@@ -1,0 +1,72 @@
+var	DPQ_P_NW, D_GDP_NW, I, PAI, R, RN3M_NW, Y, ZGDP, ZI, ZPAI, ZY;
+
+varexo EGDP,EI,EPAI,EY;
+
+parameters beta1, beta2, beta3, gam1, gam2, gyss, iss, lamb1, lamb2, paiss,
+rhogdp, rhoi, rhopai, rhoy, siggdp, sigi, sigpai, sigy;
+
+parameters a_tp_1_2,a_tp_2_1;
+
+model(linear);
+   Y=beta1*Y(-1)+beta2*Y(+1)-beta3*R(-1)+ZY;
+
+   PAI=lamb1*PAI(-1)+(1-lamb1)*PAI(+1)+lamb2*Y(-1)+ZPAI;
+
+   I=gam1*I(-1)+(1-gam1)*(PAI(+4)+gam2*Y)+ZI;
+
+   R=I-PAI(+1);
+
+   D_GDP_NW=Y-Y(-1)+ZGDP;
+
+   DPQ_P_NW=paiss+PAI;
+
+   RN3M_NW=iss+I;
+
+   ZI=rhoi*ZI(-1)+sigi*EI;
+   ZPAI=rhopai*ZPAI(-1)+sigpai*EPAI;
+   ZY=rhoy*ZY(-1)+sigy*EY;
+   ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
+end;
+
+varobs DPQ_P_NW, D_GDP_NW, RN3M_NW;
+
+
+// I will set the same priors for all the countries
+param_info;
+	gyss   ,0;
+	iss    ,0;
+	paiss  ,0;
+	rhoy   ,0;
+	sigpai(1) ,0.0001;
+	siggdp(2) ,0.0001;
+// I have set both sigpai(1) and siggdp(2) to zero. I should remove that
+// constraint. There are still some parameters that do not have a good
+// enough t-value.
+	beta1     ,0.0000     ,0	   ,.7	;
+	beta2     ,0.0833	  ,0	   ,.9	;
+	beta3(1)  ,1.6253	  ,0	   ,3.0	;
+	gam1(1)   ,0.7540	  ,0	   ,.9	;
+	gam2(1)   ,0.0655	  ,0	   ,.7	;
+	lamb1     ,0.8883	  ,0	   ,.99	;
+	lamb2  	  ,0.0027	  ,0	   ,.7	;
+	rhogdp 	  ,0.8368	  ,0	   ,.99	;
+	rhoi(1)   ,0.5006	  ,0	   ,.99	;
+	rhopai(1) ,0.7789	  ,0	   ,.99	;
+	siggdp(1) ,0.0032	  ,0.0001  ,3   ;
+	sigi(1)   ,0.0011	  ,0.0001  ,3	;
+	sigy(1)   ,0.0054	  ,0.0001  ,3	;
+
+	beta3(2)  ,0.9000 	  ,0	   ,1.0 ;
+	gam1(2)   ,0.6698 	  ,0	   ,.9	;
+	gam2(2)   ,0.0305 	  ,0	   ,.7	;
+	rhoi(2)   ,0.3665 	  ,0	   ,.7	;
+	rhopai(2) ,0.5941    ,0	   ,.99	,1;
+	sigi(2)   ,0.0032    ,0.0001  ,3	;
+	sigpai(2) ,0.0007    ,0.0001  ,3	;
+	sigy(2)   ,0.0098    ,0.0001  ,3	;
+
+// probabilities  (pij=prob(j|i))
+   a_tp_1_2,  0.1000   ,0.0001  ,.15      ;
+   a_tp_2_1,  0.1921   ,0.0001  ,.6       ;
+end;
+

@@ -1,0 +1,9 @@
+doc/*
+*.html
+*.asv
+*.bak
+*old*
+*- Copy*
+*.pdf
+help/*
+# doc/*: all files in doc directory

@@ -1,0 +1,71 @@
+var	DPQ_P_NW, D_GDP_NW, I, PAI, R, RN3M_NW, Y, ZGDP, ZI, ZPAI, ZY;
+
+varexo EGDP,EI,EPAI,EY;
+
+parameters beta_lag, beta_lead, beta_r, gam_lag, gam_y, gyss, iss, lamb_lag, lamb_lead, lamb_y, paiss,
+rhogdp, rhoi, rhopai, rhoy, siggdp, sigi, sigpai, sigy;
+
+parameters a_tp_1_2 a_tp_2_1;
+
+model(linear);
+   Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
+
+   PAI=lamb_lag*PAI(-1)+lamb_lead*PAI(+1)+lamb_y*Y(-1)+ZPAI;
+
+   I=gam_lag*I(-1)+(1-gam_lag)*(PAI(+4)+gam_y*Y)+ZI;
+
+   R=I-PAI(+1);
+
+   D_GDP_NW=Y-Y(-1)+ZGDP;
+
+   DPQ_P_NW=paiss+PAI;
+
+   RN3M_NW=iss+I;
+
+   ZI=rhoi*ZI(-1)+sigi*EI;
+   
+   ZPAI=rhopai*ZPAI(-1)+sigpai*EPAI;
+   
+   ZY=rhoy*ZY(-1)+sigy*EY;
+   
+   ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
+end;
+
+varobs DPQ_P_NW, D_GDP_NW, RN3M_NW;
+
+
+parameterization;															 
+	gyss   		 ,0;						 
+	iss    		 ,0;						 
+	paiss  		 ,0;						 
+	beta_lag 	 ,0.0001      ,0	   ,.99 ;	//					 
+	beta_lead	 ,0.0001	  ,0	   ,.99 ;	//					 
+	beta_r(1,a)  	 ,1.3328	  ,0	   ,3.0	;	//					 
+	gam_lag(1,a) 	 ,0.7499	  ,0	   ,.99 ;	//					 
+	gam_y(1,a)   	 ,0.1348	  ,0	   ,.99 ;	//					 
+	lamb_lag	 ,0.6055	  ,0	   ,.99	;	//					 
+	lamb_lead    ,0.2972	  ,0	   ,.99	;	//					 
+	lamb_y  	 ,0.0001	  ,0	   ,2.0 ;	//					 
+	rhogdp 		 ,0.7870	  ,0	   ,.99	;	//					 
+	rhoi(1,a)		 ,0.5834	  ,0	   ,.99	;	//					 
+	rhopai(1,a)	 ,0.9666	  ,0	   ,.99	;	//					 
+	rhoy   		 ,0.0001      ,0	   ,.99	;	//					 
+	siggdp(1,a)	 ,0.0032	  ,0.0001  ,3.0 ;	//					 
+	sigi(1,a)		 ,0.0012	  ,0.0001  ,3.0 ;	//					 
+	sigpai(1,a)	 ,0.0004	  ,0.0001  ,3.0 ;	//					 
+	sigy(1,a)		 ,0.0071	  ,0.0001  ,3.0 ;	//					 
+				                            	//					 
+	beta_r(2,a)    ,0.5286 	  ,0	   ,3.0 ;	//					 
+	gam_lag(2,a)	 ,0.6408 	  ,0	   ,.99 ;	//					 
+	gam_y(2,a)  	 ,0.3272 	  ,0	   ,.99 ;	//					 
+	rhoi(2,a)	     ,0.2549 	  ,0	   ,.99 ;	//					 
+	rhopai(2,a)	 ,0.0001      ,0	   ,.99	;	//				
+	siggdp(2,a)	 ,0.0005      ,0.0001  ,3.0 ;	//				
+	sigi(2,a)	     ,0.0031      ,0.0001  ,3.0 ;	//				
+	sigpai(2,a)	 ,0.0004      ,0.0001  ,3.0 ;	//				
+	sigy(2,a)	     ,0.0070      ,0.0001  ,3.0 ;	//				
+												//
+// probabilities  (pij=prob(j|i))				//
+   a_tp_1_2  	 ,0.0791   	 ,0.0001  ,.15  ;	//
+   a_tp_2_1    	 ,0.2215   	 ,0.0001  ,.6   ; 	//
+end;		  	                              
