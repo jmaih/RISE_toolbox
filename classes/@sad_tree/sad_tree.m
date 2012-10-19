@@ -6,27 +6,27 @@ classdef sad_tree < handle
         ncalls=0
     end
     methods
-        function obj=sad_tree(name,arg,initialize)
+        function obj=sad_tree(name,arg)
             if nargin
                 if isa(name,'sad_tree')
                     obj=name;
                 else
-                    if nargin<3
-                        initialize=[];
-                        if nargin<2
-                            arg=[];
-                        end
-                    end
-                    if isempty(initialize),initialize=false;end
-                    if isempty(arg),arg={}; end
                     obj.name=name;
+                    if nargin<2
+                        arg=[];
+                    end
+                    if isempty(arg)
+                        arg={};
+                    end
                     if ~iscell(arg)
                         arg={arg};
                     end
-                    obj.args=arg;
-                    if initialize
-                        setappdata(0,'sad_tree_formulae',{})
+                    for iarg=1:numel(arg)
+                        if isnumeric(arg{iarg})
+                            arg{iarg}=sad_tree(arg{iarg});
+                        end
                     end
+                    obj.args=arg;
                 end
             end
         end
