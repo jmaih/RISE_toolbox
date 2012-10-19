@@ -133,12 +133,12 @@ classdef sad_tree < handle
         %         function obj=sign(u),obj=sad_tree('sign',{u}); end
         function this=diff(obj,wrt)
             if isnumeric(obj.name)
-                this=sad_tree(obj.name,{});
+                this=sad_tree(0);
             elseif isempty(obj.args)
                 if isequal(obj.name,wrt.name)
-                    this=sad_tree(1,{});
+                    this=sad_tree(1);
                 else
-                    this=sad_tree(0,{});
+                    this=sad_tree(0);
                 end
             else
                 u=sad_tree(obj.args{1});
@@ -292,8 +292,11 @@ classdef sad_tree < handle
             if ~isempty(tree.ref)
                 fprintf(1,'%s\n',[tree.ref,' ---> ',tree.name]);
             end
+            tree.args=reprocess_arguments(tree.args);
             for iarg=1:numel(tree.args)
-                print(tree.args{iarg})
+                if ~ischar(tree.args{iarg})
+                    print(tree.args{iarg})
+                end
             end
         end
     end
