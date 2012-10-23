@@ -35,7 +35,7 @@ if obj.estimation_under_way
     switching=obj.parameters{2,loc};
 else
     M=vertcat(obj.parameters.startval);
-    switching=[obj.parameters.is_switching];
+    switching=find([obj.parameters.is_switching]);
 end
 
 if ~obj.estimation_under_way
@@ -157,8 +157,8 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     ss_i=ss_and_bgp_final_vals(1:endo_nbr,ii);
     % build the jacobian
  
-    Jcell=eval(obj.func_handles.derivatives,ss_i(indices),x_ss,ss_i,M(:,ii));
-    J=[Jcell{1},Jcell{2},Jcell{3}(:,switching)];
+    J=eval(obj.func_handles.derivatives,ss_i(indices),x_ss,ss_i,M(:,ii));
+    J=J{1};
 %    z=[ss_i(indices);x_ss;M(switching,ii)];
 %    switch derivative_type
 %         case 'numerical'
@@ -210,7 +210,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         % shocks
         cc_shocks=nnz(obj.Lead_lag_incidence)+(1:obj.NumberOfExogenous);
         % switching parameters
-        cc_switch=nnz(obj.Lead_lag_incidence)+obj.NumberOfExogenous+1:size(J,2);
+        cc_switch=nnz(obj.Lead_lag_incidence)+obj.NumberOfExogenous+switching;
     end
     Aminus_(:,aa_)=J(:,cc_);
     A0_(:,aa0)=J(:,cc0);

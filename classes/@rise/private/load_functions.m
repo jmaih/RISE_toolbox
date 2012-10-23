@@ -12,10 +12,6 @@ end
 if ~exist([obj.options.results_folder,filesep,'simulations'],'dir')
     mkdir([obj.options.results_folder,filesep,'simulations'])
 end
-% % % % % % % % % if ~exist([obj.options.results_folder,filesep,'macros'],'dir')
-% % % % % % % % %     mkdir([obj.options.results_folder,filesep,'macros'])
-% % % % % % % % % end
-% % % % % % % % % outputdir=[obj.options.results_folder,filesep,'macros'];
 
 % Get rid of definitions
 defcell=cell(0,2);
@@ -109,16 +105,11 @@ tmp=strrep(tmp,'/','./');
 tmp=strrep(tmp,'*','.*');
 handle_struct.vectorized_dynamic=str2func(tmp);
 %% transition matrix
-% the transition matrix will need to be evaluated and so, it is not
-% transformed into an anonymous function
 handle_struct.transition_matrix=rise_anonymous.empty(0,1);
 for ii=1:numel(obj.shadow_transition_matrix)
     tm_i=obj.shadow_transition_matrix(ii).Q;
     handle_struct.transition_matrix(ii,1)=rise_anonymous(tm_i.size,str2func(['@(y,x,ss,param)[',tm_i.string,']']),tm_i.indices);
 end
-% also make a handle for the transition matrix evaluator since it may be
-% used in an external function, namely during filtering for endogenous
-% switching probabilities.
 %% steady state
 % the steady state has equalities and will need to be evaluated. It can't
 % be transformed into an anonymous function.
@@ -133,14 +124,10 @@ else
 end
 
 %% model derivatives
-
-JS= obj.model_derivatives.shocks;
-JP= obj.model_derivatives.parameters;
-JE= obj.model_derivatives.endogenous;
-JE=rise_anonymous(JE.size,str2func(['@(y,x,ss,param)[',JE.string,']']),JE.indices);
-JS=rise_anonymous(JS.size,str2func(['@(y,x,ss,param)[',JS.string,']']),JS.indices);
-JP=rise_anonymous(JP.size,str2func(['@(y,x,ss,param)[',JP.string,']']),JP.indices);
-handle_struct.derivatives=[JE,JS,JP];
+JESP= obj.model_derivatives.Endogenous_Shocks_parameters;
+aux_jac=cell2mat(obj.model_derivatives.auxiliary_jacobian(:)');
+JESP=rise_anonymous(JESP.size,str2func(['@(y,x,ss,param)[',JESP.string,']']),JESP.indices,aux_jac);
+handle_struct.derivatives=JESP;
 
 
 %% planner objective

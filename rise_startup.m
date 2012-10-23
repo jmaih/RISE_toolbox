@@ -8,7 +8,7 @@ function rise_startup(flag)
   
   %-----------------------------------------------------------------------
   % Decide if using or not the RISE print and plot settings
-  USE_RISE_PLOT = true;
+  USE_RISE_PLOT = false;
   USE_RISE_PRINT = true;
   
   %--------------------------------------------------------------------------  
@@ -62,11 +62,8 @@ function rise_startup(flag)
   
   NOT_INSTALLED = 'Not installed';
   matlab_version = NOT_INSTALLED;
-  sigproc_version = NOT_INSTALLED;
   symbolic_math_version = NOT_INSTALLED;
   optimization_version = NOT_INSTALLED;
-  database_version = NOT_INSTALLED;
-  control_version = NOT_INSTALLED;
   statistics_version = NOT_INSTALLED;
   rise_version = NOT_INSTALLED;
   
@@ -84,12 +81,6 @@ function rise_startup(flag)
         statistics_version = [v.Version ' ' v.Release];
       case 'RISE Toolbox'
         rise_version = [v.Version ' ' v.Release];
-%%      case 'Signal Processing Toolbox'
-%%        sigproc_version = [v.Version ' ' v.Release];
-%%      case 'Database Toolbox'
-%%        database_version = [v.Version ' ' v.Release];
-%%      case 'Control System Toolbox'
-%%        control_version = [v.Version ' ' v.Release];
     end
   end
   
@@ -99,17 +90,7 @@ function rise_startup(flag)
   setappdata(0, 'statistics_version', statistics_version);
   setappdata(0, 'rise_version', rise_version);
   setappdata(0, 'rise_required_matlab_version', '7.11');
-%%  setappdata(0, 'sigproc_version', sigproc_version);
-%%  setappdata(0, 'database_version', database_version);
-%%  setappdata(0, 'control_version', control_version);
   
-%%  %--------------------------------------------------------------------------
-%%  % Start matlab pool if parallel toolbox is installed
-%%  if exist('parfor', 'builtin')==5 && exist('matlabpool','file')==2
-%%    %     try
-%%    %       matlabpool open 2
-%%    %     end
-%%  end
   
 %%  %--------------------------------------------------------------------------
 %%  % Check and load user parameters

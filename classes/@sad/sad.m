@@ -1,117 +1,109 @@
-% record_book={iter,var,expression}
-% record_book=cell(0,3);
-% derivatives go into the record book
-% all constants have empty book
-classdef sad
+classdef sad %< handle
+    % to do: unknown functions
+    % jacobian
+    % hessian
     properties
         x
         dx
     end
     methods
-        function obj=sad(u,du)
+        function obj=sad(y,dy)
             if nargin
-                obj.x=u;
-                obj.dx=du;
-                if exist('sad_records','var')
-                    sad.update_book(obj)
-                else
-                    assignin('base','sad_records',cell(0,2))
+                if isa(y,'sad')
+                    obj=y;
+                    return
                 end
+                if nargin<2
+                    dy='0';
+                end
+                if ~ischar(y)||~ischar(dy)
+                    error([mfilename,':: inputs must be char'])
+                end
+                obj.x=y;
+                obj.dx=dy;
             end
         end
-        function obj=mtimes(u,v)
+        function obj=plus(u,v)
             [u,du]=get_props(u);[v,dv]=get_props(v);
-            val=mytimes(u,v);
-            der=myplus(...
-                mytimes(du,v),...
-                mytimes(dv,u)...
-                );
-            obj=sad.update_book(val,der);
+            xx=myplus(u,v);
+            dxx=myplus(du,dv);
+            obj=sad(xx,dxx);
+        end
+        function obj=uplus(u)
+            [u,du]=get_props(u);
+            xx=u;
+            dxx=du;
+            obj=sad(xx,dxx);
+        end
+        function obj=minus(u,v)
+            [u,du]=get_props(u);[v,dv]=get_props(v);
+            xx=myminus(u,v);
+            dxx=myminus(du,dv);
+            obj=sad(xx,dxx);
+        end
+        function obj=uminus(u)
+            [u,du]=get_props(u);
+            xx=myminus('0',u);
+            dxx=myminus('0',du);
+            obj=sad(xx,dxx);
         end
         function obj=times(u,v)
             obj=mtimes(u,v);
         end
-        function obj=plus(u,v)
+        function obj=mtimes(u,v)
             [u,du]=get_props(u);[v,dv]=get_props(v);
-            val=myplus(u,v);
-            der=myplus(du,dv);
-            obj=sad.update_book(val,der);
-        end
-        function obj=uplus(u)
-            [u,du]=get_props(u);
-            % no need to update the book
-            obj=sad(u,du);
-        end
-        function obj=minus(u,v)
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            val=myminus(u,v);
-            der=myminus(du,dv);
-            obj=sad.update_book(val,der);
-        end
-        function obj=uminus(u)
-            [u,du]=get_props(u);
-            % no need to update the book
-            obj=sad(['-(',u,')'],['-(',du,')']);
-        end
-        function obj=mrdivide(u,v)
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            val=mydivide(u,v);
-            if strcmp(dv,'0')
-                der=mydivide(du,v);
-            else
-                der=mytimes(du,v);
-                der=myminus(der,mytimes(dv,u));
-                der=mydivide(der,mypower(v,'2'));
-            end
-            obj=sad.update_book(val,der);
-        end
-        function obj=rdivide(u,v)
-            obj=mrdivide(u,v);
-        end
-        function obj=mldivide(u,v)
-            obj=mrdivide(v,u);
-        end
-        function obj=ldivide(u,v)
-            obj=mldivide(u,v);
-        end
-        function obj=mpower(u,v)
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            val=mypower(u,v);
-            if strcmp(dv,'0')
-                der=mytimes(mytimes(v,du),mypower(u,myminus(v,'1')));
-            else
-                der1=mytimes(dv,['log(',u,')']);
-                der2=mytimes(mydivide(du,u),v);
-                der=mytimes(myplus(der1,der2),val);
-            end
-            obj=sad.update_book(val,der);
+            xx=mytimes(u,v);
+            dxx=myplus(mytimes(du,v),mytimes(dv,u));
+            obj=sad(xx,dxx);
         end
         function obj=power(u,v)
             obj=mpower(u,v);
         end
-        function obj=sqrt(u)
-            obj=u^0.5;
+        function obj=mpower(u,v)
+            [u,du]=get_props(u);[v,dv]=get_props(v);
+            xx=mypower(u,v);
+            dxx1=mytimes(mytimes(dv,['log(',u,')']),xx);
+            dxx2=mytimes(mytimes(v,du),mypower(u,myminus(v,'1')));
+            dxx=myplus(dxx1,dxx2);
+            obj=sad(xx,dxx);
         end
-        function obj=log(u)
-            [u,du]=get_props(u);
-            val=['log(',u,')'];
-            der=mydivide(du,u);
-            obj=sad.update_book(val,der);
+        function obj=rdivide(u,v)
+            obj=mrdivide(u,v);
         end
-        function obj=log10(u)
-            obj=rdivide(log(u),'log(10)');
+        function obj=mrdivide(u,v)
+            [u,du]=get_props(u);[v,dv]=get_props(v);
+            xx=mydivide(u,v);
+            dxx=mytimes(du,v);
+            dxx=myminus(dxx,mytimes(dv,u));
+            dxx=mydivide(dxx,mypower(v,'2'));
+            obj=sad(xx,dxx);
+        end
+        function obj=ldivide(u,v)
+            obj=mldivide(u,v);
+        end
+        function obj=mldivide(u,v)
+            obj=mrdivide(v,u);
         end
         function obj=exp(u)
             [u,du]=get_props(u);
-            val=['exp(',u,')'];
-            der=mytimes(du,val);
-            obj=sad.update_book(val,der);
+            xx=['exp(',u,')'];
+            dxx=mytimes(du,xx);
+            obj=sad(xx,dxx);
+        end
+        function obj=log(u)
+            [u,du]=get_props(u);
+            xx=['log(',u,')'];
+            dxx=mydivide(du,u);
+            obj=sad(xx,dxx);
+        end
+        function obj=log10(u)
+            obj=log(u)/log(10);
         end
         function obj=cos(u)
             [u,du]=get_props(u);
-            val=['cos(',u,')'];
-            der=mytimes(['-sin(',u,')'],du);
-            obj=sad.update_book(val,der);
+            xx=['cos(',u,')'];
+            dxx=mytimes(myminus('0',du),['sin(',u,')']);
+            obj=sad(xx,dxx);
         end
         function obj=acos(u)
             [u,du]=get_props(u);
@@ -119,19 +111,19 @@ classdef sad
             der=mypower(u,'2');
             der=myminus('1',der);
             der=mydivide(['-',parenthesize(du)],['sqrt(',der,')']);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
         function obj=cosh(u)
             [u,du]=get_props(u);
             val=['cosh(',u,')'];
             der=mytimes(du,['sinh(',u,')']);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
         function obj=sin(u)
             [u,du]=get_props(u);
-            val=['sin(',u,')'];
-            der=mytimes(['cos(',u,')'],du);
-            obj=sad.update_book(val,der);
+            xx=['sin(',u,')'];
+            dxx=mytimes(du,['cos(',u,')']);
+            obj=sad(xx,dxx);
         end
         function obj=asin(u)
             [u,du]=get_props(u);
@@ -139,20 +131,20 @@ classdef sad
             der=mypower(u,'2');
             der=myminus('1',der);
             der=mydivide(du,['sqrt(',der,')']);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
         function obj=sinh(u)
             [u,du]=get_props(u);
             val=['sinh(',u,')'];
             der=mydivide(du,['cosh(',u,')']);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
         function obj=tan(u)
             [u,du]=get_props(u);
             val=['tan(',u,')'];
             der=mypower(['cos(',u,')'],'2');
             der=mydivide(du,der);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
         function obj=atan(u)
             [u,du]=get_props(u);
@@ -160,32 +152,36 @@ classdef sad
             der=mypower(u,'2');
             der=myplus('1',der);
             der=mydivide(du,['sqrt(',der,')']);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
         function obj=tanh(u)
             [u,du]=get_props(u);
             val=['tanh(',u,')'];
             der=mypower(['cosh(',u,')'],'2');
             der=mydivide(du,der);
-            obj=sad.update_book(val,der);
+            obj=sad(val,der);
         end
-        function obj=abs(u)
-            [u,du]=get_props(u);
-            val=['abs(',u,')'];
-            der=mytimes(['sign(',u,')'],du);
-            obj=sad.update_book(val,der);
+        function obj=min(u,v)
+            if nargin~=2
+                error([mfilename,':: number of arguments should be 2'])
+            end
+            [u,du]=get_props(u);[v,dv]=get_props(v);
+            uLv=['(',u,'<',v,')'];
+            val=['min(',u,',',v,')'];
+            der=[uLv,'*',parenthesize(du),'+(1-',uLv,')*',parenthesize(dv)];
+            obj = sad(val,der);
         end
-        function obj=real(u)
-            [u,du]=get_props(u);
-            val=['real(',u,')'];
-            der=['real(',du,')'];
-            obj=sad.update_book(val,der);
-        end
-        function obj=norm(u)
-            obj = sqrt(sum(u.^2));
+        function obj=max(u,v)
+            if nargin~=2
+                error([mfilename,':: number of arguments should be 2'])
+            end
+            [u,du]=get_props(u);[v,dv]=get_props(v);
+            uLv=['(',u,'<',v,')'];
+            val=['max(',u,',',v,')'];
+            der=[uLv,'*',parenthesize(dv),'+(1-',uLv,')*',parenthesize(du)];
+            obj = sad(val,der);
         end
         function obj=sum(u,v)
-            % rise_sad/SUM overloads sum with a rise_sad object argument
             if nargin==1
                 [u0,du0]=get_props(u(1));
                 val=u0;
@@ -195,133 +191,152 @@ classdef sad
                     val=myplus(val,u0);
                     der=myplus(der,du0);
                 end
-                obj=sad.update_book(val,der);
+                obj=sad(val,der);
             else
                 obj=plus(u,v);
             end
         end
         function obj=normpdf(u,mu,sig)
             if nargin<3
-                sig=1;
+                sig='1';
                 if nargin<2
-                    mu=0;
+                    mu='0';
                 end
             end
             [u,du]=get_props(u);
-            [mu,sig]=get_char_form(mu,sig);
+            mu=get_props(mu);
+            sig=get_props(sig);
             val=['normpdf(',u,',',mu,',',sig,')'];
             der0=myminus(u,mu);
             der1=mypower(sig,'2');
             der=mydivide(['-(',der0,')'],der1);
             der=mytimes(der,du);
             der=mytimes(der,val);
-            obj = sad.update_book(val,der);
+            obj = sad(val,der);
         end
         function obj=normcdf(u,mu,sig)
             if nargin<3
-                sig=1;
+                sig='1';
                 if nargin<2
-                    mu=0;
+                    mu='0';
                 end
             end
             [u,du]=get_props(u);
-            [mu,sig]=get_char_form(mu,sig);
+            mu=get_props(mu);
+            sig=get_props(sig);
             val=['normcdf(',u,',',mu,',',sig,')'];
             der=mytimes(du,['normpdf(',u,',',mu,',',sig,')']);
-            obj = sad.update_book(val,der);
+            obj = sad(val,der);
         end
-        function obj=conj(u)
+        function obj=abs(u)
             [u,du]=get_props(u);
-            val=['conj(',u,')'];
-            der=['conj(',du,')'];
-            obj = sad.update_book(val,der);
+            val=['abs(',u,')'];
+            der=mytimes(['sign(',u,')'],du);
+            obj=sad(val,der);
         end
-        function c = isreal(u)
-            % rise_sad/ISREAL overloads isreal with a rise_sad object argument
+        function obj=isreal(u)
             u=get_props(u);
-            c = ['isreal(',u,')'];
+            val=['real(',u,')'];
+            der='0';
+            obj=sad(val,der);
         end
-        function obj = min(u,v)
-            % sad/MIN overloads min with a rise_sad object argument
-            % but will work with 2 arguments.
-            if nargin~=2
-                error([mfilename,':: number of arguments should be 2'])
+        function obj=sqrt(u)
+            [u,du]=get_props(u);
+            xx=['sqrt(',u,')'];
+            dxx=mytimes('0.5',mydivide(du,xx));
+            obj=sad(xx,dxx);
+        end
+        function obj=norm(u)
+            obj = sqrt(sum(u.^2));
+        end
+        
+        function d = char(u,expand)
+            if nargin<2
+                expand=false;
             end
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            uLv=['(',u,'<',v,')'];
-            val=['min(',u,',',v,')'];
-            der=[uLv,'*',parenthesize(du),'+(1-',uLv,')*',parenthesize(dv)];
-            obj = sad.update_book(val,der);
-        end
-        function obj = max(u,v)
-            % sad/MAX overloads max with a rise_sad object argument
-            % but will work with 2 arguments.
-            if nargin~=2
-                error([mfilename,':: number of arguments should be 2'])
-            end
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            uLv=['(',u,'<',v,')'];
-            val=['max(',u,',',v,')'];
-            der=[uLv,'*',parenthesize(dv),'+(1-',uLv,')*',parenthesize(du)];
-            obj = sad.update_book(val,der);
-        end
-        function d = char(u)
             d = u.dx;
+            if expand
+                d=replace_keys(d);
+            end
         end
     end
     methods(Static)
-        function obj=update_book(val,der)
-            % Now we can also simplify equalities
-            % check that the expression was not computed before
-            sad_records=evalin('base','sad_records');
-            olditer=size(sad_records,1);
-            push_val=assign_element(val);
-            push_der=assign_element(der);
-            obj=sad(push_val,push_der);
-            assignin('base','sad_records',sad_records)
-            function push_element=assign_element(element)
-                push_element=element;
-                is_definition=any(strcmp(element,sad_records(:,1)));
-                if ~strcmp(element,'0') && ~strcmp(element,'1') && ~is_definition
-                    % is is possible to re-arrange the expression wrt the
-                    % operators so as to facilitate the search?
-                    % check whether the whole expression has been computed
-                    % before.
-                    % if not, check the bits of the expression that have
-                    % been computed before
-                    dejavu=find(strcmp(element,sad_records(:,2)));
-                    if ~isempty(dejavu)
-                        push_element=sad_records{dejavu,1};
-                    else
-                        iter=olditer+1;
-                        push_element=['T_',int2str(iter)];
-                        sad_records=[sad_records
-                            {push_element,element}];
-                        olditer=iter;
+        varargout=jacobian(varargin)
+        varargout=hessian(varargin)
+        function [derivatives,auxiliary]=trim(derivatives)
+            mapObj_sad=evalin('base','mapObj_sad');
+            allKeys = keys(mapObj_sad);
+            allValues = values(mapObj_sad);
+            auxiliary='';
+            for icount=mapObj_sad.Count:-1:1
+                % if a particular value occurs only once, then replace it
+                % and remove the key
+                vv=['T_',int2str(icount)];
+                pat=['(?<![\w])',vv,'(?![\w])'];
+                locs=regexp(derivatives,pat);
+                if iscell(locs)
+                    locs=cell2mat(locs(:)');
+                end
+                howmany=numel(locs);
+                loc=strcmp(vv,allValues);
+                add_it=true;
+                if howmany==1
+                    % normally I should do this for each cell,
+                    % carefully reconstructing the string,... but this
+                    % is not without cost.
+                    derivatives=regexprep(derivatives,pat,['(',allKeys{loc},')']);
+                    % do not add it if it does not already appear in the
+                    % auxilary
+                    if isempty(auxiliary)||isempty(regexp(auxiliary,pat,'once'))
+                        add_it=false;
                     end
                 end
+                if add_it
+                    auxiliary=[[vv,'=',allKeys{loc},';'],auxiliary];  %#ok<AGROW>
+                end
+                allKeys(loc)=[];
+                allValues(loc)=[];
+            end
+            if ~isempty(auxiliary)
+                auxiliary=strcat(regexp(auxiliary,';','split'),';');
+                auxiliary=auxiliary(1:end-1);
             end
         end
-        varargout=diff(varargin)
-        varargout=hessian(varargin)
-        varargout=jacobian(varargin)
+        function string=replace_keys(string)
+            % get the list of keys in the string
+            mapObj_sad=evalin('base','mapObj_sad');
+            allKeys = keys(mapObj_sad);
+            allValues = values(mapObj_sad);
+            pat='(?<![\w])T_[\d]+(?![\w])';
+            string0=string;
+            [start,finish]=regexp(string0,pat,'start','end');
+            % reconstructing the string
+            while ~isempty(start)
+                string=string0(1:start(1)-1);
+                for iloc=1:numel(start)
+                    val=string0(start(iloc):finish(iloc));
+                    val_loc= strcmp(val,allValues);
+                    key=allKeys{val_loc};
+                    parenth=(~isempty(string) && any(string(end)=='-^/*\'))||...
+                        (finish(iloc)<length(string0) && any(string0(finish(iloc)+1)=='*/^\'));
+                    if parenth
+                        key=['(',key,')']; %#ok<AGROW>
+                    end
+                    suffix='';
+                    if iloc<numel(start)
+                        suffix=string0(finish(iloc)+1:start(iloc+1)-1);
+                    end
+                    string=[string,key,suffix]; %#ok<AGROW>
+                end
+                string=[string,string0(finish(end)+1:end)]; %#ok<AGROW>
+                string0=string;
+                [start,finish]=regexp(string0,pat,'start','end');
+            end
+        end
+        function destroy()
+            evalin('base','clear(''mapObj_sad'')');
+        end
     end
-end
-
-function varargout=get_char_form(varargin)
-n=length(varargin);
-for ivar=1:n
-    vv=varargin{ivar};
-    switch class(vv)
-        case 'char'
-            varargout{ivar}=vv;
-        case 'double'
-            varargout{ivar}=num2str(vv,10);
-        case 'rise_sad'
-            varargout{ivar}=vv.x;
-        otherwise
-    end
-end
 end
 
 function [u,du]=get_props(x)
@@ -337,9 +352,13 @@ switch class(x)
     otherwise
         error([mfilename,':: unsupported class ',class(x)])
 end
+[u,du]=archive(u,du);
 end
 
 function c=myplus(a,b)
+% this operation is commutative and so sort alphabetically before computing
+% this will help in the archivation process to make sure a+b=b+a
+[a,b]=commute(a,b);
 if strcmp(a,'0')
     if strcmp(b,'0')
         c='0';
@@ -360,18 +379,22 @@ if strcmp(a,'0')
     if strcmp(b,'0')
         c='0';
     else
-        c=tryevaluate(['-',parenthesize(b)]);
+        c=tryevaluate(['-',parenthesize(b,'+-')]);
     end
 else
     if strcmp(b,'0')
         c=a;
     else
-        c=tryevaluate([a,'-',parenthesize(b)]);
+        c=tryevaluate([a,'-',parenthesize(b,'+-')]);
     end
 end
 end
 
 function c=mytimes(a,b)
+% this operation is commutative and so sort alphabetically before
+% computing. this will help in the archivation process to make sure a*b=b*a
+[a,b]=commute(a,b);
+
 if strcmp(a,'0')||strcmp(b,'0')
     c='0';
 elseif strcmp(a,'1')
@@ -379,15 +402,15 @@ elseif strcmp(a,'1')
 elseif strcmp(b,'1')
     c=a;
 else
-    c=tryevaluate([parenthesize(a),'*',parenthesize(b)]);
+    c=tryevaluate([parenthesize(a,'+-'),'*',parenthesize(b,'+-')]);
 end
 end
 
 function c=mypower(a,b)
-if strcmp(b,'0')
+if strcmp(b,'0')||strcmp(a,'1')
     c='1';
 else
-    c=tryevaluate([parenthesize(a),'^',parenthesize(b)]);
+    c=tryevaluate([parenthesize(a,'+-/*^'),'^',parenthesize(b,'+-/*^')]);
 end
 end
 
@@ -395,21 +418,33 @@ function c=mydivide(a,b)
 if strcmp(a,'0')
     c='0';
 else
-    c=tryevaluate([parenthesize(a),'/',parenthesize(b)]);
+    c=tryevaluate([parenthesize(a,'+-'),'/',parenthesize(b,'+-/*^')]);
 end
 end
 
-function x=parenthesize(x)
-flag=false;
-for ii=1:length(x)
-    if any(x(ii)=='+-*/^')
-        flag=true;
-        break
-    end
+function [a,b]=commute(a,b)
+% sort alphabetically
+if a(1)>b(1)
+    atmp=a;
+    btmp=b;
+    a=btmp;
+    b=atmp;
 end
+end
+
+function x=parenthesize(x,forbid)
+if nargin<2
+    forbid='+-*/^';
+end
+forbid=strrep(forbid,'-','\-'); % must escape the minus sign
+flag=~isempty(regexp(x,['[',forbid,']'],'start'));
 if flag
     x=['(',x,')'];
 end
+end
+
+function flag=is_atom(string)
+flag=isempty(regexp(string,'[/*\-+^]','start','once')); %<---flag=isempty(regexp(string,'[/*\-+^]','start'));
 end
 
 function a=tryevaluate(a)
@@ -433,3 +468,60 @@ if flag
     end
 end
 end
+
+function varargout=archive(varargin)
+persistent mapObj_sad
+if isempty(mapObj_sad)
+    mapObj_sad=containers.Map;
+end
+varargout=varargin;
+for item=1:length(varargin)
+    if ~is_atom(varargin{item})
+        if isKey(mapObj_sad,varargin{item})
+            varargout{item}=mapObj_sad(varargin{item});
+        else
+            Count=mapObj_sad.Count+1;
+            varargout{item}=['T_',int2str(Count)];
+            mapObj_sad(varargin{item})=varargout{item};
+        end
+    end
+end
+assignin('base','mapObj_sad',mapObj_sad)
+end
+
+% function varargout=archive(varargin)
+% persistent mapObj_sad
+% if isempty(mapObj_sad)
+%     mapObj_sad=cell(0,3);
+% end
+% varargout=varargin;
+% for item=1:length(varargin)
+%     if ~is_atom(varargin{item})
+%         key=get_key(varargin{item});
+%         if ~isempty(key) % <---if isKey(mapObj_sad,varargin{item})
+%             varargout{item}=key;
+%         else
+%             if isempty(mapObj_sad)
+%                 Count=1;
+%             else
+%                 Count=mapObj_sad{end,3}+1; % <--- Count=mapObj_sad.Count+1;
+%             end
+%             varargout{item}=['T_',int2str(Count)];
+%             mapObj_sad=[mapObj_sad;varargin(item),varargout(item),{Count}]; %#ok<AGROW> % <-- mapObj_sad(varargin{item})=varargout{item};
+%         end
+%     end
+% end
+% % capture x and the derivatives right here. Check whether
+% % they look like anything that has been computed earlier in
+% % which case they should assume the auxiliary values... The
+% % criterion should be that they have at least one operator
+% % in order to be eligible for the container
+% assignin('base','mapObj_sad',mapObj_sad)
+%     function key=get_key(item)
+%         key=[];
+%         key_loc=find(strcmp(item,mapObj_sad(:,1)));
+%         if ~isempty(key_loc)
+%             key=mapObj_sad{key_loc,2};
+%         end
+%     end
+% end

@@ -77,6 +77,13 @@ classdef rise_sad < handle
         end
         function obj=abs(u),obj=rise_sad('abs',{u}); end
         function obj=isreal(u),obj=rise_sad('isreal',{u}); end
+        function obj=sqrt(u),obj=rise_sad('sqrt',{u}); end
+        function obj=norm(u),obj=rise_sad('norm',{u}); end
+        function obj=gt(u,v),obj=rise_sad('gt',{u,v}); end
+        function obj=ge(u,v),obj=rise_sad('ge',{u,v}); end
+        function obj=lt(u,v),obj=rise_sad('lt',{u,v}); end
+        function obj=le(u,v),obj=rise_sad('le',{u,v}); end
+        function obj=sign(u),obj=rise_sad('sign',{u}); end
         % % % %         varagout=char(varargin)
         function string=char(obj,unravel,isparent)
             if nargin<3
@@ -91,7 +98,7 @@ classdef rise_sad < handle
                 string=num2str(obj.name,10);
             elseif isempty(args_) % variable
                 string=obj.name; % this should be a char
-            elseif ~unravel && ~isempty(obj.ref) && ~isparent
+            elseif ~unravel && ~isempty(obj.ref) && ~strcmp(obj.ref,'x') && ~isparent
                 string=obj.ref;
             else
                 switch obj.name
@@ -120,17 +127,9 @@ classdef rise_sad < handle
                 end
             end
             if isparent
-                string=[obj.ref,'=',string];
+                string=[obj.ref,'=',string,';'];
             end
         end
-        
-        function obj=sqrt(u),obj=rise_sad('sqrt',{u}); end
-        function obj=norm(u),obj=rise_sad('norm',{u}); end
-        function obj=gt(u,v),obj=rise_sad('gt',{u,v}); end
-        function obj=ge(u,v),obj=rise_sad('ge',{u,v}); end
-        function obj=lt(u,v),obj=rise_sad('lt',{u,v}); end
-        function obj=le(u,v),obj=rise_sad('le',{u,v}); end
-        function obj=sign(u),obj=rise_sad('sign',{u}); end
         function this=diff(obj,wrt)
             if isnumeric(obj.name)
                 this=rise_sad(0);
@@ -162,121 +161,127 @@ classdef rise_sad < handle
             end
             function this=differentiation_engine(wrt)
                 du=diff(u,wrt);
-                if n_args>1
-                    dv=diff(v,wrt);
-                end
                 switch obj.name
                     case {'gt','ge','lt','le','sign'}
                         this=rise_sad(0);
                     case 'plus'
+                    dv=diff(v,wrt);
                         this=du+dv;
                     case 'uplus'
                         this=du;
                     case 'minus'
+                    dv=diff(v,wrt);
                         this=du-dv;
                     case 'uminus'
                         this=-du;
                     case {'mtimes','times'}
-                        update_reference(u);
-                        update_reference(v);
+                    dv=diff(v,wrt);
                         upv=du*v;
                         vpu=dv*u;
                         this=upv+vpu;
+                        update_reference(u,v);
                     case {'power','mpower'}
-                        update_reference(u);
-                        update_reference(v);
                         this=(log(u)+du/u*v)*u^v;
+                        update_reference(u,v);
                     case {'rdivide','mrdivide'}
-                        update_reference(u);
-                        update_reference(v);
+                    dv=diff(v,wrt);
                         this=(du*v-dv*u)/v^2; % only when v~=0
+                        update_reference(u,v);
                     case {'ldivide','mldivide'}
-                        update_reference(u);
-                        update_reference(v);
+                    dv=diff(v,wrt);
                         this=(u*dv-v*du)/u^2; % only when u~=0
+                        update_reference(u,v);
                     case 'exp'
-                        update_reference(obj);
                         this=du*obj;
+                        update_reference(obj);
                     case 'log'
-                        update_reference(u);
                         this=du/u;
+                        update_reference(u);
                     case 'log10'
-                        update_reference(u);
                         this=(du/u)/log(10);
+                        update_reference(u);
                     case 'cos'
-                        update_reference(u);
                         this=-du*sin(u);
+                        update_reference(u);
                     case 'acos'
-                        update_reference(u);
                         this=-du/sqrt(1-u^2);
+                        update_reference(u);
                     case 'cosh'
-                        update_reference(u);
                         this=du*sinh(u);
+                        update_reference(u);
                     case 'sin'
-                        update_reference(u);
                         this=du*cos(u);
+                        update_reference(u);
                     case 'asin'
-                        update_reference(u);
                         this=du/sqrt(1-u^2);
+                        update_reference(u);
                     case 'sinh'
-                        update_reference(u);
                         this=du*cosh(u);
+                        update_reference(u);
                     case 'tan'
-                        update_reference(u);
                         this=du/(cos(u))^2;
+                        update_reference(u);
                     case 'atan'
-                        update_reference(u);
                         this=du/(1+u^2);
+                        update_reference(u);
                     case 'tanh'
-                        update_reference(u);
                         this=du/(1-u^2);
-                    case 'min'
                         update_reference(u);
-                        update_reference(v);
+                    case 'min'
                         muv=u<v;
                         this=muv*u+(1-muv)*v;
+                        update_reference(u,v);
                     case 'max'
-                        update_reference(u);
-                        update_reference(v);
                         muv=u>v;
                         this=muv*u+(1-muv)*v;
+                        update_reference(u,v);
                     case 'sum'
                         this=sum(du);
+                        update_reference(u);
                     case 'normpdf'
-                        update_reference(u);
-                        update_reference(v);
-                        update_reference(w);
                         this=-du/w*(u-v)/w*obj;
+                        update_reference(u,v,w);
                     case 'normcdf'
-                        update_reference(u);
-                        update_reference(v);
-                        update_reference(w);
                         this=du*normpdf(u,v,w);
+                        update_reference(u,v,w);
                     case 'abs'
-                        update_reference(u);
                         this=du*(-u<0+u>0);
+                        update_reference(u);
                     case 'isreal'
-                        update_reference(u);
                         this=isreal(u)*du;
-                    case 'sqrt'
-                        update_reference(obj);
-                        this=du/(2*sqrt(obj));
-                    case 'norm' % this would not work!
                         update_reference(u);
+                    case 'sqrt'
+                        this=du/(2*sqrt(obj));
+                        update_reference(obj);
+                    case 'norm' % this would not work!
                         this=sum(u.*du)/norm(u);
+                        update_reference(u);
                     otherwise
                         keyboard
                 end
             end
         end
-        function update_reference(obj)
+        function update_reference(varargin)
             % not a variable and not a constant
-            if isempty(obj.ref) && ~isempty(obj.args)
-                obj.ncalls=obj.ncalls+1;
-                if obj.ncalls>1
-                    obj.ref='x';
+            for iarg=1:length(varargin)
+                if isempty(varargin{iarg}.ref) && ~isempty(varargin{iarg}.args)
+                    varargin{iarg}.ncalls=varargin{iarg}.ncalls+1;
+                    if varargin{iarg}.ncalls>1
+                        varargin{iarg}.ref='x';
+                    end
                 end
             end
+% % % % % % %             archive_it=~isnumeric(obj.name) && ~isempty(obj.args);
+% % % % % % %             if archive_it
+% % % % % % %                 if ~exist('mapObj_rise_sad','var')
+% % % % % % %                     mapObj_rise_sad = containers.Map();
+% % % % % % %                 end
+% % % % % % %                 if ~isKey(mapObj_rise_sad,obj)
+% % % % % % %                     nobj=size(mapObj_rise_sad,1);
+% % % % % % %                     mapObj_rise_sad=containers.Map(obj,['T_',int2str(nobj)]);
+% % % % % % %                 end
+% % % % % % %                 assignin('base','mapObj_rise_sad',mapObj_rise_sad)
+% % % % % % %             end
         end
         function imax=re_flag_tree(tree,istart)
             if nargin<2
@@ -298,7 +303,7 @@ classdef rise_sad < handle
                 references=[];
             end
             if ~isempty(tree.args)
-                isparent=~isempty(tree.ref) && is_atom(char(tree,false));
+                isparent=~isempty(tree.ref) && strcmp(tree.ref(1),'T');% <---is_atom(char(tree,false));
                 if isparent
                     references=[{char(tree,false,true)};references];
                 end

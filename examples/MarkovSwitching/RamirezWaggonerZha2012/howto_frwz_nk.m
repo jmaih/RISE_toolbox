@@ -3,49 +3,10 @@ clear all
 close all
 clc
 %% List of models and solvers
-Models={'fwz_nasty@pp_1','fwz_nasty@pp_2','fwz_nasty@pp_3',...
-    'frwz_nk','frwz_nk@cal_2','usmodel'};
+Models={'frwz_nk','frwz_nk@cal_2'};
 solvers={'newton_system','newton_kronecker',...
     'newton_kronecker_iteration','functional_iteration'};
 %% Alternative calibrations
-% the first (for fwz_nasty) parameterization has a unique solution
-pp_1={'name','value','regime'
-    'delta',    0,      1
-    'delta',    0,      2
-    'betta',    1,      1
-    'betta',    1,      2
-    'rho',     .9,      1
-    'rho',     .9,      2
-    'phi',     .5,      1
-    'phi',     .8,      2
-    'a_tp_1_2',1-.8,    1
-    'a_tp_2_1',1-.9,    1};   
-
-% the second (for fwz_nasty) parameterization has 2 solutions
-pp_2={'name','value','regime'
-    'delta',  -.7,       1
-    'delta',   .4,       2
-    'betta',    1,       1
-    'betta',    1,       2
-    'rho',      0,       1
-    'rho',      0,       2
-    'phi',     .5,       1
-    'phi',     .8,       2
-    'a_tp_1_2', 1-1,     1
-    'a_tp_2_1',1-.64,    1};   
-
-% the third (for fwz_nasty) parameterization has more than 2 solutions
-pp_3={'name','value','regime'
-    'delta',   -.7,      1
-    'delta',   -.2,      2
-    'betta',     1,      1
-    'betta',     1,      2
-    'rho',       0,      1
-    'rho',       0,      2
-    'phi',      .2,      1
-    'phi',      .4,      2
-    'a_tp_1_2',1-.9,     1
-    'a_tp_2_1',1-.8,     1};   
 
 cal_2={'name', 'value','regime'
 	'psi'  , 0.7 , 2};

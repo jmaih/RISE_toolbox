@@ -1,4 +1,4 @@
-function [Jac,wrt,myrefs,i_index]=jacobian(objectives,varnames,wrt,myrefs,i_index)
+function [Jac,myrefs,wrt,i_index]=jacobian(objectives,varnames,wrt,myrefs,i_index)
 % objectives is a function handle or an array of function handles
 % wrt is a rise_sad variable or a cell array of such.
 % output is returned in a rise_sad form in case the user wants to use it to
@@ -21,7 +21,7 @@ end
 % but I do not have that skill yet
 %  example
 %  func={'exp(a+b*log(c)+c*atan(a*b))','cos(abs(a)+atan(a*b))'};
-%  [Jac,wrt,myrefs,i_index]=rise_sad.jacobian(func,{'a','c','b'})
+%  [Jac,myrefs,wrt,i_index]=rise_sad.jacobian(func,{'a','c','b'})
 %  
 if isempty(i_index),i_index=0;end
 
@@ -65,6 +65,10 @@ ncols=numel(wrt);
 nrows=numel(objectives);
 Jac=repmat({rise_sad(0)},nrows,ncols);
 for irow=1:nrows
+    if isa(objectives{irow},'rise_sad')
+        % expand it in full
+        objectives{irow}=char(objectives{irow},1);
+    end
     [occur,myfunc]=find_occurrences(objectives{irow},args_);
     loc=ismember(wrt,args_(occur));
     % re-create the function
@@ -118,9 +122,10 @@ for ii=1:numel(names)
     if ~ischar(names{ii})
         error([mfilename,':: variable names must be char'])
     end
-    bad=names{ii}(~isstrprop(names{ii},'alphanum'));
+    bad=regexp(names{ii},'[\W]','match');%<-- names{ii}(~isstrprop(names{ii},'alphanum'));
     if ~isempty(bad)
-        error([mfilename,':: ',bad,' is(are) not valid character(s) is variable names '])
+        bad=cell2mat(bad);
+        error([mfilename,':: ''',bad,''' is(are) not valid character(s) is variable names '])
     end
 end
 for ii=1:numel(names)

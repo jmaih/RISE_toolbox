@@ -123,7 +123,7 @@ end
 
 clear current_block_name
 %% Populate the dictionary
-dictionary.definitions={}; 
+dictionary.definitions={};
 % unlike the declared list, definitions will never be sorted
 dictionary.known_words={'steady_state','argzero','x0_','x1_','param_obj','commitment','discount',...
     'log','exp','cos','sin','normpdf','normcdf'};
@@ -553,7 +553,7 @@ for ii=1:size(blocks(current_block_id).listing,1)
     dictionary.Parameterization_block=capture_parameterization(dictionary.Parameterization_block,blocks(current_block_id).listing(ii,:));
 end
 % remove item from block
-blocks(current_block_id)=[]; 
+blocks(current_block_id)=[];
 
 % check that every parameter is controled by one chain only and that it is
 % assigned a value in every state of the commanding chain. NB: above, I
@@ -727,7 +727,7 @@ dictionary.Lead_lag_incidence(dictionary.Lead_lag_incidence>0)=1:nnz(dictionary.
 % % % % % % % % % % dictionary.Lead_lag_incidence=transpose(dictionary.Lead_lag_incidence);
 
 appear_as_current=find(dictionary.Lead_lag_incidence(:,2));
-if any(~appear_as_current) 
+if any(~appear_as_current)
     disp('The following variables::')
     disp(old_endo_names(~appear_as_current))
     error('do not appear as current')
@@ -877,10 +877,10 @@ for ii=1:numel(equation_type)
                 sh_tvp=[sh_tvp,item];
             otherwise
                 if strcmp(item,'steady_state')
-					% then two blocks later is the name of the variable
-					Vss=eq_i{1,jj+2};
-					pos=find(strcmp(Vss,{dictionary.orig_endogenous.name}));
-					eq_i{1,jj+2}=int2str(pos);
+                    % then two blocks later is the name of the variable
+                    Vss=eq_i{1,jj+2};
+                    pos=find(strcmp(Vss,{dictionary.orig_endogenous.name}));
+                    eq_i{1,jj+2}=int2str(pos);
                 end
                 if is_def
                     sh_d=[sh_d,item];
@@ -911,7 +911,7 @@ for ii=1:numel(equation_type)
         shadow_tvp=[shadow_tvp;{sh_tvp}];
     elseif is_sseq
         static.steady_state_shadow_model=[static.steady_state_shadow_model;{sh_ssm}];
-         % put back the semicolon as this is going to be evaluated
+        % put back the semicolon as this is going to be evaluated
     elseif is_planner
         dictionary.planner.shadow_model=[dictionary.planner.shadow_model;{sh_pl}];
         dictionary.planner.symbolic_model=[dictionary.planner.symbolic_model;{sy_pl}];
@@ -941,7 +941,7 @@ for ii=1:numel(old_shadow_steady_state_model)
         if ii<numel(old_shadow_steady_state_model)
             eq_i=[eq_i;{'if ~retcode,'}];
             fsolve_nbr=fsolve_nbr+1;
-        end            
+        end
         static.steady_state_shadow_model=[static.steady_state_shadow_model;eq_i];
     else
         static.steady_state_shadow_model=[static.steady_state_shadow_model;{eq_i}];
@@ -993,20 +993,45 @@ for ii=numel(dictionary.definitions):-1:1
     end
 end
 with_respect_to=[endo_list_,exo_list_,param_list_];
-dynamic.model_derivatives=rise_sad.jacobian(symbolic_original,with_respect_to);
-% create 2 or 3 matrices for the jacobian: endogenous, shocks, parameters
-JE=cellstr2mat(dynamic.model_derivatives(:,1:lli_nbr));
-JS=cellstr2mat(dynamic.model_derivatives(:,lli_nbr+(1:exo_nbr)));
-JP=cellstr2mat(dynamic.model_derivatives(:,lli_nbr+exo_nbr+1:end));
+% add the list of the symbolic parameters
+list_ss=collect_symbolic_list(symbolic_original,'ss_');
+symb_list=[with_respect_to,list_ss];
 
-dynamic.model_derivatives=struct('endogenous',JE,'shocks',JS,'parameters',JP);
+% first destroy any previous derivatives elements
+disp([mfilename,':: computing first-order derivatives with respect to all endogenous, exogenous and parameters'])
+tic
+sad.destroy();
+[dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
+jac_toc=toc();
+disp([mfilename,':: The computation of first-order derivatives took ',num2str(jac_toc),' seconds'])
+
+% should differentiate the steady state from the other variables here...
+% otherwise this won't work well.
+
+% put things in an analytic form
+validnames={'y','x','param','ss'};
+dynamic.model_derivatives=analytical_symbolic_form(dynamic.model_derivatives,validnames,'analytic');
+auxiliary_jacobian=analytical_symbolic_form(auxiliary_jacobian,validnames,'analytic');
+% for the moment, put all in the same matrix
+JESP=cellstr2mat(dynamic.model_derivatives);
+
+dynamic.model_derivatives=struct('Endogenous_Shocks_parameters',{JESP},'auxiliary_jacobian',{auxiliary_jacobian});
 
 if is_model_with_planner_objective
     % note that the variables are not the same here!!! although I take
     % a subset of the list above. In the above case, y(1) may represent
     % a lead, whereas in the policy case below it represents time t
     % variable
-    [Hcell,JacCell]=rise_sad.hessian(dictionary.planner.symbolic_model{1},with_respect_to(1:orig_endo_nbr));
+    % add the list of the symbolic parameters
+    with_respect_to=[endo_list_,exo_list_,param_list_];
+    list_ss=collect_symbolic_list(dictionary.planner.symbolic_model{1},'ss_');
+    symb_list=[with_respect_to(1:orig_endo_nbr),exo_list_,param_list_,list_ss];
+    % first destroy any previous derivatives elements
+    sad.destroy();
+    [Hcell,JacCell,Hessrefs]=sad.hessian(dictionary.planner.symbolic_model{1},symb_list,with_respect_to(1:orig_endo_nbr));
+    Hcell=analytical_symbolic_form(Hcell,validnames,'analytic');
+    JacCell=analytical_symbolic_form(JacCell,validnames,'analytic');
+    Hessrefs=analytical_symbolic_form(Hessrefs,validnames,'analytic');
     dictionary.planner.first_order_derivatives=cellstr2mat(JacCell(:));
     dictionary.planner.second_order_derivatives=cellstr2mat(Hcell);
     shadow_model=dictionary.planner.shadow_model;
@@ -1014,8 +1039,11 @@ if is_model_with_planner_objective
     dictionary.planner.commitment=cellstr2mat(strrep(commitment,';',''));
     discount=strrep(shadow_model(3),'discount-','');
     dictionary.planner.discount=cellstr2mat(strrep(discount,';',''));
+    dictionary.planner.auxiliary=Hessrefs;
 end
 
+%% destroy all derivative elements
+sad.destroy();
 
 %% give greek names to endogenous, exogenous, parameters
 dictionary.orig_endogenous=greekify(dictionary.orig_endogenous);
@@ -1119,11 +1147,11 @@ for ii=1:numel(dictionary.parameters)
 end
 dictionary.is_in_use_parameter=is_in_use_parameter;
 dictionary.is_in_use_shock=is_in_use_shock;
-% replace the list of definition names with definition equations 
+% replace the list of definition names with definition equations
 dictionary.definitions=struct('model',orig_definitions,'shadow',shadow_definitions);
 dictionary=orderfields(dictionary);
 %% Miscellaneous
-% 1.  
+% 1.
 
 %% functions
 
@@ -1140,7 +1168,7 @@ dictionary=orderfields(dictionary);
                 defcell{jdef,2}=strrep(defcell{jdef,2},defcell{idef,1},['(',defcell{idef,2},')']);
             end
         end
-        defcell_symb=analytical_symbolic_form(defcell,{'y','x','param','def','ss'},'symbolic');       
+        defcell_symb=analytical_symbolic_form(defcell,{'y','x','param','def','ss'},'symbolic');
     end
 
     function transition_probabilities()
@@ -1196,7 +1224,7 @@ dictionary=orderfields(dictionary);
             % could have included the tvp into the list of definitions,
             % as it seems.
             for idef=1:size(defcell,1)
-                NewQ=strrep(NewQ,defcell{ii,1},['(',defcell{ii,2},')']);
+                NewQ=strrep(NewQ,defcell{idef,1},['(',defcell{idef,2},')']);
             end
             QQ(i1).Q=cellstr2mat(NewQ);
             iter=iter+1;
@@ -1279,11 +1307,11 @@ dictionary=orderfields(dictionary);
                 end
             end
         end
-% maybe this function should be called with a block name...        
-% %         if strcmp(status,'unknown') && strcmp(current_block_name,'steady_state_model')
-% %             dictionary.known_words=[dictionary.known_words,{tokk}];
-% %             status='f';
-% %         end
+        % maybe this function should be called with a block name...
+        % %         if strcmp(status,'unknown') && strcmp(current_block_name,'steady_state_model')
+        % %             dictionary.known_words=[dictionary.known_words,{tokk}];
+        % %             status='f';
+        % %         end
     end
 
     function block=capture_equations(block,cell_info,block_name)
@@ -1303,7 +1331,7 @@ dictionary=orderfields(dictionary);
             end
             
             if isempty(equation)
-% % % % %                 last_status='';
+                % % % % %                 last_status='';
                 endo_switch_flag=false;
                 def_flag=false;
                 if time_on
@@ -1488,8 +1516,8 @@ dictionary=orderfields(dictionary);
                         equation=[equation,{rest_,[]}'];
                         rest_='';
                     end
-                last_status=determine_status(equation{1,end}(end));
-               end
+                    last_status=determine_status(equation{1,end}(end));
+                end
             end
             if ~isempty(equation)
                 if strcmp(equation{1,end}(end),';')
@@ -1559,12 +1587,12 @@ dictionary=orderfields(dictionary);
                                 error([mfilename,':: comma missing between chain and state for parameter ',equation{1,ic},' in ',file_name_,' at line ',int2str(iline_)])
                             end
                             if ismember(equation{1,ic+4},dictionary.chain_names) % chain or state
-                                 if isempty(chain_)
+                                if isempty(chain_)
                                     chain_=equation{1,ic+4};
                                 else
                                     error([mfilename,':: chain declared more than once for parameter ',equation{1,ic},' in ',file_name_,' at line ',int2str(iline_)])
                                 end
-                           elseif ~isnan(eval(equation{1,ic+4}))
+                            elseif ~isnan(eval(equation{1,ic+4}))
                                 if isempty(state_)
                                     state_=eval(equation{1,ic+4});
                                 else
@@ -1624,11 +1652,11 @@ dictionary=orderfields(dictionary);
                 % Putting the equation back together: what to do with the
                 % equality sign?
                 if ~strcmp(block_name,'parameter_restrictions') &&...
-                         ~strcmp(block_name,'steady_state_model') &&...
+                        ~strcmp(block_name,'steady_state_model') &&...
                         ~strcmp(block_name,'exogenous_definition') &&...
                         ~ismember(equation{1,1},dictionary.definitions) &&...
                         ~ismember(equation{1,1},dictionary.time_varying_probabilities)
-% % % % %                         ~ismember(equation{1,1},dictionary.known_words) &&... % I don't remember why this is here !
+                    % % % % %                         ~ismember(equation{1,1},dictionary.known_words) &&... % I don't remember why this is here !
                     % modify the last item of the right hand side
                     rhs{1,end}=[rhs{1,end}(1:end-1),');'];
                     middle=transpose({'-(',[]});
@@ -1927,7 +1955,7 @@ dictionary=orderfields(dictionary);
                     end
                     if ismember(tokk,block.listing(:,1))
                         error([mfilename,':: atom ''',tokk,''' has been declared twice in ',...
-                                file_name,' at line ',int2str(line_number)])
+                            file_name,' at line ',int2str(line_number)])
                     end
                     block.listing=[block.listing;{tokk,''}];
                 end
@@ -2016,8 +2044,8 @@ while 1
         rawline=read_file(newfile);
         inclusions=true;
     elseif strcmp(tokk,'@#for')
-         inclusions=true;
-       [index,rest_]=strtok(rest_,SPACE_DELIMITERS);
+        inclusions=true;
+        [index,rest_]=strtok(rest_,SPACE_DELIMITERS);
         index=['@{',index,'}'];
         in=strfind(rest_,'in');
         rest_=rest_(in+2:end);
