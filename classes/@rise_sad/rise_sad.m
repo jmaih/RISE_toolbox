@@ -127,55 +127,71 @@ classdef rise_sad < handle
                 end
             end
             if isparent
-                string=[obj.ref,'=',string,';'];
+% % % %                 if ~exist('mapObj_rise_sad','var')
+% % % %                     assignin('base','mapObj_rise_sad',containers.Map());
+% % % %                     disp([mfilename,':: containers.map object created'])
+% % % %                 end
+% % % %                 mapObj_rise_sad=evalin('base','mapObj_rise_sad');
+% % % %                 if ~isKey(mapObj_rise_sad,string)
+% % % %                     mapObj_rise_sad=containers.Map(string,obj.ref);
+% % % %                     assignin('base','mapObj_rise_sad',mapObj_rise_sad)
+% % % %                 else
+% % % %                     T_=values(mapObj_rise_sad,string);
+% % % %                     if ~strcmp(T_,obj.ref)
+% % % %                         obj.ref=T_;
+% % % %                     end
+% % % %                 end
+                string=[obj.ref,'=',string,';']; % <---string={obj.ref,'=',string};
             end
         end
         function this=diff(obj,wrt)
-            if isnumeric(obj.name)
-                this=rise_sad(0);
-            elseif isempty(obj.args)
-                if isequal(obj.name,wrt.name)
-                    this=rise_sad(1);
-                else
-                    this=rise_sad(0);
-                end
-            else
-                u=rise_sad(obj.args{1});
-                n_args=numel(obj.args);
-                if n_args>1
-                    v=rise_sad(obj.args{2});
-                    if n_args>2
-                        w=rise_sad(obj.args{3});
+            this=rise_sad.empty(0,0);
+            for iobj=1:numel(obj)
+                if isnumeric(obj(iobj).name)
+                    this(iobj,1)=rise_sad(0);
+                elseif isempty(obj(iobj).args)
+                    if isequal(obj(iobj).name,wrt.name)
+                        this(iobj,1)=rise_sad(1);
+                    else
+                        this(iobj,1)=rise_sad(0);
                     end
-                end
-                if iscell(wrt)
-                    this=cell(size(wrt));
-                    for ic=1:numel(wrt)
-                        this{ic}=differentiation_engine(wrt{ic});
-                    end
-                elseif isa(wrt,'rise_sad')
-                    this=differentiation_engine(wrt);
                 else
-                    error([mfilename,':: second argument must be rise_sad object'])
+                    u=rise_sad(obj(iobj).args{1});
+                    n_args=numel(obj(iobj).args);
+                    if n_args>1
+                        v=rise_sad(obj(iobj).args{2});
+                        if n_args>2
+                            w=rise_sad(obj(iobj).args{3});
+                        end
+                    end
+                    if iscell(wrt)
+                        for ic=1:numel(wrt)
+                            this(iobj,ic)=differentiation_engine(iobj,wrt{ic});
+                        end
+                    elseif isa(wrt,'rise_sad')
+                        this(iobj,1)=differentiation_engine(iobj,wrt);
+                    else
+                        error([mfilename,':: second argument must be rise_sad object'])
+                    end
                 end
             end
-            function this=differentiation_engine(wrt)
+            function this=differentiation_engine(index,wrt)
                 du=diff(u,wrt);
-                switch obj.name
+                switch obj(index).name
                     case {'gt','ge','lt','le','sign'}
                         this=rise_sad(0);
                     case 'plus'
-                    dv=diff(v,wrt);
+                        dv=diff(v,wrt);
                         this=du+dv;
                     case 'uplus'
                         this=du;
                     case 'minus'
-                    dv=diff(v,wrt);
+                        dv=diff(v,wrt);
                         this=du-dv;
                     case 'uminus'
                         this=-du;
                     case {'mtimes','times'}
-                    dv=diff(v,wrt);
+                        dv=diff(v,wrt);
                         upv=du*v;
                         vpu=dv*u;
                         this=upv+vpu;
@@ -184,16 +200,16 @@ classdef rise_sad < handle
                         this=(log(u)+du/u*v)*u^v;
                         update_reference(u,v);
                     case {'rdivide','mrdivide'}
-                    dv=diff(v,wrt);
+                        dv=diff(v,wrt);
                         this=(du*v-dv*u)/v^2; % only when v~=0
                         update_reference(u,v);
                     case {'ldivide','mldivide'}
-                    dv=diff(v,wrt);
+                        dv=diff(v,wrt);
                         this=(u*dv-v*du)/u^2; % only when u~=0
                         update_reference(u,v);
                     case 'exp'
-                        this=du*obj;
-                        update_reference(obj);
+                        this=du*obj(index);
+                        update_reference(obj(index));
                     case 'log'
                         this=du/u;
                         update_reference(u);
@@ -239,7 +255,7 @@ classdef rise_sad < handle
                         this=sum(du);
                         update_reference(u);
                     case 'normpdf'
-                        this=-du/w*(u-v)/w*obj;
+                        this=-du/w*(u-v)/w*obj(index);
                         update_reference(u,v,w);
                     case 'normcdf'
                         this=du*normpdf(u,v,w);
@@ -251,8 +267,8 @@ classdef rise_sad < handle
                         this=isreal(u)*du;
                         update_reference(u);
                     case 'sqrt'
-                        this=du/(2*sqrt(obj));
-                        update_reference(obj);
+                        this=du/(2*sqrt(obj(index)));
+                        update_reference(obj(index));
                     case 'norm' % this would not work!
                         this=sum(u.*du)/norm(u);
                         update_reference(u);
@@ -271,29 +287,20 @@ classdef rise_sad < handle
                     end
                 end
             end
-% % % % % % %             archive_it=~isnumeric(obj.name) && ~isempty(obj.args);
-% % % % % % %             if archive_it
-% % % % % % %                 if ~exist('mapObj_rise_sad','var')
-% % % % % % %                     mapObj_rise_sad = containers.Map();
-% % % % % % %                 end
-% % % % % % %                 if ~isKey(mapObj_rise_sad,obj)
-% % % % % % %                     nobj=size(mapObj_rise_sad,1);
-% % % % % % %                     mapObj_rise_sad=containers.Map(obj,['T_',int2str(nobj)]);
-% % % % % % %                 end
-% % % % % % %                 assignin('base','mapObj_rise_sad',mapObj_rise_sad)
-% % % % % % %             end
         end
         function imax=re_flag_tree(tree,istart)
             if nargin<2
                 istart=0;
             end
-            if ~isempty(tree.args)
-                for iarg=1:numel(tree.args)
-                    istart=re_flag_tree(tree.args{iarg},istart);
-                end
-                if strcmp(tree.ref,'x')
-                    istart=istart+1;
-                    tree.ref=['T_',int2str(istart)];
+            for it=1:numel(tree)
+                if ~isempty(tree(it).args)
+                    for iarg=1:numel(tree(it).args)
+                        istart=re_flag_tree(tree(it).args{iarg},istart);
+                    end
+                    if strcmp(tree(it).ref,'x')
+                        istart=istart+1;
+                        tree(it).ref=['T_',int2str(istart)];
+                    end
                 end
             end
             imax=istart;
@@ -302,13 +309,15 @@ classdef rise_sad < handle
             if nargin<2
                 references=[];
             end
-            if ~isempty(tree.args)
-                isparent=~isempty(tree.ref) && strcmp(tree.ref(1),'T');% <---is_atom(char(tree,false));
-                if isparent
-                    references=[{char(tree,false,true)};references];
-                end
-                for iarg=1:numel(tree.args)
-                    references=collect_references(tree.args{iarg},references);
+            for it=1:numel(tree)
+                if ~isempty(tree(it).args)
+                    isparent=~isempty(tree(it).ref) && strcmp(tree(it).ref(1),'T');% <---is_atom(char(tree(it),false));
+                    if isparent
+                        references=[{char(tree(it),false,true)};references]; %#ok<AGROW>
+                    end
+                    for iarg=1:numel(tree(it).args)
+                        references=collect_references(tree(it).args{iarg},references);
+                    end
                 end
             end
         end
@@ -320,6 +329,50 @@ classdef rise_sad < handle
             for iarg=1:numel(tree.args)
                 if ~ischar(tree.args{iarg})
                     print(tree.args{iarg})
+                end
+            end
+        end
+        function [tank,n]=vectorize(tree,tank,n)
+            if nargin<3
+                n=0;
+                if nargin<2
+                    tank=rise_sad.empty(0);
+                end
+            end
+            for it=1:numel(tree)
+                n=n+1;
+                tank(n,1)=tree(it);
+                for iarg=1:numel(tree(it).args)
+                    [tank,n]=vectorize(tree(it).args{iarg},tank,n);
+                end
+            end
+        end
+        function flag=eq(obj1,obj2)
+            siz=size(obj1);
+            siz2=size(obj2);
+            if isequal(siz,siz2)
+            elseif max(siz)==1
+                obj1=repmat(obj1,siz2);
+                siz=siz2;
+            elseif max(siz2)==1
+                obj2=repmat(obj2,siz);
+            else
+                error('wrong sizes of inputs')
+            end
+            flag=false(siz);
+            for ii=1:prod(siz)
+                if isequal(obj1(ii).name,obj2(ii).name)
+                    nargs=numel(obj1(ii).args);
+                    flag(ii)=true;
+                    if nargs
+                        for iarg=1:nargs
+                            eq_args=eq(obj1(ii).args{iarg},obj2(ii).args{iarg});
+                            if ~eq_args
+                                flag(ii)=false;
+                                break
+                            end
+                        end
+                    end
                 end
             end
         end
@@ -450,3 +503,19 @@ if flag
     end
 end
 end
+
+%{
+clear all
+clc
+a=rise_sad('a');b=rise_sad('b');c=rise_sad('c');
+func=@(a,b,c)[exp(a+2*log(b+c)-a*atan(b*c));exp(-a*atan(b*c));exp(a+2*log(b+c))];
+tree=func(a,b,c);
+tmp=tree.vectorize
+tmp==tmp(2)
+*while vectorizing, check equalities?
+* construct a new tree and check that its elements are not in the previous
+trees for consistency and savings... then 
+dd=diff(tree,{a,b,c});
+re_flag_tree(tree)
+references=collect_references(tree)
+%}
