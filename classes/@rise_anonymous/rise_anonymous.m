@@ -62,7 +62,7 @@ classdef rise_anonymous
                 elseif isequal(val_i,1)
                     % no need to update Q
                 else
-                    Q=kron(Q,val_i{1});
+                    Q=kron(Q,val_i);
                 end
             end
             retcode=0;
