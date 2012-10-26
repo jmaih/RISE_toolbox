@@ -32,7 +32,7 @@ if obj.estimation_under_way
     loc=strcmp('startval',obj.parameters(1,:));
     M=obj.parameters{2,loc};
     loc=strcmp('is_switching',obj.parameters(1,:));
-    switching=obj.parameters{2,loc};
+    switching=find(obj.parameters{2,loc});
 else
     M=vertcat(obj.parameters.startval);
     switching=find([obj.parameters.is_switching]);
