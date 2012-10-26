@@ -256,7 +256,7 @@ classdef sad %< handle
             end
             d = u.dx;
             if expand
-                d=replace_keys(d);
+                d=sad.replace_keys(d);
             end
         end
     end
