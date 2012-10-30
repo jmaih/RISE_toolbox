@@ -1,137 +1,103 @@
-function [Jac,myrefs,wrt,i_index]=jacobian(objectives,varnames,wrt,myrefs,i_index)
-% objectives is a function handle or an array of function handles
-% wrt is a rise_sad variable or a cell array of such.
-% output is returned in a rise_sad form in case the user wants to use it to
-% recompute the hessian, which would be much easier to compute from the
-% rise_sad form
+function [Jac,... % jacobian in string form with auxiliary terms
+    dd,... % jacobian in rise_sad form. Readily usable for further differentiation
+    references,... % definition of the auxiliary terms
+    tank ... % containers.Map object for the different operations in the objectives
+    ]=jacobian(objectives,... set of objective functions (rise_sad, string or function handles)
+    varnames,... variable names entering the objectives
+    wrt,... list of variables to differentiate with respect to
+    references,...
+    tank ...
+    )
+
 if nargin<5
-    i_index=[];
+    tank=[];
     if nargin<4
-        myrefs=[];
+        references=[];
         if nargin<3
             wrt=[];
             if nargin<2
-                error([mfilename,':: the list of the arguments entering the function must be provided'])
+                error('At least two arguments should be provided')
             end
         end
     end
 end
-
-% probably possible to link different trees through some kind of hashing
-% but I do not have that skill yet
-%  example
-%  func={'exp(a+b*log(c)+c*atan(a*b))','cos(abs(a)+atan(a*b))'};
-%  [Jac,myrefs,wrt,i_index]=rise_sad.jacobian(func,{'a','c','b'})
-%  
-if isempty(i_index),i_index=0;end
-
-if isempty(myrefs),myrefs={};end
-
-if ischar(objectives)
-    objectives=cellstr(objectives);
-end
-if ~iscell(objectives)
-    objectives={objectives};
-end
-
-if ischar(varnames)
-    varnames=cellstr(varnames);
-end
-args=get_names(varnames);
+vlist='';
+args=cell2rise_sad(varnames);
 if isempty(wrt)
     wrt=args;
 end
-wrt=get_names(wrt);
-
-% locate the variables in main list
-bad=~ismember(wrt,args);
-bad=wrt(bad);
-if ~isempty(bad)
-    disp(bad)
-    error([mfilename,':: the variables above not present in the list of variables'])
+%% create tree
+switch class(objectives)
+    case 'rise_sad'
+        tree=objectives(:);
+    case {'char','cell'}
+        if ischar(objectives)
+            objectives=cellstr(objectives);
+        end
+        tree=rise_sad.empty(0);
+        n=0;
+        for ic=1:numel(objectives)
+            n=n+1;
+            switch class(objectives{ic})
+                case 'rise_sad'
+                    tree(n,1)=objectives{ic};
+                case 'char'
+                    if isempty(vlist)
+                        vlist=rise_sad2cellstr(varnames);
+                        vlist=unique(vlist);
+                        vlist=cell2mat(strcat(vlist(:)',','));
+                        vlist=vlist(1:end-1);
+                    end
+                    objectives{ic}=str2func(['@(',vlist,')',objectives{ic}]);
+                    tree(n,1)=objectives{ic}(args{:});
+                case 'function_handle'
+                    tree(n,1)=objectives{ic}(args{:});
+                otherwise
+                    error(['Unsupported class ',class(objectives{ic})])
+            end
+        end
+    case 'function_handle'
+        tree=objectives(args{:});
+    otherwise
+        error(['Unsupported class ',class(objectives)])
 end
-
-args_=args;
-%% locate the wrt variables in the args
-wrt_locs=locate_variables(wrt,args_);
-%% save the variable names and create the objects
-for ii=1:numel(args)
-    args{ii}=rise_sad(args{ii});
-end
-% variables going into the jacobian
-wrt_args=args(wrt_locs);
-%% recreate the functions
-ncols=numel(wrt);
-nrows=numel(objectives);
-Jac=repmat({rise_sad(0)},nrows,ncols);
-for irow=1:nrows
-    if isa(objectives{irow},'rise_sad')
-        % expand it in full
-        objectives{irow}=char(objectives{irow},1);
+%% put wrt in the right form
+wrt=cell2rise_sad(wrt);
+%% compute derivatives... and register the number of calls to each node in the tree
+[dd,references,tank]=diff(tree,wrt,references,tank);
+%% now the derivatives can be printed
+Jac=cell(size(dd));
+for irow=1:size(dd,1)
+    for jcol=1:size(dd,2)
+        Jac{irow,jcol}=char(dd(irow,jcol));
     end
-    [occur,myfunc]=find_occurrences(objectives{irow},args_);
-    loc=ismember(wrt,args_(occur));
-    % re-create the function
-    argfun=cell2mat(strcat(args_(occur),','));
-    myfunc=str2func(['@(',argfun(1:end-1),')',myfunc]);
-    % create the master tree
-    if any(occur)
-        objectives{irow}=myfunc(args{occur});
-    else
-        objectives{irow}=rise_sad(0);
-    end
-    % differentiate the master tree
-    if any(loc)
-        Jac(irow,loc)=objectives{irow}.diff(wrt_args(loc));
-    end
-end
-%% re_flag the master tree after the derivatives have been computed
-for irow=1:nrows
-    i_index=objectives{irow}.re_flag_tree(i_index);
-end
-%% collect the references
-for irow=1:nrows
-    myrefs=[myrefs;collect_references(objectives{irow})];
-end
 end
 
-function [occur,objectives]=find_occurrences(objectives,vlist)
-if isa(objectives,'function_handle')
-    objectives=func2str(objectives);
 end
-if ~ischar(objectives)
-    error([mfilename,':: first input must be a string or a function handle'])
+
+function dd=cell2rise_sad(item)
+if ischar(item)
+    item=cellstr(item);
 end
-if ischar(vlist)
-    vlist=cellstr(vlist);
+dd=cell(size(item));
+for it=1:numel(item)
+    dd{it}=rise_sad(item{it});
 end
-vlist=vlist(:)';
-args=cell2mat(strcat(vlist,'|'));
-varlist = regexp(objectives,['(?<![\w])(',args(1:end-1),')(?![\w])'],'match');
-occur=ismember(vlist,varlist);
 end
-function names=get_names(array)
-if ~iscell(array)
-    array={array};
-end
-names=array;
-for ii=1:numel(names)
-    if isa(names{ii},'rise_sad')
-        names{ii}=names{ii}.name;
-    end
-    if ~ischar(names{ii})
-        error([mfilename,':: variable names must be char'])
-    end
-    bad=regexp(names{ii},'[\W]','match');%<-- names{ii}(~isstrprop(names{ii},'alphanum'));
-    if ~isempty(bad)
-        bad=cell2mat(bad);
-        error([mfilename,':: ''',bad,''' is(are) not valid character(s) is variable names '])
-    end
-end
-for ii=1:numel(names)
-    ni=sum(strcmp(names{ii},names));
-    if ni>1
-        error([mfilename,':: variable ',names{ii},' declared more than once'])
-    end
+
+function item=rise_sad2cellstr(item)
+switch class(item)
+    case 'rise_sad'
+        item={item.name};
+    case 'cell'
+        for it=1:numel(item)
+            if ~ischar(item{it})
+                item{it}=rise_sad2cellstr(item{it});
+            end
+        end
+    case 'char'
+        item=cellstr(item);
+    otherwise
+        error(['Unsupported class ',class(item)])
 end
 end

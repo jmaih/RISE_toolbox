@@ -185,11 +185,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         % A nice result is that at first-order approximation, the jacobians
         % are just reweighted by the probabilities evaluated at the steady
         % state.
-        % Ideally the transition matrix should not be a function of something that switches...
-        % but then, does that mean the steady state should be constant?
         [obj.Q,retcode]=kron(obj.func_handles.transition_matrix,ss_i,ss_i,[],M(:,1));
-%         [obj.Q,retcode]=transition_matrix_evaluation(ss_i,ss_i,M(:,1),...
-%             obj.func_handles.transition_matrix);
         if retcode
             obj=clean_obj;
             if obj(1).options.debug
@@ -211,6 +207,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         cc_shocks=nnz(obj.Lead_lag_incidence)+(1:obj.NumberOfExogenous);
         % switching parameters
         cc_switch=nnz(obj.Lead_lag_incidence)+obj.NumberOfExogenous+switching;
+        obj.C=nan(obj.NumberOfEquations,numel(switching),NumberOfRegimes);
     end
     Aminus_(:,aa_)=J(:,cc_);
     A0_(:,aa0)=J(:,cc0);
@@ -250,11 +247,6 @@ end
 % will be pushed into the varendo...
 obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
 
-%% Sparse everything, unfortunately it does not work on arrays of more than 2 dimensions
-%SparseList={'Aminus','A0','Aplus','Q','B','H'};
-%for kk=1:numel(SparseList)
-%	obj.(SparseList{kk})=sparse(obj.(SparseList{kk}));
-%end
 
     function [is_stationary,ys,retcode]=determine_stationarity_status()
         

@@ -84,7 +84,6 @@ classdef rise_sad < handle
         function obj=lt(u,v),obj=rise_sad('lt',{u,v}); end
         function obj=le(u,v),obj=rise_sad('le',{u,v}); end
         function obj=sign(u),obj=rise_sad('sign',{u}); end
-        % % % %         varagout=char(varargin)
         function string=char(obj,unravel,isparent)
             if nargin<3
                 isparent=false;
@@ -98,7 +97,7 @@ classdef rise_sad < handle
                 string=num2str(obj.name,10);
             elseif isempty(args_) % variable
                 string=obj.name; % this should be a char
-            elseif ~unravel && ~isempty(obj.ref) && ~strcmp(obj.ref,'x') && ~isparent
+            elseif ~unravel && ~isempty(obj.ref) && ~isparent
                 string=obj.ref;
             else
                 switch obj.name
@@ -127,21 +126,7 @@ classdef rise_sad < handle
                 end
             end
             if isparent
-% % % %                 if ~exist('mapObj_rise_sad','var')
-% % % %                     assignin('base','mapObj_rise_sad',containers.Map());
-% % % %                     disp([mfilename,':: containers.map object created'])
-% % % %                 end
-% % % %                 mapObj_rise_sad=evalin('base','mapObj_rise_sad');
-% % % %                 if ~isKey(mapObj_rise_sad,string)
-% % % %                     mapObj_rise_sad=containers.Map(string,obj.ref);
-% % % %                     assignin('base','mapObj_rise_sad',mapObj_rise_sad)
-% % % %                 else
-% % % %                     T_=values(mapObj_rise_sad,string);
-% % % %                     if ~strcmp(T_,obj.ref)
-% % % %                         obj.ref=T_;
-% % % %                     end
-% % % %                 end
-                string=[obj.ref,'=',string,';']; % <---string={obj.ref,'=',string};
+                string=[obj.ref,'=',string,';'];
             end
         end
         function print(tree)
@@ -186,34 +171,39 @@ classdef rise_sad < handle
                 end
             end
         end
-        function [this,references,tank,newtank]=diff(obj,wrt)
+        function [this,references,tank]=diff(obj,wrt,references,tank)
             % check that I do not need to output the object thanks to the
             % handle property
-            [obj,tank]=consolidate(obj);
+            if nargin<4
+                tank=[];
+                if nargin<3
+                    references=[];
+                end
+            end
+            [obj,tank]=consolidate(obj,tank);
             this=mydiff(obj,wrt);
-            newtank=containers.Map(values(tank),zeros(tank.Count,1));
-            update_flags(obj,newtank);
-            references=collect_references(obj);
+            [this,tank]=consolidate(this,tank);
+            tank=update_flags(obj,tank);
+            tank=update_flags(this,tank);
+            references=collect_references(obj,references);
+            references=collect_references(this,references);
         end
     end
     methods(Access=private)
-        function update_flags(tree,newtank)
+        function tank=update_flags(tree,tank)
             % create new tank with all the T_ as keys and 0 as values for
             % all
-            update_flags_intern(tree,1);
-            update_flags_intern(tree,2);
-            function update_flags_intern(tree,pass)
+            update_flags_intern(tree);
+            function update_flags_intern(tree)
                 for it=1:numel(tree)
                     if ~isempty(tree(it).args)
                         for iarg=1:numel(tree(it).args)
-                            update_flags_intern(tree(it).args{iarg},pass);
+                            update_flags_intern(tree(it).args{iarg});
                         end
-                        calls=newtank(tree(it).ref);
-                        if pass==1
-                            if tree(it).ncalls
-                                newtank(tree(it).ref)=calls+tree(it).ncalls;
-                            end
-                        else
+                        if ~isempty(tree(it).ref)
+                            location=str2double(tree(it).ref(3:end));
+                            calls=tank{3}(location);
+                            tree(it).ncalls=calls;
                             if calls<2
                                 tree(it).ref=[];
                             end
@@ -273,85 +263,85 @@ classdef rise_sad < handle
                         upv=du*v;
                         vpu=dv*u;
                         this=upv+vpu;
-                        update_reference(u,v);
+                        % update_reference(u,v);
                     case {'power','mpower'}
                         this=(log(u)+du/u*v)*u^v;
-                        update_reference(u,v);
+                        % update_reference(u,v);
                     case {'rdivide','mrdivide'}
                         dv=mydiff(v,wrt);
                         this=(du*v-dv*u)/v^2; % only when v~=0
-                        update_reference(u,v);
+                        % update_reference(u,v);
                     case {'ldivide','mldivide'}
                         dv=mydiff(v,wrt);
                         this=(u*dv-v*du)/u^2; % only when u~=0
-                        update_reference(u,v);
+                        % update_reference(u,v);
                     case 'exp'
                         this=du*obj(index);
-                        update_reference(obj(index));
+                        % update_reference(obj(index));
                     case 'log'
                         this=du/u;
-                        update_reference(u);
+                        % update_reference(u);
                     case 'log10'
                         this=(du/u)/log(10);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'cos'
                         this=-du*sin(u);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'acos'
                         this=-du/sqrt(1-u^2);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'cosh'
                         this=du*sinh(u);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'sin'
                         this=du*cos(u);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'asin'
                         this=du/sqrt(1-u^2);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'sinh'
                         this=du*cosh(u);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'tan'
                         this=du/(cos(u))^2;
-                        update_reference(u);
+                        % update_reference(u);
                     case 'atan'
                         this=du/(1+u^2);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'tanh'
                         this=du/(1-u^2);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'min'
                         muv=u<v;
                         this=muv*u+(1-muv)*v;
-                        update_reference(u,v);
+                        % update_reference(u,v);
                     case 'max'
                         muv=u>v;
                         this=muv*u+(1-muv)*v;
-                        update_reference(u,v);
+                        % update_reference(u,v);
                     case 'sum'
                         this=sum(du);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'normpdf'
                         this=-du/w*(u-v)/w*obj(index);
-                        update_reference(u,v,w);
+                        updtate_reference(u,v,w);
                     case 'normcdf'
                         this=du*normpdf(u,v,w);
-                        update_reference(u,v,w);
+                        % update_reference(u,v,w);
                     case 'abs'
                         this=du*(-u<0+u>0);
-                        update_reference(u);
+                        % update_reference(u);
                     case 'isreal'
                         this=isreal(u)*du;
-                        update_reference(u);
+                        % update_reference(u);
                     case 'sqrt'
                         this=du/(2*sqrt(obj(index)));
-                        update_reference(obj(index));
+                        % update_reference(obj(index));
                     case 'norm' % this would not work!
                         this=sum(u.*du)/norm(u);
-                        update_reference(u);
+                        % update_reference(u);
                     otherwise
-                        keyboard
+                        error([obj(index).name,' is unknown type of operator'])
                 end
             end
         end
@@ -360,40 +350,49 @@ classdef rise_sad < handle
             % I should check that I do not need to call the output because
             % of the handle property
             if nargin<2
-                tank=containers.Map();
+                tank=[];
+            end
+            if isempty(tank)
+                % key, value, calls
+                tank={containers.Map(),{},[]};
             end
             for it=1:numel(tree)
                 for iarg=1:numel(tree(it).args)
                     [tree(it).args{iarg},tank]=consolidate(tree(it).args{iarg},tank);
                 end
                 if ~isempty(tree(it).args)
-                    string=char(tree(it));
-                    if isKey(tank,string)
-                        T_=tank(string);
+                    string=char(tree(it),1);
+                    if isKey(tank{1},string)
+                        T_=tank{1}(string);
+                        loc=find(strcmp(tank{2},T_));
+                        tank{3}(loc)=tank{3}(loc)+1;
                     else
-                        n=tank.Count+1;
-                        T_=['T_',int2str(n)];
-                        tank(string)=['T_',int2str(n)];
+                        Count=tank{1}.Count+1;
+                        T_=['T_',int2str(Count)];
+                        tank{1}(string)=T_;
+                        tank{2}=[tank{2};T_];
+                        tank{3}=[tank{3};1];
                     end
                     tree(it).ref=T_;
                 end
             end
         end
-        function update_reference(varargin)
-            % not a variable and not a constant
-            for iarg=1:length(varargin)
-                if ~isempty(varargin{iarg}.ref) && ~isempty(varargin{iarg}.args)
-                    varargin{iarg}.ncalls=varargin{iarg}.ncalls+1;
-                end
-            end
-        end
+%         function update_reference(varargin)
+%             % not a variable and not a constant
+% % % % %             for iarg=1:length(varargin)
+% % % % %                 if ~isempty(varargin{iarg}.ref) && ~isempty(varargin{iarg}.args)
+% % % % %                     varargin{iarg}.ncalls=varargin{iarg}.ncalls+1;
+% % % % %                 end
+% % % % %             end
+%         end
         function references=collect_references(tree,references)
             if nargin<2
                 references=[];
             end
             for it=1:numel(tree)
                 if ~isempty(tree(it).args)
-                    isparent=~isempty(tree(it).ref) && strcmp(tree(it).ref(1),'T');% <---is_atom(char(tree(it),false));
+                    isparent=tree(it).ncalls>=2;% <---is_atom(char(tree(it),false));
+%                     isparent=~isempty(tree(it).ref) && strcmp(tree(it).ref(1),'T');% <---is_atom(char(tree(it),false));
                     for iarg=1:numel(tree(it).args)
                         references=collect_references(tree(it).args{iarg},references);
                     end
@@ -410,32 +409,9 @@ classdef rise_sad < handle
     methods(Static)
         varargout=jacobian(varargin)
         varargout=hessian(varargin)
-% % % %         function varargout=re_sad_tree(varargin)
-% % % %             varargout=varargin;
-% % % %             for ii=1:length(varargin)
-% % % %                 if ~isa(vi,'rise_sad')
-% % % %                     varargout{ii}=rise_sad(varargin{ii});
-% % % %                 end
-% % % %             end
-% % % %         end
-% % % %         function [tree,tank]=match_tree(tree,tank)
-% % % %             for it=1:numel(tree)
-% % % %                 nail=tree(it)==tank;
-% % % %                 if any(nail)
-% % % %                     tree(it)=tank(nail);
-% % % %                     disp('match found and successfully pushed')
-% % % %                 else
-% % % %                     % grow the tank
-% % % %                     tank=[tank;tree(it)]; %#ok<AGROW>
-% % % %                     nargs=numel(tree(it).args);
-% % % %                     for iarg=1:nargs
-% % % %                         [tree(it).args{iarg},tank]=match_tree(tree(it).args{iarg},tank);
-% % % %                     end
-% % % %                 end
-% % % %             end
-% % % %         end
     end
 end
+
 
 function args=reprocess_arguments(args)
 for ii=1:numel(args)
@@ -524,10 +500,6 @@ if flag
 end
 end
 
-function flag=is_atom(string)
-flag=isempty(regexp(string,'[/*\-+^]','start'));
-end
-
 function a=tryevaluate(a)
 % checks whether a string can be evaluated
 flag=~any(isstrprop(a,'alpha'));
@@ -549,19 +521,3 @@ if flag
     end
 end
 end
-
-%{
-clear all
-clc
-a=rise_sad('a');b=rise_sad('b');c=rise_sad('c');
-func=@(a,b,c)[exp(a+2*log(b+c)-a*atan(b*c));exp(-a*atan(b*c));exp(a+2*log(b+c))];
-tree=func(a,b,c);
-tmp=tree.vectorize
-tmp==tmp(2)
-*while vectorizing, check equalities?
-* construct a new tree and check that its elements are not in the previous
-trees for consistency and savings... then 
-dd=diff(tree,{a,b,c});
-re_flag_tree(tree)
-references=collect_references(tree)
-%}
