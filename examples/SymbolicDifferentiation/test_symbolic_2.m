@@ -27,4 +27,4 @@ profile viewer
 %% Jacobian with tree and no arguments must have wrt in that case
 [Jac,dd,references]=rise_sad.jacobian(tree_,[],{'a','b'})
 %% Hessian
-[H,Jac_char,references]=rise_sad.hessian('exp(a+2*log(b+c)-a*atan(b*c))',{'a','b','c','d'},{'a','b','c','d'})
+[H,Jac_char,references,Hrs,Jac_rs]=rise_sad.hessian('exp(a+2*log(b+c)-a*atan(b*c))',{'a','b','c'},{'a','b','c'})

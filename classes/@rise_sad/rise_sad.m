@@ -91,6 +91,14 @@ classdef rise_sad < handle
                     unravel=false;
                 end
             end
+            n=numel(obj);
+            if n>1
+                string=cell(size(obj));
+                for i0=1:n
+                    string{i0}=char(obj(i0),unravel,isparent);
+                end
+                return
+            end
             % char itself is already taken care of
             args_=reprocess_arguments(obj.args);
             if isa(obj.name,'double')
@@ -102,22 +110,17 @@ classdef rise_sad < handle
             else
                 switch obj.name
                     case {'plus','minus','times','power'}
-                        operator=str2func(['my',obj.name]);
-                        string=operator(mychar(args_{1},unravel),mychar(args_{2},unravel));
-                    case 'uplus'
-                        string=myplus('0',mychar(args_{1},unravel));
-                    case 'uminus'
-                        string=myminus('0',mychar(args_{1},unravel));
-                    case {'mtimes'}
-                        string=mytimes(mychar(args_{1},unravel),mychar(args_{2},unravel));
-                    case {'mpower'}
-                        string=mypower(mychar(args_{1},unravel),mychar(args_{2},unravel));
-                    case {'rdivide','mrdivide'}
-                        string=mydivide(mychar(args_{1},unravel),mychar(args_{2},unravel));
+                        string=rise_cat(mychar(args_{1},unravel),mychar(args_{2},unravel),obj.name);
+                    case {'uplus','uminus'}
+                        string=rise_cat('0',mychar(args_{1},unravel),obj.name(2:end));
+                    case {'mtimes','mpower','rdivide'}
+                        string=rise_cat(mychar(args_{1},unravel),mychar(args_{2},unravel),obj.name(2:end));
+                    case {'mrdivide'}
+                        string=rise_cat(mychar(args_{1},unravel),mychar(args_{2},unravel),obj.name(3:end));
                     case {'min','max','gt','lt','ge','le'}
                         string=[obj.name,'(',mychar(args_{1},unravel),',',mychar(args_{2},unravel),')'];
                     case {'ldivide','mldivide'}
-                        string=mydivide(mychar(args_{2},unravel),mychar(args_{1},unravel));
+                        string=rise_cat(mychar(args_{2},unravel),mychar(args_{1},unravel),'divide');
                     case {'exp','log','log10','sin','asin','sinh','cos','acos','cosh',...
                             'tan','atan','tanh','abs','sqrt','isreal','sign'}
                         string=[obj.name,'(',mychar(args_{1},unravel),')'];
@@ -180,38 +183,101 @@ classdef rise_sad < handle
                     references=[];
                 end
             end
-            [obj,tank]=consolidate(obj,tank);
+            tank=consolidate(obj,tank);
             this=mydiff(obj,wrt);
-            [this,tank]=consolidate(this,tank);
-            tank=update_flags(obj,tank);
-            tank=update_flags(this,tank);
+%             tank=consolidate(this,tank);
+%             tank=update_flags(obj,tank);
+%             tank=update_flags(this,tank);
             references=collect_references(obj,references);
-            references=collect_references(this,references);
+%             references=collect_references(this,references);
         end
     end
     methods(Access=private)
         function tank=update_flags(tree,tank)
-            % create new tank with all the T_ as keys and 0 as values for
-            % all
-            update_flags_intern(tree);
-            function update_flags_intern(tree)
+            update_flags_intern(tree,1);
+            update_flags_intern(tree,2);
+            function update_flags_intern(tree,pass)
                 for it=1:numel(tree)
                     if ~isempty(tree(it).args)
                         for iarg=1:numel(tree(it).args)
-                            update_flags_intern(tree(it).args{iarg});
+                            update_flags_intern(tree(it).args{iarg},pass);
                         end
                         if ~isempty(tree(it).ref)
                             location=str2double(tree(it).ref(3:end));
                             calls=tank{3}(location);
-                            tree(it).ncalls=calls;
-                            if calls<2
-                                tree(it).ref=[];
+                            if pass==1
+                                tank{3}(location)=calls+tree(it).ncalls;
+                            elseif pass==2
+                                tree(it).ncalls=calls;
+%                                 if calls<2
+%                                     tree(it).ref=[];
+%                                 end
+                            else
+                                error('pass must be either 1 or 2')
                             end
                         end
                     end
                 end
             end
         end
+        function tank=consolidate(tree,tank)
+            % vectorizes and consolidates a tree vector... 
+            % I should check that I do not need to call the output because
+            % of the handle property
+            if nargin<2
+                tank=[];
+            end
+            if isempty(tank)
+                tank=containers.Map();
+            end
+            for it=1:numel(tree)
+                if ~isempty(tree(it).args)
+                    string=char(tree(it),true);
+                    if rise_isa(string,'atom')
+                        tree(it)=rise_sad(string);
+                    elseif isKey(tank,string)
+                        tree(it)=tank(string);
+                    else
+                        for iarg=1:numel(tree(it).args)
+                            tank=consolidate(tree(it).args{iarg},tank);
+                        end
+                        n=tank.Count+1;
+                        tree(it).ref=['T_',int2str(n)];
+                        tank(string)=tree(it);
+                    end
+                end
+            end
+        end
+        function update_reference(varargin)
+%             not a variable and not a constant
+            for iarg=1:length(varargin)
+                if ~isempty(varargin{iarg}.ref) && ~isempty(varargin{iarg}.args)
+                    varargin{iarg}.ncalls=varargin{iarg}.ncalls+1;
+                end
+            end
+        end
+        function references=collect_references(tree,references)
+            if nargin<2
+                references=[];
+            end
+            unravel=false;
+            for it=1:numel(tree)
+                if ~isempty(tree(it).args)
+                    isparent=tree(it).ncalls>=2;% <---is_atom(char(tree(it),false));
+%                     isparent=~isempty(tree(it).ref) && strcmp(tree(it).ref(1),'T');% <---is_atom(char(tree(it),false));
+                    for iarg=1:numel(tree(it).args)
+                        references=collect_references(tree(it).args{iarg},references);
+                    end
+                    if isparent
+                        new_item=char(tree(it),unravel,isparent);
+                        if ~any(strcmp(new_item,references))
+                            references=[references;{new_item}]; %#ok<AGROW>
+                        end
+                    end
+                end
+            end
+        end
+        
         function this=mydiff(obj,wrt)
             this=rise_sad.empty(0,0);
             for iobj=1:numel(obj)
@@ -263,145 +329,89 @@ classdef rise_sad < handle
                         upv=du*v;
                         vpu=dv*u;
                         this=upv+vpu;
-                        % update_reference(u,v);
+                        update_reference(u,v);
                     case {'power','mpower'}
-                        this=(log(u)+du/u*v)*u^v;
-                        % update_reference(u,v);
+                        this=v*du*u^(v-1);
+                        if ~isnumeric(v.name)
+                            dv=mydiff(v,wrt);
+                            this=this+dv*log(u)*u^v;
+                        end
+                        update_reference(u,v);
                     case {'rdivide','mrdivide'}
                         dv=mydiff(v,wrt);
                         this=(du*v-dv*u)/v^2; % only when v~=0
-                        % update_reference(u,v);
+                        update_reference(u,v);
                     case {'ldivide','mldivide'}
                         dv=mydiff(v,wrt);
                         this=(u*dv-v*du)/u^2; % only when u~=0
-                        % update_reference(u,v);
+                        update_reference(u,v);
                     case 'exp'
                         this=du*obj(index);
-                        % update_reference(obj(index));
+                        update_reference(obj(index));
                     case 'log'
                         this=du/u;
-                        % update_reference(u);
+                        update_reference(u);
                     case 'log10'
                         this=(du/u)/log(10);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'cos'
                         this=-du*sin(u);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'acos'
                         this=-du/sqrt(1-u^2);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'cosh'
                         this=du*sinh(u);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'sin'
                         this=du*cos(u);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'asin'
                         this=du/sqrt(1-u^2);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'sinh'
                         this=du*cosh(u);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'tan'
                         this=du/(cos(u))^2;
-                        % update_reference(u);
+                        update_reference(u);
                     case 'atan'
                         this=du/(1+u^2);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'tanh'
                         this=du/(1-u^2);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'min'
                         muv=u<v;
                         this=muv*u+(1-muv)*v;
-                        % update_reference(u,v);
+                        update_reference(u,v);
                     case 'max'
                         muv=u>v;
                         this=muv*u+(1-muv)*v;
-                        % update_reference(u,v);
+                        update_reference(u,v);
                     case 'sum'
                         this=sum(du);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'normpdf'
                         this=-du/w*(u-v)/w*obj(index);
                         updtate_reference(u,v,w);
                     case 'normcdf'
                         this=du*normpdf(u,v,w);
-                        % update_reference(u,v,w);
+                        update_reference(u,v,w);
                     case 'abs'
                         this=du*(-u<0+u>0);
-                        % update_reference(u);
+                        update_reference(u);
                     case 'isreal'
                         this=isreal(u)*du;
-                        % update_reference(u);
+                        update_reference(u);
                     case 'sqrt'
                         this=du/(2*sqrt(obj(index)));
-                        % update_reference(obj(index));
+                        update_reference(obj(index));
                     case 'norm' % this would not work!
                         this=sum(u.*du)/norm(u);
-                        % update_reference(u);
+                        update_reference(u);
                     otherwise
                         error([obj(index).name,' is unknown type of operator'])
-                end
-            end
-        end
-        function [tree,tank]=consolidate(tree,tank)
-            % vectorizes and consolidates a tree vector... 
-            % I should check that I do not need to call the output because
-            % of the handle property
-            if nargin<2
-                tank=[];
-            end
-            if isempty(tank)
-                % key, value, calls
-                tank={containers.Map(),{},[]};
-            end
-            for it=1:numel(tree)
-                for iarg=1:numel(tree(it).args)
-                    [tree(it).args{iarg},tank]=consolidate(tree(it).args{iarg},tank);
-                end
-                if ~isempty(tree(it).args)
-                    string=char(tree(it),1);
-                    if isKey(tank{1},string)
-                        T_=tank{1}(string);
-                        loc=find(strcmp(tank{2},T_));
-                        tank{3}(loc)=tank{3}(loc)+1;
-                    else
-                        Count=tank{1}.Count+1;
-                        T_=['T_',int2str(Count)];
-                        tank{1}(string)=T_;
-                        tank{2}=[tank{2};T_];
-                        tank{3}=[tank{3};1];
-                    end
-                    tree(it).ref=T_;
-                end
-            end
-        end
-%         function update_reference(varargin)
-%             % not a variable and not a constant
-% % % % %             for iarg=1:length(varargin)
-% % % % %                 if ~isempty(varargin{iarg}.ref) && ~isempty(varargin{iarg}.args)
-% % % % %                     varargin{iarg}.ncalls=varargin{iarg}.ncalls+1;
-% % % % %                 end
-% % % % %             end
-%         end
-        function references=collect_references(tree,references)
-            if nargin<2
-                references=[];
-            end
-            for it=1:numel(tree)
-                if ~isempty(tree(it).args)
-                    isparent=tree(it).ncalls>=2;% <---is_atom(char(tree(it),false));
-%                     isparent=~isempty(tree(it).ref) && strcmp(tree(it).ref(1),'T');% <---is_atom(char(tree(it),false));
-                    for iarg=1:numel(tree(it).args)
-                        references=collect_references(tree(it).args{iarg},references);
-                    end
-                    if isparent
-                        new_item=char(tree(it),false,true);
-                        if ~any(strcmp(new_item,references))
-                            references=[references;{new_item}]; %#ok<AGROW>
-                        end
-                    end
                 end
             end
         end
@@ -429,95 +439,3 @@ else
 end
 end
 
-function c=myplus(a,b)
-if strcmp(a,'0')
-    if strcmp(b,'0')
-        c='0';
-    else
-        c=tryevaluate(b);
-    end
-else
-    if strcmp(b,'0')
-        c=tryevaluate(a);
-    else
-        c=tryevaluate([a,'+',b]);
-    end
-end
-end
-
-function c=myminus(a,b)
-if strcmp(a,'0')
-    if strcmp(b,'0')
-        c='0';
-    else
-        c=tryevaluate(['-',parenthesize(b,'+-')]);
-    end
-else
-    if strcmp(b,'0')
-        c=a;
-    else
-        c=tryevaluate([a,'-',parenthesize(b,'+-')]);
-    end
-end
-end
-
-function c=mytimes(a,b)
-if strcmp(a,'0')||strcmp(b,'0')
-    c='0';
-elseif strcmp(a,'1')
-    c=b;
-elseif strcmp(b,'1')
-    c=a;
-else
-    c=tryevaluate([parenthesize(a,'+-'),'*',parenthesize(b,'+-')]);
-end
-end
-
-function c=mypower(a,b)
-if strcmp(b,'0')||strcmp(a,'1')
-    c='1';
-else
-    c=tryevaluate([parenthesize(a,'+-/*^'),'^',parenthesize(b,'+-/*^')]);
-end
-end
-
-function c=mydivide(a,b)
-if strcmp(a,'0')
-    c='0';
-else
-    c=tryevaluate([parenthesize(a,'+-'),'/',parenthesize(b,'+-/*^')]);
-end
-end
-
-function x=parenthesize(x,forbid)
-if nargin<2
-    forbid='+-*/^';
-end
-forbid=strrep(forbid,'-','\-'); % must escape the minus sign
-flag=~isempty(regexp(x,['[',forbid,']'],'start'));
-if flag
-    x=['(',x,')'];
-end
-end
-
-function a=tryevaluate(a)
-% checks whether a string can be evaluated
-flag=~any(isstrprop(a,'alpha'));
-if flag
-    cntrl=a;
-    cntrl(isstrprop(cntrl,'digit'))=[];
-    flag=~isempty(cntrl) && ~isequal(cntrl,'.');
-    if flag
-        flag=false;
-        for ii=1:length(cntrl)
-            if any(cntrl(ii)=='+-*^/')
-                flag=true;
-                break
-            end
-        end
-        if flag
-            a=num2str(eval(a),10);
-        end
-    end
-end
-end
