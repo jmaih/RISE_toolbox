@@ -55,6 +55,9 @@ add_finishing();
 
 fclose(fid);
 
+if exist([report_name,'.pdf'],'file')
+    delete([report_name,'.pdf'])
+end
 system(['pdflatex ',report_name])
 useless_extensions={'.log','.bbl','.blg','.aux','.*.bak'};
 for iext=1:numel(useless_extensions)
@@ -126,36 +129,10 @@ end
     function add_preamble()
         preamble_instructions={
             '\documentclass[12pt]{article}'
-            '\usepackage{amsfonts}'
-            '\usepackage{amsmath}'
+            '\usepackage{amsfonts,amsmath,color,graphicx}'
             '\usepackage[landscape]{geometry}'
-            '\usepackage{color}'
-            '\usepackage{graphicx}'
-            '\setcounter{MaxMatrixCols}{10}'
-            '\newtheorem{theorem}{Theorem}'
-            '\newtheorem{acknowledgement}[theorem]{Acknowledgement}'
-            '\newtheorem{algorithm}[theorem]{Algorithm}'
-            '\newtheorem{axiom}[theorem]{Axiom}'
-            '\newtheorem{case}[theorem]{Case}'
-            '\newtheorem{claim}[theorem]{Claim}'
-            '\newtheorem{conclusion}[theorem]{Conclusion}'
-            '\newtheorem{condition}[theorem]{Condition}'
-            '\newtheorem{conjecture}[theorem]{Conjecture}'
-            '\newtheorem{corollary}[theorem]{Corollary}'
-            '\newtheorem{criterion}[theorem]{Criterion}'
-            '\newtheorem{definition}[theorem]{Definition}'
-            '\newtheorem{exercise}[theorem]{Exercise}'
-            '\newtheorem{lemma}[theorem]{Lemma}'
-            '\newtheorem{notation}[theorem]{Notation}'
-            '\newtheorem{problem}[theorem]{Problem}'
-            '\newtheorem{proposition}[theorem]{Proposition}'
-            '\newtheorem{remark}[theorem]{Remark}'
-            '\newtheorem{solution}[theorem]{Solution}'
-            '\newtheorem{summary}[theorem]{Summary}'
-            '\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\ \rule{0.5em}{0.5em}}'
-            '\definecolor{lightgray}{gray}{0.5}'
-            '\setlength{\parindent}{0pt}'
             '\begin{document}'
+            '\pagestyle{myheadings}'
             };
         for jj=1:numel(preamble_instructions)
             fprintf(fid,'%s \n',preamble_instructions{jj});
@@ -188,15 +165,22 @@ end
 
     function add_paragraph(paragraph)
         default_paragraph=struct('text','',...
-            'title','no title');
+            'title','no title','itemize',false);
         new_paragraph=mysetfield(default_paragraph,paragraph);
         new_paragraph.text=char(new_paragraph.text);
+        itemize=new_paragraph.itemize;
         fprintf(fid,'%s \n',['\section*{',reprocess(new_paragraph.title),'}']);
-        fprintf(fid,'%s \n','\begin{par}');
-        for ii=1:size(new_paragraph.text,1)
-            fprintf(fid,'%s \n\n',new_paragraph.text(ii,:));
+        string='';
+        if itemize
+            fprintf(fid,'%s \n','\begin{itemize}');
+            string='\item ';
         end
-        fprintf(fid,'%s \n','\end{par}');
+        for ii=1:size(new_paragraph.text,1)
+            fprintf(fid,'%s \n',[string,new_paragraph.text(ii,:)]);
+        end
+        if itemize
+            fprintf(fid,'%s \n','\end{itemize}');
+        end
     end
 
     function add_model_equations(equations)
@@ -256,14 +240,20 @@ end
             'caption','no caption');
         new_figure=mysetfield(default_figure,graph); %
         if ~isempty(new_figure.name)
-            fprintf(fid,'%s \n',['\section*{',reprocess(new_figure.title),'}']);
-            fprintf(fid,'%s \n','\begin{figure}[h]');
-            fprintf(fid,'%s \n','\begin{center}');
-            fprintf(fid,'%s \n',['\includegraphics[width=0.95\textwidth,trim=60 60 60 60]{',new_figure.name,'}']);
-            fprintf(fid,'%s \n','\end{center}');
-            fprintf(fid,'%s \n',['\caption{',new_figure.caption,'}']);
-            fprintf(fid,'%s \n','\end{figure}');
-            fprintf(fid,'%s \n','\clearpage');
+            fprintf(fid,'%s \n','\newpage');
+%             fprintf(fid,'%s \n','\[');
+            fprintf(fid,'%s \n','\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}');
+            fprintf(fid,'%s \n',['\multicolumn{1}{c}{\large\bfseries ',reprocess(new_figure.title),'}\\']);
+            % if ishandle create figure and delete after compile. the
+            % advantage is that we can portrait or landscape the picture
+            % depending on the format of the general report
+%             fprintf(fid,'%s \n','\begin{figure}[h]');
+%             fprintf(fid,'%s \n','\begin{center}');
+            fprintf(fid,'%s \n',['\raisebox{10pt}{\includegraphics[scale=0.85]{',new_figure.name,'}}']);
+%             fprintf(fid,'%s \n','\end{center}');
+%             fprintf(fid,'%s \n','\end{figure}');
+            fprintf(fid,'%s \n','\end{tabular}');%
+%             fprintf(fid,'%s \n','\]');
         end
     end
 
