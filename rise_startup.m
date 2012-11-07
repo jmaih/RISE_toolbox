@@ -2,26 +2,26 @@ function rise_startup(flag)
 if nargin<1
     flag=false;
 end
-testing=true;
 
 % this function sets up RISE (it replaces setpaths)
 
+[retcode,pdflatex_path] = system('findtexmf --file-type=exe pdflatex');
+
 %-----------------------------------------------------------------------
 % Decide if using or not the RISE print and plot settings
-USE_RISE_PLOT = false;
+USE_RISE_PLOT = true;
 USE_RISE_PRINT = false;
 
 %--------------------------------------------------------------------------
-
-v = ver('RISE');
 
 %  %--------------------------------------------------------------------------
 %  % format of numbers on MATLAB terminal
 %  format long g
 
+rise_data=cell(0,2);
+
 
 if USE_RISE_PRINT
-    
     
     % ------------------------------------------------------------------------
     % Version Variables
@@ -49,13 +49,14 @@ if USE_RISE_PRINT
                 rise_version = [v.Version ' ' v.Release];
         end
     end
-    
-    setappdata(0, 'matlab_version', matlab_version);
-    setappdata(0, 'symbolic_math_version', symbolic_math_version);
-    setappdata(0, 'optimization_version', optimization_version);
-    setappdata(0, 'statistics_version', statistics_version);
-    setappdata(0, 'rise_version', rise_version);
-    setappdata(0, 'rise_required_matlab_version', '7.11');
+    rise_data=[rise_data
+        'matlab_version', matlab_version
+        'symbolic_math_version', symbolic_math_version
+        'optimization_version', optimization_version
+        'statistics_version', statistics_version
+        'rise_version', rise_version
+        'rise_required_matlab_version', '7.11'
+        ];
     
     
     %%  %--------------------------------------------------------------------------
@@ -72,9 +73,6 @@ if USE_RISE_PRINT
     set(0, 'DefaultFigurePaperPosition', [3.56 2.03 22.56 16.92]);
 end
 
-%%%  % ------------------------------------------------------------------------
-%%%  % Backup MATLAB's plot settings
-%%%  utils.plottools.backupDefaultPlotSettings();
 
 %--------------------------------------------------------------------------
 % Plot settings
@@ -83,7 +81,7 @@ if USE_RISE_PLOT
     % ------------------------------------------------------------------------
     % General Variables
     
-    setappdata(0, 'rise_default_plot_colors', { ...
+    rise_default_plot_colors={ ...
         [0 0 1],     ...  % 'b'
         [1 0 0],     ...  % 'r'
         [0 1 0],     ...  % 'g'
@@ -107,19 +105,21 @@ if USE_RISE_PLOT
         [255 128 0]/255,   ...
         [143 0 0]/255,     ...
         [255 207 0]/255,   ...
-        [0.9 0.266 0.593]});
+        [0.9 0.266 0.593]
+        };
     
-    set(0, 'DefaultAxesXColor', [0 0 0]);
-    set(0, 'DefaultAxesYColor', [0 0 0]);
+    rise_data=[rise_data
+        'rise_default_plot_colors',{rise_default_plot_colors}];
+    
+    
+    %     set(0, 'DefaultAxesXColor', [0 0 0]);
+    %     set(0, 'DefaultAxesYColor', [0 0 0]);
     %    set(0, 'defaultfigurenumbertitle', 'on');
     set(0, 'DefaultFigureColor', 'w');
-    set(0, 'DefaultFigurePosition', [0 0 1200 700]);
-    set(0, 'DefaultAxesPosition', [0.13 0.15 0.775 0.75]);
+    %     set(0, 'DefaultFigurePosition', [0 0 1200 700]);
+    %     set(0, 'DefaultAxesPosition', [0.13 0.15 0.775 0.75]);
 end
 
-% Add user model paths
-%%%  prefs = getappdata(0, 'RISEpreferences');
-%%%  searchPaths = prefs.getModelsPrefs.getSearchPaths;
 searchPaths=collect_paths(mfilename);
 for jj = 1:numel(searchPaths)
     if flag
@@ -130,119 +130,84 @@ for jj = 1:numel(searchPaths)
 end
 
 %--------------------------------------------------------------------------
-% Activate correct helptoc.xml file (depending on MATLAB version)
+rise_root=strrep(which('rise'), fullfile('rise', 'classes', '@rise', 'rise.m'), '');
+rise_data=[rise_data
+    {'rise_root',rise_root}];
+rise_data=[rise_data
+    {'rise_pdflatex',~isempty(pdflatex_path)}];
 
-if ~testing
-    % Define MATLAB helptoc version
-    matlabRelease = version('-release');
-    switch matlabRelease
-        case {'2008a', '2008b', '2009a'}
-            matlabRelease = 'R2009a';
-        case '2009b'
-            matlabRelease = 'R2009b';
-        case '2010a'
-            matlabRelease = 'R2010a';
-        otherwise
-            matlabRelease = 'R2010a';
+for id=1:size(rise_data,1)
+    if flag
+        rmappdata(0,rise_data{id,1});
+    else
+        % Set RISE Root dir
+        setappdata(0, rise_data{id,1}, rise_data{id,2});
     end
-    
-    % Get info.xml path from the path of rise_startup because it might be
-    % happen that the RISE toolbox is not on top of the MATLAB path
-    startupPath = fileparts(which(mfilename()));
-    infoPath = strrep(startupPath, strcat('m', filesep(), 'etc'), '');
-    
-    % read info.xml file in order to get the helptoc.xml path
-    infoXML = xmlread(fullfile(infoPath, 'info.xml'));
-    tbNameNode = infoXML.getElementsByTagName('name');
-    tbName = tbNameNode.item(0).getFirstChild.getData;
-    if strcmp(tbName, 'RISE')
-        helpLocationNodes = infoXML.getElementsByTagName('help_location');
-        helpLocation = char(helpLocationNodes.item(0).getFirstChild.getTextContent);
-    else % Otherwise error out
-        error('Can not find info.xml file for My Toolbox');
-    end
-    
-    helptocLocation = fullfile(infoPath, helpLocation);
-    
-    helptocSource = fullfile(helptocLocation, strcat('helptoc', matlabRelease, '.xml'));
-    helptocDest   = fullfile(helptocLocation, 'helptoc.xml');
-    
-    copyfile(helptocSource, helptocDest);
-    
-    % Set RISE Root dir
-    riseroot = strrep(which('rise'), fullfile('rise', 'classes', '@rise', 'rise.m'), '');
-    setappdata(0, 'RISEROOT', riseroot);
-    
 end
 
+if flag
+    set(0,'default');
+end
 % Show logo
 showLogo();
 
+
+    function showLogo()
+        
+        vv = ver('RISE_Toolbox');
+        
+        logo = {...
+            '                                        ',...
+            '                  ****                  ',...
+            '                   **                   ',...
+            '  _____	   _    _____ 	 _____ 		 ',...
+            ' |  _  \	  |*|  | ____|  | ____|   	 ',...
+            ' | |_| |	   _   | |      | |       	 ',...
+            ' |     /	  |	|  | |__ _  | |___    	 ',...
+            ' | |\ \	  |	|  |____  | |  ___|   	 ',...
+            ' | | \ \	  | |       | | | |       	 ',...
+            ' | |  \ \    | |   ____| | | |___       ',...
+            ' |_|	\_\   |_|  |______| |_____|   	 ',...
+            '                   **                   ',...
+            '                  ****                  ',...
+            };
+        
+        l1 = '+----------------------------------------------------+';
+        %   ll = length(l1);
+        
+        disp(l1);
+        % for jj = 1:numel(logo)
+        %     fprintf(1,'%s\n',logo{jj});
+        % end
+        disp(['Welcome to the ', vv.Name])
+        disp(['Version: ', vv.Version])
+        disp(['Release: ', vv.Release])
+        disp(['Date: ', vv.Date])
+        if retcode
+            disp('pdflatex/Miktex could not be located')
+        end
+        disp(l1);
+        
+    end
 end
 
-
-function showLogo()
-
-v = ver('RISE_Toolbox');
-
-logo = {...
-    '                                        ',...
-    '                  ****                  ',...
-    '                   **                   ',...
-    '  _____	   _    _____ 	 _____ 		 ',...
-    ' |  _  \	  |*|  | ____|  | ____|   	 ',...
-    ' | |_| |	   _   | |      | |       	 ',...
-    ' |     /	  |	|  | |__ _  | |___    	 ',...
-    ' | |\ \	  |	|  |____  | |  ___|   	 ',...
-    ' | | \ \	  | |       | | | |       	 ',...
-    ' | |  \ \    | |   ____| | | |___       ',...
-    ' |_|	\_\   |_|  |______| |_____|   	 ',...
-    '                   **                   ',...
-    '                  ****                  ',...
-    };
-
-l1 = '+----------------------------------------------------+';
-%   ll = length(l1);
-
-disp(l1);
-%   for jj = 1:numel(logo)
-%     fprintf(1,'%s\n',logo{jj});
-%   end
-disp(['Welcome to the ', v.Name])
-disp(['Version: ', v.Version])
-disp(['Release: ', v.Release])
-disp(['Date: ', v.Date])
-disp(l1);
-
-end
-
-
-function list=collect_paths(filename)
+function collect=collect_paths(filename)
 fullpath=which(filename);
 loc=strfind(fullpath,filename);
-tmp=genpath(fullpath(1:loc-2));
+fullpath=fullpath(1:loc-2);
+subfolders={'m','classes',};
+tmp='';
+for sfld=1:numel(subfolders)
+    tmp=[tmp,genpath([fullpath,filesep,subfolders{sfld}])]; %#ok<AGROW>
+end
 
 if ispc
-    semicols=strfind(tmp,';');
+    collect=regexp(tmp,';','split');
 elseif ismac
-    semicols=strfind(tmp,':');
+    collect=regexp(tmp,':','split');
 else
     error([mfilename,':: unknown system '])
 end
-previous=0;
-collect={};
-for ii=1:numel(semicols)
-    current=semicols(ii);
-    thepath=tmp(previous+1:current-1);
-    if isempty(strfind(thepath,'.svn')) && ...
-            isempty(strfind(lower(thepath),'test')) && ...
-            isempty(strfind(lower(thepath),'junk'))
-        collect=[collect,{thepath}];
-    end
-    previous=current;
-end
-if nargout
-    list=collect;
-end
 
 end
+
