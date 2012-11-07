@@ -1,9 +1,17 @@
-function rise_report(this,report_name,instructions)
+function retcode=rise_report(this,report_name,instructions)
 
 default_name='report';
 if isempty(report_name)
     report_name=default_name;
 end
+rise_pdflatex=getappdata(0,'rise_pdflatex');
+
+if ~rise_pdflatex
+    error([mfilename,':: cannot generate a report, MIKTEX was not found earlier'])
+end
+%% create a temporary directory to temporarily save handles
+tmpdir='';
+tmpdir_flag=false;
 
 thedot=strfind(report_name,'.');
 if ~isempty(thedot)
@@ -56,9 +64,10 @@ add_finishing();
 fclose(fid);
 
 if exist([report_name,'.pdf'],'file')
+    delete([report_name,'.tex'])
     delete([report_name,'.pdf'])
 end
-system(['pdflatex ',report_name])
+retcode=system(['pdflatex ',report_name]);
 useless_extensions={'.log','.bbl','.blg','.aux','.*.bak'};
 for iext=1:numel(useless_extensions)
     file2delete=[report_name,useless_extensions{iext}];
@@ -67,6 +76,9 @@ for iext=1:numel(useless_extensions)
     end
 end
 
+if tmpdir_flag
+rmdir(tmpdir,'s'); % use s to remove the contents as well otherwise the operation will not be successful
+end
     function add_table(options)
         default_table=struct('title','no title',...
             'table',[],'caption','no caption');
@@ -81,20 +93,18 @@ end
             str='';
             for icol=1:ncols
                 tmp=reprocess(new_table.table{irow,icol});
-                if irow==1
-                    str=[str,['\textbf{',tmp,'}']];
-                else
-                    str=[str,tmp];
+% % % % %                 if irow==1
+% % % % %                     tmp=['\textbf{',tmp,'}'];
+% % % % %                 end
+                if icol==1
+                    tmp=['\multicolumn{1}{l}{',tmp,'}'];
                 end
+                str=[str,tmp];
                 if icol<ncols
                     str=[str,' &'];
                 end
             end
-            if irow<nrows
-                str=[str,' \\ \hline'];
-            else
-                str=[str,' \\ \hline\hline'];
-            end
+            str=[str,' \\'];
             AllBatch{irow}=str;
         end
         
@@ -114,11 +124,16 @@ end
             end
             % with this I can cut the table at any time
             fprintf(fid,'%s \n','\begin{table}[h] \centering');
-            fprintf(fid,'%s \n',['\begin{tabular}{|',repmat('c|',1,ncols),'}']);
+            fprintf(fid,'%s \n',['\begin{tabular}{',repmat('r',1,ncols),'}']);
             fprintf(fid,'%s \n','\hline\hline');
             fprintf(fid,'%s \n',theHeader);
+            fprintf(fid,'%s \n','\hline');
             for irow=(itab-1)*max_rows+1:min(new_nrows,itab*max_rows)
                 fprintf(fid,'%s \n',AllBatch{irow});
+            end
+            fprintf(fid,'%s \n','\hline');
+            if itab==number_of_tables
+                fprintf(fid,'%s \n','\hline');
             end
             fprintf(fid,'%s \n','\end{tabular}');
             fprintf(fid,'%s \n',['\caption{',new_table.caption,additional_string,'}']);
@@ -128,9 +143,9 @@ end
 
     function add_preamble()
         preamble_instructions={
-            '\documentclass[12pt]{article}'
-            '\usepackage{amsfonts,amsmath,color,graphicx}'
-            '\usepackage[landscape]{geometry}'
+            '\documentclass[12pt,landscape]{article}'
+            '\usepackage{amsfonts,amsmath,color,graphicx}'%,fullpage
+            '\usepackage{geometry}'%[centering]
             '\begin{document}'
             '\pagestyle{myheadings}'
             };
@@ -148,15 +163,49 @@ end
         default_title=struct('title','Simple RISE Report',...
             'address','',...
             'date','',...
-            'author','RISE Toolbox');
+            'author','RISE Toolbox',...
+            'email','junior.maih@gmail.com');
         if nargin==0
             return
         end
         AfterAuthor=' \\';
         new_title=mysetfield(default_title,options);
         fprintf(fid,'%s \n',['\title{',reprocess(new_title.title),'}']);
-        fprintf(fid,'%s \n',['\author{',new_title.author,AfterAuthor]);
-        fprintf(fid,'%s \n',[new_title.address,'}']);
+        authors=regexp(new_title.author,'&','split');
+        address=regexp(new_title.address,'&','split');
+        email=regexp(new_title.email,'&','split');
+        flag_add=numel(address)==numel(authors);
+        flag_email=numel(email)==numel(authors);
+        fprintf(fid,'%s \n','\author{');
+        for iaut=1:numel(authors)
+            thisAuthor=authors{iaut};
+            if flag_add
+                thisAuthor=[thisAuthor,AfterAuthor];
+                fprintf(fid,'%s \n',thisAuthor);
+                thisAddress=address{iaut};
+                if flag_email
+                    thisAddress=[thisAddress,AfterAuthor];
+                    fprintf(fid,'%s \n',thisAddress);
+                    thisEmail=['\texttt{',email{iaut},'}'];
+                    fprintf(fid,'%s \n',thisEmail);
+                else
+                    fprintf(fid,'%s \n',thisAddress);
+                end
+            else
+                if flag_email
+                    thisAuthor=[thisAuthor,AfterAuthor];
+                    fprintf(fid,'%s \n',thisAuthor);
+                    thisEmail=['\texttt{',email{iaut},'}'];
+                    fprintf(fid,'%s \n',thisEmail);
+                else
+                    fprintf(fid,'%s \n',thisAuthor);
+                end
+            end
+            if iaut<numel(authors)
+                fprintf(fid,'%s \n','\and');
+            end
+        end
+        fprintf(fid,'%s \n','}');
         if ~isempty(new_title.date)
             fprintf(fid,'%s \n',['\date{',new_title.date,'}']);
         end
@@ -176,7 +225,7 @@ end
             string='\item ';
         end
         for ii=1:size(new_paragraph.text,1)
-            fprintf(fid,'%s \n',[string,new_paragraph.text(ii,:)]);
+            fprintf(fid,'%s \n',[string,'\large{',new_paragraph.text(ii,:),'}']);
         end
         if itemize
             fprintf(fid,'%s \n','\end{itemize}');
@@ -185,7 +234,7 @@ end
 
     function add_model_equations(equations)
         default_equations=struct('title','Model equations',...
-            'equations',{{this.equations.dynamic}});
+            'equations',{{this(1).equations.dynamic}});
         new_equations=mysetfield(default_equations,equations);
         if ischar(new_equations.equations)
             new_equations.equations=cellstr(new_equations.equations);
@@ -240,67 +289,92 @@ end
             'caption','no caption');
         new_figure=mysetfield(default_figure,graph); %
         if ~isempty(new_figure.name)
+            tmpname=new_figure.name;
+            angle=0;
+            if ishandle(tmpname)
+                if ~tmpdir_flag
+                    tmpdir=tempname(pwd);
+                    mkdir(tmpdir);
+                    tmpdir_flag=true;
+                end
+                new_handle=tmpname;
+                tmpname=tempname(tmpdir); %,'.pdf'
+             % quotes and spaces may still not work if the extension .pdf is
+            % added
+               angle=rise_saveaspdf(new_handle,tmpname);
+            end
+            tmpname=strrep(tmpname,'\','/');
             fprintf(fid,'%s \n','\newpage');
-%             fprintf(fid,'%s \n','\[');
             fprintf(fid,'%s \n','\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}');
             fprintf(fid,'%s \n',['\multicolumn{1}{c}{\large\bfseries ',reprocess(new_figure.title),'}\\']);
-            % if ishandle create figure and delete after compile. the
-            % advantage is that we can portrait or landscape the picture
-            % depending on the format of the general report
-%             fprintf(fid,'%s \n','\begin{figure}[h]');
-%             fprintf(fid,'%s \n','\begin{center}');
-            fprintf(fid,'%s \n',['\raisebox{10pt}{\includegraphics[scale=0.85]{',new_figure.name,'}}']);
-%             fprintf(fid,'%s \n','\end{center}');
-%             fprintf(fid,'%s \n','\end{figure}');
+            fprintf(fid,'%s \n',['\raisebox{10pt}{\includegraphics[scale=0.9,angle=',...
+                num2str(angle),']{"',tmpname,'"}}']);
             fprintf(fid,'%s \n','\end{tabular}');%
-%             fprintf(fid,'%s \n','\]');
         end
     end
 
     function mytable=estimation2table()
-        estimated_parameters=this.estimated_parameters;
-        npar=numel(estimated_parameters);
-        mytable=cell(npar+1,7);
-        mytable(2:end,1)={estimated_parameters.name}';mytable{1,1}='Param Names';
-        mytable(2:end,2)={estimated_parameters.distribution}';mytable{1,2}='Prior distr';
-        mytable(2:end,3)=num2cell(vertcat(estimated_parameters.interval_probability));mytable{1,3}='Prior prob';
-        mytable(2:end,4)=num2cell(vertcat(estimated_parameters.plb));mytable{1,4}='low';
-        mytable(2:end,5)=num2cell(vertcat(estimated_parameters.pub));mytable{1,5}='high';
-        mytable(2:end,6)=num2cell(vertcat(estimated_parameters.mode));mytable{1,6}='mode';
-        mytable(2:end,7)=num2cell(vertcat(estimated_parameters.mode_std));mytable{1,7}='mode\_std';
+        ncases=numel(this);
+        type_name='name';
+        parnames= {this(1).estimated_parameters.(type_name)}';
+        for ic=2:ncases
+            if ~isequal(parnames,{this(ic).estimated_parameters.(type_name)}')
+                error([mfilename,':: all models should have the same (estimated) parameters'])
+            end
+        end
+        estimated_parameters=[this.estimated_parameters];
+        npar=numel(parnames);
+        mytable=cell(npar+1,5);
+        mytable(2:end,1)=parnames;mytable{1,1}='Param Names';
+        mytable(2:end,2)={estimated_parameters(:,1).distribution}';mytable{1,2}='Prior distr';
+        mytable(2:end,3)=num2cell(vertcat(estimated_parameters(:,1).interval_probability));mytable{1,3}='Prior prob';
+        mytable(2:end,4)=num2cell(vertcat(estimated_parameters(:,1).plb));mytable{1,4}='low';
+        mytable(2:end,5)=num2cell(vertcat(estimated_parameters(:,1).pub));mytable{1,5}='high';
+        for ic=1:ncases
+            mytable=[mytable,[{['mode(',int2str(ic),')']};num2cell(vertcat(estimated_parameters(:,ic).mode))]];
+        end
+        if ncases==1
+            mytable=[mytable,[{'mode\_std'};num2cell(vertcat(estimated_parameters(:,1).mode_std))]];
+        end
         mytable={'table'
             struct('title','Estimation Results',...
             'table',{mytable},'caption','Prior and Posterior mode')};
     end
     function mytable=further_estimation2table()
         mytable={
-            'log-post:',this.log_post
-            'log-lik:',this.log_lik
-            'log-prior:',this.log_prior
-            'log-endog_prior',this.log_endog_prior
-            'nonlcon_viol_penalty',this.nonlcon_viol_penalty
-            'log-MDD(Laplace)', this.log_mdd_laplace
-            'log-MDD(MHM)',this.log_mdd_mhm
-            'estimation sample', [this.options.estim_start_date,':',this.options.estim_end_date]
-            'number of observations ',numel(this.varobs(1).value)
-            'estimation algorithm ', this.options.optimizer
-            'solution algorithm ', this.options.solver
+            'log-post:'
+            'log-lik:'
+            'log-prior:'
+            'log-endog_prior'
+            'nonlcon_viol_penalty'
+            'log-MDD(Laplace)'
+            'log-MDD(MHM)'
+            'estimation sample'
+            'number of observations '
+            'estimation algorithm '
+            'solution algorithm '
+            'start time:'
+            'end time :'
+            'total time:'
             };
-        
-        if isfield(this.options,'estim_end_time') && ~isempty(this.options.estim_end_time)
-            t2=this.options.estim_end_time;
-            t1=this.options.estim_start_time;
-            estimation_time=etime(t2,t1);
-            hrs=floor(estimation_time/3600);
-            secs=estimation_time-hrs*3600;
-            mins=floor(secs/60);
-            secs=secs-mins*60;
-            mytable=[mytable
-                {
-                'start time:',datestr(t1)
-                'end time :',datestr(t2)
-                'total time:',[int2str(hrs),':',int2str(mins),':',int2str(secs)]
-                }];
+        for ic=1:numel(this)
+            this_ic={this(ic).log_post,this(ic).log_lik,this(ic).log_prior,...
+                this(ic).log_endog_prior,this(ic).nonlcon_viol_penalty,...
+                this(ic).log_mdd_laplace,this(ic).log_mdd_mhm,...
+                [this(ic).options.estim_start_date,':',this(ic).options.estim_end_date],...
+                numel(this(ic).varobs(1).value),this(ic).options.optimizer,...
+                this(ic).options.solver,nan,nan,nan}';
+            if isfield(this(ic).options,'estim_end_time') && ~isempty(this(ic).options.estim_end_time)
+                t2=this(ic).options.estim_end_time;
+                t1=this(ic).options.estim_start_time;
+                estimation_time=etime(t2,t1);
+                hrs=floor(estimation_time/3600);
+                secs=estimation_time-hrs*3600;
+                mins=floor(secs/60);
+                secs=secs-mins*60;
+                this_ic(end-(2:-1:0))={datestr(t1),datestr(t2),[int2str(hrs),':',int2str(mins),':',int2str(secs)]};
+            end
+            mytable=[mytable,this_ic];
         end
         
         mytable={'table'
