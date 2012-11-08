@@ -268,7 +268,10 @@ classdef sad %< handle
             allKeys = keys(mapObj_sad);
             allValues = values(mapObj_sad);
             auxiliary='';
-            for icount=mapObj_sad.Count:-1:1
+            % for some versions of matlab, one has to double the output of
+            % the container, which returns elements of type int64 on my
+            % machine: an undesirable feature.
+            for icount=double(mapObj_sad.Count):-1:1 % icount=mapObj_sad.Count:-1:1
                 % if a particular value occurs only once, then replace it
                 % and remove the key
                 vv=['T_',int2str(icount)];
