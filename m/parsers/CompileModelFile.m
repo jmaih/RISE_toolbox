@@ -2064,7 +2064,7 @@ end
 fclose(fid);
 
 if inclusions
-    expanded=[FileName(1:end-4),'_expanded',FileName(end-3:end)];
+    expanded=['expanded_',FileName(1:end-4),FileName(end-3:end)];
     try % this would fail under parallel computing
         if exist(expanded,'file')
             delete(expanded)
