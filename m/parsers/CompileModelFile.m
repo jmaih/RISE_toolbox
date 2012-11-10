@@ -1001,7 +1001,7 @@ symb_list=[with_respect_to,list_ss];
 disp([mfilename,':: computing first-order derivatives with respect to all endogenous, exogenous and parameters'])
 tic
 sad.destroy();
-[dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
+[dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
 jac_toc=toc();
 disp([mfilename,':: The computation of first-order derivatives took ',num2str(jac_toc),' seconds'])
 

@@ -1,5 +1,8 @@
-function retcode=rise_report(this,report_name,instructions)
+function retcode=rise_report(this,report_name,instructions,graphicsPath)
 
+if nargin<4
+    graphicsPath='';
+end
 default_name='report';
 if isempty(report_name)
     report_name=default_name;
@@ -149,6 +152,10 @@ end
             '\begin{document}'
             '\pagestyle{myheadings}'
             };
+        if ~isempty(graphicsPath)
+            preamble_instructions=[preamble_instructions
+            ['\graphicspath{{"',graphicsPath,'"}}']];
+        end
         for jj=1:numel(preamble_instructions)
             fprintf(fid,'%s \n',preamble_instructions{jj});
         end
@@ -286,11 +293,11 @@ end
     function add_figure(graph)
         default_figure=struct('name','',...
             'title','no title',...
-            'caption','no caption');
+            'caption','no caption','angle',0);
         new_figure=mysetfield(default_figure,graph); %
         if ~isempty(new_figure.name)
             tmpname=new_figure.name;
-            angle=0;
+            angle=new_figure.angle;
             if ishandle(tmpname)
                 if ~tmpdir_flag
                     tmpdir=tempname(pwd);
@@ -304,6 +311,10 @@ end
                angle=rise_saveaspdf(new_handle,tmpname);
             end
             tmpname=strrep(tmpname,'\','/');
+            theDot=find(tmpname=='.');
+            if ~isempty(theDot)
+                tmpname=tmpname(1:theDot-1);
+            end
             fprintf(fid,'%s \n','\newpage');
             fprintf(fid,'%s \n','\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}');
             fprintf(fid,'%s \n',['\multicolumn{1}{c}{\large\bfseries ',reprocess(new_figure.title),'}\\']);

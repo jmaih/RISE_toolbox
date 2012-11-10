@@ -126,6 +126,9 @@ end
 %% model derivatives
 JESP= obj.model_derivatives.Endogenous_Shocks_parameters;
 aux_jac=cell2mat(obj.model_derivatives.auxiliary_jacobian(:)');
+if isempty(aux_jac)
+    aux_jac='';
+end
 JESP=rise_anonymous(JESP.size,str2func(['@(y,x,ss,param)[',JESP.string,']']),JESP.indices,aux_jac);
 handle_struct.derivatives=JESP;
 

@@ -3,7 +3,7 @@ classdef rise_anonymous
         size
         indices
         func
-        auxiliary
+        auxiliary=''
         args
         type='fhandle'
     end
@@ -30,6 +30,11 @@ classdef rise_anonymous
                 obj.args=regexp(string(3:closing_par-1),',','split');
                 if strcmp(obj.type,'eval')
                     fhandle=string(closing_par+1:end);
+                else
+                    if isempty(strfind(string,'double'))
+                        fhandle=[string(1:closing_par),'double(',string(closing_par+1:end),')'];
+                        fhandle=str2func(fhandle);
+                    end
                 end
             end
         end
