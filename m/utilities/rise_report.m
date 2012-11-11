@@ -20,6 +20,10 @@ thedot=strfind(report_name,'.');
 if ~isempty(thedot)
     report_name=report_name(1:thedot-1);
 end
+if exist([report_name,'.tex'],'file')
+    delete([report_name,'.tex'])
+end
+
 fid=fopen([report_name,'.tex'],'w');
 
 add_preamble();
@@ -67,9 +71,9 @@ add_finishing();
 fclose(fid);
 
 if exist([report_name,'.pdf'],'file')
-    delete([report_name,'.tex'])
     delete([report_name,'.pdf'])
 end
+
 retcode=system(['pdflatex ',report_name]);
 useless_extensions={'.log','.bbl','.blg','.aux','.*.bak'};
 for iext=1:numel(useless_extensions)
@@ -149,12 +153,13 @@ end
             '\documentclass[12pt,landscape]{article}'
             '\usepackage{amsfonts,amsmath,color,graphicx}'%,fullpage
             '\usepackage{geometry}'%[centering]
+% %             '\usepackage[space]{grffile}'
             '\begin{document}'
             '\pagestyle{myheadings}'
             };
         if ~isempty(graphicsPath)
             preamble_instructions=[preamble_instructions
-            ['\graphicspath{{"',graphicsPath,'"}}']];
+            ['\graphicspath{{',graphicsPath,'}}']];
         end
         for jj=1:numel(preamble_instructions)
             fprintf(fid,'%s \n',preamble_instructions{jj});
@@ -305,28 +310,25 @@ end
                     tmpdir_flag=true;
                 end
                 new_handle=tmpname;
-                tmpname=tempname(tmpdir); %,'.pdf'
-             % quotes and spaces may still not work if the extension .pdf is
-            % added
+                tmpname=tempname(tmpdir); 
                angle=rise_saveaspdf(new_handle,tmpname);
             end
             tmpname=strrep(tmpname,'\','/');
-            theDot=find(tmpname=='.');
-            if ~isempty(theDot)
-                tmpname=tmpname(1:theDot-1);
-            end
+            tmpname=strrep(tmpname,'.pdf','');%,'.pdf'
+             % quotes and spaces may still not work if the extension .pdf is
+            % added
             fprintf(fid,'%s \n','\newpage');
             fprintf(fid,'%s \n','\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}');
             fprintf(fid,'%s \n',['\multicolumn{1}{c}{\large\bfseries ',reprocess(new_figure.title),'}\\']);
             fprintf(fid,'%s \n',['\raisebox{10pt}{\includegraphics[scale=0.9,angle=',...
-                num2str(angle),']{"',tmpname,'"}}']);
+                num2str(angle),']{',tmpname,'}}']);
             fprintf(fid,'%s \n','\end{tabular}');%
         end
     end
 
     function mytable=estimation2table()
         ncases=numel(this);
-        type_name='name';
+        type_name='tex_name';
         parnames= {this(1).estimated_parameters.(type_name)}';
         for ic=2:ncases
             if ~isequal(parnames,{this(ic).estimated_parameters.(type_name)}')
@@ -336,6 +338,16 @@ end
         estimated_parameters=[this.estimated_parameters];
         npar=numel(parnames);
         mytable=cell(npar+1,5);
+        for ipar=1:npar
+            if any(parnames{ipar}=='\')
+                if ~strcmp(parnames{ipar}(1),'$')
+                    parnames{ipar}=['$',parnames{ipar}];
+                end
+                if ~strcmp(parnames{ipar}(end),'$')
+                    parnames{ipar}=[parnames{ipar},'$'];
+                end
+            end
+        end
         mytable(2:end,1)=parnames;mytable{1,1}='Param Names';
         mytable(2:end,2)={estimated_parameters(:,1).distribution}';mytable{1,2}='Prior distr';
         mytable(2:end,3)=num2cell(vertcat(estimated_parameters(:,1).interval_probability));mytable{1,3}='Prior prob';
