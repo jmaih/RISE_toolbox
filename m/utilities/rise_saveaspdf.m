@@ -4,17 +4,29 @@ if ~isempty(theDot)
     filename=filename(1:theDot-1);
 end
 
-correction=-90;
 orient(fig,'landscape')
 
 rise_pdflatex=getappdata(0, 'rise_pdflatex');
 
 if rise_pdflatex
-    print(fig,'-depsc',filename)%,sprintf('-r%d',dpi)
+    % this thing lets me down a times
+    success=false;
+    for itry=1:10
+        try
+            print(fig,'-depsc',filename)
+            success=true;
+        catch me
+        end
+    end
+    if ~ success
+        rethrow(me)
+    end
     % mask the filename, with "" in case it contains spaces.
     system(['epstopdf "',filename,'.eps"']);
+    correction=-90;
 else
     print(fig,'-dpdf',filename)%,sprintf('-r%d',dpi)
+    correction=0;
 end
 
 
