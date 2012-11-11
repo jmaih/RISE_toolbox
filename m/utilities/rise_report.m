@@ -5,6 +5,9 @@ if nargin<4
 end
 if ~isempty(graphicsPath)
     graphicsPath=strrep(graphicsPath,'\','/');
+    if ~strcmp(graphicsPath(end),'/')
+        graphicsPath=[graphicsPath,'/'];
+    end
 end
 default_name='report';
 if isempty(report_name)
