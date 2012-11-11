@@ -3,6 +3,9 @@ function retcode=rise_report(this,report_name,instructions,graphicsPath)
 if nargin<4
     graphicsPath='';
 end
+if ~isempty(graphicsPath)
+    graphicsPath=strrep(graphicsPath,'\','/');
+end
 default_name='report';
 if isempty(report_name)
     report_name=default_name;
