@@ -322,7 +322,11 @@ end
             % added
             fprintf(fid,'%s \n','\newpage');
             fprintf(fid,'%s \n','\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}');
-            fprintf(fid,'%s \n',['\multicolumn{1}{c}{\large\bfseries ',reprocess(new_figure.title),'}\\']);
+            myfigname=reprocess(new_figure.title);
+            if any(isspace(myfigname))
+                myfigname=['"',myfigname,'"'];
+            end
+            fprintf(fid,'%s \n',['\multicolumn{1}{c}{\large\bfseries ',myfigname,'}\\']);
             fprintf(fid,'%s \n',['\raisebox{10pt}{\includegraphics[scale=0.9,angle=',...
                 num2str(angle),']{',tmpname,'}}']);
             fprintf(fid,'%s \n','\end{tabular}');%
