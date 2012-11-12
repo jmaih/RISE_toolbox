@@ -1,4 +1,4 @@
-function [T,K0] = functional_iteration(T0,Aplus,A0,Aminus,Q,nn,h,frwz)
+function [T,K0] = functional_iteration_(T0,Aplus,A0,Aminus,Q,nn,h,frwz)
 if nargin<8
     frwz=false;
 end
