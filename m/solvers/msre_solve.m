@@ -185,9 +185,9 @@ end
             case {2,'msre_aim'}
                 iterate_func = @(x)msre_aim(x,Aplus,A0,Aminus,Q,nn,h);
             case {3,'functional_iteration'}
-                iterate_func = @(x)msre_solvers.functional_iteration_(x,Aplus,A0,Aminus,Q,nn,h,solve_fwz_hypothesis);
-            case {33,'functional_iteration_'}
                 iterate_func = @(x)msre_solvers.functional_iteration(x,Aplus,A0,Aminus,Q,nn,h,solve_fwz_hypothesis);
+            case {33,'functional_iteration_'}
+                iterate_func = @(x)msre_solvers.functional_iteration_(x,Aplus,A0,Aminus,Q,nn,h,solve_fwz_hypothesis);
             case {4,'newton_kronecker'}
                 iterate_func = @(x)msre_solvers.newton_kronecker(x,Aplus,A0,Aminus,Q,nn,h,solve_fwz_hypothesis);
             case {44,'newton_kronecker_'}
