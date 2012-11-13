@@ -341,7 +341,12 @@ if nargin<3
 end
 
 retcode=0;
-par_vals=vertcat(param_obj.startval);
+if isa(param_obj,'rise_param')
+    par_vals=vertcat(param_obj.startval);
+else
+    loc= strcmp('startval',param_obj(1,:));
+    par_vals=vertcat(param_obj{2,loc});
+end
 number_of_regimes=size(par_vals,2);
 if unique_ss
     par_vals=mean(par_vals,2);
