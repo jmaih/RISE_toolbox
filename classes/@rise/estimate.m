@@ -142,7 +142,7 @@ ub=vertcat(obj(1).estimated_parameters.ub);
 
 % This does not work well under parallel mode, especially for old versions
 % of Matlab
-try
+try %#ok<TRYNC>
     prior_plots(obj)
 end
 
