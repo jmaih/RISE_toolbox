@@ -6,7 +6,7 @@ end
 object_properties=properties(obj);
 for ii=1:nargs/2
     propname=varargin{2*ii-1};
-    if isempty(strmatch(propname,object_properties))
+    if ~any(strcmp(propname,object_properties))
         error([mfilename,...
             ':: propname is not a valid property of class ',class(obj)])
     end
