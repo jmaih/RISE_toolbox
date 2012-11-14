@@ -298,10 +298,14 @@ warning('on','MATLAB:illConditionedMatrix')
         % the reason you want to output the object here is because it potentially
         % contains crucial information going forward. In particular, it contains
         % information about whether the model is stationary or not.
-        for mo=1:nobj
-            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
-            if retcode
-                break
+        if any(x<lb)||any(x>ub)
+            retcode=308;
+        else
+            for mo=1:nobj
+                [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
+                if retcode
+                    break
+                end
             end
         end
         % Now take the negative for minimization
