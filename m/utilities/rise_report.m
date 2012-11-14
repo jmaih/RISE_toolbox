@@ -56,16 +56,19 @@ for iinstr=1:size(instructions,2)
             add_figure(instructions{2,iinstr});
         case 'equations'
             add_model_equations(instructions{2,iinstr})
+        case 'estimation_statistics'
+            if isempty(instructions{2,iinstr})
+                instructions(:,iinstr)=further_estimation2table();
+            end
+            add_table(instructions{2,iinstr});
         case 'estimation'
             if isempty(instructions{2,iinstr})
                 instructions(:,iinstr)=estimation2table();
                 add_table(instructions{2,iinstr});
                 fprintf(fid,'%s \n','\newpage');
                 instructions(:,iinstr)=further_estimation2table();
-                add_table(instructions{2,iinstr});
-            else
-                add_table(instructions{2,iinstr});
             end
+            add_table(instructions{2,iinstr});
         otherwise
             error([mfilename,':: unknown type ',type])
     end
