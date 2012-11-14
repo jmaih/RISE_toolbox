@@ -21,39 +21,8 @@ if isempty(obj)
     return
 end
 nobj=numel(obj);
-
-oldoptions=obj(1).options;
-oldoptions=mysetfield(oldoptions,varargin{:});
 Fields=fieldnames(Defaults);
-for ii=1:numel(Fields)
-    vi=Fields{ii};
-    Defaults.(vi)=oldoptions.(vi);
-end
-irf_shock_list=Defaults.irf_shock_list;
-irf_var_list  =Defaults.irf_var_list  ;
-irf_periods	  =Defaults.irf_periods	  ;
-irf_anticipate=Defaults.irf_anticipate;
-irf_param_type=Defaults.irf_param_type;
-irf_shock_sign=Defaults.irf_shock_sign;
-% how many parameter draws
-irf_draws	  =Defaults.irf_draws	  ;
-girf_draws	  =Defaults.girf_draws	  ;
-irf_type	  =Defaults.irf_type	  ;
-irf_history   =Defaults.irf_history;
-if isempty(irf_shock_list)
-    irf_shock_list={obj(1).varexo.name};
-elseif ischar(irf_shock_list)
-    irf_shock_list=cellstr(irf_shock_list);
-end
-if isempty(irf_var_list)
-    irf_var_list={obj(1).orig_varendo.name};
-elseif ischar(irf_var_list)
-    irf_var_list=cellstr(irf_var_list);
-end
-shocks_id=locate_variables(irf_shock_list,{obj(1).varexo.name});
 
-varnames={obj(1).varendo.name};
-var_locs=locate_variables(irf_var_list,varnames);
 dsge_irfs=cell(1,nobj);
 dsge_var_irfs=cell(1,nobj);
 for ii=1:nobj
@@ -62,6 +31,39 @@ end
 
 
     function [dsge_irfs,dsge_var_irfs]=irf_intern(obj)
+        
+        oldoptions=obj.options;
+        oldoptions=mysetfield(oldoptions,varargin{:});
+        thisDefault=Defaults;
+        for ifield=1:numel(Fields)
+            vi=Fields{ifield};
+            thisDefault.(vi)=oldoptions.(vi);
+        end
+        irf_shock_list=thisDefault.irf_shock_list;
+        irf_var_list  =thisDefault.irf_var_list  ;
+        irf_periods	  =thisDefault.irf_periods	  ;
+        irf_anticipate=thisDefault.irf_anticipate;
+        irf_param_type=thisDefault.irf_param_type;
+        irf_shock_sign=thisDefault.irf_shock_sign;
+        % how many parameter draws
+        irf_draws	  =thisDefault.irf_draws	  ;
+        girf_draws	  =thisDefault.girf_draws	  ;
+        irf_type	  =thisDefault.irf_type	  ;
+        irf_history   =thisDefault.irf_history;
+        if isempty(irf_shock_list)
+            irf_shock_list={obj(1).varexo.name};
+        elseif ischar(irf_shock_list)
+            irf_shock_list=cellstr(irf_shock_list);
+        end
+        if isempty(irf_var_list)
+            irf_var_list={obj.orig_varendo.name};
+        elseif ischar(irf_var_list)
+            irf_var_list=cellstr(irf_var_list);
+        end
+        shocks_id=locate_variables(irf_shock_list,{obj(1).varexo.name});
+        
+        varnames={obj(1).varendo.name};
+        var_locs=locate_variables(irf_var_list,varnames);
         
         shock_only_one=false;
         relative=false;
@@ -74,8 +76,8 @@ end
         end
         % otherwise I would need to write 2 lines of code to get the
         % correct results as follows:
-%         obj.options.order=irf_anticipate;
-%         [obj.options.shock_properties(:).horizon]=deal(irf_anticipate);
+        %         obj.options.order=irf_anticipate;
+        %         [obj.options.shock_properties(:).horizon]=deal(irf_anticipate);
         
         % number of endogenous variables after solving...
         NumberOfEndogenous=obj.NumberOfEndogenous(2);
@@ -132,7 +134,7 @@ end
             R=obj.R;
             Q=obj.Q;
             for ss=1:NumberOfShocks
-%                 shock_name=irf_shock_list{ss}; %#ok<USENS>
+                %                 shock_name=irf_shock_list{ss}; %#ok<USENS>
                 shock_loc=shocks_id(ss);
                 switch irf_type
                     case 'girf'
@@ -172,21 +174,21 @@ end
                             Z(:,:,d,ss,reg)=bsxfun(@plus,Z(:,:,d,ss,reg),relative*steady_state(:,reg));
                         end
                     case 'hirf'
-                            % create one page for each of the shocks in each regime
-                            y0=[];
-                            PAI=1;
-                            for t=1:irf_periods
-                                reg=irf_history(t);
-                                [Z(:,t+1,d,ss),y0]=update_impulse(y0,T(:,:,reg),R(:,:,:,reg),PAI,...
-                                    irf_anticipate,shock_loc,t,irf_shock_sign);
-                            end
+                        % create one page for each of the shocks in each regime
+                        y0=[];
+                        PAI=1;
+                        for t=1:irf_periods
+                            reg=irf_history(t);
+                            [Z(:,t+1,d,ss),y0]=update_impulse(y0,T(:,:,reg),R(:,:,:,reg),PAI,...
+                                irf_anticipate,shock_loc,t,irf_shock_sign);
+                        end
                 end
             end
             if strcmp(irf_type,'irf') && obj.is_dsge_var_model
                 % impulse responses are computed for all shocks in this
                 % case
                 Z_bvar_dsge(:,:,dd,:)=dsge_var_irf(obj,param_draw,irf_periods,false,false,false);
-%                 Z_bvar_dsge=zeros(obj.NumberOfObservables,irf_periods+1,irf_draws,NumberOfShocks);
+                %                 Z_bvar_dsge=zeros(obj.NumberOfObservables,irf_periods+1,irf_draws,NumberOfShocks);
             end
         end
         
@@ -197,7 +199,7 @@ end
             RegimeNames=irf_type;
         end
         for ss=1:NumberOfShocks
-            shock_name=irf_shock_list{ss}; 
+            shock_name=irf_shock_list{ss};
             for vv=1:numel(irf_var_list)
                 dsge_irfs.(shock_name).(irf_var_list{vv})=...
                     rise_time_series(startdate,Z(:,:,:,var_locs(vv),ss),RegimeNames);
