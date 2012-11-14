@@ -22,10 +22,6 @@ classdef rise_estim_param < rise_param
         mean=[];
         quantiles=[];
         post_sim_mode=[];
-% % %         function_log_pdf
-% % %         function_cdf
-% % %         function_inverse_cdf
-% % %         function_prior_draw
         prior_mean
         prior_standard_deviation
     end
@@ -35,7 +31,6 @@ classdef rise_estim_param < rise_param
         plot(obj)
         % constructor
         function obj=rise_estim_param(name,tex_name,id,value,plb,pub,distrib,prob,prior_trunc,c,d)
-%%%%            obj=obj@rise_param(name,tex_name,id,value);
 			obj=obj@rise_param('name',name,'tex_name',tex_name,'id',id,'startval',value);
             obj.plb=plb;
             obj.pub=pub;
@@ -97,8 +92,14 @@ classdef rise_estim_param < rise_param
             % name in the vector of 'rise_estim_param' objects. The ids
             % are the same as the order of the estimated parameters in your
             % model file. This is formalized in private function
-            % rise/format_parameters 
-            error(nargchk(3,4,nargin,'string'))
+            % rise/format_parameters
+            try
+                narginchk(3,4)
+            catch me
+                % for backward compatibility
+                warning(me.message)
+                error(nargchk(3,4,nargin,'string')) %#ok<NCHKN>
+            end
             if nargin<4
                 id=[];
             end
@@ -136,6 +137,40 @@ classdef rise_estim_param < rise_param
                     error([mfilename,':: value for parameter ''',name{ii},''' outside its bounds ([',num2str(obj(id_i).lb),' ',num2str(obj(id_i).ub),'])'])
                 end
                 obj(id_i).startval=value(ii);
+            end
+        end
+        function obj=reset_bounds(obj,low,high)
+            if nargin<3
+                high=nan;
+                if nargin<2
+                    low=nan;
+                end
+            elseif nargin>3
+                error([mfilename,':: number of arguments cannot exceed 3'])
+            end
+            set_input('lb',low)
+            set_input('ub',high)
+            function set_input(where,x)
+                if isnan(x)||isinf(x)
+                    warning([mfilename,':: nan or inf new value not set for ',where])
+                elseif ~isreal(x)
+                    error([mfilename,':: input must be real'])
+                else
+                    nobj=numel(obj);
+                    for iobj=1:nobj
+                        switch where
+                            case 'lb'
+                                if x>obj(iobj).ub
+                                    error([mfilename,':: attempting to set a value for the lower bound that exceeds the upper bound'])
+                                end
+                            case 'ub'
+                                if x<obj(iobj).lb
+                                    error([mfilename,':: attempting to set a value for the upper bound that exceeds the lower bound'])
+                                end
+                        end
+                        obj(iobj).(where)=x;
+                    end
+                end
             end
         end
     end
