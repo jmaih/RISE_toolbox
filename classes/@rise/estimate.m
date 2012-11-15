@@ -289,19 +289,15 @@ warning('on','MATLAB:illConditionedMatrix')
         % this function returns the minimax if there are many objects
         % evaluated simultaneously
         
-        fval=nan(1,nobj);
+        fval=obj(1).options.Penalty*ones(1,nobj);
         % all objects are evaluated at the same point
         % the reason you want to output the object here is because it potentially
         % contains crucial information going forward. In particular, it contains
         % information about whether the model is stationary or not.
-        if any(x<lb)||any(x>ub)
-            retcode=308;
-        else
-            for mo=1:nobj
-                [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
-                if retcode
-                    break
-                end
+        for mo=1:nobj
+            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
+            if retcode
+                break
             end
         end
         % Now take the negative for minimization
