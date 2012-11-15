@@ -157,21 +157,23 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     ss_i=ss_and_bgp_final_vals(1:endo_nbr,ii);
     % build the jacobian
  
-    J=eval(obj.func_handles.derivatives,ss_i(indices),x_ss,ss_i,M(:,ii));
-    J=J{1};
-%    z=[ss_i(indices);x_ss;M(switching,ii)];
-%    switch derivative_type
-%         case 'numerical'
-%             J=numerical_jacobian(vectorized_dynamic,z,vectorized_code,ss_i,M(:,ii));
-%         case 'automatic'
-%             if ii==1
-%                 zmad=automatic(z);
-%             else
-%                 zmad=set(zmad,'x',z(:));
-%             end
-%             J=get(dynamic(zmad,ss_i,M(:,ii)),'dx');
-% %             J=full(first_order_derivatives(dynamic,z,ss_i,M(:,ii)));
-%     end
+    switch derivative_type
+        case 'symbolic'
+            J=eval(obj.func_handles.derivatives,ss_i(indices),x_ss,ss_i,M(:,ii));
+            J=J{1};
+        case 'numerical'
+            z=[ss_i(indices);x_ss;M(:,ii)];
+            J=rise_numjac(vectorized_dynamic,z,ss_i);
+       case 'automatic'
+            z=[ss_i(indices);x_ss;M(:,ii)];
+            if ii==1
+                zmad=automatic(z);
+            else
+                zmad=set(zmad,'x',z(:));
+            end
+            J=get(dynamic(zmad,ss_i,M(:,ii)),'dx');
+%             J=full(first_order_derivatives(dynamic,z,ss_i,M(:,ii)));
+    end
     if any(any(isnan(J)))
         retcode=2; % nans in jacobian
         obj=clean_obj;
@@ -280,49 +282,6 @@ end
 
 function [objective,commitment,discount,der1,der2]=policy_evaluation(y,ss,param,planner) %#ok<STOUT,INUSL>
 eval(planner);
-end
-
-function J=numerical_jacobian(objfun,y0,vectorized_code,varargin)
-if nargin<3 || isempty(vectorized_code)
-    vectorized_code=true;
-end
-
-% one evaluation of the objective just to get the number of equations.
-% Hopefully this is not expensive. I would have to do this if I had to
-% evaluate one-sided derivatives...
-f0=objfun(y0,varargin{:});
-NumberOfEquations=size(f0,1);
-
-delta_y=sqrt(eps)*max(abs(y0),1);
-temp = max(abs(y0),1)+delta_y; delta_y=temp-max(abs(y0),1);
-% above we make sure that h and x+h are representable in floating point
-% precision so that the difference between x+h and x is exactly h. This is
-% accomplished by placing their values into and out of memory as
-% follows: h = sqrt(eps) * x, temp = x + h and h = temp ? x.
-
-ysize=numel(y0);
-FPLUS=nan(NumberOfEquations,ysize);
-FMINUS=nan(NumberOfEquations,ysize);
-% we now build each column of the jacobian using numerical derivatives
-if vectorized_code
-    ones_y=ones(1,ysize);
-    y=y0(:,ones_y)+diag(delta_y);
-    FPLUS=objfun(y,varargin{:});
-    y=y0(:,ones_y)-diag(delta_y);
-    FMINUS=objfun(y,varargin{:});
-else
-    % direction=1:xsize+ysize;
-    direction=ysize:-1:1;
-    for ii=direction % evaluate backward for faster allocation
-        y=y0(:,ones(2,1));
-        y(ii,:)=y(ii,:)+[delta_y(ii),-delta_y(ii)];
-        FPLUS(:,ii)=objfun(y(:,1),varargin{:});
-        FMINUS(:,ii)=objfun(y(:,2),varargin{:});
-    end
-end
-% central differences more accurate...
-delta=2*delta_y';
-J=(FPLUS-FMINUS)./delta(ones(NumberOfEquations,1),:);
 end
 
 function res=derivatives_evaluation(ss,x,param,indices,deriv_func) %#ok<STOUT,INUSL>

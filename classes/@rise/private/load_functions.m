@@ -75,7 +75,7 @@ tmp=substitute_definitions(tmp,defcell);
 handle_struct.balanced_growth=str2func(tmp);
 
 %% dynamic
-tmp=['@(z,ss,param)[',cell2mat({obj.equations.shadow_dynamic}),']'];
+tmp=['@(z,ss)[',cell2mat({obj.equations.shadow_dynamic}),']'];
 tmp(isspace(tmp))=[];
 tmp(end-1)=[]; % remove last semicolon
 tmp=substitute_definitions(tmp,defcell);
@@ -86,23 +86,25 @@ for ii=1:obj.NumberOfExogenous
     tmp=strrep(tmp,['x(',int2str(ii),')'],['y(',int2str(iter),')']);
 end
 % nvz=iter;
-% replace all switching parameters
-switching=find([obj.parameters.is_switching]);
-for ii=1:numel(switching)
+% replace all parameters
+for ii=1:obj.NumberOfParameters
     iter=iter+1;
-    tmp=strrep(tmp,['param(',int2str(switching(ii)),')'],['y(',int2str(iter),')']);
+    tmp=strrep(tmp,['param(',int2str(ii),')'],['y(',int2str(iter),')']);
 end
+% % % switching=find([obj.parameters.is_switching]);
+% % % for ii=1:numel(switching)
+% % %     iter=iter+1;
+% % %     tmp=strrep(tmp,['param(',int2str(switching(ii)),')'],['y(',int2str(iter),')']);
+% % % end
+
 % replace y by z
-tmp=strrep(tmp,'y(','z(');
+tmp=regexprep(tmp,'(?<!\w)y(','z(');
 % non vectorized form
 handle_struct.dynamic=str2func(tmp);
 % final steps for the vectorizations
-for ii=1:iter
-    tmp=strrep(tmp,['z(',int2str(ii),')'],['z(',int2str(ii),',:)']);
-end
-tmp=strrep(tmp,'^','.^');
-tmp=strrep(tmp,'/','./');
-tmp=strrep(tmp,'*','.*');
+tmp=regexprep(tmp,'(?<!\.)([\^/*]{1})','.$1');
+tmp=regexprep(tmp,'(?<!\w)(z\()(\d+)(\))','$1$2,:$3');
+
 handle_struct.vectorized_dynamic=str2func(tmp);
 %% transition matrix
 handle_struct.transition_matrix=rise_anonymous.empty(0,1);
