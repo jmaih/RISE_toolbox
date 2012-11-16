@@ -76,7 +76,6 @@ if init
         % ====== optimization options ======
         'derivatives',derivatives %['symbolic','numerical','automatic']
         % ====== Filtering, priors, likelihood options ======
-        'hessian_conditioning',true
         'hessian','fd' % (finite differences) alternatives: 'opg' (outer-product gradient)
         % ====== graphic and debugging options ======
         'graphics',[rows,cols]
