@@ -7,10 +7,9 @@ varlist=[];
 if ischar(validNames)
 	validNames=cellstr(validNames);
 end
-var_types=validNames{1};
-for ivar=2:numel(validNames)
-    var_types=[var_types,'|',validNames{ivar}]; %#ok<AGROW>
-end
+validNames=validNames(:)';
+var_types=cell2mat(strcat(validNames,'|'));
+var_types=var_types(1:end-1);
 NoANb='(?<![\w])';% no alphanumeric before
 NoAf='(?![a-zA-Z])';% no alphabetic after
 switch flag
