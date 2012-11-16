@@ -184,7 +184,7 @@ for t=1:smpl
             v(occur,s1,s0)=data(occur,1)-a01(obs_id(occur),s1,s0);
             % Symmetrize it first, just in case
             F(occur,occur,s1,s0)=P01(obs_id(occur),obs_id(occur),s1,s0)+H(occur,occur,s1); %symmetrize()
-            [ispd,dF,iF10,F(occur,occur,s1,s0)]=CheckPositiveDefiniteness(F(occur,occur,s1,s0));
+            [ispd,dF,iF10]=CheckPositiveDefiniteness(F(occur,occur,s1,s0));
             if ~ispd
                 retcode=305;
                 return

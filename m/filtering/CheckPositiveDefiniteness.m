@@ -1,23 +1,16 @@
-function [ispd,dF,iF,F]=CheckPositiveDefiniteness(F)
+function [ispd,dF,iF]=CheckPositiveDefiniteness(F)
 
-if any(any(isnan(F)))
-    ispd=false;
+ispd=false;
+if any(any(isnan(F)))||any(any(isinf(F)))
     iF=[];
     dF=[];
 else
-    [F,iF,dF] = hessian_conditioner(F,eps);
-    ispd=isfinite(dF) && dF>0;
+    dF=det(F);
+    if dF>0
+        ispd=true;
+        iF=F\eye(size(F,1));
+    end
 end
-
-
-% dF=det(F);
-% if dF>0
-%     iF=F\eye(size(F,1));
-%     if any(any(isnan(iF)))
-%         ispd=false;
-%     end
-% else
-% end
 
 end
 
