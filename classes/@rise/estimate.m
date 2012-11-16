@@ -215,16 +215,12 @@ PROBLEM=struct('objective',@fh_wrapper,...
 
 [x1,f1,H,issue]=estimation_engine(PROBLEM,hessian_type); %#ok<ASGLU>
 
-if obj(1).options.hessian_conditioning
-    % make the hessian diagonally dominant if necessary
-    Hc=hessian_conditioner(H);
-    if ~isequal(Hc,H)
-        warning([mfilename,':: non-positive definite hessian made diagonally dominant']) %#ok<WNTAG>
-        H=Hc; clear Hc
-    end
+% make the hessian positive definite if necessary
+[Hc,Hinv] = hessian_conditioner(H);
+if ~isequal(Hc,H)
+    warning([mfilename,':: non-positive definite hessian made diagonally dominant']) %#ok<WNTAG>
+    H=Hc; clear Hc
 end
-% get the covariance matrix
-Hinv=H\eye(npar);
 % the standard deviations
 SD=sqrt(diag(Hinv));
 
