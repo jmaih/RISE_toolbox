@@ -473,8 +473,9 @@ end
 end
 
 function varargout=archive(varargin)
-persistent mapObj_sad
-if isempty(mapObj_sad)
+if evalin('base','exist(''mapObj_sad'',''var'')')
+    mapObj_sad=evalin('base','mapObj_sad');
+else
     mapObj_sad=containers.Map;
 end
 varargout=varargin;
