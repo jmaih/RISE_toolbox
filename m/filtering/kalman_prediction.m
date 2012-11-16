@@ -6,7 +6,7 @@ if nargin==4
     Record=[];
     Rt=[];
 elseif nargin==10
-    [Tt,Rt,bt,junk,Record]=ConditionalStateMatrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
+    [Tt,Rt,bt,~,Record]=ConditionalStateMatrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
     RR=Rt*Rt';
 else
     error([mfilename,':: number of input arguments must be 4 or 10'])
