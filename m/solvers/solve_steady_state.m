@@ -1,17 +1,18 @@
-function [ys,retcode]=solve_steady_state(ys0,x_ss,param,resid_func,static_func,is_linear_model,optim_opt)
+function [ys,retcode]=solve_steady_state(ys0,x_ss,param,def,...
+    resid_func,static_func,is_linear_model,optim_opt)
 
 last_item=numel(ys0);
 switch is_linear_model
     case 1
         ys0=0*ys0;
         % compute the constant
-        const=resid_func(ys0,static_func,x_ss,param);
+        const=resid_func(ys0,static_func,x_ss,param,def);
         if any(const)
             % partial derivatives
             PD=zeros(last_item);
             for jj=1:last_item
                 yj=ys0;yj(jj)=1;
-                PD(:,jj)=resid_func(yj,static_func,x_ss,param)-const;
+                PD(:,jj)=resid_func(yj,static_func,x_ss,param,def)-const;
             end
             ys=-pinv(PD)*const; % <-- ys=-PD\const;
             % The generalized inverse works better when the system is
@@ -21,12 +22,12 @@ switch is_linear_model
         else
             ys=ys0;
         end
-        residuals=resid_func(ys,static_func,x_ss,param);
+        residuals=resid_func(ys,static_func,x_ss,param,def);
         exitflag=max(abs(residuals))<=optim_opt.TolFun;
     otherwise
         % Here is why we need good initial values. You cannot, say start at
         % zero for a variable in logs...
-        residuals=resid_func(ys0,static_func,x_ss,param);
+        residuals=resid_func(ys0,static_func,x_ss,param,def);
         if isnan(residuals)
             exitflag=-4;
             ys=nan;
@@ -35,9 +36,9 @@ switch is_linear_model
             exitflag=1;
         else
             optim_opt.Display='none';
-            [ys,junk,exitflag]=fsolve(resid_func,ys0,optim_opt,static_func,x_ss,param);
+            [ys,junk,exitflag]=fsolve(resid_func,ys0,optim_opt,static_func,x_ss,param,def);
             if exitflag~=1
-                residuals=resid_func(ys,static_func,x_ss,param);
+                residuals=resid_func(ys,static_func,x_ss,param,def);
                 if ~all(isnan(residuals))&& max(abs(residuals))<=optim_opt.TolFun
                     exitflag=1;
                 end

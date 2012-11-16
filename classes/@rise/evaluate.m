@@ -63,13 +63,18 @@ end
 endo_nbr=obj.NumberOfEndogenous(1);
 ss_and_bgp_start_vals=zeros(2*endo_nbr,obj.NumberOfRegimes);
 
+vectorized_code=endo_nbr<=obj.options.vectorized_code_threshold;
+dynamic_params=obj.func_handles.dynamic_params;
 ssfunc=obj.func_handles.steady_state_model;
 vectorized_dynamic=obj.func_handles.vectorized_dynamic;
 dynamic=obj.func_handles.dynamic;
-vectorized_code=endo_nbr<=obj.options.vectorized_code_threshold;
 static=obj.func_handles.static;
 balanced_growth=obj.func_handles.balanced_growth;
+endo_exo_derivatives=obj.func_handles.endo_exo_derivatives;
+param_derivatives=obj.func_handles.param_derivatives;
 planner=obj.func_handles.planner;
+vectorized_dynamic_params=obj.func_handles.vectorized_dynamic_params;
+definitions=obj.func_handles.definitions;
 if obj.options.use_steady_state_model && ~isempty(ssfunc)
     optimopt=optimset('display','none','maxiter',400);
     [ss,retcode]=steady_state_evaluation(obj.parameters,obj.is_unique_steady_state,optimopt,ssfunc);
@@ -118,6 +123,8 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
             pp_i=mean(M,2);
         end
         ss_and_bgp_i=ss_and_bgp_start_vals(:,ii);
+        def=eval(definitions,pp_i); %#ok<*EVLC>
+        def=def{1};
         if isempty(obj.is_stationary_model)
             % determine stationarity
             [is_stationary,ss_and_bgp_i,retcode]=determine_stationarity_status();
@@ -137,7 +144,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         else
             % solve the steady state
             [ss_and_bgp_i(1:last_item),retcode]=...
-                solve_steady_state(ss_and_bgp_i(1:last_item),x_ss,pp_i,...
+                solve_steady_state(ss_and_bgp_i(1:last_item),x_ss,pp_i,def,...
                 resid_func,static_func,obj.is_linear_model,obj.options.optimset);
         end
         if ~retcode
@@ -159,11 +166,23 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
  
     switch derivative_type
         case 'symbolic'
-            J=eval(obj.func_handles.derivatives,ss_i(indices),x_ss,ss_i,M(:,ii));
+            J=eval(endo_exo_derivatives,ss_i(indices),x_ss,ss_i,M(:,ii),def);
             J=J{1};
+           if ~isempty(switching)
+                JP=eval(param_derivatives,ss_i(indices),x_ss,ss_i,M(:,ii)); %#ok<*GTARG>
+                J=[J,JP{1}]; %#ok<AGROW>
+            end
         case 'numerical'
-            z=[ss_i(indices);x_ss;M(:,ii)];
-            J=rise_numjac(vectorized_dynamic,z,ss_i);
+            z=[ss_i(indices);x_ss];
+            J=rise_numjac(vectorized_dynamic,z,M(:,ii),ss_i,def);
+           if ~isempty(switching)
+               % now the z vector has to be a matrix in order to avoid a
+               % breakdown occurring when no parameter is present in some
+               % equations.
+               z=z(:,ones(1,size(M,1)));
+                JP=rise_numjac(vectorized_dynamic_params,M(:,ii),z,ss_i);
+                J=[J,JP]; %#ok<AGROW>
+            end
        case 'automatic'
             z=[ss_i(indices);x_ss;M(:,ii)];
             if ii==1
@@ -172,7 +191,6 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
                 zmad=set(zmad,'x',z(:));
             end
             J=get(dynamic(zmad,ss_i,M(:,ii)),'dx');
-%             J=full(first_order_derivatives(dynamic,z,ss_i,M(:,ii)));
     end
     if any(any(isnan(J)))
         retcode=2; % nans in jacobian
@@ -251,15 +269,15 @@ obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
 
 
     function [is_stationary,ys,retcode]=determine_stationarity_status()
-        
+
         is_stationary=[];
         % try stationarity
         ys=ss_and_bgp_i;
-        [ys(1:endo_nbr),retcode]=solve_steady_state(ss_and_bgp_i(1:endo_nbr),x_ss,pp_i,...
+        [ys(1:endo_nbr),retcode]=solve_steady_state(ss_and_bgp_i(1:endo_nbr),x_ss,pp_i,def,...
             @steady_state_residuals,static,obj.is_linear_model,obj.options.optimset);
         if retcode
             % try nonstationarity
-            [ys,retcode]=solve_steady_state(ss_and_bgp_i,x_ss,pp_i,...
+            [ys,retcode]=solve_steady_state(ss_and_bgp_i,x_ss,pp_i,def,...
                 @balanced_growth_path_residuals,balanced_growth,obj.is_linear_model,obj.options.optimset);
             if ~retcode
                 is_stationary=false;
@@ -282,12 +300,6 @@ end
 
 function [objective,commitment,discount,der1,der2]=policy_evaluation(y,ss,param,planner) %#ok<STOUT,INUSL>
 eval(planner);
-end
-
-function res=derivatives_evaluation(ss,x,param,indices,deriv_func) %#ok<STOUT,INUSL>
-y=ss(indices);
-y=y(:); %#ok<NASGU>
-eval(deriv_func)
 end
 
 function [ss,retcode]=steady_state_evaluation(param_obj,unique_ss,options,ssfunc) %#ok<INUSL>
@@ -328,19 +340,19 @@ end
 end
 
 
-function lhs=steady_state_residuals(y,func_ss,x,param)
+function lhs=steady_state_residuals(y,func_ss,x,param,def)
 % if the structural model is defined in terms of steady states, then the
 % the word ss will appear in the static model. But then, those values are
 % the same as those found in y
 ss=y;
-lhs=func_ss(y,x,ss,param);
+lhs=func_ss(y,x,ss,param,def);
 end
 
-function lhs=balanced_growth_path_residuals(y,func_bgp,x,param)
+function lhs=balanced_growth_path_residuals(y,func_bgp,x,param,def)
 ss=y;
 % in this case, the y vector also contains the balanced-growth values.
 % copying the whole vector to ss does not harm since only the relevant
 % elements in the upper part of y will be picked up.
-lhs=func_bgp(y,x,ss,param);
+lhs=func_bgp(y,x,ss,param,def);
 end
 

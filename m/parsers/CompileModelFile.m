@@ -973,11 +973,9 @@ for ii=1:exo_nbr
 end
 
 param_list_={};
-for ii=1:numel(dictionary.parameters)
+nparams=numel(dictionary.parameters);
+for ii=1:nparams
     token=['param_',int2str(ii)];
-    %         if dictionary.parameters(ii).is_switching && ~dictionary.parameters(ii).is_measurement_error
-    %             with_respect_to=[with_respect_to,{token}];
-    %         end
     param_list_=[param_list_,{token}];
 end
 % Get rid of definitions
@@ -985,6 +983,24 @@ end
 % In the loop below, I must start from the last definition otherwise,
 % strrep will mess things up in case there are definitions with more than 1
 % digit.
+def_list_=defcell_symb(:,1);
+with_respect_to=[endo_list_,exo_list_];%
+% add the list of the symbolic parameters and the definitions
+list_ss=collect_symbolic_list(symbolic_original,'ss_');
+symb_list=[param_list_,with_respect_to,list_ss,def_list_(:)'];
+% derivatives with respect to the endogenous and the exogenous
+% first destroy any previous derivatives elements
+disp([mfilename,':: computing first-order derivatives with respect to all endogenous and exogenous'])
+neqstr=int2str(numel(symbolic_original));
+tic
+sad.destroy();
+[model_derivatives,model_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
+% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
+jac_toc=toc();
+disp([mfilename,':: Computation of 1st-order derivatives wrt ',int2str(exo_nbr+lli_nbr),' VARIABLES in ',neqstr,' equations: ',num2str(jac_toc),' seconds'])
+
+% now replace the definitions occurring in the symbolic_original in order
+% to differentiate with respect to the parameters.
 for ii=numel(dictionary.definitions):-1:1
     % mask it in order to avoid sign problems
     symbolic_original=strrep(symbolic_original,defcell_symb{ii,1},['(',defcell_symb{ii,2},')']);
@@ -992,30 +1008,36 @@ for ii=numel(dictionary.definitions):-1:1
         dictionary.planner.symbolic_model(1)=strrep(dictionary.planner.symbolic_model(1),defcell_symb{ii,1},['(',defcell_symb{ii,2},')']);
     end
 end
-with_respect_to=[endo_list_,exo_list_,param_list_];
-% add the list of the symbolic parameters
-list_ss=collect_symbolic_list(symbolic_original,'ss_');
-symb_list=[with_respect_to,list_ss];
 
 % first destroy any previous derivatives elements
-disp([mfilename,':: computing first-order derivatives with respect to all endogenous, exogenous and parameters'])
+disp([mfilename,':: computing 1st-order derivatives with respect to all parameters'])
 tic
 sad.destroy();
-[dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
+nnn=numel(param_list_)+numel(list_ss)+numel(with_respect_to);
+symb_list=symb_list(1:nnn);
+with_respect_to=param_list_;
+[param_derivatives,param_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
+% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
 jac_toc=toc();
-disp([mfilename,':: The computation of first-order derivatives took ',num2str(jac_toc),' seconds'])
+disp([mfilename,':: Computation of 1st-order derivatives wrt ',int2str(nparams),' PARAMETERS in ',neqstr,' equations: ',num2str(jac_toc),' seconds'])
 
 % should differentiate the steady state from the other variables here...
 % otherwise this won't work well.
 
 % put things in an analytic form
-validnames={'y','x','param','ss'};
-dynamic.model_derivatives=analytical_symbolic_form(dynamic.model_derivatives,validnames,'analytic');
-auxiliary_jacobian=analytical_symbolic_form(auxiliary_jacobian,validnames,'analytic');
+validnames={'y','x','param','ss','def'};
+Items={'model_derivatives','model_auxiliary_jacobian','param_derivatives','param_auxiliary_jacobian'};
+for it=1:numel(Items)
+    eval([Items{it},'=analytical_symbolic_form(',Items{it},',validnames,''analytic'');'])
+%     dynamic.(Items{it})=analytical_symbolic_form(eval(Items{it}),validnames,'analytic');
+end
 % for the moment, put all in the same matrix
-JESP=cellstr2mat(dynamic.model_derivatives);
-
-dynamic.model_derivatives=struct('Endogenous_Shocks_parameters',{JESP},'auxiliary_jacobian',{auxiliary_jacobian});
+JES=cellstr2mat(model_derivatives);
+JP=cellstr2mat(param_derivatives);
+dynamic.model_derivatives=struct(...
+    'Endogenous_Shocks',{JES},'Endogenous_Shocks_auxiliary_jacobian',{model_auxiliary_jacobian},...
+    'Parameters',{JP},'Parameters_auxiliary_jacobian',{param_auxiliary_jacobian}...
+    );
 
 if is_model_with_planner_objective
     % note that the variables are not the same here!!! although I take
