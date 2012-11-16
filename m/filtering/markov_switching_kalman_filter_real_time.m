@@ -27,7 +27,12 @@ kf_algorithm='';
 kf_tol=0;
 kf_filtering_level=0;
 
-error(nargchk(11,13,nargin,'struct'))
+try
+    narginchk(11,13)
+catch %#ok<CTCH>
+    % for backward compatibility
+    error(nargchk(11,13,nargin,'struct')) %#ok<NCHKN>
+end
 
 if nargin<13
     WB=[];
@@ -80,7 +85,7 @@ Filters=[];
 Incr=[];
 LogLik=nan;
 
-[endo_nbr,junk,order,h]=size(R);
+[endo_nbr,~,order,h]=size(R);
 % currently this would not work for nsteps>1 but we will see.
 
 [pp,smpl]=size(y);
@@ -137,7 +142,7 @@ for s1=1:h
 end
 P01=zeros(mm,mm,h,hstar);
 for s1=1:h
-    [junk,tmp,PAItt,start,retcode]=kalman_initialization(...
+    [~,tmp,PAItt,start,retcode]=kalman_initialization(...
         T(:,:,s1),R(:,:,1,s1)*R(:,:,1,s1)',Q0,init_options);
     if retcode==0
         for s0=1:hstar
@@ -202,7 +207,7 @@ for t=1:smpl
             v(occur,s1,s0)=data(occur)-a01(obs_id(occur),s1,s0);
             % Symmetrize it first, just in case
             F(occur,occur,s1,s0)=P01(obs_id(occur),obs_id,s1(occur),s0)+H(occur,occur,s1);% symmetrize()
-            [ispd,dF,iF10]=CheckPositiveDefiniteness(F(occur,occur,s1,s0));
+            [ispd,dF,iF10,F(occur,occur,s1,s0)]=CheckPositiveDefiniteness(F(occur,occur,s1,s0));
             if ~ispd
                 retcode=305;
                 return

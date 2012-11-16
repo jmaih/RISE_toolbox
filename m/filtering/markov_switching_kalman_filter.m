@@ -26,7 +26,12 @@ if nargin==0
     return
 end
 
-error(nargchk(6,9,nargin))
+try
+    narginchk(6,9)
+catch %#ok<CTCH>
+    % for backward compatibility
+    error(nargchk(6,9,nargin)) %#ok<NCHKN>
+end
 
 if nargin<9
     WB=[];
@@ -77,7 +82,7 @@ Filters=[];
 Incr=[];
 LogLik=nan;
 
-[endo_nbr,junk,nsteps,h]=size(R);
+[endo_nbr,~,nsteps,h]=size(R);
 
 if nsteps>1
     error([mfilename,':: this seems to be a candidate for the real-time filter'])
@@ -120,7 +125,7 @@ for s1=1:h
     
     % initialize the filter but also modify T and RR if there are
     % nonstationary variables
-    [junk,tmp,PAItt,start,retcode]=kalman_initialization(T(:,:,s1),RR(:,:,s1),...
+    [~,tmp,PAItt,start,retcode]=kalman_initialization(T(:,:,s1),RR(:,:,s1),...
         Q0,init_options);
     if retcode==0
         for s0=1:hstar
@@ -179,7 +184,7 @@ for t=1:smpl
             v(occur,s1,s0)=data(occur,1)-a01(obs_id(occur),s1,s0);
             % Symmetrize it first, just in case
             F(occur,occur,s1,s0)=P01(obs_id(occur),obs_id(occur),s1,s0)+H(occur,occur,s1); %symmetrize()
-            [ispd,dF,iF10]=CheckPositiveDefiniteness(F(occur,occur,s1,s0));
+            [ispd,dF,iF10,F(occur,occur,s1,s0)]=CheckPositiveDefiniteness(F(occur,occur,s1,s0));
             if ~ispd
                 retcode=305;
                 return
