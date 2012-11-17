@@ -1,14 +1,15 @@
 function [ispd,dF,iF]=CheckPositiveDefiniteness(F)
 
 ispd=false;
-if any(any(isnan(F)))||any(any(isinf(F)))
-    iF=[];
-    dF=[];
-else
-    dF=det(F);
-    if dF>0
-        ispd=true;
-        iF=F\eye(size(F,1));
+iF=[];
+dF=[];
+if ~(any(any(isnan(F)))||any(any(isinf(F))))
+    [V,D]=eig(F);
+    eigvals=diag(D);
+    ispd=min(eigvals)>0;
+    if ispd
+        dF=prod(eigvals);
+        iF=V*diag(1./eigvals)*V';
     end
 end
 
@@ -16,7 +17,7 @@ end
 
 % all( all( M == M' ) ) & min( eig( M ) ) > 0
 % Alternatively, one may use the test
-% 
+%
 % M = [...];     % assume M is square
 % isposdef = true;
 % for i=1:length(M)
