@@ -994,8 +994,8 @@ disp([mfilename,':: computing first-order derivatives with respect to all endoge
 neqstr=int2str(numel(symbolic_original));
 tic
 sad.destroy();
-[model_derivatives,model_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
-% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
+[model_derivatives,model_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
+% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
 jac_toc=toc();
 disp([mfilename,':: Computation of 1st-order derivatives wrt ',int2str(exo_nbr+lli_nbr),' VARIABLES in ',neqstr,' equations: ',num2str(jac_toc),' seconds'])
 
@@ -1016,8 +1016,8 @@ sad.destroy();
 nnn=numel(param_list_)+numel(list_ss)+numel(with_respect_to);
 symb_list=symb_list(1:nnn);
 with_respect_to=param_list_;
-[param_derivatives,param_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
-% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
+[param_derivatives,param_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
+% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
 jac_toc=toc();
 disp([mfilename,':: Computation of 1st-order derivatives wrt ',int2str(nparams),' PARAMETERS in ',neqstr,' equations: ',num2str(jac_toc),' seconds'])
 
