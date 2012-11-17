@@ -318,7 +318,7 @@ warning('on','MATLAB:illConditionedMatrix')
     function p=violation_penalizer(viol)
 %%%		too_small=viol>0 & viol<1;
 %%%		viol(too_small)=1+viol(too_small);
-        p=sum(estim_nonlcon_viol_penalty*viol.^3);
+        p=estim_nonlcon_viol_penalty*sum(viol.^2);
     end
 
     function [viol,grad]=nonlcon_with_gradient(x)
