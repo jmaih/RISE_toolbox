@@ -7,6 +7,7 @@ for ii=1:nobj
     figure('name',['pdf + cdf + inv_cdf (',obj(ii).distribution,'(',num2str(obj(ii).a),',',num2str(obj(ii).b),')) for parameter ',obj(ii).name]);
     % functions of the distribution
     [lpdfn,cdfn,icdfn]=distributions.(obj(ii).distribution)();
+    
     subplot(2,2,1)
     xx=linspace(obj(ii).lb,obj(ii).ub,N);
     dens=exp(lpdfn(xx,obj(ii).a,obj(ii).b,obj(ii).c,obj(ii).d));
@@ -19,13 +20,16 @@ for ii=1:nobj
     xx=xx(significant);dens=dens(significant);
     plot(xx,dens); axis tight
     title('probability density function (PDF)')
+    
     subplot(2,2,2)
     plot(xx,cdfn(xx,obj(ii).a,obj(ii).b,obj(ii).c,obj(ii).d)); axis tight
     title('cumulative density function (CDF)')
+    
     subplot(2,2,3)
     u=linspace(0,1,N);
     plot(u,icdfn(u,obj(ii).a,obj(ii).b,obj(ii).c,obj(ii).d)); axis tight
     title('Inverse cumulative density function')
+    
     subplot(2,2,4)
     resfunc=@(a,b)sqrt((cdfn(obj(ii).plb,a,b,obj(ii).c,obj(ii).d)-.5*(1-obj(ii).interval_probability)).^2+...
         (cdfn(obj(ii).pub,a,b,obj(ii).c,obj(ii).d)-.5*(1+obj(ii).interval_probability)).^2);
@@ -55,7 +59,7 @@ for ii=1:nobj
         if right>ab_space(2,2)
             right=[];
         end
-        bvals=[left,bvals,right];
+        bvals=[left,bvals,right]; %#ok<*AGROW>
     end
     [aa,bb]=meshgrid(avals,bvals);
     zz=resfunc(aa,bb);
