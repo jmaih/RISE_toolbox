@@ -1,4 +1,4 @@
-classdef my_sad < handle
+classdef my_sad %< handle
     properties
         name
         args
@@ -10,10 +10,7 @@ classdef my_sad < handle
                     obj=name;
                 else
                     obj.name=name;
-                    if nargin<2
-                        arg=[];
-                    end
-                    if isempty(arg)
+                    if nargin<2||isempty(arg)
                         arg={};
                     end
                     if ~iscell(arg)
@@ -151,20 +148,37 @@ classdef my_sad < handle
             this=mydiff(obj,wrt);
         end
     end
-    methods(Access=private)        
+    methods(Access=private)
+        function this=push(this,a,b)
+            if nargin<3
+                b={};
+                if nargin<2
+                    a='';
+                end
+            end
+            if isa(a,'my_sad')
+                this=a;
+            else
+                if ~iscell(b) && ~isa(b,'my_sad')
+                    b={b};
+                end
+                this.name=a;
+                this.args=b;
+            end
+        end
         function this=mydiff(obj,wrt)
             this=my_sad.empty(0,0);
             for iobj=1:numel(obj)
                 if isnumeric(obj(iobj).name)
-                    this(iobj,1)=my_sad(0);
+                    this(iobj,1)=obj.push(0);
                 elseif isempty(obj(iobj).args)
                     if isequal(obj(iobj).name,wrt.name)
-                        this(iobj,1)=my_sad(1);
+                        this(iobj,1)=obj.push(1);
                     else
-                        this(iobj,1)=my_sad(0);
+                        this(iobj,1)=obj.push(0);
                     end
                 else
-                    u=my_sad(obj(iobj).args{1});
+                    u=obj.push(obj(iobj).args{1});
                     n_args=numel(obj(iobj).args);
                     if n_args>1
                         v=my_sad(obj(iobj).args{2});
@@ -179,7 +193,7 @@ classdef my_sad < handle
                     elseif isa(wrt,'my_sad')
                         this(iobj,1)=differentiation_engine(iobj,wrt);
                     elseif isa(wrt,'char')
-                        this(iobj,1)=differentiation_engine(iobj,my_sad(wrt));
+                        this(iobj,1)=differentiation_engine(iobj,obj.push(wrt));
                     else
                         error([mfilename,':: second argument must be my_sad object'])
                     end
@@ -189,7 +203,7 @@ classdef my_sad < handle
                 du=mydiff(u,wrt);
                 switch obj(index).name
                     case {'gt','ge','lt','le','sign'}
-                        this=my_sad(0);
+                        this=obj(index).push(0);
                     case 'plus'
                         dv=mydiff(v,wrt);
                         this=du+dv;
