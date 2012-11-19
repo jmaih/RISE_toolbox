@@ -70,7 +70,9 @@ switch func
             c=tryevaluate([a,'/',b]);
         end
     otherwise
-        error(['Unknown operator ''',func,''])
+        a=tryevaluate(a);
+        b=tryevaluate(b);
+        c=[func,'(',a,',',b,')'];
 end
 c=tryevaluate(c);
 
