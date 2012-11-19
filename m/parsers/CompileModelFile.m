@@ -172,7 +172,7 @@ for ii=1:numel(dic_items)
     loc=strcmp(dic_items{ii},{blocks.name});
     dictionary.(dic_items{ii})=struct('name',{},'tex_name',{});
     % sort variables and parameters right here right now
-    [junk,tags]=sort(blocks(loc).listing(:,1));
+    [~,tags]=sort(blocks(loc).listing(:,1));
     for jj=1:numel(tags)
         dictionary.(dic_items{ii})(jj).name=blocks(loc).listing{tags(jj),1};
         dictionary.(dic_items{ii})(jj).tex_name=blocks(loc).listing{tags(jj),2};
@@ -340,7 +340,7 @@ end
 clear variables
 
 %% Now we can re-order the original (and augmented) endogenous
-[junk,tags]=sort({dictionary.orig_endogenous.name});
+[~,tags]=sort({dictionary.orig_endogenous.name});
 dictionary.orig_endogenous=dictionary.orig_endogenous(tags);
 % as well as the same list but without the augmentation add-ons
 orig_endogenous_current=orig_endogenous_current(tags);
@@ -707,7 +707,7 @@ if numel(dictionary.log_vars)
         dictionary.orig_endogenous(var_pos).name=['LOG_',vname];
     end
     % re-order the variables
-    [junk,tags]=sort({dictionary.orig_endogenous.name});
+    [~,tags]=sort({dictionary.orig_endogenous.name});
     dictionary.orig_endogenous=dictionary.orig_endogenous(tags);
     % re-order the incidence and occurrence matrices accordingly
     Occurrence=Occurrence(:,tags,:);
@@ -1012,10 +1012,11 @@ end
 % first destroy any previous derivatives elements
 disp([mfilename,':: computing 1st-order derivatives with respect to all parameters'])
 tic
-sad.destroy();
 nnn=numel(param_list_)+numel(list_ss)+numel(with_respect_to);
 symb_list=symb_list(1:nnn);
 with_respect_to=param_list_;
+
+sad.destroy();
 [param_derivatives,param_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
 % [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
 jac_toc=toc();
@@ -1121,7 +1122,7 @@ else
     end
 end
 % now we can resort the final variables
-[junk,tags]=sort({unsorted_endogenous.name});
+[~,tags]=sort({unsorted_endogenous.name});
 dictionary.endogenous=unsorted_endogenous(tags);
 % this will be used to reorder the solution of loose commitment or sticky
 % information
@@ -1810,7 +1811,7 @@ dictionary=orderfields(dictionary);
             newparam=struct('name',tokk,'tex_name','','max_lead',0,'max_lag',0,'is_switching',false,'is_measurement_error',true);
             dictionary.parameters=[dictionary.parameters,newparam];
             clear newparam
-            [junk,tags]=sort({dictionary.parameters.name});
+            [~,tags]=sort({dictionary.parameters.name});
             dictionary.parameters=dictionary.parameters(tags);
             % the new parameter is of course in use.
             is_in_use_parameter=[is_in_use_parameter;true];
@@ -1820,7 +1821,7 @@ dictionary=orderfields(dictionary);
             error([mfilename,':: ',tokk,' is not recognized as a parameter or as an observable variable in ',file_name_,' at line(s) ',iline_])
         end
         % diagonal transition probabilities not estimated
-        [junk,diagonal]=is_transition_probability(tokk);
+        [~,diagonal]=is_transition_probability(tokk);
         if diagonal
             error([mfilename,':: diagonal transition probabilities are not allowed in ',file_name_,' at line(s) ',iline_])
         end
@@ -1923,7 +1924,7 @@ dictionary=orderfields(dictionary);
 
     function block=construct_list(block,rawline_,tokk)
         if is_trigger
-            [junk,junk,rawline_]=look_around(tokk,rawline_);
+            [~,~,rawline_]=look_around(tokk,rawline_);
         end
         end_game=~isempty(strfind(rawline_,';'));
         while ~isempty(rawline_)
@@ -1985,7 +1986,7 @@ dictionary=orderfields(dictionary);
             rawline_=rest_;
         end
         if end_game
-            [junk,tags]=sort(block.listing(:,1));
+            [~,tags]=sort(block.listing(:,1));
             block.listing=block.listing(tags,:);
             block.active=false;
         end
@@ -2087,7 +2088,7 @@ fclose(fid);
 
 if inclusions
     expanded=['expanded_',FileName(1:end-4),FileName(end-3:end)];
-    try % this would fail under parallel computing
+    try %#ok<TRYNC> % this would fail under parallel computing
         if exist(expanded,'file')
             delete(expanded)
         end
