@@ -109,7 +109,7 @@ handle_struct.vectorized_dynamic_params=create_function_handle({'param','z','ss'
 handle_struct.transition_matrix=rise_anonymous.empty(0,1);
 for ii=1:numel(obj.shadow_transition_matrix)
     tm_i=obj.shadow_transition_matrix(ii).Q;
-    handle_struct.transition_matrix(ii,1)=rise_anonymous(tm_i.size,str2func(['@(y,x,ss,param)double([',tm_i.string,'])']),tm_i.indices);
+    handle_struct.transition_matrix(ii,1)=rise_anonymous(tm_i.size,str2func(['@(y,x,ss,param)[',tm_i.string,']']),tm_i.indices);
 end
 %% steady state
 % the steady state has equalities and will need to be evaluated. It can't
@@ -130,14 +130,14 @@ aux_jac=cell2mat(obj.model_derivatives.Endogenous_Shocks_auxiliary_jacobian(:)')
 if isempty(aux_jac)
     aux_jac='';
 end
-JES=rise_anonymous(JES.size,str2func(['@(y,x,ss,param,def)double([',JES.string,'])']),JES.indices,aux_jac);
+JES=rise_anonymous(JES.size,str2func(['@(y,x,ss,param,def)[',JES.string,']']),JES.indices,aux_jac);
 handle_struct.endo_exo_derivatives=JES;
 JP= obj.model_derivatives.Parameters;
 aux_jac=cell2mat(obj.model_derivatives.Parameters_auxiliary_jacobian(:)');
 if isempty(aux_jac)
     aux_jac='';
 end
-JP=rise_anonymous(JP.size,str2func(['@(y,x,ss,param)double([',JP.string,'])']),JP.indices,aux_jac);
+JP=rise_anonymous(JP.size,str2func(['@(y,x,ss,param)[',JP.string,']']),JP.indices,aux_jac);
 handle_struct.param_derivatives=JP;
 
 
@@ -159,7 +159,7 @@ else
     for ii=1:numel(items)
         vi=items{ii};
         tmp=obj.planner.(vi);
-        handle_struct.planner.(vi)=rise_anonymous(tmp.size,str2func(['@(y,x,ss,param)double([',tmp.string,'])']),tmp.indices);
+        handle_struct.planner.(vi)=rise_anonymous(tmp.size,str2func(['@(y,x,ss,param)[',tmp.string,']']),tmp.indices);
     end
 end
 obj.func_handles=handle_struct;
@@ -196,7 +196,7 @@ inputList=inputList(1:end-1);
 tmp=cell2mat(cellarray);
 tmp(isspace(tmp))=[];
 tmp(end)=[]; % remove last semicolon
-tmp=['@(',inputList,')double([',tmp,'])'];
+tmp=['@(',inputList,')[',tmp,']'];
 fhandle=str2func(tmp);
 end
 
