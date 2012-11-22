@@ -182,15 +182,17 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
                z=z(:,ones(1,size(M,1)));
                 JP=rise_numjac(vectorized_dynamic_params,M(:,ii),z,ss_i);
                 J=[J,JP]; %#ok<AGROW>
+           end
+        case 'automatic'
+            z=[ss_i(indices);x_ss];
+            zz=rise_nad(z);
+            this=dynamic(zz,M(:,ii),ss_i,def);
+            J=get(this,'dx');
+            if ~isempty(switching)
+                this=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
+                JP=get(this,'dx');
+                J=[J,JP]; %#ok<AGROW>
             end
-       case 'automatic'
-            z=[ss_i(indices);x_ss;M(:,ii)];
-            if ii==1
-                zmad=automatic(z);
-            else
-                zmad=set(zmad,'x',z(:));
-            end
-            J=get(dynamic(zmad,ss_i,M(:,ii)),'dx');
     end
     if any(any(isnan(J)))
         retcode=2; % nans in jacobian
