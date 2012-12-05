@@ -48,6 +48,7 @@ else
     dictionary.filename=FileName(1:loc-1);
 end
 
+% read file and remove comments
 RawFile=read_file(FileName);
 
 blocks=struct('name',{'log_vars','orig_endogenous','exogenous','parameters',...
@@ -72,10 +73,7 @@ NumberOfLines=size(RawFile,1);
 iline=0;
 while iline<NumberOfLines
     iline=iline+1;
-    rawline=remove_comments(RawFile{iline,1});
-    if all(isspace(rawline))
-        continue
-    end
+    rawline=RawFile{iline,1};
     file_name=RawFile{iline,2};
     line_number=RawFile{iline,3};
     
@@ -744,7 +742,6 @@ dictionary.planner.shadow_model=cell(0,1);
 dictionary.planner.symbolic_model=cell(0,1);
 
 static.steady_state_shadow_model=cell(0,1);
-symbolic_original=cell(0,1);
 shadow_definitions=cell(0,1);
 orig_definitions=cell(0,1);
 shadow_tvp=cell(0,1);
@@ -753,8 +750,8 @@ for ii=1:numel(equation_type)
     % we don't need the semicolons anymore
     eq_i=AllModels{ii};
     o_m='';s_m='';sh_o='';sh_s='';sh_b1='';sh_b2='';
-    sy_o='';sh_d='';sh_tvp='';sh_vo='';sh_ssm='';
-    sh_pl='';sy_pl=''; o_d='';
+    sh_d='';sh_tvp='';sh_vo='';sh_ssm='';
+    sh_pl='';o_d='';
     is_def=equation_type(ii)==2;
     is_tvp=equation_type(ii)==3;
     is_sseq=equation_type(ii)==4;
@@ -781,7 +778,6 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,'y(',int2str(index),')'];
                 elseif is_planner
                     sh_pl=[sh_pl,'y(',int2str(index),')'];
-                    sy_pl=[sy_pl,'y_',int2str(index)];
                 else
                     o_m=[o_m,item];
                     if lead_or_lag
@@ -793,7 +789,6 @@ for ii=1:numel(equation_type)
                     else
                         sh_vo=[sh_vo,'y(',int2str(index),',:)'];
                     end
-                    sy_o=[sy_o,'y_',int2str(index)];
                     s_m=[s_m,item];
                     sh_s=[sh_s,'y(',int2str(pos),')'];
                     switch lead_or_lag
@@ -822,7 +817,6 @@ for ii=1:numel(equation_type)
                     o_m=[o_m,item];
                     sh_o=[sh_o,'x(',int2str(pos),')'];
                     sh_vo=[sh_vo,'x(',int2str(pos),',:)'];
-                    sy_o=[sy_o,'x_',int2str(pos)];
                     s_m=[s_m,item];
                     sh_s=[sh_s,'x(',int2str(pos),')'];
                     sh_b1=[sh_b1,'x(',int2str(pos),')'];
@@ -838,12 +832,10 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,'param(',int2str(pos),')'];
                 elseif is_planner
                     sh_pl=[sh_pl,'param(',int2str(pos),')'];
-                    sy_pl=[sy_pl,'param_',int2str(pos)];
                 else
                     o_m=[o_m,item];
                     sh_o=[sh_o,'param(',int2str(pos),')'];
                     sh_vo=[sh_vo,'param(',int2str(pos),')'];
-                    sy_o=[sy_o,'param_',int2str(pos)];
                     s_m=[s_m,item];
                     sh_s=[sh_s,'param(',int2str(pos),')'];
                     sh_b1=[sh_b1,'param(',int2str(pos),')'];
@@ -859,14 +851,12 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,'def(',int2str(pos),')'];
                 elseif is_planner
                     sh_pl=[sh_pl,'def(',int2str(pos),')'];
-                    sy_pl=[sy_pl,'def_',int2str(pos)];
                 else
                     o_m=[o_m,item];
                     s_m=[s_m,item];
                     sh_o=[sh_o,'def(',int2str(pos),')'];
                     sh_vo=[sh_vo,'def(',int2str(pos),')'];
                     sh_s=[sh_s,'def(',int2str(pos),')'];
-                    sy_o=[sy_o,'def_',int2str(pos)];
                     sh_b1=[sh_b1,'def(',int2str(pos),')'];
                     sh_b2=[sh_b2,'def(',int2str(pos),')'];
                 end
@@ -891,14 +881,12 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,item];
                 elseif is_planner
                     sh_pl=[sh_pl,item];
-                    sy_pl=[sy_pl,item];
                 else
                     o_m=[o_m,item];
                     s_m=[s_m,item];
                     sh_o=[sh_o,item];
                     sh_vo=[sh_vo,item];
                     sh_s=[sh_s,item];
-                    sy_o=[sy_o,item];
                     sh_b1=[sh_b1,item];
                     sh_b2=[sh_b2,item];
                 end
@@ -914,14 +902,12 @@ for ii=1:numel(equation_type)
         % put back the semicolon as this is going to be evaluated
     elseif is_planner
         dictionary.planner.shadow_model=[dictionary.planner.shadow_model;{sh_pl}];
-        dictionary.planner.symbolic_model=[dictionary.planner.symbolic_model;{sy_pl}];
     else
         dynamic.model=[dynamic.model;{o_m}];
         static.model=[static.model;{s_m}];
         dynamic.shadow_model=[dynamic.shadow_model;{replace_steady_state_call(sh_o)}];
         static.shadow_model=[static.shadow_model;{replace_steady_state_call(sh_s)}];
         static.shadow_BGP_model=[static.shadow_BGP_model;{replace_steady_state_call(sh_b1)};{replace_steady_state_call(sh_b2)}];
-        symbolic_original=[symbolic_original;{replace_steady_state_call(sy_o,'symbolic')}];
     end
 end
 
@@ -956,107 +942,64 @@ if ~isempty(static.steady_state_shadow_model)
     static.steady_state_shadow_model=[{['y=zeros(',int2str(orig_endo_nbr),',1);']};static.steady_state_shadow_model];
 end
 
-%% symbolic derivatives
-% variables to differentiate wrt
-endo_list_={};
-lli_nbr=nnz(dictionary.Lead_lag_incidence);
-for ii=1:lli_nbr
-    token=['y_',int2str(ii)];
-    endo_list_=[endo_list_,{token}];
-end
-
-exo_list_={};
-exo_nbr=numel(dictionary.exogenous);
-for ii=1:exo_nbr
-    token=['x_',int2str(ii)];
-    exo_list_=[exo_list_,{token}];
-end
-
-param_list_={};
-nparams=numel(dictionary.parameters);
-for ii=1:nparams
-    token=['param_',int2str(ii)];
-    param_list_=[param_list_,{token}];
-end
-% Get rid of definitions
-[defcell,defcell_symb]=format_definitions();
-% In the loop below, I must start from the last definition otherwise,
-% strrep will mess things up in case there are definitions with more than 1
-% digit.
-def_list_=defcell_symb(:,1);
-with_respect_to=[endo_list_,exo_list_];%
-% add the list of the symbolic parameters and the definitions
-list_ss=collect_symbolic_list(symbolic_original,'ss_');
-symb_list=[param_list_,with_respect_to,list_ss,def_list_(:)'];
-% derivatives with respect to the endogenous and the exogenous
-% first destroy any previous derivatives elements
-disp([mfilename,':: computing first-order derivatives with respect to all endogenous and exogenous'])
-neqstr=int2str(numel(symbolic_original));
-tic
-sad.destroy();
-[model_derivatives,model_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
-% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
-jac_toc=toc();
-disp([mfilename,':: Computation of 1st-order derivatives wrt ',int2str(exo_nbr+lli_nbr),' VARIABLES in ',neqstr,' equations: ',num2str(jac_toc),' seconds'])
-
-% now replace the definitions occurring in the symbolic_original in order
-% to differentiate with respect to the parameters.
-for ii=numel(dictionary.definitions):-1:1
-    % mask it in order to avoid sign problems
-    symbolic_original=strrep(symbolic_original,defcell_symb{ii,1},['(',defcell_symb{ii,2},')']);
-    if is_model_with_planner_objective
-        dictionary.planner.symbolic_model(1)=strrep(dictionary.planner.symbolic_model(1),defcell_symb{ii,1},['(',defcell_symb{ii,2},')']);
-    end
-end
-
-% first destroy any previous derivatives elements
-disp([mfilename,':: computing 1st-order derivatives with respect to all parameters'])
-tic
-nnn=numel(param_list_)+numel(list_ss)+numel(with_respect_to);
-symb_list=symb_list(1:nnn);
-with_respect_to=param_list_;
-
-sad.destroy();
-[param_derivatives,param_auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to,'expand');
-% [dynamic.model_derivatives,auxiliary_jacobian]=sad.jacobian(symbolic_original,symb_list,with_respect_to);
-jac_toc=toc();
-disp([mfilename,':: Computation of 1st-order derivatives wrt ',int2str(nparams),' PARAMETERS in ',neqstr,' equations: ',num2str(jac_toc),' seconds'])
-
-% should differentiate the steady state from the other variables here...
-% otherwise this won't work well.
-
-% put things in an analytic form
+%% symbolic forms
 validnames={'y','x','param','ss','def'};
-Items={'model_derivatives','model_auxiliary_jacobian','param_derivatives','param_auxiliary_jacobian'};
-for it=1:numel(Items)
-    eval([Items{it},'=analytical_symbolic_form(',Items{it},',validnames,''analytic'');'])
-%     dynamic.(Items{it})=analytical_symbolic_form(eval(Items{it}),validnames,'analytic');
-end
+
+% dynamic model wrt y and x
+wrt={'y',1:nnz(dictionary.Lead_lag_incidence)
+    'x',1:numel(dictionary.exogenous)};
+[model_derivatives,model_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(dynamic.shadow_model,validnames,wrt);
+disp([mfilename,':: first-order derivatives of dynamic model wrt y(+0-) and x. ',...
+    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+
+% static model wrt y
+wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
+[static_model_derivatives,static_model_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(static.shadow_model,validnames,wrt);
+disp([mfilename,':: first-order derivatives of static model wrt y(0). ',...
+    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+
+% balanced growth path model wrt y
+wrt={'y',1:2*size(dictionary.Lead_lag_incidence,1)};
+[static_bgp_model_derivatives,static_bgp_model_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(static.shadow_BGP_model,validnames,wrt);
+disp([mfilename,':: first-order derivatives of static BGP model wrt y(0). ',...
+    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+
+% dynamic model wrt param: replace the definitions
+wrt={'param',1:numel(dictionary.parameters)};
+[param_derivatives,param_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(dynamic.shadow_model,validnames,wrt,shadow_definitions);
+disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
+    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+
+%% push derivatives in to functions
 % for the moment, put all in the same matrix
 JES=cellstr2mat(model_derivatives);
 JP=cellstr2mat(param_derivatives);
+JSTAT=cellstr2mat(static_model_derivatives);
+JSTAT_BGP=cellstr2mat(static_bgp_model_derivatives);
 dynamic.model_derivatives=struct(...
     'Endogenous_Shocks',{JES},'Endogenous_Shocks_auxiliary_jacobian',{model_auxiliary_jacobian},...
-    'Parameters',{JP},'Parameters_auxiliary_jacobian',{param_auxiliary_jacobian}...
+    'Parameters',{JP},'Parameters_auxiliary_jacobian',{param_auxiliary_jacobian},...
+    'StaticEndogenous',{JSTAT},'Static_auxiliary_jacobian',{static_model_auxiliary_jacobian},...
+    'Static_BGP_Endogenous',{JSTAT_BGP},'Static_BGP_auxiliary_jacobian',{static_bgp_model_auxiliary_jacobian}...
     );
 
 if is_model_with_planner_objective
-    % note that the variables are not the same here!!! although I take
-    % a subset of the list above. In the above case, y(1) may represent
-    % a lead, whereas in the policy case below it represents time t
-    % variable
-    % add the list of the symbolic parameters
-    with_respect_to=[endo_list_,exo_list_,param_list_];
-    list_ss=collect_symbolic_list(dictionary.planner.symbolic_model{1},'ss_');
-    symb_list=[with_respect_to(1:orig_endo_nbr),exo_list_,param_list_,list_ss];
-    % first destroy any previous derivatives elements
-    sad.destroy();
-    [Hcell,JacCell,Hessrefs]=sad.hessian(dictionary.planner.symbolic_model{1},symb_list,with_respect_to(1:orig_endo_nbr));
-    Hcell=analytical_symbolic_form(Hcell,validnames,'analytic');
-    JacCell=analytical_symbolic_form(JacCell,validnames,'analytic');
-    Hessrefs=analytical_symbolic_form(Hessrefs,validnames,'analytic');
-    dictionary.planner.first_order_derivatives=cellstr2mat(JacCell(:));
-    dictionary.planner.second_order_derivatives=cellstr2mat(Hcell);
+    wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
+    [ObjectiveJacobian,~,numEqtns,numVars,jac_toc]=...
+        rise_derivatives(dictionary.planner.shadow_model,validnames,wrt,shadow_definitions);
+    disp([mfilename,':: first-order derivatives of planner objective wrt y(0). ',...
+        int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+    [ObjectiveHessian,~,numEqtns,numVars,jac_toc]=...
+        rise_derivatives(ObjectiveJacobian,validnames,wrt);
+    disp([mfilename,':: 2nd-order derivatives of planner objective wrt y(0). ',...
+        int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+    
+    dictionary.planner.first_order_derivatives=cellstr2mat(ObjectiveJacobian(:));
+    dictionary.planner.second_order_derivatives=cellstr2mat(ObjectiveHessian(:));
     shadow_model=dictionary.planner.shadow_model;
     commitment=strrep(shadow_model(2),'commitment-','');
     dictionary.planner.commitment=cellstr2mat(strrep(commitment,';',''));
@@ -1064,9 +1007,6 @@ if is_model_with_planner_objective
     dictionary.planner.discount=cellstr2mat(strrep(discount,';',''));
     dictionary.planner.auxiliary=Hessrefs;
 end
-
-%% destroy all derivative elements
-sad.destroy();
 
 %% give greek names to endogenous, exogenous, parameters
 dictionary.orig_endogenous=greekify(dictionary.orig_endogenous);
@@ -1178,22 +1118,6 @@ dictionary=orderfields(dictionary);
 
 %% functions
 
-    function [defcell,defcell_symb]=format_definitions()
-        defcell=cell(0,2);
-        for idef=1:numel(shadow_definitions)
-            def_=shadow_definitions{idef};
-            equality=strfind(def_,'=');
-            % get rid of the semicolon
-            defcell=[defcell;{def_(1:equality-1),def_(equality+1:end-1)}];
-        end
-        for idef=1:numel(shadow_definitions)
-            for jdef=idef+1:numel(shadow_definitions)
-                defcell{jdef,2}=strrep(defcell{jdef,2},defcell{idef,1},['(',defcell{idef,2},')']);
-            end
-        end
-        defcell_symb=analytical_symbolic_form(defcell,{'y','x','param','def','ss'},'symbolic');
-    end
-
     function transition_probabilities()
         
         ProbScript=[shadow_tvp;{'Q=1;'}];
@@ -1243,12 +1167,8 @@ dictionary=orderfields(dictionary);
                 ProbScript{iter,1}=['Qi(',int2str(s1),',',int2str(s1),')=1-sum(Qi(',int2str(s1),',:));'];
             end
             % those probabilities could be functions of
-            % definitions. so take care of that right here. I just
-            % could have included the tvp into the list of definitions,
-            % as it seems.
-            for idef=1:size(defcell,1)
-                NewQ=strrep(NewQ,defcell{idef,1},['(',defcell{idef,2},')']);
-            end
+            % definitions. so take care of that right here. 
+            NewQ=replace_definitions(NewQ,shadow_definitions);
             QQ(i1).Q=cellstr2mat(NewQ);
             iter=iter+1;
             ProbScript{iter,1}='Q=kron(Q,Qi);';
@@ -2008,96 +1928,6 @@ if ~isempty(loc_)
     last_block_id=loc_;
 elseif ~any([blocks.active])
     last_block_id=[];
-end
-end
-
-function rawline_=remove_comments(rawline_)
-% locate comments
-loc_=strfind(rawline_,'%');
-if ~isempty(loc_)
-    rawline_=rawline_(1:loc_(1)-1);
-end
-loc_=strfind(rawline_,'//');
-if ~isempty(loc_)
-    rawline_=rawline_(1:loc_(1)-1);
-end
-end
-
-function RawFile=read_file(FileName)
-% this would be the equivalent of dynare's macroprocessor
-SPACE_DELIMITERS=char([9:13,32]);
-tank_open=false;
-tank=cell(0,3);
-RawFile=cell(0,1);
-fid = fopen(FileName);
-iter=0;
-inclusions=false;
-while 1
-    rawline = fgetl(fid);
-    if ~ischar(rawline), break, end
-    iter=iter+1;
-    % check whether there are files included by parsing rawline
-    [tokk,rest_]=strtok(rawline,SPACE_DELIMITERS);
-    if tank_open
-        if strcmp(tokk,'@#endfor')
-            rawline=cell(0,3);
-            for ii=start:finish
-                tank0=tank;
-                tank0(:,1)=strrep(tank0(:,1),index,int2str(ii));
-                rawline=[rawline;tank0];
-            end
-            tank_open=false;
-            tank=cell(0,3);
-        else
-            tank=[tank;{rawline,FileName,iter}];
-            continue
-        end
-    elseif strcmp(tokk,'@#include')
-        quotes=strfind(rest_,'"');
-        if isempty(rest_)
-            error([mfilename,':: missing quotes after statement @#include in ',FileName,' at line',int2str(iter)])
-        end
-        if numel(quotes)~=2
-            error([mfilename,':: expecting a pair of quotes in ',FileName,' at line ',int2str(iter)])
-        end
-        newfile=strtrim(rest_(quotes(1)+1:quotes(2)-1));
-        if ~exist(newfile,'file')
-            error([mfilename,':: file ',newfile,' not found::  ',FileName,' at line ',int2str(iter)])
-        end
-        rawline=read_file(newfile);
-        inclusions=true;
-    elseif strcmp(tokk,'@#for')
-        inclusions=true;
-        [index,rest_]=strtok(rest_,SPACE_DELIMITERS);
-        index=['@{',index,'}'];
-        in=strfind(rest_,'in');
-        rest_=rest_(in+2:end);
-        colon=strfind(rest_,':');
-        start=eval(rest_(1:colon-1));
-        finish=eval(rest_(colon+1:end));
-        tank_open=true;
-        continue
-    elseif strcmp(tokk,'@#endfor')
-        error([mfilename,':: preprocessor failed ',FileName,' at line ',int2str(iter)])
-    else
-        rawline={rawline,FileName,iter};
-    end
-    RawFile=[RawFile;rawline];
-end
-fclose(fid);
-
-if inclusions
-    expanded=['expanded_',FileName(1:end-4),FileName(end-3:end)];
-    try %#ok<TRYNC> % this would fail under parallel computing
-        if exist(expanded,'file')
-            delete(expanded)
-        end
-        fid=fopen(expanded,'w+');
-        for ii=1:size(RawFile,1)
-            fprintf(fid,'%s \n',RawFile{ii,1});
-        end
-        fclose(fid);
-    end
 end
 end
 
