@@ -75,6 +75,7 @@ param_derivatives=obj.func_handles.param_derivatives;
 planner=obj.func_handles.planner;
 vectorized_dynamic_params=obj.func_handles.vectorized_dynamic_params;
 definitions=obj.func_handles.definitions;
+static_model_derivatives=obj.func_handles.static_model_derivatives;
 if obj.options.use_steady_state_model && ~isempty(ssfunc)
     optimopt=optimset('display','none','maxiter',400);
     [ss,retcode]=steady_state_evaluation(obj.parameters,obj.is_unique_steady_state,optimopt,ssfunc);

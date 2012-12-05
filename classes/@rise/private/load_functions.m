@@ -132,6 +132,23 @@ if isempty(aux_jac)
 end
 JES=rise_anonymous(JES.size,str2func(['@(y,x,ss,param,def)[',JES.string,']']),JES.indices,aux_jac);
 handle_struct.endo_exo_derivatives=JES;
+
+JSTAT= obj.model_derivatives.StaticEndogenous;
+aux_jac=cell2mat(obj.model_derivatives.Static_auxiliary_jacobian(:)');
+if isempty(aux_jac)
+    aux_jac='';
+end
+JSTAT=rise_anonymous(JSTAT.size,str2func(['@(y,x,ss,param,def)[',JSTAT.string,']']),JSTAT.indices,aux_jac);
+handle_struct.static_model_derivatives=JSTAT;
+
+JSTAT_BGP= obj.model_derivatives.Static_BGP_Endogenous;
+aux_jac=cell2mat(obj.model_derivatives.Static_BGP_auxiliary_jacobian(:)');
+if isempty(aux_jac)
+    aux_jac='';
+end
+JSTAT_BGP=rise_anonymous(JSTAT_BGP.size,str2func(['@(y,x,ss,param,def)[',JSTAT_BGP.string,']']),JSTAT_BGP.indices,aux_jac);
+handle_struct.static_model_derivatives=JSTAT_BGP;
+
 JP= obj.model_derivatives.Parameters;
 aux_jac=cell2mat(obj.model_derivatives.Parameters_auxiliary_jacobian(:)');
 if isempty(aux_jac)
@@ -139,7 +156,6 @@ if isempty(aux_jac)
 end
 JP=rise_anonymous(JP.size,str2func(['@(y,x,ss,param)[',JP.string,']']),JP.indices,aux_jac);
 handle_struct.param_derivatives=JP;
-
 
 %% planner objective
 % in this case there are items that could be written as anonymous
