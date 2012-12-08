@@ -147,7 +147,7 @@ if isempty(aux_jac)
     aux_jac='';
 end
 JSTAT_BGP=rise_anonymous(JSTAT_BGP.size,str2func(['@(y,x,ss,param,def)[',JSTAT_BGP.string,']']),JSTAT_BGP.indices,aux_jac);
-handle_struct.static_model_derivatives=JSTAT_BGP;
+handle_struct.static_bgp_model_derivatives=JSTAT_BGP;
 
 JP= obj.model_derivatives.Parameters;
 aux_jac=cell2mat(obj.model_derivatives.Parameters_auxiliary_jacobian(:)');
