@@ -228,7 +228,7 @@ end
             itercode=0;
         else
             if isevs
-                [T,junk,retcode]=iterate_func(T0);
+                [T,~,retcode]=iterate_func(T0);
                 itercode=0;
             else
 				if fwz_flag % transform T into X
