@@ -4,14 +4,13 @@ function [Jac,auxiliary]=jacobian(objectives,varnames,wrt)
 % output is returned in a sad_forward form in case the user wants to use it to
 % recompute the hessian, which would be much easier to compute from the
 % sad_forward form
-    if nargin<3
-        wrt=[];
-        if nargin<2
-            error([mfilename,':: the list of the arguments entering the function must be provided'])
-        end
+if nargin<3
+    wrt=[];
+    if nargin<2
+        error([mfilename,':: the list of the arguments entering the function must be provided'])
     end
+end
 
-    
 if ischar(objectives)
     objectives=cellstr(objectives);
 end
@@ -29,20 +28,15 @@ end
 wrt=get_names(wrt);
 
 % locate the variables in main list
-bad=~ismember(wrt,args);
-bad=wrt(bad);
-if ~isempty(bad)
-    disp(bad)
-    error([mfilename,':: the variables above not present in the list of variables'])
-end
-
-args_=args;
+prototype=sad_forward('xxx','0');
 
 %% save the variable names and create the objects
-args=repmat({sad_forward('xxx')},numel(args),1);
-for ii=1:numel(args_)
-    args{ii}.x=args_{ii};
+args_= args;
+for w=1:numel(args)
+    prototype.x=args{w};
+    args_{w}=prototype;
 end
+
 %% recreate the functions
 ncols=numel(wrt);
 nrows=numel(objectives);
@@ -52,22 +46,35 @@ for irow=1:nrows
         % expand it in full
         objectives{irow}=char(objectives{irow},1);
     end
-    [occur,myfunc]=find_occurrences(objectives{irow},args_);
+    [occur,myfunc]=find_occurrences(objectives{irow},args);
     
     % re-create the function
-    var_occur=args_(occur);
+    var_occur=args(occur);
     argfun=cell2mat(strcat(var_occur,','));
     myfunc=str2func(['@(',argfun(1:end-1),')',myfunc]);
     
-    % differentiate
-    for icol=1:numel(wrt)
-        args_x=args(occur);
-        target= strcmp(wrt{icol},var_occur);
-        if any(target)
-            args_x{target}.dx='1';
-            Jac{irow,icol}=myfunc(args_x{:});
-            Jac{irow,icol}=char(Jac{irow,icol});
-        end
+    % wrt variables occurring in var_occur SILENTLY
+    locs=locate_variables(wrt,var_occur,true);
+    wrt_occur=wrt(~isnan(locs));
+    locs_=locs(~isnan(locs));
+    nwrt=numel(wrt_occur);
+    
+    % now inflate the derivatives of the guys occurring
+    var_occur_=args_(occur);
+    dx={'0'};
+    dx=dx(1,ones(nwrt,1));
+    for ii=1:nwrt
+        dxi=dx;
+        dxi{ii}='1';
+        var_occur_{locs_(ii)}.dx=dxi;
+    end
+    
+    % locate the specific wrt
+    orig_locs=locate_variables(wrt_occur,wrt);
+    if ~isempty(orig_locs)
+        % differentiate
+        tmp=myfunc(var_occur_{:});
+        Jac(irow,orig_locs)=char(tmp);
     end
 end
 
