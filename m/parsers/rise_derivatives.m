@@ -41,7 +41,7 @@ end
 
 symb_list=union(symb_list,with_respect_to);
 tic
-[derivs,auxiliary]=sad.jacobian(symbolic_batch,symb_list,with_respect_to);
+[derivs,auxiliary]=sad_forward.jacobian(symbolic_batch,symb_list,with_respect_to);
 derivs=trim_symbolic_equation(derivs);
 jac_toc=toc();
 
