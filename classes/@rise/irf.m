@@ -5,10 +5,13 @@ function [dsge_irfs,dsge_var_irfs]=irf(obj,varargin)
 % 3- I should add a sub-field for anticipated vs unanticipated irfs?
 % 4- shock surprises?
 
+too_small=1e-9;
+
 Defaults=struct('irf_shock_list','',...
     'irf_var_list','',...
     'irf_periods',40,...
-    'irf_anticipate',1,...
+    'irf_anticipate',true,...
+    'irf_horizon',1,...
     'irf_param_type','mode',...
     'irf_shock_sign',1,...
     'irf_draws',1,...
@@ -32,8 +35,9 @@ end
 
     function [dsge_irfs,dsge_var_irfs]=irf_intern(obj)
         
+        obj=set_options(obj,varargin{:});
+%         obj.options=mysetfield(obj.options,varargin{:});
         oldoptions=obj.options;
-        oldoptions=mysetfield(oldoptions,varargin{:});
         thisDefault=Defaults;
         for ifield=1:numel(Fields)
             vi=Fields{ifield};
@@ -43,6 +47,7 @@ end
         irf_var_list  =thisDefault.irf_var_list  ;
         irf_periods	  =thisDefault.irf_periods	  ;
         irf_anticipate=thisDefault.irf_anticipate;
+        irf_horizon=thisDefault.irf_horizon;
         irf_param_type=thisDefault.irf_param_type;
         irf_shock_sign=thisDefault.irf_shock_sign;
         % how many parameter draws
@@ -68,16 +73,16 @@ end
         shock_only_one=false;
         relative=false;
         
-        % set the order to the chosen irf_anticipate in a way that the
+        % set the order to the chosen irf_horizon in a way that the
         % shock properties are also affected. But do that only if there is
         % a difference.
-        if irf_anticipate>obj.options.order
-            obj=obj.set_options('order',irf_anticipate);
+        if irf_horizon>obj.options.order
+            obj=obj.set_options('order',irf_horizon);
         end
         % otherwise I would need to write 2 lines of code to get the
         % correct results as follows:
-        %         obj.options.order=irf_anticipate;
-        %         [obj.options.shock_properties(:).horizon]=deal(irf_anticipate);
+        %         obj.options.order=irf_horizon;
+        %         [obj.options.shock_properties(:).horizon]=deal(irf_horizon);
         
         % number of endogenous variables after solving...
         NumberOfEndogenous=obj.NumberOfEndogenous(2);
@@ -148,7 +153,7 @@ end
                             % use the algorithm hidden in kalman initialization and
                             % make it a small function...
                             for t=1:irf_periods
-                                [imp,y0]=update_impulse(y0,T,R,PAI,irf_anticipate,shock_loc,t,irf_shock_sign,shock_only_one);
+                                [imp,y0]=update_impulse(y0,T,R,PAI,shock_loc,t,irf_shock_sign,shock_only_one);
                                 Z(:,t+1,d,ss)=Z(:,t+1,d,ss)+imp;
                                 % update probabilities
                                 PAI=Q'*PAI;
@@ -169,7 +174,7 @@ end
                             PAI=1;
                             for t=1:irf_periods
                                 [Z(:,t+1,d,ss,reg),y0]=update_impulse(y0,T(:,:,reg),R(:,:,:,reg),PAI,...
-                                    irf_anticipate,shock_loc,t,irf_shock_sign);
+                                    shock_loc,t,irf_shock_sign);
                             end
                             Z(:,:,d,ss,reg)=bsxfun(@plus,Z(:,:,d,ss,reg),relative*steady_state(:,reg));
                         end
@@ -180,7 +185,7 @@ end
                         for t=1:irf_periods
                             reg=irf_history(t);
                             [Z(:,t+1,d,ss),y0]=update_impulse(y0,T(:,:,reg),R(:,:,:,reg),PAI,...
-                                irf_anticipate,shock_loc,t,irf_shock_sign);
+                                shock_loc,t,irf_shock_sign);
                         end
                 end
             end
@@ -193,6 +198,8 @@ end
         end
         
         Z=permute(Z,[2,5,3,1,4]); % time,regimes,draws,varnames,shocks
+        % set to 0 the terms that are too tiny
+        Z(abs(Z)<=too_small)=0;
         startdate=0;
         RegimeNames=strcat('regime_',num2str((1:NumberOfRegimes)'));
         if ismember(irf_type,{'girf','hirf'})
@@ -213,6 +220,8 @@ end
                     Z_bvar_dsge=permute(Z_bvar_dsge,[2,1,3,4]);% time,varnames,draws,
                 end
                 disp([mfilename,':: check the syntax here for the number observables and the names'])
+                % set to 0 the terms that are too tiny
+                Z_bvar_dsge(abs(Z_bvar_dsge)<=too_small)=0;
                 for vv=1:obj.NumberOfObservables(1)
                     dsge_var_irfs.(shock_name).(obj.varobs(vv).name)=...
                         rise_time_series(startdate,squeeze(Z_bvar_dsge(:,vv,:,shock_loc)));
@@ -220,63 +229,70 @@ end
             end
         end
         clear Z Z_bvar_dsge
+        
+        function [imp,y0]=update_impulse(y0,T,R,PAI,shock_id,t,irf_shock_sign,shock_only_one)
+            if nargin<8
+                shock_only_one=true;
+                if nargin<7
+                    irf_shock_sign=1;
+                end
+            end
+            [n,exo_nbr,~,h]=size(R);
+            if h>1
+                % pick a state
+                csp=[0;cumsum(PAI)];
+                state=find(csp>rand,1,'first')-1;
+            else
+                state=1;
+            end
+            if isempty(y0)
+                y0=zeros(n,1);
+                if h>1
+                    y0=[y0,y0];
+                end
+                % 1 standard-deviation shock. That is unanticipated
+                % the first time it is known but which will remain
+                % in the system
+                if irf_anticipate || irf_horizon==1
+                    y0(:,1)=irf_shock_sign*R(:,shock_id,irf_horizon,state);
+                end
+            else
+                y0(:,1)=T(:,:,state)*y0(:,1);
+                if h>1 % then we are doing GIRF
+                    y0(:,2)=T(:,:,state)*y0(:,2);
+                    % agents get hit in the current period by new
+                    % shocks that are unanticipated. I don't know
+                    % whether I should include all other possible
+                    % shocks...
+                    if shock_only_one
+                        shock=randn;
+                        y0(:,1)=y0(:,1)+R(:,shock_id,1,state)*shock;
+                        y0(:,2)=y0(:,2)+R(:,shock_id,1,state)*shock;
+                    else
+                        shock=randn(exo_nbr,1);
+                        y0(:,1)=y0(:,1)+R(:,:,1,state)*shock;
+                        y0(:,2)=y0(:,2)+R(:,:,1,state)*shock;
+                    end
+                end
+                if t<=irf_horizon
+                    step=irf_horizon-t+1;
+                    if irf_anticipate || step==1
+                        y0(:,1)=y0(:,1)+irf_shock_sign*R(:,shock_id,step,state);
+                        if h>1
+                            y0(:,2)=y0(:,2)+irf_shock_sign*R(:,shock_id,step,state);
+                        end
+                    end
+                end
+            end
+            imp=y0(:,1);
+            if h>1
+                imp=imp-y0(:,2);
+            end
+        end
     end
+
 end
 
-function [imp,y0]=update_impulse(y0,T,R,PAI,irf_anticipate,shock_id,t,irf_shock_sign,shock_only_one)
-if nargin<9
-    shock_only_one=true;
-    if nargin<8
-        irf_shock_sign=1;
-    end
-end
-[n,exo_nbr,~,h]=size(R);
-if h>1
-    % pick a state
-    csp=[0;cumsum(PAI)];
-    state=find(csp>rand,1,'first')-1;
-else
-    state=1;
-end
-if isempty(y0)
-    y0=zeros(n,1);
-    if h>1
-        y0=[y0,y0];
-    end
-    % 1 standard-deviation shock. That is unanticipated
-    % the first time it is known but which will remain
-    % in the system
-    y0(:,1)=irf_shock_sign*R(:,shock_id,irf_anticipate,state)*1;
-else
-    y0(:,1)=T(:,:,state)*y0(:,1);
-    if h>1 % then we are doing GIRF
-        y0(:,2)=T(:,:,state)*y0(:,2);
-        % agents get hit in the current period by new
-        % shocks that are unanticipated. I don't know
-        % whether I should include all other possible
-        % shocks...
-        if shock_only_one
-            shock=randn;
-            y0(:,1)=y0(:,1)+R(:,shock_id,1,state)*shock;
-            y0(:,2)=y0(:,2)+R(:,shock_id,1,state)*shock;
-        else
-            shock=randn(exo_nbr,1);
-            y0(:,1)=y0(:,1)+R(:,:,1,state)*shock;
-            y0(:,2)=y0(:,2)+R(:,:,1,state)*shock;
-        end
-    end
-    if t<=irf_anticipate
-        y0(:,1)=y0(:,1)+irf_shock_sign*R(:,shock_id,irf_anticipate-t+1,state);
-        if h>1
-            y0(:,2)=y0(:,2)+irf_shock_sign*R(:,shock_id,irf_anticipate-t+1,state);
-        end
-    end
-end
-imp=y0(:,1);
-if h>1
-    imp=imp-y0(:,2);
-end
-end
 
 % r0=obj(1).options.graphics(1);
 % c0=obj(1).options.graphics(2);
