@@ -14,8 +14,8 @@ classdef sad_forward %< handle
                 if nargin<2
                     dy='0';
                 end
-                if ~ischar(y)||~ischar(dy)
-                    error([mfilename,':: inputs must be char'])
+                if ~ischar(y)
+                    error('first input must be char')
                 end
                 obj.x=y;
                 obj.dx=dy;
@@ -41,8 +41,14 @@ classdef sad_forward %< handle
         end
         function obj=uminus(u)
             [u,du]=get_props(u);
-            xx=rise_algebra_cat('-',u);  
-            dxx=rise_algebra_cat('-',du);
+            xx='0';
+            dxx='0';
+            if ~strcmp(u,'0')
+                xx=strcat('-',parenthesize(u,'-'));
+            end
+            if ~strcmp(du,'0')
+                dxx=strcat('-',parenthesize(du,'-'));
+            end
             obj=sad_forward(xx,dxx);
         end
         function obj=times(u,v)
@@ -62,10 +68,10 @@ classdef sad_forward %< handle
         function obj=mpower(u,v)
             [u,du]=get_props(u);[v,dv]=get_props(v);
             xx=rise_algebra_cat('^',u,v);
-            dxx1=rise_algebra_cat('*',rise_algebra_cat('*',dv,['log(',u,')']),xx);
+            dxx1=rise_algebra_cat('*',rise_algebra_cat('*',dv,strcat('log(',u,')')),xx);
             dxx2=rise_algebra_cat('*',rise_algebra_cat('*',v,du),...
                 rise_algebra_cat('^',u,rise_algebra_cat('-',v,'1')));
-            dxx=rise_algebra_cat(dxx1,dxx2,'+');
+            dxx=rise_algebra_cat('+',dxx1,dxx2);
             obj=sad_forward(xx,dxx);
         end
         function obj=rdivide(u,v)
@@ -87,13 +93,13 @@ classdef sad_forward %< handle
         end
         function obj=exp(u)
             [u,du]=get_props(u);
-            xx=['exp(',u,')'];
+            xx=strcat('exp(',u,')');
             dxx=rise_algebra_cat('*',du,xx);
             obj=sad_forward(xx,dxx);
         end
         function obj=log(u)
             [u,du]=get_props(u);
-            xx=['log(',u,')'];
+            xx=strcat('log(',u,')');
             dxx=rise_algebra_cat('/',du,u);
             obj=sad_forward(xx,dxx);
         end
@@ -102,105 +108,67 @@ classdef sad_forward %< handle
         end
         function obj=cos(u)
             [u,du]=get_props(u);
-            xx=['cos(',u,')'];
+            xx=strcat('cos(',u,')');
             dxx=rise_algebra_cat('*',...
-                rise_algebra_cat('-','0',du),['sin(',u,')']);
+                rise_algebra_cat('-','0',du),strcat('sin(',u,')'));
             obj=sad_forward(xx,dxx);
         end
         function obj=acos(u)
             [u,du]=get_props(u);
-            val=['acos(',u,')'];
+            val=strcat('acos(',u,')');
             der=rise_algebra_cat('^',u,'2');
             der=rise_algebra_cat('-','1',der);
             der=rise_algebra_cat('/',rise_algebra_cat('*','-1',du),...
-                ['sqrt(',der,')']);
+                strcat('sqrt(',der,')'));
             obj=sad_forward(val,der);
         end
         function obj=cosh(u)
             [u,du]=get_props(u);
-            val=['cosh(',u,')'];
-            der=rise_algebra_cat('*',du,['sinh(',u,')']);
+            val=strcat('cosh(',u,')');
+            der=rise_algebra_cat('*',du,strcat('sinh(',u,')'));
             obj=sad_forward(val,der);
         end
         function obj=sin(u)
             [u,du]=get_props(u);
-            xx=['sin(',u,')'];
-            dxx=rise_algebra_cat('*',du,['cos(',u,')']);
+            xx=strcat('sin(',u,')');
+            dxx=rise_algebra_cat('*',du,strcat('cos(',u,')'));
             obj=sad_forward(xx,dxx);
         end
         function obj=asin(u)
             [u,du]=get_props(u);
-            val=['asin(',u,')'];
+            val=strcat('asin(',u,')');
             der=rise_algebra_cat('^',u,'2');
             der=rise_algebra_cat('*','-1',der);
-            der=rise_algebra_cat('/',du,['sqrt(',der,')']);
+            der=rise_algebra_cat('/',du,strcat('sqrt(',der,')'));
             obj=sad_forward(val,der);
         end
         function obj=sinh(u)
             [u,du]=get_props(u);
-            val=['sinh(',u,')'];
-            der=rise_algebra_cat('/',du,['cosh(',u,')']);
+            val=strcat('sinh(',u,')');
+            der=rise_algebra_cat('/',du,strcat('cosh(',u,')'));
             obj=sad_forward(val,der);
         end
         function obj=tan(u)
             [u,du]=get_props(u);
-            val=['tan(',u,')'];
-            der=rise_algebra_cat('^',['cos(',u,')'],'2');
+            val=strcat('tan(',u,')');
+            der=rise_algebra_cat('^',strcat('cos(',u,')'),'2');
             der=rise_algebra_cat('/',du,der);
             obj=sad_forward(val,der);
         end
         function obj=atan(u)
             [u,du]=get_props(u);
-            val=['atan(',u,')'];
+            val=strcat('atan(',u,')');
             der=rise_algebra_cat('^',u,'2');
             der=rise_algebra_cat('+','1',der);
-            der=rise_algebra_cat('/',du,['sqrt(',der,')']);
+            der=rise_algebra_cat('/',du,strcat('sqrt(',der,')'));
             obj=sad_forward(val,der);
         end
         function obj=tanh(u)
             [u,du]=get_props(u);
-            val=['tanh(',u,')'];
-            der=rise_algebra_cat('^',['cosh(',u,')'],'2');
+            val=strcat('tanh(',u,')');
+            der=rise_algebra_cat('^',strcat('cosh(',u,')'),'2');
             der=rise_algebra_cat('/',du,der);
             obj=sad_forward(val,der);
-        end
-        function obj=min(u,v)
-            if nargin~=2
-                error([mfilename,':: number of arguments should be 2'])
-            end
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            uLv=['(',u,'<',v,')'];
-            val=['min(',u,',',v,')'];
-            
-            der=rise_algebra_cat('+',...
-                rise_algebra_cat('*',uLv,du),...
-                rise_algebra_cat('*','(1+uminus(',uLv,'))',dv));
-            obj = sad_forward(val,der);
-        end
-        function obj=max(u,v)
-            if nargin~=2
-                error([mfilename,':: number of arguments should be 2'])
-            end
-            [u,du]=get_props(u);[v,dv]=get_props(v);
-            uLv=['(',u,'<',v,')'];
-            val=['max(',u,',',v,')'];
-            der=rise_algebra_cat('+',rise_algebra_cat('*',uLv,dv),rise_algebra_cat('*','(1+uminus(',uLv,'))',du));
-            obj = sad_forward(val,der);
-        end
-        function obj=sum(u,v)
-            if nargin==1
-                [u0,du0]=get_props(u(1));
-                val=u0;
-                der=du0;
-                for ii=2:numel(u)
-                    [u0,du0]=get_props(u(ii));
-                    val=rise_algebra_cat(val,u0,'plus');
-                    der=rise_algebra_cat(der,du0,'plus');
-                end
-                obj=sad_forward(val,der);
-            else
-                obj=plus(u,v);
-            end
         end
         function obj=normpdf(u,mu,sig)
             if nargin<3
@@ -212,10 +180,10 @@ classdef sad_forward %< handle
             [u,du]=get_props(u);
             mu=get_props(mu);
             sig=get_props(sig);
-            val=['normpdf(',u,',',mu,',',sig,')'];
+            val=strcat('normpdf(',u,',',mu,',',sig,')');
             der0=rise_algebra_cat('-',u,mu);
             der1=rise_algebra_cat('^',sig,'2');
-            der=rise_algebra_cat('/',['uminus(',der0,')'],der1);
+            der=rise_algebra_cat('/',strcat('uminus(',der0,')'),der1);
             der=rise_algebra_cat('*',der,du);
             der=rise_algebra_cat('*',der,val);
             obj = sad_forward(val,der);
@@ -230,30 +198,21 @@ classdef sad_forward %< handle
             [u,du]=get_props(u);
             mu=get_props(mu);
             sig=get_props(sig);
-            val=['normcdf(',u,',',mu,',',sig,')'];
-            der=rise_algebra_cat('*',du,['normpdf(',u,',',mu,',',sig,')']);
+            val=strcat('normcdf(',u,',',mu,',',sig,')');
+            der=rise_algebra_cat('*',du,strcat('normpdf(',u,',',mu,',',sig,')'));
             obj = sad_forward(val,der);
         end
         function obj=abs(u)
             [u,du]=get_props(u);
-            val=['abs(',u,')'];
-            der=rise_algebra_cat('*',['sign(',u,')'],du);
-            obj=sad_forward(val,der);
-        end
-        function obj=isreal(u)
-            u=get_props(u);
-            val=['real(',u,')'];
-            der='0';
+            val=strcat('abs(',u,')');
+            der=rise_algebra_cat('*',strcat('sign(',u,')'),du);
             obj=sad_forward(val,der);
         end
         function obj=sqrt(u)
             [u,du]=get_props(u);
-            xx=['sqrt(',u,')'];
+            xx=strcat('sqrt(',u,')');
             dxx=rise_algebra_cat('*','0.5',rise_algebra_cat('/',du,xx));
             obj=sad_forward(xx,dxx);
-        end
-        function obj=norm(u)
-            obj = sqrt(sum(u.^2));
         end
         
         function d = char(u)
