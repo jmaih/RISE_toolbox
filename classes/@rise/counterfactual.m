@@ -52,7 +52,7 @@ else
 end
 
 % compute the history
-[obj,junk,junk,retcode]=filter(obj,'evaluate_params',params,'kf_filtering_level',3);
+[obj,~,~,retcode]=filter(obj,'evaluate_params',params,'kf_filtering_level',3);
 if retcode
     error([mfilename,':: model could not be solved for this parameterization'])
 end
@@ -60,7 +60,7 @@ end
 if ~isempty(shocks_db)
     T=obj.T;
     R=obj.R; %
-    [endo_nbr,junk,order,regime_nbr]=size(R);
+    [endo_nbr,~,order,regime_nbr]=size(R);
     if regime_nbr>1
         error([mfilename,':: counterfactual analysis for multiple-regime models not yet implemented'])
     end
@@ -122,7 +122,7 @@ if ~isempty(param_struct)
     % 1- set the parameters
     newobj=obj.set_parameters(param_struct);
     % 2- filter using those parameters but save to a different object
-    [newobj,junk,junk,retcode]=newobj.filter('kf_filtering_level',3);
+    [newobj,~,~,retcode]=newobj.filter('kf_filtering_level',3);
     if retcode
         error([mfilename,':: model could not be solved for this parameterization'])
     end
