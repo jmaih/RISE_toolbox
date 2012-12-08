@@ -8,6 +8,7 @@ if nargin<4
         end
     end
 end
+cellmode=iscellstr(a)||iscellstr(b);
 if ischar(a)
     a=cellstr(a);
 end
@@ -58,28 +59,31 @@ ab_r=strcmp(aa,bb);
 no_letter=~(ar_l|br_l);
 c(no_letter)=myeval(strcat('(',aa(no_letter),')',fun,'(',bb(no_letter),')'));
 
-if all(no_letter)
-    return
+if ~all(no_letter)
+    % remove no_letter location as it has already been processed
+    ar_0(no_letter)=false; ar_1(no_letter)=false;
+    br_0(no_letter)=false; br_1(no_letter)=false;
+    ab_r(no_letter)=false;
+    switch fun
+        case '+'
+            myplus()
+        case '-'
+            myminus()
+        case '*'
+            mytimes()
+        case '/'
+            mydivide()
+        case '^'
+            mypower()
+        otherwise
+            error(['function ',fun,' is undefined'])
+    end
 end
 
-% remove no_letter location as it has already been processed
-ar_0(no_letter)=false; ar_1(no_letter)=false;
-br_0(no_letter)=false; br_1(no_letter)=false;
-ab_r(no_letter)=false;
-switch fun
-    case '+'
-        myplus()
-    case '-'
-        myminus()
-    case '*'
-        mytimes()
-    case '/'
-        mydivide()
-    case '^'
-        mypower()
-    otherwise
-        error(['function ',fun,' is undefined'])
+if ~cellmode
+    c=char(c);
 end
+
 
     function [x,x_l,x_0,x_1,same]=format_argument(x,ncols)
         x_l=myisletter(x);
@@ -96,16 +100,18 @@ end
         end
     end
 
-    function d=parenth(d,same_shit) 
-        dejavu=cell(2,0);
-        [dejavu,d(1)]=myparenth(dejavu,d(1));
-        for kk=2:numel(d)
-            if same_shit
-                if kk==2
-                    d(kk:end)=d(1);
+    function d=parenth(d,same_shit)
+        if ~isempty(d)           
+            dejavu=cell(2,0);
+            [dejavu,d(1)]=myparenth(dejavu,d(1));
+            for kk=2:numel(d)
+                if same_shit
+                    if kk==2
+                        d(kk:end)=d(1);
+                    end
+                else
+                    [dejavu,d(kk)]=myparenth(dejavu,d(kk));
                 end
-            else
-                [dejavu,d(kk)]=myparenth(dejavu,d(kk));
             end
         end
         function [dejavu,dd]=myparenth(dejavu,dd)
@@ -158,10 +164,12 @@ end
         rest=~(no_letter|ab_r|br_0);
         if any(rest)
             b_rest=parenth(bb(rest),same_b);
-            a_rest=parenth(aa(rest),same_b);
+            a_rest=parenth(aa(rest),same_a);
+            c_rest=c(rest);
             arz=strcmp('0',a_rest);
-            c(rest(arz))=strcat('-',b_rest(arz));
-            c(rest(~arz))=strcat(a_rest(~arz),'-',b_rest(~arz));
+            c_rest(arz)=strcat('-',b_rest(arz));
+            c_rest(~arz)=strcat(a_rest(~arz),'-',b_rest(~arz));
+            c(rest)=c_rest;
         end
     end
 
