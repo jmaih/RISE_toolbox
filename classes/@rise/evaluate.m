@@ -65,17 +65,19 @@ ss_and_bgp_start_vals=zeros(2*endo_nbr,obj.NumberOfRegimes);
 
 vectorized_code=endo_nbr<=obj.options.vectorized_code_threshold;
 dynamic_params=obj.func_handles.dynamic_params;
-ssfunc=obj.func_handles.steady_state_model;
 vectorized_dynamic=obj.func_handles.vectorized_dynamic;
 dynamic=obj.func_handles.dynamic;
-static=obj.func_handles.static;
-balanced_growth=obj.func_handles.balanced_growth;
 endo_exo_derivatives=obj.func_handles.endo_exo_derivatives;
 param_derivatives=obj.func_handles.param_derivatives;
 planner=obj.func_handles.planner;
 vectorized_dynamic_params=obj.func_handles.vectorized_dynamic_params;
 definitions=obj.func_handles.definitions;
-static_model_derivatives=obj.func_handles.static_model_derivatives;
+% steady state functions
+ssfunc=obj.func_handles.steady_state_model;
+func_ss=obj.func_handles.static;
+balanced_growth=obj.func_handles.balanced_growth;
+func_jac=obj.func_handles.static_model_derivatives;
+static_bgp_model_derivatives=obj.func_handles.static_bgp_model_derivatives;
 if obj.options.use_steady_state_model && ~isempty(ssfunc)
     optimopt=optimset('display','none','maxiter',400);
     [ss,retcode]=steady_state_evaluation(obj.parameters,obj.is_unique_steady_state,optimopt,ssfunc);
@@ -103,15 +105,13 @@ indices=[find(Lead_lag_incidence(:,1)>0);(1:endo_nbr)';find(Lead_lag_incidence(:
 % threshold for using vectorized code in numerical approximation of the
 % jacobian
 
+resid_func=@static_or_bgp_residuals;
+last_item=endo_nbr;
 if ~isempty(obj.is_stationary_model)
-    if obj.is_stationary_model
-        resid_func=@steady_state_residuals;
-        last_item=endo_nbr;
-        static_func=obj.func_handles.static;
-    else
-        resid_func=@balanced_growth_path_residuals;
+    if ~obj.is_stationary_model
         last_item=2*endo_nbr;
-        static_func=obj.func_handles.balanced_growth;
+        func_ss=obj.func_handles.balanced_growth;
+        func_jac=static_bgp_model_derivatives;
     end
 end
 NumberOfRegimes=obj.NumberOfRegimes;
@@ -128,25 +128,20 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         def=def{1};
         if isempty(obj.is_stationary_model)
             % determine stationarity
+            
             [is_stationary,ss_and_bgp_i,retcode]=determine_stationarity_status();
             if ~retcode
                 obj.is_stationary_model=is_stationary;
                 % based on that, set the functions...
-                if obj.is_stationary_model
-                    resid_func=@steady_state_residuals;
-                    last_item=endo_nbr;
-                    static_func=static;
-                else
-                    resid_func=@balanced_growth_path_residuals;
+                if ~obj.is_stationary_model
                     last_item=2*endo_nbr;
-                    static_func=balanced_growth;
                 end
             end
         else
             % solve the steady state
             [ss_and_bgp_i(1:last_item),retcode]=...
                 solve_steady_state(ss_and_bgp_i(1:last_item),x_ss,pp_i,def,...
-                resid_func,static_func,obj.is_linear_model,obj.options.optimset);
+                resid_func,obj.is_linear_model,obj.options.optimset);
         end
         if ~retcode
             ss_and_bgp_final_vals(:,ii)=ss_and_bgp_i;
@@ -275,13 +270,17 @@ obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
 
         is_stationary=[];
         % try stationarity
+
         ys=ss_and_bgp_i;
         [ys(1:endo_nbr),retcode]=solve_steady_state(ss_and_bgp_i(1:endo_nbr),x_ss,pp_i,def,...
-            @steady_state_residuals,static,obj.is_linear_model,obj.options.optimset);
+            @static_or_bgp_residuals,obj.is_linear_model,obj.options.optimset);
+        
         if retcode
             % try nonstationarity
+            func_ss=balanced_growth;
+            func_jac=static_bgp_model_derivatives;
             [ys,retcode]=solve_steady_state(ss_and_bgp_i,x_ss,pp_i,def,...
-                @balanced_growth_path_residuals,balanced_growth,obj.is_linear_model,obj.options.optimset);
+                @static_or_bgp_residuals,obj.is_linear_model,obj.options.optimset);
             if ~retcode
                 is_stationary=false;
                 if ~obj.options.evaluate_islooping
@@ -297,6 +296,23 @@ obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
             if ~obj.options.evaluate_islooping
                 disp([mfilename,':: model found to be MEAN-stationary'])
             end
+        end
+    end
+
+    function [lhs,Jac]=static_or_bgp_residuals(y,x,param,def)
+        % if the structural model is defined in terms of steady states, then the
+        % the word ss will appear in the static model. But then, those values are
+        % the same as those found in y.
+        % In some cases, the model is nonstationary so that only the BGP is
+        % solvable in this case, the y vector also contains the balanced-growth
+        % values. copying the whole vector to ss does not harm since only the
+        % relevant elements in the upper part of y will be picked up.
+        
+        ss_=y;
+        lhs=func_ss(y,x,ss_,param,def);
+        if nargout>1
+            Jac=eval(func_jac,y,x,ss_,param,def);
+            Jac=Jac{1};
         end
     end
 end
@@ -340,22 +356,5 @@ for ii=1:number_of_regimes
     ss(:,ii)=y; %#ok<AGROW>
 end
 
-end
-
-
-function lhs=steady_state_residuals(y,func_ss,x,param,def)
-% if the structural model is defined in terms of steady states, then the
-% the word ss will appear in the static model. But then, those values are
-% the same as those found in y
-ss=y;
-lhs=func_ss(y,x,ss,param,def);
-end
-
-function lhs=balanced_growth_path_residuals(y,func_bgp,x,param,def)
-ss=y;
-% in this case, the y vector also contains the balanced-growth values.
-% copying the whole vector to ss does not harm since only the relevant
-% elements in the upper part of y will be picked up.
-lhs=func_bgp(y,x,ss,param,def);
 end
 
