@@ -57,7 +57,9 @@ c=c(1,ones(1,sab));
 ab_r=strcmp(aa,bb);
 
 no_letter=~(ar_l|br_l);
-c(no_letter)=myeval(strcat('(',aa(no_letter),')',fun,'(',bb(no_letter),')'));
+if any(no_letter)
+    c(no_letter)=myeval(strcat('(',aa(no_letter),')',fun,'(',bb(no_letter),')'));
+end
 
 if ~all(no_letter)
     % remove no_letter location as it has already been processed
