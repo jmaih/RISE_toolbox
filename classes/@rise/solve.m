@@ -60,7 +60,7 @@ end
         % that there no shocks. If order==0, this will later on help set
         % the conditional information to nan. But for the purpose of
         % expanding the model, the expansion order is at least 1.
-        order=max(1,max(obj.options.irf_anticipate,obj.options.order));
+        order=max(1,max(obj.options.irf_horizon,obj.options.order));
         forward_expansion_has_changed=~isequal(obj.current_expansion_order,order);
         solution_algorithm_has_changed=~isequal(obj.current_solution_algorithm,obj.options.solver);
         
