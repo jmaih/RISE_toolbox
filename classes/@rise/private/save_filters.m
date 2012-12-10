@@ -36,7 +36,7 @@ end
         else
             dateInfo=obj.dates_smoothing;
         end
-        [r,c,p]=size(filtdata);
+        [~,c,p]=size(filtdata);
         others='';
         if ismember(p,[nobs,nobs+1]) % this is not very robust...
             filtdata=permute(filtdata,[3,1,2]);
@@ -70,7 +70,7 @@ end
             not_iobs=setdiff(1:nvars,find(iobs));
             index=not_iobs;
             for iloop=2:nloops
-                index=[index,not_iobs+nvars];
+                index=[index,not_iobs+nvars]; %#ok<AGROW>
             end
             tmp(:,index,:)=filtdata;
             filtdata=tmp;
