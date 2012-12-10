@@ -28,10 +28,14 @@ Fields=fieldnames(Defaults);
 
 dsge_irfs=cell(1,nobj);
 dsge_var_irfs=cell(1,nobj);
+% check that the models are consistent
+check_irf_consistency(obj)
 for ii=1:nobj
     [dsge_irfs{ii},dsge_var_irfs{ii}]=irf_intern(obj(ii));
 end
 
+dsge_irfs=format_irf_output(dsge_irfs);
+dsge_var_irfs=format_irf_output(dsge_var_irfs);
 
     function [dsge_irfs,dsge_var_irfs]=irf_intern(obj)
         
@@ -278,9 +282,6 @@ end
                     step=irf_horizon-t+1;
                     if irf_anticipate || step==1
                         y0(:,1)=y0(:,1)+irf_shock_sign*R(:,shock_id,step,state);
-                        if h>1
-                            y0(:,2)=y0(:,2)+irf_shock_sign*R(:,shock_id,step,state);
-                        end
                     end
                 end
             end
@@ -293,81 +294,69 @@ end
 
 end
 
+function check_irf_consistency(obj)
+nobj=numel(obj);
+if nobj>1
+    first_list={'varendo','varexo','Regimes','markov_chains'};
+    second_list={'irf_shock_list','irf_var_list','irf_periods','irf_type'};
+    for ilist=1:numel(first_list)
+        ref_list={obj(1).(first_list{ilist})};
+        for iobj=2:nobj
+            list={obj(iobj).(first_list{ilist})};
+            if ~isequal(ref_list,list)
+                error([first_list{ilist},' should be the same across models'])
+            end
+        end
+    end
+    for ilist=1:numel(second_list)
+        ref_list={obj(1).options.(second_list{ilist})};
+        for iobj=2:nobj
+            list={obj(iobj).options.(second_list{ilist})};
+            if ~isequal(ref_list,list)
+                error([second_list{ilist},' should be the same across models'])
+            end
+        end
+    end
+end
+end
 
-% r0=obj(1).options.graphics(1);
-% c0=obj(1).options.graphics(2);
-% selected_var_tex_list={obj(1).varendo(var_locs).tex_name};
-% nfields=nobj;
-% for jj=1:numel(shocks_id)
-%     shock_name=irf_shock_list{jj};
-%     X=[];
-%     for ii=1:nobj
-%         if ii==1 && jj==1 % check the kind of irfs
-%             if isfield(obj(1).irfs,'regime_girf')
-%                 string='irfs.regime_girf';
-%                 regime=1;
-%             elseif isfield(obj(1).irfs,'regime_1')
-%                 string='irfs.regime_';
-%                 nfields=numel(fieldnames(obj(1).irfs));
-%                 if nfields>1 && nobj>1
-%                     return
-%                 end
-%                 regime=num2str(transpose(1:nfields));
-%             elseif isfield(obj(1).dsge_var,'irfs')
-%                 string='dsge_var.irfs';
-%             end
-%         end
-%         if strcmp(string,'irfs.regime_')
-%             tmp=[];
-%             for kk=1:nfields
-%                 eval(['tmp1=double(obj(ii).',string,int2str(kk),'.(shock_name));'])
-%                 tmp=[tmp,mean(tmp1(:,var_locs,:),3)]; %#ok<NODEF,*AGROW>
-%             end
-%         else
-%             eval(['tmp=double(obj(ii).',string,'.(shock_name));'])
-%             tmp=mean(tmp(:,var_locs,:),3);
-%         end
-%         X=[X,tmp];
-%     end
-%     X=reshape(X,[irf_periods+1,numel(var_locs),nfields]);
-%     %     plot_impulse_response(X,selected_var_tex_list,shock_name,regime,r0,c0,irf_anticipate)
-% end
-% rows and columns in graphs probably not needed?
+function dsge_irfs=format_irf_output(dsge_irfs)
+nobj=numel(dsge_irfs);
+if nobj==1
+    dsge_irfs=dsge_irfs{1};
+else
+    tmp=struct();
+    shockList=fieldnames(dsge_irfs{1});
+    if ~isstruct(dsge_irfs{1}.(shockList{1}))
+        return
+    end
+    varList=fieldnames(dsge_irfs{1}.(shockList{1}));
+    mydates=dsge_irfs{1}.(shockList{1}).(varList{1}).TimeInfo;
+    for ishock=1:numel(shockList)
+        for ivar=1:numel(varList)
+            for imod=1:nobj
+                datta=double(dsge_irfs{imod}.(shockList{ishock}).(varList{ivar}));
+                if imod==1 && ivar==1 && ishock==1
+                    irf_size=size(datta);
+                    tank=zeros(irf_size(1),nobj,irf_size(2));
+                    mod_names=strcat('model_',cellfun(@num2str,num2cell(1:nobj),'uniformOutput',false));
+                    reg_names=strcat('regime_',cellfun(@num2str,num2cell(1:irf_size(2)),'uniformOutput',false));
+                end
+                tank(:,imod,:)=datta;
+            end
+            if irf_size(2)>1
+                for ireg=1:irf_size(2)
+                    tmp.(shockList{ishock}).(reg_names{ireg}).(varList{ivar})=...
+                        rise_time_series(mydates,tank(:,:,ireg),mod_names);
+                end
+            else
+                tmp.(shockList{ishock}).(varList{ivar})=...
+                    rise_time_series(mydates,tank,mod_names);
+            end
+        end
+    end
+    % aggregate
+    dsge_irfs=tmp;
+end
 
-
-% function plot_impulse_response(X,var_tex_list,shock_name,regime,r0,c0,irf_anticipate)
-%
-% nn=numel(var_tex_list);
-% nstar=r0*c0;
-% nfig=ceil(nn/nstar);
-% X(abs(X)<1e-9)=0;
-%
-% titel=['Orthogonalized shocks to ',shock_name];
-% for fig=1:nfig
-%     if nfig>1
-%         titelfig=[titel,' ',int2str(fig)];
-%     else
-%         titelfig=titel;
-%     end
-%     figure('name',titelfig);
-%     [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,nn,r0,c0);
-%     for ii=1:min(nstar,Remains)
-%         var_id=(fig-1)*nstar+ii;
-%         data=squeeze(X(:,var_id,:));
-%         subplot(r,c,ii)
-%         hold on
-%         plot(data,'linewidth',2)
-%         title(var_tex_list{var_id},'fontsize',12)%,'interpreter','none'
-%         if ii==1 && numel(regime)>1
-%             legend(regime)
-%         end
-%         plot([1,length(data)],[data(1),data(1)],'r','linewidth',2) % plot([0,irf_anticipate],[min(min(data)),max(max(data))],'r')
-%         %         plot([0,irf_anticipate],[0,0],'r','linewidth',2) % plot([0,irf_anticipate],[min(min(data)),max(max(data))],'r')
-%         hold off
-%         axis tight
-%     end
-% end
-% end
-
-
-
+end
