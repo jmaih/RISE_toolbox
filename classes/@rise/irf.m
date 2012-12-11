@@ -75,7 +75,7 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
         var_locs=locate_variables(irf_var_list,varnames);
         
         shock_only_one=false;
-        relative=false;
+%         relative=false;
         
         % set the order to the chosen irf_horizon in a way that the
         % shock properties are also affected. But do that only if there is
@@ -136,8 +136,8 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
             end
             d=d+1;
             
-            steady_state=vertcat(obj.varendo.det_steady_state);
-            same_steady_state=max(max(abs(bsxfun(@minus,steady_state,steady_state(:,1)))))<1e-9;
+%             steady_state=vertcat(obj.varendo.det_steady_state);
+%             same_steady_state=max(max(abs(bsxfun(@minus,steady_state,steady_state(:,1)))))<1e-9;
             
             T=obj.T;
             R=obj.R;
@@ -164,13 +164,13 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
                             end
                         end
                         Z(:,:,d,ss)=Z(:,:,d,ss)/girf_draws;
-                        if same_steady_state
-                            Z(:,:,d,ss)=bsxfun(@plus,Z(:,:,d,ss),relative*steady_state(:,1));
-                        else
-                            disp([mfilename,':: dealing with switching steady states is an unsolved problem here for the moment'])
-                            % I don't know how to deal with multiple steady states
-                            % in this case
-                        end
+% % %                         if same_steady_state
+% % %                             Z(:,:,d,ss)=bsxfun(@plus,Z(:,:,d,ss),relative*steady_state(:,1));
+% % %                         else
+% % %                             disp([mfilename,':: dealing with switching steady states is an unsolved problem here for the moment'])
+% % %                             % I don't know how to deal with multiple steady states
+% % %                             % in this case
+% % %                         end
                     case 'irf'
                         for reg=1:NumberOfRegimes
                             % create one page for each of the shocks in each regime
@@ -180,7 +180,7 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
                                 [Z(:,t+1,d,ss,reg),y0]=update_impulse(y0,T(:,:,reg),R(:,:,:,reg),PAI,...
                                     shock_loc,t,irf_shock_sign);
                             end
-                            Z(:,:,d,ss,reg)=bsxfun(@plus,Z(:,:,d,ss,reg),relative*steady_state(:,reg));
+% % %                             Z(:,:,d,ss,reg)=bsxfun(@plus,Z(:,:,d,ss,reg),relative*steady_state(:,reg));
                         end
                     case 'hirf'
                         % create one page for each of the shocks in each regime
@@ -325,11 +325,11 @@ nobj=numel(dsge_irfs);
 if nobj==1
     dsge_irfs=dsge_irfs{1};
 else
-    tmp=struct();
-    shockList=fieldnames(dsge_irfs{1});
-    if ~isstruct(dsge_irfs{1}.(shockList{1}))
+    if isempty(dsge_irfs{1})
         return
     end
+    tmp=struct();
+    shockList=fieldnames(dsge_irfs{1});
     varList=fieldnames(dsge_irfs{1}.(shockList{1}));
     mydates=dsge_irfs{1}.(shockList{1}).(varList{1}).TimeInfo;
     for ishock=1:numel(shockList)
