@@ -1,4 +1,4 @@
-function Histdec=historical_decomposition(obj,varargin)
+function [Histdec,obj]=historical_decomposition(obj,varargin)
 
 % PURPOSE: Computes historical decompositions of a DSGE model
 %-------------------------------------------------------------
@@ -77,7 +77,8 @@ else
     histdec_start_date=rise_date(histdec_start_date);
 end
 if histdec_start_date<hist_start_date || histdec_start_date>hist_end_date
-    error([mfilename,':: the decomposition start date must lie between ',hist_start_date.date,' and ',hist_end_date.date])
+    error([mfilename,':: the decomposition start date must lie between ',...
+        hist_start_date.date,' and ',hist_end_date.date])
 end
 smoothed_variables=window(smoothed_variables,hist_start_date);
 smoothed_variables=double(smoothed_variables);
@@ -116,7 +117,8 @@ smoothed_shocks=smoothed_shocks(varlocs,:);
 % number of variables
 endo_nbr = numel(endo_names);
 
-% number of shocks: this is potentially a problem if there are exogenous deterministic variables
+% number of shocks: this is potentially a problem if there are exogenous
+% deterministic variables 
 exo_nbr = numel(exo_names);
 
 z = zeros(endo_nbr,exo_nbr+2,NumberOfObservations);
@@ -134,10 +136,12 @@ Histdec=struct();
 for ii=1:endo_nbr
     theData=transpose(squeeze(z(ii,1:end-1,:)));
     if ii==1
-        Histdec.(endo_names{ii})=rise_time_series(histdec_start_date,theData,ContributingNames);
+        Histdec.(endo_names{ii})=rise_time_series(histdec_start_date,...
+            theData,ContributingNames);
         TimeInfo=Histdec.(endo_names{ii}).TimeInfo;
     else
-        Histdec.(endo_names{ii})=rise_time_series(TimeInfo,theData,ContributingNames);
+        Histdec.(endo_names{ii})=rise_time_series(TimeInfo,theData,...
+            ContributingNames);
     end
 end
 
@@ -152,17 +156,20 @@ end
                 if t==1
                     % Collect the shocks
                     for j=1:NumberOfAnticipatedSteps
-                        z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
+                        z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + ...
+                            B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                     end
                     % Find initial condition contribution
-                    z(:,exo_nbr+1,t) = z(:,exo_nbr+2,t) - sum(z(:,1:exo_nbr,t),2);
+                    z(:,exo_nbr+1,t) = z(:,exo_nbr+2,t) - ...
+                        sum(z(:,1:exo_nbr,t),2);
                 else
                     % evolve initial condition
                     z(:,exo_nbr+1,t)=A*z(:,exo_nbr+1,t-1);
                     % collect the shocks
                     z(:,1:exo_nbr,t)=A*z(:,1:exo_nbr,t-1);
                     for j=1:NumberOfAnticipatedSteps
-                        z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
+                        z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + ...
+                            B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                     end
                 end
             else
@@ -172,7 +179,8 @@ end
                 
                 % collect the shocks
                 for j=1:NumberOfAnticipatedSteps
-                    z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
+                    z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + ...
+                        B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                 end
                 % initial conditions
                 z(:,exo_nbr+1,t) = z(:,exo_nbr+2,t) - sum(z(:,1:exo_nbr,t),2);
