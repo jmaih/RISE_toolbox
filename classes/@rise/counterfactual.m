@@ -1,133 +1,147 @@
-function obj=counterfactual(obj,param_type,shocks_db,param_struct)
+function [counterf,actual]=counterfactual(obj,varargin)
 % shocks_db is a rise_time_series object with alternative history for the shocks
+
+% should
+Defaults=struct('counterfact_shocks_db','',...
+    'counterfact_nullify_others',true);
+
 if isempty(obj)
-    if nargout>1
-        error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-    end
-    obj=struct();
+    counterf=Defaults;
     return
 end
-if nargin < 4
-    param_struct=[];
-    if nargin<3
-        shocks_db=[];
-        if nargin<2
-            param_type=[];
-        end
-    end
+nobj=numel(obj);
+Fields=fieldnames(Defaults);
+
+counterf=cell(1,nobj);
+actual=cell(1,nobj);
+for ii=1:nobj
+    [counterf{ii},actual{ii}]=counterfactual_intern(obj(ii));
 end
 
-mode_=vertcat(obj.estimated_parameters.mode);
-mean_=vertcat(obj.estimated_parameters.mean);
-startval=vertcat(obj.estimated_parameters.startval);
-params=[];
-if isempty(param_type)
-    if ~isempty(mean_)
-        params=mean_;
-    elseif ~isempty(mode_)
-        params=mode_;
-    end
+if nobj==1
+	counterf=counterf{1};
+	actual=actual{1};
 else
-    if strcmp(param_type,'mode')
-        if isempty(mode_)
-            warning([mfilename,':: mode has not been estimated']) %#ok<WNTAG>
-        end
-        params=mode_;
-    elseif strcmp(param_type,'mean')
-        if isempty(mean_)
-            if isempty(mode_)
-                warning([mfilename,':: model has not been estimated, using calibration']) %#ok<WNTAG>
-            else
-                warning([mfilename,':: mean has not been estimated, using the mode']) %#ok<WNTAG>
+	% pad them as we did with irfs
+	
+end
+
+    function [COUNTER,ACTUAL]=counterfactual_intern(obj)
+
+        obj=set_options(obj,varargin{:});
+        oldoptions=obj.options;
+        thisDefault=Defaults;
+        for ifield=1:numel(Fields)
+            vi=Fields{ifield};
+            if isfield(oldoptions,vi)
+                thisDefault.(vi)=oldoptions.(vi);
             end
-            params=mode_;
-        else
-            params=mean_;
         end
-    elseif strcmp(param_type,'calibration')
-        params=startval;
-    else
-        error([mfilename,':: unrecognized parameter type ',param_type])
-    end
-end
-
-% compute the history
-[obj,~,~,retcode]=filter(obj,'evaluate_params',params,'kf_filtering_level',3);
-if retcode
-    error([mfilename,':: model could not be solved for this parameterization'])
-end
-
-if ~isempty(shocks_db)
-    T=obj.T;
-    R=obj.R; %
-    [endo_nbr,~,order,regime_nbr]=size(R);
-    if regime_nbr>1
-        error([mfilename,':: counterfactual analysis for multiple-regime models not yet implemented'])
-    end
-    SS=obj.steady_state_and_balanced_growth_path(1:endo_nbr,:);
-    % use the new shocks and the smoothed information to reconstruct history
-    
-    % dates for beginning and end of history
-    start_date=obj.Filters.smoothed_shocks.regime_1.TimeInfo(1);
-    finish_date=obj.Filters.smoothed_shocks.regime_1.TimeInfo(end);
-    % check dates consistency
-    if start_date<shocks_db.TimeInfo(1)
-        error([mfilename,':: alternative shock history cannot start before ',start_date.date])
-    end
-    if finish_date<shocks_db.TimeInfo(end)
-        error([mfilename,':: alternative shock history cannot end after ',finish_date.date])
-    end
-    if obj.Filters.smoothed_shocks.regime_1.NumberOfPages<shocks_db.NumberOfPages
-        error([mfilename,':: alternative shock history cannot have more pages than the baseline'])
-    end
-    % locations of the alternative history
-    alt_start=start_date.date_2_observation(shocks_db.TimeInfo(1));
-    alt_finish=start_date.date_2_observation(shocks_db.TimeInfo(end));
-    
-    % locate the new shocks in the baseline database
-    name_id=locate_variables(shocks_db.varnames,{obj.varexo.name});
-
-    % get the old shocks (baseline case)
-    smoothed_shocks=cell2mat(obj.Filters.smoothed_shocks.regime_1.data(2:end,2:end,:));
-    
-    % replace with the alternative shocks
-    smoothed_shocks(alt_start:alt_finish,name_id,1:shocks_db.NumberOfPages)=...
-        cell2mat(shocks_db.data(2:end,2:end,:));
-    % now permute the order to names,time,expectations
-    smoothed_shocks=permute(smoothed_shocks,[2,1,3]);
-    
-    % get the number of observations
-    NumberOfObservations=obj.Filters.smoothed_shocks.regime_1.NumberOfObservations;
-    
-    % initialize output
-    COUNTER=zeros(endo_nbr,NumberOfObservations);
-    % recreate history: things like this could be done in a simulate function
-    % but I already have one and this is not the time to mess with it.
-    % there is no way to know what y0 is and setting it to be the steady
-    % state is only good for filtering, not for smoothing. Hence we impose
-    % that the first observation (y1) is given and we compute the rest
-    COUNTER(:,1)=cell2mat(obj.Filters.smoothed_variables.regime_1.data(2,2:end));
-    % we then start the iterations at 2
-    for t=2:NumberOfObservations
-        COUNTER(:,t)=SS+T*(COUNTER(:,t-1)-SS);
-        for r=1:order
-            COUNTER(:,t)=COUNTER(:,t)+R(:,:,r)*smoothed_shocks(:,t,r);
+		shocks_db=thisDefault.counterfact_shocks_db;
+        counterfact_nullify_others=thisDefault.counterfact_nullify_others;
+        
+        % get the historical decomposition to partial out the elements that
+        % are changed by the counterfactual shocks
+		[Histdec,obj]=historical_decomposition(obj);
+        
+        shockList={obj.varexo.name};
+        endoList={obj.varendo.name};
+        smoothed_shocks=obj.Filters.Expected_smoothed_shocks;
+        smoothed_variables=obj.Filters.Expected_smoothed_variables;
+        TimeInfo=smoothed_variables.(endoList{1}).TimeInfo;
+        if ischar(shocks_db)
+            shocks_db=cellstr(shocks_db);
+        end
+        if isstruct(shocks_db) || isa(shocks_db,'rise_time_series')
+            if isa(shocks_db,'rise_time_series')
+                shocks_db=pages2struct(shocks_db);
+            end
+            if ~isequal(shocks_db.TimeInfo,smoothed_shocks.(shockList{1}).TimeInfo)
+                error('shocks database should match history used for filtering')
+            end
+            % a structure time series
+            db_shock_names=fieldnames(shocks_db);
+            for ishock=1:numel(shockList)
+                shock_name=shockList{ishock};
+                if ismember(shock_name,db_shock_names)
+                    smoothed_shocks.(shock_name)=shocks_db.(shock_name);
+                elseif ismember(shock_name,shockList)
+                    smoothed_shocks.(shock_name)=nullify(smoothed_shocks.(shock_name));
+                end
+            end
+        elseif iscellstr(shocks_db)
+            % list of shocks to include in the simulation. Get them from
+            % the smoother and zero-out all other shocks. but first check
+            % that they indeed are present in the list of shocks.
+%             locs=locate_variables(shocks_db,shockList);
+            other_shocks=setdiff(shockList,shocks_db);
+            for ishock=1:numel(other_shocks)
+                shock_name=other_shocks{ishock};
+                smoothed_shocks.(shock_name)=nullify(smoothed_shocks.(shock_name));
+            end
+        end
+        % get the number of observations
+        NumberOfObservations=smoothed_shocks.(shockList{1}).NumberOfObservations;
+        
+        % now reconstruct the history that would have been
+        smoothed_shocks=rise_time_series.collect(smoothed_shocks);
+        tmp_names=smoothed_shocks.varnames;
+        locs=locate_variables(tmp_names,shockList);
+        smoothed_shocks=double(smoothed_shocks);
+        smoothed_shocks=permute(smoothed_shocks,[2,1,3]);
+        smoothed_shocks=smoothed_shocks(locs,:,:);
+        smoothed_variables=rise_time_series.collect(smoothed_variables);
+        tmp_names=smoothed_variables.varnames;
+        locs=locate_variables(tmp_names,endoList);
+        smoothed_variables=double(smoothed_variables);
+        smoothed_variables=permute(smoothed_variables,[2,1]);
+        smoothed_variables=smoothed_variables(locs,:);
+        
+        T=obj.T;
+        R=obj.R; %
+        [endo_nbr,~,order,regime_nbr]=size(R);
+        
+        SS=obj.steady_state_and_balanced_growth_path(1:endo_nbr,:);
+        % use the new shocks and the smoothed information to reconstruct history
+        
+        % initialize output
+        COUNTER=zeros(endo_nbr,NumberOfObservations);
+        % recreate history: things like this could be done in a simulate function
+        % but I already have one and this is not the time to mess with it.
+        % there is no way to know what y0 is and setting it to be the steady
+        % state is only good for filtering, not for smoothing. Hence we impose
+        % that the first observation (y1) is given and we compute the rest
+        COUNTER(:,1)=smoothed_variables(:,1);
+        % we then start the iterations at 2
+        for t=2:NumberOfObservations
+            COUNTER(:,t)=SS+T*(COUNTER(:,t-1)-SS);
+            for r=1:order
+                COUNTER(:,t)=COUNTER(:,t)+R(:,:,r)*smoothed_shocks(:,t,r);
+            end
+        end
+        
+        % put to ...
+        COUNTER=double2rise_time_series(COUNTER);
+        ACTUAL=double2rise_time_series(smoothed_variables);
+        clear smoothed_variables
+        
+        function dbout=double2rise_time_series(dbin)
+            dbout=struct();
+            for jj=1:numel(endoList)
+                dbout.(endoList{jj})=rise_time_series(TimeInfo,dbin(jj,:)',endoList{jj});
+            end
+        end
+            
+        function db=nullify(db)
+            if counterfact_nullify_others
+                datta=zeros(size(double(db)));
+                this_TimeInfo=db.TimeInfo;
+                varnames=db.varnames;
+                db=rise_time_series(this_TimeInfo,datta,varnames);
+            end
         end
     end
-    obj=obj.set_properties('counterfactual_shocks',rise_time_series(start_date.date,transpose(COUNTER),char({obj.varendo.name})));
 end
 
-if ~isempty(param_struct)
-    % change the parameters and redo the filtering
-    % 1- set the parameters
-    newobj=obj.set_parameters(param_struct);
-    % 2- filter using those parameters but save to a different object
-    [newobj,~,~,retcode]=newobj.filter('kf_filtering_level',3);
-    if retcode
-        error([mfilename,':: model could not be solved for this parameterization'])
-    end
-    % turn the smoothed to a database
-    obj=obj.set_properties('counterfactual_parameters',...
-         newobj.Filters.smoothed_variables.regime_1);
-end
+
 
