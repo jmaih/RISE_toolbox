@@ -1,9 +1,5 @@
 1- smooth transition estimation?
-2- possibility of selecting range to plot, highlighting and using tex_names in dyn_ts/plot
-3- automatic differentiation?
-4- symbolic differentiation?
-5- perturbation methods?
-6- finish the forecast routine, importing functions from other work
+2- finish the forecast routine, importing functions from earlier work
 7- how to implement the dirichlet distribution in the estimation of markov switching with more than 2 transition probabilities?
 8- learn GIT & GITHUB
 9- there are restrictions from the model and other restrictions that possibly may use the whole model. This needs separation and clarification
