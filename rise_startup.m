@@ -203,7 +203,7 @@ end
 
 if ispc
     collect=regexp(tmp,';','split');
-elseif ismac
+elseif ismac || isunix
     collect=regexp(tmp,':','split');
 else
     error([mfilename,':: unknown system '])
