@@ -169,11 +169,15 @@ if  kf_filtering_level
     Filters.BIGPAI(:,1)=PAI;
     a01_store=zeros(mm,h,hstar,smpl+1);
     a_store=zeros(mm,h,smpl+1);
+    a01_store(:,:,:,1)=a01;
     P_store=zeros(mm,mm,h,hstar,smpl+1);
     for s1=1:h
         for s0=1:hstar
+            pai01_joint=Q0(s0,s1)*PAItt(s1);
             P_store(:,:,s1,s0,1)=P01(:,:,s1,s0);
+            a_store(:,s1,1)=a_store(:,s1,1)+pai01_joint*a01(:,s1,s0);
         end
+        a_store(:,s1,1)=a_store(:,s1,1)/PAItt(s1);
     end
     if  kf_filtering_level>1
         Filters.BIGPAI_tt=zeros(h,smpl);
