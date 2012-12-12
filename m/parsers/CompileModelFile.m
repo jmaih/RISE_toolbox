@@ -1332,7 +1332,11 @@ dictionary=orderfields(dictionary);
                         [tokk,rest1]=strtok(rest_,DELIMITERS); %#ok<*STTOK>
                         tok_status=determine_status(tokk);
                         if ~strcmp(tok_status,'unknown')
-                            error([mfilename,':: string ''',tokk,''' in ',file_name_,' at line ',int2str(iline_),' cannot have multiple types'])
+                            if strcmp(tok_status,'f')
+                                disp([mfilename,':: (gentle warning): ',tokk,' is also a matlab function'])
+                            else
+                                error([mfilename,':: string ''',tokk,''' in ',file_name_,' at line ',int2str(iline_),' cannot have multiple types'])
+                            end
                         end
                         if def_flag
                             dictionary.definitions=[dictionary.definitions;{tokk}];
