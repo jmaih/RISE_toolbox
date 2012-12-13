@@ -99,8 +99,8 @@ for ireg=1:nreg
     end
 end
 
-SS=SS(:,1); % to be adjusted for markov chain later
-smoothed_variables=bsxfun(@minus,smoothed_variables,transpose(SS));
+% SS=SS(:,1); % to be adjusted for markov chain later
+% smoothed_variables=bsxfun(@minus,smoothed_variables,transpose(SS));
 smoothed_variables=permute(smoothed_variables,[2,1]);
 smoothed_shocks=window(smoothed_shocks,hist_start_date);
 smoothed_shocks=permute(double(smoothed_shocks),[2,1,3]);
@@ -121,12 +121,12 @@ endo_nbr = numel(endo_names);
 % deterministic variables 
 exo_nbr = numel(exo_names);
 
-z = zeros(endo_nbr,exo_nbr+2,NumberOfObservations);
-z(:,end,:)=smoothed_variables;
+% orig_smoothed_variables=smoothed_variables;
+z = zeros(endo_nbr,exo_nbr+1,NumberOfObservations);
 
 z=HistoricalDecompositionEngine(z,smoothed_shocks);
 
-if max(max(abs(squeeze(sum(z(:,1:end-1,:),2))-squeeze(z(:,end,:)))))>1e-9
+if max(max(abs(squeeze(sum(z,2))-smoothed_variables)))>1e-9
     error([mfilename,':: Decomposition failed'])
 end
 
@@ -134,7 +134,7 @@ ContributingNames=[exo_names,'InitialConditions'];
 
 Histdec=struct();
 for ii=1:endo_nbr
-    theData=transpose(squeeze(z(ii,1:end-1,:)));
+    theData=transpose(squeeze(z(ii,1:end,:)));
     if ii==1
         Histdec.(endo_names{ii})=rise_time_series(histdec_start_date,...
             theData,ContributingNames);
@@ -151,7 +151,8 @@ end
         NumberOfAnticipatedSteps=size(R,3);
         
         for t=1:NumberOfObservations
-            [A,B]=expected_state_matrices(t);
+            [A,B,SS_t]=expected_state_matrices(t);
+            smoothed_variables(:,t)=smoothed_variables(:,t)-SS_t;
             if histdec_method
                 if t==1
                     % Collect the shocks
@@ -160,7 +161,7 @@ end
                             B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                     end
                     % Find initial condition contribution
-                    z(:,exo_nbr+1,t) = z(:,exo_nbr+2,t) - ...
+                    z(:,exo_nbr+1,t) = smoothed_variables(:,t) - ...
                         sum(z(:,1:exo_nbr,t),2);
                 else
                     % evolve initial condition
@@ -183,17 +184,19 @@ end
                         B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                 end
                 % initial conditions
-                z(:,exo_nbr+1,t) = z(:,exo_nbr+2,t) - sum(z(:,1:exo_nbr,t),2);
+                z(:,exo_nbr+1,t) = smoothed_variables(:,t) - sum(z(:,1:exo_nbr,t),2);
             end
         end
         
-        function [A,B]=expected_state_matrices(t)
+        function [A,B,SS_t]=expected_state_matrices(t)
             probs_t=Probs(:,t);
             A=probs_t(1)*T(:,:,1);
             B=probs_t(1)*R(:,:,:,1);
+            SS_t=probs_t(1)*SS(:,1);
             for st=2:nreg
                 A=A+probs_t(st)*T(:,:,st);
                 B=B+probs_t(st)*R(:,:,:,st);
+                SS_t=SS_t+probs_t(st)*SS(:,st);
             end
         end
     end
