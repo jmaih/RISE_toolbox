@@ -126,10 +126,10 @@ classdef rise
         % start values.
         Hessian
         vcov
-        % properties potentially going out
-        hist_dec
-        counterfactual_parameters
-        counterfactual_shocks
+% % % % % %         % properties potentially going out
+% % % % % %         hist_dec
+% % % % % %         counterfactual_parameters
+% % % % % %         counterfactual_shocks
         Filters
         state_names
     end
@@ -175,6 +175,7 @@ classdef rise
         varargout=set_properties(obj,varargin)
         varargout=set_options(obj,varargin)
         varargout=historical_decomposition(obj,varargin)
+        varargout=variance_decomposition(obj,varargin)
         % constructor
         function obj=rise(model_filename,varargin)
             % default options
