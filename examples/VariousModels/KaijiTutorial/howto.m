@@ -30,6 +30,9 @@ kaiji.print_solution
 kaiji.print_solution({'C','H','K'})
 
 %% doing things the RBC way: waste of time
+% RISE write the solution of the whole system as: X_t=T*X_{t-1}+R*e_t. The
+% RBC guys write solutions as S_t=P*S_{t-1}+K*e_t and Y_t=F*S_t . Below, we
+% show how to recover matrices P, K and F.
 % collect the T and R matrices
 T=kaiji.T;
 R=kaiji.R;
@@ -77,19 +80,20 @@ var_list={kaiji.varendo.name};
 var_list={'A','B','D','PSI','C','K','H','R'}; 
 for ishock=1:numel(shock_list)
     shock=shock_list{ishock};
-    figure('name',['orthogonalized shocks to ',shock]);
+    loc=locate_variables(shock,{kaiji.varexo.name});
+    figure('name',['IRFs to a ',kaiji.varexo(loc).tex_name, 'shock']);
     for ivar=1:numel(var_list)
         endovar=var_list{ivar};
-        tmp=[myirfs{1}.(shock).(endovar),myirfs{2}.(shock).(endovar)];
         subplot(3,3,ivar)
-        plot(tmp,'linewidth',2)
-        title(endovar)
+        plot(myirfs.(shock).(endovar),'linewidth',2)
+        loc=locate_variables(endovar,{kaiji.varendo.name});
+        title({kaiji.varendo(loc).tex_name})
         if ivar==1
             legend('anticipated','unanticipated')
         end
     end
 end
-%% estimation
+%% estimation. Now the DSGE way
 
 %% read the data and create the time series
 [datta,names]=xlsread('data.xlsx');
@@ -111,4 +115,79 @@ end
 
 %% estimate the model
 
-kaiji=estimate(kaiji,'data',rise_time_series.collect(mydata))
+kaiji=estimate(kaiji,'data',rise_time_series.collect(mydata));
+
+%% historical decomposition of shocks
+histdec=historical_decomposition(kaiji);
+
+%% plot the decomposition
+figure('name','historical decomposition of shocks and initial conditions')
+for ivar=1:numel(var_list)
+    vname=var_list{ivar};
+    subplot(3,3,ivar)
+    plot_decomp(histdec.(vname))
+    loc=locate_variables(vname,{kaiji.varendo.name});
+    title(kaiji.varendo(loc).tex_name)
+    if ivar==1
+        contrib_names=histdec.(vname).varnames;
+        shock_texnames={kaiji.varexo.tex_name};
+        locs=locate_variables(contrib_names,{kaiji.varexo.name},true);
+        for jj=1:numel(locs)
+            if isnan(locs(jj))
+                continue
+            end
+            contrib_names{jj}=kaiji.varexo(locs(jj)).tex_name;
+        end
+        hleg=legend(contrib_names,...
+            'Location','BestOutside','orientation','horizontal');
+        pp=get(hleg,'position');
+        pp(1:2)=0;
+        set(hleg,'position',pp)
+    end
+end
+
+%% counterfactual: what if only one shock had been alive?
+for ishock=1:numel(shock_list)
+    [counterf,actual]=counterfactual(kaiji,'counterfact_shocks_db',...
+        shock_list{ishock});%,'EPS_PSI','EPS_B','EPS_D'
+    loc=locate_variables(shock_list{ishock},{kaiji.varexo.name},true);
+    figure('name',['Counterfactual: ',kaiji.varexo(loc).tex_name,' shock only'])
+    for ivar=1:numel(var_list)
+        vname=var_list{ivar};
+        subplot(3,3,ivar)
+        plot([actual.(vname),counterf.(vname)])
+        loc=locate_variables(vname,{kaiji.varendo.name});
+        title(kaiji.varendo(loc).tex_name)
+        if ivar==1
+            legend({'actual','counterfactual'})
+        end
+    end
+end
+%% variance decomposition
+vardec=variance_decomposition(kaiji);
+
+%% plot the decomposition
+figure('name','Variance decomposition of shocks')
+for ivar=1:numel(var_list)
+    vname=var_list{ivar};
+    subplot(3,3,ivar)
+    plot_decomp(vardec.conditional.(vname))
+    loc=locate_variables(vname,{kaiji.varendo.name});
+    title(kaiji.varendo(loc).tex_name)
+    if ivar==1
+        contrib_names=vardec.conditional.(vname).varnames;
+        shock_texnames={kaiji.varexo.tex_name};
+        locs=locate_variables(contrib_names,{kaiji.varexo.name},true);
+        for jj=1:numel(locs)
+            if isnan(locs(jj))
+                continue
+            end
+            contrib_names{jj}=kaiji.varexo(locs(jj)).tex_name;
+        end
+        hleg=legend(contrib_names,...
+            'Location','BestOutside','orientation','horizontal');
+        pp=get(hleg,'position');
+        pp(1:2)=0;
+        set(hleg,'position',pp)
+    end
+end
