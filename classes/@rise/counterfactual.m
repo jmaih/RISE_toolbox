@@ -3,7 +3,8 @@ function [counterf,actual]=counterfactual(obj,varargin)
 
 % should
 Defaults=struct('counterfact_shocks_db','',...
-    'counterfact_nullify_others',true);
+    'counterfact_nullify_others',true,...
+    'counterfact_regime',[]); % counterfact_regime={'coef',1','vol',3}
 
 if isempty(obj)
     counterf=Defaults;
@@ -39,7 +40,8 @@ end
         end
 		shocks_db=thisDefault.counterfact_shocks_db;
         counterfact_nullify_others=thisDefault.counterfact_nullify_others;
-        
+        counterfact_regime=thisDefault.counterfact_regime;
+                
         % get the benchmark history
         [obj,~,~,retcode]=obj.filter();	% by default, this will also smooth....
         
@@ -53,6 +55,10 @@ end
         smoothed_shocks=obj.Filters.Expected_smoothed_shocks;
         smoothed_variables=obj.Filters.Expected_smoothed_variables;
         TimeInfo=smoothed_variables.(endoList{1}).TimeInfo;
+        if isempty(shocks_db)
+            % allow all shocks
+            shocks_db=smoothed_shocks;
+        end
         if ischar(shocks_db)
             shocks_db=cellstr(shocks_db);
         end
@@ -107,15 +113,54 @@ end
         % apply the smoothed probabilities to SS
         Regimes=obj.Regimes;
         [nreg,nchains]=size(Regimes);
-        Probs=ones(nreg,NumberOfObservations);
         chainNames={obj.markov_chains.name};
-        for ireg=1:nreg
-            reg_i=Regimes(ireg,:);
-            for ichain=1:nchains
-                ch_reg=[chainNames{ichain},'_',int2str(reg_i(ichain))];
-                loc=strcmp(ch_reg,probList);
-                Probs(ireg,:)=Probs(ireg,:).*smoothed_probabilities(loc,:);
+        if isempty(counterfact_regime)
+            Probs=ones(nreg,NumberOfObservations);
+            for ireg=1:nreg
+                reg_i=Regimes(ireg,:);
+                for ichain=1:nchains
+                    ch_reg=[chainNames{ichain},'_',int2str(reg_i(ichain))];
+                    loc=strcmp(ch_reg,probList);
+                    Probs(ireg,:)=Probs(ireg,:).*smoothed_probabilities(loc,:);
+                end
             end
+        else
+            if ischar(counterfact_regime)
+                counterfact_regime=cellstr(counterfact_regime);
+            end
+            nn=numel(counterfact_regime)/2;
+            if nn~=floor(nn)
+                error('counterfact_regime elements must come in pairs')
+            end
+            counterfact_regime=reshape(counterfact_regime(:)',2,nn);
+            choice=true(nreg,1);
+            marked=false(1,nchains);
+            marked(1)=true; % constant chain always marked
+            for kk=1:n
+                ch=counterfact_regime{1,kk};
+                if strcmp(ch,'const')
+                    continue
+                end
+                reg=counterfact_regime{2,kk};
+                ccol=find(strcmp(ch,chainNames));
+                if isempty(ccol)
+                    error([ch,' unrecognized as a chain name'])
+                end
+                if ~ismember(reg,(1:numel(obj.markov_chains(2).states)))
+                    error(['regime chosen for chain ',ch,' not in the range of the states of that chain'])
+                end
+                if marked(ccol)
+                    error(['chain ',ch,' cannot be declared more than once'])
+                end
+                marked(ccol)=true;
+                choice=choice & Regimes(:,ccol)==reg;
+            end
+            not_marked=chainNames(~marked);
+            if ~isempty(not_marked)
+                disp(not_marked)
+                error('the chains listed above have not been declared')
+            end
+            counterfact_regime=find(choice);
         end
         
         T=obj.T;
@@ -143,20 +188,25 @@ end
             end
         end
         
-        % put to ...
         COUNTER=double2rise_time_series(COUNTER);
         ACTUAL=double2rise_time_series(smoothed_variables);
         clear smoothed_variables
         
         function [A,B,SS_t]=expected_state_matrices(t)
-            probs_t=Probs(:,t);
-            A=probs_t(1)*T(:,:,1);
-            B=probs_t(1)*R(:,:,:,1);
-            SS_t=probs_t(1)*SS(:,1);
-            for st=2:nreg
-                A=A+probs_t(st)*T(:,:,st);
-                B=B+probs_t(st)*R(:,:,:,st);
-                SS_t=SS_t+probs_t(st)*SS(:,st);
+            if isempty(counterfact_regime)
+                probs_t=Probs(:,t);
+                A=probs_t(1)*T(:,:,1);
+                B=probs_t(1)*R(:,:,:,1);
+                SS_t=probs_t(1)*SS(:,1);
+                for st=2:nreg
+                    A=A+probs_t(st)*T(:,:,st);
+                    B=B+probs_t(st)*R(:,:,:,st);
+                    SS_t=SS_t+probs_t(st)*SS(:,st);
+                end
+            else
+                A=T(:,:,counterfact_regime);
+                B=R(:,:,:,counterfact_regime);
+                SS_t=SS(:,counterfact_regime);
             end
         end
         
