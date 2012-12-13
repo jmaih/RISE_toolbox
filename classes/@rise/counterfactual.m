@@ -40,9 +40,13 @@ end
 		shocks_db=thisDefault.counterfact_shocks_db;
         counterfact_nullify_others=thisDefault.counterfact_nullify_others;
         
-        % get the historical decomposition to partial out the elements that
-        % are changed by the counterfactual shocks
-		[Histdec,obj]=historical_decomposition(obj);
+        % get the benchmark history
+        [obj,~,~,retcode]=obj.filter();	% by default, this will also smooth....
+        
+        % extract the state and transition matrices
+        if retcode
+            error([mfilename,':: model could not be solved'])
+        end
         
         shockList={obj.varexo.name};
         endoList={obj.varendo.name};
@@ -96,10 +100,27 @@ end
         smoothed_variables=double(smoothed_variables);
         smoothed_variables=permute(smoothed_variables,[2,1]);
         smoothed_variables=smoothed_variables(locs,:);
+
+        smoothed_probabilities=rise_time_series.collect(obj.Filters.smoothed_probabilities);
+        probList=smoothed_probabilities.varnames;
+        smoothed_probabilities=permute(double(smoothed_probabilities),[2,1]);
+        % apply the smoothed probabilities to SS
+        Regimes=obj.Regimes;
+        [nreg,nchains]=size(Regimes);
+        Probs=ones(nreg,NumberOfObservations);
+        chainNames={obj.markov_chains.name};
+        for ireg=1:nreg
+            reg_i=Regimes(ireg,:);
+            for ichain=1:nchains
+                ch_reg=[chainNames{ichain},'_',int2str(reg_i(ichain))];
+                loc=strcmp(ch_reg,probList);
+                Probs(ireg,:)=Probs(ireg,:).*smoothed_probabilities(loc,:);
+            end
+        end
         
         T=obj.T;
         R=obj.R; %
-        [endo_nbr,~,order,regime_nbr]=size(R);
+        [endo_nbr,~,order,~]=size(R);
         
         SS=obj.steady_state_and_balanced_growth_path(1:endo_nbr,:);
         % use the new shocks and the smoothed information to reconstruct history
@@ -111,12 +132,14 @@ end
         % there is no way to know what y0 is and setting it to be the steady
         % state is only good for filtering, not for smoothing. Hence we impose
         % that the first observation (y1) is given and we compute the rest
-        COUNTER(:,1)=smoothed_variables(:,1);
+        start=2;
+        COUNTER(:,1:start-1)=smoothed_variables(:,1:start-1);
         % we then start the iterations at 2
-        for t=2:NumberOfObservations
-            COUNTER(:,t)=SS+T*(COUNTER(:,t-1)-SS);
+        for t=start:NumberOfObservations
+            [A,B,SS_t]=expected_state_matrices(t);
+            COUNTER(:,t)=SS_t+A*(COUNTER(:,t-1)-SS_t);
             for r=1:order
-                COUNTER(:,t)=COUNTER(:,t)+R(:,:,r)*smoothed_shocks(:,t,r);
+                COUNTER(:,t)=COUNTER(:,t)+B(:,:,r)*smoothed_shocks(:,t,r);
             end
         end
         
@@ -124,6 +147,18 @@ end
         COUNTER=double2rise_time_series(COUNTER);
         ACTUAL=double2rise_time_series(smoothed_variables);
         clear smoothed_variables
+        
+        function [A,B,SS_t]=expected_state_matrices(t)
+            probs_t=Probs(:,t);
+            A=probs_t(1)*T(:,:,1);
+            B=probs_t(1)*R(:,:,:,1);
+            SS_t=probs_t(1)*SS(:,1);
+            for st=2:nreg
+                A=A+probs_t(st)*T(:,:,st);
+                B=B+probs_t(st)*R(:,:,:,st);
+                SS_t=SS_t+probs_t(st)*SS(:,st);
+            end
+        end
         
         function dbout=double2rise_time_series(dbin)
             dbout=struct();
