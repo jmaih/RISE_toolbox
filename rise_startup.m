@@ -149,40 +149,21 @@ if flag
     set(0,'default');
 end
 % Show logo
-showLogo();
+welcome_message();
 
-
-    function showLogo()
+    function welcome_message()
         
         vv = ver('RISE_Toolbox');
-        
-        logo = {...
-            '                                        ',...
-            '                  ****                  ',...
-            '                   **                   ',...
-            '  _____	   _    _____ 	 _____ 		 ',...
-            ' |  _  \	  |*|  | ____|  | ____|   	 ',...
-            ' | |_| |	   _   | |      | |       	 ',...
-            ' |     /	  |	|  | |__ _  | |___    	 ',...
-            ' | |\ \	  |	|  |____  | |  ___|   	 ',...
-            ' | | \ \	  | |       | | | |       	 ',...
-            ' | |  \ \    | |   ____| | | |___       ',...
-            ' |_|	\_\   |_|  |______| |_____|   	 ',...
-            '                   **                   ',...
-            '                  ****                  ',...
-            };
-        
-        l1 = '+----------------------------------------------------+';
-        %   ll = length(l1);
+        l1 = '+----------------------------------------------+';
         
         disp(l1);
-        % for jj = 1:numel(logo)
-        %     fprintf(1,'%s\n',logo{jj});
-        % end
         disp(['Welcome to the ', vv.Name])
         disp(['Version: ', vv.Version])
         disp(['Release: ', vv.Release])
         disp(['Date: ', vv.Date])
+        disp('Please address concerns, problems, suggestions ')
+        disp('and desideratas to junior.maih@gmail.com')
+        disp('Thank you for your feedback !!!')
         if retcode
             disp('pdflatex/Miktex could not be located')
         end
