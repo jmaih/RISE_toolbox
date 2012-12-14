@@ -147,9 +147,9 @@ end
 
 if flag
     set(0,'default');
+else
+    welcome_message();
 end
-% Show logo
-welcome_message();
 
     function welcome_message()
         
