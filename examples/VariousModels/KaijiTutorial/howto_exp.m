@@ -9,7 +9,7 @@ addpath('C:\Users\Junior\Documents\GitHub\RISE_toolbox')
 rise_startup();
 
 %% read the model
-kaiji=rise('kaiji1207');
+kaiji=rise('kaiji1207_exp');
 
 %% get the first-order perturbation (approximation) of the model
 
@@ -80,12 +80,14 @@ var_list={kaiji.varendo.name};
 var_list={'A','B','D','PSI','C','K','H','R'}; 
 for ishock=1:numel(shock_list)
     shock=shock_list{ishock};
-    figure('name',['IRFs to a ',shock, 'shock']);
+    loc=locate_variables(shock,{kaiji.varexo.name});
+    figure('name',['IRFs to a ',kaiji.varexo(loc).tex_name, 'shock']);
     for ivar=1:numel(var_list)
         endovar=var_list{ivar};
         subplot(3,3,ivar)
         plot(myirfs.(shock).(endovar),'linewidth',2)
-        title(endovar)
+        loc=locate_variables(endovar,{kaiji.varendo.name});
+        title({kaiji.varendo(loc).tex_name})
         if ivar==1
             legend('anticipated','unanticipated')
         end
@@ -124,9 +126,18 @@ for ivar=1:numel(var_list)
     vname=var_list{ivar};
     subplot(3,3,ivar)
     plot_decomp(histdec.(vname))
-    title(vname)
+    loc=locate_variables(vname,{kaiji.varendo.name});
+    title(kaiji.varendo(loc).tex_name)
     if ivar==1
         contrib_names=histdec.(vname).varnames;
+        shock_texnames={kaiji.varexo.tex_name};
+        locs=locate_variables(contrib_names,{kaiji.varexo.name},true);
+        for jj=1:numel(locs)
+            if isnan(locs(jj))
+                continue
+            end
+            contrib_names{jj}=kaiji.varexo(locs(jj)).tex_name;
+        end
         hleg=legend(contrib_names,...
             'Location','BestOutside','orientation','horizontal');
         pp=get(hleg,'position');
@@ -139,12 +150,14 @@ end
 for ishock=1:numel(shock_list)
     [counterf,actual]=counterfactual(kaiji,'counterfact_shocks_db',...
         shock_list{ishock});%,'EPS_PSI','EPS_B','EPS_D'
-    figure('name',['Counterfactual: ',shock_list{ishock},' shock only'])
+    loc=locate_variables(shock_list{ishock},{kaiji.varexo.name},true);
+    figure('name',['Counterfactual: ',kaiji.varexo(loc).tex_name,' shock only'])
     for ivar=1:numel(var_list)
         vname=var_list{ivar};
         subplot(3,3,ivar)
         plot([actual.(vname),counterf.(vname)])
-        title(vname)
+        loc=locate_variables(vname,{kaiji.varendo.name});
+        title(kaiji.varendo(loc).tex_name)
         if ivar==1
             legend({'actual','counterfactual'})
         end
@@ -159,9 +172,18 @@ for ivar=1:numel(var_list)
     vname=var_list{ivar};
     subplot(3,3,ivar)
     plot_decomp(vardec.conditional.(vname))
-    title(vname)
+    loc=locate_variables(vname,{kaiji.varendo.name});
+    title(kaiji.varendo(loc).tex_name)
     if ivar==1
         contrib_names=vardec.conditional.(vname).varnames;
+        shock_texnames={kaiji.varexo.tex_name};
+        locs=locate_variables(contrib_names,{kaiji.varexo.name},true);
+        for jj=1:numel(locs)
+            if isnan(locs(jj))
+                continue
+            end
+            contrib_names{jj}=kaiji.varexo(locs(jj)).tex_name;
+        end
         hleg=legend(contrib_names,...
             'Location','BestOutside','orientation','horizontal');
         pp=get(hleg,'position');
