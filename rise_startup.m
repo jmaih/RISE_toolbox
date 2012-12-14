@@ -154,16 +154,16 @@ welcome_message();
     function welcome_message()
         
         vv = ver('RISE_Toolbox');
-        l1 = '+----------------------------------------------+';
+        l1 = '+--------------------------------------------------+';
         
         disp(l1);
         disp(['Welcome to the ', vv.Name])
         disp(['Version: ', vv.Version])
         disp(['Release: ', vv.Release])
         disp(['Date: ', vv.Date])
-        disp('Please address concerns, problems, suggestions ')
-        disp('and desideratas to junior.maih@gmail.com')
-        disp('Thank you for your feedback !!!')
+        disp('For concerns, problems, suggestions and desideratas')
+        disp('please send email to <a href="junior.maih@gmail.com">this address</a>')
+        disp('Thank you in advance for your feedback !!!')
         if retcode
             disp('pdflatex/Miktex could not be located')
         end
