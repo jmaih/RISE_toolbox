@@ -149,7 +149,7 @@ end
 %% counterfactual: what if only one shock had been alive?
 for ishock=1:numel(shock_list)
     [counterf,actual]=counterfactual(kaiji,'counterfact_shocks_db',...
-        shock_list{ishock});%,'EPS_PSI','EPS_B','EPS_D'
+        shock_list{ishock});%,{'EPS_PSI','EPS_B','EPS_D'}
     loc=locate_variables(shock_list{ishock},{kaiji.varexo.name},true);
     figure('name',['Counterfactual: ',kaiji.varexo(loc).tex_name,' shock only'])
     for ivar=1:numel(var_list)
@@ -163,6 +163,22 @@ for ishock=1:numel(shock_list)
         end
     end
 end
+
+%% counterfactual for a subset of shocks
+[counterf,actual]=counterfactual(kaiji,'counterfact_shocks_db',...
+    {'EPS_PSI','EPS_B'});
+figure('name','Counterfactual: EPS_PSI and EPS_B shock only');
+for ivar=1:numel(var_list)
+    vname=var_list{ivar};
+    subplot(3,3,ivar)
+    plot([actual.(vname),counterf.(vname)])
+    loc=locate_variables(vname,{kaiji.varendo.name});
+    title(kaiji.varendo(loc).tex_name)
+    if ivar==1
+        legend({'actual','counterfactual'})
+    end
+end
+
 %% variance decomposition
 vardec=variance_decomposition(kaiji);
 
