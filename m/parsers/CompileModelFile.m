@@ -1,10 +1,28 @@
-function dictionary=CompileModelFile(FileName)
+function dictionary=CompileModelFile(FileName,varargin)
 % by the way, I can still declare exogenous and make them observable at the
 % same time. The exogenous that are observed are determisitic. This opens
 % the door for estimating partial equilibrium models
 
+DefaultOptions=struct('definitions_in_param_differentiation',true);
 if nargin<1
-    error([mfilename,':: No file to parse']);
+    dictionary=DefaultOptions;
+    return
+end
+
+%%
+lv=length(varargin);
+if rem(lv,2)~=0
+    error('arguments must come in pairs')
+end
+if lv
+    ccc=reshape(varargin(:),2,[]); clear varargin
+    for ii=1:0.5*lv
+        str=ccc{1,ii};
+        if ~isfield(DefaultOptions,str)
+            error([str,' Not an option for ',mfilename])
+        end
+        DefaultOptions.(str)=ccc{2,ii};
+    end
 end
 %% general initializations
 equation=cell(2,0);
@@ -23,6 +41,8 @@ dictionary=struct();
 dictionary.is_linear_model=false;
 static.is_imposed_steady_state=false;
 static.is_unique_steady_state=false;
+% those names will be used in functions and in this specific order
+dictionary.input_list={'y','x','param','ss','def'};
 
 %% set various blocks
 
@@ -739,7 +759,6 @@ static.model=cell(0,1);
 static.shadow_model=cell(0,1);
 static.shadow_BGP_model=cell(0,1);
 dictionary.planner.shadow_model=cell(0,1);
-dictionary.planner.symbolic_model=cell(0,1);
 
 static.steady_state_shadow_model=cell(0,1);
 shadow_definitions=cell(0,1);
@@ -943,69 +962,68 @@ if ~isempty(static.steady_state_shadow_model)
 end
 
 %% symbolic forms
-validnames={'y','x','param','ss','def'};
 
 % dynamic model wrt y and x
 wrt={'y',1:nnz(dictionary.Lead_lag_incidence)
     'x',1:numel(dictionary.exogenous)};
-[model_derivatives,model_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(dynamic.shadow_model,validnames,wrt);
+[model_derivatives,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
 disp([mfilename,':: first-order derivatives of dynamic model wrt y(+0-) and x. ',...
     int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
 
 % static model wrt y
 wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
-[static_model_derivatives,static_model_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(static.shadow_model,validnames,wrt);
+[static_model_derivatives,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(static.shadow_model,dictionary.input_list,wrt);
 disp([mfilename,':: first-order derivatives of static model wrt y(0). ',...
     int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
 
 % balanced growth path model wrt y
 wrt={'y',1:2*size(dictionary.Lead_lag_incidence,1)};
-[static_bgp_model_derivatives,static_bgp_model_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(static.shadow_BGP_model,validnames,wrt);
+[static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(static.shadow_BGP_model,dictionary.input_list,wrt);
 disp([mfilename,':: first-order derivatives of static BGP model wrt y(0). ',...
     int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
 
-% dynamic model wrt param: replace the definitions
+% dynamic model wrt param: I probably should insert the definitions but
+% they are taken out for the moment...
 wrt={'param',1:numel(dictionary.parameters)};
-[param_derivatives,param_auxiliary_jacobian,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(dynamic.shadow_model,validnames,wrt,shadow_definitions);
+if DefaultOptions.definitions_in_param_differentiation
+    [param_derivatives,numEqtns,numVars,jac_toc]=...
+        rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt,...
+        shadow_definitions);
+else
+    [param_derivatives,numEqtns,numVars,jac_toc]=...
+        rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
+end
 disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
     int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
 
 %% push derivatives in to functions
 % for the moment, put all in the same matrix
-JES=cellstr2mat(model_derivatives);
-JP=cellstr2mat(param_derivatives);
-JSTAT=cellstr2mat(static_model_derivatives);
-JSTAT_BGP=cellstr2mat(static_bgp_model_derivatives);
 dynamic.model_derivatives=struct(...
-    'Endogenous_Shocks',{JES},'Endogenous_Shocks_auxiliary_jacobian',{model_auxiliary_jacobian},...
-    'Parameters',{JP},'Parameters_auxiliary_jacobian',{param_auxiliary_jacobian},...
-    'StaticEndogenous',{JSTAT},'Static_auxiliary_jacobian',{static_model_auxiliary_jacobian},...
-    'Static_BGP_Endogenous',{JSTAT_BGP},'Static_BGP_auxiliary_jacobian',{static_bgp_model_auxiliary_jacobian}...
+    'Endogenous_Shocks',{model_derivatives},...
+    'Parameters',{param_derivatives},...
+    'StaticEndogenous',{static_model_derivatives},...
+    'Static_BGP_Endogenous',{static_bgp_model_derivatives}...
     );
 
 if is_model_with_planner_objective
     wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
-    [ObjectiveJacobian,~,numEqtns,numVars,jac_toc]=...
-        rise_derivatives(dictionary.planner.shadow_model,validnames,wrt,shadow_definitions);
-    disp([mfilename,':: first-order derivatives of planner objective wrt y(0). ',...
+    [LossComDiscHessJac,numEqtns,numVars,jac_toc]=...
+    rise_derivatives(dictionary.planner.shadow_model(1),dictionary.input_list,wrt,shadow_definitions,2);
+    disp([mfilename,':: 1st and 2nd-order derivatives of planner objective wrt y(0). ',...
         int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-    [ObjectiveHessian,~,numEqtns,numVars,jac_toc]=...
-        rise_derivatives(ObjectiveJacobian,validnames,wrt);
-    disp([mfilename,':: 2nd-order derivatives of planner objective wrt y(0). ',...
-        int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-    
-    dictionary.planner.first_order_derivatives=cellstr2mat(ObjectiveJacobian(:));
-    dictionary.planner.second_order_derivatives=cellstr2mat(ObjectiveHessian(:));
+    % add the loss, the commitment degree and discount
     shadow_model=dictionary.planner.shadow_model;
-    commitment=strrep(shadow_model(2),'commitment-','');
-    dictionary.planner.commitment=cellstr2mat(strrep(commitment,';',''));
-    discount=strrep(shadow_model(3),'discount-','');
-    dictionary.planner.discount=cellstr2mat(strrep(discount,';',''));
-    dictionary.planner.auxiliary=Hessrefs;
+    lcd={
+        ['loss=',shadow_model{1}]
+        ['commitment=',strrep(shadow_model{2},'commitment-','')]
+        ['discount=',strrep(shadow_model{3},'discount-','')]
+        };
+    LossComDiscHessJac.code=[cell2mat(lcd(:)'),LossComDiscHessJac.code];
+    LossComDiscHessJac.argouts={'loss','commitment','discount','Hess_','Jac_'};
+    dictionary.planner.LossComDiscHessJac=LossComDiscHessJac;
 end
 
 %% give greek names to endogenous, exogenous, parameters
@@ -1130,7 +1148,7 @@ dictionary=orderfields(dictionary);
         end
         iter=numel(ProbScript);
         Qsize=1;
-        QQ=struct([]);
+        QQ=struct([]); % this will not be used anymore
         for i1=1:size(dictionary.MarkovChains,2)
             chain=dictionary.MarkovChains{1,i1};
             states_nbr_ii=dictionary.MarkovChains{2,i1};
@@ -1173,7 +1191,10 @@ dictionary=orderfields(dictionary);
             iter=iter+1;
             ProbScript{iter,1}='Q=kron(Q,Qi);';
         end
-        dictionary.shadow_transition_matrix=QQ;
+        dictionary.shadow_transition_matrix=struct('code',cell2mat(ProbScript(:)'),...
+            'argins',{dictionary.input_list},... 
+            'argouts',{{'Q'}});
+%         dictionary.shadow_transition_matrix=QQ;
     end
 
     function string=replace_steady_state_call(string,flag)
