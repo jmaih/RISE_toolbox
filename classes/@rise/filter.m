@@ -57,8 +57,8 @@ if  obj.is_endogenous_switching_model
     M=obj.parameters{2,end};
     % transition matrix should be invariant. And so, hopefully, the first
     % argument to Q{2} could be the updated data in any state.
-    % order of the input arguments is y,x,ss,param
-    Q{3}={[],SS(:,1),mean(M,2)}; % remaining arguments of Q{2} after the first one
+    % order of the input arguments is y,x,param,ss
+    Q{3}={[],mean(M,2),SS(:,1)}; % remaining arguments of Q{2} after the first one
 %    Q{3}={ss(:,1),mean(M,2),transition_script}; % remaining arguments of Q{2}
     % [obj.Q,retcode]=transition_matrix_evaluation(ss_i,ss_i,M(:,1),transition_matrix); % should be invariant
 end

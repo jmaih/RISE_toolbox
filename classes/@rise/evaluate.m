@@ -116,16 +116,15 @@ if ~isempty(obj.is_stationary_model)
 end
 NumberOfRegimes=obj.NumberOfRegimes;
 for ii=NumberOfRegimes:-1:1 % backward to optimize speed
+    pp_i=M(:,ii);
+    def=online_function_evaluator(definitions,pp_i); %#ok<*EVLC>
     if ~obj.is_optimal_policy_model && ~obj.is_imposed_steady_state
         % if the initial guess solves the steady state then proceed. Else
         % try and improve the initial guess through fsolve.
-        pp_i=M(:,ii);
         if obj.is_unique_steady_state
             pp_i=mean(M,2);
         end
         ss_and_bgp_i=ss_and_bgp_start_vals(:,ii);
-        def=eval(definitions,pp_i); %#ok<*EVLC>
-        def=def{1};
         if isempty(obj.is_stationary_model)
             % determine stationarity
             
@@ -159,36 +158,36 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     % matrix
     ss_i=ss_and_bgp_final_vals(1:endo_nbr,ii);
     % build the jacobian
- 
+    
     switch derivative_type
         case 'symbolic'
-            J=eval(endo_exo_derivatives,ss_i(indices),x_ss,ss_i,M(:,ii),def);
-            J=J{1};
-           if ~isempty(switching)
-                JP=eval(param_derivatives,ss_i(indices),x_ss,ss_i,M(:,ii)); %#ok<*GTARG>
-                J=[J,JP{1}]; %#ok<AGROW>
+            J=online_function_evaluator(endo_exo_derivatives,ss_i(indices),x_ss,M(:,ii),ss_i,def);
+            if ~isempty(switching)
+                JP=online_function_evaluator(param_derivatives,ss_i(indices),x_ss,M(:,ii),ss_i,def); %#ok<*GTARG>
+                J=[J,JP]; %#ok<AGROW>
             end
         case 'numerical'
             z=[ss_i(indices);x_ss];
             J=rise_numjac(vectorized_dynamic,z,M(:,ii),ss_i,def);
-           if ~isempty(switching)
-               % now the z vector has to be a matrix in order to avoid a
-               % breakdown occurring when no parameter is present in some
-               % equations.
-               z=z(:,ones(1,size(M,1)));
+            if ~isempty(switching)
+                % now the z vector has to be a matrix in order to avoid a
+                % breakdown occurring when no parameter is present in some
+                % equations.
+                z=z(:,ones(1,size(M,1)));
                 JP=rise_numjac(vectorized_dynamic_params,M(:,ii),z,ss_i);
                 J=[J,JP]; %#ok<AGROW>
-           end
+            end
         case 'automatic'
             z=[ss_i(indices);x_ss];
             zz=rise_nad(z);
             this=dynamic(zz,M(:,ii),ss_i,def);
-            J=get(this,'dx');
+            J=vertcat(this.dx);
             if ~isempty(switching)
                 this=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
-                JP=get(this,'dx');
+                JP=vertcat(this.dx);
                 J=[J,JP]; %#ok<AGROW>
             end
+            J=full(J);
     end
     if any(any(isnan(J)))
         retcode=2; % nans in jacobian
@@ -203,7 +202,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         % A nice result is that at first-order approximation, the jacobians
         % are just reweighted by the probabilities evaluated at the steady
         % state.
-        [obj.Q,retcode]=kron(obj.func_handles.transition_matrix,ss_i,ss_i,[],M(:,1));
+        [obj.Q,retcode]=online_function_evaluator(obj.func_handles.transition_matrix,ss_i,[],M(:,1),ss_i,def);
         if retcode
             obj=clean_obj;
             if obj(1).options.debug
@@ -239,17 +238,22 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     
     % loss function weights
     if obj.is_optimal_policy_model || obj.is_optimal_simple_rule_model
-        [~,obj.planner_commitment(1,ii),...
-            obj.planner_discount(1,ii),~,W1]=policy_evaluation(ss_i,ss_i,M(:,ii),planner);
+        [obj.planner_loss(1,ii),...
+            obj.planner_commitment(1,ii),...
+            obj.planner_discount(1,ii),W1]=online_function_evaluator(...
+            planner,ss_i,x_ss,M(:,ii),ss_i,def);
         if obj.options.debug
-            W2=finite_difference_hessian(@policy_evaluation,ss_i,ss_i,M(:,ii),planner);
+            plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def);
+            W2=finite_difference_hessian(plan_fd,ss_i);
             disp('discrepancies in planner computations')
-            disp(W1-W2)
+            disp(max(max(abs(W1-W2))))
         else
             if strcmp(derivative_type,'symbolic')
                 obj.W(:,:,ii)=W1;
             else
-                obj.W(:,:,ii)=finite_difference_hessian(@policy_evaluation,ss_i,ss_i,M(:,ii),planner);
+                plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def);
+                W2=finite_difference_hessian(plan_fd,ss_i);
+                obj.W(:,:,ii)=W2;
             end
         end
     end
@@ -265,12 +269,26 @@ end
 % will be pushed into the varendo...
 obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
 
+if ~obj.estimation_under_way && ~obj.is_optimal_policy_model && ...
+        ~obj.is_sticky_information_model
+    % I wanted to push the steady state right way but sometimes the steady
+    % state is not known before the model is totally solved as in the case
+    % of optimal policy... and in particular, when the number of endogenous
+    % variables changes after the solution
+    tmp=mat2cell(obj.steady_state_and_balanced_growth_path,ones(2*endo_nbr,1),NumberOfRegimes);
+    tmp0=tmp(1:endo_nbr,:);
+    % this thing below works well... even after checking many
+    % times :-)
+    [obj.varendo(:).det_steady_state]=(tmp0{:});
+    tmp0=tmp(endo_nbr+1:end,:);
+    [obj.varendo(:).balanced_growth]=(tmp0{:});
+end
 
     function [is_stationary,ys,retcode]=determine_stationarity_status()
-
+        
         is_stationary=[];
         % try stationarity
-
+        
         ys=ss_and_bgp_i;
         [ys(1:endo_nbr),retcode]=solve_steady_state(ss_and_bgp_i(1:endo_nbr),x_ss,pp_i,def,...
             @static_or_bgp_residuals,obj.is_linear_model,obj.options.optimset);
@@ -299,7 +317,7 @@ obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
         end
     end
 
-    function [lhs,Jac]=static_or_bgp_residuals(y,x,param,def)
+    function [lhs,Jac,retcode]=static_or_bgp_residuals(y,x,param,def)
         % if the structural model is defined in terms of steady states, then the
         % the word ss will appear in the static model. But then, those values are
         % the same as those found in y.
@@ -308,17 +326,22 @@ obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
         % values. copying the whole vector to ss does not harm since only the
         % relevant elements in the upper part of y will be picked up.
         
+        retcode=0;
+        
         ss_=y;
-        lhs=func_ss(y,x,ss_,param,def);
+        lhs=online_function_evaluator(func_ss,y,x,param,ss_,def);
+%         if any(any(isnan(lhs)))||(any(any(isnan(lhs))))
+%             retcode=?
+%             if retcode, Jac=[];
+%             end
+%         end
         if nargout>1
-            Jac=eval(func_jac,y,x,ss_,param,def);
-            Jac=Jac{1};
+            Jac=online_function_evaluator(func_jac,y,x,param,ss_,def);
+%             if any(any(isnan(Jac)))||(any(any(isnan(Jac))))
+%                 retcode=?
+%             end
         end
     end
-end
-
-function [objective,commitment,discount,der1,der2]=policy_evaluation(y,ss,param,planner) %#ok<STOUT,INUSL>
-eval(planner);
 end
 
 function [ss,retcode]=steady_state_evaluation(param_obj,unique_ss,options,ssfunc) %#ok<INUSL>
@@ -344,8 +367,8 @@ end
 ss=[];
 for ii=1:number_of_regimes
     if ii==1 || ~unique_ss
-        param=par_vals(:,ii); %#ok<NASGU>
-        eval(ssfunc)
+        param=par_vals(:,ii); 
+        y=online_function_evaluator(ssfunc,[],[],param,[]);
     end
     if retcode
         return %#ok<UNRCH>

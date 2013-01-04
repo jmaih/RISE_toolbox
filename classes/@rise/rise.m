@@ -67,6 +67,7 @@ classdef rise
         steady_state_file_2_model_communication
         steady_state_shadow_model
         sticky_information_lambda_id
+        input_list
         z_restrictions
     end
     properties(SetAccess=protected)
@@ -126,10 +127,6 @@ classdef rise
         % start values.
         Hessian
         vcov
-% % % % % %         % properties potentially going out
-% % % % % %         hist_dec
-% % % % % %         counterfactual_parameters
-% % % % % %         counterfactual_shocks
         Filters
         state_names
     end
@@ -139,6 +136,7 @@ classdef rise
     methods
         check_optimum(obj,varargin)
         varargout=counterfactual(obj,varargin)
+        varargout=check_derivatives(obj,varargin)
         varargout=draw_parameter(obj,varargin)
         varargout=estimate(obj,varargin)
         varargout=filter(obj,varargin)
@@ -180,11 +178,32 @@ classdef rise
         function obj=rise(model_filename,varargin)
             % default options
             if nargin<1
-%                 obj=set_options(obj);
                 return
             end
+            if isa(model_filename,'rise')
+                obj=model_filename;
+                return
+            end
+            
+            % separate options going into CompileModelFile to the others
+            cmfOptions=fieldnames(CompileModelFile());
+            if rem(length(varargin),2)~=0
+                error('arguments must come in pairs')
+            end
+            discard=false(1,length(varargin));
+            for iv=1:2:length(varargin)
+                if ~ischar(varargin{iv})
+                    error('odd input arguments must be char')
+                end
+                if ismember(varargin{iv},cmfOptions)
+                    discard(iv:iv+1)=true;
+                end
+            end
+            cmfArgins=varargin(discard);
+            % proceed with the remaining arguments
+            varargin(discard)=[];
             % the constructor needs to have an output
-            dictionary=CompileModelFile(model_filename);
+            dictionary=CompileModelFile(model_filename,cmfArgins{:});
             % build the equations object
             quick_fill={'NumberOfEquations','Lead_lag_incidence','filename',...
                 'reordering_index','orig_endo_names_current',...
@@ -194,7 +213,8 @@ classdef rise
                 'is_hybrid_model','is_purely_backward_looking_model',...
                 'is_purely_forward_looking_model','is_lagrange_multiplier',...
                 'is_linear_model','shadow_transition_matrix',...
-                'is_endogenous_switching_model','is_in_use_parameter'};
+                'is_endogenous_switching_model','is_in_use_parameter',...
+                'input_list'};
             
             % check that all the shocks in the model are in use
             not_in_use={dictionary.exogenous(~dictionary.is_in_use_shock).name};
@@ -270,12 +290,6 @@ classdef rise
             % now make the number of observables into a vector
             obj.NumberOfObservables=[iter_endo,iter_exo];
             
-            % Once the names of the exogenous variables are known, we can
-            % build the options. We call the overloaded method
-            obj=set_options(obj,varargin{:});
-            obj.current_solution_algorithm=obj.options.solver;
-            obj.current_expansion_order=obj.options.order;
-            
             if isfield(dictionary.dynamic,'model_derivatives')
                 obj.model_derivatives=dictionary.dynamic.model_derivatives;
             end
@@ -290,14 +304,6 @@ classdef rise
                 ny+(1:nx),...
                 {switching,ny+nx+(1:np)}};
             
-            % parameters and estimated parameters and more ...
-            obj=format_parameters(obj,dictionary.parameters,dictionary.Parameterization_block,...
-                dictionary.MarkovChains,dictionary.Param_rest_block);
-            obj.NumberOfRegimes=size(obj.Regimes,1);
-            
-            % Now we can load the functions and create the handles
-            obj=load_functions(obj);
-            
             % flags for the different types of models
             if obj.is_hybrid_expectations_model
                 obj.hybrid_expectations_lambda_id=find(strcmp('hybrid_expectations_lambda',{obj.parameters.name}),1);
@@ -308,18 +314,26 @@ classdef rise
                 obj.sticky_information_lambda_id=find(strcmp('sticky_information_lambda',{obj.parameters.name}),1);
             end
             
-            % measurement errors restrictions
-            obj.measurement_errors_restrictions=[];
-            for ii=1:obj.NumberOfObservables(1) % pick only the endogenous observables
-                vi=obj.varobs(ii).name;
-                loc=find(strcmp(['stderr_',vi],{obj.parameters.name}));
-                % the line above is a bit inefficient. I have to change it
-                if ~isempty(loc)
-                    obj.measurement_errors_restrictions=...
-                        [obj.measurement_errors_restrictions;ii,loc];
-                end
-            end
             
+            % Once the names of the exogenous variables are known, we can
+            % build the options. We call the overloaded method
+            obj=set_options(obj,varargin{:});
+            % which will also load the functions since obj.options is empty
+            % at this point. 
+            
+            % parameters and estimated parameters and more ...:
+            % format_parameters depends on the value of the prior
+            % truncation which is stored in the options... and cannot be
+            % changed after the model is read. yet another reason to
+            % separate the reading of the model with everything else
+            obj=format_parameters(obj,dictionary.parameters,dictionary.Parameterization_block,...
+                dictionary.MarkovChains,dictionary.Param_rest_block);
+            obj.NumberOfRegimes=size(obj.Regimes,1);
+                        
+            % the two lines below should probably be moved elsewhere
+            obj.current_solution_algorithm=obj.options.solver;
+            obj.current_expansion_order=obj.options.order;
+                        
             % conclude
             if obj.is_sticky_information_model
                 disp([mfilename,':: Sticky Information (SI) model detected'])
