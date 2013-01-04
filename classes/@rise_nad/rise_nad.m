@@ -3,7 +3,7 @@ classdef rise_nad
     % see also sad, rise_sad
     % example objectives=@(x)[x(1)^2+x(2)*log(x(3));x(1)^2+x(2)*sin(x(3))];
     % vars=rise_nad(rand(3,1)); derivs=objectives(vars);
-    % dx=get(derivs,'dx');
+    % dx=vertcat(derivs.dx);
     
     % to do: unknown functions
     % jacobian
@@ -19,12 +19,19 @@ classdef rise_nad
                     obj=y;
                     return
                 end
-                y=y(:);
                 if nargin<2
                     dy=speye(length(y));
                 end
-                obj.x=y;
-                obj.dx=dy;
+                if numel(y)>1
+                    obj=rise_nad.empty(0);
+                    for iobj=1:numel(y)
+                        obj(iobj,1).x=y(iobj);
+                        obj(iobj,1).dx=dy(iobj,:);
+                    end
+                else
+                    obj.x=y(1);
+                    obj.dx=dy(1,:);
+                end
             end
         end
         function obj=plus(u,v)
@@ -147,8 +154,7 @@ classdef rise_nad
         function obj=atan(u)
             [u,du]=get_props(u);
             val=atan(u);
-            der=sqrt(1-u.^2);
-            der=du/der;
+            der=du/(1+u.^2);
             obj=rise_nad(val,der);
         end
         function obj=tanh(u)
@@ -246,23 +252,29 @@ classdef rise_nad
         function obj=norm(u)
             obj = sqrt(sum(u.^2));
         end
-        function val=get(obj,prop)
-            switch prop
-                case 'x'
-                    val=vertcat(obj.x);
-                case 'dx'
-                    val=vertcat(obj.dx);
-                otherwise
-            end
+        function d=double(obj)
+            d=vertcat(obj.dx);
         end
-        function nn = subsref(u,s)            
-            switch s(1).type
-                case '()'
-                    nn = rise_nad(u.x(s.subs{1}), u.dx(s.subs{1},:));
-                otherwise
-                    error([s(1).type,' subsref not allowed for rise_nad objects'])
-            end
-        end
+        %=====================
+%         function a = subsasgn(a,s,b)
+%             % SUBSASGN for rise_nad objects
+%             if length(s)>1, error('Subscripted assignment too complicated'); end
+%             if length(s.subs)==1, s.subs{end+1}=':'; end
+%             
+%             switch [class(a),class(b)]
+%                 case 'doublerise_nad'
+%                     a = subsasgn(a,s,double(b));
+%                 case 'rise_naddouble'
+%                     a.x  = subsasgn(a.x,s,b);
+%                     a.dx = subsasgn(a.dx,s,0);
+%                 case 'rise_nadrise_nad'
+%                     a.x  = subsasgn(a.x,s,b.x);
+%                     a.dx = subsasgn(full(a.dx),s,full(b.dx));
+%                 otherwise
+%                     error(['cannot assign ',class(b),' to ',class(a)]);
+%             end
+%         end
+        %=====================
     end
     methods(Static)
         varargout=jacobian(varargin)
@@ -282,5 +294,3 @@ switch class(x)
         error([mfilename,':: unsupported class ',class(x)])
 end
 end
-
-
