@@ -180,6 +180,20 @@ if ~isempty(tmp)
     obj.estim_distrib_locations=distr_locs;
 end
 
+% measurement errors restrictions: this has to come after the
+% parameters
+obj.measurement_errors_restrictions=[];
+for ii=1:obj.NumberOfObservables(1) % pick only the endogenous observables
+    vi=obj.varobs(ii).name;
+    loc=find(strcmp(['stderr_',vi],{obj.parameters.name}));
+    % the line above is a bit inefficient. I have to change it
+    if ~isempty(loc)
+        obj.measurement_errors_restrictions=...
+            [obj.measurement_errors_restrictions;ii,loc];
+    end
+end
+
+
 function [formated_par_name,formated_par_tex_name]=...
     format_estimated_parameter_names(par_name,par_tex_name,chain_name,chain_state)
 
