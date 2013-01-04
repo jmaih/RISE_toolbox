@@ -1,4 +1,9 @@
 function obj=load_functions(obj)
+defaultOptions=struct('rise_functions2disk',false);
+if isempty(obj)
+    obj=defaultOptions;
+    return
+end
 
 if ~exist(obj.options.results_folder,'dir')
     mkdir(obj.options.results_folder)
@@ -11,6 +16,9 @@ if ~exist([obj.options.results_folder,filesep,'estimation'],'dir')
 end
 if ~exist([obj.options.results_folder,filesep,'simulations'],'dir')
     mkdir([obj.options.results_folder,filesep,'simulations'])
+end
+if ~exist([obj.options.results_folder,filesep,'routines'],'dir')
+    mkdir([obj.options.results_folder,filesep,'routines'])
 end
 
 % Get rid of definitions
@@ -43,11 +51,7 @@ end
 %% anonymous function for definitions
 theDef={obj.definitions.shadow_dynamic};
 theDef=[{['def=zeros(',int2str(numel(obj.definitions)),',1);']},theDef];
-theDef=cell2mat(theDef);
-sizdef=[numel(obj.definitions),1];
-indicesdef=1:sizdef(1);
-handle_struct.definitions=rise_anonymous(sizdef,...
-    str2func('@(param)eval(''def'')'),indicesdef,theDef);
+recreate_function_handle(theDef,{'param'},{'def'},'definitions');
 
 %% parameter restrictions
 % for the moment,I only allow the matrix of parameters. the idea is that if
@@ -67,14 +71,22 @@ end
 handle_struct.parameter_restrictions=str2func(tmp);
 
 %% static
-inputList={'y','x','ss','param','def'};
-handle_struct.static=create_function_handle(inputList,{obj.equations.shadow_static});
+mystatic=strcat('RES(',int2str((1:obj.NumberOfEquations)'),')=',...
+    {obj.equations.shadow_static}');
+mystatic=[['RES=zeros(',int2str(obj.NumberOfEquations),',1);'];mystatic];
+recreate_function_handle(mystatic,obj.input_list,{'RES'},'static');
+% handle_struct.static=create_function_handle(obj.input_list,{obj.equations.shadow_static});
+
 %% balanced growth path
-tmp=cellstr(obj.equations(1).shadow_balanced_growth_path)';
+mybalanced_growth=cellstr(obj.equations(1).shadow_balanced_growth_path)';
 for ii=2:obj.NumberOfEquations
-    tmp=[tmp,cellstr(obj.equations(ii).shadow_balanced_growth_path)']; %#ok<AGROW>
+    mybalanced_growth=[mybalanced_growth,cellstr(obj.equations(ii).shadow_balanced_growth_path)']; %#ok<AGROW>
 end
-handle_struct.balanced_growth=create_function_handle(inputList,tmp);
+mybalanced_growth=strcat('RES(',int2str((1:2*obj.NumberOfEquations)'),')=',...
+    mybalanced_growth');
+mybalanced_growth=[['RES=zeros(',int2str(2*obj.NumberOfEquations),',1);'];mybalanced_growth];
+recreate_function_handle(mybalanced_growth,obj.input_list,{'RES'},'balanced_growth');
+% handle_struct.balanced_growth=create_function_handle(obj.input_list,tmp);
 
 %% dynamic and vectorized dynamic
 shd={obj.equations.shadow_dynamic};
@@ -89,96 +101,104 @@ shd=regexprep(shd,'(?<!\w)y(','z(');
 
 % endogenous and exogenous
 % non-vectorized form
-handle_struct.dynamic=create_function_handle({'z','param','ss','def'},shd);
+tmp=strcat('RES(',int2str((1:obj.NumberOfEquations)'),')=',...
+    shd');
+tmp=[['RES=zeros(',int2str(obj.NumberOfEquations),',1);'];tmp];
+recreate_function_handle(tmp,{'z','param','ss','def'},{'RES'},'dynamic');
+
 % vectorized form
 string=vectorize_string(shd,{'z'});
-handle_struct.vectorized_dynamic=create_function_handle({'z','param','ss','def'},string);
+tmp=strcat('RES(',int2str((1:obj.NumberOfEquations)'),',:)=',...
+    string');
+tmp=[['RES=zeros(',int2str(obj.NumberOfEquations),...
+    ',',int2str(nnz(obj.Lead_lag_incidence)+obj.NumberOfExogenous),');'];tmp];
+recreate_function_handle(tmp,{'z','param','ss','def'},{'RES'},'vectorized_dynamic');
 
 % for the parameters, the definitions have to be substituted
 % unfortunately we are taking derivatives wrt the parameters
 shd=substitute_definitions(shd,defcell);
 % non-vectorized form
-handle_struct.dynamic_params=create_function_handle({'param','z','ss'},shd);
+tmp=strcat('RES(',int2str((1:obj.NumberOfEquations)'),')=',...
+    shd');
+tmp=[['RES=zeros(',int2str(obj.NumberOfEquations),',1);'];tmp];
+recreate_function_handle(tmp,{'param','z','ss'},{'RES'},'dynamic_params');
+
 % vectorized form: NB: vectorization has to be done also with respect to z
 % because some equations may not have parameters and this would kill the
 % concatenation.
 string=vectorize_string(shd,{'param','z'});
-handle_struct.vectorized_dynamic_params=create_function_handle({'param','z','ss'},string);
+tmp=strcat('RES(',int2str((1:obj.NumberOfEquations)'),',:)=',...
+    string');
+tmp=[['RES=zeros(',int2str(obj.NumberOfEquations),...
+    ',',int2str(obj.NumberOfParameters),');'];tmp];
+recreate_function_handle(tmp,{'param','z','ss'},{'RES'},'vectorized_dynamic_params');
 
 %% transition matrix
-handle_struct.transition_matrix=rise_anonymous.empty(0,1);
-for ii=1:numel(obj.shadow_transition_matrix)
-    tm_i=obj.shadow_transition_matrix(ii).Q;
-    handle_struct.transition_matrix(ii,1)=rise_anonymous(tm_i.size,str2func(['@(y,x,ss,param)[',tm_i.string,']']),tm_i.indices);
-end
+kode=obj.shadow_transition_matrix;
+kode.code=['retcode=0;',kode.code,'if any(any(isnan(Q))) || any(any(Q<0)) || any(any(Q>1));Q=[];retcode=3;end;'];
+% augment the code with expections. This could also have been done at
+% compilation time
+kode.argouts=[kode.argouts,'retcode'];
+recreate_function_handle(kode,[],[],'transition_matrix');
+% finally load it                           
 %% steady state
 % the steady state has equalities and will need to be evaluated. It can't
 % be transformed into an anonymous function.
 if isempty(obj.steady_state_shadow_model)
     handle_struct.steady_state_model=[];
 else
-    tmp=substitute_definitions(cell2mat(obj.steady_state_shadow_model'),defcell);
-    handle_struct.steady_state_model=tmp;
+    steady_state_model=...
+        substitute_definitions(cell2mat(obj.steady_state_shadow_model'),defcell);
+    recreate_function_handle(steady_state_model,obj.input_list,{'y'},'steady_state_model');
     if obj.is_imposed_steady_state
         obj.is_stationary_model=true;
     end
 end
 
-%% model derivatives
-JES= obj.model_derivatives.Endogenous_Shocks;
-aux_jac=cell2mat(obj.model_derivatives.Endogenous_Shocks_auxiliary_jacobian(:)');
-if isempty(aux_jac)
-    aux_jac='';
-end
-JES=rise_anonymous(JES.size,str2func(['@(y,x,ss,param,def)[',JES.string,']']),JES.indices,aux_jac);
-handle_struct.endo_exo_derivatives=JES;
+%% model derivatives: 
+% those elements are already in the adequate structure form
+recreate_function_handle(obj.model_derivatives.Endogenous_Shocks,[],[],...
+    'endo_exo_derivatives');
 
-JSTAT= obj.model_derivatives.StaticEndogenous;
-aux_jac=cell2mat(obj.model_derivatives.Static_auxiliary_jacobian(:)');
-if isempty(aux_jac)
-    aux_jac='';
-end
-JSTAT=rise_anonymous(JSTAT.size,str2func(['@(y,x,ss,param,def)[',JSTAT.string,']']),JSTAT.indices,aux_jac);
-handle_struct.static_model_derivatives=JSTAT;
+recreate_function_handle(obj.model_derivatives.StaticEndogenous,[],[],...
+    'static_model_derivatives');
 
-JSTAT_BGP= obj.model_derivatives.Static_BGP_Endogenous;
-aux_jac=cell2mat(obj.model_derivatives.Static_BGP_auxiliary_jacobian(:)');
-if isempty(aux_jac)
-    aux_jac='';
-end
-JSTAT_BGP=rise_anonymous(JSTAT_BGP.size,str2func(['@(y,x,ss,param,def)[',JSTAT_BGP.string,']']),JSTAT_BGP.indices,aux_jac);
-handle_struct.static_bgp_model_derivatives=JSTAT_BGP;
+recreate_function_handle(obj.model_derivatives.Static_BGP_Endogenous,[],[],...
+    'static_bgp_model_derivatives');
 
-JP= obj.model_derivatives.Parameters;
-aux_jac=cell2mat(obj.model_derivatives.Parameters_auxiliary_jacobian(:)');
-if isempty(aux_jac)
-    aux_jac='';
-end
-JP=rise_anonymous(JP.size,str2func(['@(y,x,ss,param)[',JP.string,']']),JP.indices,aux_jac);
-handle_struct.param_derivatives=JP;
+recreate_function_handle(obj.model_derivatives.Parameters,[],[],'param_derivatives');
 
 %% planner objective
-% in this case there are items that could be written as anonymous
-% functions, such as the objective, commiment and discount. We could write
-% a function such as @(y,x,ss,param)deal(objective,commitment,discount),
-% which would automatically return 3 outputs and would error if a number of
-% outputs different from 3 was called. This drawback would be circumvented
-% by writing to the toolbox an additional function calling the anonymous
-% function as input and explicitly returning the outputs. We do not do this
-% as there are also the derivatives which need to be evaluated. The
-% solution is just to evaluate a long sequence of items and have a policy
-% evaluation function as in old days.
 if isempty(obj.planner.shadow_model) % function [objective,commitment,discount,der1,der2]=planner(y,ss,param)
     handle_struct.planner=[];
 else
-    items={'first_order_derivatives','second_order_derivatives','commitment','discount'};
-    for ii=1:numel(items)
-        vi=items{ii};
-        tmp=obj.planner.(vi);
-        handle_struct.planner.(vi)=rise_anonymous(tmp.size,str2func(['@(y,x,ss,param)[',tmp.string,']']),tmp.indices);
-    end
+    % this element is to be evaluated using the online function evaluator.
+    % it returns 5 outputs in the following order: loss, commitment,
+    % discount, hessian and jacobian
+    handle_struct.planner=obj.planner.LossComDiscHessJac;
 end
 obj.func_handles=handle_struct;
+
+    function recreate_function_handle(batch,input_list,ouput_list,fname)
+        if iscell(batch)
+            batch=cell2mat(batch(:)');
+        end
+        if ~isstruct(batch)
+            batch=struct('code',batch,'argins',{input_list},'argouts',{ouput_list});
+        end
+        if obj.options.rise_functions2disk
+            routine_dir_name=[obj.options.results_folder,filesep,'routines'];
+            code2file(batch,fname)
+            movefile([fname,'.m'],routine_dir_name)
+            curr_dir=pwd;
+            % go into the folder and get the handle
+            cd(routine_dir_name);
+            handle_struct.(fname)=str2func(['@',fname]);
+            cd(curr_dir);
+        else
+            handle_struct.(fname)=batch;
+        end
+    end
 end
 
 %% functions
@@ -201,18 +221,17 @@ for ii=1:size(defcell,1)
 end
 end
 
-function fhandle=create_function_handle(inputList,cellarray)
-if ischar(inputList)
-    inputList=cellstr(inputList);
-end
-inputList=inputList(:)';
-inputList=strcat(inputList,',');
-inputList=cell2mat(inputList);
-inputList=inputList(1:end-1);
-tmp=cell2mat(cellarray);
-tmp(isspace(tmp))=[];
-tmp(end)=[]; % remove last semicolon
-tmp=['@(',inputList,')[',tmp,']'];
-fhandle=str2func(tmp);
-end
-
+% function fhandle=create_function_handle(input_list,cellarray)
+% if ischar(input_list)
+%     input_list=cellstr(input_list);
+% end
+% input_list=input_list(:)';
+% input_list=strcat(input_list,',');
+% input_list=cell2mat(input_list);
+% input_list=input_list(1:end-1);
+% tmp=cell2mat(cellarray);
+% tmp(isspace(tmp))=[];
+% tmp(end)=[]; % remove last semicolon
+% tmp=['@(',input_list,')[',tmp,']'];
+% fhandle=str2func(tmp);
+% end
