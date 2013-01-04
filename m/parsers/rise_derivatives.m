@@ -1,5 +1,5 @@
-function [derivs,auxiliary,numberOfEquations,numberOfVariables,jac_toc]=...
-    rise_derivatives(batch,validnames,wrt,Definitions)
+function [finalOutput,numberOfEquations,numberOfVariables,jac_toc]=...
+    rise_derivatives(batch,validnames,wrt,Definitions,order)
 
 % wrt can be entered in two ways:
 % 1- a direct list of the variables to differentiate. e.g. wrt={'x','y','z'}
@@ -7,11 +7,24 @@ function [derivs,auxiliary,numberOfEquations,numberOfVariables,jac_toc]=...
 % names of the variables and the second column the numeric indices. e.g.
 % wrt={'x',1:10;'y',3:7}
 
+if nargin<5
+    order=[];
+    if nargin<4
+        Definitions=[];
+    end
+end
+
+if isempty(order)
+    order=1;
+end
+if order>2
+    error('Forbidden to compute derivatives beyond 2')
+end
 if ischar(batch)
     batch=cellstr(batch);
 end
 
-if nargin>3
+if ~isempty(Definitions)
     batch=replace_definitions(batch,Definitions);
 end
 
@@ -40,14 +53,31 @@ else
 end
 
 symb_list=union(symb_list,with_respect_to);
+
+numberOfEquations=numel(symbolic_batch);
+numberOfVariables=numel(with_respect_to);
+
 tic
-[derivs,auxiliary]=sad_forward.jacobian(symbolic_batch,symb_list,with_respect_to);
-derivs=trim_symbolic_equation(derivs);
+if order==1
+    test=false;
+    % vectorized form
+    if test
+        vectform=false;
+    else
+        vectform=true;
+    end
+    [~,~,~,finalOutput]=sad_reverse.jacobian(symbolic_batch,symb_list,with_respect_to,vectform);
+    argouts={'Jac_'};
+elseif order==2
+    % non-vectorized form
+    [~,~,~,finalOutput]=sad_reverse.hessian(symbolic_batch(1),symb_list,with_respect_to);
+    argouts={'Hess_','Jac_'};
+end
 jac_toc=toc();
 
-derivs=analytical_symbolic_form(derivs,validnames,'analytic');
-auxiliary=analytical_symbolic_form(auxiliary,validnames,'analytic');
+finalOutput=analytical_symbolic_form(finalOutput,validnames,'analytic');
 
-numberOfEquations=numel(batch);
-numberOfVariables=numel(with_respect_to);
+finalOutput=struct('code',cell2mat(finalOutput(:)'),'argins',...
+    {validnames},'argouts',{argouts});
+
 
