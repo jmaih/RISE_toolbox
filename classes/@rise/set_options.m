@@ -22,6 +22,9 @@ if init
         'print_estimates','print_estimation_results','print_solution','prior_plots',...
         'simulation_diagnostics','theoretical_autocovariances'};
     method_list(ismember(method_list,restricted_list))=[];
+    % add some private methods to the list
+    method_list=[method_list;'load_functions'];
+
     myoptions=struct();
     for ii=1:numel(method_list)
         %                 if  nargout(['rise>rise.',method_list{ii}])~=0
@@ -30,6 +33,9 @@ if init
             );
         %                 end
     end
+    
+    % this is needed later to load the functions
+    refresh_functions=true;
     
     % Create the main options
     update_random_number_stream=true;
@@ -65,14 +71,18 @@ if init
         'cond_data_ct',rise_time_series
         'cond_data_lb',rise_time_series
         'cond_data_ub',rise_time_series
-        'order',expansion_order % this should be a property of solve...
+        % this should be a property of solve... It should be replaced with
+        % solve_exp_order. order will be reserved for higher order
+        % approximation in which case it will be called solve_order
+        'order',expansion_order 
         'shock_properties',shock_properties
 		%
         % ====== solve options ======
         'qz_criterium',1.000001
         'dsge_varlag',4
         'dsge_var_constant',true
-        'Penalty',1e+8
+        % should be a direct default if the functions where it is used
+        'Penalty',1e+8 
         % ====== optimization options ======
         'derivatives',derivatives %['symbolic','numerical','automatic']
         % ====== Filtering, priors, likelihood options ======
@@ -94,6 +104,7 @@ else
         error([mfilename,':: arguments should enter by pairs'])
     end
     update_random_number_stream=false;
+    refresh_functions=false;
     if nargs>0
         All_properties=fieldnames(obj.options);
         for ii=1:nargs/2
@@ -103,6 +114,10 @@ else
                     ':: ',propname,' is not a valid option of class ',class(obj)])
             end
             propval=varargin{2*ii};
+            
+            if strcmp(propname,'rise_functions2disk')
+                refresh_functions=true;
+            end
             
             if strcmp(propname,'optimset')
                 subfields=fieldnames(propval);
@@ -202,6 +217,9 @@ if update_random_number_stream
     end
 end
 
+if refresh_functions
+    obj=load_functions(obj);
+end
 % if ~isempty(obj.options.harvey_scale_factor)
 %     obj.options.ergodic=false;
 % end
