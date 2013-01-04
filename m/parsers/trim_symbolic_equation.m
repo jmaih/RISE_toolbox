@@ -24,7 +24,7 @@ patterns={
     '(\+\-)|(\-\+)','-',                  '"+-" or "-+" ---> "-"' 
     '(?<!(\w|\)))(\+)(\w+)','$2',         '"+atom" ---> "atom" if not preceded by \w|\)' 
     '(?<!\w)(\()(\w+)(\))','$2',          '"(atom)" ---> "atom" if atom and not preceded by a function name'  
-    '(\-\(\-)(\w+)(\))','+$2',               '"-(-atom)" ---> "atom"'  
+    '(\-\(\-)(\w+)(\))','+$2',               '"-(-atom)" ---> "+atom"'  
     '(\()(\+)(\w+)','$1$3',               '"(+atom" ---> "(atom"' 
     '(?<![\w\.])1\*','',         '"1*"--->"" if not preceeded by: \w or .'
     '[\*\^]1(?![\^/\d\.])','',   '"*1" or "^1"--->"": if not followed by \d|\^|/|\.'
