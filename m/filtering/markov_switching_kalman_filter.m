@@ -251,8 +251,7 @@ for t=1:smpl
     end
     
     if endogenous_switching
-        [Qtmp,retcode]=kron(transition_matrix,att(:,1),Vargs{:});
-%         [Qtmp,retcode]=transition_matrix(att(:,1),Vargs{:});
+        [Qtmp,retcode]=online_function_evaluator(transition_matrix,att(:,1),Vargs{:});
         if retcode
             return
         end
