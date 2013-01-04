@@ -49,7 +49,7 @@ control_cols=~state_cols;
 P=T(state_cols,state_cols);
 % recover the solution of the controls as a function of states
 FP=T(control_cols,state_cols);
-F=FP/P; % P should always be invertible unless collinearity
+F=FP/P; % F=FP*inv(P) P should always be invertible unless collinearity
 % recover the shock impact on the states
 K=R(state_cols,:);
 %% compute impulse responses
