@@ -1,4 +1,4 @@
-function [T,F,retcode]=msre_klein(junk,Aplus,A0,Aminus,junk2,junk3,hh)
+function [T,F,retcode]=msre_klein(~,Aplus,A0,Aminus,~,~,hh)
 
 if hh>1
     A0=expand_array(A0,1);
@@ -12,7 +12,7 @@ if hh>1
 %     nn=size(A0,1);
 end
 
-[T,junk,junk,retcode]=dsge_solve_klein(Aplus,A0,Aminus,[],[],true);
+[T,~,~,retcode]=dsge_solve_klein(Aplus,A0,Aminus,[],[],true);
 
 if retcode==0
     T=collapse_array(T,1,hh);

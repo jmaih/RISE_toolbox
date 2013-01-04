@@ -1,4 +1,4 @@
-function [T,R,SS,retcode]=dsge_solve_klein(Aplus,A0,Aminus,B,junk,T_only)
+function [T,R,SS,retcode]=dsge_solve_klein(Aplus,A0,Aminus,B,~,T_only)
 % this function solves the rational expectations model
 % Aplus*X_{t+1}+A0*X_{t}+Aminus*X_{t-1}+B*E_{t}+C=0 using Klein's method.
 % The matrices are stacked to yield the Klein/Gensys form
@@ -41,7 +41,7 @@ else
     nstates=size(AA0,2);
 end
 
-[T,junk,retcode]=solve_klein(D,E,nstates);
+[T,~,retcode]=solve_klein(D,E,nstates);
 
 if ~retcode
     if direct
@@ -63,6 +63,7 @@ end
 
 
 function varargout=reorder(order,varargin)
+varargout=varargin;
 for ii=1:numel(varargin)
     varargout{ii}=varargin{ii}(:,order);
 end
@@ -86,7 +87,7 @@ clusters(unit) = 2;
 clusters(stable) = 1;
 % Unstable roots last.
 % Re-order by the clusters.
-[SS,TT,junk,ZZ] = ordqz(SS,TT,QQ,ZZ,clusters);
+[SS,TT,~,ZZ] = ordqz(SS,TT,QQ,ZZ,clusters);
 
 % Undo the eigval inversion.
 infeigval = eigval == 0;
