@@ -168,19 +168,21 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
             end
         case 'numerical'
             z=[ss_i(indices);x_ss];
-            J=rise_numjac(vectorized_dynamic,z,M(:,ii),ss_i,def);
+            myfun=@(xx)online_function_evaluator(vectorized_dynamic,xx,M(:,ii),ss_i,def);
+            J=rise_numjac(myfun,z);
             if ~isempty(switching)
                 % now the z vector has to be a matrix in order to avoid a
                 % breakdown occurring when no parameter is present in some
                 % equations.
                 z=z(:,ones(1,size(M,1)));
-                JP=rise_numjac(vectorized_dynamic_params,M(:,ii),z,ss_i);
+                myfun=@(xx)online_function_evaluator(vectorized_dynamic_params,xx,z,ss_i);
+                JP=rise_numjac(myfun,M(:,ii),z);
                 J=[J,JP]; %#ok<AGROW>
             end
         case 'automatic'
             z=[ss_i(indices);x_ss];
             zz=rise_nad(z);
-            this=dynamic(zz,M(:,ii),ss_i,def);
+            this=online_function_evaluator(dynamic,zz,M(:,ii),ss_i,def);
             J=vertcat(this.dx);
             if ~isempty(switching)
                 this=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
@@ -368,7 +370,7 @@ ss=[];
 for ii=1:number_of_regimes
     if ii==1 || ~unique_ss
         param=par_vals(:,ii); 
-        y=online_function_evaluator(ssfunc,[],[],param,[]);
+        y=online_function_evaluator(ssfunc,[],[],param,[],[]);
     end
     if retcode
         return %#ok<UNRCH>
