@@ -45,11 +45,6 @@ if init
         'StandardDeviation',num2cell(nan(obj.NumberOfExogenous,1)),...
         'horizon',num2cell(expansion_order*ones(obj.NumberOfExogenous,1)));
     rows=4;cols=3;
-    if license('test','symbolic_toolbox') && exist('sym.m','file')
-        derivatives='symbolic';
-    else
-        derivatives='numerical';
-    end
     MainOptions={
          % set output folder name
 		'results_folder',obj.filename %  obj.output_folder_name=obj.filename;
@@ -84,7 +79,7 @@ if init
         % should be a direct default if the functions where it is used
         'Penalty',1e+8 
         % ====== optimization options ======
-        'derivatives',derivatives %['symbolic','numerical','automatic']
+        'derivatives','symbolic' %['symbolic','numerical','automatic']
         % ====== Filtering, priors, likelihood options ======
         'hessian','fd' % (finite differences) alternatives: 'opg' (outer-product gradient)
         % ====== graphic and debugging options ======
@@ -152,14 +147,6 @@ else
                     continue
                 end
                 propval=str2func(propval);
-            end
-            if strcmp(propname,'derivatives')&& strcmp(propval,'symbolic')
-                if ~license('test','symbolic_toolbox')
-                    propval='numerical';
-                    warning([mfilenaname,':: symbolic derivatives require the ',...
-                        'symbolic math toolbox, which you don''t have: ',...
-                        'switching to numerical derivatives instead']) %#ok<WNTAG>
-                end
             end
             
             if strcmp(propname,'data')|| ...
