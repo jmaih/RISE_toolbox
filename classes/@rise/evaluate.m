@@ -370,6 +370,8 @@ ss=[];
 for ii=1:number_of_regimes
     if ii==1 || ~unique_ss
         param=par_vals(:,ii); 
+        % in ssfunc, the definitions have been substituted already in
+        % load_functions and so all is needed here is the parameters
         y=online_function_evaluator(ssfunc,[],[],param,[],[]);
     end
     if retcode
