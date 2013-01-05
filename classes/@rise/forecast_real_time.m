@@ -27,6 +27,7 @@ if retcode
 end
 
 Updates=obj1.Filters.Expected_updated_variables;
+old_Updates=Updates;
 
 T=obj1.T;
 
@@ -81,6 +82,9 @@ for iendo=1:endo_nbr
     ts_rmse.(state_var_names{iendo})=...
         rise_time_series(1,rmse(iendo,:)');
 end
+
+% push the updates as a structure to ease plotting
+Updates=old_Updates;
 
     function y1=iterate_forecast(y0)
         y1=ss+T*(y0-ss);
