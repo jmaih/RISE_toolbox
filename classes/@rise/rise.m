@@ -144,6 +144,7 @@ classdef rise
         % regimes. This is something to address
         varargout=evaluate(obj,varargin)
         varargout=forecast(obj,varargin)
+        varargout=forecast_real_time(obj,varargin)
         flag=is_stable_system(obj,varargin)
 		varargout=load_parameters(obj,varargin)
         varargout=log_marginal_data_density_mhm(obj,varargin)
