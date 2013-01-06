@@ -66,7 +66,9 @@ ss_and_bgp_start_vals=zeros(2*endo_nbr,obj.NumberOfRegimes);
 vectorized_code=endo_nbr<=obj.options.vectorized_code_threshold;
 dynamic_params=obj.func_handles.dynamic_params;
 vectorized_dynamic=obj.func_handles.vectorized_dynamic;
-dynamic=obj.func_handles.dynamic;
+% dynamic=obj.func_handles.dynamic; % both numerical and automatic
+% derivatives use the vectorized form of this function, irrespective of the
+% flag vectorized_code, which I have to discard, but I am hesitating
 endo_exo_derivatives=obj.func_handles.endo_exo_derivatives;
 param_derivatives=obj.func_handles.param_derivatives;
 planner=obj.func_handles.planner;
@@ -182,11 +184,9 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         case 'automatic'
             z=[ss_i(indices);x_ss];
             zz=rise_nad(z);
-            this=online_function_evaluator(dynamic,zz,M(:,ii),ss_i,def);
-            J=vertcat(this.dx);
+            J=online_function_evaluator(vectorized_dynamic,zz,M(:,ii),ss_i,def);
             if ~isempty(switching)
-                this=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
-                JP=vertcat(this.dx);
+                JP=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
                 J=[J,JP]; %#ok<AGROW>
             end
             J=full(J);
