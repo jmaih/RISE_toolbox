@@ -49,7 +49,7 @@ for kk=1:numel(obj)
         fprintf(fid,'%s :: %s\n','SOLVER',solver);
         endo_names={obj(kk).varendo.name};
         exo_names={obj(kk).varexo.name};
-        [junk,junk,order,h]=size(R);
+        [~,~,order,h]=size(R);
         T(abs(T)<1e-9)=0;
         R(abs(R)<1e-9)=0;
         SS(abs(SS)<1e-9)=0;
