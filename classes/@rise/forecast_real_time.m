@@ -1,5 +1,7 @@
 function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 
+% see also plot_real_time
+
 default_options=struct('fkst_rt_nahead',16);
 
 if isempty(obj)
@@ -47,20 +49,21 @@ endo_nbr=obj1.NumberOfEndogenous(2);
 
 smpl=Updates.NumberOfObservations;
 
-fkst=zeros(endo_nbr,nahead,smpl);
+fkst=zeros(endo_nbr,nahead+1,smpl);
 
 fkst_errors=nan(endo_nbr,nahead,smpl);
 
 for t=1:smpl
     y0=transpose(dF(t,locs));
+    fkst(:,1,t)=y0;
     for h=1:nahead
         y1=iterate_forecast(y0);
-        fkst(:,h,t)=y1;
+        fkst(:,1+h,t)=y1;
         y0=y1;
     end
     hbar=min(nahead,smpl-t);
     steps=t+(1:hbar);
-    fkst_errors(:,1:hbar,t)=transpose(dF(steps,locs))-fkst(:,1:hbar,t);
+    fkst_errors(:,1:hbar,t)=transpose(dF(steps,locs))-fkst(:,1+(1:hbar),t);
 end
 
 rmse=nan(endo_nbr,nahead);
@@ -74,8 +77,8 @@ rmse=sqrt(rmse);
 
 ts_fkst=struct();
 ts_rmse=struct();
-TimeInfo=[Updates.TimeInfo(2:end);Updates.TimeInfo(end)+1];
-mynames=strcat(num2str((1:nahead)'),{'-step'});
+TimeInfo=Updates.TimeInfo;% [Updates.TimeInfo(2:end);Updates.TimeInfo(end)+1];
+mynames=strcat(num2str((0:nahead)'),{'-step'});
 for iendo=1:endo_nbr
     ts_fkst.(state_var_names{iendo})=...
         rise_time_series(TimeInfo,permute(fkst(iendo,:,:),[3,2,1]),mynames);
