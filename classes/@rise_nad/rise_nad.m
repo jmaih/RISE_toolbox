@@ -255,26 +255,6 @@ classdef rise_nad
         function d=double(obj)
             d=vertcat(obj.dx);
         end
-        %=====================
-%         function a = subsasgn(a,s,b)
-%             % SUBSASGN for rise_nad objects
-%             if length(s)>1, error('Subscripted assignment too complicated'); end
-%             if length(s.subs)==1, s.subs{end+1}=':'; end
-%             
-%             switch [class(a),class(b)]
-%                 case 'doublerise_nad'
-%                     a = subsasgn(a,s,double(b));
-%                 case 'rise_naddouble'
-%                     a.x  = subsasgn(a.x,s,b);
-%                     a.dx = subsasgn(a.dx,s,0);
-%                 case 'rise_nadrise_nad'
-%                     a.x  = subsasgn(a.x,s,b.x);
-%                     a.dx = subsasgn(full(a.dx),s,full(b.dx));
-%                 otherwise
-%                     error(['cannot assign ',class(b),' to ',class(a)]);
-%             end
-%         end
-        %=====================
     end
     methods(Static)
         varargout=jacobian(varargin)
