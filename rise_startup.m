@@ -28,7 +28,6 @@ if USE_RISE_PRINT
     
     NOT_INSTALLED = 'Not installed';
     matlab_version = NOT_INSTALLED;
-    symbolic_math_version = NOT_INSTALLED;
     optimization_version = NOT_INSTALLED;
     statistics_version = NOT_INSTALLED;
     rise_version = NOT_INSTALLED;
@@ -39,8 +38,6 @@ if USE_RISE_PRINT
         switch v.Name
             case 'MATLAB'
                 matlab_version = [v.Version ' ' v.Release];
-            case 'Symbolic Math Toolbox'
-                symbolic_math_version = [v.Version ' ' v.Release];
             case 'Optimization Toolbox'
                 optimization_version = [v.Version ' ' v.Release];
             case 'Statistics Toolbox'
@@ -51,7 +48,6 @@ if USE_RISE_PRINT
     end
     rise_data=[rise_data
         'matlab_version', matlab_version
-        'symbolic_math_version', symbolic_math_version
         'optimization_version', optimization_version
         'statistics_version', statistics_version
         'rise_version', rise_version
