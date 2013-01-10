@@ -9,6 +9,9 @@ classdef rise_equation
         tex_static
         id
     end
+    properties
+        value
+    end
     methods
         % set property utility
         function obj=set_properties(obj,varargin)

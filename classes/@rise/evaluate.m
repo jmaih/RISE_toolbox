@@ -117,9 +117,10 @@ if ~isempty(obj.is_stationary_model)
     end
 end
 NumberOfRegimes=obj.NumberOfRegimes;
+def=nan(numel(obj.definitions),NumberOfRegimes);
 for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     pp_i=M(:,ii);
-    def=online_function_evaluator(definitions,pp_i); %#ok<*EVLC>
+    def_i=online_function_evaluator(definitions,pp_i); %#ok<*EVLC>
     if ~obj.is_optimal_policy_model && ~obj.is_imposed_steady_state
         % if the initial guess solves the steady state then proceed. Else
         % try and improve the initial guess through fsolve.
@@ -141,7 +142,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         else
             % solve the steady state
             [ss_and_bgp_i(1:last_item),retcode]=...
-                solve_steady_state(ss_and_bgp_i(1:last_item),x_ss,pp_i,def,...
+                solve_steady_state(ss_and_bgp_i(1:last_item),x_ss,pp_i,def_i,...
                 resid_func,obj.is_linear_model,obj.options.optimset);
         end
         if ~retcode
@@ -163,14 +164,14 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     
     switch derivative_type
         case 'symbolic'
-            J=online_function_evaluator(endo_exo_derivatives,ss_i(indices),x_ss,M(:,ii),ss_i,def);
+            J=online_function_evaluator(endo_exo_derivatives,ss_i(indices),x_ss,M(:,ii),ss_i,def_i);
             if ~isempty(switching)
-                JP=online_function_evaluator(param_derivatives,ss_i(indices),x_ss,M(:,ii),ss_i,def); %#ok<*GTARG>
+                JP=online_function_evaluator(param_derivatives,ss_i(indices),x_ss,M(:,ii),ss_i,def_i); %#ok<*GTARG>
                 J=[J,JP]; %#ok<AGROW>
             end
         case 'numerical'
             z=[ss_i(indices);x_ss];
-            myfun=@(xx)online_function_evaluator(vectorized_dynamic,xx,M(:,ii),ss_i,def);
+            myfun=@(xx)online_function_evaluator(vectorized_dynamic,xx,M(:,ii),ss_i,def_i);
             J=rise_numjac(myfun,z);
             if ~isempty(switching)
                 % now the z vector has to be a matrix in order to avoid a
@@ -184,7 +185,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         case 'automatic'
             z=[ss_i(indices);x_ss];
             zz=rise_nad(z);
-            J=online_function_evaluator(vectorized_dynamic,zz,M(:,ii),ss_i,def);
+            J=online_function_evaluator(vectorized_dynamic,zz,M(:,ii),ss_i,def_i);
             if ~isempty(switching)
                 JP=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
                 J=[J,JP]; %#ok<AGROW>
@@ -204,7 +205,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         % A nice result is that at first-order approximation, the jacobians
         % are just reweighted by the probabilities evaluated at the steady
         % state.
-        [obj.Q,retcode]=online_function_evaluator(obj.func_handles.transition_matrix,ss_i,[],M(:,1),ss_i,def);
+        [obj.Q,retcode]=online_function_evaluator(obj.func_handles.transition_matrix,ss_i,[],M(:,1),ss_i,def_i);
         if retcode
             obj=clean_obj;
             if obj(1).options.debug
@@ -243,9 +244,9 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         [obj.planner_loss(1,ii),...
             obj.planner_commitment(1,ii),...
             obj.planner_discount(1,ii),W1]=online_function_evaluator(...
-            planner,ss_i,x_ss,M(:,ii),ss_i,def);
+            planner,ss_i,x_ss,M(:,ii),ss_i,def_i);
         if obj.options.debug
-            plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def);
+            plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def_i);
             W2=finite_difference_hessian(plan_fd,ss_i);
             disp('discrepancies in planner computations')
             disp(max(max(abs(W1-W2))))
@@ -253,7 +254,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
             if strcmp(derivative_type,'symbolic')
                 obj.W(:,:,ii)=W1;
             else
-                plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def);
+                plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def_i);
                 W2=finite_difference_hessian(plan_fd,ss_i);
                 obj.W(:,:,ii)=W2;
             end
@@ -264,12 +265,18 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         tmp(Restrictions(:,1))=M(Restrictions(:,2),ii).^2;
         obj.H(:,:,ii)=diag(tmp);
     end
+    
+    def(:,ii)=def_i;
 end
 % This steady state is hidden from the users since it might be adjusted or
 % expanded when actually solving the model (loose commitment, sticky
 % information). It is only when the model is solved that the steady state
 % will be pushed into the varendo...
 obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
+
+[nrows,ncols]=size(def);
+tmp=mat2cell(def,ones(nrows,1),ncols);
+[obj.definitions(1:nrows).value]=(tmp{:});
 
 if ~obj.estimation_under_way && ~obj.is_optimal_policy_model && ...
         ~obj.is_sticky_information_model
@@ -292,14 +299,14 @@ end
         % try stationarity
         
         ys=ss_and_bgp_i;
-        [ys(1:endo_nbr),retcode]=solve_steady_state(ss_and_bgp_i(1:endo_nbr),x_ss,pp_i,def,...
+        [ys(1:endo_nbr),retcode]=solve_steady_state(ss_and_bgp_i(1:endo_nbr),x_ss,pp_i,def_i,...
             @static_or_bgp_residuals,obj.is_linear_model,obj.options.optimset);
         
         if retcode
             % try nonstationarity
             func_ss=balanced_growth;
             func_jac=static_bgp_model_derivatives;
-            [ys,retcode]=solve_steady_state(ss_and_bgp_i,x_ss,pp_i,def,...
+            [ys,retcode]=solve_steady_state(ss_and_bgp_i,x_ss,pp_i,def_i,...
                 @static_or_bgp_residuals,obj.is_linear_model,obj.options.optimset);
             if ~retcode
                 is_stationary=false;
@@ -319,7 +326,7 @@ end
         end
     end
 
-    function [lhs,Jac,retcode]=static_or_bgp_residuals(y,x,param,def)
+    function [lhs,Jac,retcode]=static_or_bgp_residuals(y_,x_,param_,def_)
         % if the structural model is defined in terms of steady states, then the
         % the word ss will appear in the static model. But then, those values are
         % the same as those found in y.
@@ -330,15 +337,15 @@ end
         
         retcode=0;
         
-        ss_=y;
-        lhs=online_function_evaluator(func_ss,y,x,param,ss_,def);
+        ss_=y_;
+        lhs=online_function_evaluator(func_ss,y_,x_,param_,ss_,def_);
 %         if any(any(isnan(lhs)))||(any(any(isnan(lhs))))
 %             retcode=?
 %             if retcode, Jac=[];
 %             end
 %         end
         if nargout>1
-            Jac=online_function_evaluator(func_jac,y,x,param,ss_,def);
+            Jac=online_function_evaluator(func_jac,y_,x_,param_,ss_,def_);
 %             if any(any(isnan(Jac)))||(any(any(isnan(Jac))))
 %                 retcode=?
 %             end
