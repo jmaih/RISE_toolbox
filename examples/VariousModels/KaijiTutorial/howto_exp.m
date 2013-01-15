@@ -52,6 +52,13 @@ FP=T(control_cols,state_cols);
 F=FP/P; % F=FP*inv(P) P should always be invertible unless collinearity
 % recover the shock impact on the states
 K=R(state_cols,:);
+
+allvars={kaiji.varendo.name};
+
+state_variables=allvars(state_cols);
+
+control_variables=allvars(control_cols);
+
 %% compute impulse responses
 % In general, if you want to see the options for a particular method,
 % create an empty rise object. e.g. tmp=rise.empty(0); then you can go
