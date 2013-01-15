@@ -118,7 +118,7 @@ classdef rise
         log_mdd_laplace
         log_mdd_mhm
         log_mdd_chib_jeliazkov
-        nonlcon_viol_penalty
+        numberOfActiveInequalities=0;
         estimated_parameters=rise_estim_param.empty(0,0); 
         % I am tempted of moving estimated_parameters to the unprotected
         % properties in order to allow the user to modify the start values
