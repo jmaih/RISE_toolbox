@@ -82,7 +82,7 @@ if iscell(optimizer)
     for ii=1:Nsim
         [xfinal{ii},ffinal{ii},exitflag{ii}]=optimizer(fh_handle,x0(:,ii),lb,ub,options,vargs{:});
     end
-elseif strcmp(class(optimizer),'function_handle')
+elseif isa(optimizer,'function_handle')
     for ii=1:Nsim
         [xfinal{ii},ffinal{ii},exitflag{ii}]=optimizer(problem_maker(ii));
     end
@@ -121,7 +121,7 @@ else
 end
 
 % select the overall best
-[junk,order]=sort(cell2mat(ffinal));
+[~,order]=sort(cell2mat(ffinal));
 best=order(1);
 xbest=xfinal{best};
 fbest=ffinal{best};
