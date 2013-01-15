@@ -1,4 +1,4 @@
-function [best,best_fit,obj]=gampc_2(Objective,x0,f0,lb,ub,Options,varargin)
+function [best,best_fval,obj]=gampc_2(Objective,x0,f0,lb,ub,Options,varargin)
 %  GAMPC attempts to find the global minimum of a constrained function of
 %  several variables.
 %   GAMPC attempts to solve problems of the form:
@@ -98,7 +98,7 @@ arch_size=round(.5*colony_size); % archive size
     restrictions,penalty, varargin{:});
 [ff,xx]=resort(ff,xx);
 best=xx(:,1);
-best_fit=ff(1);
+best_fval=ff(1);
 obj.fcount= obj.fcount+funevals;
 pool_size=3*colony_size; % pool size
 offsp_size=1:3: colony_size;
@@ -137,12 +137,12 @@ while isempty(stopflag)
     memorize_best_solution;
     if rem( obj.iter, verbose)==0 ||  obj.iter==1
         restart=1;
-        fmin_iter= best_fit;
+        fmin_iter= best_fval;
         disperse=dispersion( xx(:,1:arch_size),lb,ub);
-        display_progress(restart, obj.iter, best_fit,fmin_iter,...
+        display_progress(restart, obj.iter, best_fval,fmin_iter,...
             disperse, obj.fcount,mfilename);
     end
-    if ~isnan(known_optimum) && abs(best_fit-known_optimum)<1e-8
+    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<1e-8
         obj.known_optimum_reached=true;
     end
     stopflag=check_convergence(obj);
@@ -271,8 +271,8 @@ obj.finish_time=clock;
 
     function memorize_best_solution()
         [ff,xx]=resort(ff,xx);
-        if isempty(best_fit)|| ff(1)<best_fit
-            best_fit= ff(1);
+        if isempty(best_fval)|| ff(1)<best_fval
+            best_fval= ff(1);
             best= xx(:,1);
         end
     end

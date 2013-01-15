@@ -75,7 +75,7 @@ RandStream.setDefaultStream(s);
     generate_candidates(@evaluate,lb,ub,missing,...
     restrictions,penalty);
 [ff,xx]=resort(ff,xx);
-best_fit=ff(1);
+best_fval=ff(1);
 
 % Now find the peak
 if ~stopping_created %#ok<*BDSCI,*BDLGI>
@@ -99,12 +99,12 @@ while isempty(stopflag)
     memorize_best_solution();
     if rem(obj.iter,verbose)==0 || obj.iter==1
         restart=1;
-        fmin_iter=best_fit;
+        fmin_iter=best_fval;
         disperse=dispersion(xx,lb,ub);
-        display_progress(restart,obj.iter,best_fit,fmin_iter,...
+        display_progress(restart,obj.iter,best_fval,fmin_iter,...
             disperse,obj.fcount,mfilename);
     end
-    if ~isnan(known_optimum) && abs(best_fit-known_optimum)<tol_fun
+    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<tol_fun
         obj.known_optimum_reached=true;
     end
     stopflag=check_convergence(obj);
@@ -127,8 +127,8 @@ obj.finish_time=clock;
 
     function memorize_best_solution()
         [ff,xx]=resort(ff,xx);
-        if isempty(best_fit)||ff(1)<best_fit
-            best_fit=ff(1);
+        if isempty(best_fval)||ff(1)<best_fval
+            best_fval=ff(1);
             %             best=xx(:,1);
         end
     end

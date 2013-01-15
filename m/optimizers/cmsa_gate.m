@@ -76,7 +76,7 @@ cmsa_options.restrictions=PROBLEM.nonlcon;
 obj=cmsa(Objective,x0,[],lb,ub,cmsa_options);
 
 x=obj.best;
-f=obj.best_fit;
+f=obj.best_fval;
 
 if obj.iter>=obj.max_iter || ...
         obj.fcount>=obj.max_fcount || ...

@@ -75,7 +75,7 @@ studga_options.restrictions=PROBLEM.nonlcon;
 obj=studga(Objective,x0,[],lb,ub,studga_options);
 
 x=obj.best;
-f=obj.best_fit;
+f=obj.best_fval;
 
 if obj.iter>=obj.max_iter || ...
         obj.fcount>=obj.max_fcount || ...

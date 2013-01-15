@@ -71,7 +71,7 @@ obj=struct('known_optimum_reached',false,'max_fcount',max_fcount,...
     'max_time',max_time,'start_time',start_time,'optimizer',mfilename);
 n0=size(x0,2);
 
-best_fit=[];
+best_fval=[];
 bestx=[];
 
 if n0
@@ -86,7 +86,7 @@ if n0
         f0=f0(1:n0);
     end
     [f0,x0]=resort(f0,x0);
-    best_fit=f0(1);
+    best_fval=f0(1);
     bestx=x0(:,1);
 end
 
@@ -134,10 +134,10 @@ while isempty(stopflag)
         restart=1;
         fmin_iter=min(ff);
         disperse=dispersion(xx,lb,ub);
-        display_progress(restart,obj.iter,best_fit,fmin_iter,...
+        display_progress(restart,obj.iter,best_fval,fmin_iter,...
             disperse,obj.fcount,optimizer);
     end
-    if ~isnan(known_optimum) && abs(best_fit-known_optimum)<tol_fun
+    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<tol_fun
         obj.known_optimum_reached=true;
     end
     stopflag=check_convergence(obj);
@@ -145,7 +145,7 @@ end
 xx=restore(xx);
 bestx=restore(bestx);
 xx(:,1)=bestx;
-ff(1)=best_fit;
+ff(1)=best_fval;
 
     function fy=evaluate(y)
         y=restore(y);
@@ -204,8 +204,8 @@ ff(1)=best_fit;
     end
     function memorize_best_source
         [ff,xx,fitness,trial]=resort(ff,xx,fitness,trial);
-        if isempty(best_fit)||ff(1)<best_fit
-            best_fit=ff(1);
+        if isempty(best_fval)||ff(1)<best_fval
+            best_fval=ff(1);
             bestx=xx(:,1);
         end
     end

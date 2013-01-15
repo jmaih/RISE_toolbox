@@ -76,7 +76,7 @@ bee_options.restrictions=PROBLEM.nonlcon;
 obj=bee(Objective,x0,[],lb,ub,bee_options);
 
 x=obj.best;
-f=obj.best_fit;
+f=obj.best_fval;
 
 if obj.iter>=obj.max_iter || ...
         obj.fcount>=obj.max_fcount || ...

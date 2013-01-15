@@ -1,4 +1,4 @@
-classdef bee < handle
+classdef bee %< handle
     properties
         stopping_created=false;
         start_time
@@ -7,6 +7,10 @@ classdef bee < handle
         ub
         x0
         f0
+        violation_strength_0
+        fitness_0
+        iter=0;
+        fcount=0;
         max_iter=1000;
         max_time=3600;
         max_fcount=inf;
@@ -28,111 +32,15 @@ classdef bee < handle
     properties(SetAccess=protected)
         Objective
         best
-        best_fit
+        best_fval
+        best_viol_strength
+        best_fitness
         xx
         ff
         number_of_parameters
         finish_time
-        iter=0;
-        fcount=0;
         optimizer='abc';
-    end
-    methods(Access=private)
-        function obj=optimize(obj)
-            obj.food_number=round(.5*obj.colony_size);
-            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
-            obj.ff=nan(1,obj.colony_size);
-            obj.fitness=nan(1,obj.colony_size);
-            obj.trial=nan(1,obj.colony_size);
-            n0=size(obj.x0,2);
-            if n0
-                obj.fitness(1:n0)=compute_fitness(obj.f0(1:n0));
-                obj.trial(1:n0)=0;
-                obj.ff(1:n0)=obj.f0;
-                obj.xx(:,1:n0)=obj.x0(:,1:n0);
-            end
-            missing=obj.colony_size-n0;
-            % set and record the seed before we start drawing anything
-            s = RandStream.create('mt19937ar','seed',obj.rand_seed);
-            RandStream.setDefaultStream(s);
-            
-            [obj.xx(:,n0+1:end),obj.ff(n0+1:end),funevals,...
-                obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
-                new_bees(obj.Objective,obj.lb,obj.ub,missing,obj.restrictions,...
-                obj.penalty,obj.vargs{:});
-            obj.fcount=obj.fcount+funevals;
-            obj.memorize_best_source;
-            
-            if ~obj.stopping_created
-                manual_stopping;
-            else
-                if ~exist('ManualStoppingFile.txt','file')
-                    manual_stopping;
-                end
-            end
-            stopflag=check_convergence(obj);
-            while isempty(stopflag)
-                obj.iter=obj.iter+1;
-                obj.send_employed_bees;
-                obj.send_onlooker_bees;
-                obj.memorize_best_source;
-                obj.send_scout_bees;
-                if rem(obj.iter,obj.verbose)==0 || obj.iter==1
-                    restart=1;
-                    fmin_iter=obj.best_fit;
-                    disperse=dispersion(obj.xx,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fit,fmin_iter,...
-                        disperse,obj.fcount,obj.optimizer);
-                end
-                stopflag=check_convergence(obj);
-            end
-            obj.finish_time=clock;
-        end
-        
-        function obj=send_scout_bees(obj)
-            renew=find(obj.trial>=obj.max_trials);
-            test=false;
-            if test
-                [obj.xx(:,renew),obj.ff(renew),funevals,obj.fitness(renew),...
-                    obj.trial(renew)]=new_bees4_renewal(obj.Objective,...
-                    obj.best,obj.lb,obj.ub,numel(renew),obj.vargs{:});
-            else
-                [obj.xx(:,renew),obj.ff(renew),funevals,obj.fitness(renew),...
-                    obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
-                    obj.ub,numel(renew),obj.restrictions,obj.penalty,obj.vargs{:});
-            end
-            obj.fcount=obj.fcount+funevals;
-        end
-        function obj=send_employed_bees(obj)
-            for ii=1:obj.food_number
-                obj=generate_mutant(obj,ii);
-            end
-        end
-        function obj=send_onlooker_bees(obj)
-            prob=(0.9.*obj.fitness./max(obj.fitness))+0.1;
-            t=0;
-            ii=1;
-            while t<obj.food_number
-                if rand<prob(ii)
-                    t=t+1;
-                    obj=generate_mutant(obj,ii);
-                end
-                ii=ii+1;
-                if ii==obj.food_number+1
-                    ii=1;
-                end
-            end
-        end
-        function obj=memorize_best_source(obj)
-            [obj.ff,obj.xx,obj.fitness,obj.trial]=...
-                resort(obj.ff,obj.xx,obj.fitness,obj.trial);
-            %             [obj.ff,obj.xx,obj.fitness]=...
-            %                 resort(obj.ff,obj.xx,obj.fitness);
-            if isempty(obj.best_fit)||obj.ff(1)<obj.best_fit
-                obj.best_fit=obj.ff(1);
-                obj.best=obj.xx(:,1);
-            end
-        end
+        violation_strength
     end
     methods
         function obj=bee(Objective,x0,f0,lb,ub,options,varargin)
@@ -148,7 +56,7 @@ classdef bee < handle
             %   at x0), 'vargs'(additional arguments of FUN),'penalty' (threshold
             %   function value beyond which the parameter draws are
             %   discarded),'Objective' (name of the objective function), 'best'(best
-            %   parameter vector), 'best_fit'(best function value), 'xx'(parameter
+            %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
             %   'max_iter','max_time','colony_size
             %
@@ -203,6 +111,12 @@ classdef bee < handle
             if nargin<5
                 options=[];
             end
+            if isempty(options.restrictions)
+                options.restrictions=@(z)[];
+            end
+            options.restrictions=@(z)[options.restrictions(z);lb-z;z-ub];
+            % the restrictions are satisfied when all elements in this
+            % vector are negative or equal to 0
             % set these default options and change them if later on options is non-empty
             if ~isempty(options)
                 all_prop=fieldnames(bee);
@@ -236,46 +150,169 @@ classdef bee < handle
             if n0
                 n0=min(n0,obj.colony_size);
                 obj.x0=obj.x0(:,1:n0);
-                if isempty(obj.f0)
-                    obj.f0=nan(1,1:n0);
-                    for ii=1:n0
-                        obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
-                    end
-                    obj.fcount=obj.fcount+n0;
-                else
-                    obj.f0=obj.f0(1:n0);
+                obj.violation_strength_0=zeros(1,n0);
+                obj.f0=nan(1,1:n0);
+                for ii=1:n0
+                    obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
+                    tmp=obj.restrictions(obj.x0(:,ii));
+                    tmp=tmp(tmp>0);
+                    obj.violation_strength_0(ii)=sum(tmp);
                 end
-                [obj.f0,obj.x0]=resort(obj.f0,obj.x0);
-                obj.best_fit=obj.f0(1);
-                obj.best=obj.x0(:,1);
+                obj.fcount=obj.fcount+n0;
+                obj.fitness_0=compute_fitness(obj.f0);
+                obj=memorize_best_source(obj);
+            end
+            % Now find the peak
+            obj=optimize(obj);
+        end
+    end
+    methods(Access=private)
+        function obj=optimize(obj)
+            obj.food_number=round(.5*obj.colony_size);
+            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
+            obj.ff=nan(1,obj.colony_size);
+            obj.fitness=nan(1,obj.colony_size);
+            obj.trial=nan(1,obj.colony_size);
+            obj.violation_strength=nan(1,obj.colony_size);
+            n0=size(obj.x0,2);
+            if n0
+                obj.fitness(1:n0)=obj.fitness_0(1:n0);
+                obj.trial(1:n0)=0;
+                obj.ff(1:n0)=obj.f0;
+                obj.xx(:,1:n0)=obj.x0(:,1:n0);
+                obj.violation_strength(1:n0)=obj.violation_strength_0;
+            end
+            missing=obj.colony_size-n0;
+            % set and record the seed before we start drawing anything
+            s = RandStream.create('mt19937ar','seed',obj.rand_seed);
+            try
+                RandStream.setGlobalStream(s);
+            catch %#ok<CTCH>
+                RandStream.setDefaultStream(s); %#ok<SETRS>
             end
             
-            % Now find the peak
-            obj.optimize;
+            [obj.xx(:,n0+1:end),obj.ff(n0+1:end),...
+                obj.violation_strength(n0+1:end),funevals,...
+                obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
+                new_bees(obj.Objective,obj.lb,obj.ub,missing,obj.restrictions,...
+                obj.penalty,obj.vargs{:});
+            obj.fcount=obj.fcount+funevals;
+            obj=memorize_best_source(obj);
+            
+            if ~obj.stopping_created
+                manual_stopping;
+            else
+                if ~exist('ManualStoppingFile.txt','file')
+                    manual_stopping;
+                end
+            end
+            stopflag=check_convergence(obj);
+            while isempty(stopflag)
+                obj.iter=obj.iter+1;
+                obj=send_employed_bees(obj);
+                obj=send_onlooker_bees(obj);
+                obj=memorize_best_source(obj);
+                obj=send_scout_bees(obj);
+                if rem(obj.iter,obj.verbose)==0 || obj.iter==1
+                    restart=1;
+                    fmin_iter=obj.best_fval;
+                    disperse=dispersion(obj.xx,obj.lb,obj.ub);
+                    display_progress(restart,obj.iter,obj.best_fval,fmin_iter,...
+                        disperse,obj.fcount,obj.optimizer);
+                end
+                stopflag=check_convergence(obj);
+            end
+            obj.finish_time=clock;
+        end
+        function obj=send_scout_bees(obj)
+            renew=find(obj.trial>=obj.max_trials);
+            [obj.xx(:,renew),obj.ff(renew),obj.violation_strength(renew),funevals,obj.fitness(renew),...
+                obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
+                obj.ub,numel(renew),obj.restrictions,obj.penalty,obj.vargs{:});
+            obj.fcount=obj.fcount+funevals;
+        end
+        function obj=send_employed_bees(obj)
+            for ii=1:obj.food_number
+                obj=generate_mutant(obj,ii);
+            end
+        end
+        function obj=send_onlooker_bees(obj)
+            prob=(0.9.*obj.fitness./max(obj.fitness))+0.1;
+            t=0;
+            ii=1;
+            while t<obj.food_number
+                if rand<prob(ii)
+                    t=t+1;
+                    obj=generate_mutant(obj,ii);
+                end
+                ii=ii+1;
+                if ii==obj.food_number+1
+                    ii=1;
+                end
+            end
+        end
+        function obj=memorize_best_source(obj)
+            if isempty(obj.ff)
+                obj.best_fitness=obj.fitness_0(1);
+                obj.best_fval=obj.f0(1);
+                obj.best=obj.x0(:,1);
+                obj.best_viol_strength=obj.violation_strength_0(1);
+            else
+                obj=sort(obj);
+                tmp=deb_selection(obj,1,obj.best_viol_strength,obj.best,obj.best_fitness,obj.best_fval);
+                if isempty(obj.best_fval)||obj.ff(1)<obj.best_fval
+                    obj.best_fval=tmp.ff(1);
+                    obj.best=tmp.xx(:,1);
+                    obj.best_viol_strength=obj.violation_strength(1);
+                end
+            end
+        end
+        function obj=sort(obj)
+            VS=unique(obj.violation_strength);
+            FF=nan(1,obj.colony_size);
+            XX=nan(obj.number_of_parameters,obj.colony_size);
+            FIT=nan(1,obj.colony_size);
+            TRIALS=nan(1,obj.colony_size);
+            VIOLS=nan(1,obj.colony_size);
+            iter0=0;
+            for iloc=1:numel(VS)
+                this=obj.violation_strength==VS(iloc);
+                nthis=numel(this);
+                [FF(iter0+(1:nthis)),XX(:,iter0+(1:nthis)),FIT(iter0+(1:nthis)),TRIALS(iter0+(1:nthis)),VIOLS(iter0+(1:nthis))]=...
+                    resort(obj.ff(this),obj.xx(:,this),obj.fitness(this),obj.trial(this),obj.violation_strength(this));
+                iter0=iter0+nthis;
+            end
+            [obj.ff,obj.xx,obj.fitness,obj.trial,obj.violation_strength]=deal(FF,XX,FIT,TRIALS,VIOLS);
         end
     end
 end
 
-function [x,f,funevals,fit,trial]=new_bees(objective,lb,ub,n,restrictions,penalty,...
+function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,restrictions,penalty,...
     varargin)
-[x,f,funevals]=generate_candidates(objective,lb,ub,n,restrictions,penalty,varargin{:});
+[x,f,viol_strength,funevals]=generate_candidates(objective,lb,ub,n,restrictions,penalty,varargin{:});
 trial=zeros(1,n);
 fit=compute_fitness(f);
+for ii=1:n
+    v=viol_strength{ii};
+    v=v(v>0);
+    viol_strength{ii}=sum(v);
+end
+viol_strength=cell2mat(viol_strength);
 end
 
-function [x,f,funevals,fit,trial]=new_bees4_renewal(objective,xbest,lb,ub,...
-    n,varargin)
-npar=size(lb,1);
-x=bsxfun(@plus,lb,bsxfun(@times,ub-lb,rand(npar,n)));
-x=x+rand(1,1).*(xbest(:,ones(1,n))-x);
-x=recenter(x,lb,ub);
-f=nan(1,n);
-for ii=1:n
-    f(ii)=objective(x(:,ii),varargin{:});
+function obj=deb_selection(obj,ii,viol_strength,mutant,fit_mut,f_mut)
+% we apply a greedy selection between ii and the mutant after controling
+% for feasibility
+if (viol_strength<obj.violation_strength(ii))||...
+        (viol_strength==obj.violation_strength(ii) && fit_mut>obj.fitness(ii))
+    obj.fitness(ii)=fit_mut;
+    obj.xx(:,ii)=mutant;
+    obj.ff(:,ii)=f_mut;
+    obj.trial(ii)=0;
+    obj.violation_strength(ii)=viol_strength;
+else
+    obj.trial(ii)=obj.trial(ii)+1;
 end
-trial=zeros(1,n);
-fit=compute_fitness(f);
-funevals=n;
 end
 
 function obj=generate_mutant(obj,ii)
@@ -290,39 +327,16 @@ while 1
 end
 mutant=obj.xx(:,ii);
 
-test_it=false;
-if test_it
-    % pick the number of parameters to change
-    change=round(1+rand*(obj.number_of_parameters-1));
-    % choose the parameters to change
-    choice_set=1:obj.number_of_parameters;
-    for i1=1:change
-        pp=round(i1+rand*(obj.number_of_parameters-i1));
-        tmp=choice_set(i1);
-        choice_set(i1)=choice_set(pp);
-        choice_set(pp)=tmp;
-    end
-    choice_set=choice_set(1:change);
-    mutant(choice_set)=mutant(choice_set)+(mutant(choice_set)-...
-        obj.xx(choice_set,donor_id))*2.*(rand-.5);%(change,1)
-else
-    % %     pick the parameters to change in the new solution
-    change=min(fix(rand*obj.number_of_parameters)+1,obj.number_of_parameters);
-    mutant(change)=mutant(change)+(mutant(change)-...
-        obj.xx(change,donor_id))*2.*(rand(numel(change),1)-.5);
-end
-mutant=recenter(mutant,obj.lb,obj.ub);
+% %     pick the parameters to change in the new solution
+change=min(fix(rand*obj.number_of_parameters)+1,obj.number_of_parameters);
+mutant(change)=mutant(change)+(mutant(change)-...
+    obj.xx(change,donor_id))*2.*(rand(numel(change),1)-.5);
+mutant(change)=recenter(mutant(change),obj.lb(change),obj.ub(change));
 f_mut=obj.Objective(mutant,obj.vargs{:});
+viol=obj.restrictions(mutant);
+viol=viol(viol>0);
+viol_strength=sum(viol);
 obj.fcount=obj.fcount+1;
 fit_mut=compute_fitness(f_mut);
-% we apply a greedy selection between ii and the
-% mutant
-if fit_mut>obj.fitness(ii)
-    obj.fitness(ii)=fit_mut;
-    obj.xx(:,ii)=mutant;
-    obj.ff(:,ii)=f_mut;
-    obj.trial(ii)=0;
-else
-    obj.trial(ii)=obj.trial(ii)+1;
-end
+obj=deb_selection(obj,ii,viol_strength,mutant,fit_mut,f_mut);
 end

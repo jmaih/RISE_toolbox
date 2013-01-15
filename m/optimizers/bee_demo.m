@@ -31,7 +31,7 @@ classdef bee_demo < handle
     properties(SetAccess=protected)
         Objective
         best
-        best_fit
+        best_fval
         xx
         ff
         number_of_parameters
@@ -81,9 +81,9 @@ classdef bee_demo < handle
                 obj.send_scout_bees;
                 if rem(obj.iter,obj.display)==0 || obj.iter==1
                     restart=1;
-                    fmin_iter=obj.best_fit;
+                    fmin_iter=obj.best_fval;
                     disperse=dispersion(obj.xx,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fit,fmin_iter,...
+                    display_progress(restart,obj.iter,obj.best_fval,fmin_iter,...
                         disperse,obj.fcount,obj.optimizer);
                 end
                 stopflag=check_convergence(obj);
@@ -132,8 +132,8 @@ classdef bee_demo < handle
                 resort(obj.ff,obj.xx,obj.fitness,obj.trial);
 %             [obj.ff,obj.xx,obj.fitness]=...
 %                 resort(obj.ff,obj.xx,obj.fitness);
-            if isempty(obj.best_fit)||obj.ff(1)<obj.best_fit
-                obj.best_fit=obj.ff(1);
+            if isempty(obj.best_fval)||obj.ff(1)<obj.best_fval
+                obj.best_fval=obj.ff(1);
                 obj.best=obj.xx(:,1);
             end
         end
@@ -152,7 +152,7 @@ classdef bee_demo < handle
             %   at x0), 'vargs'(additional arguments of FUN),'penalty' (threshold
             %   function value beyond which the parameter draws are
             %   discarded),'Objective' (name of the objective function), 'best'(best
-            %   parameter vector), 'best_fit'(best function value), 'xx'(parameter
+            %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
             %   'max_iter','max_time','colony_size
             %
@@ -250,7 +250,7 @@ classdef bee_demo < handle
                     obj.f0=obj.f0(1:n0);
                 end
                 [obj.f0,obj.x0]=resort(obj.f0,obj.x0);
-                obj.best_fit=obj.f0(1);
+                obj.best_fval=obj.f0(1);
                 obj.best=obj.x0(:,1);
             end
             

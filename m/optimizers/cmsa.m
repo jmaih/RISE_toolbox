@@ -32,7 +32,7 @@ classdef cmsa < handle
     properties(SetAccess=protected)
         Objective
         best
-        best_fit
+        best_fval
         restart_best_fit
         xx
         ff
@@ -92,7 +92,7 @@ classdef cmsa < handle
             end
             stagnate=0;
             restart=1;
-            obj.restart_best_fit=obj.best_fit;
+            obj.restart_best_fit=obj.best_fval;
             %=========================
             
             if ~obj.stopping_created
@@ -121,7 +121,7 @@ classdef cmsa < handle
                 end
                 [ff_search,xx_search,ss,sig,obj.fcount]=recombination(obj,C,mm,sig_rec);
                 
-                if ff_search(1)<obj.best_fit
+                if ff_search(1)<obj.best_fval
                     % record the best population so far
                     obj.ff=ff_search;
                     obj.xx=xx_search;
@@ -141,10 +141,10 @@ classdef cmsa < handle
                 obj.memorize_best_solution;
                 if rem(obj.iter,obj.verbose)==0 || obj.iter==1
                     disperse=dispersion(xx_search,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fit,ff_search(1),...
+                    display_progress(restart,obj.iter,obj.best_fval,ff_search(1),...
                         disperse,obj.fcount,obj.optimizer);
                 end
-                if ~isnan(obj.known_optimum) && abs(obj.best_fit-obj.known_optimum)<obj.tol_fun
+                if ~isnan(obj.known_optimum) && abs(obj.best_fval-obj.known_optimum)<obj.tol_fun
                     obj.known_optimum_reached=true;
                 end
                 stopflag=check_convergence(obj);
@@ -195,8 +195,8 @@ classdef cmsa < handle
         
         function obj=memorize_best_solution(obj)
             [obj.ff,obj.xx]=resort(obj.ff,obj.xx);
-            if isempty(obj.best_fit)||obj.ff(1)<obj.best_fit
-                obj.best_fit=obj.ff(1);
+            if isempty(obj.best_fval)||obj.ff(1)<obj.best_fval
+                obj.best_fval=obj.ff(1);
                 obj.best=obj.xx(:,1);
             end
         end
@@ -215,7 +215,7 @@ classdef cmsa < handle
             %   at x0), 'vargs'(additional arguments of FUN),'penalty' (threshold
             %   function value beyond which the parameter draws are
             %   discarded),'Objective' (name of the Objective function), 'best'(best
-            %   parameter vector), 'best_fit'(best function value), 'xx'(parameter
+            %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
             %   'max_iter','max_time','colony_size
             %
@@ -315,7 +315,7 @@ classdef cmsa < handle
                     obj.f0=obj.f0(1:n0);
                 end
                 [obj.f0,obj.x0]=resort(obj.f0,obj.x0);
-                obj.best_fit=obj.f0(1);
+                obj.best_fval=obj.f0(1);
                 obj.best=obj.x0(:,1);
             end
             
