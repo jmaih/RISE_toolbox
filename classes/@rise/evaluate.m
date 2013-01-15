@@ -274,9 +274,11 @@ end
 % will be pushed into the varendo...
 obj.steady_state_and_balanced_growth_path=ss_and_bgp_final_vals;
 
-[nrows,ncols]=size(def);
-tmp=mat2cell(def,ones(nrows,1),ncols);
-[obj.definitions(1:nrows).value]=deal(tmp{:});
+if ~isempty(def)
+    [nrows,ncols]=size(def);
+    tmp=mat2cell(def,ones(nrows,1),ncols);
+    [obj.definitions(1:nrows).value]=(tmp{:});
+end
 
 if ~obj.estimation_under_way && ~obj.is_optimal_policy_model && ...
         ~obj.is_sticky_information_model
