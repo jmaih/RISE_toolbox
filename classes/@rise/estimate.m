@@ -376,7 +376,11 @@ end
             end
         end
         nonlcon=cell2mat(nonlcon(:)');
-        nonlcon=str2func(['@(param)[',nonlcon(1:end-1),']']);
+        nonlcon=nonlcon(1:end-1);
+        if isempty(nonlcon)
+            nonlcon='0';
+        end
+        nonlcon=str2func(['@(param)[',nonlcon,']']);
     end
 % function rst=push_time_series(C)
 % rst=rise_time_series(C{1},C{2},C{3});
