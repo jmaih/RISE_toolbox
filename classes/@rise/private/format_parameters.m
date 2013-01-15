@@ -115,7 +115,11 @@ for ii=1:n_restr
             % the matrix...
             equation_i{1,jj}=['M(',int2str(p_id),',',int2str(col),')'];
             % location in the estimated parameters
-            p_id=find(strcmp([pname,'(',chain_,',',int2str(state),')'],estim_param_names));
+            if strcmp(chain_,'const')
+                p_id=find(strcmp(pname,estim_param_names));
+            else
+                p_id=find(strcmp([pname,'(',chain_,',',int2str(state),')'],estim_param_names));
+            end
             if isempty(p_id)
                 delete_equation_in_draws(ii)=true;
             else
