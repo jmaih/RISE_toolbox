@@ -15,8 +15,7 @@ Defaults=mergestructures(dsge_lc_solve(),msre_solve(),...
     'check_stability',true,...
     'vectorized_code_threshold',150,...
     'accelerate_solver',true));
-% the numerical approximation of the jacobian will use vectorized code
-% if the number of endogenous variables is less than or equal to
+
 if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
@@ -24,6 +23,7 @@ if isempty(obj)
     obj=Defaults;
     return
 end
+
 params=[];
 if ~isempty(varargin)
 	tmp=find(strcmp('evaluate_params',varargin));
