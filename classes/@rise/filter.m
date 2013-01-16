@@ -222,18 +222,23 @@ function varargout=minimum_state_for_estimation(state,varargin)
 % ones
 if ~islogical(state)
     tmp=state;
+    % The step below is critical for speed, though it may add some noise
+    % when computing the filters for all the endogenous variables
+    tmp(abs(tmp)<1e-9)=0; 
     state=any(tmp(:,:,1));
     for ii=2:size(tmp,3)
         state=state | any(tmp(:,:,ii));
     end
 end
 n=numel(state);
+n_varg=length(varargin);
 newstate=state;
-for ii=1:length(varargin)
+for ii=1:n_varg
     newstate(varargin{ii})=true;
 end
+varargout=cell(1,n_varg+1);
 varargout{1}=newstate;
-for ii=1:length(varargin)
+for ii=1:n_varg
     newobs=false(1,n);
     newobs(varargin{ii})=true;
     newobs(~newstate)=[];
