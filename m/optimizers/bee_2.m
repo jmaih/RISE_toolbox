@@ -8,22 +8,22 @@ if nargin<5
     options=[];
 end
 
-colony_size=[];
-max_iter=[]; max_time=[]; max_fcount=[]; penalty=[];
+MaxNodes=[];
+MaxIter=[]; MaxTime=[]; MaxFunEvals=[]; penalty=[];
 rand_seed=[]; verbose=[];stopping_created=[];
-known_optimum=[]; tol_fun=[];start_time=[];restrictions=[];
+known_optimum=[]; TolFun=[];start_time=[];restrictions=[];
 
 % optimizer-specific properties
 max_trials=[];
-fields={'colony_size','MaxNodes',50
-    'max_iter','MaxIter',10000 % effectively max_iter/number_of_cycles
-    'max_time','MaxTime',3600
-    'max_fcount','MaxFunEvals',inf
+fields={'MaxNodes','MaxNodes',50
+    'MaxIter','MaxIter',10000 % effectively MaxIter/number_of_cycles
+    'MaxTime','MaxTime',3600
+    'MaxFunEvals','MaxFunEvals',inf
     'rand_seed','rand_seed',100*sum(clock);
     'penalty','penalty',1e+8;
     'verbose','verbose',10
     'known_optimum','known_optimum',nan
-    'tol_fun','TolFun',1e-6
+    'TolFun','TolFun',1e-6
     'start_time','start_time',clock
     'stopping_created','stopping_created',false
     'max_trials','max_trials',100
@@ -66,16 +66,16 @@ npar_v=sum(variable);
 lb=lb(variable);
 ub=ub(variable);
 
-obj=struct('known_optimum_reached',false,'max_fcount',max_fcount,...
-    'fcount',0,'max_iter',max_iter,'iter',0,...
-    'max_time',max_time,'start_time',start_time,'optimizer',mfilename);
+obj=struct('known_optimum_reached',false,'MaxFunEvals',MaxFunEvals,...
+    'funcCount',0,'MaxIter',MaxIter,'iterations',0,...
+    'MaxTime',MaxTime,'start_time',start_time,'optimizer',mfilename);
 n0=size(x0,2);
 
 best_fval=[];
 bestx=[];
 
 if n0
-    n0=min(n0,colony_size);
+    n0=min(n0,MaxNodes);
     x0=x0(variable,1:n0);
     if isempty(f0)
         f0=nan(1,1:n0);
@@ -91,11 +91,11 @@ if n0
 end
 
 optimizer=mfilename;
-food_number=round(.5*colony_size);
-xx=nan(npar_v,colony_size);
-ff=nan(1,colony_size);
-fitness=nan(1,colony_size);
-trial=nan(1,colony_size);
+food_number=round(.5*MaxNodes);
+xx=nan(npar_v,MaxNodes);
+ff=nan(1,MaxNodes);
+fitness=nan(1,MaxNodes);
+trial=nan(1,MaxNodes);
 n0=size(x0,2);
 if n0
     fitness(1:n0)=compute_fitness(f0(1:n0));
@@ -103,7 +103,7 @@ if n0
     ff(1:n0)=f0;
     xx(:,1:n0)=x0(:,1:n0);
 end
-missing=colony_size-n0;
+missing=MaxNodes-n0;
 % set and record the seed before we start drawing anything
 s = RandStream.create('mt19937ar','seed',rand_seed);
 RandStream.setDefaultStream(s);
@@ -124,20 +124,20 @@ else
 end
 stopflag=check_convergence(obj);
 while isempty(stopflag)
-    obj.iter=obj.iter+1;
+    obj.iterations=obj.iterations+1;
     send_employed_bees();
     send_onlooker_bees();
     memorize_best_source();
     proposal=[]; % proposal=xx(:,round(1+rand*(food_number-1)));
     send_scout_bees(proposal);
-    if rem(obj.iter,verbose)==0 || obj.iter==1|| obj.iter==max_iter
+    if rem(obj.iterations,verbose)==0 || obj.iterations==1|| obj.iterations==MaxIter
         restart=1;
         fmin_iter=min(ff);
         disperse=dispersion(xx,lb,ub);
-        display_progress(restart,obj.iter,best_fval,fmin_iter,...
-            disperse,obj.fcount,optimizer);
+        display_progress(restart,obj.iterations,best_fval,fmin_iter,...
+            disperse,obj.funcCount,optimizer);
     end
-    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<tol_fun
+    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<TolFun
         obj.known_optimum_reached=true;
     end
     stopflag=check_convergence(obj);
@@ -150,7 +150,7 @@ ff(1)=best_fval;
     function fy=evaluate(y)
         y=restore(y);
         fy=Objective(y,varargin{:});
-        obj.fcount=obj.fcount+1;
+        obj.funcCount=obj.funcCount+1;
     end
 
     function xx=restore(x)

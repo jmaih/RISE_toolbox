@@ -1,17 +1,17 @@
 classdef cmsa < handle
     properties
-        tol_fun=1e-6;
+        TolFun=1e-6;
         known_optimum=nan;
         stopping_created=false;
         start_time
-        colony_size=20;
+        MaxNodes=20;
         lb
         ub
         x0
         f0
-        max_iter=1000;
-        max_time=3600;
-        max_fcount=inf;
+        MaxIter=1000;
+        MaxTime=3600;
+        MaxFunEvals=inf;
         rand_seed=100*sum(clock);
         penalty=1e+8;
         verbose=10;
@@ -38,8 +38,8 @@ classdef cmsa < handle
         ff
         number_of_parameters
         finish_time
-        iter=0;
-        fcount=0;
+        iterations=0;
+        funcCount=0;
         optimizer='cmsa';
         Cov
     end
@@ -59,14 +59,14 @@ classdef cmsa < handle
     end
     methods(Access=private)
         function obj=optimize(obj)
-            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
-            obj.ff=nan(1,obj.colony_size);
+            obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
+            obj.ff=nan(1,obj.MaxNodes);
             n0=size(obj.x0,2);
             if n0
                 obj.ff(1:n0)=obj.f0;
                 obj.xx(:,1:n0)=obj.x0(:,1:n0);
             end
-            missing=obj.colony_size-n0;
+            missing=obj.MaxNodes-n0;
             % set and record the seed before we start drawing anything
             ss = RandStream.create('mt19937ar','seed',obj.rand_seed);
             RandStream.setDefaultStream(ss);
@@ -74,11 +74,11 @@ classdef cmsa < handle
                 generate_candidates(obj.Objective,obj.lb,obj.ub,missing,...
                 obj.restrictions,obj.penalty,obj.vargs{:});
             [obj.ff,obj.xx]=resort(obj.ff,obj.xx);
-            obj.fcount=obj.fcount+funevals;
+            obj.funcCount=obj.funcCount+funevals;
             obj.memorize_best_solution;
             
             %=========================
-            mu=round(obj.mu_prop*obj.colony_size);
+            mu=round(obj.mu_prop*obj.MaxNodes);
             ii=1:mu;
             weights=log(mu+.5)-log(ii);
             weights=weights/sum(weights);
@@ -104,7 +104,7 @@ classdef cmsa < handle
             end
             stopflag=check_convergence(obj);
             while isempty(stopflag)
-                obj.iter=obj.iter+1;
+                obj.iterations=obj.iterations+1;
                 
                 break_it=false;
                 if stagnate==obj.max_stagnate
@@ -119,7 +119,7 @@ classdef cmsa < handle
                 if break_it
                     break
                 end
-                [ff_search,xx_search,ss,sig,obj.fcount]=recombination(obj,C,mm,sig_rec);
+                [ff_search,xx_search,ss,sig,obj.funcCount]=recombination(obj,C,mm,sig_rec);
                 
                 if ff_search(1)<obj.best_fval
                     % record the best population so far
@@ -139,12 +139,12 @@ classdef cmsa < handle
                 [mm,C,sig_rec]=obj.updates(C,xx_search,ss,weights,sig,tau_c);
                 
                 obj.memorize_best_solution;
-                if rem(obj.iter,obj.verbose)==0 || obj.iter==1
+                if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
                     disperse=dispersion(xx_search,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fval,ff_search(1),...
-                        disperse,obj.fcount,obj.optimizer);
+                    display_progress(restart,obj.iterations,obj.best_fval,ff_search(1),...
+                        disperse,obj.funcCount,obj.optimizer);
                 end
-                if ~isnan(obj.known_optimum) && abs(obj.best_fval-obj.known_optimum)<obj.tol_fun
+                if ~isnan(obj.known_optimum) && abs(obj.best_fval-obj.known_optimum)<obj.TolFun
                     obj.known_optimum_reached=true;
                 end
                 stopflag=check_convergence(obj);
@@ -161,9 +161,9 @@ classdef cmsa < handle
                 iter0=iter0+1;
                 try %#ok<TRYNC>
                     [mm,fm,funevals]=generate_candidates(...
-                        obj.Objective,obj.lb,obj.ub,obj.colony_size,...
+                        obj.Objective,obj.lb,obj.ub,obj.MaxNodes,...
 						obj.restrictions,obj.penalty,obj.vargs{:});
-                    obj.fcount=obj.fcount+funevals;
+                    obj.funcCount=obj.funcCount+funevals;
                     success=true;
                     [fm,mm]=resort(fm,mm);
                     mm=mm(:,1);
@@ -175,21 +175,21 @@ classdef cmsa < handle
             %             C=obj.Cov;
         end
         
-        function [ff_search,xx_search,ss,sig,fcount]=recombination(obj,C,mm,sig_rec)
+        function [ff_search,xx_search,ss,sig,funcCount]=recombination(obj,C,mm,sig_rec)
             % recombination for the cmsa guys
             tau=1/sqrt(2*obj.number_of_parameters); % learning parameter
-            sig=max(obj.sig_min,sig_rec)*exp(tau*randn(1,obj.colony_size));
+            sig=max(obj.sig_min,sig_rec)*exp(tau*randn(1,obj.MaxNodes));
             CC=chol(C,'lower');
-            ss=CC*randn(obj.number_of_parameters,obj.colony_size);
+            ss=CC*randn(obj.number_of_parameters,obj.MaxNodes);
             z=bsxfun(@times,sig,ss);
-            xx_search=mm(:,ones(1,obj.colony_size))+z;
+            xx_search=mm(:,ones(1,obj.MaxNodes))+z;
             
             xx_search=recenter(xx_search,obj.lb,obj.ub);
             ff_search=xx_search(1,:);
-            for l=1:obj.colony_size
+            for l=1:obj.MaxNodes
                 ff_search(l)=obj.Objective(xx_search(:,l),obj.vargs{:});
             end
-            fcount=obj.fcount+obj.colony_size;
+            funcCount=obj.funcCount+obj.MaxNodes;
             [ff_search,xx_search,ss,sig]=resort(ff_search,xx_search,ss,sig);
         end
         
@@ -217,7 +217,7 @@ classdef cmsa < handle
             %   discarded),'Objective' (name of the Objective function), 'best'(best
             %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
-            %   'max_iter','max_time','colony_size
+            %   'MaxIter','MaxTime','MaxNodes
             %
             %   RES = CMSA(FUN,X0,[],LB,UB) starts at X0 and finds a minimum X to the
             %   function FUN, subject to the bound constraints LB and UB. FUN accepts
@@ -227,19 +227,19 @@ classdef cmsa < handle
             %   RES = CMSA(FUN,X0,[],LB,UB,OPTIONS) optimizes the function FUN under the
             %   optimization options set under the structure OPTIONS. The fields of
             %   this structure could be all or any of the following:
-            %       - 'colony_size': this the number of different elements in the group
+            %       - 'MaxNodes': this the number of different elements in the group
             %       that will share information with each other in order to find better
             %       solutions. The default is 20
-            %       - 'max_iter': the maximum number of iterations. The default is 1000
-            %       - 'max_time': The time budget in seconds. The default is 3600
-            %       - 'max_fcount': the maximum number of function evaluations. The
+            %       - 'MaxIter': the maximum number of iterations. The default is 1000
+            %       - 'MaxTime': The time budget in seconds. The default is 3600
+            %       - 'MaxFunEvals': the maximum number of function evaluations. The
             %       default is inf
             %       - 'rand_seed': the seed number for the random draws
             %
             %   Optimization stops when one of the following happens:
-            %   1- the number of iterations exceeds max_iter
-            %   2- the number of function counts exceeds max_fcount
-            %   3- the time elapsed exceeds max_time
+            %   1- the number of iterations exceeds MaxIter
+            %   2- the number of function counts exceeds MaxFunEvals
+            %   3- the time elapsed exceeds MaxTime
             %   4- the user write anything in and saves the automatically generated
             %   file called "ManualStopping.txt"
             %
@@ -255,8 +255,8 @@ classdef cmsa < handle
             %
             %     FUN=inline('sum(x.^2)'); n=100;
             %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-            %     optimpot=struct('colony_size',20,'max_iter',1000,'max_time',60,...
-            %     'max_fcount',inf);
+            %     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
+            %     'MaxFunEvals',inf);
             %     RES=cmsa(@(x) FUN(x),x0,[],lb,ub,optimpot)
             
             % Reference: Inspired from Beyer and Sendhoff (????):
@@ -303,14 +303,14 @@ classdef cmsa < handle
             obj.Objective=fcnchk(Objective,length(obj.vargs));
             n0=size(obj.x0,2);
             if n0
-                n0=min(n0,obj.colony_size);
+                n0=min(n0,obj.MaxNodes);
                 obj.x0=obj.x0(:,1:n0);
                 if isempty(obj.f0)
                     obj.f0=nan(1,1:n0);
                     for ii=1:n0
                         obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
                     end
-                    obj.fcount=obj.fcount+n0;
+                    obj.funcCount=obj.funcCount+n0;
                 else
                     obj.f0=obj.f0(1:n0);
                 end

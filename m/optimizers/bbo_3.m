@@ -1,17 +1,17 @@
 function [xx,ff,obj]=bbo_3(Objective,x0,f0,lb,ub,Options,varargin)
 
-stopping_created=[];start_time=[];colony_size=[];
-max_iter=[];max_time=[];max_fcount=[];rand_seed=[];penalty=[];
-verbose=[]; tol_fun=[]; migration_model=[]; maximum_immigration_rate=[];
+stopping_created=[];start_time=[];MaxNodes=[];
+MaxIter=[];MaxTime=[];MaxFunEvals=[];rand_seed=[];penalty=[];
+verbose=[]; TolFun=[]; migration_model=[]; maximum_immigration_rate=[];
 maximum_emigration_rate=[]; mutation_probability=[];
 habitat_modification_probability=[]; elitism=[]; mutation_type=[];
 known_optimum=[]; restrictions=[];
 Fields={'stopping_created',false
     'start_time',clock
-    'colony_size',20
-    'max_iter',1000
-    'max_time',3600
-    'max_fcount',inf
+    'MaxNodes',20
+    'MaxIter',1000
+    'MaxTime',3600
+    'MaxFunEvals',inf
     'rand_seed',100*sum(clock)
     'penalty',1e+8
     'verbose',10
@@ -23,7 +23,7 @@ Fields={'stopping_created',false
     'elitism',2
     'mutation_type','gaussian' % 'cauchy','uniform'
     'known_optimum',nan
-    'tol_fun',1e-6
+    'TolFun',1e-6
 	'restrictions',[]
     };
 for ii=1:size(Fields,1)
@@ -46,12 +46,12 @@ npar_v=sum(variable);
 lb=lb(variable);
 ub=ub(variable);
 
-obj=struct('known_optimum_reached',false,'max_fcount',max_fcount,...
-    'fcount',0,'max_iter',max_iter,'iter',0,'finish_time',[],...
-    'max_time',max_time,'start_time',start_time,'optimizer',mfilename);
+obj=struct('known_optimum_reached',false,'MaxFunEvals',MaxFunEvals,...
+    'funcCount',0,'MaxIter',MaxIter,'iterations',0,'finish_time',[],...
+    'MaxTime',MaxTime,'start_time',start_time,'optimizer',mfilename);
 n0=size(x0,2);
 if n0
-    n0=min(n0,colony_size);
+    n0=min(n0,MaxNodes);
     x0=x0(variable,1:n0);
     if isempty(f0)
         f0=nan(1,1:n0);
@@ -62,13 +62,13 @@ if n0
         f0=f0(1:n0);
     end
 end
-xx=nan(npar_v,colony_size);
-ff=nan(1,colony_size);
+xx=nan(npar_v,MaxNodes);
+ff=nan(1,MaxNodes);
 if n0
     ff(1:n0)=f0;
     xx(:,1:n0)=x0(:,1:n0);
 end
-missing=colony_size-n0;
+missing=MaxNodes-n0;
 s = RandStream.create('mt19937ar','seed',rand_seed);
 RandStream.setDefaultStream(s);
 [xx(:,n0+1:end),ff(n0+1:end)]=...
@@ -91,20 +91,20 @@ memorize_best_solution();
 
 stopflag=check_convergence(obj);
 while isempty(stopflag)
-    obj.iter=obj.iter+1;
+    obj.iterations=obj.iterations+1;
     islands=migration();
     mutation();
     xx=clear_duplicates(xx,lb,ub); %clear_duplicates;
     selection();
     memorize_best_solution();
-    if rem(obj.iter,verbose)==0 || obj.iter==1
+    if rem(obj.iterations,verbose)==0 || obj.iterations==1
         restart=1;
         fmin_iter=best_fval;
         disperse=dispersion(xx,lb,ub);
-        display_progress(restart,obj.iter,best_fval,fmin_iter,...
-            disperse,obj.fcount,mfilename);
+        display_progress(restart,obj.iterations,best_fval,fmin_iter,...
+            disperse,obj.funcCount,mfilename);
     end
-    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<tol_fun
+    if ~isnan(known_optimum) && abs(best_fval-known_optimum)<TolFun
         obj.known_optimum_reached=true;
     end
     stopflag=check_convergence(obj);
@@ -115,7 +115,7 @@ obj.finish_time=clock;
     function fy=evaluate(y)
         y=restore(y);
         fy=Objective(y,varargin{:});
-        obj.fcount=obj.fcount+1;
+        obj.funcCount=obj.funcCount+1;
     end
 
     function xx=restore(x)
@@ -136,8 +136,8 @@ obj.finish_time=clock;
 
     function mutation()
         % Mutate only the worst half of the solutions
-        kstart=round(colony_size/2);
-        k=colony_size-kstart+1;
+        kstart=round(MaxNodes/2);
+        k=MaxNodes-kstart+1;
         tmp=islands(:,kstart:end);
         %             mutants=bsxfun(@lt,rand(number_of_parameters,k),mutation_rates(kstart:end));
         mutants=mutation_probability>rand(npar_v,k);
@@ -171,14 +171,14 @@ obj.finish_time=clock;
         mu=emigration_rate;
         lambda=immigration_rate;
         % select habitats to modify
-        modify=habitat_modification_probability>rand(1,colony_size);
+        modify=habitat_modification_probability>rand(1,MaxNodes);
         lambda_scale = (lambda-min(lambda))/(max(lambda)-min(lambda));
         % initialize so that those that are not modified remain
         % untouched
         islands=xx;
         cmu=mu/sum(mu);
         cmu=cumsum(cmu);cmu(end)=1;
-        for kk=1:colony_size
+        for kk=1:MaxNodes
             if modify(kk)
                 for jj = 1:npar_v
                     if rand<lambda_scale(kk)
@@ -194,7 +194,7 @@ obj.finish_time=clock;
     function [immigration_rate,emigration_rate]=migration_rates()
         I=maximum_immigration_rate;
         E=maximum_emigration_rate;
-        n=colony_size;
+        n=MaxNodes;
         
         k=n:-1:1; % <--- k=1:n;
         switch migration_model

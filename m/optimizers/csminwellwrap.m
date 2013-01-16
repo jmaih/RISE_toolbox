@@ -14,7 +14,7 @@ nit = 1000;
 analytic_grad=[];
 exitflag=1;
 
-[fh,xh,gh,H,itct,fcount,retcodeh] = csminwel(...
+[fh,xh,gh,H,itct,funcCount,retcodeh] = csminwel(...
     @myobjective,x0,H0,analytic_grad,crit,nit,varargin{:});
 
     function fval=myobjective(x)

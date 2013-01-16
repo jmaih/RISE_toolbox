@@ -2,14 +2,14 @@ classdef bee_demo < handle
     properties
         stopping_created=false;
         start_time
-        colony_size=20;
+        MaxNodes=20;
         lb
         ub
         x0
         f0
-        max_iter=1000;
-        max_time=3600;
-        max_fcount=inf;
+        MaxIter=1000;
+        MaxTime=3600;
+        MaxFunEvals=inf;
         rand_seed=100*sum(clock);
         penalty=1e+8;
         display=10;
@@ -36,23 +36,23 @@ classdef bee_demo < handle
         ff
         number_of_parameters
         finish_time
-        iter=0;
-        fcount=0;
+        iterations=0;
+        funcCount=0;
         optimizer='abc';
     end
     methods(Access=private)
         function obj=optimize(obj)
-            obj.food_number=round(.5*obj.colony_size);
-            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
-            obj.ff=nan(1,obj.colony_size);
-            obj.fitness=nan(1,obj.colony_size);
-            obj.trial=nan(1,obj.colony_size);
+            obj.food_number=round(.5*obj.MaxNodes);
+            obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
+            obj.ff=nan(1,obj.MaxNodes);
+            obj.fitness=nan(1,obj.MaxNodes);
+            obj.trial=nan(1,obj.MaxNodes);
             n0=size(obj.x0,2);
             obj.fitness(1:n0)=compute_fitness(obj.f0(1:n0));
             obj.trial(1:n0)=0;
             obj.ff(1:n0)=obj.f0;
             obj.xx(:,1:n0)=obj.x0(:,1:n0);
-            missing=obj.colony_size-n0;
+            missing=obj.MaxNodes-n0;
             % set and record the seed before we start drawing anything
             s = RandStream.create('mt19937ar','seed',obj.rand_seed);
             RandStream.setDefaultStream(s);
@@ -61,7 +61,7 @@ classdef bee_demo < handle
                 obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
                 new_bees(obj.Objective,obj.lb,obj.ub,missing,...
                 obj.penalty,obj.vargs{:});
-            obj.fcount=obj.fcount+funevals;
+            obj.funcCount=obj.funcCount+funevals;
             obj.memorize_best_source;
             
             if ~obj.stopping_created
@@ -74,17 +74,17 @@ classdef bee_demo < handle
             hh=[];
             stopflag=check_convergence(obj);
             while isempty(stopflag)
-                obj.iter=obj.iter+1;
+                obj.iterations=obj.iterations+1;
                 obj.send_employed_bees;
                 obj.send_onlooker_bees;
                 obj.memorize_best_source;
                 obj.send_scout_bees;
-                if rem(obj.iter,obj.display)==0 || obj.iter==1
+                if rem(obj.iterations,obj.display)==0 || obj.iterations==1
                     restart=1;
                     fmin_iter=obj.best_fval;
                     disperse=dispersion(obj.xx,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fval,fmin_iter,...
-                        disperse,obj.fcount,obj.optimizer);
+                    display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
+                        disperse,obj.funcCount,obj.optimizer);
                 end
                 stopflag=check_convergence(obj);
                 hh=vizualize_progress(hh,mfilename,obj.xx,obj.ff,obj.xbest,obj.fbest,obj.griddata,obj.lb,obj.ub);
@@ -105,7 +105,7 @@ classdef bee_demo < handle
                     obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
                     obj.ub,numel(renew),obj.penalty,obj.vargs{:});
             end
-            obj.fcount=obj.fcount+funevals;
+            obj.funcCount=obj.funcCount+funevals;
         end
         function obj=send_employed_bees(obj)
             for ii=1:obj.food_number
@@ -154,7 +154,7 @@ classdef bee_demo < handle
             %   discarded),'Objective' (name of the objective function), 'best'(best
             %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
-            %   'max_iter','max_time','colony_size
+            %   'MaxIter','MaxTime','MaxNodes
             %
             %   RES = BEE(FUN,X0,[],LB,UB) starts at X0 and finds a minimum X to the
             %   function FUN, subject to the bound constraints LB and UB. FUN accepts
@@ -164,19 +164,19 @@ classdef bee_demo < handle
             %   RES = BEE(FUN,X0,[],LB,UB,OPTIONS) optimizes the function FUN under the
             %   optimization options set under the structure OPTIONS. The fields of
             %   this structure could be all or any of the following:
-            %       - 'colony_size': this the number of different elements in the group
+            %       - 'MaxNodes': this the number of different elements in the group
             %       that will share information with each other in order to find better
             %       solutions. The default is 20
-            %       - 'max_iter': the maximum number of iterations. The default is 1000
-            %       - 'max_time': The time budget in seconds. The default is 3600
-            %       - 'max_fcount': the maximum number of function evaluations. The
+            %       - 'MaxIter': the maximum number of iterations. The default is 1000
+            %       - 'MaxTime': The time budget in seconds. The default is 3600
+            %       - 'MaxFunEvals': the maximum number of function evaluations. The
             %       default is inf
             %       - 'rand_seed': the seed number for the random draws
             %
             %   Optimization stops when one of the following happens:
-            %   1- the number of iterations exceeds max_iter
-            %   2- the number of function counts exceeds max_fcount
-            %   3- the time elapsed exceeds max_time
+            %   1- the number of iterations exceeds MaxIter
+            %   2- the number of function counts exceeds MaxFunEvals
+            %   3- the time elapsed exceeds MaxTime
             %   4- the user write anything in and saves the automatically generated
             %   file called "ManualStopping.txt"
             %
@@ -192,8 +192,8 @@ classdef bee_demo < handle
             %
             %     FUN=inline('sum(x.^2)'); n=100;
             %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-            %     optimpot=struct('colony_size',20,'max_iter',1000,'max_time',60,...
-            %     'max_fcount',inf);
+            %     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
+            %     'MaxFunEvals',inf);
             %     RES=bee(@(x) FUN(x),x0,[],lb,ub,optimpot)
             
             % Reference: Inspired from Karaboga
@@ -238,14 +238,14 @@ classdef bee_demo < handle
             obj.Objective=fcnchk(Objective,length(obj.vargs));
             n0=size(obj.x0,2);
             if n0
-                n0=min(n0,obj.colony_size);
+                n0=min(n0,obj.MaxNodes);
                 obj.x0=obj.x0(:,1:n0);
                 if isempty(obj.f0)
                     obj.f0=nan(1,1:n0);
                     for ii=1:n0
                         obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
                     end
-                    obj.fcount=obj.fcount+n0;
+                    obj.funcCount=obj.funcCount+n0;
                 else
                     obj.f0=obj.f0(1:n0);
                 end
@@ -299,7 +299,7 @@ mutant(change)=mutant(change)+(mutant(change)-...
     obj.xx(change,donor_id))*2*(rand-.5);
 mutant=recenter(mutant,obj.lb,obj.ub);
 f_mut=obj.Objective(mutant,obj.vargs{:});
-obj.fcount=obj.fcount+1;
+obj.funcCount=obj.funcCount+1;
 fit_mut=compute_fitness(f_mut);
 % we apply a greedy selection between ii and the
 % mutant

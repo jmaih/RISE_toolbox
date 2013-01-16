@@ -2,14 +2,14 @@ classdef gampc < handle
     properties
         start_time
         stopping_created=false;
-        colony_size=20;
+        MaxNodes=20;
         lb
         ub
         x0
         f0
-        max_iter=1000;
-        max_time=3600;
-        max_fcount=inf;
+        MaxIter=1000;
+        MaxTime=3600;
+        MaxFunEvals=inf;
         rand_seed=100*sum(clock);
         penalty=1e+8;
         verbose=10;
@@ -30,13 +30,13 @@ classdef gampc < handle
         ff
         number_of_parameters
         finish_time
-        iter=0;
-        fcount=0;
+        iterations=0;
+        funcCount=0;
         optimizer='gampc';
     end
     methods(Static)
-        function winners=tournament_selection(colony_size,choice_set)
-            pool_size=3*colony_size; % pool size
+        function winners=tournament_selection(MaxNodes,choice_set)
+            pool_size=3*MaxNodes; % pool size
             winners=nan(1,pool_size);
             for ii=1:pool_size
                 % select the number of individuals to compete
@@ -44,7 +44,7 @@ classdef gampc < handle
                 % select the competitors
                 randnum=nan(1,TcSize);
                 for  tc=1:TcSize
-                    randnum(tc) = randi(colony_size);
+                    randnum(tc) = randi(MaxNodes);
                 end
                 % It is assumed the population is sorted. In that case the
                 % winner is the guy with the smallest index
@@ -54,25 +54,25 @@ classdef gampc < handle
     end
     methods(Access=private)
         function obj=optimize(obj)
-            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
-            obj.ff=nan(1,obj.colony_size);
+            obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
+            obj.ff=nan(1,obj.MaxNodes);
             n0=size(obj.x0,2);
             if n0
                 obj.ff(1:n0)=obj.f0;
                 obj.xx(:,1:n0)=obj.x0(:,1:n0);
             end
-            missing=obj.colony_size-n0;
+            missing=obj.MaxNodes-n0;
             % set and record the seed before we start drawing anything
             s = RandStream.create('mt19937ar','seed',obj.rand_seed);
             RandStream.setDefaultStream(s);
             %=============================
-            arch_size=round(.5*obj.colony_size); % archive size
+            arch_size=round(.5*obj.MaxNodes); % archive size
             %=============================
             [obj.xx(:,n0+1:end),obj.ff(n0+1:end),funevals]=...
                 generate_candidates(obj.Objective,obj.lb,obj.ub,missing,...
                 obj.restrictions,obj.penalty,obj.vargs{:});
             [obj.ff,obj.xx]=resort(obj.ff,obj.xx);
-            obj.fcount=obj.fcount+funevals;
+            obj.funcCount=obj.funcCount+funevals;
             obj.memorize_best_solution;
             
             if ~obj.stopping_created
@@ -84,10 +84,10 @@ classdef gampc < handle
             end
             stopflag=check_convergence(obj);
             while isempty(stopflag)
-                obj.iter=obj.iter+1;
+                obj.iterations=obj.iterations+1;
                 
                 % Select the best performers
-                tournament_bests=obj.tournament_selection(obj.colony_size,[2,3]);
+                tournament_bests=obj.tournament_selection(obj.MaxNodes,[2,3]);
                 
                 % Mutation
                 offsprings=obj.mutation(tournament_bests);
@@ -101,12 +101,12 @@ classdef gampc < handle
                 obj.xx=clear_duplicates(obj.xx,obj.lb,obj.ub,true);
                 
                 obj.memorize_best_solution;
-                if rem(obj.iter,obj.verbose)==0 || obj.iter==1
+                if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
                     restart=1;
                     fmin_iter=obj.best_fval;
                     disperse=dispersion(obj.xx(:,1:arch_size),obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fval,fmin_iter,...
-                        disperse,obj.fcount,obj.optimizer);
+                    display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
+                        disperse,obj.funcCount,obj.optimizer);
                 end
                 stopflag=check_convergence(obj);
             end
@@ -114,10 +114,10 @@ classdef gampc < handle
         end
         
         function offsprings=mutation(obj,tournament_bests)
-            offsp_size=1:3:obj.colony_size;
+            offsp_size=1:3:obj.MaxNodes;
             offsp_size=offsp_size(end)+2;
             offsprings=nan(obj.number_of_parameters,offsp_size);
-            for ii=1:3:obj.colony_size
+            for ii=1:3:obj.MaxNodes
                 if rand<.1%
                     betta = 0.5+0.3*randn;
                 else
@@ -131,7 +131,7 @@ classdef gampc < handle
                 
                 %%% Check the similarity between all selected individuals
                 while ~isequal(numel(unique(consec)),3)
-                    consec=unique([consec,randi(obj.colony_size)]);
+                    consec=unique([consec,randi(obj.MaxNodes)]);
                 end
                 offsprings(:,ii)=obj.xx(:,consec(1))+betta.*(obj.xx(:,consec(2))-obj.xx(:,consec(3)));
                 offsprings(:,ii+1)=obj.xx(:,consec(2))+betta.*(obj.xx(:,consec(3))-obj.xx(:,consec(1)));
@@ -149,26 +149,26 @@ classdef gampc < handle
             for ii=arch_size+(1:offsp_size)
                 all_fit(ii)=obj.Objective(all_individuals(:,ii),obj.vargs{:});
             end
-            obj.fcount=obj.fcount+offsp_size;
+            obj.funcCount=obj.funcCount+offsp_size;
             
             %  From both the archive individuals and the new offsprings, select
-            %  the tournament_bests colony_size individuals for the next
+            %  the tournament_bests MaxNodes individuals for the next
             %  generation
             
             % 1-  Sort All polulation according to Objective value
             [all_fit,all_individuals] = resort(all_fit,all_individuals);
             
-            % 2- copy the tournament_bests colony_size individuals into xx to start the new
+            % 2- copy the tournament_bests MaxNodes individuals into xx to start the new
             % generation
-            obj.xx=all_individuals(:,1:obj.colony_size);
-            obj.ff=all_fit(1:obj.colony_size);
+            obj.xx=all_individuals(:,1:obj.MaxNodes);
+            obj.ff=all_fit(1:obj.MaxNodes);
             
 %             [obj.xx,obj.ff,funevals]=rebuild_population(obj.xx,obj.ff,obj.Objective,obj.lb,obj.ub,0.03,obj.vargs{:});
 %             [obj.ff,obj.xx]=resort(obj.ff,obj.xx);
-%             obj.fcount=obj.fcount+funevals;
+%             obj.funcCount=obj.funcCount+funevals;
         end
         function offsprings=crossover(obj,offsprings,arch_size)
-            % Create an archive pool = 0.5*colony_size
+            % Create an archive pool = 0.5*MaxNodes
             archive=obj.xx(:,1:arch_size);
             % Randomized Operator
             for ii=1:size(offsprings,2)
@@ -205,7 +205,7 @@ classdef gampc < handle
             %   discarded),'Objective' (name of the Objective function), 'best'(best
             %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
-            %   'max_iter','max_time','colony_size
+            %   'MaxIter','MaxTime','MaxNodes
             %
             %   RES = GAMPC(FUN,X0,[],LB,UB) starts at X0 and finds a minimum X to the
             %   function FUN, subject to the bound constraints LB and UB. FUN accepts
@@ -215,19 +215,19 @@ classdef gampc < handle
             %   RES = GAMPC(FUN,X0,[],LB,UB,OPTIONS) optimizes the function FUN under the
             %   optimization options set under the structure OPTIONS. The fields of
             %   this structure could be all or any of the following:
-            %       - 'colony_size': this the number of different elements in the group
+            %       - 'MaxNodes': this the number of different elements in the group
             %       that will share information with each other in order to find better
             %       solutions. The default is 20
-            %       - 'max_iter': the maximum number of iterations. The default is 1000
-            %       - 'max_time': The time budget in seconds. The default is 3600
-            %       - 'max_fcount': the maximum number of function evaluations. The
+            %       - 'MaxIter': the maximum number of iterations. The default is 1000
+            %       - 'MaxTime': The time budget in seconds. The default is 3600
+            %       - 'MaxFunEvals': the maximum number of function evaluations. The
             %       default is inf
             %       - 'rand_seed': the seed number for the random draws
             %
             %   Optimization stops when one of the following happens:
-            %   1- the number of iterations exceeds max_iter
-            %   2- the number of function counts exceeds max_fcount
-            %   3- the time elapsed exceeds max_time
+            %   1- the number of iterations exceeds MaxIter
+            %   2- the number of function counts exceeds MaxFunEvals
+            %   3- the time elapsed exceeds MaxTime
             %   4- the user write anything in and saves the automatically generated
             %   file called "ManualStopping.txt"
             %
@@ -243,8 +243,8 @@ classdef gampc < handle
             %
             %     FUN=inline('sum(x.^2)'); n=100;
             %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-            %     optimpot=struct('colony_size',20,'max_iter',1000,'max_time',60,...
-            %     'max_fcount',inf);
+            %     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
+            %     'MaxFunEvals',inf);
             %     RES=gampc(@(x) FUN(x),x0,[],lb,ub,optimpot)
             
             % Reference: Saber M. Elsayed, Ruhul A. Sarker and Daryl L.
@@ -291,14 +291,14 @@ classdef gampc < handle
             obj.Objective=fcnchk(Objective,length(obj.vargs));
             n0=size(obj.x0,2);
             if n0
-                n0=min(n0,obj.colony_size);
+                n0=min(n0,obj.MaxNodes);
                 obj.x0=obj.x0(:,1:n0);
                 if isempty(obj.f0)
                     obj.f0=nan(1,1:n0);
                     for ii=1:n0
                         obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
                     end
-                    obj.fcount=obj.fcount+n0;
+                    obj.funcCount=obj.funcCount+n0;
                 else
                     obj.f0=obj.f0(1:n0);
                 end

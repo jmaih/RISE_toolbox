@@ -2,18 +2,18 @@ classdef bee %< handle
     properties
         stopping_created=false;
         start_time
-        colony_size=20;
+        MaxNodes=20;
         lb
         ub
         x0
         f0
         violation_strength_0
         fitness_0
-        iter=0;
-        fcount=0;
-        max_iter=1000;
-        max_time=3600;
-        max_fcount=inf;
+        iterations=0;
+        funcCount=0;
+        MaxIter=1000;
+        MaxTime=3600;
+        MaxFunEvals=inf;
         rand_seed=100*sum(clock);
         penalty=1e+8;
         verbose=10;
@@ -58,7 +58,7 @@ classdef bee %< handle
             %   discarded),'Objective' (name of the objective function), 'best'(best
             %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
-            %   'max_iter','max_time','colony_size
+            %   'MaxIter','MaxTime','MaxNodes
             %
             %   RES = BEE(FUN,X0,[],LB,UB) starts at X0 and finds a minimum X to the
             %   function FUN, subject to the bound constraints LB and UB. FUN accepts
@@ -68,19 +68,19 @@ classdef bee %< handle
             %   RES = BEE(FUN,X0,[],LB,UB,OPTIONS) optimizes the function FUN under the
             %   optimization options set under the structure OPTIONS. The fields of
             %   this structure could be all or any of the following:
-            %       - 'colony_size': this the number of different elements in the group
+            %       - 'MaxNodes': this the number of different elements in the group
             %       that will share information with each other in order to find better
             %       solutions. The default is 20
-            %       - 'max_iter': the maximum number of iterations. The default is 1000
-            %       - 'max_time': The time budget in seconds. The default is 3600
-            %       - 'max_fcount': the maximum number of function evaluations. The
+            %       - 'MaxIter': the maximum number of iterations. The default is 1000
+            %       - 'MaxTime': The time budget in seconds. The default is 3600
+            %       - 'MaxFunEvals': the maximum number of function evaluations. The
             %       default is inf
             %       - 'rand_seed': the seed number for the random draws
             %
             %   Optimization stops when one of the following happens:
-            %   1- the number of iterations exceeds max_iter
-            %   2- the number of function counts exceeds max_fcount
-            %   3- the time elapsed exceeds max_time
+            %   1- the number of iterations exceeds MaxIter
+            %   2- the number of function counts exceeds MaxFunEvals
+            %   3- the time elapsed exceeds MaxTime
             %   4- the user write anything in and saves the automatically generated
             %   file called "ManualStopping.txt"
             %
@@ -96,8 +96,8 @@ classdef bee %< handle
             %
             %     FUN=inline('sum(x.^2)'); n=100;
             %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-            %     optimpot=struct('colony_size',20,'max_iter',1000,'max_time',60,...
-            %     'max_fcount',inf);
+            %     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
+            %     'MaxFunEvals',inf);
             %     RES=bee(@(x) FUN(x),x0,[],lb,ub,optimpot)
             
             % Reference: Inspired from Karaboga
@@ -148,7 +148,7 @@ classdef bee %< handle
             obj.Objective=fcnchk(Objective,length(obj.vargs));
             n0=size(obj.x0,2);
             if n0
-                n0=min(n0,obj.colony_size);
+                n0=min(n0,obj.MaxNodes);
                 obj.x0=obj.x0(:,1:n0);
                 obj.violation_strength_0=zeros(1,n0);
                 obj.f0=nan(1,1:n0);
@@ -158,7 +158,7 @@ classdef bee %< handle
                     tmp=tmp(tmp>0);
                     obj.violation_strength_0(ii)=sum(tmp);
                 end
-                obj.fcount=obj.fcount+n0;
+                obj.funcCount=obj.funcCount+n0;
                 obj.fitness_0=compute_fitness(obj.f0);
                 obj=memorize_best_source(obj);
             end
@@ -168,12 +168,12 @@ classdef bee %< handle
     end
     methods(Access=private)
         function obj=optimize(obj)
-            obj.food_number=round(.5*obj.colony_size);
-            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
-            obj.ff=nan(1,obj.colony_size);
-            obj.fitness=nan(1,obj.colony_size);
-            obj.trial=nan(1,obj.colony_size);
-            obj.violation_strength=nan(1,obj.colony_size);
+            obj.food_number=round(.5*obj.MaxNodes);
+            obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
+            obj.ff=nan(1,obj.MaxNodes);
+            obj.fitness=nan(1,obj.MaxNodes);
+            obj.trial=nan(1,obj.MaxNodes);
+            obj.violation_strength=nan(1,obj.MaxNodes);
             n0=size(obj.x0,2);
             if n0
                 obj.fitness(1:n0)=obj.fitness_0(1:n0);
@@ -182,7 +182,7 @@ classdef bee %< handle
                 obj.xx(:,1:n0)=obj.x0(:,1:n0);
                 obj.violation_strength(1:n0)=obj.violation_strength_0;
             end
-            missing=obj.colony_size-n0;
+            missing=obj.MaxNodes-n0;
             % set and record the seed before we start drawing anything
             s = RandStream.create('mt19937ar','seed',obj.rand_seed);
             try
@@ -196,7 +196,7 @@ classdef bee %< handle
                 obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
                 new_bees(obj.Objective,obj.lb,obj.ub,missing,obj.restrictions,...
                 obj.penalty,obj.vargs{:});
-            obj.fcount=obj.fcount+funevals;
+            obj.funcCount=obj.funcCount+funevals;
             obj=memorize_best_source(obj);
             
             if ~obj.stopping_created
@@ -208,17 +208,17 @@ classdef bee %< handle
             end
             stopflag=check_convergence(obj);
             while isempty(stopflag)
-                obj.iter=obj.iter+1;
+                obj.iterations=obj.iterations+1;
                 obj=send_employed_bees(obj);
                 obj=send_onlooker_bees(obj);
                 obj=memorize_best_source(obj);
                 obj=send_scout_bees(obj);
-                if rem(obj.iter,obj.verbose)==0 || obj.iter==1
+                if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
                     restart=1;
                     fmin_iter=obj.best_fval;
                     disperse=dispersion(obj.xx,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fval,fmin_iter,...
-                        disperse,obj.fcount,obj.optimizer);
+                    display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
+                        disperse,obj.funcCount,obj.optimizer);
                 end
                 stopflag=check_convergence(obj);
             end
@@ -229,7 +229,7 @@ classdef bee %< handle
             [obj.xx(:,renew),obj.ff(renew),obj.violation_strength(renew),funevals,obj.fitness(renew),...
                 obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
                 obj.ub,numel(renew),obj.restrictions,obj.penalty,obj.vargs{:});
-            obj.fcount=obj.fcount+funevals;
+            obj.funcCount=obj.funcCount+funevals;
         end
         function obj=send_employed_bees(obj)
             for ii=1:obj.food_number
@@ -269,11 +269,11 @@ classdef bee %< handle
         end
         function obj=sort(obj)
             VS=unique(obj.violation_strength);
-            FF=nan(1,obj.colony_size);
-            XX=nan(obj.number_of_parameters,obj.colony_size);
-            FIT=nan(1,obj.colony_size);
-            TRIALS=nan(1,obj.colony_size);
-            VIOLS=nan(1,obj.colony_size);
+            FF=nan(1,obj.MaxNodes);
+            XX=nan(obj.number_of_parameters,obj.MaxNodes);
+            FIT=nan(1,obj.MaxNodes);
+            TRIALS=nan(1,obj.MaxNodes);
+            VIOLS=nan(1,obj.MaxNodes);
             iter0=0;
             for iloc=1:numel(VS)
                 this=obj.violation_strength==VS(iloc);
@@ -336,7 +336,7 @@ f_mut=obj.Objective(mutant,obj.vargs{:});
 viol=obj.restrictions(mutant);
 viol=viol(viol>0);
 viol_strength=sum(viol);
-obj.fcount=obj.fcount+1;
+obj.funcCount=obj.funcCount+1;
 fit_mut=compute_fitness(f_mut);
 obj=deb_selection(obj,ii,viol_strength,mutant,fit_mut,f_mut);
 end

@@ -12,27 +12,27 @@ function [best,best_fval,obj]=gampc_2(Objective,x0,f0,lb,ub,Options,varargin)
 %   Copyright 2011 Junior Maih (junior.maih@gmail.com).
 %   $Revision: 8 $  $Date: 2011/08/13 11:23 $
 
-colony_size=[];
-max_iter=[];
+MaxNodes=[];
+MaxIter=[];
 % beta_0=[];
 % beta_min=[];
 % gamma=[];
 start_time=[];
 % alpha0=[];
-max_time=[];
+MaxTime=[];
 rand_seed=[];
 penalty=[];
 verbose=[];
-max_fcount=[];
+MaxFunEvals=[];
 known_optimum=[];
 crossover_probability=[];
 stopping_created=[];
 restrictions=[];
 
-fields={'colony_size','MaxNodes',50
-    'max_iter','MaxIter',10000 % effectively max_iter/number_of_cycles
-    'max_time','MaxTime',3600
-    'max_fcount','MaxFunEvals',inf
+fields={'MaxNodes','MaxNodes',50
+    'MaxIter','MaxIter',10000 % effectively MaxIter/number_of_cycles
+    'MaxTime','MaxTime',3600
+    'MaxFunEvals','MaxFunEvals',inf
     'rand_seed','rand_seed',100*sum(clock);
     'penalty','penalty',1e+8;
     'verbose','verbose',10
@@ -64,34 +64,34 @@ end
 number_of_parameters=size(lb,1);
 Objective=fcnchk(Objective,length( varargin));
 n0=size(x0,2);
-obj.fcount=0;
+obj.funcCount=0;
 if n0
-    n0=min(n0, colony_size);
+    n0=min(n0, MaxNodes);
     x0= x0(:,1:n0);
     if isempty( f0)
         f0=nan(1,1:n0);
         for ii=1:n0
             f0(ii)= Objective( x0(:,ii), varargin{:});
         end
-        obj.fcount= obj.fcount+n0;
+        obj.funcCount= obj.funcCount+n0;
     else
         f0= f0(1:n0);
     end
     [f0,x0]=resort( f0, x0);
 end
-xx=nan(number_of_parameters, colony_size);
-ff=nan(1, colony_size);
+xx=nan(number_of_parameters, MaxNodes);
+ff=nan(1, MaxNodes);
 n0=size( x0,2);
 if n0
     ff(1:n0)= f0;
     xx(:,1:n0)= x0(:,1:n0);
 end
-missing= colony_size-n0;
+missing= MaxNodes-n0;
 % set and record the seed before we start drawing anything
 s = RandStream.create('mt19937ar','seed', rand_seed);
 RandStream.setDefaultStream(s);
 %=============================
-arch_size=round(.5*colony_size); % archive size
+arch_size=round(.5*MaxNodes); % archive size
 %=============================
 [ xx(:,n0+1:end), ff(n0+1:end),funevals]=...
     generate_candidates( Objective, lb, ub,missing,...
@@ -99,9 +99,9 @@ arch_size=round(.5*colony_size); % archive size
 [ff,xx]=resort(ff,xx);
 best=xx(:,1);
 best_fval=ff(1);
-obj.fcount= obj.fcount+funevals;
-pool_size=3*colony_size; % pool size
-offsp_size=1:3: colony_size;
+obj.funcCount= obj.funcCount+funevals;
+pool_size=3*MaxNodes; % pool size
+offsp_size=1:3: MaxNodes;
 offsp_size=offsp_size(end)+2;
 
 memorize_best_solution;
@@ -113,15 +113,15 @@ else
         manual_stopping;
     end
 end
-obj.iter=0;
-obj.max_iter=max_iter;
+obj.iterations=0;
+obj.MaxIter=MaxIter;
 obj.start_time=start_time;
-obj.max_time=max_time;
-obj.max_fcount=max_fcount;
+obj.MaxTime=MaxTime;
+obj.MaxFunEvals=MaxFunEvals;
 obj.optimizer=mfilename;
 stopflag=check_convergence(obj);
 while isempty(stopflag)
-    obj.iter= obj.iter+1;
+    obj.iterations= obj.iterations+1;
     
     % Select the best performers
     tournament_bests= tournament_selection([2,3]);
@@ -135,12 +135,12 @@ while isempty(stopflag)
     selection(offsprings);
     
     memorize_best_solution;
-    if rem( obj.iter, verbose)==0 ||  obj.iter==1
+    if rem( obj.iterations, verbose)==0 ||  obj.iterations==1
         restart=1;
         fmin_iter= best_fval;
         disperse=dispersion( xx(:,1:arch_size),lb,ub);
-        display_progress(restart, obj.iter, best_fval,fmin_iter,...
-            disperse, obj.fcount,mfilename);
+        display_progress(restart, obj.iterations, best_fval,fmin_iter,...
+            disperse, obj.funcCount,mfilename);
     end
     if ~isnan(known_optimum) && abs(best_fval-known_optimum)<1e-8
         obj.known_optimum_reached=true;
@@ -157,7 +157,7 @@ obj.finish_time=clock;
             % select the competitors
             randnum=nan(1,TcSize);
             for  tc=1:TcSize
-                randnum(tc) = randi(colony_size);
+                randnum(tc) = randi(MaxNodes);
             end
             % It is assumed the population is sorted. In that case the
             % winner is the guy with the smallest index
@@ -167,7 +167,7 @@ obj.finish_time=clock;
 
     function offsprings=mutation(tournament_bests)
         offsprings=nan( number_of_parameters,offsp_size);
-        for i1=1:3: colony_size
+        for i1=1:3: MaxNodes
             if rand<1%
                 betta = 0.5+0.3*randn;
             else
@@ -181,7 +181,7 @@ obj.finish_time=clock;
             
             %%% Check the similarity between all selected individuals
             while ~isequal(numel(unique(consec)),3)
-                consec=unique([consec,randi(colony_size)]);
+                consec=unique([consec,randi(MaxNodes)]);
             end
             test=0;
             switch test
@@ -236,27 +236,27 @@ obj.finish_time=clock;
         [all_individuals,all_fit,funevals]=...
             rebuild_population(all_individuals,all_fit,Objective,...
             lb,ub,0.005,varargin{:});
-        obj.fcount= obj.fcount+funevals;
+        obj.funcCount= obj.funcCount+funevals;
         
         %  From both the archive individuals and the new offsprings, select
-        %  the tournament_bests colony_size individuals for the next
+        %  the tournament_bests MaxNodes individuals for the next
         %  generation
         
         % 1-  Sort All according to Objective value
         [all_fit,all_individuals] = resort(all_fit,all_individuals);
         
-        % 2- copy the tournament_bests colony_size individuals into xx to start the new
+        % 2- copy the tournament_bests MaxNodes individuals into xx to start the new
         % generation
-        xx=all_individuals(:,1:colony_size);
-        ff=all_fit(1:colony_size);
+        xx=all_individuals(:,1:MaxNodes);
+        ff=all_fit(1:MaxNodes);
         [xx,ff]=rebuild_population(xx,ff,Objective,lb,ub,0.01,varargin{:});
         
 %         [ff,xx]=resort(ff,xx);
-%         obj.fcount= obj.fcount+funevals;
+%         obj.funcCount= obj.funcCount+funevals;
 
     end
     function offsprings=crossover(offsprings)
-        % Create an archive pool = 0.5*colony_size
+        % Create an archive pool = 0.5*MaxNodes
         archive= xx(:,1:arch_size);
         % Randomized Operator
         for i1=1:size(offsprings,2)

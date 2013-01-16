@@ -9,10 +9,10 @@ funcs={'schwefel','rastrigin','ackley','griewank'};
 
 n=2; % number of parameters
 opt=struct();
-opt.colony_size=10;
+opt.MaxNodes=10;
 % opt.B=10;
-opt.max_fcount=inf;
-opt.max_iter=100;
+opt.MaxFunEvals=inf;
+opt.MaxIter=100;
 opt.display=1;
 opt.fbest=0;
 

@@ -1,17 +1,17 @@
 function [xbest,fbest,obj]=hybrid_artificial_bee_colony(objective,x0,lb,ub,Options)
 
 if nargin<5
-    Options=struct('max_time',3600/60*5);
+    Options=struct('MaxTime',3600/60*5);
 end
-stopping_created=[]; start_time=[]; colony_size=[]; max_iter=[]; 
-max_time=[]; max_fcount=[]; verbose=[]; abc=[];limit=[]; 
+stopping_created=[]; start_time=[]; MaxNodes=[]; MaxIter=[]; 
+MaxTime=[]; MaxFunEvals=[]; verbose=[]; abc=[];limit=[]; 
 F=[]; cr=[]; debug=[]; threshold=[];
 Fields={'stopping_created',false
     'start_time',clock
-    'colony_size',20
-    'max_iter',10000
-    'max_time',3600
-    'max_fcount',inf
+    'MaxNodes',20
+    'MaxIter',10000
+    'MaxTime',3600
+    'MaxFunEvals',inf
     'verbose',10
     'abc',3
     'limit',100
@@ -35,11 +35,11 @@ for ii=1:size(Fields,1)
         eval([Fields{ii,1},'=Fields{ii,2};'])
     end
 end
-n_empl=colony_size;
+n_empl=MaxNodes;
 
-obj=struct('known_optimum_reached',false,'max_fcount',max_fcount,...
-    'fcount',0,'max_iter',max_iter,'iter',0,'finish_time',[],...
-    'max_time',max_time,'start_time',start_time,'optimizer',mfilename);
+obj=struct('known_optimum_reached',false,'MaxFunEvals',MaxFunEvals,...
+    'funcCount',0,'MaxIter',MaxIter,'iterations',0,'finish_time',[],...
+    'MaxTime',MaxTime,'start_time',start_time,'optimizer',mfilename);
 
 n_onlook=ceil(0.5*n_empl);
 nparticles=ceil(0.75*n_empl);
@@ -67,7 +67,7 @@ end
 stopflag=check_convergence(obj);
 
 while  isempty(stopflag)
-    obj.iter=obj.iter+1;
+    obj.iterations=obj.iterations+1;
     
     % -1) search new food source and evaluate its quality
     for ie=1:n_empl
@@ -95,11 +95,11 @@ while  isempty(stopflag)
     if de_step
         differential_evolution_step()
     end
-    if rem(obj.iter,verbose)==0 || obj.iter==1
+    if rem(obj.iterations,verbose)==0 || obj.iterations==1
         restart=1;
         disperse=dispersion(x,lb,ub);
-        display_progress(restart,obj.iter,fbest,min(f),...
-            disperse,obj.fcount,obj.optimizer);
+        display_progress(restart,obj.iterations,fbest,min(f),...
+            disperse,obj.funcCount,obj.optimizer);
     end
     stopflag=check_convergence(obj);
 end
@@ -193,7 +193,7 @@ end
     end
     function [fi]=evaluate(xi)
         fi=objective(xi);
-        obj.fcount=obj.fcount+1;
+        obj.funcCount=obj.funcCount+1;
     end
     function xab=get_difference(xa,xb)
 %         d=distance(xa,xb);

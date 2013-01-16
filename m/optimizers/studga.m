@@ -3,14 +3,14 @@ classdef studga < handle
     properties
         stopping_created=false;
         start_time
-        colony_size=50;
+        MaxNodes=50;
         lb
         ub
         x0
         f0
-        max_iter=1000;
-        max_time=3600;
-        max_fcount=inf;
+        MaxIter=1000;
+        MaxTime=3600;
+        MaxFunEvals=inf;
         rand_seed=100*sum(clock);
         penalty=1e+8;
         verbose=10;
@@ -34,20 +34,20 @@ classdef studga < handle
         ff
         number_of_parameters
         finish_time
-        iter=0;
-        fcount=0;
+        iterations=0;
+        funcCount=0;
         optimizer='studga';
     end
     methods(Access=private)
         function obj=optimize(obj)
-            obj.xx=nan(obj.number_of_parameters,obj.colony_size);
-            obj.ff=nan(1,obj.colony_size);
+            obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
+            obj.ff=nan(1,obj.MaxNodes);
             n0=size(obj.x0,2);
             if n0
                 obj.ff(1:n0)=obj.f0;
                 obj.xx(:,1:n0)=obj.x0(:,1:n0);
             end
-            missing=obj.colony_size-n0;
+            missing=obj.MaxNodes-n0;
             % set and record the seed before we start drawing anything
             s = RandStream.create('mt19937ar','seed',obj.rand_seed);
             RandStream.setDefaultStream(s);
@@ -56,8 +56,8 @@ classdef studga < handle
                 generate_candidates(obj.Objective,obj.lb,obj.ub,missing,...
                 obj.restrictions,obj.penalty,obj.vargs{:});
             [obj.ff,obj.xx]=resort(obj.ff,obj.xx);
-            % % %             obj.probabilities=1/obj.colony_size*ones(1,obj.colony_size);
-            obj.fcount=obj.fcount+funevals;
+            % % %             obj.probabilities=1/obj.MaxNodes*ones(1,obj.MaxNodes);
+            obj.funcCount=obj.funcCount+funevals;
             obj.memorize_best_solution;
             
             %==================
@@ -78,7 +78,7 @@ classdef studga < handle
             end
             stopflag=check_convergence(obj);
             while isempty(stopflag)
-                obj.iter=obj.iter+1;
+                obj.iterations=obj.iterations+1;
                 obj.crossover_selection;
                 
                 % Mutation
@@ -91,21 +91,21 @@ classdef studga < handle
                 obj.xx=recenter(obj.xx,obj.lb,obj.ub);
                 
                 % Calculate cost
-                for k = 1 : obj.colony_size
+                for k = 1 : obj.MaxNodes
                     obj.ff(k) = obj.Objective(obj.xx(:,k),obj.vargs{:});
                 end
-                obj.fcount=obj.fcount+obj.colony_size;
+                obj.funcCount=obj.funcCount+obj.MaxNodes;
                 
                 % Sort from best to worst
                 [obj.ff,obj.xx] = resort(obj.ff,obj.xx);
                 
                 obj.memorize_best_solution;
-                if rem(obj.iter,obj.verbose)==0 || obj.iter==1
+                if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
                     restart=1;
                     fmin_iter=obj.best_fval;
                     disperse=dispersion(obj.xx,obj.lb,obj.ub);
-                    display_progress(restart,obj.iter,obj.best_fval,fmin_iter,...
-                        disperse,obj.fcount,obj.optimizer);
+                    display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
+                        disperse,obj.funcCount,obj.optimizer);
                 end
                 stopflag=check_convergence(obj);
             end
@@ -115,8 +115,8 @@ classdef studga < handle
         function obj=crossover_selection(obj)
             InverseCost = compute_fitness(obj.ff);
             %             InverseCost = 1./obj.ff;
-            children=nan(obj.number_of_parameters,obj.colony_size-obj.elitism);
-            for k = obj.elitism+1:2:obj.colony_size % begin selection/crossover loop
+            children=nan(obj.number_of_parameters,obj.MaxNodes-obj.elitism);
+            for k = obj.elitism+1:2:obj.MaxNodes % begin selection/crossover loop
                 % Select the most fit individual (the stud) as the first parent
                 mate =[1,nan];
                 % Select another parent to mate with the stud and create two children - roulette wheel selection
@@ -129,7 +129,7 @@ classdef studga < handle
                 Select_index = 1;
                 while Select_Cost < Random_Cost
                     Select_index = Select_index + 1;
-                    if Select_index >= obj.colony_size
+                    if Select_index >= obj.MaxNodes
                         break;
                     end
                     Select_Cost = Select_Cost + InverseCost(Select_index);
@@ -175,14 +175,14 @@ classdef studga < handle
                 end
             end % end selection/crossover loop
             % Replace the non-elite population members with the new children
-            for k = obj.elitism+1:2:obj.colony_size
+            for k = obj.elitism+1:2:obj.MaxNodes
                 obj.xx(:,k) = children(:,k-obj.elitism);
                 obj.xx(:,k+1) = children(:,k-obj.elitism+1);
             end
         end
         
         function obj=mutation(obj)
-            for individual = obj.elitism+1:obj.colony_size % Don't allow the elites to be mutated
+            for individual = obj.elitism+1:obj.MaxNodes % Don't allow the elites to be mutated
                 for parnum = 1 : obj.number_of_parameters
                     if obj.mutation_probability > rand
                         obj.xx(parnum,individual) = obj.lb(parnum) + (obj.ub(parnum)-obj.lb(parnum)) * rand;
@@ -215,7 +215,7 @@ classdef studga < handle
             %   discarded),'Objective' (name of the objective function), 'best'(best
             %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
             %   vectors in the colony),'ff'(function values at xx)
-            %   'max_iter','max_time','colony_size
+            %   'MaxIter','MaxTime','MaxNodes
             %
             %   RES = STUDGA(FUN,X0,LB,UB) starts at X0 and finds a minimum X to the
             %   function FUN, subject to the bound constraints LB and UB. FUN accepts
@@ -225,22 +225,22 @@ classdef studga < handle
             %   RES = STUDGA(FUN,X0,LB,UB,OPTIONS) optimizes the function FUN under the
             %   optimization options set under the structure OPTIONS. The fields of
             %   this structure could be all or any of the following:
-            %       - 'colony_size': this the number of different elements in the group
+            %       - 'MaxNodes': this the number of different elements in the group
             %       that will share information with each other in order to find better
             %       solutions. The default is 20
-            %       - 'max_iter': the maximum number of iterations. The default is 1000
-            %       - 'max_time': The time budget in seconds. The default is 3600
-            %       - 'max_fcount': the maximum number of function evaluations. The
+            %       - 'MaxIter': the maximum number of iterations. The default is 1000
+            %       - 'MaxTime': The time budget in seconds. The default is 3600
+            %       - 'MaxFunEvals': the maximum number of function evaluations. The
             %       default is inf
             %       - 'rand_seed': the seed number for the random draws
-            %       - colony_size: the inital number of plants in the
-            %         colony, which will then be increased up to colony_size as plants
+            %       - MaxNodes: the inital number of plants in the
+            %         colony, which will then be increased up to MaxNodes as plants
             %         reproduce
             %
             %   Optimization stops when one of the following happens:
-            %   1- the number of iterations exceeds max_iter
-            %   2- the number of function counts exceeds max_fcount
-            %   3- the time elapsed exceeds max_time
+            %   1- the number of iterations exceeds MaxIter
+            %   2- the number of function counts exceeds MaxFunEvals
+            %   3- the time elapsed exceeds MaxTime
             %   4- the user write anything in and saves the automatically generated
             %   file called "ManualStopping.txt"
             %
@@ -256,7 +256,7 @@ classdef studga < handle
             %
             %     clear classes,FUN=inline('sum(x.^2)'); n=100;
             %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-            %     optimpot=struct('colony_size',20,'max_iter',10000,'max_time',180,'max_fcount',inf);
+            %     optimpot=struct('MaxNodes',20,'MaxIter',10000,'MaxTime',180,'MaxFunEvals',inf);
             %     RES=studga(@(x) FUN(x),x0,lb,ub,optimpot)
             
             % Reference: Dan Simon
@@ -302,14 +302,14 @@ classdef studga < handle
             obj.Objective=fcnchk(Objective,length(obj.vargs));
             n0=size(obj.x0,2);
             if n0
-                n0=min(n0,obj.colony_size);
+                n0=min(n0,obj.MaxNodes);
                 obj.x0=obj.x0(:,1:n0);
                 if isempty(obj.f0)
                     obj.f0=nan(1,n0);
                     for ii=1:n0
                         obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
                     end
-                    obj.fcount=obj.fcount+n0;
+                    obj.funcCount=obj.funcCount+n0;
                 else
                     obj.f0=obj.f0(1:n0);
                 end

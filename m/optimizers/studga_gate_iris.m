@@ -1,6 +1,6 @@
 function [p,fval,HESS]=studga_gate_iris(Objective,p0,pl,pu,optim_set)
 
-fields={'colony_size','max_iter','max_time','max_fcount'};
+fields={'MaxNodes','MaxIter','MaxTime','MaxFunEvals'};
 fields_equiv={'MaxNodes','MaxIter','MaxTime','MaxFunEvals'};
 fields_defaults={20,10000,60*60,inf};
 

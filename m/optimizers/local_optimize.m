@@ -1,10 +1,10 @@
 function [x,fx,obj]=local_optimize(Objective,x,fx,lb,ub,Options,varargin)
-obj=struct('iter',0,...
-'max_iter',inf,...
+obj=struct('iterations',0,...
+'MaxIter',inf,...
 'start_time',clock,...
-'max_time',inf,...
-'fcount',0,...
-'max_fcount',inf,...
+'MaxTime',inf,...
+'funcCount',0,...
+'MaxFunEvals',inf,...
 'intial_step_size',1,...
 'verbose',10,...
 'optimizer',mfilename,...
@@ -47,19 +47,19 @@ end
 fxv = obj.penalty;
 xv=x;
 if obj.verbose %#ok<*BDSCI,*BDLGI>
-    display_progress(obj.restart,obj.iter,fx,fx,0,obj.fcount,obj.optimizer)
+    display_progress(obj.restart,obj.iterations,fx,fx,0,obj.funcCount,obj.optimizer)
 end
 if ~exist('ManualStoppingFile.txt','file')
     manual_stopping;
 end
 if abs(vr)<obj.threshold
-    disp([mfilename,':: Peak found (iter=',int2str(obj.iter),',max_iter=',int2str(obj.max_iter),')'])
-    obj.iter=obj.max_iter+1;
+    disp([mfilename,':: Peak found (iterations=',int2str(obj.iterations),',MaxIter=',int2str(obj.MaxIter),')'])
+    obj.iterations=obj.MaxIter+1;
 end
 stopflag=check_convergence(obj);
 
 while isempty(stopflag)
-    obj.iter=obj.iter+1;
+    obj.iterations=obj.iterations+1;
     if abs(vr)<2*obj.threshold
         inner_max_iter = 2*npar_v;
     else
@@ -128,12 +128,12 @@ while isempty(stopflag)
             fxv = evaluate(xv);
         end
     end
-    if rem(obj.iter,obj.verbose)==0 || obj.iter==1
-        display_progress(obj.restart,obj.iter,fx,fx,vr,obj.fcount,obj.optimizer)
+    if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
+        display_progress(obj.restart,obj.iterations,fx,fx,vr,obj.funcCount,obj.optimizer)
     end
     if abs(vr)< obj.threshold
-        disp([mfilename,':: Peak found (iter=',int2str(obj.iter),',max_iter=',int2str(obj.max_iter),')'])
-        obj.iter=obj.max_iter+1;
+        disp([mfilename,':: Peak found (iterations=',int2str(obj.iterations),',MaxIter=',int2str(obj.MaxIter),')'])
+        obj.iterations=obj.MaxIter+1;
     end
     stopflag=check_convergence(obj);
 end
@@ -143,7 +143,7 @@ x=restore(x);
     function fy=evaluate(y)
         y=restore(y);
         fy=Objective(y,varargin{:});
-        obj.fcount=obj.fcount+1;
+        obj.funcCount=obj.funcCount+1;
     end
 
     function xx=restore(x)

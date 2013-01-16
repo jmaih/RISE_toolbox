@@ -13,21 +13,21 @@ function [x,f,exitflag,obj]=bee_gate(PROBLEM)
 %   [X,F,OBJ] = BEE_GATE(FUN,X0,LB,UB,OPTIONS) optimizes the function FUN under the
 %   optimization options set under the structure OPTIONS. The fields of
 %   this structure could be all or any of the following:
-%       - 'colony_size': this the number of different elements in the group
+%       - 'MaxNodes': this the number of different elements in the group
 %       that will share information with each other in order to find better
 %       solutions. The default is 20
-%       - 'max_iter': the maximum number of iterations. The default is 1000
-%       - 'max_time': The time budget in seconds. The default is 3600
-%       - 'max_fcount': the maximum number of function evaluations. The
+%       - 'MaxIter': the maximum number of iterations. The default is 1000
+%       - 'MaxTime': The time budget in seconds. The default is 3600
+%       - 'MaxFunEvals': the maximum number of function evaluations. The
 %       default is inf
 %       - 'rand_seed': the seed number for the random draws
 %    X if the optimum, F is the value of the objective at X, OBJ is an
 %    object with more information
 %
 %   Optimization stops when one of the following happens:
-%   1- the number of iterations exceeds max_iter
-%   2- the number of function counts exceeds max_fcount
-%   3- the time elapsed exceeds max_time
+%   1- the number of iterations exceeds MaxIter
+%   2- the number of function counts exceeds MaxFunEvals
+%   3- the time elapsed exceeds MaxTime
 %   4- the user write anything in and saves the automatically generated
 %   file called "ManualStopping.txt"
 %
@@ -43,8 +43,8 @@ function [x,f,exitflag,obj]=bee_gate(PROBLEM)
 %
 %     FUN=inline('sum(x.^2)'); n=100;
 %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-%     optimpot=struct('colony_size',20,'max_iter',1000,'max_time',60,...
-%     'max_fcount',inf);
+%     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
+%     'MaxFunEvals',inf);
 %     x=bee_gate(@(x) FUN(x),x0,lb,ub,optimpot)
 
 %   Copyright 2011 Junior Maih (junior.maih@gmail.com).
@@ -61,14 +61,14 @@ options=PROBLEM.options;
  bee_options=[];
  for ii=1:numel(fields)
      fi=fields{ii};
-     if (strcmpi(fi,'max_iter')||strcmpi(fi,'MaxIter'))&&~isempty(options.(fi))
-         bee_options.max_iter=options.(fi);
-     elseif (strcmpi(fi,'MaxFunEvals')||strcmpi(fi,'max_fcount'))&&~isempty(options.(fi)) 
-         bee_options.max_fcount=options.(fi);
-     elseif (strcmpi(fi,'max_time')||strcmpi(fi,'MaxTime'))&&~isempty(options.(fi)) 
-         bee_options.max_time=options.(fi);
-     elseif (strcmpi(fi,'MaxNodes')||strcmpi(fi,'colony_size') )&&~isempty(options.(fi))
-         bee_options.colony_size=options.(fi);
+     if (strcmpi(fi,'MaxIter'))&&~isempty(options.(fi))
+         bee_options.MaxIter=options.(fi);
+     elseif (strcmpi(fi,'MaxFunEvals'))&&~isempty(options.(fi)) 
+         bee_options.MaxFunEvals=options.(fi);
+     elseif (strcmpi(fi,'MaxTime'))&&~isempty(options.(fi)) 
+         bee_options.MaxTime=options.(fi);
+     elseif (strcmpi(fi,'MaxNodes') )&&~isempty(options.(fi))
+         bee_options.MaxNodes=options.(fi);
      end
  end
 bee_options.restrictions=PROBLEM.nonlcon;
@@ -78,9 +78,9 @@ obj=bee(Objective,x0,[],lb,ub,bee_options);
 x=obj.best;
 f=obj.best_fval;
 
-if obj.iter>=obj.max_iter || ...
-        obj.fcount>=obj.max_fcount || ...
-        etime(obj.finish_time,obj.start_time)>=obj.max_time
+if obj.iterations>=obj.MaxIter || ...
+        obj.fcount>=obj.MaxFunEvals || ...
+        etime(obj.finish_time,obj.start_time)>=obj.MaxTime
     exitflag=0; % disp('Too many function evaluations or iterations.')
 else
     exitflag=-1; % disp('Stopped by output/plot function.')

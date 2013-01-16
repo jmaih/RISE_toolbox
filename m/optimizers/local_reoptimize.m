@@ -1,14 +1,14 @@
-function [xstore,fstore,fcount,outer_iter]=local_reoptimize(Objective,x,fx,lb,ub,Options,varargin)
+function [xstore,fstore,funcCount,outer_iter]=local_reoptimize(Objective,x,fx,lb,ub,Options,varargin)
 
-threshold=[]; intial_step_size=[]; verbose=[]; max_iter=[];
-optimizer=[]; fcount=[]; restart=[];
+threshold=[]; intial_step_size=[]; verbose=[]; MaxIter=[];
+optimizer=[]; funcCount=[]; restart=[];
 
 Fields={'threshold',1e-6
     'intial_step_size',1
     'verbose',50
-    'max_iter',inf
+    'MaxIter',inf
     'optimizer',mfilename
-    'fcount',0
+    'funcCount',0
     'restart',0};
 for ii=1:size(Fields,1)
     if isfield(Options,Fields{ii,1})
@@ -47,7 +47,7 @@ par_count=0;
 norm_delta=norm(delta);
 fstore=[];
 xstore=[];
-while norm_delta>threshold && outer_iter<max_iter%#ok<*BDSCI>
+while norm_delta>threshold && outer_iter<MaxIter%#ok<*BDSCI>
     outer_iter=outer_iter+1;
     if norm_delta<2*threshold
         max_inner_iter = npar_v;
@@ -117,7 +117,7 @@ while norm_delta>threshold && outer_iter<max_iter%#ok<*BDSCI>
     end
     norm_delta=norm(delta);
     if ismember(rem(outer_iter,verbose),[0,1])
-        display_progress(restart,outer_iter,fx,fx,norm_delta,fcount,optimizer)
+        display_progress(restart,outer_iter,fx,fx,norm_delta,funcCount,optimizer)
     end
 end
 display(max_delta)
@@ -204,7 +204,7 @@ display(full_cycles);
     function fy=evaluate(y)
         y=restore(y);
         fy=Objective(y,varargin{:});
-        fcount=fcount+1;
+        funcCount=funcCount+1;
     end
 
     function xx=restore(x)

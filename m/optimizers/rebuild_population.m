@@ -1,15 +1,15 @@
 function [xx,ff,funevals]=rebuild_population(xx,ff,Objective,lb,ub,tol,varargin)
-[npar,colony_size]=size(xx);
+[npar,MaxNodes]=size(xx);
 ul=ub-lb;
 funevals=0;
 newstyle=true;
-for ii=1:colony_size
+for ii=1:MaxNodes
     xi=(xx(:,ii)-lb)./ul;
     if isnan(ff(ii))
         ff(ii)=Objective(xx(:,ii),varargin{:});
         funevals=funevals+1;
     end
-    for jj=ii+1:colony_size
+    for jj=ii+1:MaxNodes
         xj=(xx(:,jj)-lb)./ul;
         if distance(xi,xj)<tol
             if ff(ii)<ff(jj)

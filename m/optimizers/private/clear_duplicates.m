@@ -3,11 +3,11 @@ if nargin<4
     newdeal=false;
 end
 norm_=norm(ub-lb);
-[number_of_parameters,colony_size]=size(islands);
-ids=false(1,colony_size);
-for i1=1:colony_size
+[number_of_parameters,MaxNodes]=size(islands);
+ids=false(1,MaxNodes);
+for i1=1:MaxNodes
     agent_ii=islands(:,i1);
-    for jj=i1+1:colony_size
+    for jj=i1+1:MaxNodes
         dd=distance(agent_ii,islands(:,jj));
         if dd/norm_<1e-2
             ids(jj)=true;
@@ -38,10 +38,10 @@ ids=find(ids);
 
 % %%
 % [energy,lb,ub,fname]=cec_2011_problems(112);
-% Options=struct('max_fcount',50000*3,...
+% Options=struct('MaxFunEvals',50000*3,...
 %     'verbose',50,'penalty',1e+12,...
-%     'colony_size',90,...
-%     'max_iter',10000);
+%     'MaxNodes',90,...
+%     'MaxIter',10000);
 % samode(energy,[],[],lb,ub,Options);
 %{
 	C:\Users\Junior\Dropbox\SandboxFiles\Code\MarkovSwitchingDsge\optimizers\clever_algorithms

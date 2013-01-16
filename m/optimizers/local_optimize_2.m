@@ -1,6 +1,6 @@
-function [x,fx,fcount,outer_iter]=local_optimize_2(Objective,x,lb,ub,Options,varargin)
+function [x,fx,funcCount,outer_iter]=local_optimize_2(Objective,x,lb,ub,Options,varargin)
 TolFun=[];intial_step_size=[];verbose=[];MaxIter=[]; MaxFunEvals=[];MaxTime=[];
-optimizer=[];fcount=[];restart=[]; penalty=[];
+optimizer=[];funcCount=[];restart=[]; penalty=[];
 Fields={'TolFun',1e-6
     'MaxIter',inf
     'MaxFunEvals',20000
@@ -8,7 +8,7 @@ Fields={'TolFun',1e-6
     'intial_step_size',1
     'verbose',true
     'optimizer',mfilename
-    'fcount',0
+    'funcCount',0
     'restart',0
     'penalty',1e10};
 for ii=1:size(Fields,1)
@@ -47,10 +47,10 @@ fxv = penalty;
 xv=x;
 outer_iter=0;
 if verbose %#ok<*BDSCI,*BDLGI>
-    display_progress(restart,outer_iter,fx,fx,0,fcount,optimizer)
+    display_progress(restart,outer_iter,fx,fx,0,funcCount,optimizer)
 end
 t0=clock;
-while abs(vr)>= TolFun && outer_iter<MaxIter && fcount < MaxFunEvals && etime(clock,t0)<MaxTime
+while abs(vr)>= TolFun && outer_iter<MaxIter && funcCount < MaxFunEvals && etime(clock,t0)<MaxTime
     outer_iter=outer_iter+1;
     if abs(vr)<2*TolFun
         inner_max_iter = 2*npar_v;
@@ -58,10 +58,10 @@ while abs(vr)>= TolFun && outer_iter<MaxIter && fcount < MaxFunEvals && etime(cl
         inner_max_iter =2;
     end
     
-    iter = 0;
-    while fxv >= fx && iter < inner_max_iter
+    iterations = 0;
+    while fxv >= fx && iterations < inner_max_iter
         vector_works = false;
-        if iter == 0
+        if iterations == 0
             xv = x;
         else
             xv(par_id)= xv(par_id)-vr;
@@ -77,7 +77,7 @@ while abs(vr)>= TolFun && outer_iter<MaxIter && fcount < MaxFunEvals && etime(cl
         xv(par_id) =xv(par_id)+ vr;
         xv(par_id)=recenter(xv(par_id),lb(par_id),ub(par_id));
         fxv  = evaluate(xv);
-        iter=iter+1;
+        iterations=iterations+1;
     end
     
     if fxv >= fx
@@ -86,7 +86,7 @@ while abs(vr)>= TolFun && outer_iter<MaxIter && fcount < MaxFunEvals && etime(cl
     else
         fx = fxv;
         x = xv;
-        if iter == 0
+        if iterations == 0
             if vector_works
                 u = u+v;
                 v = v*2;
@@ -121,7 +121,7 @@ while abs(vr)>= TolFun && outer_iter<MaxIter && fcount < MaxFunEvals && etime(cl
         end
     end
     if verbose
-        display_progress(restart,outer_iter,fx,fx,vr,fcount,optimizer)
+        display_progress(restart,outer_iter,fx,fx,vr,funcCount,optimizer)
     end
 end
 
@@ -130,7 +130,7 @@ x=restore(x);
     function fy=evaluate(y)
         y=restore(y);
         fy=Objective(y,varargin{:});
-        fcount=fcount+1;
+        funcCount=funcCount+1;
     end
 
     function xx=restore(x)
