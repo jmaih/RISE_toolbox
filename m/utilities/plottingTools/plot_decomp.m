@@ -1,4 +1,4 @@
-function plot_decomp(obj)
+function h=plot_decomp(obj)
 
 uall=double(obj);
 upos=zeros(size(uall));
@@ -17,3 +17,6 @@ hold on
 plot(this_all,'k-','linewidth',2)
 axis tight;
 hold off
+if nargout>0
+    h=gca;
+end
