@@ -13,7 +13,7 @@ if isempty(pp)
 end
 
 map=getappdata(0,'rise_default_plot_colors');
-plot(pp.xdatenums(2:nr+1)',dd(:,1),'linewidth',2)%,'color',[0,0,0]
+plot(pp.xdatenums(1:nr)',dd(:,1),'linewidth',2)%,'color',[0,0,0]
 hold on
 iter=0;
 for tt=1:size(dd,1)
