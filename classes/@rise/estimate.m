@@ -16,7 +16,8 @@ if nobj==0
         'estim_start_time',[],...
         'estim_end_time',[],...
         'estim_mode_file',[],...
-        'estim_general_restrictions',[]);% holds a function that takes as input the model object and returns the
+        'estim_general_restrictions',[],... % holds a function that takes as input the model object and returns the
+        'estim_blocks',[]);
     % violations of the restrictions in a vector for instance in order to impose the max operator ZLB, Linde and Maih
     obj=mergestructures(estimation_engine(),...
         main_defaults);
@@ -57,6 +58,10 @@ hessian_type=obj(1).options.hessian_type;
 estim_start_from_mode=obj(1).options.estim_start_from_mode;
 estim_parallel=obj(1).options.estim_parallel;
 estim_general_restrictions=obj(1).options.estim_general_restrictions;
+estim_blocks=obj(1).options.estim_blocks;
+if ~isempty(estim_blocks)
+    estim_blocks=create_estimation_blocks(obj(1),estim_blocks);
+end
 
 % Load the function that computes the likelihood
 % preliminary checks:
@@ -143,7 +148,7 @@ try %#ok<TRYNC>
     prior_plots(obj)
 end
 
-nonlcon=reprocess_nolinear_restrictions(obj(1).parameter_random_draws_restrictions);
+[nonlcon,nconst]=reprocess_nolinear_restrictions(obj(1).parameter_random_draws_restrictions);
 % the functions in obj(1).parameter_random_draws_restrictions only check
 % whether the restrictions are violated or not but do not give the strength
 % of the violation, which we need in order to apply DEB. So we need to use
@@ -199,7 +204,7 @@ for ii=beg:Nsim
 end
 
 
-[x1,f1,H,issue,viol,obj]=big_wrapper(x0,'estimate');
+[x1,f1,H,issue,viol,obj]=big_wrapper(x0,'estimate'); %#ok<ASGLU>
 viol=viol(viol>0);
 numberOfActiveInequalities=numel(viol);
 
@@ -274,7 +279,7 @@ warning('on','MATLAB:illConditionedMatrix')
                 x0=lb+(ub-lb).*rand(npar,1);
             end
         end
-        xLast=[];
+        violLast=[];
         objLast=[];
         retcodeLast=[];
         viol=[];
@@ -288,7 +293,8 @@ warning('on','MATLAB:illConditionedMatrix')
                     'nonlcon',@nonlcon_with_gradient,... % the nonlinear constraints restrictions take the same inputs as fh_wrapper
                     'options',optim_options,...
                     'solver',optimizer);
-                [x1,f1,H,issue]=estimation_engine(PROBLEM_,hessian_type);
+                
+                [x1,f1,H,issue]=estimation_engine(PROBLEM_,hessian_type,estim_blocks);
             case 'eval'
                 [f1,retcode_0]=fh_wrapper(x0);
                 x1=x0;
@@ -316,31 +322,44 @@ warning('on','MATLAB:illConditionedMatrix')
             end
             % Now take the negative for minimization
             minus_log_post=-min(fval);
-            xLast=x;
             objLast=obj;
             retcodeLast=retcode;
+            % nonlinear constraints might be incompatible with blockwise
+            % optimization. In that case, it is better to compute the
+            % restriction violation while evaluating the objective and save
+            % the results to pass on to the optimizer when it calls the
+            % nonlinear constraints.
+            violLast=nonlcon_with_gradient(x,true);
         end
         
-        function [viol,grad]=nonlcon_with_gradient(x)
+        function [viol,grad]=nonlcon_with_gradient(x,do_it)
             grad=[];
-            if retcodeLast
-                viol=realmax;
-               % this should make it hard enough for this vector to stay in any population
-            else
-                if ~isequal(x,xLast)
-                    keyboard
+            if nargin<2
+                do_it=false;
+            end
+            if do_it
+                if retcodeLast
+                    viol=ones(nconst,1)*realmax/nconst;
+                    % this should make it hard enough for this vector to stay in any population
+                else
+                    viol=nonlcon(x);
                 end
-                viol=nonlcon(x);
                 if ~isempty(estim_general_restrictions)
                     viols=estim_general_restrictions(objLast);
                     viol=[viol(:);viols(:)];
+                    % it may be important to know the number of
+                    % restrictions returned by this function or at least
+                    % the user should return the proper number of arguments
+                    % whenever something fails.
                 end
+            else
+                viol=violLast;
             end
         end
     end
 end
 
-    function nonlcon=reprocess_nolinear_restrictions(nonlcon)
+    function [nonlcon,nconst]=reprocess_nolinear_restrictions(nonlcon)
         % transform the nonlinear constraints. I would like to keep the
         % flexibility of knowning what parameters enter the constraints and
         % so I do not do this in format parameters
@@ -379,6 +398,7 @@ end
         nonlcon=nonlcon(1:end-1);
         if isempty(nonlcon)
             nonlcon='0';
+            nconst=1;
         end
         nonlcon=str2func(['@(param)[',nonlcon,']']);
     end

@@ -1,4 +1,4 @@
-function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type)
+function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_blocks)
 
 opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify | notify-detailed | final | final-detailed ]
     'MaxFunEvals',inf,...% [ positive scalar ]
@@ -9,16 +9,6 @@ opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify
     'MaxTime',3600);%: [ positive scalar | {7200} ]
 opt.optimizer='fmincon'; % default is fmincon
 opt.hessian_type='fd';
-% 'Algorithm','interior-point',...% [ active-set | interior-point | levenberg-marquardt | sqp | ...
-% I observed the following problem with the interior point algorithm (IP): I estimated a model using my abc
-% routines and then wanted to sharpen the results using fmincon. fmincon with the IP
-% could not even replicate the function at the starting point (my guess is that this is
-% because some parameters were lying against their boundaries). More exactly, the function was given the
-% the value of the penalty. When I turned off the interior point, everything was fine. Maybe all this is
-% consistent with the definition of interior point.
-% further testing with wrapper function fminsearch_bnd also gave the wrong starting value function. This
-% points in the direction of a penalty arising with the parameters not being in the interior.
-% I probably should revisit the way I impose constraints in abc
 
 if nargin==0
     if nargout>1
@@ -26,6 +16,12 @@ if nargin==0
     end
     xbest=opt;
     return
+end
+if nargin<3
+    estim_blocks=[];
+	if nargin<2
+	 hessian_type=[];
+	 end
 end
 OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
 if isempty(PROBLEM.solver)
@@ -37,20 +33,7 @@ for ii=1:numel(OtherProblemFields)
     end
 end
 if isnumeric(PROBLEM.solver)
-    switch PROBLEM.solver
-        case 0
-        case 1
-            PROBLEM.solver='fmincon';
-        case 2
-            PROBLEM.solver='fminunc';
-        case 3
-        case 4
-        case 5
-        case 6
-        case 7
-            PROBLEM.solver='fminsearch';
-        otherwise
-    end
+    error('optimizer should be a string or a function handle')
 end
 optimizer=PROBLEM.solver;
 fh=PROBLEM.objective;
@@ -69,96 +52,67 @@ if isempty(hessian_type)
     hessian_type='fd';
 end
 
-Nsim=size(x0,2);
-xfinal=cell(1,Nsim);
-ffinal=cell(1,Nsim);
-exitflag=cell(1,Nsim);
+block_flag=~isempty(estim_blocks);
+if block_flag
+    options.blocks=estim_blocks;
+end
 
-fh_handle=@fh_wrapper;
-problem_maker=@make_problem;
+vargs={};
 if iscell(optimizer)
     vargs=optimizer(2:end);
     optimizer=optimizer{1};
-    for ii=1:Nsim
-        [xfinal{ii},ffinal{ii},exitflag{ii}]=optimizer(fh_handle,x0(:,ii),lb,ub,options,vargs{:});
-    end
-elseif isa(optimizer,'function_handle')
-    for ii=1:Nsim
-        [xfinal{ii},ffinal{ii},exitflag{ii}]=optimizer(problem_maker(ii));
-    end
+end
+% rename the optimizers if necessary
+if isa(optimizer,'function_handle')
+    tmp=func2str(optimizer);
 else
-    switch optimizer
-        case 0 % just compute log-likelihood/posterior
-            for ii=1:Nsim
-                ffinal{ii}=fh(x0(:,ii));
-                xfinal{ii}=x0(:,ii);
-                exitflag{ii}=1;
-            end
-        case {1,'fmincon'}
-            for ii=1:Nsim
-                [xfinal{ii},ffinal{ii},exitflag{ii}] = fmincon(problem_maker(ii));
-            end
-        case {2,'fminunc'}
-            for ii=1:Nsim
-                [xfinal{ii},ffinal{ii},exitflag{ii}]=fminunc_bnd(fh_handle,...
-                    x0(:,ii),lb,ub,options);
-            end
-        case {4,5,6}
-            error([mfilename,':: cases 4, 5 and 6 are not yet implemented'])
-        case {7,'fminsearch'} %
-            for ii=1:Nsim
-                [xfinal{ii},ffinal{ii},exitflag{ii}]=fminsearch_bnd(fh_handle,...
-                    x0(:,ii),lb,ub,options);
-            end
-        otherwise
-            if ischar(optimizer)
-                optimizer=str2func(optimizer);
-            end
-            for ii=1:Nsim
-                [xfinal{ii},ffinal{ii},exitflag{ii}]=optimizer(problem_maker(ii));
-            end
+    tmp=optimizer;
+end
+if ~strcmp(tmp,'fmincon')
+    options.nonlcon=PROBLEM.nonlcon;
+end
+if ismember(tmp,{'fminunc','fminsearch'})
+    optimizer=str2func(['@',tmp,'_bnd']);
+end
+if ischar(optimizer)
+    optimizer=str2func(optimizer);
+end
+
+if block_flag
+    options.optimizer=optimizer;
+    [xfinal,ffinal,exitflag]=blockwise_optimization(fh,x0,lb,ub,options,vargs{:});
+else
+    if strcmp(tmp,'fmincon')
+        [xfinal,ffinal,exitflag]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
+    else
+        [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
     end
 end
 
 % select the overall best
-[~,order]=sort(cell2mat(ffinal));
-best=order(1);
-xbest=xfinal{best};
-fbest=ffinal{best};
-TranslateOptimization(exitflag{best});
+xbest=xfinal;
+fbest=ffinal;
+TranslateOptimization(exitflag);
 
 % compute Hessian
 issue='';
 switch lower(hessian_type)
     case 'fd'
-        H = finite_difference_hessian(fh_handle,xbest);
+        H = finite_difference_hessian(fh,xbest);
     case 'opg'
-        H = outer_product_hessian(fh_handle,xbest);
+        H = outer_product_hessian(fh,xbest);
         if any(any(isnan(H)))||any(any(isinf(H)))
             issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
             warning([mfilename,':: ',issue]) %#ok<WNTAG>
             warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
-            H = finite_difference_hessian(fh_handle,xbest);
+            H = finite_difference_hessian(fh,xbest);
         end
     otherwise
         issue=['unknow hessian option ',hessian_type,' using finite differences'];
         warning([mfilename,':: ',issue]) %#ok<WNTAG>
-        H = finite_difference_hessian(fh_handle,xbest);
+        H = finite_difference_hessian(fh,xbest);
 end
 
-% % %     function [constr,constreq]=my_nonlinear_restriction(x)
-% % %         constr=nonlcon(x);
-% % %         constreq=[];
-% % %     end
-
-    function f=fh_wrapper(x)
-        f=fh(x);
-    end
-
-    function pb=make_problem(index)
-        pb=PROBLEM;
-        pb.x0=x0(:,index);
-    end
 end
 
 function TranslateOptimization(exitflag)
@@ -190,23 +144,27 @@ switch exitflag
 end
 end
 
-function [x,fval,exitflag]=fminsearch_bnd(fun,x0,lb,ub,options)
+function [x,fval,exitflag,output]=fminsearch_bnd(fun,x0,lb,ub,options,varargin) %#ok<DEFNU>
+nonlcon=options.nonlcon;
+options=rmfield(options,'nonlcon');
 bc=bound_class([lb,ub]);
 xt=transform_parameters(x0,bc,[lb,ub]);
-[xt,fval,exitflag]=fminsearch(@wrapper,xt,options,fun,bc,lb,ub);
+[xt,fval,exitflag,output]=fminsearch(@wrapper,xt,options,fun,bc,lb,ub,varargin{:});
 x=untransform_parameters(xt,bc,[lb,ub]);
 end
 
-function [x,fval,exitflag]=fminunc_bnd(fun,x0,lb,ub,options)
+function [x,fval,exitflag,output]=fminunc_bnd(fun,x0,lb,ub,options,varargin) %#ok<DEFNU>
+nonlcon=options.nonlcon;
+options=rmfield(options,'nonlcon');
 bc=bound_class([lb,ub]);
 xt=transform_parameters(x0,bc,[lb,ub]);
-[xt,fval,exitflag]=fminunc(@wrapper,xt,options,fun,bc,lb,ub);
+[xt,fval,exitflag,output]=fminunc(@wrapper,xt,options,fun,bc,lb,ub,varargin{:});
 x=untransform_parameters(xt,bc,[lb,ub]);
 end
 
-function ff=wrapper(xt,fun,bc,lb,ub)
+function ff=wrapper(xt,fun,bc,lb,ub,varargin)
 xu=untransform_parameters(xt,bc,[lb,ub]);
-ff=fun(xu);
+ff=fun(xu,varargin{:});
 end
 
 function bc=bound_class(bounds)
@@ -242,3 +200,18 @@ xu(id)=bounds(id,1)+exp(xt(id));
 id=bc==1;
 xu(id)=bounds(id,2)-exp(xt(id));
 end
+% 'Algorithm','interior-point',...% [ active-set | interior-point | levenberg-marquardt | sqp | ...
+% I observed the following problem with the interior point algorithm (IP):
+% I estimated a model using my abc routines and then wanted to sharpen the
+% results using fmincon. fmincon with the IP could not even replicate the
+% function at the starting point (my guess is that this is because some
+% parameters were lying up against their boundaries). More exactly, the
+% function was given the value of the penalty. When I turned off the
+% interior point, everything was fine. Maybe all this is consistent with
+% the definition of interior point. Further testing with wrapper function
+% fminsearch_bnd also gave the wrong starting value function. This points
+% in the direction of a penalty arising with the parameters not being in
+% the interior.  
+% I probably should revisit the way I impose constraints in abc: this
+% should be obsolete by now
+
