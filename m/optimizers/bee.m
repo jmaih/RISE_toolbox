@@ -283,7 +283,7 @@ VIOLS=nan(1,obj.MaxNodes);
 iter0=0;
 for iloc=1:numel(VS)
     this=obj.violation_strength==VS(iloc);
-    nthis=numel(this);
+    nthis=sum(this); % this is logical and so the sum has to be taken
     [FF(iter0+(1:nthis)),XX(:,iter0+(1:nthis)),FIT(iter0+(1:nthis)),TRIALS(iter0+(1:nthis)),VIOLS(iter0+(1:nthis))]=...
         resort(obj.ff(this),obj.xx(:,this),obj.fitness(this),obj.trial(this),obj.violation_strength(this));
     iter0=iter0+nthis;
