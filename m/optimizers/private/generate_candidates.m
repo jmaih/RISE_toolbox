@@ -27,11 +27,12 @@ for ii=1:n
             [c,fc,violc]=draw_and_evaluate_vector();
             if sum(violc)<sum(viol{ii})
                 x(:,ii)=c;
+                f(ii)=fc;
                 viol{ii}=violc;
             end
         end
         funevals=funevals+1;
-        if fc<penalty
+        if f(ii)<penalty
             invalid=false;
         else
             fprintf(1,'%5s %3.0d/%3.0d %8s %5.0d %8s %s \n',...
@@ -39,8 +40,6 @@ for ii=1:n
         end
         iter=iter+1;
     end
-    x(:,ii)=c;
-    f(ii)=fc;
 end
 
     function [c,fc,viol]=draw_and_evaluate_vector()
