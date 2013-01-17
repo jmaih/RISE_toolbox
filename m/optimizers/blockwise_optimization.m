@@ -1,22 +1,26 @@
-function [x0,f0,exitflag,output]=blockwise_optimization(objective,x0,lb,ub,options,varargin)
+function [x0,f0,exitflag,output]=blockwise_optimization(func,x0,lb,ub,options,varargin)
 
-if isstruct(objective)
-    x0=objective.x0;
-    lb=objective.lb;
-    ub=objective.ub;
-    options=objective.options;
-    objective=objective.objective;
+if nargin<4
+    options=[];
 end
-if ischar(objective)
-    objective=str2func(objective);
+if isstruct(func)
+    x0=func.x0;
+    lb=func.lb;
+    ub=func.ub;
+    options=func.options;
+    if isfield(func,'solver')
+        options.optimizer=func.solver;
+    end
+    func=func.objective;
+end
+if ischar(func)
+    func=str2func(func);
 end
 
 default_options=struct('MaxNodes',20,'MaxIter',1000,...
     'MaxTime',3600,'MaxFunEvals',inf,'rand_seed',100*sum(clock),...
-    'penalty',1e+8,'verbose',10,'blocks',[],'optimizer',@bee_gate);
-if nargin<4
-    options=[];
-end
+    'penalty',1e+8,'verbose',10,'blocks',[],'optimizer',@bee_gate,...
+    'Display','iter','nonlcon',[]);
 ff=fieldnames(default_options);
 for ifield=1:numel(ff)
     v=ff{ifield};
@@ -29,7 +33,7 @@ blocks=default_options.blocks;
 optimizer=default_options.optimizer;
 optim_options=rmfield(default_options,{'optimizer','blocks'});
 
-f0=objective(x0,varargin{:});
+f0=func(x0,varargin{:});
 minblk=5;
 % blk_jump_prob=0.1;
 
@@ -73,10 +77,12 @@ for ifield=1:numel(Fields2Add)
     v=Fields2Add{ifield};
     blkw_obj.(v)=default_options.(v);
 end
+start_time=clock;
+blkw_obj.start_time=start_time;
 stopflag=check_convergence(blkw_obj);
 while isempty(stopflag)
     for blk=1:nblks+1
-        optim_options.start_time=clock;
+        optim_options.start_time=start_time;
         %         if rand < blk_jump_prob
         %             if rand<.5
         %                 this=random_block();
@@ -88,18 +94,19 @@ while isempty(stopflag)
         %         else
         if blk<=nblks
             this=blocks{blk};
-            disp(['optimizing block : ',int2str(blk),'/',int2str(nblks)])
+            disp(['optimizing block : ',int2str(blk),'/',int2str(nblks),' : ',int2str(numel(this)),' parameters'])
         else
             % now optimize the whole vector
             this=1:npar;
-            disp('optimizing block the entire vector')
+            disp(['optimizing block the entire vector: ',int2str(numel(this)),' parameters'])
         end
         %         end
         [x0(this),f0,exitflag,output]=optimizer(@wrapper,x0(this),lb(this),ub(this),...
             optim_options,...
             x0);
         blkw_obj.funcCount=blkw_obj.funcCount+output.funcCount;
-        blkw_obj.iterations=blkw_obj.iterations+obj.iterations;
+        blkw_obj.iterations=blkw_obj.iterations+output.iterations;
+        start_time=clock;
     end
     stopflag=check_convergence(blkw_obj);
 end
@@ -107,7 +114,7 @@ end
 
     function f=wrapper(z,x)
         x(this)=z;
-        f=objective(x,varargin{:});
+        f=func(x,varargin{:});
     end
 
 %     function blk=random_block()
