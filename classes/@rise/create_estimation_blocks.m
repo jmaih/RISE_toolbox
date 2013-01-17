@@ -28,24 +28,36 @@ else
     chain_names={obj.markov_chains.name};
     for iblok=1:nblks
         chains=blocks{iblok};
-        if ~iscell(chains)&&~ischar(chains)
+        continue_flag=false;
+        if iscell(chains)||ischar(chains)
+        elseif isnumeric(chains)
+            if numel(unique(chains))~=numel(chains)
+                error(['parameters duplicated in block ',int2str(iblok)])
+            end
+            reblocks{iblok}=chains;
+            ontheline=setdiff(ontheline,chains);
+            continue_flag=true;
+        else
             error('elements of blocks must be cellstr arrays or char')
         end
         if ischar(chains)
             chains=cellstr(chains);
         end
-        continue_flag=false;
-        for ic=1:numel(chains)
-            if ismember(chains{ic},chain_names)
-                if continue_flag
-                    error('mixing parameter names and chain names is not allowed')
+        if ~ continue_flag
+            for ic=1:numel(chains)
+                if ismember(chains{ic},chain_names)
+                    if continue_flag
+                        error('mixing parameter names and chain names is not allowed')
+                    end
+                elseif ismember(chains{ic},param_names)
+                    loc=find(strcmp(chains{ic},param_names));
+                    reblocks{iblok}=[reblocks{iblok},loc];
+                    ontheline(ontheline==loc)=[];
+                    continue_flag=true;
+                    continue
+                else
+                    error([chains{ic},' not recognized as a chain name or a parameter name'])
                 end
-            elseif ismember(chains{ic},param_names) 
-                reblocks{iblok}=[reblocks{iblok},find(strcmp(chains{ic},param_names))];
-                continue_flag=true;
-                continue
-            else
-                error([chains{ic},' not recognized as a chain name or a parameter name'])
             end
         end
         if continue_flag
