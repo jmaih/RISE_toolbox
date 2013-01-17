@@ -19,7 +19,7 @@ classdef bee %< handle
         verbose=10;
         % optimizer-specific properties
         max_trials=100;
-        restrictions
+        nonlcon
     end
     %     properties(Constant, Hidden = true)
     %     end
@@ -111,10 +111,10 @@ classdef bee %< handle
             if nargin<5
                 options=[];
             end
-            if isempty(options.restrictions)
-                options.restrictions=@(z)[];
+            if isempty(options.nonlcon)
+                options.nonlcon=@(z)0;
             end
-            options.restrictions=@(z)[options.restrictions(z);lb-z;z-ub];
+            options.nonlcon=@(z)[options.nonlcon(z);lb-z;z-ub];
             % the restrictions are satisfied when all elements in this
             % vector are negative or equal to 0
             % set these default options and change them if later on options is non-empty
@@ -154,7 +154,7 @@ classdef bee %< handle
                 obj.f0=nan(1,1:n0);
                 for ii=1:n0
                     obj.f0(ii)=obj.Objective(obj.x0(:,ii),obj.vargs{:});
-                    tmp=obj.restrictions(obj.x0(:,ii));
+                    tmp=obj.nonlcon(obj.x0(:,ii));
                     tmp=tmp(tmp>0);
                     obj.violation_strength_0(ii)=sum(tmp);
                 end
@@ -163,133 +163,137 @@ classdef bee %< handle
                 obj=memorize_best_source(obj);
             end
             % Now find the peak
-            obj=optimize(obj);
-        end
-    end
-    methods(Access=private)
-        function obj=optimize(obj)
-            obj.food_number=round(.5*obj.MaxNodes);
-            obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
-            obj.ff=nan(1,obj.MaxNodes);
-            obj.fitness=nan(1,obj.MaxNodes);
-            obj.trial=nan(1,obj.MaxNodes);
-            obj.violation_strength=nan(1,obj.MaxNodes);
-            n0=size(obj.x0,2);
-            if n0
-                obj.fitness(1:n0)=obj.fitness_0(1:n0);
-                obj.trial(1:n0)=0;
-                obj.ff(1:n0)=obj.f0;
-                obj.xx(:,1:n0)=obj.x0(:,1:n0);
-                obj.violation_strength(1:n0)=obj.violation_strength_0;
-            end
-            missing=obj.MaxNodes-n0;
-            % set and record the seed before we start drawing anything
-            s = RandStream.create('mt19937ar','seed',obj.rand_seed);
-            try
-                RandStream.setGlobalStream(s);
-            catch %#ok<CTCH>
-                RandStream.setDefaultStream(s); %#ok<SETRS>
-            end
-            
-            [obj.xx(:,n0+1:end),obj.ff(n0+1:end),...
-                obj.violation_strength(n0+1:end),funevals,...
-                obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
-                new_bees(obj.Objective,obj.lb,obj.ub,missing,obj.restrictions,...
-                obj.penalty,obj.vargs{:});
-            obj.funcCount=obj.funcCount+funevals;
-            obj=memorize_best_source(obj);
-            
-            if ~obj.stopping_created
-                manual_stopping;
-            else
-                if ~exist('ManualStoppingFile.txt','file')
-                    manual_stopping;
-                end
-            end
-            stopflag=check_convergence(obj);
-            while isempty(stopflag)
-                obj.iterations=obj.iterations+1;
-                obj=send_employed_bees(obj);
-                obj=send_onlooker_bees(obj);
-                obj=memorize_best_source(obj);
-                obj=send_scout_bees(obj);
-                if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
-                    restart=1;
-                    fmin_iter=obj.best_fval;
-                    disperse=dispersion(obj.xx,obj.lb,obj.ub);
-                    display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
-                        disperse,obj.funcCount,obj.optimizer);
-                end
-                stopflag=check_convergence(obj);
-            end
-            obj.finish_time=clock;
-        end
-        function obj=send_scout_bees(obj)
-            renew=find(obj.trial>=obj.max_trials);
-            [obj.xx(:,renew),obj.ff(renew),obj.violation_strength(renew),funevals,obj.fitness(renew),...
-                obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
-                obj.ub,numel(renew),obj.restrictions,obj.penalty,obj.vargs{:});
-            obj.funcCount=obj.funcCount+funevals;
-        end
-        function obj=send_employed_bees(obj)
-            for ii=1:obj.food_number
-                obj=generate_mutant(obj,ii);
-            end
-        end
-        function obj=send_onlooker_bees(obj)
-            prob=(0.9.*obj.fitness./max(obj.fitness))+0.1;
-            t=0;
-            ii=1;
-            while t<obj.food_number
-                if rand<prob(ii)
-                    t=t+1;
-                    obj=generate_mutant(obj,ii);
-                end
-                ii=ii+1;
-                if ii==obj.food_number+1
-                    ii=1;
-                end
-            end
-        end
-        function obj=memorize_best_source(obj)
-            if isempty(obj.ff)
-                obj.best_fitness=obj.fitness_0(1);
-                obj.best_fval=obj.f0(1);
-                obj.best=obj.x0(:,1);
-                obj.best_viol_strength=obj.violation_strength_0(1);
-            else
-                obj=sort(obj);
-                tmp=deb_selection(obj,1,obj.best_viol_strength,obj.best,obj.best_fitness,obj.best_fval);
-                if isempty(obj.best_fval)||obj.ff(1)<obj.best_fval
-                    obj.best_fval=tmp.ff(1);
-                    obj.best=tmp.xx(:,1);
-                    obj.best_viol_strength=obj.violation_strength(1);
-                end
-            end
-        end
-        function obj=sort(obj)
-            VS=unique(obj.violation_strength);
-            FF=nan(1,obj.MaxNodes);
-            XX=nan(obj.number_of_parameters,obj.MaxNodes);
-            FIT=nan(1,obj.MaxNodes);
-            TRIALS=nan(1,obj.MaxNodes);
-            VIOLS=nan(1,obj.MaxNodes);
-            iter0=0;
-            for iloc=1:numel(VS)
-                this=obj.violation_strength==VS(iloc);
-                nthis=numel(this);
-                [FF(iter0+(1:nthis)),XX(:,iter0+(1:nthis)),FIT(iter0+(1:nthis)),TRIALS(iter0+(1:nthis)),VIOLS(iter0+(1:nthis))]=...
-                    resort(obj.ff(this),obj.xx(:,this),obj.fitness(this),obj.trial(this),obj.violation_strength(this));
-                iter0=iter0+nthis;
-            end
-            [obj.ff,obj.xx,obj.fitness,obj.trial,obj.violation_strength]=deal(FF,XX,FIT,TRIALS,VIOLS);
+            obj=optimize_bees(obj);
         end
     end
 end
 
-function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,restrictions,penalty,...
+function obj=optimize_bees(obj)
+obj.food_number=round(.5*obj.MaxNodes);
+obj.xx=nan(obj.number_of_parameters,obj.MaxNodes);
+obj.ff=nan(1,obj.MaxNodes);
+obj.fitness=nan(1,obj.MaxNodes);
+obj.trial=nan(1,obj.MaxNodes);
+obj.violation_strength=nan(1,obj.MaxNodes);
+n0=size(obj.x0,2);
+if n0
+    obj.fitness(1:n0)=obj.fitness_0(1:n0);
+    obj.trial(1:n0)=0;
+    obj.ff(1:n0)=obj.f0;
+    obj.xx(:,1:n0)=obj.x0(:,1:n0);
+    obj.violation_strength(1:n0)=obj.violation_strength_0;
+end
+missing=obj.MaxNodes-n0;
+% set and record the seed before we start drawing anything
+s = RandStream.create('mt19937ar','seed',obj.rand_seed);
+try
+    RandStream.setGlobalStream(s);
+catch %#ok<CTCH>
+    RandStream.setDefaultStream(s); %#ok<SETRS>
+end
+
+[obj.xx(:,n0+1:end),obj.ff(n0+1:end),...
+    obj.violation_strength(n0+1:end),funevals,...
+    obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
+    new_bees(obj.Objective,obj.lb,obj.ub,missing,obj.nonlcon,...
+    obj.penalty,obj.vargs{:});
+obj.funcCount=obj.funcCount+funevals;
+obj=memorize_best_source(obj);
+
+if ~obj.stopping_created
+    manual_stopping;
+else
+    if ~exist('ManualStoppingFile.txt','file')
+        manual_stopping;
+    end
+end
+stopflag=check_convergence(obj);
+while isempty(stopflag)
+    obj.iterations=obj.iterations+1;
+    obj=send_employed_bees(obj);
+    obj=send_onlooker_bees(obj);
+    obj=memorize_best_source(obj);
+    obj=send_scout_bees(obj);
+    if rem(obj.iterations,obj.verbose)==0 || obj.iterations==1
+        restart=1;
+        fmin_iter=obj.best_fval;
+        disperse=dispersion(obj.xx,obj.lb,obj.ub);
+        display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
+            disperse,obj.funcCount,obj.optimizer);
+    end
+    stopflag=check_convergence(obj);
+end
+obj.finish_time=clock;
+end
+
+function obj=send_scout_bees(obj)
+renew=find(obj.trial>=obj.max_trials);
+[obj.xx(:,renew),obj.ff(renew),obj.violation_strength(renew),funevals,obj.fitness(renew),...
+    obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
+    obj.ub,numel(renew),obj.nonlcon,obj.penalty,obj.vargs{:});
+obj.funcCount=obj.funcCount+funevals;
+end
+
+function obj=send_employed_bees(obj)
+for ii=1:obj.food_number
+    obj=generate_mutant(obj,ii);
+end
+end
+
+function obj=send_onlooker_bees(obj)
+prob=(0.9.*obj.fitness./max(obj.fitness))+0.1;
+t=0;
+ii=1;
+while t<obj.food_number
+    if rand<prob(ii)
+        t=t+1;
+        obj=generate_mutant(obj,ii);
+    end
+    ii=ii+1;
+    if ii==obj.food_number+1
+        ii=1;
+    end
+end
+end
+
+function obj=memorize_best_source(obj)
+if isempty(obj.ff)
+    obj.best_fitness=obj.fitness_0(1);
+    obj.best_fval=obj.f0(1);
+    obj.best=obj.x0(:,1);
+    obj.best_viol_strength=obj.violation_strength_0(1);
+else
+    obj=sort_bees(obj);
+    tmp=deb_selection(obj,1,obj.best_viol_strength,obj.best,obj.best_fitness,obj.best_fval);
+    if isempty(obj.best_fval)||obj.ff(1)<obj.best_fval
+        obj.best_fval=tmp.ff(1);
+        obj.best=tmp.xx(:,1);
+        obj.best_viol_strength=obj.violation_strength(1);
+    end
+end
+end
+
+function obj=sort_bees(obj)
+VS=unique(obj.violation_strength);
+FF=nan(1,obj.MaxNodes);
+XX=nan(obj.number_of_parameters,obj.MaxNodes);
+FIT=nan(1,obj.MaxNodes);
+TRIALS=nan(1,obj.MaxNodes);
+VIOLS=nan(1,obj.MaxNodes);
+iter0=0;
+for iloc=1:numel(VS)
+    this=obj.violation_strength==VS(iloc);
+    nthis=numel(this);
+    [FF(iter0+(1:nthis)),XX(:,iter0+(1:nthis)),FIT(iter0+(1:nthis)),TRIALS(iter0+(1:nthis)),VIOLS(iter0+(1:nthis))]=...
+        resort(obj.ff(this),obj.xx(:,this),obj.fitness(this),obj.trial(this),obj.violation_strength(this));
+    iter0=iter0+nthis;
+end
+[obj.ff,obj.xx,obj.fitness,obj.trial,obj.violation_strength]=deal(FF,XX,FIT,TRIALS,VIOLS);
+end
+
+function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,nonlcon,penalty,...
     varargin)
-[x,f,viol_strength,funevals]=generate_candidates(objective,lb,ub,n,restrictions,penalty,varargin{:});
+[x,f,viol_strength,funevals]=generate_candidates(objective,lb,ub,n,nonlcon,penalty,varargin{:});
 trial=zeros(1,n);
 fit=compute_fitness(f);
 for ii=1:n
@@ -333,7 +337,7 @@ mutant(change)=mutant(change)+(mutant(change)-...
     obj.xx(change,donor_id))*2.*(rand(numel(change),1)-.5);
 mutant(change)=recenter(mutant(change),obj.lb(change),obj.ub(change));
 f_mut=obj.Objective(mutant,obj.vargs{:});
-viol=obj.restrictions(mutant);
+viol=obj.nonlcon(mutant);
 viol=viol(viol>0);
 viol_strength=sum(viol);
 obj.funcCount=obj.funcCount+1;

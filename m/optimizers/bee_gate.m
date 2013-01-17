@@ -1,4 +1,4 @@
-function [x,f,exitflag,obj]=bee_gate(PROBLEM)
+function [x,f,exitflag,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %  BEE_GATE attempts to find the global minimum of a constrained function of
 %  several variables.
 %   BEE_GATE attempts to solve problems of the form:
@@ -51,35 +51,24 @@ function [x,f,exitflag,obj]=bee_gate(PROBLEM)
 %   $Revision: 7 $  $Date: 2011/05/26 11:23 $
 
 % OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
-Objective=PROBLEM.objective;
-x0=PROBLEM.x0;
-lb=PROBLEM.lb;
-ub=PROBLEM.ub;
-options=PROBLEM.options;
 
- fields=fieldnames(options);
- bee_options=[];
- for ii=1:numel(fields)
-     fi=fields{ii};
-     if (strcmpi(fi,'MaxIter'))&&~isempty(options.(fi))
-         bee_options.MaxIter=options.(fi);
-     elseif (strcmpi(fi,'MaxFunEvals'))&&~isempty(options.(fi)) 
-         bee_options.MaxFunEvals=options.(fi);
-     elseif (strcmpi(fi,'MaxTime'))&&~isempty(options.(fi)) 
-         bee_options.MaxTime=options.(fi);
-     elseif (strcmpi(fi,'MaxNodes') )&&~isempty(options.(fi))
-         bee_options.MaxNodes=options.(fi);
-     end
- end
-bee_options.restrictions=PROBLEM.nonlcon;
 
-obj=bee(Objective,x0,[],lb,ub,bee_options);
+bee_fields= properties('bee');
+bee_options=struct();
+for ii=1:numel(bee_fields)
+    fi=bee_fields{ii};
+    if isfield(options,fi)
+        bee_options.(fi)=options.(fi);
+    end
+end
+
+obj=bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
 
 x=obj.best;
 f=obj.best_fval;
 
 if obj.iterations>=obj.MaxIter || ...
-        obj.fcount>=obj.MaxFunEvals || ...
+        obj.funcCount>=obj.MaxFunEvals || ...
         etime(obj.finish_time,obj.start_time)>=obj.MaxTime
     exitflag=0; % disp('Too many function evaluations or iterations.')
 else
