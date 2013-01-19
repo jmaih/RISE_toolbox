@@ -230,6 +230,9 @@ end
         if ~isempty(new_title.date)
             fprintf(fid,'%s \n',['\date{',new_title.date,'}']);
         end
+        fprintf(fid,'%s \n','\pagestyle{myheadings}');
+        fprintf(fid,'%s \n',['\markright{',reprocess(new_title.title),'\hfill ',new_title.date,'\hfill}']);
+        fprintf(fid,'%s \n','\thispagestyle{empty}');
         fprintf(fid,'%s \n','\maketitle');
     end
 
@@ -382,7 +385,7 @@ end
             'log-lik:'
             'log-prior:'
             'log-endog_prior'
-            'numberOfActiveInequalities'
+            'number of active inequalities'
             'log-MDD(Laplace)'
             'log-MDD(MHM)'
             'estimation sample'
