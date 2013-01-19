@@ -57,7 +57,6 @@ optimizer=obj(1).options.optimizer;
 hessian_type=obj(1).options.hessian_type;
 estim_start_from_mode=obj(1).options.estim_start_from_mode;
 estim_parallel=obj(1).options.estim_parallel;
-estim_general_restrictions=obj(1).options.estim_general_restrictions;
 estim_blocks=obj(1).options.estim_blocks;
 if ~isempty(estim_blocks)
     estim_blocks=create_estimation_blocks(obj(1),estim_blocks);
@@ -67,6 +66,8 @@ end
 % preliminary checks:
 param_names={obj(1).estimated_parameters.name};
 % Load the function that computes the likelihood
+estim_general_restrictions=cell(1,nobj);
+estim_gen_restr_args=cell(1,nobj);
 for ii=1:nobj
     if ~isequal(param_names,{obj(ii).estimated_parameters.name})
         error([mfilename,':: optimization parameters should be the same across all models and ordered in the same way'])
@@ -83,9 +84,16 @@ for ii=1:nobj
     % on.
     obj(ii).options.kf_filtering_level=0;
     if ~isempty(obj(ii).options.estim_general_restrictions)
+		if iscell(obj(ii).options.estim_general_restrictions)
+			estim_general_restrictions(ii)=obj(ii).options.estim_general_restrictions(1);	
+			estim_gen_restr_args{ii}=obj(ii).options.estim_general_restrictions(2:end);
+		else
+			estim_general_restrictions{ii}=obj(ii).options.estim_general_restrictions;
+            estim_gen_restr_args{ii}={};
+		end
         % collect the information about the degree of filtering
         % 0 (no filters), 1(filtered), 2(filtered+updated), 3(filtered+updated+smoothed)
-        obj(ii).options.kf_filtering_level=obj(ii).options.estim_general_restrictions();
+        obj(ii).options.kf_filtering_level=estim_general_restrictions{ii}();
         if obj(ii).options.kf_filtering_level && obj(ii).is_optimal_simple_rule_model
             error([mfilename,':: Cannot do filtering under estimation of optimal simple rules'])
         end
@@ -344,14 +352,16 @@ warning('on','MATLAB:illConditionedMatrix')
                 else
                     viol=nonlcon(x);
                 end
-                if ~isempty(estim_general_restrictions)
-                    viols=estim_general_restrictions(objLast);
-                    viol=[viol(:);viols(:)];
+					for iobj=1:nobj
+		                if ~isempty(estim_general_restrictions{iobj})
+		                    viols=estim_general_restrictions{iobj}(objLast(iobj),estim_gen_restr_args{iobj}{:});
+		                    viol=[viol(:);viols(:)];
+		                end
+					end
                     % it may be important to know the number of
                     % restrictions returned by this function or at least
                     % the user should return the proper number of arguments
                     % whenever something fails.
-                end
             else
                 viol=violLast;
             end
