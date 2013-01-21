@@ -111,7 +111,7 @@ classdef bee %< handle
             if nargin<5
                 options=[];
             end
-            if isempty(options.nonlcon)
+            if ~isfield(options,'nonlcon')||isempty(options.nonlcon)
                 options.nonlcon=@(z)0;
             end
             options.nonlcon=@(z)[options.nonlcon(z);lb-z;z-ub];
