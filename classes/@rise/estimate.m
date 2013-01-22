@@ -280,7 +280,7 @@ print_estimation_results(obj);
 warning('on','MATLAB:nearlySingularMatrix')
 warning('on','MATLAB:illConditionedMatrix')
 
-    function [x1,f1,H,issue,viol,objLast]=big_wrapper(x0,action)
+    function [x1,f1,H,issue,viol,finalobj]=big_wrapper(x0,action)
         if nargin<2
             action='eval';
             if nargin<1
@@ -288,9 +288,9 @@ warning('on','MATLAB:illConditionedMatrix')
             end
         end
         violLast=[];
-        objLast=[];
-        retcodeLast=[];
+        xLast=[];
         viol=[];
+        ngen_restr=[];
         switch action
             case 'estimate'
                 %         [x,f,eflag,output]=problem.optimizer(@fh_wrapper,@nonlcon_with_gradient);
@@ -312,6 +312,7 @@ warning('on','MATLAB:illConditionedMatrix')
             otherwise
                 error(['unknown type of action ',action])
         end
+        finalobj=obj;
         
         function [minus_log_post,retcode]=fh_wrapper(x)
             % this function returns the minimax if there are many objects
@@ -330,40 +331,48 @@ warning('on','MATLAB:illConditionedMatrix')
             end
             % Now take the negative for minimization
             minus_log_post=-min(fval);
-            objLast=obj;
-            retcodeLast=retcode;
             % nonlinear constraints might be incompatible with blockwise
             % optimization. In that case, it is better to compute the
             % restriction violation while evaluating the objective and save
             % the results to pass on to the optimizer when it calls the
             % nonlinear constraints.
-            violLast=nonlcon_with_gradient(x,true);
+            if retcode
+                 if isempty(ngen_restr)
+                    error('impossible to initialize the constraints')
+                end
+                violLast=ones(nconst+ngen_restr,1)*realmax/(nconst+ngen_restr);
+           else
+                violLast=mynonlinear_constraints(x,obj);
+            end
+            % update this element right here, so that it is ready when
+            % calling nonlcon_with_gradient
+            xLast=x;
+       end
+        
+        function viol=mynonlinear_constraints(x,obj)
+            viol=nonlcon(x);
+            viols=[];
+            for iobj=1:nobj
+                if ~isempty(estim_general_restrictions{iobj})
+                    vv=estim_general_restrictions{iobj}(obj(iobj),estim_gen_restr_args{iobj}{:});
+                    viols=[viols,vv(:)]; %#ok<AGROW>
+                end
+            end
+            if isempty(ngen_restr)
+                ngen_restr=numel(viols);
+            end
+            viol=[viol(:);viols(:)];
         end
         
-        function [viol,grad]=nonlcon_with_gradient(x,do_it)
+        function [viol,grad]=nonlcon_with_gradient(x)
             grad=[];
-            if nargin<2
-                do_it=false;
-            end
-            if do_it
-                if retcodeLast
-                    viol=ones(nconst,1)*realmax/nconst;
-                    % this should make it hard enough for this vector to stay in any population
-                else
-                    viol=nonlcon(x);
-                end
-					for iobj=1:nobj
-		                if ~isempty(estim_general_restrictions{iobj})
-		                    viols=estim_general_restrictions{iobj}(objLast(iobj),estim_gen_restr_args{iobj}{:});
-		                    viol=[viol(:);viols(:)];
-		                end
-					end
-                    % it may be important to know the number of
-                    % restrictions returned by this function or at least
-                    % the user should return the proper number of arguments
-                    % whenever something fails.
-            else
+            if isequal(x,xLast)
                 viol=violLast;
+            else
+                warning('evaluating constraints before computing log-posterior ')
+                thisobj=set_parameters(obj,x);
+                thisobj=filter(thisobj);
+                viol=mynonlinear_constraints(x,thisobj);
             end
         end
     end
