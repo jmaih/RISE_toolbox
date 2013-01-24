@@ -169,7 +169,7 @@ f0=nan(1,Nsim);
 % all objects are evaluated at the same point. Without a second argument,
 % this is exactly what will happen.
 [~,f0(1),~,retcode0,viol]=big_wrapper(x0(:,1));
-if retcode0||any(viol)
+if retcode0||any(viol>0)
     % first check constraint violations
     f0(1)=obj(1).options.Penalty;
 end
@@ -210,7 +210,6 @@ for ii=beg:Nsim
     ratio=ii/Nsim;
     fprintf(1,'%s\n',['...', num2str(100*ratio),'% done']);
 end
-
 
 [x1,f1,H,issue,viol,obj]=big_wrapper(x0,'estimate'); %#ok<ASGLU>
 viol=viol(viol>0);
