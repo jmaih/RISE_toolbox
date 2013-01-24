@@ -1,6 +1,6 @@
 function indiv=evaluate_individual(bird,objective,lb,ub,nonlcon,varargin)
 if nargin<1
-    indiv=struct('x',{},'f',{},'viol',{},'violstrength',{});
+    indiv=struct('x',{},'f',{},'viol',{},'fitness',{},'violstrength',{});
 else
     % correct the bounds
     bird(bird<lb)=lb(bird<lb);
@@ -18,6 +18,7 @@ else
     indiv=struct('x',bird,...
         'f',fval,...
         'viol',vv,...
-        'violstrength',sum(vv(vv>0)));
+        'fitness',compute_fitness(fval),...
+        'violstrength',sqrt(sum(vv.^2)));
 end
 end

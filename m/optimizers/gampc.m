@@ -257,7 +257,7 @@ classdef gampc < handle
             if nargin==0
                 return
             end
-            if nargin<5
+            if nargin<6
                 options=[];
             end
             
