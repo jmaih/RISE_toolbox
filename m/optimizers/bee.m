@@ -112,9 +112,10 @@ classdef bee %< handle
                 options=[];
             end
             if ~isfield(options,'nonlcon')||isempty(options.nonlcon)
-                options.nonlcon=@(z)0;
+                options.nonlcon=@(z)[lb-z;z-ub];
+            else
+                options.nonlcon=@(z)[options.nonlcon(z,varargin{:});lb-z;z-ub];
             end
-            options.nonlcon=@(z)[options.nonlcon(z);lb-z;z-ub];
             % the restrictions are satisfied when all elements in this
             % vector are negative or equal to 0
             % set these default options and change them if later on options is non-empty
@@ -304,21 +305,6 @@ end
 viol_strength=cell2mat(viol_strength);
 end
 
-function obj=deb_selection(obj,ii,viol_strength,mutant,fit_mut,f_mut)
-% we apply a greedy selection between ii and the mutant after controling
-% for feasibility
-if (viol_strength<obj.violation_strength(ii))||...
-        (viol_strength==obj.violation_strength(ii) && fit_mut>obj.fitness(ii))
-    obj.fitness(ii)=fit_mut;
-    obj.xx(:,ii)=mutant;
-    obj.ff(:,ii)=f_mut;
-    obj.trial(ii)=0;
-    obj.violation_strength(ii)=viol_strength;
-else
-    obj.trial(ii)=obj.trial(ii)+1;
-end
-end
-
 function obj=generate_mutant(obj,ii)
 % generate a solution for index ii
 % a randomly chosen solution different from ii is used
@@ -344,3 +330,19 @@ obj.funcCount=obj.funcCount+1;
 fit_mut=compute_fitness(f_mut);
 obj=deb_selection(obj,ii,viol_strength,mutant,fit_mut,f_mut);
 end
+
+function obj=deb_selection(obj,ii,viol_strength,mutant,fit_mut,f_mut)
+% we apply a greedy selection between ii and the mutant after controling
+% for feasibility
+if (viol_strength<obj.violation_strength(ii))||...
+        (viol_strength==obj.violation_strength(ii) && fit_mut>obj.fitness(ii))
+    obj.fitness(ii)=fit_mut;
+    obj.xx(:,ii)=mutant;
+    obj.ff(:,ii)=f_mut;
+    obj.trial(ii)=0;
+    obj.violation_strength(ii)=viol_strength;
+else
+    obj.trial(ii)=obj.trial(ii)+1;
+end
+end
+

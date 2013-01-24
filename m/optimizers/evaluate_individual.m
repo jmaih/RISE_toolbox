@@ -13,7 +13,8 @@ else
     if isempty(nonlcon)
         vv=0;
     else
-        vv=nonlcon(bird);
+        % nonlcon should have the same inputs as objective
+        vv=nonlcon(bird,varargin{:});
     end
     indiv=struct('x',bird,...
         'f',fval,...

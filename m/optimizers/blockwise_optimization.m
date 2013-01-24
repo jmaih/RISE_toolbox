@@ -32,6 +32,19 @@ end
 blocks=default_options.blocks;
 optimizer=default_options.optimizer;
 optim_options=rmfield(default_options,{'optimizer','blocks'});
+nonlcon=default_options.nonlcon;
+if isempty(nonlcon)
+    nonlcon=@(x)0;
+end
+
+% get the name of the optimizer and check whether it comes from matlab, in
+% which case, it is better to pass arguments as problem
+if ischar(optimizer)
+    optimizer_name=optimizer;
+    optimizer=str2func(optimizer);
+else
+    optimizer_name=func2str(optimizer);
+end
 
 f0=func(x0,varargin{:});
 minblk=5;
@@ -80,6 +93,17 @@ end
 start_time=clock;
 blkw_obj.start_time=start_time;
 stopflag=check_convergence(blkw_obj);
+
+matlab_style=ismember(optimizer_name,{'fmincon','fminunc','fminsearch'});
+if matlab_style
+    Problem=struct('objective',[],'x0',[],'Aineq',[],'bineq',[],'Aeq',[],...
+        'beq',[],'lb',[],'ub',[],'nonlcon',optim_options.nonlcon,...
+        'solver',optimizer_name,...
+        'options',rmfield(optim_options,...
+        {'nonlcon','verbose','rand_seed','penalty'}));
+end
+% add the block nonlinear constraint
+optim_options.nonlcon=@block_nonlcon;
 while isempty(stopflag)
     for blk=1:nblks+1
         optim_options.start_time=start_time;
@@ -101,20 +125,33 @@ while isempty(stopflag)
             disp(['optimizing block the entire vector: ',int2str(numel(this)),' parameters'])
         end
         %         end
-        [x0(this),f0,exitflag,output]=optimizer(@wrapper,x0(this),lb(this),ub(this),...
-            optim_options,...
-            x0);
-        blkw_obj.funcCount=blkw_obj.funcCount+output.funcCount;
+        
+        if matlab_style
+            Problem.objective=@(x)block_wrapper(x,x0);
+            Problem.x0=x0(this);
+            Problem.lb=lb(this);
+            Problem.ub=ub(this);
+            Problem.options.nonlcon=@(x)block_nonlcon(x,x0);
+            [x0(this),f0,exitflag,output]=optimizer(Problem);
+        else
+            [x0(this),f0,exitflag,output]=optimizer(@block_wrapper,x0(this),...
+                lb(this),ub(this),optim_options,x0);
+        end
         blkw_obj.iterations=blkw_obj.iterations+output.iterations;
         start_time=clock;
     end
     stopflag=check_convergence(blkw_obj);
 end
 
+    function constr=block_nonlcon(z,x)
+        x(this)=z;
+        constr=nonlcon(x);
+    end
 
-    function f=wrapper(z,x)
+    function f=block_wrapper(z,x)
         x(this)=z;
         f=func(x,varargin{:});
+        blkw_obj.funcCount=blkw_obj.funcCount+1;
     end
 
 %     function blk=random_block()
