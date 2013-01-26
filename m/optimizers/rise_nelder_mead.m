@@ -149,7 +149,7 @@ while funcCount < MaxFunEvals && iterations < MaxIter
     end
     Simplex = sort_population(Simplex);
     iterations = iterations + 1;
-    fprintf(' %5.0f        %5.0f     %12.6g         %s\npar', iterations, funcCount, Simplex(1).f, how)
+    fprintf(' %5.0f        %5.0f     %12.6g         %s\n', iterations, funcCount, Simplex(1).f, how)
 end   % while
 
 xbest = Simplex(1).x;
