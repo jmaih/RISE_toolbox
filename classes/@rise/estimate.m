@@ -336,10 +336,13 @@ warning('on','MATLAB:illConditionedMatrix')
             % the results to pass on to the optimizer when it calls the
             % nonlinear constraints.
             if retcode
-                 if isempty(ngen_restr)
-                    error('impossible to initialize the constraints')
+                if isempty(ngen_restr)
+                    % then we still have not found a good starting point
+                    % and therefore, there is no point in looking at the
+                    % constraints.
+                else
+                    violLast=ones(nconst+ngen_restr,1)*realmax/(nconst+ngen_restr);
                 end
-                violLast=ones(nconst+ngen_restr,1)*realmax/(nconst+ngen_restr);
            else
                 violLast=mynonlinear_constraints(x,obj);
             end
