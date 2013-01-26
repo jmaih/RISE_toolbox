@@ -304,7 +304,7 @@ if nobj>1
         for iobj=2:nobj
             list={obj(iobj).(first_list{ilist})};
             if ~isequal(ref_list,list)
-                error([first_list{ilist},' should be the same across models'])
+                warning([first_list{ilist},' is not the same across models'])
             end
         end
     end
