@@ -3,11 +3,8 @@ function [LogLik,Incr,retcode,Filters] = markov_switching_kalman_filter(obs_id,y
 %  Detailed explanation to come here
 
 % all rows of Q should sum to 1
-kf_algorithm='';
-kf_tol=0;
-kf_filtering_level=0;
 filt_options=struct('kf_algorithm','lwz',...%     alternative is kn (Kim and Nelson)
-    'kf_tol',1.0000e-020,...
+    'kf_tol',1e-20,...
     'kf_filtering_level',3);
 % 0: no filters,
 % 1: filtering,
@@ -44,21 +41,15 @@ if nargin<9
 end
 data_occurrence=~isnan(y);
 
-filtering_fields=fieldnames(filt_options);
-for ii=1:numel(filtering_fields)
-    v=filtering_fields{ii};
-    if isfield(Options,v)
-        eval([v,'=Options.(v);'])
-    else
-        eval([v,'=defaults.(v);'])
-    end
-end
+defaults=mysetfield(defaults,Options);
+kf_algorithm=defaults.kf_algorithm;
+kf_tol=defaults.kf_tol;
+kf_filtering_level=defaults.kf_filtering_level;
+
 init_fields=fieldnames(init_options);
 for ii=1:numel(init_fields)
     v=init_fields{ii};
-    if isfield(Options,v)
-        init_options.(v)=Options.(v);
-    end
+    init_options.(v)=defaults.(v);
 end
 
 deterministic=false;
@@ -104,7 +95,15 @@ switch lower(deblank(kf_algorithm))
 end
 
 %% Initialization
-a01=zeros(endo_nbr,h,hstar);
+[a01,P01,PAItt,start,retcode]=kalman_initialization(T,R,Q0,init_options);
+if retcode
+    return
+end
+% chop the matrices if necessary
+a01=a01(:,1:h,1:hstar);
+P01=P01(:,:,1:h,1:hstar);
+
+% add the steady state to the zero-initial conditions
 for s1=1:h
     for s0=1:hstar
         a01(:,s1,s0)=steady_state(:,s1);
@@ -115,25 +114,12 @@ for s1=1:h
         end
     end
 end
-P01=zeros(endo_nbr,endo_nbr,h,hstar);
 RR=zeros(endo_nbr,endo_nbr,h);
 
 for s1=1:h
     RR(:,:,s1)=R(:,:,s1)*transpose(R(:,:,s1));
     % the correct form is RR(:,:,s1)=R(:,:,:,s1)*transpose(R(:,:,:,s1));
     % but still the thing above works since the 3rd dimension is unity
-    
-    % initialize the filter but also modify T and RR if there are
-    % nonstationary variables
-    [~,tmp,PAItt,start,retcode]=kalman_initialization(T(:,:,s1),RR(:,:,s1),...
-        Q0,init_options);
-    if retcode==0
-        for s0=1:hstar
-            P01(:,:,s1,s0)=tmp;
-        end
-    else
-        return
-    end
 end
 
 PAI=transpose(Q0)*PAItt;
@@ -350,7 +336,7 @@ if kf_filtering_level
     end % if kf_filtering_level>1
 end % if kf_filtering_level
 
-%=========================== Sub-function ===========================================
+%--------------------------------------------------------------------------
     function [a,P]=predict_while_collapsing(att,Ptt,Qt,PAI,PAItt,slead)
         a=0;
         P=0;

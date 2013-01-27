@@ -38,6 +38,8 @@ switch code
         msg='unlikely parameter vector';
     case 307
         msg='Nan, Inf or complex in log prior';
+    case 308
+        msg='Inconsistent ergodic probabilities (nans or sum different from 1)';
         % ====== finding hyperparameters ====== %
     case 402
         msg='finding hyperparameters failed';

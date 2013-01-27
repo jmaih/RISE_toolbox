@@ -25,7 +25,6 @@ end
 % all rows of Q should sum to 1
 kf_algorithm='';
 kf_tol=0;
-kf_filtering_level=0;
 
 try
     narginchk(11,13)
@@ -46,14 +45,11 @@ end
 
 data_occurrence=~isnan(y);
 
-filtering_fields=fieldnames(defaults);
-for ii=1:numel(filtering_fields)
-    v=filtering_fields{ii};
-    if isfield(Options,v)
-        defaults.(v)=Options.(v);
-    end
-    eval([v,'=defaults.(v);'])
-end
+defaults=mysetfield(defaults,Options);
+kf_algorithm=defaults.kf_algorithm;
+kf_tol=defaults.kf_tol;
+kf_filtering_level=defaults.kf_filtering_level;
+
 init_options=kalman_initialization();
 init_fields=fieldnames(init_options);
 for ii=1:numel(init_fields)
@@ -129,7 +125,13 @@ switch lower(deblank(kf_algorithm))
 end
 
 %% Initialization
-a01=zeros(mm,h,hstar);
+[a01,P01tmp,PAItt,start,retcode]=kalman_initialization(T,squeeze(R(:,:,1,:)),Q0,init_options);
+if retcode
+    return
+end
+% chop the matrices if necessary
+a01=a01(:,1:h,1:hstar);
+P01tmp=P01tmp(:,:,1:h,1:hstar);
 for s1=1:h
     for s0=1:hstar
         a01(1:endo_nbr,s1,s0)=steady_state(:,s1);
@@ -140,19 +142,10 @@ for s1=1:h
         end
     end
 end
-P01=zeros(mm,mm,h,hstar);
-for s1=1:h
-    [~,tmp,PAItt,start,retcode]=kalman_initialization(...
-        T(:,:,s1),R(:,:,1,s1)*R(:,:,1,s1)',Q0,init_options);
-    if retcode==0
-        for s0=1:hstar
-            P01(1:endo_nbr,1:endo_nbr,s1,s0)=tmp;
-            P01(endo_nbr+1:end,endo_nbr+1:end,s1,s0)=eye(shock_span);
-        end
-    else
-        return
-    end
-end
+P01=eye(mm);
+P01=P01(:,:,ones(h,1),ones(hstar,1));
+P01(1:endo_nbr,1:endo_nbr,:,:)=P01tmp;
+
 PAI=transpose(Q0)*PAItt;
 
 %% pre-allocation

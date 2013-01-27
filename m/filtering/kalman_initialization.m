@@ -1,5 +1,4 @@
-function [a0,P0,PAI00,start,retcode]=kalman_initialization(T,RQR,transition_matrix,...
-    options)
+function [a0,P0,PAI00,start,retcode]=kalman_initialization(T,R,transition_matrix,options)
 % There is no documentation of this function yet.
 
 % diffuse initialization for all elements in the state vector including
@@ -47,22 +46,42 @@ kf_presample=defaults.kf_presample;
 
 kf_diffuse_all=~isempty(kf_init_variance);
 
-endo_nbr=size(T,1);
-a0=zeros(endo_nbr,1);
-start=[]; PAI00=[];
+[a0,P0,PAI00,retcode]=initialize_filter();
 
-if kf_diffuse_all
-    P0=kf_init_variance*eye(size(T,1));
-    retcode=0;
-else
-    [P0,retcode]=lyapunov_equation(T,RQR,options);
-end
+start=[]; 
 if ~retcode
     kf_presample=max(kf_presample,0);
     if kf_diffuse_all
         kf_presample=max(kf_presample,kf_diffuse_min_presample);
     end
-    PAI00=initial_markov_distribution(transition_matrix,kf_ergodic);
     start=kf_presample+1;
 end
 
+%--------------------------------------------------------------------------
+    function [a0,P0,PAI00,retcode]=initialize_filter()
+        [endo_nbr,~,h]=size(T);
+        [PAI00,retcode]=initial_markov_distribution(transition_matrix,kf_ergodic);
+        P0=[];
+        a0=[];
+        if ~retcode
+            if kf_diffuse_all
+                P0=kf_init_variance*eye(endo_nbr);
+            else
+                Tstar=0;
+                Rstar=0;
+                for ireg=1:h
+                    Tstar=Tstar+PAI00(ireg)*T(:,:,ireg);
+                    Rstar=Rstar+PAI00(ireg)*R(:,:,ireg);
+                end
+                [tmp,retcode]=lyapunov_equation(Tstar,Rstar*Rstar',options);
+                if ~retcode
+                    P0=tmp;
+                end
+            end
+            if ~retcode
+                P0=P0(:,:,ones(1,h),ones(1,h));
+                a0=zeros(endo_nbr,h,h);
+            end
+        end
+    end
+end
