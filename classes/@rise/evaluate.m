@@ -179,7 +179,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
                 % equations.
                 z=z(:,ones(1,size(M,1)));
                 myfun=@(xx)online_function_evaluator(vectorized_dynamic_params,xx,z,ss_i);
-                JP=rise_numjac(myfun,M(:,ii),z);
+                JP=rise_numjac(myfun,M(:,ii));
                 J=[J,JP]; %#ok<AGROW>
             end
         case 'automatic'
@@ -187,7 +187,7 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
             zz=rise_nad(z);
             J=online_function_evaluator(vectorized_dynamic,zz,M(:,ii),ss_i,def_i);
             if ~isempty(switching)
-                JP=dynamic_params(rise_nad(M(:,ii)),z,ss_i);
+                JP=online_function_evaluator(vectorized_dynamic_params,rise_nad(M(:,ii)),z,ss_i);
                 J=[J,JP]; %#ok<AGROW>
             end
             J=full(J);
