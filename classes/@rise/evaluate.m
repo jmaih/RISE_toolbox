@@ -63,8 +63,8 @@ end
 endo_nbr=obj.NumberOfEndogenous(1);
 ss_and_bgp_start_vals=zeros(2*endo_nbr,obj.NumberOfRegimes);
 
-vectorized_code=endo_nbr<=obj.options.vectorized_code_threshold;
-dynamic_params=obj.func_handles.dynamic_params;
+% % vectorized_code=endo_nbr<=obj.options.vectorized_code_threshold;
+% % dynamic_params=obj.func_handles.dynamic_params;
 vectorized_dynamic=obj.func_handles.vectorized_dynamic;
 % dynamic=obj.func_handles.dynamic; % both numerical and automatic
 % derivatives use the vectorized form of this function, irrespective of the
