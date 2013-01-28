@@ -629,15 +629,14 @@ classdef sad_reverse
             wrt_names={wrt.name};
             obj=obj(:);
             nobj=numel(obj);
+            this=sad_reverse(0);
             if vectorize
                 index=cell(nobj,2);
-                this=sad_reverse.empty(0,1);
                 tmp=sad_reverse.create_map();
                 prefix=tmp.prefix_list{2};
                 clear tmp
             else
                 index=[];
-                this=sad_reverse(0);
                 this=this(ones(nobj,nwrt));
             end
             for iobj=1:nobj
