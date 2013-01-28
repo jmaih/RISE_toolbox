@@ -635,6 +635,7 @@ classdef sad_reverse
                 tmp=sad_reverse.create_map();
                 prefix=tmp.prefix_list{2};
                 clear tmp
+                this=this(ones(nobj,1));
             else
                 index=[];
                 this=this(ones(nobj,nwrt));
@@ -1022,7 +1023,7 @@ classdef sad_reverse
                     right=[map.prefix_list{2},'_',row_str,'_'];
                     str=[name,'(',row_str,',',right,')'];
                     % replace only the lhs of the epilogue
-                    epilogue(:,1)=strrep(epilogue(:,1),c{irow},str);
+                    epilogue(:,1)=regexprep(epilogue(:,1),['(?<!\w)',c{irow},'(?!\w)'],str); % ;<-- epilogue(:,1)=strrep(epilogue(:,1),c{irow},str);
                 else
                     for icol=1:ncols
                         if irow==1
