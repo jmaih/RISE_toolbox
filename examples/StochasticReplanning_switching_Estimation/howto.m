@@ -2,7 +2,7 @@
 close all
 clear
 clc
-%% add the necessary paths
+%% load the toolbox
 rise_startup()
 %% load the data and construct the time series
 dat=load('usmodel_data');
@@ -18,7 +18,7 @@ hist_start=rise_date(data_start);
 sw=rise('usmodel_sr_switch','data',data,...
     'estim_start_date',hist_start.observation_2_date(71),...
     'kf_presample',4,...
-    'lc_MaxIter',5000,... % jack up the number of iteration to increase the probability of solving
+    'lc_MaxIter',5000,... % jack up the number of iterations to increase the probability of solving
     'check_stability',false); % save some time by avoiding the checking of stability all the time
     
 
