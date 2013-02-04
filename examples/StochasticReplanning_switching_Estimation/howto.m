@@ -3,7 +3,7 @@ close all
 clear
 clc
 %% add the necessary paths
-setpaths
+rise_startup()
 %% load the data and construct the time series
 dat=load('usmodel_data');
 vnames=fieldnames(dat);
@@ -17,10 +17,10 @@ data=rise_time_series(data_start,data,vnames);
 hist_start=rise_date(data_start);
 sw=rise('usmodel_sr_switch','data',data,...
     'estim_start_date',hist_start.observation_2_date(71),...
-    'presample',4,...
-    'MaxIter',5000,... % jack up the number of iteration to increase the probability of solving
-    'check_stability',false,... % save some time by avoiding the checking of stability all the time
-    'steady_state_file','usmodel_steadystate');
+    'kf_presample',4,...
+    'lc_MaxIter',5000,... % jack up the number of iteration to increase the probability of solving
+    'check_stability',false); % save some time by avoiding the checking of stability all the time
+    
 
 %% estimating the model
 profile on

@@ -8,7 +8,7 @@ error(nargchk(4,4,nargin,'struct'))
 % what I do here, so that I can be used for simulation and for the
 % calculation of moments too.
 if obj.is_optimal_policy_model && obj.NumberOfRegimes==2
-    if obj.options.reconvexify
+    if obj.options.lc_reconvexify
         error([mfilename,':: reconvexification is not compatible with multiple regimes'])
     end
     T=repmat(T,[1,1,2]);
@@ -35,7 +35,7 @@ end
 % % % should write a function called  that does
 % % % what I do here, so that I can be used for simulation and for the
 % % % calculation of moments too.
-% % if obj.is_optimal_policy_model && ~obj.options.reconvexify
+% % if obj.is_optimal_policy_model && ~obj.options.lc_reconvexify
 % %     gam=obj.planner_commitment;
 % %     if ~ismember(gam,[0,1])
 % %         T=repmat(T,[1,1,2]);

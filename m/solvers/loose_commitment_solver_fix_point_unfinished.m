@@ -33,7 +33,7 @@ algo_name=mfilename;
 retcode=0;
 
 optimization_options={'MaxIter','TolFun','explosion_limit',...
-    'qz_criterium','reconvexify','lc_algorithm','verbose'};
+    'qz_criterium','lc_reconvexify','lc_algorithm','verbose'};
 for ii=1:numel(optimization_options)
     vi=optimization_options{ii};
     if isfield(optim_opt,vi)
@@ -57,13 +57,13 @@ end
 
 switch lc_algorithm
     case 'short'
-        [GAM0,GAMlag,GAMv]=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+        [GAM0,GAMlag,GAMv]=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
         if det(GAM0)==0
-            [GAM0,GAMlag,GAMv]=loose_commitment_matrices(rand(size(T0)),Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+            [GAM0,GAMlag,GAMv]=loose_commitment_matrices(rand(size(T0)),Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
         end
         T=-GAM0\GAMlag;
     case 'long'
-        [OMG0,OMGlag,OMGlead,GAMv]=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+        [OMG0,OMGlag,OMGlead,GAMv]=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
 end
 
 [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargin) 
@@ -76,10 +76,10 @@ while conv_T>TolFun && iter<MaxIter && conv_T<explosion_limit && ~any(any(isnan(
     %===== Iterate =====%
     switch lc_algorithm
         case 'short'
-                GAM0=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+                GAM0=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
             T=-GAM0\GAMlag;
         case 'long'
-                OMG0=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+                OMG0=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
             % 		[T,control]=msre_aim(0,OMGlead,OMG0,OMGlag,0,m,1);
             [T,control]=msre_gensys(0,OMGlead,OMG0,OMGlag,0,m,1);
             if isnan(control)
@@ -126,7 +126,7 @@ if retcode
 else
     if strcmp(lc_algorithm,'long')
         clear OMGlead OMG0 OMGlag
-        GAM0=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+        GAM0=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
     end
     
     iGAM0=GAM0\eye(m);
@@ -149,13 +149,13 @@ end
 
 end
 
-function T=loose_commitment_iterator(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify,algorithm)
+function T=loose_commitment_iterator(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify,algorithm)
 switch algorithm
     case 'short'
-        GAM0=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+        GAM0=loose_commitment_matrices(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
         T=-GAM0\GAMlag;
     case 'long'
-        OMG0=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,reconvexify);
+        OMG0=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
         % 		[T,control]=msre_aim(0,OMGlead,OMG0,OMGlag,0,m,1);
         [T,control]=msre_gensys(0,OMGlead,OMG0,OMGlag,0,m,1);
         if isnan(control)
@@ -165,7 +165,7 @@ end
 end
 
 
-function [GAM0,GAMlag,GAMv]=loose_commitment_matrices(T,Aminus,A0,Aplus,B,W,betta,gam,reconvexify)
+function [GAM0,GAMlag,GAMv]=loose_commitment_matrices(T,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify)
 
 [mult_nbr,endo_nbr]=size(A0);
 m=mult_nbr+endo_nbr;
@@ -190,7 +190,7 @@ GAM0(l,l)=gam*Aplus*Tyl;
 if nargout>1
     exo_nbr=size(B,2);
     GAMlag=zeros(m);
-    if reconvexify
+    if lc_reconvexify
         GAMlag(y,l)=gam/betta*Aplus';
     else
         GAMlag(y,l)=(gam>0)/betta*Aplus';
@@ -203,7 +203,7 @@ if nargout>1
 end
 end
 
-function [OMG0,OMGlag,OMGlead,GAMv]=loose_commitment_matrices_long(T,Aminus,A0,Aplus,B,W,betta,gam,reconvexify)
+function [OMG0,OMGlag,OMGlead,GAMv]=loose_commitment_matrices_long(T,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify)
 [mult_nbr,endo_nbr]=size(A0);
 m=endo_nbr+mult_nbr;
 y=1:endo_nbr;
@@ -223,7 +223,7 @@ if nargout>1
     
     OMGlag=zeros(m);
     OMGlag(l,y)=Aminus;
-    if reconvexify
+    if lc_reconvexify
         OMGlag(y,l)=gam/betta*Aplus';
     else
         OMGlag(y,l)=(gam>0)/betta*Aplus';
