@@ -10,7 +10,7 @@
 %   <a href="matlab:help m\solvers\expand_array">m\solvers\expand_array</a>                                 - case 1	% A0, Aminus or Aplus
 %   <a href="matlab:help m\solvers\fix_point_iterator">m\solvers\fix_point_iterator</a>                           - this function solves for a fix point. Inputs are:
 %   <a href="matlab:help m\solvers\gensys">m\solvers\gensys</a>                                       - function [G1,C,impact,fmat,fwt,ywt,gev,eu,loose]=gensys(g0,g1,c,psi,pi,div)
-%   <a href="matlab:help m\solvers\get_default_optimization_option">m\solvers\get_default_optimization_option</a>              - reconvexify:
+%   <a href="matlab:help m\solvers\get_default_optimization_option">m\solvers\get_default_optimization_option</a>              - lc_reconvexify:
 %   m\solvers\is_eigenvalue_solver_candidate               - (No help available)
 %   <a href="matlab:help m\solvers\loose_commitment_solver">m\solvers\loose_commitment_solver</a>                      - Reference: Debortoli, Maih, Nunes (2010): "Loose Commitment in Medium
 %   <a href="matlab:help m\solvers\loose_commitment_solver_fix_point_unfinished">m\solvers\loose_commitment_solver_fix_point_unfinished</a> - Reference: Debortoli, Maih, Nunes (2010): "Loose Commitment in Medium
