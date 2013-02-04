@@ -2,18 +2,19 @@ function [xbest,fbest,exitflag,output]=mbo(objective,x0,lb,ub,options,varargin)
 
 % migrating birds optimization (MBO)
 
-default_options=struct('MaxNodes',20,... % : number of initial solutions [51]
-    'MaxIter',4000,...
-    'MaxFunEvals',150000,...
-    'verbose',10,...
-    'nonlcon',[],...
-    'operator','de',...
+default_options = optimization_universal_options();
+
+specific_options=struct('operator','de',...
+    'iwo_sig_max',10/100,... % max standard deviation in IWO operator
+    'iwo_sig_min',1/100,... % min standard deviation in IWO operator
     'm_',1,...% m_ : # of tours or wing flaps [10]
     'x_',1,...% x_ : # of neighbors solutions to be shared with the next solution [1]
     'k_',11);% k_ : # of neighbors solutions to be considered : speed of the flight [3]
 %     'mutation_probability',0.01,...
 %     'crossover_probability',1,...
 %     'crossover_type',3,...
+
+default_options=mergestructures(default_options,specific_options);
 if nargin==0
     xbest=default_options;
     return
@@ -23,19 +24,12 @@ if nargin<5
     options=[];
 end
 
-ff=fieldnames(default_options);
-for ifield=1:numel(ff)
-    v=ff{ifield};
-    if isfield(options,v)
-        default_options.(v)=options.(v);
-    end
-end
+[default_options]=mysetfield(default_options,options);
 
 n_ =default_options.MaxNodes;
 if rem(n_,2)==0
     n_=n_+1;
 end
-K_=default_options.MaxFunEvals;% : iteration limit in terms of function evaluations
 npar=numel(x0);
 nonlcon=default_options.nonlcon;
 m_=default_options.m_;
@@ -43,8 +37,31 @@ x_=default_options.x_;
 k_=default_options.k_;
 verbose=default_options.verbose;
 operator=default_options.operator;
+iwo_sig_max=default_options.iwo_sig_max;
+iwo_sig_min=default_options.iwo_sig_min;
 
-funcCount=0;
+if iwo_sig_min>iwo_sig_max
+    error('iwo_sig_min greater than iwo_sig_max')
+end
+
+if strcmp(operator,'iwo')
+    search_range=ub-lb;
+    % correct for inf
+    search_range(isinf(search_range))=5;
+    if any(search_range>10)
+        warning('search range for some parameters exceeds 10...')
+    end
+    iwo_sig_min=iwo_sig_min*search_range;
+    iwo_sig_max=iwo_sig_max*search_range;
+end
+
+output={'MaxIter','MaxTime','MaxFunEvals','start_time'};
+not_needed=fieldnames(rmfield(default_options,output));
+output=rmfield(default_options,not_needed);
+output.funcCount = 0;
+output.iterations = 0;
+output.algorithm = [mfilename,'(',operator,')'];
+
 [leader,Sleft,Sright]=initialize();
 best_bird=leader;
 % this could be small in principle and it is not defined in the paper/flowchart
@@ -55,9 +72,16 @@ Sright_t_neighbor_set=wrapper();
 
 left_side=true;
 
-iterations=0;
-while funcCount<K_
-    iterations=iterations+1;
+if ~default_options.stopping_created
+    manual_stopping();
+end
+stopflag=check_convergence(output);
+while isempty(stopflag)
+    output.iterations=output.iterations+1;
+    if strcmp(operator,'iwo')
+        coef=min((output.MaxIter-output.iterations)/output.MaxIter,(output.MaxFunEvals-output.funcCount)/output.MaxFunEvals);
+        iwo_sig=iwo_sig_min+(iwo_sig_max-iwo_sig_min)*coef;
+    end
     jj=0;
     while jj<m_
         jj=jj+1;
@@ -65,16 +89,19 @@ while funcCount<K_
         improve_other_solutions();
     end
     replace_leader();
-    if iterations==1||rem(iterations,verbose)==0
-        fprintf(1,' iter %0.10g  fval %0.10g funcCount %0.10g\n',iterations,best_bird.f,funcCount);
+    if rem(output.iterations,verbose)==0 || output.iterations==1
+        restart=1;
+        fmin_iter=best_bird.f;
+        disperse=dispersion([pop.x],lb,ub);
+        display_progress(restart,output.iterations,best_bird.f,fmin_iter,...
+            disperse,output.funcCount,output.algorithm);
     end
+    stopflag=check_convergence(output);
 end
 
 xbest=best_bird.x;
 fbest=best_bird.f;
 exitflag=1;
-
-output=struct('funcCount',funcCount,'iterations',iterations);
 
     function [leader,Sleft,Sright]=initialize()
         % randomly generate n_ initial solutions
@@ -143,7 +170,7 @@ output=struct('funcCount',funcCount,'iterations',iterations);
     end
     function replace_leader()
         if left_side
-            % move the leader to the end of the left list and assign sl1 as
+            % move the leader to the end of the left list and asiwo_sign sl1 as
             % the new leader
             Sleft=[Sleft,leader];
             leader=Sleft(1);
@@ -152,7 +179,7 @@ output=struct('funcCount',funcCount,'iterations',iterations);
             Sright=[Sright,leader];
             leader=Sright(1);
             Sright(1)=[];
-            % move the leader to the end of the right list and assign sr1 as
+            % move the leader to the end of the right list and asiwo_sign sr1 as
             % the new leader
         end
         left_side=~left_side;
@@ -254,6 +281,8 @@ output=struct('funcCount',funcCount,'iterations',iterations);
             end
         end
         function this=iwo_operator(stud)
+            iwo_sig_eta=rand*iwo_sig;
+            this=stud.x+iwo_sig_eta.*randn(npar,1);
         end
     end
     function this=wrapper(bird)
@@ -261,7 +290,7 @@ output=struct('funcCount',funcCount,'iterations',iterations);
             this=evaluate_individual();
         else
             this=evaluate_individual(bird,objective,lb,ub,nonlcon,varargin{:});
-            funcCount=funcCount+1;
+            output.funcCount=output.funcCount+1;
         end
     end
 end

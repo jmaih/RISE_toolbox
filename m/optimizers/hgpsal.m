@@ -83,7 +83,7 @@ exitflag=1;
     end
     function hybrid_genetic_pattern_search()
         this=genetic_algorithm(this);
-        this=hooke_jeeves(this);
+%         this=hooke_jeeves(this);
     end
 
 
@@ -141,7 +141,7 @@ exitflag=1;
             k=k+1;
             fprintf('iter %8.4g   fval  %8.4g   f-count  %8.12g\n',k,pop(1).f,output.funcCount);
         end
-        keyboard
+%         keyboard
                 
         function choice=tournament_selection(n)
             choice=[];
