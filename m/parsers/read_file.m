@@ -11,11 +11,11 @@ while 1
     rawline = fgetl(fid);
     if ~ischar(rawline), break, end
     rawline=remove_comments(rawline);
+    iter=iter+1;
     if all(isspace(rawline))
         continue
     end
 
-    iter=iter+1;
     % check whether there are files included by parsing rawline
     [tokk,rest_]=strtok(rawline,SPACE_DELIMITERS);
     if tank_open
