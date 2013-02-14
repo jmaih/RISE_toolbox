@@ -128,15 +128,10 @@ end
                         hidden_ss_bgp=repmat(hidden_ss_bgp,2,1);
                     end
                 else
-                    if obj.estimation_under_way
-                        loc=strcmp('is_switching',obj.parameters(1,:));
-                        switching_params=obj.parameters{2,loc};
-                        loc=strcmp('startval',obj.parameters(1,:));
-                        sparam=obj.parameters{2,loc}(switching_params,:);
-                    else
-                        switching_params=[obj.parameters.is_switching];
-                        sparam=vertcat(obj.parameters(switching_params).startval);
-                    end
+                        loc=strcmp('is_switching',obj.parameters_image(1,:));
+                        switching_params=obj.parameters_image{2,loc};
+                        loc=strcmp('startval',obj.parameters_image(1,:));
+                        sparam=obj.parameters_image{2,loc}(switching_params,:);
 %                     [TT,RR,gsig,retcode,obj.options] = msre_solve_accelerated(Aminus,A0,Aplus,B,...
 %                         obj.C,sparam,obj.is_unique_steady_state,...
 %                         Q,order,T0,obj.options);

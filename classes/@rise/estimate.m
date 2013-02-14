@@ -98,8 +98,8 @@ for ii=1:nobj
             error([mfilename,':: Cannot do filtering under estimation of optimal simple rules'])
         end
     end
-    % Now destroy the parameter object
-    obj(ii).parameters=object2cell(obj(ii).parameters);
+%%%%    % Now destroy the parameter object.From now on, this is done at construction
+%%%%    obj(ii).parameters=object2cell(obj(ii).parameters);
 end
 
 % this will record the different problems encounter during estimation
@@ -249,8 +249,13 @@ for ii=1:nobj
         obj(ii).estimated_parameters(jj)=set_properties(obj(ii).estimated_parameters(jj),...
             'mode',x1(jj),'mode_std',SD(jj));
     end
-    % rebuild the parameter object
-    obj(ii).parameters=cell2object(obj(ii).parameters,'rise_param');
+	
+    % now we change the flag so that stability can be tested
+	% and parameters can be written back to their object
+    obj(ii).estimation_under_way=false;
+    
+    % rebuild the parameter object. This can be done now coz estimation_under_way is set to false
+    obj(ii)=rehash(obj(ii));
     % log_mdd=.5*npar*log(2*pi)-.5*log(det(H))+log_post;
     % or alternatively
     log_mdd=.5*npar*log(2*pi)+.5*log(det(Hinv))+log_post;
@@ -265,9 +270,6 @@ for ii=1:nobj
         'vcov',Hinv);
     
     obj(ii).list_of_issues=list_of_issues;
-    
-    % now we change the flag so that stability can be tested
-    obj(ii).estimation_under_way=false;
     
     save([obj(ii).options.results_folder,filesep,'estimation',filesep,...
         'estimated_model'],'obj','x1','x0','f1','f0','H','Hinv')

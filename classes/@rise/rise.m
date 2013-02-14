@@ -18,9 +18,9 @@ classdef rise
 % 4-Should you find something you think is a problem in this code, please
 % shoot an email to junior.maih@gmail.com 
     properties
-        % initialize this in the proper way in order to avoid problems of
-        % concatenation.
-        parameters=rise_param.empty(0,0);
+		% this is where parameter values are taken or written.
+		% those parameter values will later on be passed to the parameter object
+        parameters_image
     end
     properties (SetAccess = private, Hidden = true)
         current_expansion_order
@@ -71,7 +71,10 @@ classdef rise
         z_restrictions
     end
     properties(SetAccess=protected)
-        % those can be seen but not changed from outside
+        % those can be seen but not changed from outside at least not directly
+        % initialize this in the proper way in order to avoid problems of
+        % concatenation.
+        parameters=rise_param.empty(0,0);
         options
         definitions=rise_equation.empty(0,0);
         equations=rise_equation.empty(0,0);
@@ -330,6 +333,8 @@ classdef rise
             obj=format_parameters(obj,dictionary.parameters,dictionary.Parameterization_block,...
                 dictionary.MarkovChains,dictionary.Param_rest_block);
             obj.NumberOfRegimes=size(obj.Regimes,1);
+			% now create an image for the parameters to hasten estimation
+			obj.parameters_image=object2cell(obj.parameters);
                         
             % the two lines below should probably be moved elsewhere
             obj.current_solution_algorithm=obj.options.solver;
