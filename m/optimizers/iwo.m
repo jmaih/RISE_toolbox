@@ -9,8 +9,8 @@ function [xbest,fbest,exitflag,output]=iwo(objective,x0,lb,ub,options,varargin)
 
 default_options = optimization_universal_options();
 
-specific_options=struct('Smin',0,'Smax',5,'sig_max',10/100,'sig_min',3/100,...
-    'krigging_threshold',.1);
+specific_options=struct('Smin',0,'Smax',5,'sig_max',10/100,'sig_min',1/100,...
+    'krigging_threshold',0);
 
 default_options=mergestructures(default_options,specific_options);
 
