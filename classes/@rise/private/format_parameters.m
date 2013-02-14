@@ -156,7 +156,7 @@ end
 in_use_but_not_parameterized=intersect(param_names(obj.is_in_use_parameter),NotParameterized);
 if ~isempty(in_use_but_not_parameterized)
     disp(in_use_but_not_parameterized)
-    error([mfilename,upper([':: The parameters above affect model ',obj.filename,' but are not assigned values. I am very angry!!!'])])
+    warning([mfilename,upper([':: The parameters above affect model ',obj.filename,' but are not assigned values. I am very angry!!!'])])
 end
 
 % now resort the estimated parameter vector using their ids

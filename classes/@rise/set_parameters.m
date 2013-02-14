@@ -118,17 +118,19 @@ end
 
 if ~is_done
     % now set the parameters
-    if obj.estimation_under_way
-		loc=find(strcmp('startval',obj.parameters(1,:)));
-		obj.parameters{2,loc}(id)=values(:);
-	else
-	    Mparams=vertcat(obj.parameters.startval);
-	    Mparams(id)=values(:);
-        % pushing the parameters in this way is very expensive... I need to
-        % find a better way
-        Mparams=mat2cell(Mparams,ones(param_nbr,1),obj.NumberOfRegimes);
-        [obj.parameters(:).startval]=deal(Mparams{:});
-    end
+		loc=find(strcmp('startval',obj.parameters_image(1,:)));
+		obj.parameters_image{2,loc}(id)=values(:);
+	% now push back the parameters into the object if possible
+	obj=rehash(obj);
+%    if obj.estimation_under_way
+%	else
+%	    Mparams=vertcat(obj.parameters.startval);
+%	    Mparams(id)=values(:);
+%        % pushing the parameters in this way is very expensive... I need to
+%        % find a better way
+%        Mparams=mat2cell(Mparams,ones(param_nbr,1),obj.NumberOfRegimes);
+%        [obj.parameters(:).startval]=deal(Mparams{:});
+%    end
 end
 
 end
