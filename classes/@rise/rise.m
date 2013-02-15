@@ -57,7 +57,7 @@ classdef rise
         list_of_issues
         measurement_errors_restrictions
         model_derivatives
-        orig_endo_names_current
+%        orig_endo_names_current
         parameter_restrictions
         parameter_random_draws_restrictions
         planner
@@ -210,7 +210,7 @@ classdef rise
             dictionary=CompileModelFile(model_filename,cmfArgins{:});
             % build the equations object
             quick_fill={'NumberOfEquations','Lead_lag_incidence','filename',...
-                'reordering_index','orig_endo_names_current',...
+                'reordering_index',... % 'orig_endo_names_current',
                 'planner','is_sticky_information_model',...
                 'is_hybrid_expectations_model','is_optimal_policy_model',...
                 'is_dsge_var_model','is_optimal_simple_rule_model',...
