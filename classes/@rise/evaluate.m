@@ -185,19 +185,16 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
     if obj.is_optimal_policy_model || obj.is_optimal_simple_rule_model
         [obj.planner_loss(1,ii),...
             obj.planner_commitment(1,ii),...
-            obj.planner_discount(1,ii),W1]=online_function_evaluator(...
+            obj.planner_discount(1,ii),obj.W(:,:,ii)]=online_function_evaluator(...
             planner,ss_i,x_ss,M(:,ii),ss_i,def_i);
-        if obj.options.debug
+        if obj.options.debug||~strcmp(derivative_type,'symbolic')
             plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def_i);
             W2=finite_difference_hessian(plan_fd,ss_i);
-            disp('discrepancies in planner computations')
-            disp(max(max(abs(W1-W2))))
-        else
-            if strcmp(derivative_type,'symbolic')
-                obj.W(:,:,ii)=W1;
-            else
-                plan_fd=@(zz)online_function_evaluator(planner,zz,x_ss,M(:,ii),ss_i,def_i);
-                W2=finite_difference_hessian(plan_fd,ss_i);
+            if obj.options.debug
+                disp('discrepancies in planner computations')
+                disp(max(max(abs(obj.W(:,:,ii)-W2))))
+            end
+            if ~strcmp(derivative_type,'symbolic')
                 obj.W(:,:,ii)=W2;
             end
         end
@@ -206,6 +203,26 @@ for ii=NumberOfRegimes:-1:1 % backward to optimize speed
         tmp=zeros(obj.NumberOfObservables(1),1);
         tmp(Restrictions(:,1))=M(Restrictions(:,2),ii).^2;
         obj.H(:,:,ii)=diag(tmp);
+    end
+    if obj.is_optimal_policy_model && NumberOfRegimes>1
+        % no need to redo the same computations several times
+        other_regimes=setdiff(1:NumberOfRegimes,ii);
+        for jj=other_regimes
+            obj.B(:,:,jj)=obj.B(:,:,ii);
+            obj.C(:,:,jj)=obj.C(:,:,ii);
+            obj.Aminus(:,:,jj)=obj.Aminus(:,:,ii);
+            obj.A0(:,:,jj)=obj.A0(:,:,ii);
+            obj.Aplus(:,:,jj)=obj.Aplus(:,:,ii);
+            obj.W(:,:,jj)=obj.W(:,:,ii);
+            obj.planner_loss(1,jj)=obj.planner_loss(1,ii);
+            obj.planner_commitment(1,jj)=obj.planner_commitment(1,ii);
+            obj.planner_discount(1,jj)=obj.planner_discount(1,ii);
+            if measure_flag
+                obj.H(:,:,jj)=obj.H(:,:,ii);
+            end
+        end
+        % exit quickly
+        break
     end
 end
 
