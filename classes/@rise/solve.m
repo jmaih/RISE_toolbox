@@ -113,7 +113,12 @@ end
                             error([mfilename,':: No switch allowed in the parameters of the loose commitment model'])
                         end
                     end
-                    [TT,RR,hidden_ss_bgp,retcode,obj.options]=dsge_lc_solve(Aminus(:,:,1),A0(:,:,1),...
+                    % do not take this steady state into consideration as
+                    % it automatically returns 0. the user might have given
+                    % a steady state file that returns different values.
+                    % Plus it does not account for balanced growth, which
+                    % is taken care of in the steady state computation.
+                    [TT,RR,~,retcode,obj.options]=dsge_lc_solve(Aminus(:,:,1),A0(:,:,1),...
                         Aplus(:,:,1),B(:,:,1),obj.W(:,:,1),obj.planner_commitment(1),...
                         obj.planner_discount(1),order,obj.reordering_index,T0,obj.options);
                     % change the name of the solver right here, right now!
@@ -121,11 +126,6 @@ end
                     if ~retcode
                         [TT,RR,hidden_ss_bgp]=...
                             recast_loose_commitment_solution_into_markov_switching(obj,TT,RR,hidden_ss_bgp);
-                        % account for the balanced growth path assuming all variables
-                        % are stationary... this is a bit of a limitation but we do not
-                        % calculate the steady state of the variables under loose
-                        % commitment.
-                        hidden_ss_bgp=repmat(hidden_ss_bgp,2,1);
                     end
                 else
                         loc=strcmp('is_switching',obj.parameters_image(1,:));
