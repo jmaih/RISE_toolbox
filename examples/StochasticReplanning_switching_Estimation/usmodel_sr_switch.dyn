@@ -77,6 +77,8 @@ model(linear);
                + 1*sw ;
 //	      r =  crpi*(1-crr)*pinf +cry*(1-crr)*(y-yf)+crdy*(y-yf-y(-1)+yf(-1))+crr*r(-1)+ms  ;
 
+// new variable created to re-introduce the monetary policy shock in optimal policy
+// and avoid stochastic singularity under the estimation of the optimal policy model
 		  dr=r-r(-1);
 		  pinf_target=pinf+ms;
 		  
