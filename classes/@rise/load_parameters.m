@@ -17,9 +17,7 @@ if isempty(model)
 end
 % read the mode file
 fid=fopen(the_mode_file,'r');
-markov_chains={model.markov_chains.name};
-Regimes=model.Regimes;
-params={'name','value','regime'};
+params=struct();
 while 1
     tline = fgetl(fid);
     if ~ischar(tline)
@@ -29,40 +27,17 @@ while 1
     col=strfind(tline,':');
     par_val=str2double(tline(col+1:end));
     par_name=tline(1:col-1);
-    par_chain='const';
-    par_state=1;
+    % remove all blanks in the name
+    par_name(isspace(par_name))=[];
     parenth=strfind(par_name,'(');
     if ~isempty(parenth)
-        comma=strfind(par_name,',');
-        item_1=par_name(parenth+1:comma-1);
-        item_2=par_name(comma+1:end-1);
-        par_name=par_name(1:parenth-1);
-		par_chain=[]; par_state=[];
-		if ismember(item_1,markov_chains)
-			par_chain=item_1;
-		else
-			par_state=str2double(item_1);
-		end 
-		if ismember(item_2,markov_chains)
-			par_chain=item_2;
-		else
-			par_state=str2double(item_2);
-		end
-		if isempty(par_state)||isempty(par_chain)
-			error([mfilename,':: parameter information at line (',tline,') unrecognized'])
-		end
+        % what is represented in the model by alpha(coef,2)=10 then becomes
+        % params.alpha_coef_2=10
+        par_name=strrep(par_name,',','_');
+        par_name=strrep(par_name,'(','_');
+        par_name=strrep(par_name,')','');
     end
-    % locate the regimes where par_name, controled by par_chain, is
-    % in state par_state
-    chain_loc=strcmp(par_chain,markov_chains);
-    reg=find(Regimes(:,chain_loc)==par_state);
-	if isempty(reg)
-		error([mfilename,':: state ',int2str(par_state),' not in the range of states of markov chain ',par_chain])
-	end
-    for ireg=1:numel(reg)
-        params=[params
-            {par_name,par_val,reg(ireg)}];
-    end
+    params.(par_name)=par_val;
 end
 fclose(fid);
 

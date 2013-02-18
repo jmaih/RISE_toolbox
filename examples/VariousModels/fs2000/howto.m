@@ -23,17 +23,16 @@ fs2000=rise('fs2000_rise');
 %% pushing the particular vector (different from the initial estimation point)
 % Note we have to declare the regime of the parameter
 
-calibration={'name', 'value','regime'
-	'alp'  , 0.330 , 1
-	'bet'  , 0.990 , 1
-	'gam'  , 0.003 , 1
-	'mst'  , 1.011 , 1
-	'rho'  , 0.700 , 1
-	'psi'  , 0.787 , 1
-	'del'  , 0.020 , 1
-	'sig_a', 0.014 , 1
-	'sig_m', 0.005 , 1
-                    };
+calibration=struct();
+	calibration.alp=0.330;
+	calibration.bet=0.990;
+	calibration.gam=0.003;
+	calibration.mst=1.011;
+	calibration.rho=0.700;
+	calibration.psi=0.787;
+	calibration.del=0.020;
+	calibration.sig_a=0.014;
+	calibration.sig_m=0.005;
 fs2000=set_parameters(fs2000,calibration); 
 
 %% solve the model and 

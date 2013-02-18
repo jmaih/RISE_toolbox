@@ -6,10 +6,11 @@ clc
 Models={'frwz_nk','frwz_nk@cal_2'};
 solvers={'newton_system','newton_kronecker',...
     'newton_kronecker_iteration','functional_iteration'};
+	
 %% Alternative calibrations
-
-cal_2={'name', 'value','regime'
-	'psi'  , 0.7 , 2};
+% psi is controled by markov chain "a" and assumes a value of 2 in the second state
+cal_2=struct();
+cal_2.psi_a_2=0.7;
 
 %% read the models and their calibrations
 generic=cell(1,numel(Models));

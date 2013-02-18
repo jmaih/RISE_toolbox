@@ -49,10 +49,10 @@ end;
 //close all,
 //he=model('hybrid_expect');
 //he=he.irf(50,1,char('Y','I','PAI','R'));
-//he(2)=he.set_parameters(struct('name','hybrid_expectations_lambda','value',1));
+//he(2)=he.set_parameters(struct('hybrid_expectations_lambda',1));
 //he(2)=he(2).irf(50,1,char('Y','I','PAI','R'));
 //
 //si=model('sticky_info');
 //si=si.irf(50,1,char('Y','I','PAI','R'));
-//si(2)=si.set_parameters(struct('name','sticky_information_lambda','value',1));
+//si(2)=si.set_parameters(struct('sticky_information_lambda',1));
 //si(2)=si(2).irf(50,1,char('Y','I','PAI','R'));

@@ -2,6 +2,7 @@
 close all
 clear
 clc
+% this files needs updating and would not work with the current version of RISE
 %% add the necessary paths
 setpaths
 %% construct 2 models objects:
@@ -33,9 +34,9 @@ disp('the qr factorization on is not full. But, beyond and above everything,')
 disp('what is interesting is that the solutions are 100 percent equivalent')
 %% we repeat the exercise above but this time under discretion
 sw_discr=sw_com;
-sw_discr(1)=sw_discr(1).set_parameters(struct('name','ProbabilityOfCommitment','value',0));
+sw_discr(1)=sw_discr(1).set_parameters(struct('ProbabilityOfCommitment',0));
 
-sw_discr(2)=sw_discr(2).set_parameters(struct('name','ProbabilityOfCommitment','value',0));
+sw_discr(2)=sw_discr(2).set_parameters(struct('ProbabilityOfCommitment',0));
 
 t0=zeros(1,2);
 for ii=1:2

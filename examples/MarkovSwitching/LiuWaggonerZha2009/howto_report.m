@@ -30,10 +30,10 @@ instructions=[instructions,{'equations';[]}];
 lwz=rise('lwz09_2','irf_periods',20);
 
 %% the naive economy: assume the Hawkish regime lasts forever
-naive_calibration={'name','value','regime'
-    'q_tp_2_1',0,1
-    'q_tp_2_1',0,2
-    };
+% q_tp_2_1=0 for all regimes
+naive_calibration=struct();
+naive_calibration.q_tp_2_1=0;
+
 lwz_naive=lwz.set_parameters(naive_calibration);
 %% solve, evaluate, print solution, etc, not required
 
@@ -71,10 +71,9 @@ end
 
 %% regime-dependent structural parameters ( eta and iota)
 
-regDep_calibration={'name','value','regime'
-    'eta',0.75,2
-    'iota',0,2
-    };
+regDep_calibration=struct();
+regDep_calibration.eta_q_2=0.75; % eta controled by q assumes 0.75 in state 2
+regDep_calibration.iota_q_2=0;
 
 lwz=lwz.set_parameters(regDep_calibration);
 lwz_naive=lwz_naive.set_parameters(regDep_calibration);

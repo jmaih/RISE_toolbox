@@ -161,7 +161,7 @@ classdef rise
         print_estimation_results(obj,varargin)
         print_solution(obj,varargin)
         prior_plots(obj,varargin)
-        varargout=set_parameters(obj,varargin)%,namesOrIndex,values,regime
+        varargout=set_parameters(obj,varargin)
         % under estimation, I put the parameters in the second argument
         % (bypass), instead of loading'em from obj.parameters, which given
         % the properties of the rise_param object, will only slow down

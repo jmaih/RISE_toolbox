@@ -12,7 +12,8 @@ N=5;
 rhor_vals=linspace(0,.99,N);
 m(1:N)=test;
 for ii=1:N
-    pp=struct('name','rhor','value',rhor_vals(ii),'regime',2);
+	% rhor is controled by markov chain 'a' and assumes a value of rhor_vals(ii) in state 2
+    pp=struct('rhor_a_2',rhor_vals(ii));
     m(ii)=m(ii).set_parameters(pp);
 end
 %%
