@@ -108,7 +108,7 @@ end
                     error(['',chain,''' is not recognized as a chain name'])
                 end
                 state=str2double(myparam(underscores(end)+1:end));
-                cols=find(state==obj.Regimes(:,chain_loc));
+                cols=find(obj.Regimes(:,chain_loc)==state);
                 if isempty(cols)
                     error(['state ',num2str(state),' outside the state range of markov chain ',chain])
                 end
