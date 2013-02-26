@@ -1,6 +1,6 @@
 function [ab,fval,retcode]=find_hyperparameters(space,cdfn,plb,pub,prob,varargin)
 number_of_starting_values=10;
-debug=false;
+debug=~true;
 lb=space(:,1);
 ub=space(:,2);
 x0=initial_values();
@@ -22,7 +22,7 @@ while ~done
     [ab,fval,exitflag]=fmincon(@rich_man,x0(:,iter),[],[],[],[],lb,ub,[],options,'fmincon');
     he=happy_ending(exitflag,fval);
     if ~he
-        [ab,fval,junk,exitflag]=lsqnonlin(@rich_man,x0(:,iter),lb,ub,options,'lsqnonlin');
+        [ab,fval,~,exitflag]=lsqnonlin(@rich_man,x0(:,iter),lb,ub,options,'lsqnonlin');
         fval=norm(fval);
         he=happy_ending(exitflag,fval);
         if ~he
@@ -58,7 +58,7 @@ end
         end
     end
     function x0=initial_values()
-        x0=rand(size(lb,1),number_of_starting_values);
+        x0=[[plb,pub]',rand(size(lb,1),number_of_starting_values-1)];
         LB=lb(:,ones(1,number_of_starting_values));
         UB=ub(:,ones(1,number_of_starting_values));
         badneg=x0<LB;
