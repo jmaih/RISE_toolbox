@@ -8,6 +8,17 @@ if isempty(obj)
     return
 end
 
+nobj=numel(obj);
+Incr=[];
+if nobj>1
+    retcode=nan(1,nobj);
+    LogLik=nan(1,nobj);
+    for iobj=1:nobj
+        [obj(iobj),LogLik(iobj),~,retcode(iobj)]=filter(obj(iobj),varargin{:});
+    end
+    return
+end
+
 params=[];
 if ~isempty(varargin)
 	tmp=find(strcmp('evaluate_params',varargin));
@@ -21,8 +32,6 @@ end
 if ~obj.data_are_loaded
     obj=obj.load_data;
 end
-
-Incr=[];
 
 resolve_flag=isempty(obj.T)||~isempty(params);
 

@@ -8,6 +8,15 @@ if isempty(obj)
     return
 end
 
+nobj=numel(obj);
+if nobj>1
+    retcode=nan(1,nobj);
+    for iobj=1:nobj
+        [obj(iobj),retcode(iobj)]=evaluate(obj(iobj),varargin{:});
+    end
+    return
+end
+
 % assign the new estimates
 params=[];
 if ~isempty(varargin)

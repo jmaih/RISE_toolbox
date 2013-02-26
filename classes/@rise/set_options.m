@@ -10,6 +10,14 @@
 
 function obj=set_options(obj,varargin)
 
+nobj=numel(obj);
+if nobj>1
+    for iobj=1:nobj
+        obj(iobj)=set_options(obj(iobj),varargin{:});
+    end
+    return
+end
+
 init=isempty(obj.options);
 
 if init
@@ -156,7 +164,8 @@ else
                 % could also check that the observable variables are included
                 % in data... I do that during estimation, I guess but I can do
                 % that upfront too. Don't know what is best.
-                assert(isa(propval,'rise_time_series'),'data input must be a rise_time_series object')
+                propval=rise_time_series.collect(propval);
+% % %                 assert(isa(propval,'rise_time_series'),'data input must be a rise_time_series object')
             end
             
             if strcmp(propname,'order')

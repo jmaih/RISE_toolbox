@@ -36,13 +36,18 @@ if isempty(obj)
     return
 end
 
-if numel(obj)>1
-    error([mfilename,':: Variance decomposition for multiple models not permitted'])
+nobj=numel(obj);
+if nobj>1
+    Vardec=cell(1,nobj);
+    for iobj=1:nobj
+        [Vardec{iobj},obj(iobj)]=variance_decomposition(obj(iobj),varargin{:});
+    end
+    return
 end
 
 obj=set_options(obj,varargin{:});
 
-[obj,retcode]=solve(obj);	% by default, this will also smooth....
+[obj,retcode]=solve(obj);	
 
 % extract the state and transition matrices
 if retcode
