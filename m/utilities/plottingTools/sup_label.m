@@ -32,7 +32,7 @@ function [ax,h]=sup_label(text,whichLabel,supAxes)
 %           suptitle (Matlab Central)
 
 currax=findobj(gcf,'type','axes','-not','tag','sup_label');
-
+currax=[currax;findobj(gcf,'tag','legend')];
 if nargin < 3
     supAxes=[.08 .08 .84 .84];
     ah=findall(gcf,'type','axes');
