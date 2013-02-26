@@ -9,7 +9,12 @@ end
 
 pp=plot_specs(this.TimeInfo,5);
 
-tmp=plotyy(pp.xdatenums,datta(:,1),pp.xdatenums,datta(:,2),varargin{:});
+% tmp=plotyy(pp.xdatenums,datta(:,1),pp.xdatenums,datta(:,2),varargin{:});
+
+high=max(datta,[],1);
+low=min(datta,[],1);
+datta=bsxfun(@rdivide,bsxfun(@minus,datta,low),high-low);
+tmp=plot(pp.xdatenums,datta,varargin{:});
 
 set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
 
