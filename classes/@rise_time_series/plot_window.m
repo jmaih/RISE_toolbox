@@ -1,4 +1,4 @@
-function h=plot_window(db,start,finish,plotfunc,varargin)
+function hout=plot_window(db,start,finish,plotfunc,varargin)
 
 db=window(db,start,finish);
 
@@ -7,3 +7,6 @@ if ischar(plotfunc)
 end
 
 h=plotfunc(db,varargin{:});
+if nargout
+    hout=h;
+end

@@ -13,6 +13,7 @@ classdef rise_time_series
     methods
         varargout=plot_separate(varargin)
         varargout=plot(varargin)
+        varargout=plotyy(varargin)
         varargout=bar(varargin)
         varargout=line(varargin)
         varargout=mpower(this,varargin)
@@ -55,7 +56,7 @@ classdef rise_time_series
                             if ~isscalar(s(1).subs{1})
                                 error([mfilename,':: for leads or lags, subsref must be a scalar'])
                             end
-                        elseif strcmp(class(s(1).subs{1}),'rise_date')
+                        elseif isa(s(1).subs{1},'rise_date')
                             if ~strcmp(s(1).subs{1}(1).freq,this.frequency)
                                 error([mfilename,':: date entered does not match the frequency of the reference dates'])
                             end
@@ -197,7 +198,7 @@ classdef rise_time_series
             end
             
             if this.NumberOfObservations>=1
-                if strcmp(class(StartDate),'rise_date')
+                if isa(StartDate,'rise_date')
                     if numel(StartDate)==1
                         StartDate=StartDate+(0:this.NumberOfObservations-1);
                     end
@@ -482,7 +483,7 @@ classdef rise_time_series
             if ~strcmp(this1.TimeInfo(1).freq,this2.TimeInfo(1).freq)
                 error([mfilename,':: datasets must have same frequency'])
             end
-            [junk,I1,I2] = intersect([this1.TimeInfo.date_number],[this2.TimeInfo.date_number]);
+            [~,I1,I2] = intersect([this1.TimeInfo.date_number],[this2.TimeInfo.date_number]);
             if isempty(I1)||isempty(I2)
                 error([mfilename,':: don''t have common dates'])
             end
@@ -996,8 +997,14 @@ classdef rise_time_series
     methods(Static)
         function this=collect(varargin)
             nn=length(varargin);
-            if nn==0||isempty(varargin{1})
-                this=rise_time_series.empty(0);
+            exitflag= nn==0||isempty(varargin{1})||...
+                (nn==1 && isa(varargin{1},'rise_time_series'));
+            if exitflag
+                if nn==0
+                    this=rise_time_series.empty(0);
+                else
+                    this=varargin{1};
+                end
                 return
             end
             
@@ -1118,7 +1125,7 @@ classdef rise_time_series
             % started working with it earlier
             
             % now we can safely sort the bastard
-            [junk,tags]=sort(cellnames);
+            [~,tags]=sort(cellnames);
             this=rise_time_series(newdates,newdata(:,tags),cellnames(tags));
         end
         %         function SaveDataBase(this,SaveUnderName,extension)
