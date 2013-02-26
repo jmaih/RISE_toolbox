@@ -320,6 +320,7 @@ if nobj>1
 end
 end
 
+
 function dsge_irfs=format_irf_output(dsge_irfs)
 nobj=numel(dsge_irfs);
 if nobj==1
@@ -328,35 +329,57 @@ else
     if isempty(dsge_irfs{1})
         return
     end
-    tmp=struct();
     shockList=fieldnames(dsge_irfs{1});
-    varList=fieldnames(dsge_irfs{1}.(shockList{1}));
-    mydates=dsge_irfs{1}.(shockList{1}).(varList{1}).TimeInfo;
+    tmp=struct();
     for ishock=1:numel(shockList)
-        for ivar=1:numel(varList)
-            for imod=1:nobj
-                datta=double(dsge_irfs{imod}.(shockList{ishock}).(varList{ivar}));
-                if imod==1 && ivar==1 && ishock==1
-                    irf_size=size(datta);
-                    tank=zeros(irf_size(1),nobj,irf_size(2));
-                    mod_names=strcat('model_',cellfun(@num2str,num2cell(1:nobj),'uniformOutput',false));
-                    reg_names=strcat('regime_',cellfun(@num2str,num2cell(1:irf_size(2)),'uniformOutput',false));
-                end
-                tank(:,imod,:)=datta;
-            end
-            if irf_size(2)>1
-                for ireg=1:irf_size(2)
-                    tmp.(shockList{ishock}).(reg_names{ireg}).(varList{ivar})=...
-                        rise_time_series(mydates,tank(:,:,ireg),mod_names);
-                end
-            else
-                tmp.(shockList{ishock}).(varList{ivar})=...
-                    rise_time_series(mydates,tank,mod_names);
-            end
+        shock_models=cell(1,nobj);
+        for mm=1:nobj
+            shock_models{mm}=dsge_irfs{mm}.(shockList{ishock});
         end
+        tmp.(shockList{ishock})=concatenate_series_from_different_models(shock_models);
     end
     % aggregate
     dsge_irfs=tmp;
 end
-
 end
+
+% function dsge_irfs=format_irf_output(dsge_irfs)
+% nobj=numel(dsge_irfs);
+% if nobj==1
+%     dsge_irfs=dsge_irfs{1};
+% else
+%     if isempty(dsge_irfs{1})
+%         return
+%     end
+%     tmp=struct();
+%     shockList=fieldnames(dsge_irfs{1});
+%     varList=fieldnames(dsge_irfs{1}.(shockList{1}));
+%     mydates=dsge_irfs{1}.(shockList{1}).(varList{1}).TimeInfo;
+%     for ishock=1:numel(shockList)
+%         for ivar=1:numel(varList)
+%             for imod=1:nobj
+%                 datta=double(dsge_irfs{imod}.(shockList{ishock}).(varList{ivar}));
+%                 if imod==1 && ivar==1 && ishock==1
+%                     irf_size=size(datta);
+%                     tank=zeros(irf_size(1),nobj,irf_size(2));
+%                     mod_names=strcat('model_',cellfun(@num2str,num2cell(1:nobj),'uniformOutput',false));
+%                     reg_names=strcat('regime_',cellfun(@num2str,num2cell(1:irf_size(2)),'uniformOutput',false));
+%                 end
+%                 tank(:,imod,:)=datta;
+%             end
+%             if irf_size(2)>1
+%                 for ireg=1:irf_size(2)
+%                     tmp.(shockList{ishock}).(reg_names{ireg}).(varList{ivar})=...
+%                         rise_time_series(mydates,tank(:,:,ireg),mod_names);
+%                 end
+%             else
+%                 tmp.(shockList{ishock}).(varList{ivar})=...
+%                     rise_time_series(mydates,tank,mod_names);
+%             end
+%         end
+%     end
+%     % aggregate
+%     dsge_irfs=tmp;
+% end
+% 
+% end
