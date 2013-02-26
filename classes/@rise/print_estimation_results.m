@@ -7,11 +7,12 @@ precision='%8.4f';
 
 nobj=numel(obj);
 string='';
+reprints=[];
 for kk=1:numel(obj)
     if nobj>1
         string=int2str(kk);
     end
-    reprints={sprintf('\n%s\n',['MODEL ',string,' ESTIMATION RESULTS'])};
+    reprints=[reprints;{sprintf('\n%s\n',['MODEL ',string,' ESTIMATION RESULTS'])}];
     
     data=[{'Parameter Names',{obj(kk).estimated_parameters.name}}',...
         {'distribution',upper({obj(kk).estimated_parameters.distribution})}',...
