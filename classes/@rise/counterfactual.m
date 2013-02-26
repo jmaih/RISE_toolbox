@@ -23,8 +23,8 @@ if nobj==1
 	counterf=counterf{1};
 	actual=actual{1};
 else
-	% pad them as we did with irfs
-	
+	% pad them
+	counterf=concatenate_series_from_different_models(counterf);
 end
 
     function [COUNTER,ACTUAL]=counterfactual_intern(obj)
@@ -66,7 +66,7 @@ end
             if isa(shocks_db,'rise_time_series')
                 shocks_db=pages2struct(shocks_db);
             end
-            if ~isequal(shocks_db.TimeInfo,smoothed_shocks.(shockList{1}).TimeInfo)
+            if ~isequal(shocks_db.(shockList{1}).TimeInfo,smoothed_shocks.(shockList{1}).TimeInfo)
                 error('shocks database should match history used for filtering')
             end
             % a structure time series
@@ -136,7 +136,7 @@ end
             choice=true(nreg,1);
             marked=false(1,nchains);
             marked(1)=true; % constant chain always marked
-            for kk=1:n
+            for kk=1:nn
                 ch=counterfact_regime{1,kk};
                 if strcmp(ch,'const')
                     continue
