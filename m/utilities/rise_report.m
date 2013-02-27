@@ -46,6 +46,8 @@ instructions=[default_title,instructions];
 for iinstr=1:size(instructions,2)
     type=instructions{1,iinstr};
     switch type
+        case {'include','inclusion'}
+            add_inclusion(instructions{2,iinstr})
         case 'title'
             add_title(instructions{2,iinstr});
         case 'paragraph'
@@ -102,16 +104,13 @@ end
         if isempty(new_table.table)
             return
         end
-        fprintf(fid,'%s \n',['\section*{',reprocess(new_table.title),'}']);
+        fprintf(fid,'%s \n',['\section{',reprocess(new_table.title),'}']);
         [nrows,ncols]=size(new_table.table);
         AllBatch=cell(nrows,1);
         for irow=1:nrows
             str='';
             for icol=1:ncols
                 tmp=reprocess(new_table.table{irow,icol});
-% % % % %                 if irow==1
-% % % % %                     tmp=['\textbf{',tmp,'}'];
-% % % % %                 end
                 if icol==1
                     tmp=['\multicolumn{1}{l}{',tmp,'}'];
                 end
@@ -174,6 +173,10 @@ end
             fprintf(fid,'%s \n',preamble_instructions{jj});
         end
         fprintf(fid,'%s \n\n','% end of preamble');
+    end
+
+    function add_inclusion(filename)
+        fprintf(fid,'%s \n',['\include{',filename,'}']);
     end
 
     function add_finishing()
@@ -242,7 +245,7 @@ end
         new_paragraph=mysetfield(default_paragraph,paragraph);
         new_paragraph.text=char(new_paragraph.text);
         itemize=new_paragraph.itemize;
-        fprintf(fid,'%s \n',['\section*{',reprocess(new_paragraph.title),'}']);
+        fprintf(fid,'%s \n',['\section{',reprocess(new_paragraph.title),'}']);
         string='';
         if itemize
             fprintf(fid,'%s \n','\begin{itemize}');
@@ -263,7 +266,7 @@ end
         if ischar(new_equations.equations)
             new_equations.equations=cellstr(new_equations.equations);
         end
-        fprintf(fid,'%s \n',['\section*{',reprocess(new_equations.title),'}']);
+        fprintf(fid,'%s \n',['\section{',reprocess(new_equations.title),'}']);
         fprintf(fid,'%s \n',' \begin{verbatim}');	%\color{lightgray}
         for ieq=1:numel(new_equations.equations)
             myeq=['EQ',int2str(ieq),': ',new_equations.equations{ieq}];
@@ -345,40 +348,64 @@ end
     function mytable=estimation2table()
         ncases=numel(this);
         type_name='tex_name';
-        parnames= {this(1).estimated_parameters.(type_name)}';
-        for ic=2:ncases
-            if ~isequal(parnames,{this(ic).estimated_parameters.(type_name)}')
-                error([mfilename,':: all models should have the same (estimated) parameters'])
-            end
-        end
-        estimated_parameters=[this.estimated_parameters];
-        npar=numel(parnames);
-        mytable=cell(npar+1,5);
-        for ipar=1:npar
-            if any(parnames{ipar}=='\')
-                if ~strcmp(parnames{ipar}(1),'$')
-                    parnames{ipar}=['$',parnames{ipar}];
-                end
-                if ~strcmp(parnames{ipar}(end),'$')
-                    parnames{ipar}=[parnames{ipar},'$'];
-                end
-            end
-        end
-        mytable(2:end,1)=parnames;mytable{1,1}='Param Names';
-        mytable(2:end,2)={estimated_parameters(:,1).distribution}';mytable{1,2}='Prior distr';
-        mytable(2:end,3)=num2cell(vertcat(estimated_parameters(:,1).interval_probability));mytable{1,3}='Prior prob';
-        mytable(2:end,4)=num2cell(vertcat(estimated_parameters(:,1).plb));mytable{1,4}='low';
-        mytable(2:end,5)=num2cell(vertcat(estimated_parameters(:,1).pub));mytable{1,5}='high';
+        parnames= {this(1).estimated_parameters.(type_name)};
+        ordered_names=sort(parnames);
+        PALL=cell(1,ncases);
         for ic=1:ncases
-            mytable=[mytable,[{['mode(',int2str(ic),')']};num2cell(vertcat(estimated_parameters(:,ic).mode))]];
+            newnames={this(ic).estimated_parameters.(type_name)};
+            mode=num2cell(vertcat(this(ic).estimated_parameters.mode));
+            mode_std=num2cell(vertcat(this(ic).estimated_parameters.mode_std));
+            prior_prob=num2cell(vertcat(this(ic).estimated_parameters.interval_probability));
+            plb=num2cell(vertcat(this(ic).estimated_parameters.plb));
+            pub=num2cell(vertcat(this(ic).estimated_parameters.pub));
+            prior_distrib={this(ic).estimated_parameters.distribution};
+            PALL{ic}=[newnames',prior_distrib',prior_prob,plb,pub,mode,mode_std];
+            if ~isequal(parnames,newnames)
+                ordered_names=union(ordered_names,newnames);
+            end
+        end
+        nparams=numel(ordered_names);
+       
+        mytable=cell(nparams+1,5+ncases);
+        mytable(1,1:5)={'parameter','Prior distr','Prior prob','low','high'};
+        for iparam=1:nparams
+            name_in=false;
+            for imod=1:ncases
+                if iparam==1
+                    mytable{1,5+imod}=['model(',int2str(imod),')'];
+                end
+                if isempty(PALL{imod})
+                    mytable{iparam+1,5+imod}='--';
+                else
+                    if ~name_in
+                        param_info=PALL{imod}(1,:);
+                        pname=param_info{1};
+                        name_in=true;
+                        mytable(iparam+1,1:5)=param_info(1:5);
+                        mytable{iparam+1,5+imod}=param_info{6};
+                        PALL{imod}(1,:)=[];
+                        % add the dollars
+                        mytable{iparam+1,1}=['$',mytable{iparam+1,1},'$'];
+                        continue
+                    end
+                    loc=find(strcmp(pname,PALL{imod}(:,1)));
+                    if isempty(loc)
+                        mytable{iparam+1,5+imod}='--';
+                    else
+                        mytable{iparam+1,5+imod}=PALL{imod}{loc,6};
+                        PALL{imod}(loc,:)=[];
+                    end
+                end
+            end
         end
         if ncases==1
-            mytable=[mytable,[{'mode\_std'};num2cell(vertcat(estimated_parameters(:,1).mode_std))]];
+            mytable=[mytable,[{'mode\_std'};num2cell(vertcat(this.estimated_parameters.mode_std))]];
         end
         mytable={'table'
             struct('title','Estimation Results',...
             'table',{mytable},'caption','Prior and Posterior mode')};
     end
+
     function mytable=further_estimation2table()
         mytable={
             'log-post:'
@@ -431,6 +458,9 @@ end
 if isnumeric(xin)
     xin=num2str(xin,precision);
 elseif ischar(xin)
+    if any(xin=='$')
+        return
+    end
     xin=strrep(xin,'\_','LouisPergaud');
     xin=strrep(xin,'_','\_');
     xin=strrep(xin,'LouisPergaud','\_');
