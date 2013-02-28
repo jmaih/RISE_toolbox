@@ -29,6 +29,13 @@ end
 if exist([report_name,'.tex'],'file')
     delete([report_name,'.tex'])
 end
+model_names={this.filename};
+good_names=numel(model_names)==numel(unique(model_names));
+if ~good_names
+    for icase=1:numel(model_names)
+        model_names{icase}=['model(',int2str(icase),')'];
+    end
+end
 
 fid=fopen([report_name,'.tex'],'w');
 
@@ -86,6 +93,11 @@ if exist([report_name,'.pdf'],'file')
 end
 
 retcode=system(['pdflatex ',report_name]);
+if ~retcode
+    % run again in order to make sure the references are shown
+    system(['pdflatex ',report_name]);
+    system(['pdflatex ',report_name]);
+end
 useless_extensions={'.log','.bbl','.blg','.aux','.*.bak'};
 for iext=1:numel(useless_extensions)
     file2delete=[report_name,useless_extensions{iext}];
@@ -159,8 +171,8 @@ end
     function add_preamble()
         preamble_instructions={
             '\documentclass[12pt,landscape]{article}'
-            '\usepackage{amsfonts,amsmath,color,graphicx}'%,fullpage
-            '\usepackage{geometry}'%[centering]
+            '\usepackage{amsfonts,amsmath,color,graphicx,geometry,hyperref}'%[centering]
+            '\numberwithin{equation}{section}'
 % %             '\usepackage[space]{grffile}'
             '\begin{document}'
             '\pagestyle{myheadings}'
@@ -176,7 +188,8 @@ end
     end
 
     function add_inclusion(filename)
-        fprintf(fid,'%s \n',['\include{',filename,'}']);
+        fprintf(fid,'%s \n',['\input{',filename,'}']);
+%         fprintf(fid,'%s \n',['\include{',filename,'}']);
     end
 
     function add_finishing()
@@ -367,13 +380,10 @@ end
         nparams=numel(ordered_names);
        
         mytable=cell(nparams+1,5+ncases);
-        mytable(1,1:5)={'parameter','Prior distr','Prior prob','low','high'};
+        mytable(1,:)=[{'parameter','Prior distr','Prior prob','low','high'},model_names];
         for iparam=1:nparams
             name_in=false;
             for imod=1:ncases
-                if iparam==1
-                    mytable{1,5+imod}=['model(',int2str(imod),')'];
-                end
                 if isempty(PALL{imod})
                     mytable{iparam+1,5+imod}='--';
                 else
@@ -408,6 +418,7 @@ end
 
     function mytable=further_estimation2table()
         mytable={
+            ''
             'log-post:'
             'log-lik:'
             'log-prior:'
@@ -442,7 +453,7 @@ end
                 secs=secs-mins*60;
                 this_ic(end-(2:-1:0))={datestr(t1),datestr(t2),[int2str(hrs),':',int2str(mins),':',int2str(secs)]};
             end
-            mytable=[mytable,this_ic];
+            mytable=[mytable,[model_names(ic);this_ic]];
         end
         
         mytable={'table'
