@@ -1,7 +1,22 @@
 function [xx,f]=empirical_cdf(x,lb,ub,N)
 
 if nargin<4
-    N=250;
+    N=[];
+	if nargin<3
+		ub=[];
+		if nargin<2
+			lb=[];
+		end
+	end
+end
+if isempty(N)
+	N=250;
+end
+if isempty(ub)
+	ub=max(x);
+end
+if isempty(lb)
+	lb=min(x);
 end
 npar=numel(x);
 xx=transpose(linspace(lb,ub,N));
