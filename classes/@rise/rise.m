@@ -52,6 +52,7 @@ classdef rise
         is_purely_backward_looking_model
         is_purely_forward_looking_model
         is_stationary_model
+        is_svar_model
         is_unique_steady_state=false;
         Lead_lag_incidence
         list_of_issues
@@ -213,7 +214,7 @@ classdef rise
                 'reordering_index',... % 'orig_endo_names_current',
                 'planner','is_sticky_information_model',...
                 'is_hybrid_expectations_model','is_optimal_policy_model',...
-                'is_dsge_var_model','is_optimal_simple_rule_model',...
+                'is_dsge_var_model','is_optimal_simple_rule_model','is_svar_model',...
                 'is_hybrid_model','is_purely_backward_looking_model',...
                 'is_purely_forward_looking_model','is_lagrange_multiplier',...
                 'is_linear_model','shadow_transition_matrix',...
@@ -298,16 +299,6 @@ classdef rise
                 obj.model_derivatives=dictionary.dynamic.model_derivatives;
             end
             
-            % restrictions for endogenous, shocks and parameters for
-            % automatic and numerical differentiation
-            ny=nnz(obj.Lead_lag_incidence);
-            nx=obj.NumberOfExogenous;
-            switching=find([obj.parameters.is_switching]);
-            np=numel(switching);
-            obj.z_restrictions={1:ny,...
-                ny+(1:nx),...
-                {switching,ny+nx+(1:np)}};
-            
             % flags for the different types of models
             if obj.is_hybrid_expectations_model
                 obj.hybrid_expectations_lambda_id=find(strcmp('hybrid_expectations_lambda',{obj.parameters.name}),1);
@@ -317,7 +308,6 @@ classdef rise
                 obj.forward_looking_ids=dictionary.forward_looking_ids;
                 obj.sticky_information_lambda_id=find(strcmp('sticky_information_lambda',{obj.parameters.name}),1);
             end
-            
             
             % Once the names of the exogenous variables are known, we can
             % build the options. We call the overloaded method
@@ -336,6 +326,16 @@ classdef rise
 			% now create an image for the parameters to hasten estimation
 			obj.parameters_image=object2cell(obj.parameters);
                         
+            % restrictions for endogenous, shocks and parameters for
+            % automatic and numerical differentiation
+            ny=nnz(obj.Lead_lag_incidence);
+            nx=obj.NumberOfExogenous;
+            switching=find([obj.parameters.is_switching]);
+            np=numel(switching);
+            obj.z_restrictions={1:ny,...
+                ny+(1:nx),...
+                {switching,ny+nx+(1:np)}};
+            
             % the two lines below should probably be moved elsewhere
             obj.current_solution_algorithm=obj.options.solver;
             obj.current_expansion_order=obj.options.order;
@@ -353,6 +353,8 @@ classdef rise
                 disp([mfilename,':: Optimal Simple Rule (OSR) model detected'])
             elseif obj.is_endogenous_switching_model
                 disp([mfilename,':: Endogenous Switching DSGE model in ',int2str(obj.NumberOfRegimes),' regimes detected'])
+            elseif obj.is_svar_model
+                disp([mfilename,':: SVAR model in ',int2str(obj.NumberOfRegimes),' regimes detected'])
             else
                 disp([mfilename,':: Exogenous Switching DSGE model in ',int2str(obj.NumberOfRegimes),' regimes detected'])
             end
@@ -362,7 +364,7 @@ classdef rise
                 disp([mfilename,':: model is purely backward looking'])
             elseif obj.is_purely_forward_looking_model
                 disp([mfilename,':: model is purely forward-looking'])
-            else
+            elseif ~obj.is_svar_model
                 disp([mfilename,':: model is purely static'])
             end
         end

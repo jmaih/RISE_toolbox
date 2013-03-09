@@ -39,7 +39,9 @@ end
 handle_struct=struct();
 
 % function handles
-if obj.is_dsge_var_model
+if obj.is_svar_model
+    return
+elseif obj.is_dsge_var_model
     handle_struct.likelihood=@likelihood_dsge_var;
     obj.dsge_prior_weight_id=find(strcmp('dsge_prior_weight',{obj.parameters.name}),1);
 elseif obj.is_optimal_simple_rule_model

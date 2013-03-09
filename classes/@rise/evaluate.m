@@ -32,6 +32,11 @@ end
 clean_obj=obj;
 
 obj=assign_estimates(obj,params);
+
+if obj.is_svar_model
+    [obj,retcode]=svar_solve(obj);
+    return
+end
 % collect the parameters for all regimes
 % should probably allow for multiple objects here as well? no
 

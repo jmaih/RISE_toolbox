@@ -1,9 +1,12 @@
 function RawFile=read_file(FileName)
 % this would be the equivalent of dynare's macroprocessor
+RawFile=cell(0,1);
+if isempty(FileName)
+    return
+end
 SPACE_DELIMITERS=char([9:13,32]);
 tank_open=false;
 tank=cell(0,3);
-RawFile=cell(0,1);
 fid = fopen(FileName);
 iter=0;
 inclusions=false;

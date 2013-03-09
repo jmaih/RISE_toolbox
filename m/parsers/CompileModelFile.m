@@ -48,28 +48,56 @@ dictionary.input_list={'y','x','param','ss','def'};
 
 DELIMITERS=[char([9:13,32]),'[]{}(),;=+-*/^@><'];
 % first output: the dictionary.filename
-FileName(isspace(FileName))=[];
-loc=strfind(FileName,'.');
-if isempty(loc)
-    dictionary.filename=FileName;
-    if exist([FileName,'.dyn'],'file')
-        FileName=[FileName,'.dyn'];
-    elseif exist([FileName,'.mod'],'file')
-        FileName=[FileName,'.mod'];
-    else
-        error([mfilename,':: ',FileName,'.mod or ',FileName,'.dyn not found'])
+is_svar_model= isstruct(FileName);
+if is_svar_model
+    svar_fields={'model','var'}; 
+    % keeping the same keywords as the ones that would be used in a model
+    % file
+    for ifield=1:numel(svar_fields)
+        thisField=svar_fields{1,ifield};
+        if ~isfield(FileName,thisField)
+            error([thisField,' must be a field when declaring a svar'])
+        end
+        if strcmp(thisField,'model') && ~isequal(FileName.(thisField),'svar')
+            error('The entry for model should be ''svar'' when declaring a svar')
+        end
+        if strcmp(thisField,'var')
+            if ischar(FileName.(thisField))
+                FileName.(thisField)=cellstr(FileName.(thisField));
+            end
+            tmp=FileName.(thisField);
+            tmp=tmp(:)';
+            tmp=strcat(tmp,',');
+            tmp=cell2mat(tmp);
+            % create a line for the endogenous
+            RawFile={['var,',tmp(1:end-1),';'],'svar',1};
+        end
     end
+    dictionary.filename='svar';
 else
-    ext=FileName(loc:end);
-    if strcmp(ext,'.dyn')||strcmp(ext,'.mod')
+    FileName(isspace(FileName))=[];
+    loc=strfind(FileName,'.');
+    if isempty(loc)
+        dictionary.filename=FileName;
+        if exist([FileName,'.dyn'],'file')
+            FileName=[FileName,'.dyn'];
+        elseif exist([FileName,'.mod'],'file')
+            FileName=[FileName,'.mod'];
+        else
+            error([mfilename,':: ',FileName,'.mod or ',FileName,'.dyn not found'])
+        end
     else
-        error([mfilename,':: Input file is expected to be a .dyn or .mod file'])
+        ext=FileName(loc:end);
+        if strcmp(ext,'.dyn')||strcmp(ext,'.mod')
+        else
+            error([mfilename,':: Input file is expected to be a .dyn or .mod file'])
+        end
+        dictionary.filename=FileName(1:loc-1);
     end
-    dictionary.filename=FileName(1:loc-1);
-end
 
 % read file and remove comments
 RawFile=read_file(FileName);
+end
 
 blocks=struct('name',{'log_vars','orig_endogenous','exogenous','parameters',...
     'observables','model','steady_state_model','parameterization',...
@@ -139,6 +167,24 @@ if any([blocks.active])
     error([mfilename,':: block ',blocks([blocks.active]).name,' is not closed'])
 end
 
+if is_svar_model
+    % declare the shocks and the observables as well
+    blknames={blocks.name};
+    exoblock=strcmp(blknames,'exogenous');
+    varobsblock=strcmp(blknames,'observables');
+    endoblock=strcmp(blknames,'orig_endogenous');
+    exoListing=blocks(endoblock).listing;
+    varobsListing=blocks(endoblock).listing;
+    for ilist=1:size(exoListing,1)
+        exoListing{ilist,1}=['EPS_',exoListing{ilist,1}];
+        if ~isempty(exoListing{ilist,2})
+            exoListing{ilist,2}=[exoListing{ilist,2},' shock'];
+            varobsListing{ilist,2}='';
+        end
+    end
+    blocks(exoblock).listing=exoListing;
+    blocks(varobsblock).listing=varobsListing;
+end
 clear current_block_name
 %% Populate the dictionary
 dictionary.definitions={};
@@ -274,7 +320,7 @@ Model_block=cell(0,1);
 for ii=1:size(blocks(current_block_id).listing,1)
     Model_block=capture_equations(Model_block,blocks(current_block_id).listing(ii,:),'model');
 end
-if isempty(Model_block)
+if ~ is_svar_model && isempty(Model_block)
     error([mfilename,':: no model declared'])
 end
 % remove item from block
@@ -560,9 +606,9 @@ blocks(current_block_id)=[];
 
 %% parameterization block
 current_block_id=find(strcmp('parameterization',{blocks.name}));
-if isempty(blocks(current_block_id).listing)
-    warning([mfilename,':: parameterization block missing:: may not be able to take the derivatives wrt switching parameters...']) %#ok<WNTAG>
-end
+% % if ~is_svar_modelisempty(blocks(current_block_id).listing)
+% %     warning([mfilename,':: parameterization block missing:: may not be able to take the derivatives wrt switching parameters...']) %#ok<WNTAG>
+% % end
 dictionary.Parameterization_block=cell(0,1);
 % first make sure all statements are on the same line
 blocks(current_block_id).listing=reprocess_parameter_batch(blocks(current_block_id).listing);
@@ -963,69 +1009,70 @@ end
 
 %% symbolic forms
 
-% dynamic model wrt y and x
-wrt={'y',1:nnz(dictionary.Lead_lag_incidence)
-    'x',1:numel(dictionary.exogenous)};
-[model_derivatives,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
-disp([mfilename,':: first-order derivatives of dynamic model wrt y(+0-) and x. ',...
-    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-
-% static model wrt y
-wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
-[static_model_derivatives,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(static.shadow_model,dictionary.input_list,wrt);
-disp([mfilename,':: first-order derivatives of static model wrt y(0). ',...
-    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-
-% balanced growth path model wrt y
-wrt={'y',1:2*size(dictionary.Lead_lag_incidence,1)};
-[static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(static.shadow_BGP_model,dictionary.input_list,wrt);
-disp([mfilename,':: first-order derivatives of static BGP model wrt y(0). ',...
-    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-
-% dynamic model wrt param: I probably should insert the definitions but
-% they are taken out for the moment...
-wrt={'param',1:numel(dictionary.parameters)};
-if DefaultOptions.definitions_in_param_differentiation
-    [param_derivatives,numEqtns,numVars,jac_toc]=...
-        rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt,...
-        shadow_definitions);
-else
-    [param_derivatives,numEqtns,numVars,jac_toc]=...
+if ~is_svar_model
+    % dynamic model wrt y and x
+    wrt={'y',1:nnz(dictionary.Lead_lag_incidence)
+        'x',1:numel(dictionary.exogenous)};
+    [model_derivatives,numEqtns,numVars,jac_toc]=...
         rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
-end
-disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
-    int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-
-%% push derivatives in to functions
-% for the moment, put all in the same matrix
-dynamic.model_derivatives=struct(...
-    'Endogenous_Shocks',{model_derivatives},...
-    'Parameters',{param_derivatives},...
-    'StaticEndogenous',{static_model_derivatives},...
-    'Static_BGP_Endogenous',{static_bgp_model_derivatives}...
-    );
-
-if is_model_with_planner_objective
-    wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
-    [LossComDiscHessJac,numEqtns,numVars,jac_toc]=...
-    rise_derivatives(dictionary.planner.shadow_model(1),dictionary.input_list,wrt,shadow_definitions,2);
-    disp([mfilename,':: 1st and 2nd-order derivatives of planner objective wrt y(0). ',...
+    disp([mfilename,':: first-order derivatives of dynamic model wrt y(+0-) and x. ',...
         int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
-    % add the loss, the commitment degree and discount
-    shadow_model=dictionary.planner.shadow_model;
-    lcd={
-        ['loss=',shadow_model{1}]
-        ['commitment=',strrep(shadow_model{2},'commitment-','')]
-        ['discount=',strrep(shadow_model{3},'discount-','')]
-        };
-    LossComDiscHessJac.code=[cell2mat(lcd(:)'),LossComDiscHessJac.code];
-    LossComDiscHessJac.argouts={'loss','commitment','discount','Hess_','Jac_'};
-    dictionary.planner.LossComDiscHessJac=LossComDiscHessJac;
+    
+    % static model wrt y
+    wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
+    [static_model_derivatives,numEqtns,numVars,jac_toc]=...
+        rise_derivatives(static.shadow_model,dictionary.input_list,wrt);
+    disp([mfilename,':: first-order derivatives of static model wrt y(0). ',...
+        int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+    
+    % balanced growth path model wrt y
+    wrt={'y',1:2*size(dictionary.Lead_lag_incidence,1)};
+    [static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=...
+        rise_derivatives(static.shadow_BGP_model,dictionary.input_list,wrt);
+    disp([mfilename,':: first-order derivatives of static BGP model wrt y(0). ',...
+        int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+    
+    % dynamic model wrt param: I probably should insert the definitions but
+    % they are taken out for the moment...
+    wrt={'param',1:numel(dictionary.parameters)};
+    if DefaultOptions.definitions_in_param_differentiation
+        [param_derivatives,numEqtns,numVars,jac_toc]=...
+            rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt,...
+            shadow_definitions);
+    else
+        [param_derivatives,numEqtns,numVars,jac_toc]=...
+            rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
+    end
+    disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
+        int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+    
+    %% push derivatives in to functions
+    % for the moment, put all in the same matrix
+    dynamic.model_derivatives=struct(...
+        'Endogenous_Shocks',{model_derivatives},...
+        'Parameters',{param_derivatives},...
+        'StaticEndogenous',{static_model_derivatives},...
+        'Static_BGP_Endogenous',{static_bgp_model_derivatives}...
+        );
+    
+    if is_model_with_planner_objective
+        wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
+        [LossComDiscHessJac,numEqtns,numVars,jac_toc]=...
+            rise_derivatives(dictionary.planner.shadow_model(1),dictionary.input_list,wrt,shadow_definitions,2);
+        disp([mfilename,':: 1st and 2nd-order derivatives of planner objective wrt y(0). ',...
+            int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
+        % add the loss, the commitment degree and discount
+        shadow_model=dictionary.planner.shadow_model;
+        lcd={
+            ['loss=',shadow_model{1}]
+            ['commitment=',strrep(shadow_model{2},'commitment-','')]
+            ['discount=',strrep(shadow_model{3},'discount-','')]
+            };
+        LossComDiscHessJac.code=[cell2mat(lcd(:)'),LossComDiscHessJac.code];
+        LossComDiscHessJac.argouts={'loss','commitment','discount','Hess_','Jac_'};
+        dictionary.planner.LossComDiscHessJac=LossComDiscHessJac;
+    end
 end
-
 %% give greek names to endogenous, exogenous, parameters
 dictionary.orig_endogenous=greekify(dictionary.orig_endogenous);
 dictionary.exogenous=greekify(dictionary.exogenous);
@@ -1038,6 +1085,9 @@ dictionary.NumberOfEquations=sum(equation_type==1);
 
 % finally check that the number of equations is consistent with the number
 % of variables
+
+dictionary.is_svar_model=is_svar_model;
+
 dictionary.is_sticky_information_model=ismember('sticky_information_lambda',{dictionary.parameters.name});
 
 dictionary.is_hybrid_expectations_model=ismember('hybrid_expectations_lambda',{dictionary.parameters.name});
@@ -1067,7 +1117,7 @@ if dictionary.is_optimal_policy_model
         new_var=struct('name',['mult_',int2str(eq)],'tex_name','','max_lead',0,'max_lag',0);
         unsorted_endogenous=[unsorted_endogenous,new_var];
     end
-else
+elseif ~is_svar_model
     assert(numel(dictionary.orig_endogenous)==sum(equation_type==1),...
         '# equations different from # endogenous variables')
     if dictionary.is_sticky_information_model

@@ -52,6 +52,14 @@ for jj=1:nobj
     end
 end
 
+is_svar_model=[obj.is_svar_model];
+if all(is_svar_model)
+    obj=solve(obj);
+    return
+elseif sum(is_svar_model)<numel(obj)
+    error('estimating SVAR models and non-SVAR model simultaneously is not allowed for the moment')
+end
+
 optim_options=obj(1).options.optimset;
 optimizer=obj(1).options.optimizer;
 hessian_type=obj(1).options.hessian_type;

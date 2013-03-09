@@ -89,7 +89,10 @@ end
         
         if resolve_it
             [obj,retcode]=evaluate(obj,'evaluate_params',params);
-            
+            if obj.is_svar_model
+                % the solving has been done during the evaluation step
+                return
+            end
             if ~retcode
                 endo_nbr=obj.NumberOfEndogenous(2);
                 h=obj.NumberOfRegimes;

@@ -89,7 +89,6 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
         %         [obj.options.shock_properties(:).horizon]=deal(irf_horizon);
         
         % number of endogenous variables after solving...
-        NumberOfEndogenous=obj.NumberOfEndogenous(2);
         NumberOfShocks=numel(shocks_id);
         NumberOfRegimes=obj.NumberOfRegimes;
         if ~isempty(irf_history)
@@ -105,18 +104,6 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
         end
         d=0;
         dsge_var_irfs=rise_time_series.empty(0,1);
-        switch irf_type
-            case 'irf'
-                Z=zeros(NumberOfEndogenous,irf_periods+1,irf_draws,NumberOfShocks,NumberOfRegimes);
-                if obj.is_dsge_var_model
-                    Z_bvar_dsge=zeros(obj.NumberOfObservables,irf_periods+1,irf_draws,NumberOfShocks);
-                end
-            case {'girf','hirf'}
-                Z=zeros(NumberOfEndogenous,irf_periods+1,irf_draws,NumberOfShocks);
-            otherwise
-                error([mfilename,':: unknown option for impulse response(',obj.options.irf_type,...
-                    '). Valid options are ''irf'', ''girf'' and ''hirf'''])
-        end
         while d<irf_draws
             if d==0
                 obj=obj.set_parameters('mode');
@@ -132,6 +119,24 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
                     error([mfilename,':: model could not be solved'])
                 else
                     continue
+                end
+            elseif d==0
+                % the number of endogenous is known only after the model is
+                % solved, depending on the lag length chosen. To keep the
+                % flexibility of inputing the lag length at any time, we
+                % have to do it this way.
+                NumberOfEndogenous=obj.NumberOfEndogenous(2);
+                switch irf_type
+                    case 'irf'
+                        Z=zeros(NumberOfEndogenous,irf_periods+1,irf_draws,NumberOfShocks,NumberOfRegimes);
+                        if obj.is_dsge_var_model
+                            Z_bvar_dsge=zeros(obj.NumberOfObservables,irf_periods+1,irf_draws,NumberOfShocks);
+                        end
+                    case {'girf','hirf'}
+                        Z=zeros(NumberOfEndogenous,irf_periods+1,irf_draws,NumberOfShocks);
+                    otherwise
+                        error([mfilename,':: unknown option for impulse response(',obj.options.irf_type,...
+                            '). Valid options are ''irf'', ''girf'' and ''hirf'''])
                 end
             end
             d=d+1;

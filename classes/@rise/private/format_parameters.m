@@ -2,16 +2,11 @@ function obj=format_parameters(obj,ParameterInfo,ParameterizationArray,...
     MarkovChains,Param_rest_block)
 
 % re-order the names of the markov chains right when creating it...
-
-param_names={ParameterInfo.name};
-param_tex_names={ParameterInfo.tex_name};
-is_switching=[ParameterInfo.is_switching];
 obj.markov_chains=struct('name',MarkovChains(1,:));
 n_states=cell2mat(MarkovChains(2,:));
 
 [obj.Regimes,obj.journal]=chain_grid(n_states);
 [reg_nbr,chain_nbr]=size(obj.Regimes);
-
 for ch=1:chain_nbr
     % each markov chain has states
     for jj=1:n_states(ch)
@@ -20,9 +15,17 @@ for ch=1:chain_nbr
     end
 end
 
-par_nbr=numel(param_names);
 obj.parameters=rise_param.empty(0,0);
 obj.estimated_parameters=rise_estim_param.empty(0,0);
+if isempty(ParameterInfo)
+    return
+end
+
+param_names={ParameterInfo.name};
+param_tex_names={ParameterInfo.tex_name};
+is_switching=[ParameterInfo.is_switching];
+
+par_nbr=numel(param_names);
 
 model_is_parameterized=~isempty(ParameterizationArray);
 if model_is_parameterized
