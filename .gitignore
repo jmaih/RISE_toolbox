@@ -7,5 +7,6 @@ junk/*
 *- Copy*
 *.pdf
 !/examples/VariousModels/KaijiTutorial/Tutorial.pdf
+!/doc/svar.pdf
 help/*
 # doc/*: all files in doc directory
