@@ -14,6 +14,15 @@ if isempty(obj)
     flag=struct();
     return
 end
+
+nobj=numel(obj);
+if nobj>1
+    flag=nan(1,nobj);
+    for iobj=1:nobj
+        flag(iobj)=is_stable_system(obj(iobj));
+    end
+    return
+end
 % this is hard-coded for the moment. We don't want to check stability under
 % estimation if the problem is too big...
 ms_stability_check_threshold=5000;
