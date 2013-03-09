@@ -18,6 +18,8 @@ rise_pdflatex=getappdata(0,'rise_pdflatex');
 if ~rise_pdflatex
     error([mfilename,':: cannot generate a report, MIKTEX was not found earlier'])
 end
+%% hard wired
+max_rows=20;
 %% create a temporary directory to temporarily save handles
 tmpdir='';
 tmpdir_flag=false;
@@ -138,7 +140,6 @@ end
         theHeader=AllBatch{1};
         AllBatch=AllBatch(2:end);
         new_nrows=nrows-1;
-        max_rows=15;
         number_of_tables=ceil(new_nrows/max_rows);
         additional_string='';
         for itab=1:number_of_tables

@@ -1,5 +1,10 @@
 function [C,hyper_class]=object2cell(obj)
 % nobj=numel(obj);
+if isempty(obj)
+    C=obj;
+    hyper_class='';
+    return
+end
 hyper_class=class(obj(1));
 fields=fieldnames(obj);
 nfields=numel(fields);
