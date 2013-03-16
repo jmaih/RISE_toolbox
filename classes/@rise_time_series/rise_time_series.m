@@ -773,16 +773,16 @@ classdef rise_time_series
                 sw(ii,:)=1/(2*pi)*(gam(1,:)+2*sum(bsxfun(@times,gam(2:end,:),cwj),1));
             end
         end
-        function this=ones(this)
-            % Adds a column of ones at the end of the series
-            datta=double(this);
-            if size(datta,3)>1
-                error([mfilename,':: this operation is only defined for databases with one page'])
-            end
-            smpl=size(datta,1);
-            datta=[datta,ones(smpl,1)];
-            this=rise_time_series(this.TimeInfo,datta);
-        end
+%         function this=ones(this)
+%             % Adds a column of ones at the end of the series
+%             datta=double(this);
+%             if size(datta,3)>1
+%                 error([mfilename,':: this operation is only defined for databases with one page'])
+%             end
+%             smpl=size(datta,1);
+%             datta=[datta,ones(smpl,1)];
+%             this=rise_time_series(this.TimeInfo,datta);
+%         end
         function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
             % - B: vector of regression coefficients in the linear model Y = X*B.
             % - BINT: of 95% confidence intervals for B
@@ -1128,6 +1128,12 @@ classdef rise_time_series
             [~,tags]=sort(cellnames);
             this=rise_time_series(newdates,newdata(:,tags),cellnames(tags));
         end
+        varargout=rand(varargin)
+        varargout=randn(varargin)
+        varargout=zeros(varargin)
+        varargout=ones(varargin)
+        varargout=dummy(varargin)
+        varargout=step_dummy(varargin)
         %         function SaveDataBase(this,SaveUnderName,extension)
         %             % SaveDataBase(this,SaveUnderName,extension)
         %             if nargin<3
