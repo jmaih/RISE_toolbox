@@ -64,6 +64,10 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
         elseif ischar(irf_shock_list)
             irf_shock_list=cellstr(irf_shock_list);
         end
+        deterministic_exogenous={obj.varobs_exo.name};
+        if ~isempty(deterministic_exogenous)
+            irf_shock_list=setdiff(irf_shock_list,deterministic_exogenous);
+        end
         if isempty(irf_var_list)
             irf_var_list={obj.orig_varendo.name};
         elseif ischar(irf_var_list)
