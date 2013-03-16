@@ -21,7 +21,8 @@ db.r=testdata.intrate_us;
 svar_order = 3; % Order of VAR lags
 
 %% create a svar as a rise object
-mysvar=struct('model','svar','var',{{'Dloil','$oil price inflation$','Dlo','$output growth$','Dlp','$CPI Inflation$','r','$Interest rate$'}});
+mysvar=struct('model','svar',...
+    'var',{{'Dloil','$oil price inflation$','Dlo','$output growth$','Dlp','$CPI Inflation$','r','$Interest rate$'}});
 % push the order of the VAR directly, and override the default of 4. You
 % could always do it later as well
 obj=rise(mysvar,'data',db,'svar_lags',svar_order);%
@@ -30,12 +31,14 @@ obj=rise(mysvar,'data',db,'svar_lags',svar_order);%
 % endogenous variables as listed (alphabetically) in the model. Below, we
 % impose a different order by specifying it explicitly.
 obj=set_options(obj,'svar_order',{'Dloil','Dlp','Dlo','r'});
+obj=set_properties(obj,'filename','short cholesky');
 % here we could have explictly said we wanted a cholesky restriction
 % obj=set_options(obj,'svar_restrictions','choleski'); but this is
 % unnecessary since it is the default mode
 %% Cholesky restrictions in the long run
 % here we apply the same restrictions but in the long run
 obj(2)=set_options(obj(1),'svar_restrictions','long_cholesky');
+obj(2)=set_properties(obj(2),'filename','long cholesky');
 %% replicating the short-run Cholesky identification through short-run restrictions
 short_run_restrictions={ % eqtn,shock,restr_type,value
     'Dloil','Dlo','short',0
@@ -49,6 +52,7 @@ short_run_restrictions={ % eqtn,shock,restr_type,value
 % in this case, the option 'svar_order' from the previous model will not
 % matter at all.
 obj(3)=set_options(obj(1),'svar_restrictions',short_run_restrictions);
+obj(3)=set_properties(obj(3),'filename','short run(cholesky)');
 %% construct some exclusion restrictions, mixing short and long run
 mixed_restrictions={ % eqtn,shock,restr_type,value
     'Dloil','Dlo','short',0
@@ -60,8 +64,10 @@ mixed_restrictions={ % eqtn,shock,restr_type,value
     };
 % push those restrictions into a 4th object based on the first
 obj(4)=set_options(obj(1),'svar_restrictions',mixed_restrictions); % could also use short_run
+obj(4)=set_properties(obj(4),'filename','mixed restrictions');
 %% Solve all 4 models simultaneously
-objs=solve(obj,'debug',true);
+clc
+objs=solve(obj,'debug',true,'optimset',struct('Display','off'),'svar_restarts',1);
 %% compute irfs for all 3 models simultaneously
 testirfs=irf(obj,'irf_periods',40);
 %% plot the irfs
@@ -90,7 +96,7 @@ for iname=1:numel(endo_names)
             title(shock_texname,'interpreter','none')
         end
         if iname==1 && ishock==1
-            leg=legend({'short Cholesky','long Cholesky','short(with cholesky scheme)','mixed short and long-run'});
+            leg=legend({obj.filename});
         end
     end
 end

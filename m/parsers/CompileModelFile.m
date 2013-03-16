@@ -50,18 +50,25 @@ DELIMITERS=[char([9:13,32]),'[]{}(),;=+-*/^@><'];
 % first output: the dictionary.filename
 is_svar_model= isstruct(FileName);
 if is_svar_model
-    svar_fields={'model','var'}; 
+    svar_fields={'model','var','varexo'}; 
+    RawFile=[];
     % keeping the same keywords as the ones that would be used in a model
     % file
+    iter_svar=0;
     for ifield=1:numel(svar_fields)
         thisField=svar_fields{1,ifield};
         if ~isfield(FileName,thisField)
-            error([thisField,' must be a field when declaring a svar'])
+            if strcmp(thisField,'varexo')
+                continue
+            else
+                error([thisField,' must be a field when declaring a svar'])
+            end
         end
         if strcmp(thisField,'model') && ~isequal(FileName.(thisField),'svar')
             error('The entry for model should be ''svar'' when declaring a svar')
         end
-        if strcmp(thisField,'var')
+        if ismember(thisField,{'var','varexo'})
+            iter_svar=iter_svar+1;
             if ischar(FileName.(thisField))
                 FileName.(thisField)=cellstr(FileName.(thisField));
             end
@@ -70,7 +77,8 @@ if is_svar_model
             tmp=strcat(tmp,',');
             tmp=cell2mat(tmp);
             % create a line for the endogenous
-            RawFile={['var,',tmp(1:end-1),';'],'svar',1};
+            RawFile=[RawFile
+                {[thisField,',',tmp(1:end-1),';'],'svar',iter_svar}];
         end
     end
     dictionary.filename='svar';
@@ -182,8 +190,9 @@ if is_svar_model
             varobsListing{ilist,2}='';
         end
     end
-    blocks(exoblock).listing=exoListing;
-    blocks(varobsblock).listing=varobsListing;
+    observed_exo=blocks(exoblock).listing;
+    blocks(exoblock).listing=[observed_exo;exoListing];
+    blocks(varobsblock).listing=[observed_exo;varobsListing];
 end
 clear current_block_name
 %% Populate the dictionary
