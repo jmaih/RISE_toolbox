@@ -1,12 +1,18 @@
-function FinalResults=automatic_model_selection(obj,endo_name,exo_names,options)%[final_mod,x]
-% this is inspired from the following papers:
-% - G. Sucarrat and A. Escribano (2011): "Automated Model Selection in
-% Finance: General-to-Specific Modelling of the Mean and Volatility
-% Specifications"
-% - D. F. Hendry and H.-M. Krolzig (2005): "The Properties of Automatic
-% Gets Modelling." Economic Journal 115, C32–C61.
-% - D. F. Hendry and H.-M. Krolzig (2001): "Automatic Econometric Model
-% Selection using PcGets". London: Timberlake Consultants Press.
+function FinalResults=automatic_model_selection(tsdata,endo_name,exo_names,options)%[final_mod,x]
+% automatic model selection for single-equation models
+% tsdata: Time series represented as a table
+% endo_name: list of endogenous variables, provided they all share the same
+% exogenous variables. If not, a loop has to be written. This could be
+% improved
+% exo_names: list of the exogenous variables
+% options
+% - lags : lag length: 1:lags for the endogenous and 0:lags for the
+% exogenous
+% - debug:  false by default
+% - start_date
+% - end_date
+% - alpha : 0.05 by default
+% - fixed: list of variables that cannot go out : 'constant' is the default
 
 % TODO:
 % 1- blocking when k>>n. This should be implemented as a function calling
@@ -17,11 +23,20 @@ function FinalResults=automatic_model_selection(obj,endo_name,exo_names,options)
 % build the x matrix. One should first check that x does not contain a
 % constant.
 
+% this is inspired from the following papers:
+% - G. Sucarrat and A. Escribano (2011): "Automated Model Selection in
+% Finance: General-to-Specific Modelling of the Mean and Volatility
+% Specifications"
+% - D. F. Hendry and H.-M. Krolzig (2005): "The Properties of Automatic
+% Gets Modelling." Economic Journal 115, C32–C61.
+% - D. F. Hendry and H.-M. Krolzig (2001): "Automatic Econometric Model
+% Selection using PcGets". London: Timberlake Consultants Press.
+
 if nargin<4
     options=[];
 end
 
-switch obj.frequency
+switch tsdata.frequency
     case {'','D'}
         default_maxlags=1;
     case 'H'
@@ -52,14 +67,14 @@ start_date=fresh_options.start_date;
 end_date=fresh_options.end_date;
 
 if isempty(start_date)
-    start_date=obj.TimeInfo(1).date;
+    start_date=tsdata.TimeInfo(1).date;
 end
 if isempty(end_date)
-    end_date=obj.TimeInfo(end).date;
+    end_date=tsdata.TimeInfo(end).date;
 end
 
-first=find(strcmp(start_date,{obj.TimeInfo.date}));
-last=find(strcmp(end_date,{obj.TimeInfo.date}));
+first=find(strcmp(start_date,{tsdata.TimeInfo.date}));
+last=find(strcmp(end_date,{tsdata.TimeInfo.date}));
 
 if ischar(endo_name)
     endo_name=cellstr(endo_name);
@@ -74,9 +89,9 @@ if ismember('constant',union(endo_name,exo_names))
     error([mfilename,':: variable name ''constant'' is reserved'])
 end
 
-yloc=locate_variables(endo_name,obj.varnames);
-xloc=locate_variables(exo_names,obj.varnames);
-data=double(obj);
+yloc=locate_variables(endo_name,tsdata.varnames);
+xloc=locate_variables(exo_names,tsdata.varnames);
+data=double(tsdata);
 first_row=data(1,:);
 test=sum(abs(bsxfun(@minus,data,first_row)),1);
 if any(test==0)
@@ -141,7 +156,7 @@ end
         disp('=                                                               =')
         disp([' Modeling [',yname,'] by OLS using Automatic Model Selection'])
         disp([' The GUM has ',int2str(numel(rhs)),' variables'])
-        disp([' The estimation sample is: ',obj.TimeInfo(real_start).date,' -- ',obj.TimeInfo(last).date])
+        disp([' The estimation sample is: ',tsdata.TimeInfo(real_start).date,' -- ',tsdata.TimeInfo(last).date])
         if any(disabled)
             disp('=                                                               =')
             disp(upper(' The following tests failed at the GUM and were disabled'))

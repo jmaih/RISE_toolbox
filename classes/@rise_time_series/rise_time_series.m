@@ -1131,6 +1131,7 @@ classdef rise_time_series
         varargout=rand(varargin)
         varargout=randn(varargin)
         varargout=zeros(varargin)
+        varargout=nan(varargin)
         varargout=ones(varargin)
         varargout=dummy(varargin)
         varargout=step_dummy(varargin)
