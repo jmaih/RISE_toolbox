@@ -32,6 +32,8 @@ Features of the toolbox
 
 `*` - Maximum Likelihood and Bayesian estimation
 
+`*` - Derivative-free optimization algorithms
+
 `*` - Forecasting and conditional forecasting
 
 `*` - DSGE-VAR modeling
