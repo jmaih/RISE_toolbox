@@ -147,6 +147,26 @@ for iloop=1:number_of_loops
     x=[x,ones(size(x,1),1)];
     [FinalResults{iloop},disabled]=block_autometrics(fixed_indexes);
     FinalResults{iloop}.var_list=rhs(FinalResults{iloop}.list);
+    recursive=[];
+    try %#ok<TRYNC>
+        fields={'b','bstd','tstat','R2','R2adj'};
+        final_list=FinalResults{iloop}.list;
+        [ymm,xmm]=remove_nan_rows(y,x(:,final_list));
+        smpl=numel(ymm);
+        lowest=numel(final_list);
+        if smpl>lowest
+            for iter=lowest+1:smpl
+                res_iter=ols.ordinary_least_squares(ymm(1:iter),xmm(1:iter,:));
+                for ifield=1:numel(fields)
+                    if iter==lowest+1
+                        recursive.(fields{ifield})=[];
+                    end
+                    recursive.(fields{ifield})=[recursive.(fields{ifield}),res_iter.(fields{ifield})];
+                end
+            end
+        end
+    end
+    FinalResults{iloop}.Results.recursive=recursive;
     display_results(FinalResults{iloop},yname)
 end
 
@@ -154,7 +174,7 @@ end
         nvar=numel(M.list);
         disp('=================================================================')
         disp('=                                                               =')
-        disp([' Modeling [',yname,'] by OLS using Automatic Model Selection'])
+        disp([' Modeling [',yname,'] by OLS using Automagic Model Selection'])
         disp([' The GUM has ',int2str(numel(rhs)),' variables'])
         disp([' The estimation sample is: ',tsdata.TimeInfo(real_start).date,' -- ',tsdata.TimeInfo(last).date])
         if any(disabled)
@@ -350,14 +370,15 @@ end
                 fixed=[];
             end
         end
-        
-        bad_variables=find(any(x-real(x)));
+        [yc,xc]=remove_nan_rows(y,x);
+
+        bad_variables=find(any(xc-real(xc)));
         if ~isempty(bad_variables)
             disp(bad_variables)
             error([mfilename,':: the variables above are not real'])
         end
         
-        k=size(x,2);
+        k=size(xc,2);
         list=(1:k);
         restricted=fixed;
         if ~isempty(restricted) && ~all(ismember(restricted,list))
@@ -435,7 +456,7 @@ end
                             for ii=1:numel(second_fixed)
                                 second_fixed(ii)=find(fixed(ii)==newgum);
                             end
-                            second_round=myautometrics(y,x(:,newgum),alpha,second_fixed,false);
+                            second_round=myautometrics(yc,xc(:,newgum),alpha,second_fixed,false);
                             % adjust for the variable list
                             final_model=second_round;
                             final_model.list=newgum(second_round.list);
@@ -548,9 +569,7 @@ end
             if nargin<2
                 disabled=[];
             end
-            nanrows=isnan(y)|any(isnan(x),2);
-            ym=y(~nanrows);
-            xm=x(~nanrows,Model.list);
+            [ym,xm]=remove_nan_rows(yc,xc(:,Model.list));
             if isempty(ym)
                 error([mfilename,':: all rows are nan'])
             end
@@ -584,4 +603,10 @@ end
         end
     end
 
+end
+
+function [ym,xm]=remove_nan_rows(y,x)
+nanrows=isnan(y)|any(isnan(x),2);
+ym=y(~nanrows);
+xm=x(~nanrows,:);
 end
