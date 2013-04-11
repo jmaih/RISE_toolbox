@@ -17,6 +17,7 @@ classdef rise_time_series
         varargout=bar(varargin)
         varargout=line(varargin)
         varargout=mpower(this,varargin)
+        varargout=transform(this,varargin)
         function this=subsref(obj,s)
             this=obj;
             while ~isempty(s)
