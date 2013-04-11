@@ -56,7 +56,7 @@ is_svar_model=[obj.is_svar_model];
 if all(is_svar_model)
     obj=solve(obj);
     return
-elseif sum(is_svar_model)<numel(obj)
+elseif sum(is_svar_model) % 
     error('estimating SVAR models and non-SVAR model simultaneously is not allowed for the moment')
 end
 
