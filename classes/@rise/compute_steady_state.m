@@ -118,9 +118,9 @@ if ~isempty(steady_state_file)
     % now we actually solve the steady state. The second input argument is
     % set to true
     if nout==4
-        [obj.parameters_image,ss,retcode,obj.is_imposed_steady_state]=steady_state_file(obj.parameters_image,true);
+        [ss,obj.parameters_image,retcode,obj.is_imposed_steady_state]=steady_state_file(obj.parameters_image,true);
     else
-        [obj.parameters_image,ss,retcode]=steady_state_file(obj.parameters_image,true);
+        [ss,obj.parameters_image,retcode]=steady_state_file(obj.parameters_image,true);
     end
     if retcode
         retcode=1; % flag on the steady state
