@@ -1,4 +1,4 @@
-function [params,ss,retcode,imposed]=usmodel_lc_steady_state(params,flag)
+function [ss,params,retcode,imposed]=usmodel_lc_steady_state(params,flag)
 
 imposed=true;
 retcode=0;
