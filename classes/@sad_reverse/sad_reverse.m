@@ -934,7 +934,7 @@ classdef sad_reverse
                 end
             else
                 loc=find(strcmp(c,map.fid(:,2)));
-                if isempty(loc)
+                if isempty(loc)||~isempty(imposed_name)
                     map.operation_count=map.operation_count+1;
                     map.line_count=map.line_count+1;
                     if ~isempty(imposed_name)
