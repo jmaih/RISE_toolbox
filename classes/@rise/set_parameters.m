@@ -50,7 +50,6 @@ elseif isstruct(param_struct) % Case 3
     % 1- vectorize
     true_names={obj.parameters.name};
     param_struct=param_struct(:);
-    npar=numel(param_struct);   
     direct_assignment()
     is_done=true;
 elseif iscell(param_struct) % Case 4
@@ -82,6 +81,7 @@ end
 
     function direct_assignment()
         pnames=fieldnames(param_struct);
+        npar=numel(pnames);
         default_cols=1:obj.NumberOfRegimes;
         % I should have a more permanent way to locate the chains and their
         % states that does not require going into endless depths of the
