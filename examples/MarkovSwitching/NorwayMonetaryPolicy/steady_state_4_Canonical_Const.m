@@ -2,22 +2,26 @@ function [ss,var_names,retcode]=steady_state_4_Canonical_Const(param_obj)%param_
 
 persistent param_names number_of_regimes number_of_variables
 
-retcode=0;
-if isempty(number_of_regimes)
-number_of_regimes=numel(param_obj(1).startval);
-	number_of_variables=11;
-	param_names={param_obj.name};
+try
+	retcode=0;
+	if isempty(number_of_regimes)
+	number_of_regimes=numel(param_obj(1).startval);
+		number_of_variables=11;
+		param_names={param_obj.name};
+	end
+	
+	par_vals=vertcat(param_obj.startval);
+	ss=nan(number_of_variables,number_of_regimes);
+	var_names=[];
+	for ii=1:number_of_regimes
+		[ss(:,ii),var_names]=regime_specific_steady_state(param_names,par_vals(:,ii),var_names);
+	end
+catch
+	error('This file needs updating. Please send an email to junior.maih@gmail.com to report this')
 end
 
-par_vals=vertcat(param_obj.startval);
-ss=nan(number_of_variables,number_of_regimes);
-var_names=[];
-for ii=1:number_of_regimes
-	[ss(:,ii),var_names]=regime_specifi_steady_state(param_names,par_vals(:,ii),var_names);
-end
 
-
-function [ss,var_names]=regime_specifi_steady_state(param_names,params,var_names) %#ok<INUSL>
+function [ss,var_names]=regime_specific_steady_state(param_names,params,var_names) %#ok<INUSL>
 for index=1:numel(param_names)
 	eval([param_names{index},'=params(index);'])
 end

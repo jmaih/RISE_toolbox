@@ -9,7 +9,6 @@ rhogdp $\rho_{gdp}$, rhoi $\rho_{i}$, rhopai $\rho_{\pi}$, rhoy $\rho_{y}$,
 siggdp $\sigma_{gdp}$, sigi $\sigma_{i}$, sigpai $\sigma_{\pi}$, sigy $\sigma_{y}$;
 
 parameters a_tp_1_2, a_tp_2_1;
-//parameters b_tp_1_1 b_tp_1_2 b_tp_2_1 b_tp_2_2;
 				                              						 
 model(linear);
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
@@ -77,6 +76,4 @@ parameterization;
 	
    a_tp_1_2  	     ,0.1500   	  ,.1      ,.8000,beta_pdf,.90;	//  0.1000
    a_tp_2_1  	     ,0.2196   	  ,.1      ,.8000,beta_pdf,.90; 	//  0.1921
-//   b_tp_1_2  	     ,0.0323   	  ,.1      ,.8000,beta_pdf,.90;	//  0.1000
-//   b_tp_2_1  	     ,0.1264   	  ,.1      ,.8000,beta_pdf,.90; 	//  0.1921
 end;		  	                              

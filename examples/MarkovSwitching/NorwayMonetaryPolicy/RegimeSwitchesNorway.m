@@ -3,7 +3,7 @@ close all
 clear all
 clc
 %% add the necessary paths
-setpaths
+rise_startup()
 
 %% get the data
 [datt,navn]=xlsread('DataNEMO');
