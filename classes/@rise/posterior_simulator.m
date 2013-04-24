@@ -125,7 +125,7 @@ max_sim_id=find(max_sim_id==max(max_sim_id),1,'first');
 post_sim_mode=sampling_modes{1,max_sim_id};
 
 % mean and quantiles
-[theta_mean,junk,quantiles]=parameters_posterior_moments(simulation_folder);
+[theta_mean,~,quantiles]=parameters_posterior_moments(simulation_folder);
 for ii=1:size(obj.estimated_parameters,1)    
     obj.estimated_parameters(ii)=obj.estimated_parameters(ii).set_properties(...
         'mean',theta_mean(ii),...
@@ -166,7 +166,7 @@ f1=-f0;
         % contains crucial information going forward. In particular, it contains
         % information about whether the model is stationary or not.
         for mo=1:nobj
-            [fval(mo),junk,junk,junk,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x,filter_flag);
+            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x,filter_flag);
             if retcode
                 break
             end
