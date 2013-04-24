@@ -3,7 +3,7 @@ close all
 clear
 clc
 %% add the necessary paths
-setpaths
+rise_startup()
 %% set the profiler
 profile off
 profile on
