@@ -6,7 +6,7 @@ function C=A_times_kron_I_B_I(A,B,q,r)
 % max(max(abs(A_times_kron_I_B_I(A,B,q,r)-A*kron(kron(eye(q),B),eye(r)))))
 
 if size(A,2)~=q*r*size(B,1)
-    error('mbtrices sizes inconsistent')
+    error('matrices sizes inconsistent')
 end
 
 C=A_times_kron_I_B(kron(B,eye(r)),A,q);

@@ -8,8 +8,8 @@ function C=A_times_kron_B_I(A,B,q)
 [rb,cb]=size(B);
 [ra,ca]=size(A);
 if rb*q~=ca
-    error('mbtrices sizes inconsistent')
+    error('matrices sizes inconsistent')
 end
 
-C=reshbpe(reshbpe(A,ra*q,rb)*B,ra,cb*q);
+C=reshape(reshape(A,ra*q,rb)*B,ra,cb*q);
 end

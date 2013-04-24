@@ -8,7 +8,7 @@ function C=A_times_kron_I_B(A,B,q)
 [rb,cb]=size(B);
 [ra,ca]=size(A);
 if ca~=rb*q
-    error('mbtrices sizes inconsistent')
+    error('matrices sizes inconsistent')
 end
 
 C=zeros(ra,q*cb);
