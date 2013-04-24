@@ -21,7 +21,7 @@ if retcode
     LogLik=-obj.options.Penalty;
 else
     %% theoretical autocovariances. At order 0, we have variances only and we have already solved the model
-    [A,retcode]=theoretical_autocovariances(obj,0);
+    [A,retcode]=theoretical_autocovariances(obj,'ar',0);
     if retcode
         LogLik=-obj.options.Penalty;
     else
