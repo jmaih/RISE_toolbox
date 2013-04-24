@@ -93,6 +93,7 @@ def=vertcat(obj.definitions.value);
 
 x_ss=zeros(obj.NumberOfExogenous,1);
 
+retcode=0;
 if ~isempty(steady_state_file)
     if ischar(steady_state_file)
         steady_state_file=str2func(steady_state_file);
