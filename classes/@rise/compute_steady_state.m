@@ -154,6 +154,19 @@ elseif obj.options.use_steady_state_model
             end
             return
         end
+        if obj.is_optimal_policy_model
+            if isempty(obj.steady_state_file_2_model_communication)
+                % if this is to be used in this case, perhaps it should
+                % change name too.
+                original_endo_ids=locate_variables({obj.orig_varendo.name},{obj.varendo.name});
+                obj.steady_state_file_2_model_communication=...
+                    struct('original_endo_ids',original_endo_ids,...
+                    'located_vars_ids',[]);
+            end
+            tmp=zeros(endo_nbr,obj.NumberOfRegimes);
+            tmp(obj.steady_state_file_2_model_communication.original_endo_ids,:)=ss;
+            ss=tmp; clear tmp;
+        end
         % now put the content of ss into ss_and_bgp_start_vals
         ss_and_bgp_start_vals(1:endo_nbr,:)=ss;
         % exogenous auxiliary variables have steady state zero
