@@ -6,7 +6,7 @@ try
     narginchk(4,4)
 catch me
     % for backward compatibility
-    warning(me.message)
+%%    warning(me.message)
     error(nargchk(4,4,nargin,'string')) %#ok<NCHKN>
 end
 
