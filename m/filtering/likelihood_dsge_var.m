@@ -26,7 +26,7 @@ if ~retcode
     dsge_var=obj.dsge_var;
     p=dsge_var.p;% the var order
     %% theoretical autocovariances
-    [A,info]=theoretical_autocovariances(obj,p,resolve_flag);
+    [A,info]=theoretical_autocovariances(obj,'ar',p);
     if ~info
         %% load further elements computed in load_data
         T=dsge_var.T;% the sample size
@@ -40,7 +40,8 @@ if ~retcode
         if ~retcode
             k=const+n*p;
             %% the prior weight is given by the dsge model
-            lambda=obj.parameters(obj.dsge_prior_weight_id).startval;
+%             lambda=obj.parameters(obj.dsge_prior_weight_id).startval;
+            lambda=obj.parameters_image{2,end}(obj.dsge_prior_weight_id);
             if lambda*T>k+n
                 %% load the empirical moment matrices
                 YY=dsge_var.YY;

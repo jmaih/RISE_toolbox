@@ -90,6 +90,10 @@ for ii=1:par_nbr
 end
 warning(warnstate) 
 
+if obj.is_dsge_var_model
+    obj.dsge_prior_weight_id=find(strcmp('dsge_prior_weight',{obj.parameters.name}),1);
+end
+
 % identification restrictions
 n_restr=numel(Param_rest_block);
 direct=cell(n_restr,2);

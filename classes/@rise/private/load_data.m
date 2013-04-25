@@ -200,7 +200,7 @@ if simulation_available || data_provided
     if obj.is_dsge_var_model
         data=vertcat(obj.varobs.value)';
         const=obj.options.dsge_var_constant;
-        n=obj.NumberOfObservables;
+        n=obj.NumberOfObservables(1); % endogenous observables
         p=obj.options.dsge_varlag;
         Y=data(p+1:end,:);
         smpl=size(Y,1);
