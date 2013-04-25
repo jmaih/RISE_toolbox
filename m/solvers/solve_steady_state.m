@@ -3,7 +3,7 @@ function [ys,retcode]=solve_steady_state(ys0,x_ss,param,def,...
 
 switch is_linear_model
     case 1
-        ys0=0*ys0;
+% %         ys0=0*ys0;
         % compute the constant
         [resid,PD]=resid_func(ys0,x_ss,param,def);
         if any(resid)
