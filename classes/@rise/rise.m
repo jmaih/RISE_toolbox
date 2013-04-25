@@ -34,7 +34,7 @@ classdef rise
         estimation_under_way=false;
         estim_hyperparams=[];
         estim_distributions={};
-        estim_distrib_locations={};        
+        estim_distrib_locations={};
         forward_looking_ids
         func_handles
         hybrid_expectations_lambda_id
@@ -80,6 +80,7 @@ classdef rise
         definitions=rise_equation.empty(0,0);
         equations=rise_equation.empty(0,0);
         endogenous_priors
+        folders_paths
         orig_varendo=rise_variable.empty(0,0);
         varendo=rise_variable.empty(0,0);
         varexo=rise_variable.empty(0,0);

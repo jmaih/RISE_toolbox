@@ -15,23 +15,13 @@ if isempty(obj)
     return
 end
 
-nn=length(nargin);
+nn=length(varargin);
 if rem(nn,2)
     error([mfilename,':: arguments must come in pairs'])
 end
-fields=fieldnames(opt);
-for ii=.5*nn
-    vi=varargin{2*ii-1};
-    loc=find(strcmpi(vi,fields));
-    if isempty(loc)
-        error([mfilename,':: ',vi,' is not a valid argument for this function'])
-    end
-    obj.options.(fields{loc})=varargin{2*ii};
-end
-% for ii=1:length(opt)
-%     vi=fields{ii};
-%     eval([vi,'=obj.options.(',vi,');'])
-% end
+
+obj=set_options(obj,varargin{:});
+obj=set_options(obj,'kf_filtering_level',0);
 
 mcmc_initial_covariance_tune=obj.options.mcmc_initial_covariance_tune;
 mcmc_target_range=obj.options.mcmc_target_range;
@@ -48,10 +38,7 @@ end
 returne_c_at=100;
 
 number_of_burns=round(mcmc_burn_rate*mcmc_number_of_simulations);
-simulation_folder='simulation_folder';
-if ~isdir(simulation_folder)
-    mkdir(simulation_folder)
-end
+simulation_folder=obj.folders_paths.simulations;
 
 x0=vertcat(obj.estimated_parameters.mode);
 npar=size(x0,1);
@@ -86,7 +73,7 @@ parfor pc=1:mcmc_number_of_parallel_chains
             [c,acceptance_rate]=retune_coefficient(c,mcmc_target_range,accepted);
             cCS=c*CS;
             iter=0;
-            fprintf(1,'%s %8.0d %s %8.3f  %s %8.3f \n',...
+            fprintf(1,'%s %3.0d %s %8.3f  %s %8.3f \n',...
                 'chain(burn-in phase)',pc,'tunning coeff',c,'acceptance rate',acceptance_rate);
         end
     end
@@ -111,7 +98,7 @@ parfor pc=1:mcmc_number_of_parallel_chains
                 [c,acceptance_rate]=retune_coefficient(c,mcmc_target_range,accepted);
                 cCS=c*CS;
                 iter=0;
-                fprintf(1,'%s %8.0d %s %8.4f %s %8.3f  %s %8.3f \n',...
+                fprintf(1,'%s %3.0d %s %8.4f %s %8.3f  %s %8.3f \n',...
                     'chain',pc,'global peak',f00,'tunning coeff',c,'acceptance rate',acceptance_rate);
             end
         end
@@ -138,8 +125,8 @@ end
 end
 
 function [x1,f1,accepted,alpha_prob]=random_walk_mcmc(obj,x0,f0,cCS,lb,ub)
-filter_flag=false;
 npar=size(x0,1);
+nobj=numel(obj);
 theta_s=x0+cCS*randn(npar,1);
 if any(theta_s<lb)||any(theta_s>ub)
     f_theta_s=-inf;
@@ -166,7 +153,7 @@ f1=-f0;
         % contains crucial information going forward. In particular, it contains
         % information about whether the model is stationary or not.
         for mo=1:nobj
-            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x,filter_flag);
+            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
             if retcode
                 break
             end

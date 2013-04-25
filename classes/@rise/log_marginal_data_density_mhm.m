@@ -1,7 +1,7 @@
 function obj=log_marginal_data_density_mhm(obj)
 if isempty(obj),obj=struct();return,end
 
-simulation_folder=[obj.options.results_folder,filesep,'simulations'];
+simulation_folder=obj.folders_paths.simulations;
 [theta_mean,V0]=parameters_posterior_moments(simulation_folder);
 W = what(simulation_folder);
 W=W.mat;

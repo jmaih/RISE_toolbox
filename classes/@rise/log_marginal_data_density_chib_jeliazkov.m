@@ -1,6 +1,8 @@
 function obj=log_marginal_data_density_chib_jeliazkov(obj)
 if isempty(obj),obj=struct();return,end
-simulation_folder=[obj.options.results_folder,filesep,'simulations'];
+
+simulation_folder=obj.folders_paths.simulations;
+
 verbose=false;
 x_mode=vertcat(obj.estimated_parameters.mode);
 vcov_mode=obj.vcov;
