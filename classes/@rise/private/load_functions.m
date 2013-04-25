@@ -5,20 +5,19 @@ if isempty(obj)
     return
 end
 
-if ~exist(obj.options.results_folder,'dir')
-    mkdir(obj.options.results_folder)
+MainFolder=obj.options.results_folder;
+SubFoldersList={'graphs','estimation','simulations','routines'};
+
+if ~exist(MainFolder,'dir')
+    mkdir(MainFolder)
 end
-if ~exist([obj.options.results_folder,filesep,'graphs'],'dir')
-    mkdir([obj.options.results_folder,filesep,'graphs'])
-end
-if ~exist([obj.options.results_folder,filesep,'estimation'],'dir')
-    mkdir([obj.options.results_folder,filesep,'estimation'])
-end
-if ~exist([obj.options.results_folder,filesep,'simulations'],'dir')
-    mkdir([obj.options.results_folder,filesep,'simulations'])
-end
-if ~exist([obj.options.results_folder,filesep,'routines'],'dir')
-    mkdir([obj.options.results_folder,filesep,'routines'])
+obj.folders_paths=struct();
+for ifold=1:numel(SubFoldersList)
+	subfolder=[MainFolder,filesep,SubFoldersList{ifold}];
+	obj.folders_paths.(SubFoldersList{ifold})=subfolder;
+	if ~exist(subfolder,'dir')
+	    mkdir(subfolder)
+	end
 end
 
 % Get rid of definitions
@@ -43,7 +42,6 @@ if obj.is_svar_model
     return
 elseif obj.is_dsge_var_model
     handle_struct.likelihood=@likelihood_dsge_var;
-    obj.dsge_prior_weight_id=find(strcmp('dsge_prior_weight',{obj.parameters.name}),1);
 elseif obj.is_optimal_simple_rule_model
     handle_struct.likelihood=@likelihood_optimal_simple_rule;
 else
