@@ -3,7 +3,7 @@ close all
 clear
 clc
 %% add the necessary paths
-setpaths
+rise_startup()
 %% read the model 
 % choose whether to save the generate functions to disk or to keep them in
 % memory. I still don't know which one is the quickest...

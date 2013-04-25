@@ -3,7 +3,7 @@ close all
 clear
 clc
 %% add the necessary paths
-setpaths
+rise_startup()
 %% estimation of the model with
 
 datarabanal_hybrid
@@ -12,23 +12,17 @@ data=data.window(50,50+90-1);
 
 mx=rise('bvar_forward_ms','data',data);
 
-mx=mx.estimate(1); % 261.162 
+mx=mx.estimate(); % 261.162 
 
 %% simulate the posterior distribution
 
-mx=mx.posterior_simulator(true);
+mx=posterior_simulator(mx);
 
-% a sub-folder is created with the name, simulation_folder
+%% computation of Marginal data density
+% the result will be stored back into the
+% object
 
-%% compute IRFs: 
-% 2 types of irfs are computed: the dsge irfs are stored in the usual way
-% while the bvar_dsge irfs are stored under mx.obj.dsge_var
+mx=log_marginal_data_density_mhm(mx);
 
-mx=mx.set_options('irf_draws',20);
-
-% irfs drawing around the mode
-mx_mode=mx.irf(40,1,[],'mode');
-
-% irfs drawing from the posterior distribution
-mx_post=mx.irf(40,1,[],'posterior');
+mx=log_marginal_data_density_chib_jeliazkov(mx);
 
