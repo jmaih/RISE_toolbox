@@ -2,7 +2,13 @@ function [T,R,SS]=recast_loose_commitment_solution_into_markov_switching(obj,T,R
 % this function puts the loose commitment solution into a markov switching
 % form for estimation and simulation.
 
-narginchk(4,4) %<---error(nargchk(4,4,nargin,'struct'))
+try
+    narginchk(4,4)
+catch me
+    % for backward compatibility
+    warning(me.message)
+    error(nargchk(4,4,nargin,'string')) %#ok<NCHKN>
+end
 
 % should write a function called  that does
 % what I do here, so that I can be used for simulation and for the
