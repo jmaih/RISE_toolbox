@@ -1,6 +1,6 @@
 function posterior_marginal_and_prior_densities(obj)
 correct_for_range=true;
-simulation_folder=[obj.options.results_folder,filesep,'simulations'];
+simulation_folder=obj.folders_paths.simulations;
 W = what(simulation_folder);
 W=W.mat;
 locs=find(strncmp('chain_',W,6));
@@ -13,7 +13,11 @@ N=obj.options.discretize^2;
 %=================
 a=vertcat(obj.estimated_parameters.a);
 b=vertcat(obj.estimated_parameters.b);
-distr=vertcat(obj.estimated_parameters.distribution_code);
+distr={obj.estimated_parameters.distribution};
+% recollect the densities
+for idistr=1:numel(distr)
+    distr{idistr}=distributions.(distr{idistr});
+end
 lb=vertcat(obj.estimated_parameters.lb);
 ub=vertcat(obj.estimated_parameters.ub);
 %=================
@@ -68,7 +72,9 @@ for fig=1:nfig
         [x_mm,x_mm_id]=find_nearest(XI,mm);
         x_prior=linspace(lb(par_id),ub(par_id),N);
         x_prior=x_prior(:);
-        f_prior=prior_density(distr(par_id),x_prior,a(par_id),b(par_id));
+        f_prior=distr{par_id}(param(par_id),...
+            obj.estim_hyperparams(par_id,1),obj.estim_hyperparams(par_id,2));
+%         f_prior=prior_density(distr(par_id),x_prior,a(par_id),b(par_id));
         if correct_for_range
             % give it the same range as F
             if max(f_prior)==min(f_prior)

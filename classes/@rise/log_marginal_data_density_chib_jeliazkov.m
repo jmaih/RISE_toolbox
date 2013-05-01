@@ -3,7 +3,7 @@ if isempty(obj),obj=struct();return,end
 
 simulation_folder=obj.folders_paths.simulations;
 
-verbose=false;
+% verbose=false;
 x_mode=vertcat(obj.estimated_parameters.mode);
 vcov_mode=obj.vcov;
 npar=size(x_mode,1);
@@ -41,8 +41,8 @@ for ii=1:6 % number of allowed distributions
 end
 lb=vertcat(obj.estimated_parameters.lb);
 ub=vertcat(obj.estimated_parameters.ub);
-hyperparams=[vertcat(obj.estimated_parameters.a),...
-    vertcat(obj.estimated_parameters.b)];
+% hyperparams=[vertcat(obj.estimated_parameters.a),...
+%     vertcat(obj.estimated_parameters.b)];
 CS=transpose(chol(vcov_mode));
 f0=obj.log_post;
 alpha0=0;
@@ -54,8 +54,9 @@ for ii=1:J
             valid=true;
         end
     end
-    logpost=markov_switching_dsge_posterior(xi,obj,...
-        DistrLocations,hyperparams,false,verbose);
+    logpost=log_posterior_kernel(obj,xi);
+% % %     logpost=markov_switching_dsge_posterior(xi,obj,...
+% % %         DistrLocations,hyperparams,false,verbose);
     f_i=-logpost;
     a=alpha_probability(f_i,f0);
     alpha0=alpha0+a;
