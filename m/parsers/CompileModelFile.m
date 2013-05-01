@@ -3,7 +3,9 @@ function dictionary=CompileModelFile(FileName,varargin)
 % same time. The exogenous that are observed are determisitic. This opens
 % the door for estimating partial equilibrium models
 
-DefaultOptions=struct('definitions_in_param_differentiation',true);
+DefaultOptions=...
+    struct('definitions_in_param_differentiation',true,...
+    'rise_flags',struct());
 if nargin<1
     dictionary=DefaultOptions;
     return
@@ -104,7 +106,8 @@ else
     end
 
 % read file and remove comments
-RawFile=read_file(FileName);
+% RawFile=read_file(FileName,DefaultOptions.rise_flags);
+RawFile=parser.preparse(FileName,DefaultOptions.rise_flags);
 end
 
 blocks=struct('name',{'log_vars','orig_endogenous','exogenous','parameters',...
