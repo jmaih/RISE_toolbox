@@ -34,15 +34,9 @@ CJ=CJ/iter;
 % will save those draws... but perhaps I should put a seed to the random
 % number generator such that I get the same results.
 J=iter;
-distr=vertcat(obj.estimated_parameters.distribution_code);
-DistrLocations=cell(6,1);
-for ii=1:6 % number of allowed distributions
-    DistrLocations{ii}=find(distr==ii);
-end
 lb=vertcat(obj.estimated_parameters.lb);
 ub=vertcat(obj.estimated_parameters.ub);
-% hyperparams=[vertcat(obj.estimated_parameters.a),...
-%     vertcat(obj.estimated_parameters.b)];
+
 CS=transpose(chol(vcov_mode));
 f0=obj.log_post;
 alpha0=0;
@@ -55,9 +49,8 @@ for ii=1:J
         end
     end
     logpost=log_posterior_kernel(obj,xi);
-% % %     logpost=markov_switching_dsge_posterior(xi,obj,...
-% % %         DistrLocations,hyperparams,false,verbose);
-    f_i=-logpost;
+
+	f_i=-logpost;
     a=alpha_probability(f_i,f0);
     alpha0=alpha0+a;
 end
