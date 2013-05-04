@@ -49,7 +49,7 @@ for fig=1:nfig
             tmp=load([simulation_folder,filesep,W{m}]);
             Params=tmp.Params(par_id,:);
             if fig==1 && plt==1
-                % try and locate the sampling posteriror mode
+                % try and locate the sampling posterior mode
                 fm=-tmp.minus_logpost_params;
                 best=find(fm==max(fm),1,'first');
                 if fm(best)>f_post_mode
@@ -64,17 +64,14 @@ for fig=1:nfig
 		mm=mean(all_vals);
         xmin = min(all_vals);
         xmax = max(all_vals);
-%         grid = transpose(linspace(xmin,xmax,N));
-% 		[F,XI]=ksdensity(all_vals,grid);
 		[F,XI]=distributions.kernel_density(all_vals,[],[],'normal',N);
         [x_mode,x_mode_id]=find_nearest(XI,x0(par_id));
         [x_post_mode,x_post_mode_id]=find_nearest(XI,post_mode(par_id));
         [x_mm,x_mm_id]=find_nearest(XI,mm);
         x_prior=linspace(lb(par_id),ub(par_id),N);
         x_prior=x_prior(:);
-        f_prior=distr{par_id}(param(par_id),...
+        f_prior=distr{par_id}(Params(par_id),...
             obj.estim_hyperparams(par_id,1),obj.estim_hyperparams(par_id,2));
-%         f_prior=prior_density(distr(par_id),x_prior,a(par_id),b(par_id));
         if correct_for_range
             % give it the same range as F
             if max(f_prior)==min(f_prior)
