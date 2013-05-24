@@ -1,13 +1,10 @@
 % gives approximate values for the steady state of fs2000 
 % this is the equivalent of dynare's initvals
-function [ys,retcode]=fs2000_steadystate_initval(~,flag)
+function [ys,param_obj,retcode,imposed]=fs2000_steadystate_initval(param_obj,flag)
 
 retcode=0;
+imposed=false;
 
-% var_names={'P','R','W','c','d','dA','e','gp_obs','gy_obs','k','l','m','n','y'};
-% 
-% ys =[2.2582,1.0212,4.5959,0.4477,0.8494,1.0030,1,1.0080,1.0030,5.8012,0.8604,1.0110,0.1872,0.5808]';
-%     
 tmp={
 	'P'			,	    2.258154387910923
 %     'P_AUX_F1'	,	    2.258154387910923
@@ -33,6 +30,7 @@ switch flag
     case 1
         ys =cell2mat(tmp(:,2));
     otherwise
+		error(['unknown flag ',num2str(flag)])
 end
 
     

@@ -1,38 +1,41 @@
 % computes the steady state of fs2000 analyticaly
-function [ys,retcode]=fs2000_steadystate(param_obj,flag)
+function [ys,param_obj,retcode,imposed]=fs2000_steadystate(param_obj,flag)
 
 retcode=0;
+
+imposed=false;
+% setting this to false tells rise that this is just an initial guess and so, rise
+% will check that it is actually the steady state and if it is not, rise will use
+% it as an initial value
 switch flag
     case 0
         ys={'m','P','c','e','W','R','k','d','n','l','gy_obs','gp_obs','y','dA'};
     case 1
-        param_names={param_obj.name};
-        params=vertcat(param_obj.startval); %#ok<NASGU>
-        
-        for index=1:numel(param_names)
-            eval([param_names{index},'=params(index);'])
+        pp=struct();
+        name_loc=strcmp('name',param_obj(1,:));
+        val_loc=strcmp('startval',param_obj(1,:));
+        par_names=param_obj{2,name_loc};
+        par_mat=param_obj{2,val_loc};
+        for ipar=1:numel(par_names)
+            pp.(par_names{ipar})=par_mat(ipar,1);
         end
-        
-        % N.B: psi is the name of a function in Matlab. For some reason I do not
-        % understand, it creates problems when running this file although the loop
-        % above creates a parameter psi and assigns it a value...
-        
-        dA = exp(gam);
+                
+        dA = exp(pp.gam);
         gst = 1/dA;
-        m = mst;
+        m = pp.mst;
         
-        khst = ( (1-gst*bet*(1-del)) / (alp*gst^alp*bet) )^(1/(alp-1));
-        xist = ( ((khst*gst)^alp - (1-gst*(1-del))*khst)/mst )^(-1);
-        eval('nust = psi*mst^2/( (1-alp)*(1-psi)*bet*gst^alp*khst^alp );')
+        khst = ( (1-gst*pp.bet*(1-pp.del)) / (pp.alp*gst^pp.alp*pp.bet) )^(1/(pp.alp-1));
+        xist = ( ((khst*gst)^pp.alp - (1-gst*(1-pp.del))*khst)/pp.mst )^(-1);
+        nust = pp.psi*pp.mst^2/( (1-pp.alp)*(1-pp.psi)*pp.bet*gst^pp.alp*khst^pp.alp );
         n  = xist/(nust+xist);
         P  = xist + nust;
         k  = khst*n;
         
-        eval('l  = psi*mst*n/( (1-psi)*(1-n) );')
-        c  = mst/P;
-        d  = l - mst + 1;
-        y  = k^alp*n^(1-alp)*gst^alp;
-        R  = mst/bet;
+        l  = pp.psi*pp.mst*n/( (1-pp.psi)*(1-n) );
+        c  = pp.mst/P;
+        d  = l - pp.mst + 1;
+        y  = k^pp.alp*n^(1-pp.alp)*gst^pp.alp;
+        R  = pp.mst/pp.bet;
         W  = l/n;
         %   ist  = y-c;
         %   q  = 1 - d;

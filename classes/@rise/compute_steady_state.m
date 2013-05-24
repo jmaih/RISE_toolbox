@@ -105,8 +105,8 @@ if ~isempty(steady_state_file)
     if isempty(obj.steady_state_file_2_model_communication)
         % false means do not solve the steady state
         var_names=steady_state_file(obj.parameters_image,false);
-        original_endo_ids=locate_variables({obj.varendo.name},var_names,true);
-%        original_endo_ids=locate_variables(obj.orig_endo_names_current,var_names,true);
+        %         original_endo_ids=locate_variables({obj.varendo.name},var_names,true);
+        original_endo_ids=locate_variables(obj.orig_endo_names_current,var_names,true);
         located_vars_ids=find(~isnan(original_endo_ids));
         original_endo_ids=original_endo_ids(located_vars_ids);
         obj.steady_state_file_2_model_communication=...

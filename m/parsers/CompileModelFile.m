@@ -1178,7 +1178,7 @@ transition_probabilities();
 
 % variable names for the original endogenous but without the augmentation
 % add-ons
-%dictionary.orig_endo_names_current={orig_endogenous_current.name};
+dictionary.orig_endo_names_current={orig_endogenous_current.name};
 dictionary.dynamic=dynamic;
 dictionary.static=static;
 clear static dynamic
