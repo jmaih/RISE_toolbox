@@ -3,8 +3,7 @@ close all
 clear
 clc
 %% add the necessary paths
-disp(upper('this file may need updating...'))
-setpaths
+rise_startup()
 %% read the model and add the name of the steady state file
 mwssf=rise('Canonical_Const','steady_state_file','steady_state_4_Canonical_Const');
 
