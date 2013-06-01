@@ -1019,42 +1019,74 @@ if ~isempty(static.steady_state_shadow_model)
     static.steady_state_shadow_model=[{['y=zeros(',int2str(orig_endo_nbr),',1);']};static.steady_state_shadow_model];
 end
 
+%% replace the list of definition names with definition equations
+dictionary.definitions=struct('model',orig_definitions,'shadow',shadow_definitions);
+%% load transition matrices, they will go into the computation of
+% derivatives
+dictionary=transition_probabilities(dictionary,shadow_tvp);
+
+%%
+
+% % list of symbols
+%     thisList=collect_symbolic_list(transition_matrix_symbolic.(chain),strcat(dictionary.input_list,'_'));
+%     symb_list=union(symb_list,thisList);
+% 
+% derivs=rise_sym.differentiate(dynamic.shadow_model,...
+%     dictionary.transition_matrix_symbolic,...
+%     dictionary.input_list,...
+%     wrt,3);
+% 
+% out=rise_sym.print(derivs);
 %% symbolic forms
 
 if ~is_svar_model
     % dynamic model wrt y and x
     wrt={'y',1:nnz(dictionary.Lead_lag_incidence)
         'x',1:numel(dictionary.exogenous)};
-    [model_derivatives,numEqtns,numVars,jac_toc]=...
-        rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
-    disp([mfilename,':: first-order derivatives of dynamic model wrt y(+0-) and x. ',...
+    [model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
+        dynamic.shadow_model,...
+        dictionary.transition_matrix_symbolic,...
+        dictionary.input_list,wrt,2);
+%     [model_derivatives,numEqtns,numVars,jac_toc]=...
+%         rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
+    disp([mfilename,':: 1st and 2nd-order derivatives of dynamic model wrt y(+0-) and x. ',...
         int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
     
     % static model wrt y
     wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
-    [static_model_derivatives,numEqtns,numVars,jac_toc]=...
-        rise_derivatives(static.shadow_model,dictionary.input_list,wrt);
-    disp([mfilename,':: first-order derivatives of static model wrt y(0). ',...
+%     [static_model_derivatives,numEqtns,numVars,jac_toc]=...
+%         rise_derivatives(static.shadow_model,dictionary.input_list,wrt);
+    [static_model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
+        static.shadow_model,...
+        {},...
+        dictionary.input_list,wrt,1);
+    disp([mfilename,':: 1st-order derivatives of static model wrt y(0). ',...
         int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
     
     % balanced growth path model wrt y
     wrt={'y',1:2*size(dictionary.Lead_lag_incidence,1)};
-    [static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=...
-        rise_derivatives(static.shadow_BGP_model,dictionary.input_list,wrt);
-    disp([mfilename,':: first-order derivatives of static BGP model wrt y(0). ',...
+%     [static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=...
+%         rise_derivatives(static.shadow_BGP_model,dictionary.input_list,wrt);
+    [static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
+        static.shadow_BGP_model,...
+        {},...
+        dictionary.input_list,wrt,1);
+    disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
         int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
     
     % dynamic model wrt param: I probably should insert the definitions but
     % they are taken out for the moment...
     wrt={'param',1:numel(dictionary.parameters)};
+    ppdd=@(x)x;%dynamic.shadow_model;
     if DefaultOptions.definitions_in_param_differentiation
-        [param_derivatives,numEqtns,numVars,jac_toc]=...
-            rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt,...
-            shadow_definitions);
-    else
-        [param_derivatives,numEqtns,numVars,jac_toc]=...
-            rise_derivatives(dynamic.shadow_model,dictionary.input_list,wrt);
+        ppdd=@(x)replace_definitions(x,shadow_definitions);
     end
+%     [param_derivatives,numEqtns,numVars,jac_toc]=...
+%         rise_derivatives(ppdd(dynamic.shadow_model),dictionary.input_list,wrt);
+    [param_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
+        ppdd(dynamic.shadow_model),...
+        {},...
+        dictionary.input_list,wrt,1);
     disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
         int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
     
@@ -1069,8 +1101,15 @@ if ~is_svar_model
     
     if is_model_with_planner_objective
         wrt={'y',1:size(dictionary.Lead_lag_incidence,1)};
-        [LossComDiscHessJac,numEqtns,numVars,jac_toc]=...
-            rise_derivatives(dictionary.planner.shadow_model(1),dictionary.input_list,wrt,shadow_definitions,2);
+%         [LossComDiscHessJac,numEqtns,numVars,jac_toc]=...
+%             rise_derivatives(dictionary.planner.shadow_model(1),dictionary.input_list,wrt,shadow_definitions,2);
+    % do not chop the output because we are going to augment the function
+    % with the loss, the degree of commitment and the discount. We achieve
+    % this by setting the last argument of the function to false.
+    [LossComDiscHessJac,numEqtns,numVars,jac_toc]=differentiate_system(...
+        dictionary.planner.shadow_model(1),...
+        {},...
+        dictionary.input_list,wrt,2,false); 
         disp([mfilename,':: 1st and 2nd-order derivatives of planner objective wrt y(0). ',...
             int2str(numEqtns),' equations and ',int2str(numVars),' variables :',int2str(jac_toc),' seconds'])
         % add the loss, the commitment degree and discount
@@ -1080,8 +1119,10 @@ if ~is_svar_model
             ['commitment=',strrep(shadow_model{2},'commitment-','')]
             ['discount=',strrep(shadow_model{3},'discount-','')]
             };
-        LossComDiscHessJac.code=[cell2mat(lcd(:)'),LossComDiscHessJac.code];
-        LossComDiscHessJac.argouts={'loss','commitment','discount','Hess_','Jac_'};
+        LossComDiscHessJac.code=[cell2mat(lcd(:)'),... % loss, commitment, discount
+            LossComDiscHessJac.code,... % main code
+            'G2=ivech(G2);']; % so that the hessian is outputed as a square matrix
+        LossComDiscHessJac.argouts=[{'loss','commitment','discount'},LossComDiscHessJac.argouts];
         dictionary.planner.LossComDiscHessJac=LossComDiscHessJac;
     end
 end
@@ -1150,7 +1191,6 @@ dictionary.reordering_index=locate_variables({dictionary.endogenous.name},{unsor
 dictionary.reordering_index=transpose(dictionary.reordering_index(:));
 clear unsorted_endogenous
 
-
 % greekify the final endogenous
 dictionary.endogenous=greekify(dictionary.endogenous);
 
@@ -1173,9 +1213,6 @@ end
 dictionary.is_lagrange_multiplier=strncmp('mult_',{dictionary.endogenous.name},5);
 dictionary.is_endogenous_switching_model=any([dictionary.MarkovChains{3,:}]);
 
-% load transition matrices
-transition_probabilities();
-
 % variable names for the original endogenous but without the augmentation
 % add-ons
 dictionary.orig_endo_names_current={orig_endogenous_current.name};
@@ -1190,74 +1227,12 @@ for ii=1:numel(dictionary.parameters)
 end
 dictionary.is_in_use_parameter=is_in_use_parameter;
 dictionary.is_in_use_shock=is_in_use_shock;
-% replace the list of definition names with definition equations
-dictionary.definitions=struct('model',orig_definitions,'shadow',shadow_definitions);
 dictionary=orderfields(dictionary);
 %% Miscellaneous
 % 1.
 
 %% functions
 
-    function transition_probabilities()
-        
-        ProbScript=[shadow_tvp;{'Q=1;'}];
-        shadow_tvp_left_right=cell(1,2);
-        for iprob=1:numel(shadow_tvp)
-            pp=shadow_tvp{iprob};
-            eq_loc=strfind(pp,'=');
-            shadow_tvp_left_right{iprob,1}=pp(1:eq_loc-1);
-            shadow_tvp_left_right{iprob,2}=pp(eq_loc+1:end-1);
-        end
-        iter=numel(ProbScript);
-        Qsize=1;
-        QQ=struct([]); % this will not be used anymore
-        for i1=1:size(dictionary.MarkovChains,2)
-            chain=dictionary.MarkovChains{1,i1};
-            states_nbr_ii=dictionary.MarkovChains{2,i1};
-            Qsize=Qsize*states_nbr_ii;
-            exo_flag=~logical(dictionary.MarkovChains{3,i1});
-            iter=iter+1;
-            ProbScript{iter,1}=['Qi=zeros(',int2str(states_nbr_ii),');'];
-            NewQ=cell(states_nbr_ii);
-            for s1=1:states_nbr_ii
-                cumul='0';
-                for s2=1:states_nbr_ii
-                    if s1~=s2
-                        prob_name=[chain,'_tp_',int2str(s1),'_',int2str(s2)];
-                        if exo_flag
-                            loc=find(strcmp(prob_name,{dictionary.parameters.name}));
-                            if isempty(loc)
-                                error([mfilename,':: transition probability ',prob_name,' uncharacterized'])
-                            end
-                            new_tp=['param(',int2str(loc),')'];
-                            Info=['Qi(',int2str(s1),',',int2str(s2),')=',new_tp,';'];
-                        else
-                            prob_loc= strcmp(shadow_tvp_left_right(:,1),prob_name);
-                            new_tp=shadow_tvp_left_right{prob_loc,2};
-                            Info=['Qi(',int2str(s1),',',int2str(s2),')=',new_tp,';'];
-                        end
-                        NewQ{s1,s2}=new_tp;
-                        cumul=strcat(cumul,'+',new_tp);
-                        iter=iter+1;
-                        ProbScript{iter,1}=Info;
-                    end
-                end
-                NewQ{s1,s1}=['1-(',cumul,')'];
-                iter=iter+1;
-                ProbScript{iter,1}=['Qi(',int2str(s1),',',int2str(s1),')=1-sum(Qi(',int2str(s1),',:));'];
-            end
-            % those probabilities could be functions of
-            % definitions. so take care of that right here. 
-            NewQ=replace_definitions(NewQ,shadow_definitions);
-            QQ(i1).Q=cellstr2mat(NewQ);
-            iter=iter+1;
-            ProbScript{iter,1}='Q=kron(Q,Qi);';
-        end
-        dictionary.shadow_transition_matrix=struct('code',cell2mat(ProbScript(:)'),...
-            'argins',{dictionary.input_list},... 
-            'argouts',{{'Q'}});
-%         dictionary.shadow_transition_matrix=QQ;
-    end
 
     function string=replace_steady_state_call(string,flag)
         if nargin<2
@@ -2000,6 +1975,71 @@ dictionary=orderfields(dictionary);
     end
 
 end
+
+function dictionary=transition_probabilities(dictionary,shadow_tvp)
+
+shadow_definitions=[];
+if ~isempty(dictionary.definitions)
+    shadow_definitions=dictionary.definitions.shadow;
+end
+shadow_tvp_left_right=regexp(shadow_tvp,'=','split');
+shadow_tvp_left_right=vertcat(shadow_tvp_left_right{:});
+% remove semicolon
+if ~isempty(shadow_tvp_left_right)
+    shadow_tvp_left_right=strrep(shadow_tvp_left_right,';','');
+end
+transition_matrix_symbolic=struct();
+symb_list={};
+for i1=1:size(dictionary.MarkovChains,2)
+    chain=dictionary.MarkovChains{1,i1};
+    states_nbr_ii=dictionary.MarkovChains{2,i1};
+    exo_flag=~logical(dictionary.MarkovChains{3,i1});
+    NewQ=cell(states_nbr_ii);
+    for s1=1:states_nbr_ii
+        cumul='0';
+        for s2=1:states_nbr_ii
+            if s1~=s2
+                prob_name=[chain,'_tp_',int2str(s1),'_',int2str(s2)];
+                if exo_flag
+                    loc=find(strcmp(prob_name,{dictionary.parameters.name}));
+                    if isempty(loc)
+                        error([mfilename,':: exogenous transition probability ',...
+                            prob_name,' uncharacterized'])
+                    end
+                    new_tp=['param(',int2str(loc),')'];
+                else
+                    prob_loc= find(strcmp(shadow_tvp_left_right(:,1),prob_name));
+                    if isempty(prob_loc)
+                        error([mfilename,':: endogenous transition probability ',...
+                            prob_name,' uncharacterized'])
+                    end
+                    new_tp=shadow_tvp_left_right{prob_loc,2};
+                end
+                NewQ{s1,s2}=new_tp;
+                cumul=strcat(cumul,'+',new_tp);
+            end
+        end
+        if strcmp(cumul,'0')
+            NewQ{s1,s1}='1';
+        else
+            NewQ{s1,s1}=['1-(',cumul(3:end),')'];
+        end
+    end
+    % those probabilities could be functions of
+    % definitions. so take care of that right here.
+    NewQ=replace_definitions(NewQ,shadow_definitions);
+    transition_matrix_symbolic.(chain)=analytical_symbolic_form(NewQ,dictionary.input_list,'symbolic');
+    % list of symbols
+    thisList=collect_symbolic_list(transition_matrix_symbolic.(chain),strcat(dictionary.input_list,'_'));
+    symb_list=union(symb_list,thisList);
+end
+this_wrt={};
+[~,dictionary.Journal,dictionary.Regimes,derivsForm]=...
+    rise_sym.transition_matrices2transition_matrix(transition_matrix_symbolic,symb_list,this_wrt);
+dictionary.shadow_transition_matrix=rise_sym.print(derivsForm,'transit_matrix');
+dictionary.transition_matrix_symbolic=transition_matrix_symbolic;
+end
+    
 function [is_trigger,blocks,last_block_id]=check_block(tokk,blocks,last_block_id,file_name,line_number)
 loc_=find(strcmp(tokk,{blocks.trigger}));
 is_trigger=false;
@@ -2035,7 +2075,6 @@ if ~isempty(loc_)
     look_forward=to_process(loc_+span:end);
 end
 end
-
 
 function equation=greekify(equation)
 % so far I will just greekify names but later on, I might also greekify
@@ -2083,30 +2122,41 @@ end
     end
 end
 
-% function next=find_next_atom(string,atom)
-% next=strfind(string,atom);
-% if ~isempty(next)
-%     next=next(1);
-% else
-%     next=0;
-% end
-% end
+function [derivs,numEqtns,numVars,jac_toc]=differentiate_system(myfunc,TransMat,input_list,wrt,order,chop_output)
+if nargin<6
+    chop_output=true;
+end
 
-% function obj=itemize(obj,nextitem,next_tex_name)
-% if nargin<2
-%     next_tex_name=[];
-% end
-% if isempty(obj)
-%     obj.list={nextitem};
-%     obj.tex_list={next_tex_name};
-%     obj.number=1;
-% else
-%     obj.list=[obj.list;{nextitem}];
-%     obj.tex_list=[obj.tex_list;{next_tex_name}];
-%     obj.number=obj.number+1;
-%     [~,tag]=sort(obj.list);
-%     obj.list=obj.list(tag);
-%     obj.tex_list=obj.tex_list(tag);
-% end
-%
-% end
+reprocess=size(wrt,2)==2 && isnumeric(wrt{1,2});
+if reprocess
+    with_respect_to={};
+    for ii=1:size(wrt,1)
+        digits=wrt{ii,2};
+        xx=wrt{ii,1};
+        for id=1:numel(digits)
+            with_respect_to=[with_respect_to,[xx,'_',int2str(digits(id))]]; %#ok<AGROW>
+        end
+    end
+else
+    with_respect_to=wrt;
+end
+
+myfunc=analytical_symbolic_form(myfunc,input_list,'symbolic');
+
+% list of symbols
+symb_list=collect_symbolic_list(myfunc,strcat(input_list,'_'));
+if ~isempty(TransMat)
+    chain_names=fieldnames(TransMat);
+    for ifield=1:numel(chain_names)
+        thisList=collect_symbolic_list(TransMat.(chain_names{ifield}),strcat(input_list,'_'));
+        symb_list=union(symb_list,thisList);
+    end
+end
+tic
+derivs=rise_sym.differentiate(myfunc,TransMat,symb_list,with_respect_to,order);
+derivs=rise_sym.print(derivs,[],chop_output);
+jac_toc=toc;
+numEqtns=numel(myfunc);
+numVars=numel(with_respect_to);
+
+end
