@@ -1,0 +1,3 @@
+function close_differentiation_session()
+clear persistent rise_sym_main_map
+end
