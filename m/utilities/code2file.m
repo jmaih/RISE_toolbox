@@ -52,6 +52,9 @@ zero_nargin=isempty(in_names);
 check_inputs()
 
 code=regexp(code,';','split');
+% replace the nargout_ which is used in evaluation with nargout, which is
+% used in the normal function
+code=regexprep(code,'(?<!\w+)narg(out|in)_(?!\w+)','narg$1');
 
 the_dot=find(fname=='.');
 if ~isempty(the_dot)
