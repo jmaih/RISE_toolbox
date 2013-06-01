@@ -1985,7 +1985,9 @@ end
 shadow_tvp_left_right=regexp(shadow_tvp,'=','split');
 shadow_tvp_left_right=vertcat(shadow_tvp_left_right{:});
 % remove semicolon
-shadow_tvp_left_right=strrep(shadow_tvp_left_right,';','');
+if ~isempty(shadow_tvp_left_right)
+    shadow_tvp_left_right=strrep(shadow_tvp_left_right,';','');
+end
 transition_matrix_symbolic=struct();
 symb_list={};
 for i1=1:size(dictionary.MarkovChains,2)
@@ -2034,7 +2036,7 @@ end
 this_wrt={};
 [~,dictionary.Journal,dictionary.Regimes,derivsForm]=...
     rise_sym.transition_matrices2transition_matrix(transition_matrix_symbolic,symb_list,this_wrt);
-dictionary.transition_matrix_shadow=rise_sym.print(derivsForm,'transit_matrix');
+dictionary.shadow_transition_matrix=rise_sym.print(derivsForm,'transit_matrix');
 dictionary.transition_matrix_symbolic=transition_matrix_symbolic;
 end
     
