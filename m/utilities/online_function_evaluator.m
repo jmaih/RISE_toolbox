@@ -4,6 +4,9 @@ function varargout=online_function_evaluator(F,varargin)
 % inputs:
 % - F: structure with fields code, argins and argouts
 % - varargin instances of elements whose names are given in argins
+% the code may have references to nargin_ or nargout_ those variables will
+% automatically be replaced by nargin and nargout in the formal function,
+% while they will be evaluated in the code
 % example of usage
 % F=struct();
 % F.code='a=1;b=a+p(5);c=diag([a,b]);Jac=c;';
@@ -20,12 +23,16 @@ if nargin==0
     return
 end
 
+nargout_=nargout;
+nargin_=nargin; %#ok<NASGU>
 if isa(F,'function_handle')
-    % get the number of output arguments of the function
-    nout=nargout(F);
-    varargout=cell(1,nout);
-    % this is just pure beauty
-    [varargout{1:nout}]=(F(varargin{:}));
+%     % get the number of output arguments of the function
+%     nout=nargout(F);
+%     varargout=cell(1,nout);
+%     % this is just pure beauty
+%     [varargout{1:nout}]=(F(varargin{:}));
+    varargout=cell(1,nargout_);
+    [varargout{1:nargout_}]=(F(varargin{:}));
 else
     MajorFields=fieldnames(Default);
     for ifield=1:numel(MajorFields)
@@ -67,8 +74,8 @@ else
     
     eval(Default.code)
     
-    varargout=Default.argouts;
-    for ivar=1:numel(Default.argouts)
-        varargout{ivar}=eval(Default.argouts{ivar});
+    varargout=Default.argouts(1:nargout_);
+    for ivar=1:nargout_
+        varargout{ivar}=eval(varargout{ivar});
     end
 end
