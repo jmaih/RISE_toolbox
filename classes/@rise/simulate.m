@@ -20,6 +20,14 @@ if isempty(obj)
     return
 end
 
+nobj=numel(obj);
+if nobj>1
+    State=cell(1,nobj);
+    for iobj=1:nobj
+        [obj(iobj),State{iobj}] = simulate(obj(iobj),varargin{:});
+    end
+    return
+end
 obj.options=mysetfield(obj.options,varargin{:});
 
 simul_burn=obj.options.simul_burn;
