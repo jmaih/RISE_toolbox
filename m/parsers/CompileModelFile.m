@@ -5,7 +5,7 @@ function dictionary=CompileModelFile(FileName,varargin)
 
 DefaultOptions=...
     struct('definitions_in_param_differentiation',true,...
-    'rise_flags',struct());
+    'rise_flags',struct(),'rise_save_macro',false);
 if nargin<1
     dictionary=DefaultOptions;
     return
@@ -107,7 +107,23 @@ else
 
 % read file and remove comments
 % RawFile=read_file(FileName,DefaultOptions.rise_flags);
-RawFile=parser.preparse(FileName,DefaultOptions.rise_flags);
+[RawFile,has_macro]=parser.preparse(FileName,DefaultOptions.rise_flags);
+
+% write the expanded version
+if has_macro && DefaultOptions.rise_save_macro
+    newfile='';
+    thedot=strfind(FileName,'.');
+    fid=fopen([FileName(1:thedot-1),'_expanded.dyn'],'w');
+    for irow=1:size(RawFile,1)
+        write_newfilename=isempty(newfile)||~strcmp(newfile,RawFile{irow,2});
+        if write_newfilename
+            newfile=RawFile{irow,2};
+            fprintf(fid,'%s\n',['// ',newfile,' line ',int2str(RawFile{irow,3})]);
+        end
+        fprintf(fid,'%s\n',RawFile{irow,1});
+    end
+    fclose(fid);
+end
 end
 
 blocks=struct('name',{'log_vars','orig_endogenous','exogenous','parameters',...

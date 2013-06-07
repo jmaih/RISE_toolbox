@@ -40,7 +40,7 @@ if nn
     varargin(discard)=[];
     if ~isempty(varargin)
         for jj=1:nobj
-            obj(jj).options=mysetfield(obj(jj).options,varargin{:});
+            obj(jj)=set_options(obj(jj),varargin{:});
         end
     end
 end

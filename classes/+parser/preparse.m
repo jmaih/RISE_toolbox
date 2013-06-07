@@ -1,4 +1,4 @@
-function output=preparse(FileName,definitions)
+function [output,has_macro]=preparse(FileName,definitions)
 % int2str(x)=sprintf('%.0f',x)
 if nargin<2
     definitions=struct();
@@ -30,17 +30,23 @@ RawFile=parser.read_file(FileName);
 
 % second sweep: process the if else end for and include comments
 % include should also go through preparsing
-output=preparse_expand(RawFile,definitions);
+[output,has_macro]=preparse_expand(RawFile,definitions);
 
 end
 
-function output=preparse_expand(RawFile,definitions,output)
-if nargin<3
-    output=cell(0,3);
+function [output,has_macro]=preparse_expand(RawFile,definitions,has_macro,output)
+if nargin<4
+    output=[];
+    if nargin<3
+        has_macro=false;
+    end
 end
 if isempty(RawFile)
     return
 end
+if isempty(output),output=cell(0,3);end
+if isempty(has_macro),has_macro=false;end
+
 SPACE_DELIMITERS=char([9:13,32]);
 
 depth=0;
@@ -51,10 +57,12 @@ while iter<end_of_file
     rline=next_line(iter);
     switch rline.first_tok
         case '@#include'
+            has_macro=true;
             if depth==0
                 output=parser.append_file(output,rline,definitions);
             end
         case {'@#if','@#for'}
+            has_macro=true;
             depth=depth+1;
             control=rline.first_tok(3:end);
             if depth==1
@@ -80,9 +88,10 @@ while iter<end_of_file
                 end
                 step_rows=select_appropriate_rows(steps);
                 if strcmp(control,'if')
-                    output=preparse_expand(RawFile(step_rows,:),definitions,output);
+                    [output,has_macro]=preparse_expand(RawFile(step_rows,:),definitions,has_macro,output);
                 else
-                    output=for_loop_batch(output,RawFile(step_rows,:),definitions,steps{3});
+                    [output,has_macro2]=for_loop_batch(output,RawFile(step_rows,:),definitions,steps{3});
+                    has_macro=has_macro||has_macro2;
                 end
                 iter=jter;
             end
@@ -158,7 +167,7 @@ else
 end
 end
 %--------------------------------------------------------------------------
-function output=for_loop_batch(output,batch,definitions,index_start_finish)
+function [output,has_macro]=for_loop_batch(output,batch,definitions,index_start_finish)
 
 index=index_start_finish{1};
 start_finish=index_start_finish{2};
@@ -181,7 +190,7 @@ for ii=1:numel(start_finish)
     tank=parser.remove_definitions(batch,definitions);
     %------------------------------------
     % Now expand the content of the loop before storing...
-    tank=preparse_expand(tank,definitions);
+    [tank,has_macro]=preparse_expand(tank,definitions);
     output=[output;tank];
 end
 
