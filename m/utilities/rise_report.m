@@ -19,7 +19,7 @@ if ~rise_pdflatex
     error([mfilename,':: cannot generate a report, MIKTEX was not found earlier'])
 end
 %% hard wired
-max_rows=20;
+max_rows=15;
 %% create a temporary directory to temporarily save handles
 tmpdir='';
 tmpdir_flag=false;
@@ -143,10 +143,6 @@ end
         number_of_tables=ceil(new_nrows/max_rows);
         additional_string='';
         for itab=1:number_of_tables
-            if itab>1
-                fprintf(fid,'%s ','Table continued ...');
-                fprintf(fid,'%s ','\clearpage');
-            end
             if number_of_tables>1
                 additional_string=['(',int2str(itab),')'];
             end
@@ -166,6 +162,10 @@ end
             fprintf(fid,'%s \n','\end{tabular}');
             fprintf(fid,'%s \n',['\caption{',new_table.caption,additional_string,'}']);
             fprintf(fid,'%s \n','\end{table}');
+            if itab>1
+                fprintf(fid,'%s ','Table continued ...');
+                fprintf(fid,'%s ','\clearpage');
+            end
         end
     end
 
@@ -346,6 +346,9 @@ end
             tmpname=strrep(tmpname,'.pdf','');%,'.pdf'
              % quotes and spaces may still not work if the extension .pdf is
             % added
+            if any(isspace(tmpname))
+                tmpname=['"',tmpname,'"'];
+            end
             fprintf(fid,'%s \n','\newpage');
             fprintf(fid,'%s \n','\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}');
             myfigname=reprocess(new_figure.title);
@@ -397,6 +400,7 @@ end
                         PALL{imod}(1,:)=[];
                         % add the dollars
                         mytable{iparam+1,1}=['$',mytable{iparam+1,1},'$'];
+                        mytable{iparam+1,1}=strrep(mytable{iparam+1,1},'_','\_');
                         continue
                     end
                     loc=find(strcmp(pname,PALL{imod}(:,1)));
