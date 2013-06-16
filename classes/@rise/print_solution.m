@@ -1,11 +1,14 @@
-function print_solution(obj,varlist,file2save2,equation_format)
+function outcell=print_solution(obj,varlist,precision,equation_format,file2save2)
 
-if nargin<4
-    equation_format=[];
-    if nargin<3
-        file2save2=[];
-        if nargin<2
-            varlist=[];
+if nargin<5
+    file2save2=[];
+    if nargin<4
+        equation_format=[];
+        if nargin<3
+            precision=[];
+            if nargin<2
+                varlist=[];
+            end
         end
     end
 end
@@ -15,28 +18,35 @@ end
 if isempty(varlist)
     varlist=char({obj(1).varendo.name});
 end
-precision='%8.6f';
+if isempty(precision)
+    precision='%8.6f';
+else
+    if ~ischar(precision)
+        error('precision must be of the type %8.6f')
+    end
+    precision(isspace(precision))=[];
+    if ~strncmp(precision(1),'%',1)||...
+            ~all(isstrprop(precision([2,4]),'digit'))||...
+            ~isstrprop(precision(end),'alpha')
+        error('precision must be of the type %8.6f')
+    end
+end
 
 % get the location of the variables
 ids=locate_variables(varlist,{obj(1).varendo.name});
 
-if ~isempty(file2save2)
-    fid=fopen(file2save2,'w');
-else
-    fid=1;
-end
-
 nobj=numel(obj);
+mycell=cell(0,1);
 string='';
 for kk=1:numel(obj)
     if nobj>1
         string=int2str(kk);
     end
-    fprintf(fid,'\n%s\n',['MODEL ',string,' SOLUTION']);
+    mycell=[mycell;{sprintf('\n%s',['MODEL ',string,' SOLUTION'])}]; %#ok<*AGROW>
     
     T=obj(kk).T;
     if isempty(T)
-        fprintf(fid,'\n%s\n','MODEL HAS NOT BEEN SOLVED');
+    mycell=[mycell;{sprintf('\n%s','MODEL HAS NOT BEEN SOLVED')}]; 
     else
         R=obj(kk).R;
         SS=obj(kk).steady_state_and_balanced_growth_path(1:obj(kk).NumberOfEndogenous(2),:);
@@ -46,7 +56,7 @@ for kk=1:numel(obj)
         if isnumeric(solver)
             solver=int2str(solver);
         end
-        fprintf(fid,'%s :: %s\n','SOLVER',solver);
+         mycell=[mycell;{sprintf('%s :: %s','SOLVER',solver)}];
         endo_names={obj(kk).varendo.name};
         exo_names={obj(kk).varexo.name};
         [~,~,order,h]=size(R);
@@ -58,7 +68,7 @@ for kk=1:numel(obj)
         BGP=BGP(ids,:);
         Risk(abs(Risk)<1e-9)=0;
         if order>1
-            fprintf(fid,'\n%s\n','PRINTING RESULTS ONLY FOR ORDER 1');
+             mycell=[mycell;{sprintf('\n%s','PRINTING RESULTS ONLY FOR ORDER 1')}];
         end
         for ii=1:h
             % first select the matrices corresponding to the variables of
@@ -90,22 +100,16 @@ for kk=1:numel(obj)
             
             data=[{'Endo Name'},var_names
                 GrandState',num2cell(GrandMat')];
-            %             data=cell(2,0);
-            %             % first columns
-            %             data=[data,{'Endo Name',[{'steady state'},{'risk'},{'bal. growth'},state_vars,shock_names]'}']; %#ok<AGROW>
-            %             for vv=1:numel(var_names)
-            %                 data=[data,{var_names{vv},[SS(vv,ii);Risk_ii(vv);BGP(vv,ii);Tii(vv,:)';Rii(vv,:)']}']; %#ok<AGROW>
-            %             end
             
             B=concatenate(data,precision);
-            body_format='\n';
+            body_format='';
             % start from the end
             for bb=size(B,2):-1:1
                 body_format=['%',int2str(B{2,bb}),'s ',body_format]; %#ok<AGROW>
             end
             nrows=size(B{1,1},1);
             number_of_headers=size(B,2);
-            fprintf(fid,'\n%s %4.0f\n','Regime',ii);
+             mycell=[mycell;{sprintf('\n%s %4.0f','Regime',ii)}];
             if equation_format
                 B0=B{1,1};
                 for icols=2:number_of_headers
@@ -119,7 +123,7 @@ for kk=1:numel(obj)
                     tmp=strrep(tmp,'-+','-');
                     tmp=strrep(tmp,'steadystate','');
                     tmp=tmp(1:end-1);
-                    fprintf(fid,'%s \n',tmp);
+                     mycell=[mycell;{sprintf('%s',tmp)}];
                 end
             else
                 for rr=1:nrows
@@ -127,16 +131,30 @@ for kk=1:numel(obj)
                     for jj=1:number_of_headers
                         data_ii{jj}=B{1,jj}(rr,:);
                     end
-                    fprintf(fid,body_format,data_ii{:});
+                     mycell=[mycell;{sprintf(body_format,data_ii{:})}];
                 end
             end
         end
     end
+end
+
+if nargout
+    outcell=mycell;
+else
+    if ~isempty(file2save2)
+        fid=fopen(file2save2,'w');
+    else
+        fid=1;
+    end
+    for irow=1:numel(mycell)
+        fprintf(fid,'%s \n',mycell{irow});
+    end
+    if ~isempty(file2save2)
+        fclose(fid);
+    end
     
 end
-if ~isempty(file2save2)
-    fclose(fid);
-end
+
 
 function B=concatenate(data,precision)
 

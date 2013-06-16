@@ -3,12 +3,14 @@ classdef rise_report < handle
         documentclass='article'
         orientation='landscape'
         points='12pt'
+        papersize='letterpaper'
         packages={'graphicx','amsmath','geometry','amsfonts',...
-            'color','hyperref','longtable'}
+            'color','hyperref','longtable','float'}
         report_name='RiseReport'
         graphicspath=''
         pagestyle='myheadings'
-        titlepage=struct('title','','date','','address','','author','','email','')
+        titlepage=struct('title','','date','','address','','author','',...
+            'email','','abstract','')
     end
     properties(SetAccess = private,Hidden=true)
         script=cell(1000,1)
@@ -34,10 +36,10 @@ classdef rise_report < handle
                 obj.ncells=obj.ncells+obj.iter;
             end
             obj.script(obj.line_count+(1:nrows))=item;
-            %             for irow=1:nrows
-            %                 obj.script(obj.line_count+irow)=item(irow);
-            %             end
-            obj.line_count=obj.line_count+nrows;
+            % add some space between records for lisibility and for
+            % debugging purposes
+            obj.script(obj.line_count+nrows+1)={' '}; 
+            obj.line_count=obj.line_count+nrows+1;
         end
     end
     methods
@@ -123,6 +125,12 @@ classdef rise_report < handle
                             error('argument of pagestyle must be a ''myheadings'',''empty'' or ''headings''')
                         end
                         default_report.(field)=value;
+                    case 'papersize'
+                        default_field_map{loc,2}=true;
+                        if ~ismember(value,{'letterpaper','a4paper'})
+                            error('argument of papersize must be a ''letterpaper'' or ''a4paper''')
+                        end
+                        default_report.(field)=value;
                     case 'packages'
                         default_field_map{loc,2}=true;
                         if ischar(value)
@@ -152,16 +160,25 @@ classdef rise_report < handle
                                 error([ff,' is not a valid field of titlepage'])
                             end
                             switch ff
+                                case 'abstract'
+                                    if ~isempty(value.(ff))
+                                        if ischar(value.(ff))
+                                            value.(ff)=cellstr(value.(ff));
+                                        end
+                                        default_report.titlepage.(ff)=value.(ff);
+                                    end
                                 case 'title'
                                     default_report.titlepage.(ff)=value.(ff);
                                 case {'author','address','email'}
                                     if iscellstr(value.(ff))
-                                        tmp=value.(ff);
-                                        tmp=cell2mat(strcat(tmp(:)',' &'));
-                                        tmp=tmp(1:end-1);
+                                        tmp=value.(ff){1};
+                                        for jj=2:numel(value.(ff))
+                                            tmp=[tmp,' \and ',value.(ff){jj}];
+                                        end
                                         value.(ff)=tmp;
                                     end
-                                    default_report.titlepage.(ff)=value.(ff);
+                                    default_report.titlepage.(ff)=...
+                                        regexp(value.(ff),'\\and(?!\w+)','split');
                                 case 'date'
                                     default_report.titlepage.(ff)=value.(ff);
                                 otherwise
@@ -191,166 +208,37 @@ classdef rise_report < handle
         %         end
         %         function model_solution(obj,model)
         %         end
+        function subsubsection(obj,section_name,text)
+            mysection={['\subsubsection{',char(section_name),'}']};
+            if nargin>2
+                if ischar(text)
+                    text=cellstr(text);
+                end
+                mysection=[mysection;text(:)];
+            end
+            record(obj,mysection)
+        end
+        function subsection(obj,section_name,text)
+            mysection={['\subsection{',char(section_name),'}']};
+            if nargin>2
+                if ischar(text)
+                    text=cellstr(text);
+                end
+                mysection=[mysection;text(:)];
+            end
+            record(obj,mysection)
+        end
+        function section(obj,section_name,text)
+            mysection={['\section{',char(section_name),'}']};
+            if nargin>2
+                if ischar(text)
+                    text=cellstr(text);
+                end
+                mysection=[mysection;text(:)];
+            end
+            record(obj,mysection)
+        end
         %         %-----------------------------
-        function model_equations(obj,model_objects)
-            new_equations=struct('title','Model equations',...
-                'equations',{{model_objects(1).equations.dynamic}});
-            if ischar(new_equations.equations)
-                new_equations.equations=cellstr(new_equations.equations);
-            end
-            newscript={
-                ['\section{',reprocess(new_equations.title),'}']
-                ' \begin{verbatim}'	%\color{lightgray}
-                };
-            for ieq=1:numel(new_equations.equations)
-                myeq=['EQ',int2str(ieq),': ',new_equations.equations{ieq}];
-                equality=strfind(myeq,'=');
-                if isempty(equality)
-                    myeq=strrep(myeq,';','=0;');
-                end
-                if length(myeq)>89
-                    neweq='';
-                    strfill='';
-                    while ~isempty(myeq)
-                        [token,remain] = strtok(myeq,'+-/*');
-                        strfill=[strfill,token];
-                        if ~isempty(remain)
-                            strfill=[strfill,remain(1)]; %#ok<*AGROW>
-                        end
-                        myeq=remain(2:end);
-                        if length(strfill)>86
-                            if ~isempty(remain(2:end))
-                                strfill=[strfill,'...'];
-                            end
-                            neweq=char(neweq,strfill);
-                            if ~isempty(remain(2:end))
-                                strfill='	';
-                            else
-                                strfill='';
-                            end
-                        end
-                    end
-                    if ~isempty(strfill)
-                        neweq=char(neweq,strfill);
-                    end
-                    myeq=neweq(2:end,:);
-                    clear neweq
-                end
-                for isubeq=1:size(myeq,1)
-                    newscript=[newscript;{myeq(isubeq,:)}];
-                end
-                newscript=[newscript;{' '}];
-            end
-            newscript=[newscript;{'\end{verbatim}\color{black}'}];
-            text(obj,newscript);
-        end
-        function model_estimation_results(obj,model_objects)
-            ncases=numel(model_objects);
-            type_name='tex_name';
-            parnames= {model_objects(1).estimated_parameters.(type_name)};
-            ordered_names=sort(parnames);
-            PALL=cell(1,ncases);
-            for ic=1:ncases
-                newnames={model_objects(ic).estimated_parameters.(type_name)};
-                mode=num2cell(vertcat(model_objects(ic).estimated_parameters.mode));
-                mode_std=num2cell(vertcat(model_objects(ic).estimated_parameters.mode_std));
-                prior_prob=num2cell(vertcat(model_objects(ic).estimated_parameters.interval_probability));
-                plb=num2cell(vertcat(model_objects(ic).estimated_parameters.plb));
-                pub=num2cell(vertcat(model_objects(ic).estimated_parameters.pub));
-                prior_distrib={model_objects(ic).estimated_parameters.distribution};
-                PALL{ic}=[newnames',prior_distrib',prior_prob,plb,pub,mode,mode_std];
-                if ~isequal(parnames,newnames)
-                    ordered_names=union(ordered_names,newnames);
-                end
-            end
-            nparams=numel(ordered_names);
-            
-            mytable=cell(nparams+1,5+ncases);
-            model_names={model_objects.filename};
-            mytable(1,:)=[{'parameter','Prior distr','Prior prob','low','high'},model_names];
-            for iparam=1:nparams
-                name_in=false;
-                for imod=1:ncases
-                    if isempty(PALL{imod})
-                        mytable{iparam+1,5+imod}='--';
-                    else
-                        if ~name_in
-                            param_info=PALL{imod}(1,:);
-                            pname=param_info{1};
-                            name_in=true;
-                            mytable(iparam+1,1:5)=param_info(1:5);
-                            mytable{iparam+1,5+imod}=param_info{6};
-                            PALL{imod}(1,:)=[];
-                            % add the dollars
-                            mytable{iparam+1,1}=['$',mytable{iparam+1,1},'$'];
-                            mytable{iparam+1,1}=strrep(mytable{iparam+1,1},'_','\_');
-                            continue
-                        end
-                        loc=find(strcmp(pname,PALL{imod}(:,1)));
-                        if isempty(loc)
-                            mytable{iparam+1,5+imod}='--';
-                        else
-                            mytable{iparam+1,5+imod}=PALL{imod}{loc,6};
-                            PALL{imod}(loc,:)=[];
-                        end
-                    end
-                end
-            end
-            if ncases==1
-                mytable=[mytable,[{'mode\_std'};num2cell(vertcat(model_objects.estimated_parameters.mode_std))]];
-            end
-            table_struct=struct('longtable',true,'table',{mytable},...
-                'caption','Prior and Posterior mode',...
-                'title','Estimation Results');
-            table(obj,table_struct)
-            % add estimation statistics
-            estimation_statistics()
-            function estimation_statistics()
-                thisTable={
-                    ''
-                    'log-post:'
-                    'log-lik:'
-                    'log-prior:'
-                    'log-endog_prior'
-                    'number of active inequalities'
-                    'log-MDD(Laplace)'
-                    'log-MDD(MHM)'
-                    'estimation sample'
-                    'number of observations '
-                    'number of parameters '
-                    'estimation algorithm '
-                    'solution algorithm '
-                    'start time:'
-                    'end time :'
-                    'total time:'
-                    };
-                for icu=1:numel(model_objects)
-                    this_ic={model_objects(icu).log_post,model_objects(icu).log_lik,model_objects(icu).log_prior,...
-                        model_objects(icu).log_endog_prior,model_objects(icu).numberOfActiveInequalities,...
-                        model_objects(icu).log_mdd_laplace,model_objects(icu).log_mdd_mhm,...
-                        [model_objects(icu).options.estim_start_date,':',model_objects(icu).options.estim_end_date],...
-                        numel(model_objects(icu).varobs(1).value),numel(model_objects(icu).estimated_parameters),...
-                        model_objects(icu).options.optimizer,...
-                        model_objects(icu).options.solver,nan,nan,nan}';
-                    if isfield(model_objects(icu).options,'estim_end_time') && ~isempty(model_objects(icu).options.estim_end_time)
-                        t2=model_objects(icu).options.estim_end_time;
-                        t1=model_objects(icu).options.estim_start_time;
-                        estimation_time=etime(t2,t1);
-                        hrs=floor(estimation_time/3600);
-                        secs=estimation_time-hrs*3600;
-                        mins=floor(secs/60);
-                        secs=secs-mins*60;
-                        this_ic(end-(2:-1:0))={datestr(t1),datestr(t2),[int2str(hrs),':',int2str(mins),':',int2str(secs)]};
-                    end
-                    thisTable=[thisTable,[model_names(icu);this_ic]];
-                end
-                
-                thisTable=struct('longtable',false,'table',{thisTable},...
-                    'caption','Estimation summary statistics',...
-                    'title','Extended estimation output');
-                table(obj,thisTable)
-            end
-        end
         function thisobj=table(obj,table_struct)
             default_table=struct('longtable',false,'title','',...
                 'table',[],'caption','');
@@ -361,7 +249,7 @@ classdef rise_report < handle
             new_table=mysetfield(default_table,table_struct);
             myscript={};
             if ~isempty(new_table.title)
-                myscript=[myscript;{['\section{',reprocess(new_table.title),'}']}];
+                myscript=[myscript;best_title(new_table.title)];
             end
             [nrows,ncols]=size(new_table.table);
             AllBatch=cell(nrows,1);
@@ -385,31 +273,52 @@ classdef rise_report < handle
             AllBatch=AllBatch(2:end);
             tablestyle='table';
             if new_table.longtable
-%                 tablestyle=['long',tablestyle];
+                tablestyle=['long',tablestyle];
+                myscript=[myscript;{
+                    ['\begin{',tablestyle,'}[H]{',repmat('r',1,ncols),'}']
+                    '\hline\hline'
+                    theHeader
+                    '\hline'
+                    }];
+            else
+                myscript=[myscript;{
+                    ['\begin{',tablestyle,'}[H] \centering']
+                    ['\begin{tabular}{',repmat('r',1,ncols),'}']
+                    '\hline\hline'
+                    theHeader
+                    '\hline'
+                    }];
             end
-            myscript=[myscript;{
-                ['\begin{',tablestyle,'}[h] \centering']
-                ['\begin{tabular}{',repmat('r',1,ncols),'}']
-                '\hline\hline'
-                theHeader
-                '\hline'
-                }];
-            myscript=[myscript;AllBatch];
-            myscript=[myscript;{'\hline'
-                '\hline'
-                '\end{tabular}'}];
-            if ~isempty(new_table.caption)
-                myscript=[myscript;{['\caption{',new_table.caption,'}']}];
+            if new_table.longtable
+                myscript=[myscript;{
+                    '\endfirsthead'
+                    ['\multicolumn{',int2str(ncols),'}{c}{ -- \textit{Continued from previous page}} \\']
+                    '\hline\hline'
+                    theHeader
+                    '\hline'
+                    '\endhead'
+                    ['\hline \multicolumn{',int2str(ncols),'}{r}{\textit{Continued on next page}} \\']
+                    '\endfoot'
+                    '\hline\hline'
+                    '\endlastfoot'
+                    }];
+            end
+            myscript=[myscript
+                AllBatch];
+            if ~new_table.longtable
+                myscript=[myscript
+                    {'\hline\hline'
+                    '\end{tabular}'}
+                    ];
             end
             myscript=[myscript;{['\end{',tablestyle,'}']}];
             record(obj,myscript)
-            obj.clearpage();
             thisobj=obj;
         end
         function thisobj=figure(obj,figure_struct)
             default_figure=struct('name','',...
                 'title','',...
-                'caption','','angle',0);
+                'caption','','angle',0,'scale',0.85);
             if isempty(obj)
                 thisobj=default_figure;
                 return
@@ -418,6 +327,7 @@ classdef rise_report < handle
             if ~isempty(new_figure.name)
                 tmpname=new_figure.name;
                 angle=new_figure.angle;
+                scale=new_figure.scale;
                 if ishandle(tmpname)
                     if ~obj.tmpdir_flag
                         obj.tmpdir=tempname(pwd);
@@ -436,17 +346,13 @@ classdef rise_report < handle
                     tmpname=['"',tmpname,'"'];
                 end
                 myfigname=reprocess(new_figure.title);
-                if any(isspace(myfigname))
-                    myfigname=['"',myfigname,'"'];
-                end
                 newscript={ %'\newpage'
-                    '\begin{tabular}[t]{@{\hspace*{-3pt}}c@{}}'
+                    '\begin{tabular}[H]{@{\hspace*{-3pt}}c@{}}'
                     ['\multicolumn{1}{c}{\large\bfseries ',myfigname,'}\\']
-                    ['\raisebox{10pt}{\includegraphics[scale=0.9,angle=',...
+                    ['\raisebox{10pt}{\includegraphics[scale=',num2str(scale),',angle=',...
                     num2str(angle),']{',tmpname,'}}']
                     '\end{tabular}'};
                 record(obj,newscript)
-                obj.clearpage();
                 thisobj=obj;
             end
         end
@@ -575,6 +481,13 @@ classdef rise_report < handle
                 fprintf(fid,'%s \n',['\markright{',reprocess(new_title.title),'\hfill ',new_title.date,'\hfill}']);
                 fprintf(fid,'%s \n','\thispagestyle{empty}');
                 fprintf(fid,'%s \n','\maketitle');
+                if ~isempty(new_title.abstract)
+                    fprintf(fid,'%s \n','\begin{abstract}');
+                    for irow=1:numel(new_title.abstract)
+                        fprintf(fid,'%s \n',new_title.abstract{irow});
+                    end
+                    fprintf(fid,'%s \n','\end{abstract}');
+                end
                 function varargout=collect_attributes(new_title,varargin)
                     varargout=varargin;
                     for ii=1:length(varargin)
@@ -592,49 +505,64 @@ classdef rise_report < handle
         function report(obj,varargin)
             publish(obj,varargin)
         end
-        function subsubsection(obj,section_name,text)
-            mysection={['\subsubsection{',char(section_name),'}']};
-            if nargin>2
-                if ischar(text)
-                    text=cellstr(text);
-                end
-                mysection=[mysection;text(:)];
-            end
-            record(obj,mysection)
-        end
-        function subsection(obj,section_name,text)
-            mysection={['\subsection{',char(section_name),'}']};
-            if nargin>2
-                if ischar(text)
-                    text=cellstr(text);
-                end
-                mysection=[mysection;text(:)];
-            end
-            record(obj,mysection)
-        end
-        function section(obj,section_name,text)
-            mysection={['\section{',char(section_name),'}']};
-            if nargin>2
-                if ischar(text)
-                    text=cellstr(text);
-                end
-                mysection=[mysection;text(:)];
-            end
-            record(obj,mysection)
-        end
         function include(obj,filename)
             record(obj,['\input{',filename,'}']);
         end
-        function verbatim(obj,varargin)
-            record(obj,['\begin{verbatim}';
-                varargin(:);
-                '\end{verbatim}'])
+        function verbatim(obj,thisstruct)
+            default=struct('title','','list',{{}});
+            if isempty(obj)
+                disp(default)
+                return
+            end
+            if ~isstruct(thisstruct)
+                error('input must be a structure')
+            end
+            default=mysetfield(default,thisstruct);
+             myscript={};
+            if ~isempty(default.title)
+                myscript=[myscript;best_title(default.title)];
+            end
+            list=default.list;
+            if ~isempty(list)
+                if ischar(list)
+                    list=cellstr(list);
+                end
+                record(obj,[myscript;
+                    {'\begin{verbatim}'};
+                    list(:);
+                    {'\end{verbatim}'}])
+            end
         end
-        function text(obj,CellItems)
-            record(obj,CellItems(:))
+        function text(obj,thisstruct)
+            default=struct('title','','list',{{}});
+            if isempty(obj)
+                disp(default)
+                return
+            end
+            if ~isstruct(thisstruct)
+                error('input must be a structure')
+            end
+            default=mysetfield(defaut,thisstruct);
+             myscript={};
+            if ~isempty(default.title)
+                myscript=[myscript
+                    {'\begin{tabular}{c}'}
+                    {['\multicolumn{1}{c}{\large\bfseries ',reprocess(default.title),'}']}
+                    {'\end{tabular}'}
+                    ];
+            end
+            list=default.list;
+            if ~isempty(list)
+                if ischar(list)
+                    list=cellstr(list);
+                end
+                record(obj,[myscript;
+                    list(:)])
+            end
         end
         function paragraph(obj,varargin)
-            text(obj,[' ';varargin(:)])
+            text(obj,...
+                struct('title','','list',{[' ';varargin(:)]}))
         end
         function quote(obj,quote)
             if ischar(quote)
@@ -652,23 +580,65 @@ classdef rise_report < handle
                 quote(:)
                 '\end{quotation}'])
         end
-        function enumerate(obj,CellItems)
-            for ii=1:numel(CellItems)
-                CellItems{ii}=['\item ',CellItems{ii}];
+        function enumerate(obj,thisstruct)
+            default=struct('title','','list',{{}});
+            if isempty(obj)
+                disp(default)
+                return
             end
-            CellItems=CellItems(:);
-            record(obj,['\begin{enumerate}'
-                CellItems
-                '\end{enumerate}'])
+            if ~isstruct(thisstruct)
+                error('input must be a structure')
+            end
+            default=mysetfield(defaut,thisstruct);
+             myscript={};
+            if ~isempty(default.title)
+                myscript=[myscript;best_title(default.title)];
+            end
+            list=default.list;
+            if ~isempty(list)
+                if ischar(list)
+                    list=cellstr(list);
+                end
+                for ii=1:numel(list)
+                    list{ii}=['\item ',list{ii}];
+                end
+                myscript=[myscript;
+                    {'\begin{enumerate}'}
+                    list(:)
+                    {'\end{enumerate}'}
+                    ];
+                record(obj,myscript)
+            end
         end
-        function itemize(obj,CellItems)
-            for ii=1:numel(CellItems)
-                CellItems{ii}=['\item ',CellItems{ii}];
+        function itemize(obj,thisstruct)
+            default=struct('title','','list',{{}});
+            if isempty(obj)
+                disp(default)
+                return
             end
-            CellItems=CellItems(:);
-            record(obj,['\begin{itemize}'
-                CellItems
-                '\end{itemize}'])
+            if ~isstruct(thisstruct)
+                error('input must be a structure')
+            end
+            default=mysetfield(defaut,thisstruct);
+             myscript={};
+            if ~isempty(default.title)
+                myscript=[myscript;best_title(default.title)];
+            end
+            list=default.list;
+            if ~isempty(list)
+                if ischar(list)
+                    list=cellstr(list);
+                end
+                for ii=1:numel(list)
+                    list{ii}=['\item ',list{ii}];
+                end
+                myscript=[myscript;
+                    {'\begin{itemize}'}
+                    list(:)
+                    {'\end{itemize}'}
+                    ];
+                record(obj,myscript)
+            end
         end
         function clearpage(obj)
             record(obj,{'\clearpage'})
@@ -682,6 +652,11 @@ classdef rise_report < handle
     end
 end
 
+function tt=best_title(tit)
+tt={'\begin{tabular}{c}';
+['\multicolumn{1}{c}{\large\bfseries ',reprocess(tit),'}']
+'\end{tabular}'};
+end
 function xin=reprocess(xin,precision)
 if nargin<2
     precision=4;
@@ -689,11 +664,12 @@ end
 if isnumeric(xin)
     xin=num2str(xin,precision);
 elseif ischar(xin)
-    if any(xin=='$')
+    if any(xin=='$')% ||sum(xin=='_')<=1 %&& ~isempty(strfind(xin,'ensuremath'))
         return
     end
     xin=strrep(xin,'\_','LouisPergaud');
     xin=strrep(xin,'_','\_');
     xin=strrep(xin,'LouisPergaud','\_');
 end
+xin=strtrim(xin);
 end

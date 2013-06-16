@@ -159,10 +159,11 @@ classdef rise
         varargout=monte_carlo_filtering(obj,varargin) % <--- formerly sensitivity_analysis
         posterior_marginal_and_prior_densities(obj,varargin)
         varargout=posterior_simulator(obj,varargin)
-        print_estimates(obj,varargin)
-        print_estimation_results(obj,varargin)
-        print_solution(obj,varargin)
+        varargout=print_estimates(obj,varargin)
+        varargout=print_estimation_results(obj,varargin)
+        varargout=print_solution(obj,varargin)
         prior_plots(obj,varargin)
+        varargout=report(obj,varargin)
         varargout=set_parameters(obj,varargin)
         % under estimation, I put the parameters in the second argument
         % (bypass), instead of loading'em from obj.parameters, which given
