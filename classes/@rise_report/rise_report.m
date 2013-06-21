@@ -12,6 +12,9 @@ classdef rise_report < handle
         titlepage=struct('title','','date','','address','','author','',...
             'email','','abstract','')
     end
+    properties(Hidden=true)
+        compiler=getappdata(0,'rise_pdflatex')
+    end
     properties(SetAccess = private,Hidden=true)
         script=cell(1000,1)
         ncells=1000;
@@ -48,8 +51,7 @@ classdef rise_report < handle
             if nargs==0
                 return
             end
-            rise_pdflatex=getappdata(0,'rise_pdflatex');
-            if ~rise_pdflatex
+            if isempty(obj.compiler)
                 error([mfilename,':: cannot generate a report, MIKTEX was not found earlier'])
             end
             dummy=rise_report();
@@ -203,10 +205,6 @@ classdef rise_report < handle
         %             %\begin{quotation}
         %             %\end{quotation}
         %             record(obj,varargin)
-        %         end
-        %         function model_equations(obj,model)
-        %         end
-        %         function model_solution(obj,model)
         %         end
         function subsubsection(obj,section_name,text)
             mysection={['\subsubsection{',char(section_name),'}']};
@@ -378,11 +376,12 @@ classdef rise_report < handle
             add_finishing();
             fclose(fid);
             
-            retcode=system(['pdflatex ',obj.report_name]);
+            thisString=[obj.compiler,' ',obj.report_name];
+            retcode=system(thisString);
             if ~retcode
                 % run again in order to make sure the references are shown
-                system(['pdflatex ',obj.report_name]);
-                system(['pdflatex ',obj.report_name]);
+                system(thisString);
+                system(thisString);
             end
             useless_extensions={'.log','.bbl','.blg','.aux','.*.bak'};
             for iext=1:numel(useless_extensions)

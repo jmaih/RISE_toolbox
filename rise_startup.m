@@ -3,9 +3,19 @@ if nargin<1
     flag=false;
 end
 
-% this function sets up RISE (it replaces setpaths)
+if ispc
+    [retcode,pdflatex_path] = system('findtexmf --file-type=exe pdflatex');
+elseif ismac || isunix
+    [retcode,pdflatex_path] = ...
+        system(['PATH=$PATH:/usr/texbin:/usr/local/bin:/usr/local/sbin;' ...
+        'which pdflatex']);%, echo
+else% gnu/linux
+    [retcode,pdflatex_path] = system('which pdflatex');%, echo
+end
 
-[retcode,pdflatex_path] = system('findtexmf --file-type=exe pdflatex');
+if any(isspace(pdflatex_path))
+    pdflatex_path=strcat('"',strtrim(pdflatex_path),'"');
+end
 
 %-----------------------------------------------------------------------
 % Decide if using or not the RISE print and plot settings
@@ -130,7 +140,8 @@ rise_root=strrep(which('rise'), fullfile('rise', 'classes', '@rise', 'rise.m'), 
 rise_data=[rise_data
     {'rise_root',rise_root}];
 rise_data=[rise_data
-    {'rise_pdflatex',~isempty(pdflatex_path)}];
+    {'rise_pdflatex',pdflatex_path} %{'rise_pdflatex',~isempty(pdflatex_path)}
+    ];
 
 for id=1:size(rise_data,1)
     if flag
