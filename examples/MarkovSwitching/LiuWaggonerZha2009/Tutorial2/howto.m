@@ -98,6 +98,9 @@ end
 % one go
 for imod=1:nmodels 
     % replace "for" by "parfor" if you want to use parallel computation
+    disp('*--------------------------------------------------------------*')
+    disp(['*-----Estimation of ',model_names{imod},' model-------*'])
+    disp('*--------------------------------------------------------------*')
     estim_models{imod}=estimate(estim_models{imod},'optimizer','fmincon');
 end
 
