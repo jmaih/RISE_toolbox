@@ -344,12 +344,20 @@ classdef rise_report < handle
                     tmpname=['"',tmpname,'"'];
                 end
                 myfigname=reprocess(new_figure.title);
+%                 newscript={ %'\newpage'
+%                     '\begin{tabular}[H]{@{\hspace*{-3pt}}c@{}}'
+%                     ['\multicolumn{1}{c}{\large\bfseries ',myfigname,'}\\']
+%                     ['\raisebox{10pt}{\includegraphics[scale=',num2str(scale),',angle=',...
+%                     num2str(angle),']{',tmpname,'}}']
+%                     '\end{tabular}'
+%                     };
                 newscript={ %'\newpage'
                     '\begin{tabular}[H]{@{\hspace*{-3pt}}c@{}}'
                     ['\multicolumn{1}{c}{\large\bfseries ',myfigname,'}\\']
-                    ['\raisebox{10pt}{\includegraphics[scale=',num2str(scale),',angle=',...
+                    ['\centerline{\includegraphics[scale=',num2str(scale),',angle=',...
                     num2str(angle),']{',tmpname,'}}']
-                    '\end{tabular}'};
+                    '\end{tabular}'
+                    };
                 record(obj,newscript)
                 thisobj=obj;
             end
