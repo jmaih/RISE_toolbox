@@ -97,7 +97,7 @@ if add_data_plot
             plot_window(db.(obsList{ivar}),'',[],@plot,'linewidth',2);
             title([obsListTexnames(ivar),obsList(ivar)],'fontsize',12);
         end
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
@@ -246,7 +246,7 @@ if add_data_against_transition_probabilities
                         plotyy(smoothed.(vname),highvol,'linewidth',2)
                         title(obsListTexnames{ivar},'fontsize',12)
                     end
-                    myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+                    myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
                     figure(xrep,myfigure);
                     xrep.pagebreak();
                 end
@@ -283,7 +283,7 @@ if add_irfs
                 end
             end
             orient(fig,'tall')
-            myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+            myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
             figure(xrep,myfigure);
             xrep.pagebreak();
         end
@@ -314,7 +314,7 @@ if add_historical_decomposition
         end
         orient(fig,'tall')
         hleg=legend(contrib_names,'location','SW','orientation','horizontal');
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
@@ -355,7 +355,7 @@ if add_variance_decomposition
             end
         end
         orient(fig,'tall')
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
@@ -398,7 +398,7 @@ if add_forecast
         leg=legend(nk_models);
         set(leg,'interpreter','none')
         orient(fig,'tall')
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
@@ -443,7 +443,7 @@ if add_autocorrelations
             end
         end
         orient(fig,'tall')
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
@@ -477,7 +477,7 @@ if add_smoothed_shocks
             end
         end
         orient(fig,'tall')
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
@@ -534,7 +534,7 @@ if add_empirical_distribution_of_shocks
             end
         end
         orient(fig,'tall')
-        myfigure=struct('name',fig,'title',fig_title,'angle',90,'scale',0.85);
+        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
