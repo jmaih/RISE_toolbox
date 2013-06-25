@@ -3,18 +3,25 @@ if nargin<1
     flag=false;
 end
 
-if ispc
-    [retcode,pdflatex_path] = system('findtexmf --file-type=exe pdflatex');
-elseif ismac || isunix
-    [retcode,pdflatex_path] = ...
-        system(['PATH=$PATH:/usr/texbin:/usr/local/bin:/usr/local/sbin;' ...
-        'which pdflatex']);%, echo
-else% gnu/linux
-    [retcode,pdflatex_path] = system('which pdflatex');%, echo
-end
-
-if any(isspace(pdflatex_path))
-    pdflatex_path=strcat('"',strtrim(pdflatex_path),'"');
+latex_progs={'pdflatex','epstopdf'};
+latex_paths=latex_progs;
+retcode=0;
+for iprog=1:numel(latex_progs)
+    if ispc
+        [rcode,latex_paths{iprog}] = system(['findtexmf --file-type=exe ',...
+            latex_progs{iprog}]);
+    elseif ismac || isunix
+        [rcode,latex_paths{iprog}] = ...
+            system(['PATH=$PATH:/usr/texbin:/usr/local/bin:/usr/local/sbin;' ...
+            'which ',latex_progs{iprog}]);
+    else% gnu/linux
+        [rcode,latex_paths{iprog}] = system(['which ',latex_progs{iprog}]);
+    end
+    
+    if any(isspace(latex_paths{iprog}))
+        latex_paths{iprog}=strcat('"',strtrim(latex_paths{iprog}),'"');
+    end
+    retcode=retcode||rcode;
 end
 
 %-----------------------------------------------------------------------
@@ -29,7 +36,6 @@ USE_RISE_PRINT = false;
 %  format long g
 
 rise_data=cell(0,2);
-
 
 if USE_RISE_PRINT
     
@@ -140,7 +146,7 @@ rise_root=strrep(which('rise'), fullfile('rise', 'classes', '@rise', 'rise.m'), 
 rise_data=[rise_data
     {'rise_root',rise_root}];
 rise_data=[rise_data
-    {'rise_pdflatex',pdflatex_path} %{'rise_pdflatex',~isempty(pdflatex_path)}
+    [strcat('rise_',latex_progs(:)),latex_paths(:)] 
     ];
 
 for id=1:size(rise_data,1)
@@ -172,7 +178,7 @@ end
         disp('please send email to <a href="junior.maih@gmail.com">this address</a>')
         disp('Thank you in advance for your feedback !!!')
         if retcode
-            disp('pdflatex/Miktex could not be located')
+            disp('pdflatex/epstopdf (Miktex) could not be located')
         end
         disp(l1);
         
