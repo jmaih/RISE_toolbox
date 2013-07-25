@@ -75,13 +75,13 @@ end
 
 %========
 function [a,b]=moments_2_hyperparameters(m,s,c,d) %#ok<INUSD>
-	a=[]; b=[];%#ok<NASGU>
+	a=nan; b=nan;%#ok<NASGU>
 	error([mfilename,':: this distribution does not have moments'])
 end
 
 function moments=hyperparameters_2_moments(a,b,c,d) %#ok<INUSD>
-	moments=[]; %#ok<NASGU>
-	error([mfilename,':: this distribution does not have moments'])
+	moments=[nan,nan]; 
+	warning([mfilename,':: the Cauchy distribution does not have moments'])
 end
 %========
 function icdf=inverse_cdf(u,a,b,~,~)
@@ -115,7 +115,7 @@ end
 if isempty(d)||isnan(d)
     d=1;
 end
-lpdf=-log(b.*pi*(1+((theta-a)./b).^2)); % <--- lpdf=-log(b*pi)-log(1+((theta-a)./b).^2);
+lpdf=-log(b.*pi.*(1+((theta-a)./b).^2)); % <--- lpdf=-log(b*pi)-log(1+((theta-a)./b).^2);
 end
 % Mean, variance and moment-generating function do not
 % exist in the case of the Cauchy distribution. The
