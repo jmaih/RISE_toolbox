@@ -68,14 +68,13 @@ classdef rise_estim_param < rise_param
                 disp([mfilename,'(GENTLE WARNING):: for these hyperparameters, the distribution ',...
                         'does not have well-defined moments'])
             end
+            the_message='';
             if ismember(obj.distribution,{'inv_gamma'})
                 if bounds(2)>invgamma_upper_bound_truncation
                     the_message=[mfilename,'(GENTLE WARNING):: upper bound of inverse gamma distribution ',...
                         'truncated at ',num2str(invgamma_upper_bound_truncation)];
                 end
                 bounds(2) = min(bounds(2),invgamma_upper_bound_truncation);
-            else
-                the_message='';
             end
             % if the distribution has been truncated, say it here.
             disp(the_message)
