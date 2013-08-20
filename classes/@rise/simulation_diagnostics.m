@@ -64,7 +64,7 @@ for fig=1:nfig
                 all_vals{pc}=[all_vals{pc},Params];
                 for ii=1:nvals
                     iter=iter+1;
-                    [m0,V0]=recursive_moments(m0,V0,Params(ii),iter);
+                    [m0,V0]=rise_moments.recursive_moments(m0,V0,Params(ii),iter);
                     par_mean{pc}=[par_mean{pc},m0];
                     par_var{pc}=[par_var{pc},V0];
                 end

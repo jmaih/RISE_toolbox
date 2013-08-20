@@ -18,9 +18,9 @@ for m=1:number_of_matrices
     for ii=1:nvals
         iter=iter+1;
         if out_nargs<2
-            theta_mean=recursive_moments(theta_mean,V0,Params(:,ii),iter);
+            theta_mean=rise_moments.recursive_moments(theta_mean,V0,Params(:,ii),iter);
         else
-            [theta_mean,V0]=recursive_moments(theta_mean,V0,Params(:,ii),iter);
+            [theta_mean,V0]=rise_moments.recursive_moments(theta_mean,V0,Params(:,ii),iter);
         end
     end
 end
