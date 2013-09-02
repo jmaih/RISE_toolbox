@@ -49,14 +49,14 @@ end
                 for ivar=1:numel(VariablesToCheck)
                     test=evaluated_objects{ider}.(VariablesToCheck{ivar})-...
                         evaluated_objects{nder}.(VariablesToCheck{ivar});
-                    disp([VariablesToCheck{ivar},'::',num2str(max(max(max(abs(test)))))])
+                    disp([VariablesToCheck{ivar},'::',num2str(max(abs(test(:))))])
                 end
                 if ~rcode
                     evaluated_objects{ider}=solve(evaluated_objects{ider});
                     for ivar=1:numel(FurtherVariablesToCheck)
                         test=evaluated_objects{ider}.(FurtherVariablesToCheck{ivar})-...
                             evaluated_objects{nder}.(FurtherVariablesToCheck{ivar});
-                        disp([FurtherVariablesToCheck{ivar},'::',num2str(max(max(max(abs(test)))))])
+                        disp([FurtherVariablesToCheck{ivar},'::',num2str(max(abs(test(:))))])
                     end
                 end
             end
