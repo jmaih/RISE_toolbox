@@ -536,7 +536,13 @@ classdef sad_reverse
                         right(isspace(right))=',';
                         map=sad_reverse.update_map(map,right,map.index{iobj,1});
                     end
-                    [c{iobj},map]=char(u(iobj),map,first_call);
+                    if isnumeric(u(iobj))
+                        [map,c{iobj}]=sad_reverse.update_map(map,sprintf('%0.16g',u(iobj).name));
+                    elseif isempty(u(iobj).args)
+                        [map,c{iobj}]=sad_reverse.update_map(map,u(iobj).name);
+                    else
+                        [c{iobj},map]=char(u(iobj),map,first_call);
+                    end
                 end
                 if ~isempty(map)
                     map=sad_reverse.trim_metastruct(map,c);
