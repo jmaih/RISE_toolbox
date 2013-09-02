@@ -1,4 +1,4 @@
-function [Vardec,obj]=variance_decomposition(obj,varargin)
+function [Vardec,obj,retcode]=variance_decomposition(obj,varargin)
 
 % PURPOSE: Computes variance decompositions of a MSRE model
 %-------------------------------------------------------------
@@ -92,15 +92,29 @@ end
 Vardec=struct();
 if vardec_theoretical
     if vardec_ergodic || nstates==1
-        [Vinfi,Vi]=theoretical_vardec_engine(T,R);
+        [Vinfi,Vi,retcode]=theoretical_vardec_engine(T,R);
+        if ~retcode||nargout>2
         Vardec.conditional=vardec2rise_time_series(Vi);
         Vardec.infinity=vardec2rise_time_series(Vinfi);
-    else
-        for istate=1:nstates
-            [Vinfi,Vi]=theoretical_vardec_engine(T(:,:,istate),R(:,:,:,istate));
-            Vardec(istate).conditional=vardec2rise_time_series(Vi);
-            Vardec(istate).infinity=vardec2rise_time_series(Vinfi);
         end
+    else
+        retcode0=0;
+        for istate=1:nstates
+            [Vinfi,Vi,retcode]=theoretical_vardec_engine(T(:,:,istate),R(:,:,:,istate));
+            if ~retcode0
+                retcode0=retcode;
+            end
+            if retcode && nargout<3
+                break
+            else
+                Vardec(istate).conditional=vardec2rise_time_series(Vi);
+                Vardec(istate).infinity=vardec2rise_time_series(Vinfi);
+            end
+        end
+        retcode=retcode0;
+    end
+    if retcode && nargout<3
+        error('variance could not be solved')
     end
 else
     % compute from simulation
@@ -124,7 +138,7 @@ end
         end
     end
 
-    function [Vinfi,Vi]=theoretical_vardec_engine(T,R)
+    function [Vinfi,Vi,retcode0]=theoretical_vardec_engine(T,R)
         R=reshape(R,endo_nbr,exo_nbr*horizon);
         V=zeros(endo_nbr);
         Vi=zeros(endo_nbr,exo_nbr,k);
@@ -137,7 +151,8 @@ end
         Vinfi=zeros(endo_nbr,exo_nbr);
         [Vinf,retcode0]=lyapunov_equation(T,RR);
         if retcode0
-            error('Variance could not be solved')
+            return
+%             error('Variance could not be solved')
         end
         % deal with zero variances
         Vinfi=decompose_variance(Vinfi,Vinf);
