@@ -1,0 +1,71 @@
+ 
+STEADY-STATE RESULTS:
+ 
+PAI 		 1
+Y   		 0.9
+R   		 1.03051
+ 
+EIGENVALUES:
+         Modulus             Real        Imaginary
+
+          0.6156           0.6156                0
+           1.146            1.125           0.2144
+           1.146            1.125          -0.2144
+
+
+There are 2 eigenvalue(s) larger than 1 in modulus 
+for 2 forward-looking variable(s)
+ 
+The rank condition is verified.
+ 
+ 
+MODEL SUMMARY
+ 
+  Number of variables:         3
+  Number of stochastic shocks: 1
+  Number of state variables:   1
+  Number of jumpers:           2
+  Number of static variables:  0
+
+
+MATRIX OF COVARIANCE OF EXOGENOUS SHOCKS
+
+Variables     EPS_R  
+EPS_R        1.000000
+ 
+POLICY AND TRANSITION FUNCTIONS
+                                     PAI             Y               R  
+Constant                    0.999974        0.899893        1.030490
+(correction)               -0.000026       -0.000107       -0.000017
+R(-1)                      -0.288601       -1.814673        0.615608
+EPS_R                      -0.000929       -0.005844        0.001982
+R(-1),R(-1)                 0.218663        8.652501       -0.091182
+EPS_R,EPS_R                        0        0.000081        0.000002
+R(-1),EPS_R                 0.000506        0.050057        0.001337
+
+
+THEORETICAL MOMENTS
+
+VARIABLE      MEAN    STD. DEV.   VARIANCE 
+PAI            1.0000     0.0012     0.0000
+Y              0.9001     0.0074     0.0001
+R              1.0305     0.0025     0.0000
+ 
+
+
+MATRIX OF CORRELATIONS
+
+Variables     PAI      Y       R   
+PAI          1.0000  1.0000 -1.0000
+Y            1.0000  1.0000 -1.0000
+R           -1.0000 -1.0000  1.0000
+ 
+
+
+COEFFICIENTS OF AUTOCORRELATION
+
+Order      1       2       3       4       5   
+PAI      0.6156  0.3790  0.2333  0.1436  0.0884
+Y        0.6156  0.3790  0.2333  0.1436  0.0884
+R        0.6156  0.3790  0.2333  0.1436  0.0884
+Total computing time : 0h00m01s

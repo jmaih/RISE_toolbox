@@ -1,0 +1,30 @@
+
+var	PIELTE;
+
+varexo E_PIELTE ;
+
+parameters piestar, rho, sig, doug_tp_1_2, doug_tp_1_3, doug_tp_2_1, doug_tp_2_3, doug_tp_3_1, doug_tp_3_2;
+
+varobs PIELTE;
+
+model(linear)
+   PIELTE = piestar*(1-rho)+rho*PIELTE{-1}+sig*E_PIELTE;
+end
+
+parameterization
+   piestar(doug,1),	2.5;
+   rho(doug,1),0.5;
+   piestar(doug,2),	4;
+   rho(doug,2),0.5;
+   piestar(doug,3),	10;
+   rho(doug,3),0.9;
+   sig,
+   doug_tp_1_2,	0.3;
+   doug_tp_1_3,	0;
+   doug_tp_2_1,	0.5;
+   doug_tp_2_3, 0.1;
+   doug_tp_3_1,	0;
+   doug_tp_3_2	0.5;
+end
+
+	

@@ -1,0 +1,80 @@
+var	DPQ_P_NW $Inflation$, D_GDP_NW $Growth$, I, PAI, R, RN3M_NW $Fed Funds Rate$, Y, ZGDP, ZI, ZPAI, ZY;
+
+varexo EGDP $output shock$,EI $monetary policy shock$,EPAI $Cost push shock$,EY $IS shock$;
+
+parameters beta_lag $\beta_{lag}$, beta_lead $\beta_{lead}$, beta_r $\beta_{r}$,
+gam_lag $\gamma_{lag}$, gam_y $\gamma_{y}$, gyss, iss, lamb_lag $\lambda_{lag}$,
+lamb_lead $\lambda_{lead}$, lamb_y $\lambda_{y}$, paiss,
+rhogdp $\rho_{gdp}$, rhoi $\rho_{i}$, rhopai $\rho_{\pi}$, rhoy $\rho_{y}$,
+siggdp $\sigma_{gdp}$, sigi $\sigma_{i}$, sigpai $\sigma_{\pi}$, sigy $\sigma_{y}$;
+
+parameters a_tp_1_2 a_tp_2_1;
+				                              						 
+model(linear);
+   Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
+
+   PAI=lamb_lag*PAI(-1)+lamb_lead*PAI(+1)+lamb_y*Y(-1)+ZPAI;
+
+   I=gam_lag*I(-1)+(1-gam_lag)*(PAI(+4)+gam_y*Y)+ZI;
+
+   R=I-PAI(+1);
+
+   D_GDP_NW=Y-Y(-1)+ZGDP;
+
+   DPQ_P_NW=paiss+PAI;
+
+   RN3M_NW=iss+I;
+
+   ZI=rhoi*ZI(-1)+sigi*EI;
+   
+   ZPAI=rhopai*ZPAI(-1)+sigpai*EPAI;
+   
+   ZY=rhoy*ZY(-1)+sigy*EY;
+   
+   ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
+end;
+
+varobs DPQ_P_NW, D_GDP_NW, RN3M_NW;
+
+
+parameterization;
+// not estimated
+	gyss   		     ,0 	      ;						 
+	iss    		     ,0 	      ;						 
+	paiss  		     ,0 	      ;
+//  estimated
+	beta_lag(a,1)	 ,0.5688      ,.1      ,.8000,beta_pdf,.90;
+	beta_lag(a,2)	 ,0.0006      ,.1      ,.8000,beta_pdf,.90;		 
+	beta_lead(a,1)   ,0.0004	  ,.1      ,.8000,beta_pdf,.90;		 
+	beta_lead(a,2)   ,0.0008	  ,.1      ,.8000,beta_pdf,.90;		 
+	beta_r(a,1)  	 ,0.1167	  ,0	   ,3.0;
+	beta_r(a,2)  	 ,1.1785	  ,0	   ,3.0;
+	gam_lag(a,1) 	 ,0.4806	  ,.1      ,.8000,beta_pdf,.90;		 
+	gam_lag(a,2) 	 ,0.2924	  ,.1      ,.8000,beta_pdf,.90;		 
+	gam_y(a,1)   	 ,0.4431	  ,.1      ,.8000,beta_pdf,.90;		 
+	gam_y(a,2)   	 ,0.2417	  ,.1      ,.8000,beta_pdf,.90;		 
+	lamb_lag(a,1)	 ,0.3598	  ,.1      ,.8000,beta_pdf,.90;		 
+	lamb_lag(a,2)	 ,0.1420	  ,.1      ,.8000,beta_pdf,.90;		 
+	lamb_lead(a,1)   ,0.0001	  ,.1      ,.8000,beta_pdf,.90;		 
+	lamb_lead(a,2)   ,0.0009	  ,.1      ,.8000,beta_pdf,.90;		 
+	lamb_y(a,1)  	 ,0.0700	  ,0	   ,2.0;
+	lamb_y(a,2)  	 ,0.0938	  ,0	   ,2.0;	
+	rhogdp(a,1)	     ,0.9539	  ,.1      ,.8000,beta_pdf,.90;		 
+	rhogdp(a,2)	     ,0.9288	  ,.1      ,.8000,beta_pdf,.90;		 
+	rhoi(a,1)		 ,0.0557	  ,.1      ,.8000,beta_pdf,.90;		 
+	rhoi(a,2)		 ,0.9491	  ,.1      ,.8000,beta_pdf,.90;		 
+	rhopai(a,1)	     ,0.1224	  ,.1      ,.8000,beta_pdf,.90;		 
+	rhopai(a,2)	     ,0.0894	  ,.1      ,.8000,beta_pdf,.90;		 
+	rhoy(a,1)		 ,0.0009      ,.1      ,.8000,beta_pdf,.90;		 
+	rhoy(a,2)		 ,0.1218      ,.1      ,.8000,beta_pdf,.90;		 
+	siggdp(a,1)	     ,1.1483	  ,0.0001  ,3.0;	
+	siggdp(a,2)	     ,0.0168	  ,0.0001  ,3.0;				
+	sigi(a,1)		 ,0.5119	  ,0.0001  ,3.0;	
+	sigi(a,2)		 ,0.0028	  ,0.0001  ,3.0;				
+	sigpai(a,1)	     ,0.1538	  ,0.0001  ,3.0;	
+	sigpai(a,2)	     ,0.1760	  ,0.0001  ,3.0;				
+	sigy(a,1)		 ,0.8437	  ,0.0001  ,3.0;	
+	sigy(a,2)		 ,0.0029	  ,0.0001  ,3.0;	
+   a_tp_1_2  	     ,0.0323   	 ,.1      ,.8000,beta_pdf,.90;	
+   a_tp_2_1  	     ,0.1264   	 ,.1      ,.8000,beta_pdf,.90; 
+end;		  	                              

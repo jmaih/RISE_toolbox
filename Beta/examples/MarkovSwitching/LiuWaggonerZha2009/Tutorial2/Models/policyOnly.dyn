@@ -1,0 +1,4 @@
+//2) Markov-switching policy coefficients only;
+@#include "fwz_est.dyn"
+@#include "switching_policy_parameters_coefChain.dyn"
+@#include "constant_volatility.dyn"

@@ -1,0 +1,43 @@
+var	PAI,Y,R;
+
+varexo EPS_R;
+
+parameters betta, eta, kappa, mu,
+mu_bar, psi, rhor
+sigr;
+
+a_tp_1_2=1-.9; 
+a_tp_2_1=1-.9;
+betta= .99;
+kappa= 161;
+eta= 10;
+rhor= .8;
+sigr= 0.0025;
+mu_bar=0.02; 
+mu= mu_bar;
+psi= 3.1;
+	
+model;
+	1-betta*(1-.5*kappa*(PAI-1)^2)*Y*R/((1-.5*kappa*(PAI(+1)-1)^2)*Y(+1)*exp(mu)*PAI(+1));
+	
+	1-eta+eta*(1-.5*kappa*(PAI-1)^2)*Y+betta*kappa*(1-.5*kappa*(PAI-1)^2)*(PAI(+1)-1)*PAI(+1)/(1-.5*kappa*(PAI(+1)-1)^2)
+	-kappa*(PAI-1)*PAI;
+
+	(R(-1)/steady_state(R))^rhor*(PAI/steady_state(PAI))^((1-rhor)*psi)*exp(sigr*EPS_R)-R/steady_state(R);
+end;
+
+steady_state_model;//(unique)imposed
+    PAI=1;
+    Y=(eta-1)/eta;
+    R=exp(mu_bar)/betta*PAI;
+end;
+
+steady;
+
+check;
+
+shocks;
+	var EPS_R=1;
+end;
+
+stoch_simul(irf=40,order=2);
