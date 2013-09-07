@@ -130,8 +130,8 @@ else
     handle_struct.planner=obj.planner_system.LossComDiscHessJac;
 end
 
-handle_struct=set_structure_to_hard_function(handle_struct);
-obj.model_derivatives=set_structure_to_hard_function(obj.model_derivatives);
+% handle_struct=set_structure_to_hard_function(handle_struct);
+% obj.model_derivatives=set_structure_to_hard_function(obj.model_derivatives);
 
 obj.func_handles=handle_struct;
 
