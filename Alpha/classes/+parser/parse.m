@@ -113,7 +113,7 @@ dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities
 % replace exogenous lags with auxiliary endogenous variables
 % update the number of endogenous variables accordingly
 % Also keep the same equations to be added to the steady state model
-auxiliary_steady_state_equations=cell(0,1);
+auxiliary_steady_state_equations=cell(0,3);
 orig_endogenous_current=dictionary.orig_endogenous; % these are the variables without the augmentation add-on
 all_fields=fieldnames(parser.listing);
 main_endo_fields={'name','tex_name','max_lead','max_lag','is_log_var','is_auxiliary'};
@@ -131,9 +131,9 @@ for ii=1:numel(dictionary.orig_endogenous)
         new_var=struct('name',[vname,'_AUX_F_',sprintf('%0.0f',i2-1)],...
             'tex_name','','max_lead',1,'max_lag',0,'is_log_var',false,'is_auxiliary',true);
         Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}']}]; %#ok<*AGROW> %
+            {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}'],0,1}]; %#ok<*AGROW> %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}']}]; %
+            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0}]; %<-- add maxLag and maxLead
         if i2-1==1 % set the lead to 1
             dictionary.orig_endogenous(ii).max_lead=1;
         end
@@ -163,11 +163,11 @@ for ii=1:numel(variables)
         new_var=struct('name',[vname,'_0'],'tex_name','','max_lead',0,...
             'max_lag',-1,'is_log_var',false,'is_auxiliary',true);
         Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vname,0}',{';',[]}']}]; %
+            {[{new_var.name,0}',{'-',[]}',{vname,0}',{';',[]}'],0,0}]; %
         % The steady state is computed with zero shocks. and so instead of
         % setting the name of the shock, I write 0
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{'0',0}',{';',[]}']}]; %
+            {[{new_var.name,0}',{'=',[]}',{'0',0}',{';',[]}'],0,0}]; %<-- add maxLag and maxLead
         for ifield=1:numel(useless_fields)
             new_var.(useless_fields{ifield})=nan;
         end
@@ -190,9 +190,9 @@ for ii=1:numel(variables)
             'tex_name','','max_lead',0,'max_lag',-1,'is_log_var',false,...
             'is_auxiliary',true);
         Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}']}]; %
+            {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}'],-1,0}]; %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}']}]; %
+            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0}]; %<-- add maxLag and maxLead
         for ifield=1:numel(useless_fields)
             new_var.(useless_fields{ifield})=nan;
         end
@@ -214,11 +214,13 @@ orig_endogenous_current=orig_endogenous_current(tags);
 % at the same time, construct the incidence and occurrence matrices
 orig_endo_nbr=numel(dictionary.orig_endogenous);
 
-number_of_equations=numel(Model_block);
+number_of_equations=size(Model_block,1);
 Occurrence=false(number_of_equations,orig_endo_nbr,3);
 equation_type=ones(number_of_equations,1);
 for ii=1:number_of_equations
-    eq_i= Model_block{ii};
+    eq_i= Model_block{ii,1};
+    maxLag= Model_block{ii,2};
+    maxLead= Model_block{ii,3};
     if ismember(eq_i{1,1},dictionary.definitions) && strcmp(eq_i{1,2}(1),'=')
         equation_type(ii)=2;
     elseif ismember(eq_i{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i{1,2}(1),'=')
@@ -261,7 +263,9 @@ for ii=1:number_of_equations
             Occurrence(ii,var_loc,lag_or_lead)=true;
         end
     end
-    Model_block{ii}= eq_i;
+    Model_block{ii,1}= eq_i;
+    Model_block{ii,2}= max(-1,maxLag);
+    Model_block{ii,3}= min(1,maxLead);
 end
 % keep only the structural equations
 Occurrence=Occurrence(equation_type==1,:,:);
@@ -295,19 +299,19 @@ blocks(current_block_id)=[];
 % the equations have been validated, now rebuild them and keep a list of
 % the variables defined
 DefinedExoList=cell(1,0);%{}
-for ii=1:numel(ExogenousDefinition_block)
-    DefinedExoList=[DefinedExoList,ExogenousDefinition_block{ii}(1,1)];
+for ii=1:size(ExogenousDefinition_block,1)
+    DefinedExoList=[DefinedExoList,ExogenousDefinition_block{ii,1}(1,1)];
     eq_i='';
-    for jj=1:size(ExogenousDefinition_block{ii},2)
-        eq_i=[eq_i,ExogenousDefinition_block{ii}{1,jj}];
-        if ~isempty(ExogenousDefinition_block{ii}{2,jj}) && ExogenousDefinition_block{ii}{2,jj}~=0
-            eq_i=[eq_i,'{',sprintf('%0.0f',ExogenousDefinition_block{ii}{2,jj}),'}'];
+    for jj=1:size(ExogenousDefinition_block{ii,1},2)
+        eq_i=[eq_i,ExogenousDefinition_block{ii,1}{1,jj}];
+        if ~isempty(ExogenousDefinition_block{ii,1}{2,jj}) && ExogenousDefinition_block{ii}{2,jj}~=0
+            eq_i=[eq_i,'{',sprintf('%0.0f',ExogenousDefinition_block{ii,1}{2,jj}),'}'];
         end
     end
-    ExogenousDefinition_block{ii}=eq_i;
+    ExogenousDefinition_block{ii,1}=eq_i;
 end
 % assign information to dictionary
-dictionary.exogenous_equations=struct('name',DefinedExoList,'equation',transpose(ExogenousDefinition_block));
+dictionary.exogenous_equations=struct('name',DefinedExoList,'equation',transpose(ExogenousDefinition_block(:,1)));
 clear ExogenousDefinition_block DefinedExoList
 %% optimal policy block
 current_block_id=find(strcmp('planner_objective',{blocks.name}));
@@ -333,18 +337,26 @@ current_block_id=find(strcmp('parameter_restrictions',{blocks.name}));
 % remove item from block
 blocks(current_block_id)=[]; %#ok<NASGU>
 
-dictionary.Param_rest_block=Param_rest_block;
+% remove the columns with information about the maxLead and maxLag: the
+% capture of parameterization does not require it and might even crash
+dictionary.Param_rest_block=Param_rest_block(:,1);
 clear Param_rest_block
 
 %% Lump together the model and steady-state model
 AllModels=[Model_block;
     SteadyStateModel_block;
     PlannerObjective_block];
-ss_eq_nbr=numel(SteadyStateModel_block);
+ss_eq_nbr=size(SteadyStateModel_block,1);
 % steady state equations are identified by number 4
-planobj_eq_nbr=numel(PlannerObjective_block);
+planobj_eq_nbr=size(PlannerObjective_block,1);
 % dictionary.planner_system objective equations are identified by number 5
 equation_type=[equation_type;4*ones(ss_eq_nbr,1);5*ones(planobj_eq_nbr,1)];
+
+% collect information about leads and lags which will be used to determine
+% the status of the lagrange multipliers later on. But keep only the
+% information about the structural equations
+%--------------------------------------------------------------------------
+equations_maxLag_maxLead=cell2mat(Model_block(equation_type==1,2:end));
 
 clear Model_block SteadyStateModel_block PlannerObjective_block
 %% Incidence matrix
@@ -383,7 +395,7 @@ shadow_tvp=cell(0,1);
 
 for ii=1:numel(equation_type)
     % we don't need the semicolons anymore
-    eq_i=AllModels{ii};
+    eq_i=AllModels{ii,1};
     o_m='';s_m='';sh_o='';sh_s='';sh_b1='';sh_b2='';
     sh_d='';sh_tvp='';sh_vo='';sh_ssm='';
     sh_pl='';o_d='';
@@ -730,7 +742,6 @@ end
 
 dictionary.forward_looking_ids='NA';
 
-added=0;
 if dictionary.is_optimal_policy_model
     if dictionary.is_sticky_information_model
         error([mfilename,':: you are not allowed to solve a sticky information model with loose commitment'])
@@ -738,34 +749,44 @@ if dictionary.is_optimal_policy_model
     if dictionary.is_hybrid_expectations_model
         error([mfilename,':: you are not allowed to solve a hybrid expectations model with loose commitment'])
     end
+    
     for eq=1:dictionary.NumberOfEquations
-        new_var=struct('name',['mult_',sprintf('%0.0f',eq)],'tex_name','','max_lead',0,'max_lag',0,'is_log_var',false,'is_auxiliary',false);
+        new_var=struct('name',['mult_',sprintf('%0.0f',eq)],'tex_name','',...
+            'max_lead',-equations_maxLag_maxLead(eq,1),... % lags govern the leads
+            'max_lag',-equations_maxLag_maxLead(eq,2),... % keads govern the lags
+            'is_log_var',false,'is_auxiliary',false);
         for ifield=1:numel(useless_fields)
             new_var.(useless_fields{ifield})=nan;
         end
         unsorted_endogenous=[unsorted_endogenous,new_var];
     end
-    added=dictionary.NumberOfEquations;
+    added=[-equations_maxLag_maxLead(:,1),...
+        ones(dictionary.NumberOfEquations,1),...
+        -equations_maxLag_maxLead(:,2)];
+logical_incidence=[dictionary.Lead_lag_incidence;added];
 else
+    added=0;
     assert(numel(dictionary.orig_endogenous)==sum(equation_type==1),...
         '# equations different from # endogenous variables')
     if dictionary.is_sticky_information_model
         dictionary.forward_looking_ids=find(dictionary.Lead_lag_incidence(:,3));
         for ii=1:numel(dictionary.forward_looking_ids)
             id=dictionary.forward_looking_ids(ii);
-            new_var=struct('name',['SI_',dictionary.orig_endogenous{id}],'tex_name','','max_lead',0,'max_lag',0,'is_log_var',false,'is_auxiliary',true);
-        for ifield=1:numel(useless_fields)
-            new_var.(useless_fields{ifield})=nan;
-        end
+            new_var=struct('name',['SI_',dictionary.orig_endogenous{id}],'tex_name','',...
+                'max_lead',0,'max_lag',0,...
+                'is_log_var',false,'is_auxiliary',true);
+            for ifield=1:numel(useless_fields)
+                new_var.(useless_fields{ifield})=nan;
+            end
             unsorted_endogenous=[unsorted_endogenous,new_var];
         end
         added=numel(dictionary.forward_looking_ids);
     end
+    % this will be used for the determination of the status of the variables.
+    % the added variables are given status of static, which is misleading when
+    % added>0
+    logical_incidence=[dictionary.Lead_lag_incidence;repmat([0,1,0],added,1)];
 end
-% this will be used for the determination of the status of the variables.
-% the added variables are given status of static, which is misleading when
-% added>0
-logical_incidence=[dictionary.Lead_lag_incidence;repmat([0,1,0],added,1)];
 % now we can resort the final variables
 [~,tags]=sort({unsorted_endogenous.name});
 logical_incidence=logical_incidence(tags,:);

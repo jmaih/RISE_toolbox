@@ -10,7 +10,7 @@ if isempty(obj.parameter_values)
 end
 chain_names=obj.markov_chains.chain_names;
 
-n_restr=numel(RestrictionsBlock);
+n_restr=size(RestrictionsBlock,1);
 for ii=1:n_restr
     equation_i=RestrictionsBlock{ii};
     for rhs=1:size(equation_i,2)

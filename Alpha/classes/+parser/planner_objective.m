@@ -64,7 +64,7 @@ tmp={line_number_,Objective,fichier_name_; % policy objective
 [PlannerObjective_block,dictionary]=parser.capture_equations(dictionary,tmp,'planner_objective');
 
 % now make sure there are variables and there is no time in the variables
-time_vars=cell2mat(PlannerObjective_block{1}(2,~cellfun(@isempty,PlannerObjective_block{1}(2,:))));
+time_vars=cell2mat(PlannerObjective_block{1,1}(2,~cellfun(@isempty,PlannerObjective_block{1,1}(2,:))));
 if isempty(time_vars)
     error([mfilename,':: Planner objective must include variables. Check ',fichier_name_,' at line(s) ',mat2str(line_number_)])
 elseif any(time_vars)

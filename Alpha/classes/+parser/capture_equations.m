@@ -9,8 +9,8 @@ fill_time='';
 time_opening='';
 def_flag=false;
 endo_switch_flag=false;
-equation=cell(2,0);
-block=cell(0,1);
+equation=initialize_equation();%cell(2,0);
+block=cell(0,3);
 DELIMITERS=parser.delimiters();
 
 chain_names={dictionary.markov_chains.name};
@@ -22,6 +22,9 @@ for ii=1:size(listing,1)
     [block,equation]=capture_equations_engine(block,listing(ii,:),block_name,equation);
 end
 
+    function eqtn=initialize_equation()
+        eqtn=struct('max_lag',0,'max_lead',0,'eqtn',{cell(2,0)});
+    end
     function [block,equation]=capture_equations_engine(block,cell_info,block_name,equation)
         
         iline_=cell_info{1};
@@ -39,7 +42,7 @@ end
                 rawline_=[];
             end
             
-            if isempty(equation)
+            if isempty(equation.eqtn)
                 % % % % %                 last_status='';
                 endo_switch_flag=false;
                 def_flag=false;
@@ -131,7 +134,7 @@ end
                         end
                         % update the status above
                         tok_status=parser.determine_status(dictionary,tokk);
-                        if ~isempty(equation)
+                        if ~isempty(equation.eqtn)
                             error([mfilename,':: # and ! can only occur at the beginning of an equation check in ',file_name_,' line ',sprintf('%0.0f',iline_)])
                         end
                     elseif strcmp(tok_status,'unknown')
@@ -182,8 +185,10 @@ end
                             if ~isnumeric(fill_time)||~isequal(fill_time,floor(fill_time))
                                 error([mfilename,':: time syntax error in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                             end
-                            equation{2,end}=fill_time;
-                            update_leads_lags(equation{1,end},fill_time);
+                            equation.eqtn{2,end}=fill_time;
+                            equation.max_lag=min(equation.max_lag,fill_time);
+                            equation.max_lead=max(equation.max_lead,fill_time);
+                            update_leads_lags(equation.eqtn{1,end},fill_time);
                             fill_time='';
                             time_on=false;
                             time_closing=left_operator(1);
@@ -209,15 +214,15 @@ end
                         end
                         
                         if ~isempty(left_operator)
-                            equation=[equation,{left_operator,[]}']; %#ok<*AGROW>
+                            equation.eqtn=[equation.eqtn,{left_operator,[]}']; %#ok<*AGROW>
                         end
                     end
                     if time_on && strcmp(tok_status,'n')
                         fill_time=[fill_time,tokk];
                     else
-                        equation=[equation,{tokk,[]}'];
+                        equation.eqtn=[equation.eqtn,{tokk,[]}'];
                         if (strcmp(tok_status,'y')||strcmp(tok_status,'x'))
-                            equation{2,end}=0;
+                            equation.eqtn{2,end}=0;
                         end
                         fill_time='';
                     end
@@ -231,8 +236,8 @@ end
                         if ~isnumeric(fill_time)||~isequal(fill_time,floor(fill_time))
                             error([mfilename,':: time syntax error in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                         end
-                        equation{2,end}=fill_time;
-                        update_leads_lags(equation{1,end},fill_time);
+                        equation.eqtn{2,end}=fill_time;
+                        update_leads_lags(equation.eqtn{1,end},fill_time);
                         fill_time='';
                         %====================
                         time_on=false;
@@ -243,19 +248,19 @@ end
                         function_on=function_on+left_parents-min(function_on,right_parents);
                     end
                     if ~isempty(rest_)
-                        equation=[equation,{rest_,[]}'];
+                        equation.eqtn=[equation.eqtn,{rest_,[]}'];
                         rest_='';
                     end
-                    last_status=parser.determine_status(dictionary,equation{1,end}(end));
+                    last_status=parser.determine_status(dictionary,equation.eqtn{1,end}(end));
                 end
             end
-            if ~isempty(equation)
-                if strcmp(equation{1,end}(end),';')
+            if ~isempty(equation.eqtn)
+                if strcmp(equation.eqtn{1,end}(end),';')
                     % we've reach the end of the equation, validate it,
                     % load it and reinitialize.
-                    equation=validate_equation(equation);
-                    block=[block;{equation}];
-                    equation=cell(2,0);
+                    equation.eqtn=validate_equation(equation.eqtn);
+                    block=[block;{equation.eqtn,equation.max_lag,equation.max_lead}];
+                    equation=initialize_equation();
                 end
             end
         end
