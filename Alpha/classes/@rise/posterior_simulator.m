@@ -40,11 +40,16 @@ number_of_burns=round(mcmc_burn_rate*mcmc_number_of_simulations);
 simulation_folder=obj.folders_paths.simulations;
 
 x0=obj.estimation.mode;
+vcov=obj.estimation.vcov;
 npar=size(x0,1);
-lb=vertcat(obj.estimated_parameters.lb);
-ub=vertcat(obj.estimated_parameters.ub);
+if isempty(x0)
+    x0=[obj.estimation.priors.start]';
+    vcov=eye(npar);
+end
+lb=[obj.estimation.priors.lower_bound]';
+ub=[obj.estimation.priors.upper_bound]';
 
-CS=transpose(chol(obj.vcov));
+CS=transpose(chol(vcov));
 number_of_matrices=ceil(mcmc_number_of_simulations/mcmc_max_number_of_vectors_per_file);
 f0=obj.log_post;
 sampling_modes=[repmat({x0},1,mcmc_number_of_parallel_chains)
@@ -126,22 +131,28 @@ end
 function [x1,f1,accepted,alpha_prob]=random_walk_mcmc(obj,x0,f0,cCS,lb,ub)
 npar=size(x0,1);
 nobj=numel(obj);
-theta_s=x0+cCS*randn(npar,1);
-if any(theta_s<lb)||any(theta_s>ub)
-    f_theta_s=-inf;
-else
-    minus_log_post=fh_wrapper(theta_s);
-    f_theta_s=-minus_log_post;
-end
+[theta_s,f_theta_s]=new_proposal();
 alpha_prob=alpha_probability(f_theta_s,f0);
-accepted=false;
-if alpha_prob>rand
-    x0=theta_s;
-    f0=f_theta_s;
-    accepted=true;
+accepted=alpha_prob>rand;
+if accepted
+    x1=theta_s;
+    f1=-f_theta_s;
+else
+    x1=x0;
+    f1=-f0;
+    if delay_rejection
+        [theta_s,f_theta_s]=new_proposal();
+    end
 end
-x1=x0;
-f1=-f0;
+    function [d,f]=new_proposal()
+        d=x0+cCS*randn(npar,1);
+        if any(d<lb)||any(d>ub)
+            f=inf;
+        else
+            f=-fh_wrapper(d);
+        end
+        f=-f;
+    end
         function [minus_log_post,retcode]=fh_wrapper(x)
         % this function returns the minimax if there are many objects
         % evaluated simultaneously

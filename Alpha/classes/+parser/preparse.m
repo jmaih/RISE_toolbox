@@ -4,7 +4,7 @@ if nargin<2
     definitions=struct();
 end
 
-valid_extensions={'rs','dyn','mod'};
+valid_extensions={'rs','rz'};
 FileName(isspace(FileName))=[];
 loc=strfind(FileName,'.');
 if isempty(loc)
@@ -22,7 +22,7 @@ else
     found= exist(FileName,'file');
 end
 if ~found
-    error([mfilename,':: ',FileName,'.rs or ',FileName,'.dyn or ',FileName,'.mod not found'])
+    error([mfilename,':: ',FileName,'.rs or ',FileName,'.rz not found'])
 end
 
 % first sweep: read the file, and remove comments and stamp the lines
