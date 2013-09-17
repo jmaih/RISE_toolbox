@@ -2,8 +2,7 @@
 clear all
 close all
 clc
-%% set the paths
-setpaths
+
 %% choose some options
 % scramble the pseudo-random numbers or not
 scramble_flag=true;
@@ -12,11 +11,12 @@ optimal_poly=true;
 % debug or not
 debug_flag=true;
 %% read information about the function of interest
-% [objective,bounds]=ishigami();
-[objective,bounds]=satelli_sobol95();
+[objective,bounds]=ishigami();
+% [objective,bounds]=satelli_sobol95();
 lb=bounds(:,1);
 ub=bounds(:,2);
 npar=numel(lb);
+param_names=strcat('pp_',num2str((1:npar)'));
 %% choose the polynomial order
 pol_order=4;
 %% choose the expansion_order
@@ -30,7 +30,7 @@ objective_={f,theta};
 %% option 2: let the hdmr object generate the samples for you
 % objective_={objective,bounds,N};
 %% construct the object
-obj=hdmr(objective_,bounds,expansion_order,pol_order,optimal_poly);
+obj=hdmr(objective_,param_names,bounds,expansion_order,pol_order,optimal_poly);
 
 %% estimate the object
 profile on
@@ -43,5 +43,6 @@ plot_fit(obj,'insample');
 plot_fit(obj,'outofsample');
 %% plot the individual effects
 for ii=1:size(theta,1)
+    figure();
     first_order_effect(obj,'insample',ii);
 end

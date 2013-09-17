@@ -296,7 +296,7 @@ classdef hdmr
             if ischar(index)
                 pname=index;
                 index=locate_variables(pname,obj.param_names);
-            elseif isdouble(index)
+            elseif isnumeric(index)
                 pname=obj.param_names{index};
             end
             if ~ismember(output_index,(1:obj.output_nbr))
