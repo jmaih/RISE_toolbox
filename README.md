@@ -57,10 +57,10 @@ Example: Foerster, Rubio-Ramirez, Waggoner and Zha (2013)
 % and the name of the file is frwz_nk.dyn
 
 //Declare the endogenous
-var	PAI,Y,R;
+endogenous	PAI,Y,R
 
 //Declare the exogenous
-varexo EPS_R;
+exogenous EPS_R
 
 //Declare the parameters: a_tp_1_2 and a_tp_2_1 are automatically recognized by RISE
 // as transition probabilities. In this particular case, the name of the markov chain
@@ -68,7 +68,7 @@ varexo EPS_R;
 // the current regime and "j" denotes the regime next period.
 parameters a_tp_1_2, a_tp_2_1, betta, eta, kappa, mu,
 mu_bar, psi, rhor
-sigr;
+sigr
 
 // equations of the model
 model
@@ -78,15 +78,15 @@ model
 	-kappa*(PAI-1)*PAI;
 
 	(R(-1)/steady_state(R))^rhor*(PAI/steady_state(PAI))^((1-rhor)*psi)*exp(sigr*EPS_R)-R/steady_state(R);
-end
 
+	
 // the steady state
 steady_state_model(unique,imposed)
     PAI=1;
     Y=(eta-1)/eta;
     R=exp(mu_bar)/betta*PAI;
-end
 
+	
 // parameterization
 parameterization
 	a_tp_1_2,1-.9; 
@@ -101,7 +101,7 @@ parameterization
 	mu(a,2), 0.01;
 	psi(a,1), 3.1;
 	psi(a,2), 0.9; // value assumed by parameter "psi" (controled by chain a) in regime 2
-end
+
 ```
 
 Running the example
