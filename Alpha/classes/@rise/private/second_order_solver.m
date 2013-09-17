@@ -22,6 +22,7 @@ if obj.is_hybrid_expectations_model||obj.is_sticky_information_model||...
 end
 
 theta_hat=obj.solution.theta_hat;
+solve_disable_theta=obj.options.solve_disable_theta;
 for ireg=1:h
     if isempty(theta_hat{ireg})
         break

@@ -69,8 +69,8 @@ h=obj.markov_chains.regimes_number;
 retcode=solve_zeroth_order();
 if solve_order>0 && ~retcode
     % the parameters may have changed during the computation of the zeroth
-    % order or steady state. That is why they are not loaded before this
-    % step
+    % order or steady state. That is why they are reloaded here
+    params=obj.parameter_values;
     eqtns_number=obj.equations.number;
     retcode=solve_first_order();
     if solve_order>1 && ~retcode
