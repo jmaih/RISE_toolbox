@@ -6,6 +6,8 @@ junk/*
 *old*
 *- Copy*
 *.pdf
+rise_create_version.m
+ContentsMaker.m
 !/examples/VariousModels/KaijiTutorial/Tutorial.pdf
 !/doc/svar.pdf
 help/*
