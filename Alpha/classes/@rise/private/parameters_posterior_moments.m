@@ -1,46 +1,42 @@
-function [theta_mean,V0,quantiles]=parameters_posterior_moments(simulation_folder)
-W = what(simulation_folder);
-W=W.mat;
-locs=find(strncmp('chain_',W,6));
-if isempty(locs)
-    error([mfilename,':: no simulations found'])
+function [theta_mean,theta_median,V0]=parameters_posterior_moments(simulation_folder)
+is_saved_to_disk=ischar(simulation_folder);
+if is_saved_to_disk
+    W = what(simulation_folder);
+    W=W.mat;
+    locs=find(strncmp('chain_',W,6));
+    if isempty(locs)
+        error([mfilename,':: no simulations found'])
+    end
+    W=W(locs);
+elseif isstruct(simulation_folder)
+    W=fieldnames(simulation_folder);
+else
+    error('wrong specification of input')
 end
-W=W(locs);
 number_of_matrices=numel(W);
 theta_mean=0;
 V0=0;
 iter=0;
-out_nargs=nargout;
+% approximated median calculated as the median of the medians
+%------------------------------------------------------------
+theta_median=cell(2,number_of_matrices);
 for m=1:number_of_matrices
-    tmp=load([simulation_folder,filesep,W{m}]);
+    if is_saved_to_disk
+        tmp=load([simulation_folder,filesep,W{m}]);
+    else
+        tmp=simulation_folder.(W{m});
+    end
     Params=tmp.Params;
+    minus_logpost_params=tmp.minus_logpost_params;
+    [~,tags]=sort(minus_logpost_params);
     nvals=size(Params,2);
+    md=tags(ceil(0.5*nvals));
+    theta_median(:,m)={minus_logpost_params(md);Params(:,md)};
     for ii=1:nvals
         iter=iter+1;
-        if out_nargs<2
-            theta_mean=rise_moments.recursive_moments(theta_mean,V0,Params(:,ii),iter);
-        else
-            [theta_mean,V0]=rise_moments.recursive_moments(theta_mean,V0,Params(:,ii),iter);
-        end
+        [theta_mean,V0]=rise_moments.recursive_moments(theta_mean,V0,Params(:,ii),iter);
     end
 end
-
-% quantiles
-if out_nargs>2
-    Nsim=iter;
-    npar=size(theta_mean,1);
-    quantiles=cell(npar,1);
-    quant=[round((50:-5:5)/100*Nsim)',round((50:5:95)/100*Nsim)']';
-    for ii=1:npar
-        all_vals=nan(Nsim,1);
-        iter=0;
-        for m=1:number_of_matrices
-            tmp=load([simulation_folder,filesep,W{m}]);
-            Params=tmp.Params(ii,:);
-            nvals=size(Params,2);
-            all_vals(iter+(1:nvals))=Params(:);
-            iter=iter+nvals;
-        end
-        quantiles{ii}=all_vals(quant);
-    end
-end
+[~,tags]=sort(cell2mat(theta_median(1,:)));
+md=tags(ceil(0.5*number_of_matrices));
+theta_median=theta_median{2,md};

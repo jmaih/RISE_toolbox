@@ -119,8 +119,7 @@ classdef rise
         varargout=isnan(varargin)
         varargout=is_stable_system(obj,varargin)
         varargout=load_parameters(obj,varargin)
-        varargout=log_marginal_data_density_mhm(obj,varargin)
-        varargout=log_marginal_data_density_chib_jeliazkov(obj,varargin)
+        varargout=log_marginal_data_density(obj,varargin)
         varargout=log_posterior_kernel(obj,varargin)
         varargout=log_prior_density(obj,varargin)
         varargout=monte_carlo_filtering(obj,varargin) % <--- formerly sensitivity_analysis

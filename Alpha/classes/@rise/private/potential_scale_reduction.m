@@ -1,12 +1,12 @@
 function [R,B,W]=potential_scale_reduction(x)
 
-Nsim=size(x,2);
-R=nan(1,Nsim-1);
-B=nan(1,Nsim-1);
-W=nan(1,Nsim-1);
+[npar,Nsim]=size(x);
+R=nan(npar,Nsim-1);
+B=nan(npar,Nsim-1);
+W=nan(npar,Nsim-1);
 
 for ii=1:Nsim-1
-    [R(ii),B(ii),W(ii)]=sequential_potential_scale_reduction(x(:,1:ii+1));
+    [R(:,ii),B(:,ii),W(:,ii)]=sequential_potential_scale_reduction(x(:,1:ii+1));
 end
 
 function [R,B,W]=sequential_potential_scale_reduction(x)
