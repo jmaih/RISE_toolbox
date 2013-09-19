@@ -61,7 +61,7 @@ if forecast_param_uncert
     posterior_density_ready=~isempty(vertcat(obj.estimated_parameters.mean));
     type='posterior_density';
     if ~posterior_density_ready
-        mode_density_ready=~isempty([obj.estimation.mode]');
+        mode_density_ready=~isempty(obj.estimation.posterior_maximization.mode);
         type='mode_density';
         if ~mode_density_ready
             type='prior_density';
@@ -70,7 +70,7 @@ if forecast_param_uncert
 else
     parameters=vertcat(obj.estimated_parameters.mean);% 'mean'
     if isempty(parameters)
-        parameters=[obj.estimation.mode]'; % 'mode'
+        parameters=obj.estimation.posterior_maximization.mode; % 'mode'
         if isempty(parameters)
             parameters=[obj.estimation.priors.start]'; % 'calibration'
         end

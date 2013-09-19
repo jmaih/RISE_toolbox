@@ -20,7 +20,7 @@ file2save2=obj.options.solve_alternatives_file2save2;
 % initialize the solution
 allobj=rise.empty(0,0);
 % load parameters from the mode, which can be empty of course
-mode=obj.estimation.mode;
+mode=obj.estimation.posterior_maximization.mode;
 obj=assign_estimates(obj,mode);
 [obj,retcode]=obj.solve();
 sols=0;

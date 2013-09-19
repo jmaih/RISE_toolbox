@@ -24,8 +24,8 @@ end
 lb=vertcat(obj.estimated_parameters.lb);
 ub=vertcat(obj.estimated_parameters.ub);
 %=================
-x0=obj.estimation.mode;
-f0=obj.log_post;
+x0=obj.estimation.posterior_maximization.mode;
+f0=obj.estimation.posterior_maximization.log_post;
 post_mode=x0;
 f_post_mode=f0;
 npar=size(x0,1);

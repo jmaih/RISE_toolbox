@@ -18,13 +18,13 @@ end
 switch type
     case 'mode'
         if isempty(cc)
-            [cc,pp]=chol(obj.vcov);
+            [cc,pp]=chol(obj.estimation.posterior_maximization.vcov);
             if pp
                 error([mfilename,':: covariance matrix of estimated parameters not positive definite'])
             else
                 cc=transpose(cc);
             end
-            mode=obj.estimation.mode;
+            mode=obj.estimation.posterior_maximization.mode;
         end
         draw=mode+cc*randn(n,1);
     case 'posterior'

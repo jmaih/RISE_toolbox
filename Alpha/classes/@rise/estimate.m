@@ -46,10 +46,10 @@ end
 
 estim_start_time=clock;
 for jj=1:nobj
-    if isempty(obj(jj).estimation.estim_start_time)
+    if isempty(obj(jj).estimation.posterior_maximization.estim_start_time)
         % maybe we used several optimizers one after the other. In that
         % case the start of the estimation should not change
-        obj(jj).estimation.estim_start_time=estim_start_time;
+        obj(jj).estimation.posterior_maximization.estim_start_time=estim_start_time;
     end
 end
 
@@ -122,7 +122,7 @@ end
 % eventually I should put options for recursive estimation
 % and for passing new data to the model on the fly.
 
-xmode=obj(1).estimation.mode;
+xmode=obj(1).estimation.posterior_maximization.mode;
 response='n';
 if ~isempty(xmode)
     if ~isempty(estim_start_from_mode)
@@ -229,7 +229,7 @@ estim_end_time=clock;
 for ii=1:nobj
     % set the end time for estimation, even if it does not include the
     % smoothing part below.
-    obj(ii).estimation.estim_end_time=estim_end_time;
+    obj(ii).estimation.posterior_maximization.estim_end_time=estim_end_time;
     % set the filtering/smoothing flag to 3 in order to get out the final
     % outputs with the smoothed and filtered variables (if feasible)
     if ~obj(ii).is_optimal_simple_rule_model
@@ -242,8 +242,8 @@ for ii=1:nobj
         obj(ii)=save_filters(obj(ii));
     end
     % capture the final parameters and their standard deviations
-        obj(ii).estimation.mode=x1;
-        obj(ii).estimation.mode_stdev=SD;
+        obj(ii).estimation.posterior_maximization.mode=x1;
+        obj(ii).estimation.posterior_maximization.mode_stdev=SD;
 	
     % now we change the flag so that stability can be tested
 	% and parameters can be written back to their object
@@ -254,14 +254,14 @@ for ii=1:nobj
     % or alternatively
     log_mdd=.5*npar*log(2*pi)+.5*log(det(Hinv))+log_post;
         
-    obj(ii).estimation.log_prior=log_prior(1);
-        obj(ii).estimation.log_endog_prior=log_prior(2);
-        obj(ii).estimation.log_post=log_post;
-        obj(ii).estimation.log_lik=log_lik;
-        obj(ii).estimation.log_marginal_data_density.laplace=log_mdd;
-        obj(ii).estimation.active_inequalities_number=numberOfActiveInequalities;
-        obj(ii).estimation.vcov=Hinv;
-        obj(ii).estimation.funevals=funevals;
+    obj(ii).estimation.posterior_maximization.log_prior=log_prior(1);
+        obj(ii).estimation.posterior_maximization.log_endog_prior=log_prior(2);
+        obj(ii).estimation.posterior_maximization.log_post=log_post;
+        obj(ii).estimation.posterior_maximization.log_lik=log_lik;
+        obj(ii).estimation.posterior_maximization.log_marginal_data_density_laplace=log_mdd;
+        obj(ii).estimation.posterior_maximization.active_inequalities_number=numberOfActiveInequalities;
+        obj(ii).estimation.posterior_maximization.vcov=Hinv;
+        obj(ii).estimation.posterior_maximization.funevals=funevals;
     
     obj(ii).list_of_issues=list_of_issues;
     

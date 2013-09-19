@@ -25,7 +25,7 @@ N=obj.options.discretize;
 
 LB=vertcat(obj.estimated_parameters.lb);
 UB=vertcat(obj.estimated_parameters.ub);
-xmode=obj.estimation.mode;
+xmode=obj.estimation.posterior_maximization.mode;
 varnames={obj.estimated_parameters.tex_name};
 interpreter='none';
 if strcmp(varnames{1}(1),'\')

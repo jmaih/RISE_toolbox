@@ -122,7 +122,7 @@ PALL=cell(1,ncases);
 for ic=1:ncases
     newnames={obj(ic).estimation.priors.(type_name)};
     mode=num2cell(obj(ic).estimation.mode);
-    mode_std=num2cell(obj(ic).estimation.mode_stdev);
+    mode_std=num2cell(obj(ic).estimation.posterior_maximization.mode_stdev);
     prior_prob=num2cell(vertcat(obj(ic).estimation.priors.prior_prob));
     plb=num2cell(vertcat(obj(ic).estimation.priors.lower_quantile));
     pub=num2cell(vertcat(obj(ic).estimation.priors.upper_quantile));
@@ -182,7 +182,7 @@ for iparam=1:nparams
     end
 end
 if ncases==1
-    estim=[estim,[{'mode\_std'};num2cell(obj.estimation.mode_stdev)]];
+    estim=[estim,[{'mode\_std'};num2cell(obj.estimation.posterior_maximization.mode_stdev)]];
 end
 
 end
@@ -196,7 +196,6 @@ stats={
     'log-endog_prior'
     'number of active inequalities'
     'log-MDD(Laplace)'
-    'log-MDD(MHM)'
     'estimation sample'
     'number of observations '
     'number of parameters '
@@ -209,17 +208,19 @@ stats={
     };
 model_names={obj.filename};
 for icu=1:numel(obj)
-    this_ic={obj(icu).estimation.log_post,obj(icu).estimation.log_lik,obj(icu).estimation.log_prior,...
-        obj(icu).estimation.log_endog_prior,obj(icu).estimation.active_inequalities_number,...
-        obj(icu).estimation.log_marginal_data_density.laplace,...
-        obj(icu).estimation.log_marginal_data_density.modified_harmonic_mean,...
+    this_ic={obj(icu).estimation.posterior_maximization.log_post,...
+	    obj(icu).estimation.posterior_maximization.log_lik,...
+		obj(icu).estimation.posterior_maximization.log_prior,...
+        obj(icu).estimation.posterior_maximization.log_endog_prior,...
+		obj(icu).estimation.posterior_maximization.active_inequalities_number,...
+        obj(icu).estimation.posterior_maximization.log_marginal_data_density_laplace,...
         [parser.any2str(obj(icu).options.estim_start_date),':',parser.any2str(obj(icu).options.estim_end_date)],...
         obj(icu).data.nobs,numel(obj(icu).estimation.priors),...
-		obj(icu).estimation.funevals,...
+		obj(icu).estimation.posterior_maximization.funevals,...
         obj(icu).options.optimizer,...
         obj(icu).options.solver,nan,nan,nan}';
-        t2=obj(icu).estimation.estim_end_time;
-        t1=obj(icu).estimation.estim_start_time;
+        t2=obj(icu).estimation.posterior_maximization.estim_end_time;
+        t1=obj(icu).estimation.posterior_maximization.estim_start_time;
         estimation_time=etime(t2,t1);
         hrs=floor(estimation_time/3600);
         secs=estimation_time-hrs*3600;

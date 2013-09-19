@@ -164,7 +164,7 @@ for imod=1:numel(nk_models)%nk_models
             guide=[chain,'_tp_',int2str(ist)];
             lg=length(guide);
             locs= strncmp(guide,est_par_names,lg);
-            sumProbs=sum([model_objects(imod).estimated_parameters(locs).mode]);
+            sumProbs=sum([model_objects(imod).estimation.posterior_maximization.mode(locs)]);
             duration=1/sumProbs;
             mytable=[mytable;{['state ',int2str(ist)],1-sumProbs,duration}];
         end

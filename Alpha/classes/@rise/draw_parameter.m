@@ -21,13 +21,13 @@ switch type
     case {'posterior','posterior_density'}
         error([mfilename,':: posterior draws not implemented yet'])
     case {'mode','mode_density'}
-        C=obj.vcov;
+        C=obj.estimation.posterior_maximization.vcov;
         if temporary
             C=diag(sqrt(abs(diag(C))));
         else
             C=chol(C,'lower');
         end
-        m=[obj.estimation.mode]';
+        m=obj.estimation.posterior_maximization.mode;
         notdone=true;
         while notdone
             param=m+C*randn(numel(m),1);
