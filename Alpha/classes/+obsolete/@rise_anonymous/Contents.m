@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: classes\@rise_anonymous   %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%   path: classes\+obsolete\@rise_anonymous   %%%%%%%%%%%%%%%%%%%%
 %
-%   <a href="matlab:help classes\@rise_anonymous\rise_anonymous">classes\@rise_anonymous\rise_anonymous</a> - val_i=eval(obj(ii),varargin{:}); %#ok<*EVLC>
+%   <a href="matlab:help classes\+obsolete\@rise_anonymous\rise_anonymous">classes\+obsolete\@rise_anonymous\rise_anonymous</a> - % it is assumed that all objects in the vector share the same
