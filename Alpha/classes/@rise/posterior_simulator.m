@@ -1,5 +1,10 @@
 function [obj,postSims]=posterior_simulator(obj,varargin)
-
+% simulate the posterior distribution using a Metropolis Hastings algorithm
+% with adaptation and delayed rejection. It is possible to start simulating
+% the posterior distribution even without having maximized the posterior.
+% the first output argument will be a RISE object containing some
+% statistics from the posterior simulation. The computation of the marginal
+% likelihood has to be done separately after this step.
 if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
