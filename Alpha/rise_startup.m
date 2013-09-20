@@ -165,8 +165,11 @@ else
 end
 
     function welcome_message()
-        
-        vv = ver('RISE_Toolbox');
+        target=which('rise_startup');
+        rst=strfind(target,'rise_startup');
+        rtb=strfind(target,'RISE_toolbox');
+        target=target(rtb+13:rst-2);
+        vv = ver(target);
         l1 = '+--------------------------------------------------+';
         
         disp(l1);
