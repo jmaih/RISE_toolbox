@@ -229,7 +229,7 @@ disp(the_message)
 % check that the starting value is not outside the bounds
 %--------------------------------------------------------
 if any(parray.start<bounds(1))||any(parray.start>bounds(2))
-    error([mfilename,':: parameter ',name,' (',num2str(parray.start),') outside its bounds [',num2str(bounds),']'])
+    error([mfilename,':: parameter ',parray.name,' (',num2str(parray.start),') outside its bounds [',num2str(bounds),']'])
 end
 parray.lower_bound = bounds(1);
 parray.upper_bound = bounds(2);
