@@ -20,7 +20,13 @@ if ismember(property,{'state_tex_names','chain_tex_names','regime_tex_names'})
     end
     obj.markov_chains.(property)=value(:)';
 elseif strcmpi(property,'parameters')
-    obj=setup_calibration(obj,value);
+ % value is either a struct or a cell of the form {names,paramvector}
+   obj=setup_calibration(obj,value);
+else
+    error(['',property,''' is not a settable property of RISE'])
+end
+end
+
 %     fields=fieldnames(value);
 %     parameter_values=obj.parameter_values;
 %     par_list=get(obj,'par_list');
@@ -51,7 +57,3 @@ elseif strcmpi(property,'parameters')
 %         parameter_values(loc,destination)=value.(pname0);
 %     end
 %     obj.parameter_values=parameter_values;
-else
-    error(['',property,''' is not a settable property of RISE'])
-end
-end
