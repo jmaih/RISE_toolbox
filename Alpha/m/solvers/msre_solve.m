@@ -12,12 +12,10 @@ if nargin==0
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
     default_solve=struct('solve_risk',true,...
-        'solve_initialization','backward',...
         'solve_disable_theta',true); % 'solve_fwz_hypothesis',false,...
-    % gather the defaults from fix point iterator as well
-    default_solve=mergestructures(default_solve,fix_point_iterator());
-    T=default_solve;
-    %solve_initialization=['zeros','zero',{'backward' or 'default'},'random']
+    % gather the defaults from fix point iterator and initial guess
+    T=mergestructures(default_solve,fix_point_iterator(),...
+        msre_initial_guess());
     return
 end
 
@@ -44,88 +42,25 @@ if isempty(T0)
         end
     end
     model_class=M+2*P;
-%     warnstate=warning('query','all');
-%     warning('off','MATLAB:singularMatrix')
     switch model_class
         case {0,2} % static model or forward-looking model
-            T0=msre_initial_guess('zeros');
+            T0=msre_initial_guess(A0,Aminus,Gplus01,Q,'zeros');
             impose_solution=true;
         case 1 % backward-looking model
-            T0=msre_initial_guess('backward');
+            T0=msre_initial_guess(A0,Aminus,Gplus01,Q,'backward');
             impose_solution=true;
         case 3 % hybrid model
             if h==1 && model_class==3
-                T0=msre_initial_guess('zero_init');
+                T0=msre_initial_guess(A0,Aminus,Gplus01,Q,'zeros');
             else
-                T0=msre_initial_guess(optim_opt.solve_initialization);
+                T0=msre_initial_guess(A0,Aminus,Gplus01,Q,optim_opt.solve_initialization);
             end
     end
-%     warning(warnstate)
 end
 
 [T,R,gsig,theta_hat,retcode,itercode,algo_name]=...
     markov_switching_rational_expectations_solver(Aminus,A0,Gplus01,B,Gtheta,T0);
 
-    function T0=msre_initial_guess(solve_initialization)
-        T0=zeros(nn,nn,h);
-        bkwl=any(Aminus{1},1);
-        for istate=2:h
-            bkwl=bkwl|any(Aminus{istate},1);
-        end
-        switch solve_initialization
-            case {'zero','zeros','zero_init'}
-            case {'back_init','backward','default'}
-                for i_state=1:h
-                    % the solution that corresponds to the backward-looking model [default]
-                    % this should accelerate the solving and give more accurate results since
-                    % we strictly don't need to solve for the non-state columns i.e. the columns
-                    % where Aminus is zero
-                    T0(:,:,i_state)=-A0{i_state}\Aminus{i_state};
-                    if any(any(isnan(T0(:,:,i_state))))
-                        T0(:,:,i_state)=-pinv(A0{i_state})*Aminus{i_state};
-                        % the A0 matrix can be singular, for instance in the
-                        % case of the zlb
-                    end
-                end
-            case {'random','rand_init'}
-                level=3;
-                switch level
-                    case 0
-                        T0(:,bkwl,:)=randn(nn,sum(bkwl),h);
-                    case 1
-                        AT=zeros(nn,nn,h);
-                        sn=solvent_norm();
-                        AT(:,bkwl,:)=sn^2*randn(nn,sum(bkwl),h);
-                        for istate=1:h
-                            QAT=zeros(nn);
-                            for jstate=1:h
-                                QAT(:,bkwl)=QAT(:,bkwl)+Q(istate,jstate)*AT(:,bkwl,jstate);
-                            end
-                            QAT=QAT+A0{istate};
-                            T0(:,:,istate)=-QAT\Aminus{istate};
-                        end
-                    case 2
-                        Tbkw=msre_initial_guess('back_init');
-                        T0(:,bkwl,:)=Tbkw(:,bkwl,:).*rand(nn,sum(bkwl),h);
-                    case 3
-                        sn=solvent_norm();
-                        T0(:,bkwl,:)=sn*randn(nn,sum(bkwl),h);
-                end
-        end
-        function sn=solvent_norm()
-            n_a0=0;n_aplus=0;n_aminus=0;
-            for ii_state=1:h
-                n_a0=max(n_a0,norm(A0{ii_state}));
-                aplus=0;
-                for s1=1:h
-                    aplus=aplus+Gplus01{ii_state,s1};
-                end
-                n_aplus=max(n_aplus,norm(aplus));
-                n_aminus=max(n_aminus,norm(Aminus{ii_state}));
-            end
-            sn=(n_a0+sqrt(n_a0^2+4*n_aplus*n_aminus))/(2*n_aplus);
-        end
-    end
     function [T,R,msig,theta_hat,retcode,itercode,algo_name]=...
             markov_switching_rational_expectations_solver(Aminus,A0,Gplus01,B,Gtheta,T0)
         % the structural system takes the form
