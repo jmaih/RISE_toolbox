@@ -125,7 +125,6 @@ classdef rise
         varargout=monte_carlo_filtering(obj,varargin) % <--- formerly sensitivity_analysis
         varargout=posterior_marginal_and_prior_densities(obj,varargin)
         varargout=posterior_simulator(obj,varargin)
-        varargout=print_estimates(obj,varargin)
         varargout=print_estimation_results(obj,varargin)
         varargout=print_solution(obj,varargin)
         varargout=prior_plots(varargin)
