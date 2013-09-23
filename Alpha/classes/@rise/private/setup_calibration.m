@@ -1,4 +1,5 @@
 function obj=setup_calibration(obj,Calibration)
+% Calibration is either a struct or a cell of the form {names,paramvector}
 param_names=obj.parameters.name;
 
 par_nbr=sum(obj.parameters.number);
@@ -9,8 +10,19 @@ if isempty(obj.parameter_values)
 end
 chain_names=obj.markov_chains.chain_names;
 
-% calibration
-%------------
+% Transform to struct if necessary
+%---------------------------------
+if iscell(Calibration)
+    pnames=Calibration{1};
+    param_draw=Calibration{2};
+    Calibration=struct();
+    for iname=1:numel(pnames)
+        Calibration.(pnames{iname})=param_draw(iname);
+    end
+end
+
+% push the calibration
+%---------------------
 fields=fieldnames(Calibration);
 for ii=1:numel(fields)
     tmp=Calibration.(fields{ii});
