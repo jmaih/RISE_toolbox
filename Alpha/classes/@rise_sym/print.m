@@ -170,7 +170,8 @@ end
         function add_row_to_cell_extra_equations(myrow)
             iextra=iextra+1;
             if size(extra_equations,1)==iextra
-                extra_equations(end+(1:expansion_factor),:)={};
+                equation_ncols=size(extra_equations,2);
+                extra_equations(end+expansion_factor,:)=cell(1,equation_ncols);
             end
             extra_equations(iextra,:)=myrow;
         end
