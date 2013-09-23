@@ -51,7 +51,7 @@ mainfunc=@do_one_parameter;
 varnames={obj.estimation.priors(list_locs).name};
 parfor ipar=1:npar
     var_id=list_locs(ipar);
-    vname=varnames{var_id};
+    vname=varnames{var_id}; %#ok<PFBNS>
     db(ipar,:)={vname,mainfunc(var_id)};
 end
 
