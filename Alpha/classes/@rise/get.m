@@ -35,6 +35,8 @@ elseif strcmpi(PropertyName,'regime_list')
     Reply=obj.markov_chains.regime_names;
 elseif strcmpi(PropertyName,'state_list')
     Reply=obj.markov_chains.state_names;
+elseif ismember(lower(PropertyName),{'mode','mean','median','post_sim_mode','prior_mean','start'})
+    Reply=load_parameters();
 else
     par_list=get(obj,'par_list');
     ploc=locate_variables(PropertyName,par_list,true);
@@ -44,6 +46,26 @@ else
         error(['unknown gettable property ',PropertyName])
     end
 end
+    function Reply=load_parameters()
+        type=lower(PropertyName);
+        switch type
+            case 'mode'
+                xparam=obj.estimation.posterior_maximization.mode;
+            case {'mean','median'}
+                xparam=obj.estimation.posterior_simulation.(type);
+            case 'post_sim_mode'
+                xparam=obj.estimation.posterior_simulation.mode;
+            case {'prior_mean','start'}
+                xparam=vertcat(obj.estimation.priors.(type));
+            otherwise
+                error([mfilename,':: unrecognized type ',type])
+        end
+        param_names={obj.estimation.priors.name};
+        Reply=struct();
+        for iname=1:numel(param_names)
+            Reply.(param_names{iname})=xparam(iname);
+        end
+    end
     function Reply=load_definitions()
         formulae=obj.definitions.dynamic;
         def_vals=obj.solution.definitions;
