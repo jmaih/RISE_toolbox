@@ -18,34 +18,28 @@ solve_alternatives_nsim=obj.options.solve_alternatives_nsim;
 file2save2=obj.options.solve_alternatives_file2save2;
 
 % initialize the solution
+%-------------------------
 allobj=rise.empty(0,0);
-% load parameters from the mode, which can be empty of course
-mode=obj.estimation.posterior_maximization.mode;
-obj=assign_estimates(obj,mode);
+
 [obj,retcode]=obj.solve();
 sols=0;
 indep_sols=0;
 if ~retcode
     sols=sols+1;
     indep_sols=indep_sols+1;
-    %     error([mfilename,':: model not solvable at the mode...'])
     allobj(1)=obj;
 end
-% for the rest, use random starts. In particular, we set the initial guess
-% to true in order to start in different locations. This is not the ideal
-% solution because I use rand, where all the random numbers are positive
-% and in addition the magnitudes are not necessarily the ones in the "true"
-% solution. Famer, Waggoner and Zha(2011) propose an algorithm for
-% generating random starting values. I should try to adapt it...
-obj.options.solve_initialization='random';
-for sim=1:solve_alternatives_nsim-1
-    obj=assign_estimates(obj,mode);
+
+iter=sols;
+obj=set_options('solve_initialization','random');
+for sim=iter+1:solve_alternatives_nsim
 	[objtmp,retcode]=obj.solve();
     if ~retcode
         sols=sols+1;
         do_not_discard=true;
+		newsol=cell2mat(objtmp.solution.m_x);
         for jj=1:indep_sols
-            test=max(max(max(abs(objtmp.T-allobj(jj).T))));
+            test=max(max(abs(newsol-cell2mat(allobj(jj).solution.m_x))));
             if test<1e-5
                 do_not_discard=false;
                 break
@@ -57,7 +51,7 @@ for sim=1:solve_alternatives_nsim-1
         end
     end
 end
-obj.options.solve_initialization='default';
+
 if ~isempty(file2save2)
     diary(file2save2)
 end
