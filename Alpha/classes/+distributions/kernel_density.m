@@ -56,7 +56,7 @@ if isempty(kk)
     error([mfilename,':: unrecognized kernel ',kernel])
 end
 
-xx=linspace(lb,ub,n);
+xx=transpose(linspace(lb,ub,n));
 ff=nan(n,numel(kk));
 for ii=1:n
     u=normalize(xx(ii),data,h);
