@@ -273,8 +273,8 @@ classdef hdmr
                 hold off
                 
                 subplot(3,1,2)
-                [xg,fg]=distributions.empirical_cdf(g_,min(g_),max(g_),100);
-                [xh,fh]=distributions.empirical_cdf(h,min(g_),max(g_),100);
+                [fg,xg]=distributions.empirical_cdf(g_,min(g_),max(g_),100);
+                [fh,xh]=distributions.empirical_cdf(h,min(g_),max(g_),100);
                 plot(xg,fg,xh,fh)
                 title('cdf')
                 legend({'True model','Metamodel'})
