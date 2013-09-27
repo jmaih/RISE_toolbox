@@ -38,8 +38,8 @@ for fig=1:nfig
 end
 
 function [hh]=smirnov_subplot(x,x_,lb,ub,parname)
-[xx,f]=distributions.empirical_cdf(x,lb,ub);
-[xx_,f_]=distributions.empirical_cdf(x_,lb,ub);
+[f,xx]=distributions.empirical_cdf(x,lb,ub);
+[f_,xx_]=distributions.empirical_cdf(x_,lb,ub);
 plot(xx,f,xx_,f_)
 axis([lb,ub,0,1])
 ff=abs(f-f_);
