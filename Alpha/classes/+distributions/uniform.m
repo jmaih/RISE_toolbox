@@ -133,6 +133,10 @@ d=inverse_cdf(rand(n,1),a,b,c,d);
 end
 function lpdf=log_density(theta,a,b,junk1,junk2)
 lpdf=-log(b-a);
+n=numel(theta);
+if n>1 && numel(a)==1
+    lpdf=lpdf(ones(n,1));
+end
 target=theta>=a & theta<=b;
 lpdf(~target)=-inf;
 end
