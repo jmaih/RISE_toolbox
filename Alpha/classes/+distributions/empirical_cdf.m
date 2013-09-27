@@ -1,4 +1,4 @@
-function [xx,f]=empirical_cdf(x,lb,ub,N)
+function [f,xx]=empirical_cdf(x,lb,ub,N)
 
 if nargin<4
     N=[];
