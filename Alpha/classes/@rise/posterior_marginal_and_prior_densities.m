@@ -69,6 +69,7 @@ for fig=1:nfig
         xmax = max(all_vals);
 		[F,XI]=distributions.kernel_density(all_vals,[],[],'normal',N);
         [x_mode,x_mode_id]=find_nearest(XI,x0(par_id));
+		
         [x_post_mode,x_post_mode_id]=find_nearest(XI,post_mode(par_id));
         [x_mm,x_mm_id]=find_nearest(XI,mm);
         x_prior=linspace(lb(par_id),ub(par_id),N);
@@ -85,16 +86,11 @@ for fig=1:nfig
             f_prior=min(F)+ratio*(max(F)-min(F));
         end
         subplot(r,c,plt)
-        plot(XI,F,'LineStyle','-','Color','b',...
-            'LineWidth',2.5), hold on
-        plot(x_prior,f_prior,'LineStyle','-','Color','green',...
-            'LineWidth',2.5), hold on
-        plot([x_mm x_mm], [0 F(x_mm_id)],'LineStyle',':',...
-            'Color','black','LineWidth',2.5 ),
-        plot([x_mode x_mode], [0 F(x_mode_id)],'LineStyle',':',...
-            'Color','green','LineWidth',2.5 ),
-        plot([x_post_mode x_post_mode], [0 F(x_post_mode_id)],'LineStyle',':',...
-            'Color','red','LineWidth',2.5 ),
+        plot(XI,F,'LineStyle','-','Color','b','LineWidth',2.5), hold on
+        plot(x_prior,f_prior,'LineStyle','-','Color','green','LineWidth',2.5), hold on
+        plot([x_mm x_mm], [0 F(x_mm_id)],'LineStyle',':','Color','black','LineWidth',2.5 ),
+        plot([x_mode x_mode], [0 F(x_mode_id)],'LineStyle',':','Color','green','LineWidth',2.5 ),
+        plot([x_post_mode x_post_mode], [0 F(x_post_mode_id)],'LineStyle',':','Color','red','LineWidth',2.5 ),
         hold off
         xlow=min(xmin,min(x_prior));
         xhigh=max(xmax,max(x_prior));
