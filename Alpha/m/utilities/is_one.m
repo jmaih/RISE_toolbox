@@ -1,3 +1,3 @@
 function flag=is_one(a)
-flag=isnumeric(a) && all(a==1);
+flag=(isnumeric(a)||islogical(a)) && all(a==1);
 end
