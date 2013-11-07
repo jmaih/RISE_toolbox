@@ -243,6 +243,6 @@ for icu=1:numel(obj)
         mins=floor(secs/60);
         secs=secs-mins*60;
         this_ic(end-(2:-1:0))={datestr(t1),datestr(t2),[int2str(hrs),':',int2str(mins),':',int2str(secs)]};
-    stats=[stats,[model_names(icu);this_ic]]; %#ok<AGROW>
+    stats=[stats,[model_names(icu);this_ic]]; 
 end
 end
