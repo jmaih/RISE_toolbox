@@ -31,7 +31,7 @@ if ~retcode
 end
 
 iter=sols;
-obj=set_options('solve_initialization','random');
+obj=set_options(obj,'solve_initialization','random');
 for sim=iter+1:solve_alternatives_nsim
 	[objtmp,retcode]=obj.solve();
     if ~retcode
