@@ -4,7 +4,7 @@ function output=concatenate_series_from_different_models(dbcell)
 % returns a structure whose fields are the concatenated time series objects
 
 varList=fieldnames(dbcell{1});
-mydates=dbcell{1}.(varList{1}).TimeInfo;
+mydates_start=dbcell{1}.(varList{1}).start;
 output=struct();
 nobj=numel(dbcell);
 for ivar=1:numel(varList)
@@ -21,10 +21,10 @@ for ivar=1:numel(varList)
     if data_size(2)>1
         for ireg=1:data_size(2)
             output.(reg_names{ireg}).(varList{ivar})=...
-                rise_time_series(mydates,tank(:,:,ireg),mod_names);
+                rise_time_series(mydates_start,tank(:,:,ireg),mod_names);
         end
     else
-        output.(varList{ivar})=rise_time_series(mydates,tank,mod_names);
+        output.(varList{ivar})=rise_time_series(mydates_start,tank,mod_names);
     end
 end
 end
