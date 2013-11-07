@@ -15,7 +15,7 @@ if isempty(obj)
         'irf_horizon',1,...
         'irf_param_type','mode',...
         'irf_shock_sign',1,...
-        'irf_draws',1,...
+        'irf_draws',300,...
         'irf_type','irf',...
         'irf_history',[],...
         'irf_risk',true,...
@@ -102,8 +102,11 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
             irf_periods=numel(irf_history);
             irf_type='hirf';
         end
-        if h==1
+        if h==1 && obj.options.solve_order<2
             irf_type='irf';
+        end
+        if obj.options.solve_order>1
+            irf_type='girf';
         end
         girf=strcmp(irf_type,'girf');
         
@@ -125,6 +128,8 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
         end
         if irf_draws==1
             irf_shock_uncertainty=false;
+        else
+            irf_shock_uncertainty=true;
         end
         % initialize
         %-----------

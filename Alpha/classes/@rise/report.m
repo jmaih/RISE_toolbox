@@ -64,6 +64,11 @@ switch type
             warning('reporting the parameters for the first model only')
         end
         mytable=model_equations(obj);
+    case 'code'
+        model_syntax=true;
+        model_line_numbers=true;
+        tex_code = latex_model_file(obj,model_syntax,model_line_numbers);
+        mytable=tex_code;
     otherwise
         error(['unknown flag :: ',type])
 end
@@ -113,6 +118,16 @@ for ieq=1:numel(dynamic)
 end
 end
 
+function model_names=get_model_names(obj)
+model_names={obj.filename};
+model_legends={obj.legend};
+for ii=1:numel(model_legends)
+    if ~isempty(model_legends{ii})
+        model_names{ii}=model_legends{ii};
+    end
+end
+end
+
 function estim=model_estimation_results(obj)
 ncases=numel(obj);
 type_name='tex_name';
@@ -121,7 +136,7 @@ ordered_names=sort(parnames);
 PALL=cell(1,ncases);
 for ic=1:ncases
     newnames={obj(ic).estimation.priors.(type_name)};
-    mode=num2cell(obj(ic).estimation.mode);
+    mode=num2cell(obj(ic).estimation.posterior_maximization.mode);
     mode_std=num2cell(obj(ic).estimation.posterior_maximization.mode_stdev);
     prior_prob=num2cell(vertcat(obj(ic).estimation.priors.prior_prob));
     plb=num2cell(vertcat(obj(ic).estimation.priors.lower_quantile));
@@ -148,7 +163,7 @@ end
 nparams=numel(ordered_names);
 
 estim=cell(nparams+1,5+ncases);
-model_names={obj.filename};
+model_names=get_model_names(obj);
 estim(1,:)=[{'parameter','Prior distr','Prior prob','low','high'},model_names];
 for iparam=1:nparams
     name_in=false;
@@ -206,7 +221,8 @@ stats={
     'end time :'
     'total time:'
     };
-model_names={obj.filename};
+model_names=get_model_names(obj);
+
 for icu=1:numel(obj)
     this_ic={obj(icu).estimation.posterior_maximization.log_post,...
 	    obj(icu).estimation.posterior_maximization.log_lik,...
