@@ -105,11 +105,14 @@ end
         fwz_flag=false;
         switch solver
             case {0,'msre_klein'}
-                iterate_func = @(x)msre_klein(x,Gplus01,A0,Aminus,Q,nn,h);
+                Aplus=A0; for ireg=1:h,Aplus{ireg}=Gplus01{ireg,ireg}/Q(ireg,ireg); end
+                iterate_func = @(x)msre_klein(x,Aplus,A0,Aminus,Q,nn,h);
             case {1,'msre_gensys'}
-                iterate_func = @(x)msre_gensys(x,Gplus01,A0,Aminus,Q,nn,h);
+                Aplus=A0; for ireg=1:h,Aplus{ireg}=Gplus01{ireg,ireg}/Q(ireg,ireg); end
+                iterate_func = @(x)msre_gensys(x,Aplus,A0,Aminus,Q,nn,h);
             case {2,'msre_aim'}
-                iterate_func = @(x)msre_aim(x,Gplus01,A0,Aminus,Q,nn,h);
+                Aplus=A0; for ireg=1:h,Aplus{ireg}=Gplus01{ireg,ireg}/Q(ireg,ireg); end
+                iterate_func = @(x)msre_aim(x,Aplus,A0,Aminus,Q,nn,h);
             case {3,'functional_iteration'}
                 iterate_func = @(x)msre_solvers.functional_iteration(x,Gplus01,A0,Aminus,Q,nn,h);
             case {4,'newton_kronecker'}
