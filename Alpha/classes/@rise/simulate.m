@@ -26,6 +26,7 @@ if nobj>1
     for iobj=1:nobj
         [db{iobj},State{iobj}] = simulate(obj(iobj),varargin{:});
     end
+    db=format_simulated_data_output(db);
     return
 end
 obj=set_options(obj,varargin{:});
@@ -135,7 +136,7 @@ end
 % store the simulations in a database
 %------------------------------------
 db=rise_time_series(simul_start_date,y',obj.endogenous.name);
-
+db=pages2struct(db);
 end
 
 function [st,Q,PAI]=choose_state(st,Q,PAI,y)
@@ -161,3 +162,15 @@ if isempty(st)
 end
 end
 
+
+function sim_data=format_simulated_data_output(sim_data)
+nobj=numel(sim_data);
+if nobj==1
+    sim_data=sim_data{1};
+else
+    if isempty(sim_data{1})
+        return
+    end
+    sim_data=concatenate_series_from_different_models(sim_data);
+end
+end
