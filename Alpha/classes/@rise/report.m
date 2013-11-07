@@ -1,5 +1,5 @@
 function mytable=report(obj,varargin)
-% rep_type ='varendo','varexo','varobs','parameters','solution'
+% rep_type ='endogenous','exogenous','observables','parameters','solution'
 % 'estimation','estimation_statistics','equations'
 
 if isempty(obj)
