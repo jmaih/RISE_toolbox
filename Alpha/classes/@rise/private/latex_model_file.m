@@ -37,19 +37,23 @@ for ii = 1 : nline
         y = '';
     end
     if new_file
-        tex_code = [tex_code,process_line(filename),' \\',br]; %#ok<AGROW>
+        tmp=process_line(filename);
         new_file=false;
+        tex_code = [tex_code,tmp,' \\',br]; %#ok<AGROW>
     end
     x = process_line(x);
     y = '';%docomments(y);
     tex_code = [tex_code,x,y,' \\',br]; %#ok<AGROW>
 end
+% escape #
+tex_code=strrep(tex_code,'#','\#');
 
     function xx = process_line(xx)
         myprescreen=@pre_screen;
         if model_syntax
             % keywords
-            pat1=kwd_list; replace1='@\\textcolor{blue}{\\texttt{${myprescreen($0)}}}\\verb@';
+            pat1=['(?<!\w)',kwd_list,'(?!\w)']; 
+            replace1='@\\textcolor{blue}{\\texttt{${myprescreen($0)}}}\\verb@';
             xx = regexprep(xx,pat1,replace1);
 %             % numbers
 %             pat2='(?<![a-z_A-Z,\.{])(\d*\.*\d+)(?!})'; replace2='@\\textcolor{red}{\\texttt{$1}}\\verb@';
@@ -58,11 +62,14 @@ end
             pat3='(\w+)({)((+|-)*\d+)(})'; replace3='$1$2@\\textcolor{red}{\\texttt{$3}}\\$4\\verb@';
             xx = regexprep(xx,pat3,replace3);
         end
+        if new_file
+%             xx=['@\textbf{\texttt{',strrep(xx,'_','\_'),'}}\verb@'];
+            xx=['@\textcolor{green}{\texttt{\% new file with name :: ',strrep(xx,'_','\_'),'}}\verb@'];
+        end
         if model_line_numbers
             xx = [sprintf('%0.0f: ',line_number),xx];
         end
         xx = ['\verb@',xx,'@'];
-                        
     end
 
 end
