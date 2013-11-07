@@ -13,7 +13,7 @@ if nobj>1
     ts_rmse=cell(1,nobj);
     rmse=cell(1,nobj);
     Updates=cell(1,nobj);
-    mystatenames={obj(1).varendo.name};
+    mystatenames=obj(1).endogenous.name;
     for iobj=1:nobj
         if iobj>1 && ~isequal(mystatenames,obj(iobj).endogenous.name)
             error('models should have the same endogenous variables')
