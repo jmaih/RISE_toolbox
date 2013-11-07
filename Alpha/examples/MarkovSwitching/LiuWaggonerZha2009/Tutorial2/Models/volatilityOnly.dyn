@@ -1,5 +1,0 @@
-//1) Markov-switching volatilityonly;
-@#include "fwz_est.dyn"
-@#include "constant_policy_parameters.dyn"
-@#include "switching_volatility.dyn"
-

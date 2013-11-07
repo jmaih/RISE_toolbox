@@ -59,23 +59,23 @@ for imod=1:numel(nk_models)
     tmp=load([nk_models{imod},filesep,'estimation',filesep,'estimated_model']);
     obj=tmp.obj;
     model_objects(imod,1)=obj;
-    model_objects(imod,1)=set_properties(model_objects(imod,1),'filename',nk_models_newlabels{imod});
+    model_objects(imod,1).legend=nk_models_newlabels{imod};
 end
 
 %% locate the variables of interest
-endo_locs=locate_variables(my_varlist,{model_objects(1).varendo.name});
-var_list_tex_names={model_objects(1).varendo(endo_locs).tex_name};
+endo_locs=locate_variables(my_varlist,model_objects(1).endogenous.name);
+var_list_tex_names=model_objects(1).endogenous.tex_name(endo_locs);
 graph_nstar=graph_nrows*graph_ncols;
 nvar=numel(my_varlist);
 n_myvar_figs=ceil(nvar/graph_nstar);
 %% get the list of the observed variables
-obsList={model_objects(1).varobs.name};
-obsListTexnames={model_objects(1).varobs.tex_name};
+obsList=model_objects(1).observables.name;
+obsListTexnames=model_objects(1).observables.tex_name;
 nvarobs=numel(obsList);
 n_myobs_figs=ceil(nvarobs/graph_nstar);
 %% exogenous
-shock_list={model_objects(1).varexo.name};
-shock_list_tex_names={model_objects(1).varexo.tex_name};
+shock_list=model_objects(1).exogenous.name;
+shock_list_tex_names=model_objects(1).exogenous.tex_name;
 nshocks=numel(shock_list);
 n_myshocks_figs=ceil(nshocks/graph_nstar);
 
@@ -97,25 +97,31 @@ if add_data_plot
             plot_window(db.(obsList{ivar}),'',[],@plot,'linewidth',2);
             title([obsListTexnames(ivar),obsList(ivar)],'fontsize',12);
         end
+        xrotate(90)
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
     end
 end
 
-%% declarations
+%%  the model code and declarations
+%----------------------------------
 if add_declaration_description
     % here we are using the last model has it contains all the parameters,
     % unlike say the first one.
+    % all the code
+    %-------------
+    xrep.section('Model code',report(model_objects(end),'rep_type','code'))
+    xrep.pagebreak();
     % endogenous
     %-----------
     mytable=struct('title','Declarations: Legend for endogenous variables',...
-        'table',{report(model_objects(end),'rep_type','varendo')});
+        'table',{report(model_objects(end),'rep_type','endogenous')});
     table(xrep,mytable);
     % exogenous
     %-----------
     mytable=struct('title','Declarations: Legend for exogenous variables',...
-        'table',{report(model_objects(end),'rep_type','varexo')});
+        'table',{report(model_objects(end),'rep_type','exogenous')});
     table(xrep,mytable);
     xrep.pagebreak();
     % parameters
@@ -127,18 +133,12 @@ if add_declaration_description
     % parameters
     %-----------
     mytable=struct('title','Declarations: Legend for observables',...
-        'table',{report(model_objects(end),'rep_type','varobs')});
+        'table',{report(model_objects(end),'rep_type','observables')});
     table(xrep,mytable);
     xrep.pagebreak();
 
 end
-%% add the model equations
-if add_model_equations
-    myverbatim=struct('title','Model equations',...
-        'list',{report(model_objects(end),'rep_type','equations')});
-    verbatim(xrep,myverbatim);
-    xrep.pagebreak();
-end
+
 %% add the estimation results
 if add_estimation_results
     mytable=struct('title','Posterior modes',...
@@ -157,10 +157,12 @@ if add_duration_probabilities
 for imod=1:numel(nk_models)%nk_models
     mytable={'','Probability of staying','Duration (quarters)'};
     est_par_names={model_objects(imod).estimation.priors.name};
-    for ich=1:numel(model_objects(imod).markov_chains)
-        chain= model_objects(imod).markov_chains(ich).name;
+    Regimes=model_objects(imod).markov_chains.regimes;
+    for ich=1:model_objects(imod).markov_chains.chains_number
+        chain= model_objects(imod).markov_chains.chain_names{ich};
         mytable=[mytable;{['markov chain name=',chain],'',''}]; %#ok<*AGROW>
-        for ist=1:numel(model_objects(imod).markov_chains(ich).states)
+        nstates=max(cell2mat(Regimes(2:end,ich+1)));
+        for ist=1:nstates
             guide=[chain,'_tp_',int2str(ist)];
             lg=length(guide);
             locs= strncmp(guide,est_par_names,lg);
@@ -175,18 +177,17 @@ for imod=1:numel(nk_models)%nk_models
     xrep.pagebreak();
     
     if model_objects(imod).markov_chains.regimes_number>2
-        Q=model_objects(imod).Q;
+        Q=model_objects(imod).solution.Q;
         qsize=size(Q,1);
-        Regimes=model_objects(imod).Regimes;
         mytable={'','Probability of staying','Duration (quarters)'};
         for iq=1:qsize
             thisprobs=Q(iq,:);thisprobs(iq)=[];
             sumProbs=sum(thisprobs);
             duration=1/sumProbs;
             this_regime='';
-            for ich=1:numel(model_objects(imod).markov_chains)
-                chain= model_objects(imod).markov_chains(ich).name;
-                this_regime=[this_regime,', ',chain,'=',int2str(Regimes(iq,ich))];
+            for ich=1:model_objects(imod).markov_chains.chains_number
+                chain=model_objects(imod).markov_chains.chain_names{ich};
+                this_regime=[this_regime,', ',chain,'=',int2str(Regimes{iq+1,ich+1})];
             end
             this_regime=strtrim(this_regime(2:end));
             mytable=[mytable;{['regime ',int2str(iq),'(',this_regime,')'],1-sumProbs,duration}];
@@ -207,7 +208,7 @@ if add_data_against_transition_probabilities
             thislabels=mystate_labels;
             discard=false(1,numel(thisstates));
             for ii=1:numel(thisstates)
-                discard(ii)=~ismember(thisstates{ii},model_objects(imod).state_names);
+                discard(ii)=~ismember(thisstates{ii},model_objects(imod).markov_chains.state_names);
             end
             thisstates=thisstates(~discard);
             thislabels=thislabels(~discard);
@@ -217,19 +218,20 @@ if add_data_against_transition_probabilities
             fig=figure('name',mytitle);
             for istate=1:nstates
                 subplot(nstates,1,istate)
-                plot(model_objects(imod).Filters.smoothed_probabilities.(thisstates{istate}),...
+                plot(model_objects(imod).filtering.smoothed_state_probabilities.(thisstates{istate}),...
                     'linewidth',2)
                 title([thislabels{istate},'(chain: ',...
                     thisstates{istate}(1:end-2),', state: ',...
                     thisstates{istate}(end),')'],'fontsize',12)
             end
+            xrotate(90)
             myfigure=struct('name',fig,'title',mytitle,'angle',90);
             figure(xrep,myfigure);
             xrep.pagebreak();
             %----------------------------
-            smoothed=model_objects(imod).Filters.Expected_smoothed_variables;
+            smoothed=model_objects(imod).filtering.Expected_smoothed_variables;
             for istate=1:nstates
-                highvol=model_objects(imod).Filters.smoothed_probabilities.(thisstates{istate});
+                highvol=model_objects(imod).filtering.smoothed_state_probabilities.(thisstates{istate});
                 add_str='';
                 for ifig=1:n_myobs_figs
                     if n_myobs_figs>1
@@ -246,6 +248,7 @@ if add_data_against_transition_probabilities
                         plotyy(smoothed.(vname),highvol,'linewidth',2)
                         title(obsListTexnames{ivar},'fontsize',12)
                     end
+                    xrotate(90)
                     myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
                     figure(xrep,myfigure);
                     xrep.pagebreak();
@@ -312,6 +315,7 @@ if add_historical_decomposition
             title(nk_models{imod},'interpreter','none',...
                 'fontsize',12)
         end
+        xrotate(90)
         orient(fig,'tall')
         hleg=legend(contrib_names,'location','SW','orientation','horizontal');
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
@@ -365,22 +369,22 @@ if add_forecast
     map=getappdata(0,'rise_default_plot_colors');
     
     [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(model_objects);
-    TimeInfo=ts_fkst{1}.(obsList{1}).TimeInfo;
     pp=[];
     Q=[];
     for iobs=1:nvarobs
         fig_title=['real-time forecasts for ',obsListTexnames{iobs}];
         fig=figure('name',fig_title);
         for imod=1:numel(nk_models)
+            % steady state
+            sstate=get(model_objects(imod),'sstate');
             subplot(numel(nk_models)+1,1,imod)
             [h,pp]=plot_real_time(ts_fkst{imod}.(obsList{iobs}),pp);
             % add the steady state
-            vloc=locate_variables(obsList{iobs},{model_objects(imod).varendo.name});
             hold on
             xlim=get(h,'xlim');
-            ergodic_mean=model_objects(imod).varendo(vloc).det_steady_state;
+            ergodic_mean=sstate.(obsList{iobs});
             if numel(ergodic_mean)>1
-                Q=model_objects(imod).Q;
+                Q=model_objects(imod).solution.Q;
                 nreg=size(Q,1);
                 pai=[eye(nreg)-Q';ones(1,nreg)]\[zeros(nreg,1);1];
                 ergodic_mean=ergodic_mean*pai;
@@ -405,7 +409,7 @@ if add_forecast
 end
 %% vector autocorrelations
 if add_autocorrelations
-    [Auto,retcode]=theoretical_autocorrelations(model_objects,'ar',40);
+    [Auto,retcode]=theoretical_autocorrelations(model_objects,'autocorr_ar',40);
     for ii=1:numel(Auto)
         Auto{ii}=Auto{ii}(endo_locs,endo_locs,:);
     end
@@ -462,9 +466,9 @@ if add_smoothed_shocks
         for ivar=(ifig-1)*graph_nstar+1:min(nshocks,ifig*graph_nstar)
             ii=ivar-(ifig-1)*graph_nstar;
             vshock=shock_list{ii};
-            myshock_data=model_objects(1).Filters.Expected_smoothed_shocks.(vshock);
+            myshock_data=model_objects(1).filtering.Expected_smoothed_shocks.(vshock);
             for imod=2:numel(model_objects)
-                myshock_data=[myshock_data,model_objects(imod).Filters.Expected_smoothed_shocks.(vshock)];
+                myshock_data=[myshock_data,model_objects(imod).filtering.Expected_smoothed_shocks.(vshock)];
             end
             subplot(r,c,ii)
             plot(myshock_data,'linewidth',2)
@@ -477,6 +481,7 @@ if add_smoothed_shocks
             end
         end
         orient(fig,'tall')
+        xrotate(90)
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
@@ -486,7 +491,7 @@ end
 %% correlation of shocks
 if add_shocks_correlations
     for imod=1:numel(model_objects)
-        shock_corr=corrcoef(rise_time_series.collect(model_objects(imod).Filters.Expected_smoothed_shocks));
+        shock_corr=corrcoef(rise_time_series.collect(model_objects(imod).filtering.Expected_smoothed_shocks));
         mytable=[
             [' ',shock_list]
             shock_list',num2cell(shock_corr)
@@ -515,7 +520,7 @@ if add_empirical_distribution_of_shocks
             lb=inf;
             ub=-inf;
             for imod=1:numel(model_objects)
-                myshock_data{imod}=double(model_objects(imod).Filters.Expected_smoothed_shocks.(vshock));
+                myshock_data{imod}=double(model_objects(imod).filtering.Expected_smoothed_shocks.(vshock));
                 lb=min(lb,min(myshock_data{imod}));
                 ub=max(ub,max(myshock_data{imod}));
             end

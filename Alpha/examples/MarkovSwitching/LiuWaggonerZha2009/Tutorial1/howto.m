@@ -73,13 +73,6 @@ print_solution(m)
 
 print_solution(m,{'PAI','X','R'})
 
-%% differences in solution approaches
-
-for imod=1:numel(m)
-    disp(['model ',labels{imod,2}])
-    disp(max(max(max(abs(m(imod).T-mfwz(imod).T)))))
-end
-
 %% Compute impulse responses
 myirfs=irf(m,... % all the models
     'irf_periods',15 ... % desired length of the irfs, default is 40
@@ -106,33 +99,45 @@ for ireg=1:2
     end
 end
 %% simulation of data
-m=simulate(m);
+% the simulations are available in a time series format in a structure
+%---------------------------------------------------------------------
+simdata=simulate(m);
 
-%% recovering and plotting the simulations
-% pick a model
-choice=1;
-
-% load all the simulations as a matrix
-SIMULATIONS=vertcat(m(choice).varendo.value);
-
-% recover the list of the endogenous variables from one model
-varendo_list={m(1).varendo.name};
+%% Plotting the simulations
 
 % choose a list of variables of interest. Let's just take the same list we
 % had earlier.
 newlist=varlist;
 
-% plot the simulations for all those variables
+% plot the simulations for all those variables and for all models
+%----------------------------------------------------------------
 figure('name',['simulated data for model ',sprintf('%0.f',choice)]);
 for ivar=1:numel(newlist)
     subplot(3,1,ivar)
     % pick a variable
     v=newlist{ivar};
-    % locate its position
-    vloc=locate_variables(v,varendo_list);
     % plot it
-    plot(SIMULATIONS(vloc,:),'linewidth',2)
+    plot(simdata.(v),'linewidth',2)
     title(v,'interp','none')
+    if ivar==1
+        legend(labels(:,2))
+    end
 end
-[junk,tmp]=sup_label(['Simulated data in model ',sprintf('%0.f',choice)],'t');
+[junk,tmp]=sup_label('Simulated data for all models ','t');
 set(tmp,'fontsize',15)
+
+%% alternatively plot the simulations each model separately
+for imod=1:numel(m)
+    choice=1;
+    figure('name',['simulated data for model ',sprintf('%0.f',choice)]);
+    for ivar=1:numel(newlist)
+        subplot(3,1,ivar)
+        % pick a variable
+        v=newlist{ivar};
+        % plot it
+        plot(simdata.(v)(['model_',int2str(imod)]),'linewidth',2)
+        title(v,'interp','none')
+    end
+    [junk,tmp]=sup_label(['Simulated data for model ''',labels{imod,2},''''],'t');
+    set(tmp,'fontsize',15)
+end

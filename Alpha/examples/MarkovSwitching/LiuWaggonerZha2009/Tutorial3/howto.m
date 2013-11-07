@@ -5,7 +5,6 @@ clear all
 close all
 clc
 % This tutorial needs:
-% - updating 
 % - report
 %% Instructions
 % - Please run this file block by block and make sure you read the
@@ -19,10 +18,22 @@ setpaths=true;
 if setpaths
     addpath([pwd,filesep,'Models']) % folder with the models
     addpath([pwd,filesep,'Data']) % folder containing the data
-    % change th path below according to your own system
-%     addpath('C:\Users\L5\Documents\GitHub\RISE_toolbox')
-%     % start RISE
-%     rise_startup()
+    % Instead of copying the folder in github somewhere on your disk, you
+    % can alternatively just set the paths so that matlab reads information
+    % from the examples folder but does not write to them. Here is an
+    % example of how to do that. It assumes that your main folder is not
+    % under github!
+    %----------------------------------------------------------------------
+%     MainPath='C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha\examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial3';
+%     addpath([MainPath,filesep,'Models']) % folder with the models
+%     addpath([MainPath,filesep,'Data']) % folder containing the data
+
+    % change the path below according to your own system
+    %----------------------------------------------------
+    addpath('C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha')
+    % start RISE
+    %-----------
+    rise_startup()
 end
 %% Bring in some data and transform them into rise_time_series
 
@@ -35,11 +46,11 @@ dataList={
 mydata=struct();
 startdate='1985Q1';
 for id=1:size(dataList,1)
-    % we just give the start date, RISE automatically understand that we
+    % we just give the start date, RISE automatically understands that we
     % are dealing with quarterly data by the format startdate
     mydata.(dataList{id,1})=rise_time_series(startdate,... start date
         tmp.qdatae(:,id+1),... the data
-        dataList{id,2});
+        dataList{id,2}); % list of variables
 end
 
 %% do further transformations if necessary
@@ -57,7 +68,10 @@ for id=1:nvars
 end
 [~,tmp]=sup_label(['US data ',mydata.(varlist{id}).start,':', mydata.(varlist{id}).finish],'t');
 set(tmp,'fontsize',15)
-
+% rotate the x-axis labels since there are too many observations. The
+% optimal number of ticks will be updated in a future release of RISE.
+%---------------------------------------------------------------------
+xrotate(90)
 
 %% Read the model(s)
 
@@ -86,8 +100,6 @@ for imod=1:nmodels
 end
 
 %% We estimate the models or filter them directly
-profile off
-profile on
 close all
 % if we have the parallel computing toolbox, we can estimate all models in
 % one go
@@ -99,87 +111,173 @@ for imod=1:nmodels %
     estim_models{imod}=estimate(estim_models{imod},'optimizer','fmincon');
     close all
 end
-profile off
-profile viewer
 
 %% Simulation of the posterior distribution
-% For each model, the draws are stored in folder
-% estim_models{imod}.folders_paths.simulations
+% obj below is a rise object with the simulation statistics included in
+% obj{imod}.estimation.posterior_simulation for imod=1:nmodels
 mcmc_number_of_simulations=500;
+do_store_mcmc_to_disk=false;
+postSims=cell(1,nmodels);
+obj=cell(1,nmodels);
 for imod=1:nmodels
-    posterior_simulator(estim_models{imod},...
-        'mcmc_number_of_simulations',mcmc_number_of_simulations);
+    % replace "for" by "parfor" if you want to use parallel computation
+    disp('*--------------------------------------------------------------*')
+    disp(['*----------- MCMC for ',model_names{imod},' model-------------*'])
+    disp('*--------------------------------------------------------------*')
+    if do_store_mcmc_to_disk
+        % In this case, the simulations are either stored on disk. You may
+        % want to do this if you need a very large number of draws. 
+        %-----------------------------------------------------------------
+        obj{imod}=posterior_simulator(estim_models{imod},'mcmc_number_of_simulations',...
+            mcmc_number_of_simulations);
+    else
+        % Here the simulations are stored in variable, which here we call
+        % postSims.
+        %-----------------------------------------------------------------
+        [obj{imod},postSims{imod}]=posterior_simulator(estim_models{imod},'mcmc_number_of_simulations',...
+            mcmc_number_of_simulations);
+    end
+end
+%% Marginal Likelihood
+% choose the algorithm for computing the marginal data density in case you
+% want to compute it. The algorithms for the computation of MDD are still
+% work in progress
+%-------------------------------------------------------------------------
+lmdd_algo={'mhm','chib_jeliazkov'};
+choice=lmdd_algo{1};
+lmdd=cell(1,nmodels);
+do_log_marginal_data_density=false;
+if do_log_marginal_data_density
+    for imod=1:nmodels
+    % replace "for" by "parfor" if you want to use parallel computation
+    disp('*--------------------------------------------------------------*')
+    disp(['*--- Marginal data density for ',model_names{imod},' model---*'])
+    disp('*--------------------------------------------------------------*')
+        if do_store_mcmc_to_disk
+            lmdd{imod}=log_marginal_data_density(obj{imod},choice);
+        else
+            lmdd{imod}=log_marginal_data_density(obj{imod},choice,postSims{imod});
+        end
+    end
 end
 
-%% for each set of simulations we compute irfs and plot them
-% Since we have a switching model, it would be costly to construct
-% generalized impulse responses, for each parameter vector as the
-% generalized irfs require a great deal of sampling themselves.
-% We take a shortcut for now: we set the number of draws for the
-% generalized irfs to 1.
-ci=65/100; % confidence region
-irf_periods=20; % length of irfs
-shock_list=estim_models{1}.exogenous.name;
-shock_list_tex=estim_models{1}.exogenous.tex_name;
-var_list={'PAI','Y','I'}';
-nvar=numel(var_list);
-nshocks=numel(shock_list);
-locs=locate_variables(var_list,estim_models{1}.endogenous.name);
-var_list_tex=estim_models{1}.endogenous.tex_name(locs);
-ndraws=mcmc_number_of_simulations;
+%% posterior distribution of parameters
+% to be added later
+
+%% draw random parameters from the simulation above and compute irfs
+% choose the number of parameter draws for the irfs or a similar exercise
+%------------------------------------------------------------------------
+myreplications=200;
+
+batch_irfs=cell(1,nmodels);
 for imod=1:nmodels
-    % go into the folder and load the draws
-    W=what(estim_models{imod}.folders_paths.simulations);
-    % get the mat files only
-    W=W.mat;
-    itercount=0;
-    % initialize an array for irfs
-    this_model=nan(irf_periods+1,nvar,nshocks,ndraws);
-    for ifile=1:numel(W)
-        tmp=load([estim_models{imod}.folders_paths.simulations,filesep,W{ifile}]);
-        for iparam=1:size(tmp.Params,2)
-            % get a parameter vector
-            params=tmp.Params(:,iparam);
-            % push each parameter inside the model and re-solve it
-            m=solve(estim_models{imod},'evaluate_params',params);
-            itercount=itercount+1;
-            if itercount==size(this_model,4)
-                % expand the array if necessary
-                this_model(:,:,:,end+(1:100))=nan;
+    % replace "for" by "parfor" if you want to use parallel computation
+    disp('*--------------------------------------------------------------*')
+    disp(['*-------- Bayesian IRFs for ',model_names{imod},' model--------*'])
+    disp('*--------------------------------------------------------------*')
+    ireplic=0;
+    while ireplic<myreplications
+        if do_store_mcmc_to_disk
+            [draw,obj_with_draw]=draw_parameter(obj{imod});
+        else
+            [draw,obj_with_draw]=draw_parameter(obj{imod},postSims{imod});
+        end
+        % solve the model
+        %----------------
+        [obj_with_draw,retcode]=solve(obj_with_draw);
+        % if there is no problem proceed. else draw a new parameter. But
+        % since the parameters have been mcmc-ed. No problem is to be
+        % expected. So this is done for comprehensiveness since the
+        % draw_parameter function also allows you to draw directly from the
+        % prior distribution too 
+        %------------------------------------------------------------------
+        if retcode
+            continue
+        end
+        ireplic=ireplic+1;
+        % now you can compute your irfs based on that single draw
+        %--------------------------------------------------------
+        myirfs=irf(obj_with_draw);
+        if ireplic==1
+            shock_names=fieldnames(myirfs);
+            vnames=fieldnames(myirfs.(shock_names{1}));
+            regime_names=myirfs.(shock_names{1}).(vnames{1}).varnames;
+            for ishock=1:numel(shock_names)
+                for ivar=1:numel(vnames)
+                    batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar})=[];
+                end
             end
-            % compute irfs based on the new parameter
-            myirfs=irf(estim_models{imod},'irf_type','girf',...
-                'girf_draws',1,...
-                'irf_periods',irf_periods);
-            % extract the irfs
-            for ishock=1:nshocks
-                this_shock=shock_list{ishock};
-                for ivar=1:nvar
-                    this_var=var_list{ivar};
-                    this_model(:,ivar,ishock,itercount)=...
-                        double(myirfs.(this_shock).(this_var));
+        end
+        for ishock=1:numel(shock_names)
+            for ivar=1:numel(vnames)
+                batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar})=cat(3,...
+                    batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar}),...
+                    double(myirfs.(shock_names{ishock}).(vnames{ivar})));
+                if ireplic==myreplications
+                    % put back into time series format
+                    %---------------------------------
+                    batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar})=...
+                        rise_time_series(0,...
+                        batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar}),...
+                        regime_names);
                 end
             end
         end
     end
-    
-    % sort the irfs, making sure we don't have the nan
-    this_model=sort(this_model(:,:,:,1:itercount),4);
-    % compute the mean
-    this_mean=mean(this_model,4);
-    % get the quantiles
-    left=round(0.5*(1-ci)*itercount);
-    right=round(0.5*(1+ci)*itercount);
-    % plot the irfs
-    for ishock=1:nshocks
-        this_shock=shock_list_tex{ishock};
-        figure('name',['irfs for to a ',this_shock,' in model ',model_names{imod}])
-        for ivar=1:nvar
-            this_var=var_list_tex{ivar};
-            subplot(3,1,ivar)
-            plot([this_mean(:,ivar,ishock),squeeze(this_model(:,ivar,ishock,[left,right]))])
-            title(this_var)
+end
+%% distribution of the irfs
+% set the confidence regions for your irfs
+%-----------------------------------------
+confi_irfs=[.3,.5,.7,.9];
+% choose the colors for the fan charts
+%-------------------------------------
+mycolors={'nb','y','g','b','m','r'};
+mycolors=mycolors{1};
+% plot a shorter horizon for the irfs if you want. 40 is the default in
+% RISE
+%-----------------------------------------------------------------------
+irf_plot_horizon=40;
+
+for imod=1:nmodels
+    disp('*--------------------------------------------------------------*')
+    disp(['*-------- Plotting IRFs for ',model_names{imod},' model--------*'])
+    disp('*--------------------------------------------------------------*')
+    shock_names=fieldnames(batch_irfs{imod});
+    % Find the list of the endogenous variables that are not auxiliary
+    % (auxiliary variables are variables created so that the model has a
+    % maximum number of lags of 1 and similarly for the leads if the model
+    % is forward looking
+    %-------------------------------------------------------------------
+    vnames=get(obj{imod},'endo_list(~auxiliary)'); 
+    locs=locate_variables(vnames,obj{imod}.endogenous.name);
+    vtex_names=obj{imod}.endogenous.tex_name(locs);
+    nvars=numel(vnames);
+    regime_names=batch_irfs{imod}.(shock_names{1}).(vnames{1}).varnames;
+    for ishock=1:numel(shock_names)
+        figh=nan(1,numel(regime_names));
+        for iregime=1:numel(regime_names)
+            figh(iregime)=figure('name',[model_names{imod},':: Posterior ',...
+                'Impulse responses to a ',shock_names{ishock},' shock in ',...
+                regime_names{iregime}]);
+        end
+        for ivar=1:numel(vnames)
+            mydata=batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar});
+            for iregime=1:numel(regime_names)
+                out=fanchart(window(mydata,[],irf_plot_horizon,mydata.varnames{iregime}),confi_irfs);
+                figure(figh(iregime))
+                % you may want to change the line below if you want a
+                % different configuration for your plots
+                %----------------------------------------------------------
+                subplot(nvars,1,ivar)
+                h=plot_fanchart(out,mycolors);
+                title(vtex_names{ivar})
+                axis tight
+                if ivar==numel(vnames)
+                    legend(char(num2str(flipud(confi_irfs(:))),'mean'),'location','SW','orientation','horizontal')
+                end
+            end
         end
     end
 end
+
 

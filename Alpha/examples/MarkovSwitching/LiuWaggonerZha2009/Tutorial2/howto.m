@@ -1,10 +1,8 @@
-%%
-% RISE Tutorial by Dr. Tao Zha
+%% RISE Tutorial by Dr. Tao Zha
 %% housekeeping
 clear all
 close all
 clc
-rehash()
 %% Instructions
 % - Please run this file block by block and make sure you read the
 % comments in each block to understand what it does. If there is anything
@@ -15,11 +13,17 @@ rehash()
 %% add the paths to RISE, the data and the models
 setpaths=true;
 if setpaths
-    addpath Models % folder with the models
-    addpath Data % folder containing the data
-    % change th path below according to your own system
-% addpath C:\Users\JMaih\Dropbox\RISE\RISE_Toolbox
+    MainPath='C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha\examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial2';
+    addpath([MainPath,filesep,'Models']) % folder with the models
+    addpath([MainPath,filesep,'Data']) % folder containing the data
+%     addpath Models % folder with the models
+%     addpath Data % folder containing the data
+    
+    % change the path below according to your own system
+    %----------------------------------------------------
+    addpath('C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha')
     % start RISE
+    %-----------
     rise_startup()
 end
 %% Bring in some data and transform them into rise_time_series
@@ -55,6 +59,10 @@ for id=1:nvars
 end
 [~,tmp]=sup_label(['US data ',mydata.(varlist{id}).start,':', mydata.(varlist{id}).finish],'t');
 set(tmp,'fontsize',15)
+% rotate the x-axis labels since there are too many observations. The
+% optimal number of ticks will be updated in a future release of RISE.
+%---------------------------------------------------------------------
+xrotate(90)
 %% start parallel computing if possible
 
 % it is possible to run estimation in parallel. Uncomment this if you have
@@ -100,7 +108,7 @@ close all,clc
 for imod=1:nmodels 
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
-    disp(['*-----Estimation of ',model_names{imod},' model-------*'])
+    disp(['*---------Estimation of ',model_names{imod},' model-----------*'])
     disp('*--------------------------------------------------------------*')
     estim_models{imod}=estimate(estim_models{imod},'optimizer','fmincon');
 end
@@ -115,7 +123,7 @@ for imod=1:nmodels
     thislabels=mylabels;
     discard=false(1,numel(thisstates));
     for ii=1:numel(thisstates)
-        discard(ii)=~ismember(thisstates{ii},estim_models{imod}.state_names);
+        discard(ii)=~ismember(thisstates{ii},estim_models{imod}.markov_chains.state_names);
     end
     thisstates=thisstates(~discard);
     thislabels=thislabels(~discard);
@@ -123,13 +131,16 @@ for imod=1:nmodels
     figure('name',mytitle)
     for istate=1:nstates
         subplot(nstates,1,istate)
-        plot(estim_models{imod}.Filters.smoothed_probabilities.(thisstates{istate}),...
+        plot(estim_models{imod}.filtering.smoothed_state_probabilities.(thisstates{istate}),...
             'linewidth',2)
         title([thislabels{istate},'(chain ',thisstates{istate}(1:end-2),' state ',thisstates{istate}(end),')'])
     end
     [junk,tmp]=sup_label(mytitle,'t');
     set(tmp,'fontsize',15)
     orient tall
+    % rotate the labels of the x-axis
+    %--------------------------------
+    xrotate(90)
 end
 
 %% closing the pool of workers 

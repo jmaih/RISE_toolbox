@@ -1,5 +1,11 @@
-// in this case, only tau is controlled by markov chain nk
-// the other parameters are controlled by the const markov chain
+% in this case, only tau is controlled by markov chain nk
+% the other parameters are controlled by the const markov chain
+
+parameters rhod rhos sigd sigs sigr kappa beta rhor gamma_1	gamma_2
+
+parameters(nk,2) tau
+
+parameterization
 	tau(nk,1)    ,   0.6137    ;
 	tau(nk,2)    ,   0.1*0.6137;
 	rhod         ,   0.7550    ;

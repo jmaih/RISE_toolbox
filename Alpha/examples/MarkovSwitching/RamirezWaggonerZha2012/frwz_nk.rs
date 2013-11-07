@@ -1,13 +1,13 @@
 %-------------------------------------------------------------
 % Nonlinear New Keynesian Model
-% Reference: Foerster, Rubio-Ramirez, Waggoner and Zha (2012)
+% Reference: Foerster, Rubio-Ramirez, Waggoner and Zha (2013)
 % Perturbation Methods for Markov Switching Models.
 %-------------------------------------------------------------
-endogenous PAI,Y,R
+endogenous PAI, "Inflation", Y, "Output gap", R, "Interest rate"
 
-exogenous EPS_R
+exogenous EPS_R	"Monetary policy shock"
 
-parameters a_tp_1_2, a_tp_2_1, betta, eta, kappa, mu_bar, rhor sigr
+parameters betta, eta, kappa, mu_bar, rhor sigr a_tp_1_2, a_tp_2_1
 
 parameters(a,2) mu, psi
 
@@ -19,7 +19,7 @@ model
 
 	(R{-1}/steady_state(R))^rhor*(PAI/steady_state(PAI))^((1-rhor)*psi)*exp(sigr*EPS_R)-R/steady_state(R);
 
-steady_state_model(unique)%imposed
+steady_state_model(unique,imposed)
     PAI=1;
     Y=(eta-1)/eta;
     R=exp(mu_bar)/betta*PAI;

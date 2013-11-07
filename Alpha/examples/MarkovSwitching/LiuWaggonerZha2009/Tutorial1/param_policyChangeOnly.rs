@@ -1,7 +1,12 @@
-// in this case only gamma_1 changes. And so,
-// gamma_1 is controlled by markov chain nk
-// while the other parameters are controlled by
-// the constant markov chain
+% in this case only gamma_1 changes. And so,
+% gamma_1 is controlled by markov chain nk
+% while the other parameters are controlled by
+% the constant markov chain
+parameters tau rhod rhos sigd sigs sigr kappa beta rhor gamma_2
+
+parameters(nk,2) gamma_1
+
+parameterization
 	tau          ,   0.6137;
 	rhod         ,   0.7550;
 	rhos         ,   0.835 ;
