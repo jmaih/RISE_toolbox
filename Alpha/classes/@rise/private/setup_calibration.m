@@ -14,6 +14,8 @@ chain_names=obj.markov_chains.chain_names;
 %---------------------------------
 if iscell(Calibration)
     pnames=Calibration{1};
+    % make sure the names are not in the tex form
+    pnames=parser.param_name_to_valid_param_name(pnames);
     param_draw=Calibration{2};
     Calibration=struct();
     for iname=1:numel(pnames)
