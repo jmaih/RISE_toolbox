@@ -1,23 +1,16 @@
-function [ys,param_obj,retcode,imposed]=usmodel_steadystate(param_obj,flag)
+function [ys,obj,retcode,imposed]=usmodel_steadystate(obj,flag)
 
 % computes the steady state for the observed variables in the smets-wouters
 % model. You only need to provide the steady state for the variables whose
 % steady state is different from zero.
 
-retcode=0;
 imposed=true;
+retcode=0;
 switch flag
     case 0
         ys={'dy','dc','dinve','dw','pinfobs','robs','labobs'};
     case 1
-        pp=struct();
-        name_loc=strcmp('name',param_obj(1,:));
-        val_loc=strcmp('startval',param_obj(1,:));
-        par_names=param_obj{2,name_loc};
-        par_mat=param_obj{2,val_loc};
-        for ipar=1:numel(par_names)
-            pp.(par_names{ipar})=par_mat(ipar,1);
-        end
+        pp=get(obj,'parameters');
         
         % In the SW model, one of the steady state is endogenous...
         cpie=1+pp.constepinf/100;
@@ -49,6 +42,12 @@ switch flag
         labobs =pp.constelab;
         
         ys =[dy,dc,dinve,dw,pinfobs,robs,labobs]';
+        if any(isinf(ys))||any(isnan(ys))
+            % if there is a problem, return a flag different from zero. It
+            % does not matter what number you write as long as it is
+            % different from zero.
+            retcode=1;
+        end
     otherwise
         error([mfilename,':: Unknown flag'])
 end

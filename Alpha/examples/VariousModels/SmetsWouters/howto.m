@@ -17,16 +17,10 @@ end
 data_start='1947q3';
 data=rise_time_series(data_start,data,vnames);
 %% read the model and assign the data
-hist_start=rise_date(data_start);
 sw=rise('usmodel','data',data,...
-    'estim_start_date',hist_start.observation_2_date(71),...
-    'presample',4,...
-    'steady_state_file','usmodel_steadystate',...
-    'solver','msre_aim',...
-    'derivatives','numerical');
+    'estim_start_date',obs2date(data_start,71),... % retrieve the date of the 71st observation
+    'kf_presample',4,...
+    'steady_state_file','usmodel_steadystate');
 
 %% estimating the model
-profile on
-sw=sw.estimate;
-profile off
-profile viewer
+sw=estimate(sw); % <--- sw=sw.estimate;

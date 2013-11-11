@@ -1,17 +1,18 @@
-var ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g qs  ms  spinf sw kpf kp ;
+endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g qs
+ms  spinf sw kpf kp
 
-var labobs robs pinfobs dy dc dinve dw;
+endogenous labobs robs pinfobs dy dc dinve dw
  
-varexo ea eb eg  eqs  em  epinf ew  ;  
+exogenous ea eb eg  eqs  em  epinf ew   
  
 parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
 czcap csadjcost ctou csigma chabb cfc 
 cindw cprobw cindp cprobp csigl clandaw  crpi crdy cry crr 
 crhoa crhoas crhob crhog crhols crhoqs crhoms crhopinf crhow  
-ctrend cg, sig_a, sig_b,sig_w,sig_pinf,sig_m,sig_qs,sig_g;
+ctrend cg, sig_a, sig_b,sig_w,sig_pinf,sig_m,sig_qs,sig_g
 
 
-model(linear); 
+model(linear) 
 
 		# cpie=1+constepinf/100;
 		# cgamma=1+ctrend/100 ;
@@ -32,7 +33,7 @@ model(linear);
 		# cwly=1-crk*cky;
 		# conster=(cr-1)*100;
 
-// flexible economy
+% flexible economy
 
 	      0*(1-calfa)*a + 1*a =  calfa*rkf+(1-calfa)*(wf)  ;
 	      zcapf =  (1/(czcap/(1-czcap)))* rkf  ;
@@ -46,7 +47,7 @@ model(linear);
 	      wf = csigl*labf 	+(1/(1-chabb/cgamma))*cf - (chabb/cgamma)/(1-chabb/cgamma)*cf(-1) ;
 	      kpf =  (1-cikbar)*kpf(-1)+(cikbar)*invef + (cikbar)*(cgamma^2*csadjcost)*qs ;
 
-// sticky price - wage economy
+% sticky price - wage economy
 
 	      mc =  calfa*rk+(1-calfa)*(w) - 1*a - 0*(1-calfa)*a ;
 	      zcap =  (1/(czcap/(1-czcap)))* rk ;
@@ -68,7 +69,7 @@ model(linear);
                (csigl*lab + (1/(1-chabb/cgamma))*c - ((chabb/cgamma)/(1-chabb/cgamma))*c(-1) -w) 
                + 1*sw ;
 	      r =  crpi*(1-crr)*pinf +cry*(1-crr)*(y-yf)+crdy*(y-yf-y(-1)+yf(-1))+crr*r(-1)+ms  ;
-	      a = crhoa*a(-1)  + sig_a*ea;	//
+	      a = crhoa*a(-1)  + sig_a*ea;	%
 	      b = crhob*b(-1) + sig_b*eb;
 	      g = crhog*(g(-1)) + sig_g*eg + cgy*sig_a*ea;
 	      qs = crhoqs*qs(-1) + sig_qs*eqs;
@@ -79,7 +80,7 @@ model(linear);
 	          ewma=sig_w*ew; 
 	      kp =  (1-cikbar)*kp(-1)+cikbar*inve + cikbar*cgamma^2*csadjcost*qs ;
 
-// measurment equations
+% measurment equations
 
 		dy=y-y(-1)+ctrend;
 		dc=c-c(-1)+ctrend;
@@ -89,61 +90,57 @@ model(linear);
 		robs =    1*(r) + conster;
 		labobs = lab + constelab;
 
-end; 
+observables dy dc dinve dw pinfobs robs labobs
 
-varobs dy dc dinve dw pinfobs robs labobs;
 
-parameterization;
-	// fixed parameters
-	crhoas,1; 	 // this parameter does not enter the model
-	crhols,    0.9928;  // this parameter does not enter the model
+parameterization
+	% fixed parameters
+	crhoas,1; 	 % this parameter does not enter the model
+	crhols,    0.9928;  % this parameter does not enter the model
 	ctou,.025;
 	clandaw,1.5;
 	cg,0.18;
 	curvp,10;
 	curvw,10;
 	
-	// estimated parameters initialisation
-	sig_a,   0.4618,0.01,2,inv_gamma_pdf,0.9;
-	sig_b,   0.18185,0.01,2,inv_gamma_pdf,0.9;
-	sig_g,   0.6090,0.01,2,inv_gamma_pdf,0.9;
-	sig_qs,  0.46017,0.01,2,inv_gamma_pdf,0.9;
-	sig_m,   0.2397,0.01,2,inv_gamma_pdf,0.9;
-	sig_pinf,0.1455,0.01,2,inv_gamma_pdf,0.9;
-	sig_w,   0.2089,0.01,2,inv_gamma_pdf,0.9;
+	% estimated parameters initialisation
+	sig_a,   0.4618,0.01,2,inv_gamma_pdf(0.9);
+	sig_b,   0.18185,0.01,2,inv_gamma_pdf(0.9);
+	sig_g,   0.6090,0.01,2,inv_gamma_pdf(0.9);
+	sig_qs,  0.46017,0.01,2,inv_gamma_pdf(0.9);
+	sig_m,   0.2397,0.01,2,inv_gamma_pdf(0.9);
+	sig_pinf,0.1455,0.01,2,inv_gamma_pdf(0.9);
+	sig_w,   0.2089,0.01,2,inv_gamma_pdf(0.9);
 	
-	calfa,   .24, .2,.4,normal_pdf,.9;
-	csigma,   1.5,.75,2.25,normal_pdf,0.9;
-	cfc,      1.5, 1, 1.5,normal_pdf,.9;
-	cgy,      0.51,.1,1.5,normal_pdf,.9;
+	calfa,   .24, .2,.4,normal_pdf(.9);
+	csigma,   1.5,.75,2.25,normal_pdf(0.9);
+	cfc,      1.5, 1, 1.5,normal_pdf(.9);
+	cgy,      0.51,.1,1.5,normal_pdf(.9);
 	
-	csadjcost, 6.0144,1,7,normal_pdf,0.9;
-	chabb,     0.6361,0.3,0.7,beta_pdf,.9;    
-	cprobw,    0.8087,0.3,0.7,beta_pdf,.9;
-	csigl,     1.9423,.5,3.5,normal_pdf,.9;
-	cprobp,    0.6,0.3,0.7,beta_pdf,.9;
-	cindw,     0.3243,0.3,0.7,beta_pdf,.9;
-	cindp,     0.47,0.3,0.7,beta_pdf,.9;
-	czcap,     0.2696,0.3,0.7,beta_pdf,.9;
-	crpi,      1.488,1,2,normal_pdf,.9;
-	crr,       0.8762,0.3,0.7,beta_pdf,.9;
-	cry,       0.0593,0.025,0.225,normal_pdf,.9;
-	crdy,      0.2347,0.025,0.225,normal_pdf,.9;
-	crhoa,     0.9977,0.2,0.8,beta_pdf,.9;
-	crhob,     0.5799,0.3,0.7,beta_pdf,.9;
-	crhog,     0.9957,0.2,0.8,beta_pdf,.9;
-	crhoqs,    0.7165,0.3,0.7,beta_pdf,.9;
-	crhoms,    .3,0.3,0.7,beta_pdf,.9;
-	crhopinf,  0.8,0.3,0.7,beta_pdf,.9;
-	crhow,     0.8,0.3,0.7,beta_pdf,.9;
-	cmap ,     0.7,0.3,0.7,beta_pdf,.9;
-	cmaw  ,    0.7,0.3,0.7,beta_pdf,.9;
-	// derived from steady state
-	constebeta, 0.7420,.05,.8,gamma_pdf,.9;
+	csadjcost, 6.0144,1,7,normal_pdf(0.9);
+	chabb,     0.6361,0.3,0.7,beta_pdf(.9);    
+	cprobw,    0.8087,0.3,0.7,beta_pdf(.9);
+	csigl,     1.9423,.5,3.5,normal_pdf(.9);
+	cprobp,    0.6,0.3,0.7,beta_pdf(.9);
+	cindw,     0.3243,0.3,0.7,beta_pdf(.9);
+	cindp,     0.47,0.3,0.7,beta_pdf(.9);
+	czcap,     0.2696,0.3,0.7,beta_pdf(.9);
+	crpi,      1.488,1,2,normal_pdf(.9);
+	crr,       0.8762,0.3,0.7,beta_pdf(.9);
+	cry,       0.0593,0.025,0.225,normal_pdf(.9);
+	crdy,      0.2347,0.025,0.225,normal_pdf(.9);
+	crhoa,     0.9977,0.2,0.8,beta_pdf(.9);
+	crhob,     0.5799,0.3,0.7,beta_pdf(.9);
+	crhog,     0.9957,0.2,0.8,beta_pdf(.9);
+	crhoqs,    0.7165,0.3,0.7,beta_pdf(.9);
+	crhoms,    .3,0.3,0.7,beta_pdf(.9);
+	crhopinf,  0.8,0.3,0.7,beta_pdf(.9);
+	crhow,     0.8,0.3,0.7,beta_pdf(.9);
+	cmap ,     0.7,0.3,0.7,beta_pdf(.9);
+	cmaw  ,    0.7,0.3,0.7,beta_pdf(.9);
+	% derived from steady state
+	constebeta, 0.7420,.05,.8,gamma_pdf(.9);
 	
-	ctrend,     0.3982,.2,.6,normal_pdf,.9;
-	constepinf, .7,.425,.825,gamma_pdf,.9;
-	constelab,  1.2918,-4,4,normal_pdf,.9;
-
-end;
-
+	ctrend,     0.3982,.2,.6,normal_pdf(.9);
+	constepinf, .7,.425,.825,gamma_pdf(.9);
+	constelab,  1.2918,-4,4,normal_pdf(.9);

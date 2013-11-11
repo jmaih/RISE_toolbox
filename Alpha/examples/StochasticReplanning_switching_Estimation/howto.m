@@ -14,16 +14,12 @@ end
 data_start='1947q3';
 data=rise_time_series(data_start,data,vnames);
 %% read the model and assign the data
-hist_start=rise_date(data_start);
 sw=rise('usmodel_sr_switch','data',data,...
-    'estim_start_date',hist_start.observation_2_date(71),...
+    'estim_start_date',obs2date(data_start,71),... % retrieve the date of the 71st observation
     'kf_presample',4,...
     'lc_MaxIter',5000,... % jack up the number of iterations to increase the probability of solving
     'check_stability',false); % save some time by avoiding the checking of stability all the time
     
 
 %% estimating the model
-profile on
-sw=sw.estimate;
-profile off
-profile viewer
+sw=estimate(sw); % <--- sw=sw.estimate;

@@ -1,4 +1,4 @@
-function [ss,params,retcode,imposed]=usmodel_lc_steady_state(params,flag)
+function [ss,obj,retcode,imposed]=usmodel_lc_steady_state(obj,flag)
 
 imposed=true;
 retcode=0;
@@ -6,23 +6,12 @@ ss=[];
 if flag==0
     params={'dy','dc','dinve','dw','pinfobs','robs','labobs'};
 else
-    name_loc=strcmp('name',params(1,:));
-    val_loc=strcmp('startval',params(1,:));
-    par_names=params{2,name_loc};
-    par_mat=params{2,val_loc};
-    parlist={'ctrend','constepinf','conster','constebeta','constelab',...
-        'csigma','pelin_tp_1_2','pelin_tp_2_1'};
-    pp=struct();
-    for ilist=1:numel(parlist)
-        par=parlist{ilist};
-        loc=strcmp(par,par_names);
-        if strcmp(par,'pelin_tp_2_1')
-            % push back the parameter inside the params
-            params{2,val_loc}(loc,:)=1-pp.pelin_tp_1_2;
-            continue
-        end
-        pp.(par)=par_mat(loc,1);
-    end
+    pp=get(obj,'parameters');
+	
+	% the parameter below is not assigned a value in the model file
+	% we set it and push it back into the rise object.
+	nonset=struct('pelin_tp_2_1',1-pp.pelin_tp_1_2);
+	obj=set(obj,'parameters',nonset);
     %---------------------------------
     cpie=1+pp.constepinf/100;
     cgamma=1+pp.ctrend/100 ;
