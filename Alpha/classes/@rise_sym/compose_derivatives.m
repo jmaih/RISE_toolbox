@@ -52,6 +52,8 @@ switch x.func
         d= t14+t12;
     case 'uminus'
         d= -d_args{1};
+    case 'uplus'
+        d= d_args{1};
     case 'exp'
         d= d_args{1}*x;
     case 'log'

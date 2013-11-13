@@ -32,6 +32,7 @@ classdef rise_sym < handle
         varargout=sign(u)
         varargout=erf(u)
         varargout=uminus(u)
+        varargout=uplus(u)
         varargout=sqrt(u)
         varargout=abs(u)
         varargout=log(u)
