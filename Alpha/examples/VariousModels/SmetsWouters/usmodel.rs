@@ -1,5 +1,5 @@
-endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g qs
-ms  spinf sw kpf kp
+endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a
+b g qs ms  spinf sw kpf kp
 
 endogenous labobs robs pinfobs dy dc dinve dw
  
