@@ -214,10 +214,8 @@ dsge_var_irfs=format_irf_output(dsge_var_irfs);
                 else
                     e=zeros(exo_nbr,expansion_order+1);
                 end
-                tmp=zeros(nshocks,1);
                 this_shock_pos=position(ishock);
-                tmp(this_shock_pos)=1*irf_shock_sign;
-                e(:,end)=tmp;
+                e(this_shock_pos,end)=1*irf_shock_sign;
                 st=choose_state();
                 % start at the steady state
                 %--------------------------
