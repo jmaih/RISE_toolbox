@@ -54,7 +54,7 @@ end
         end
         govChain=obj.parameters.governing_chain(position);
         if ~(chain_id==govChain)
-            error(['parameter ',pname,' is not controlled by ',chain_names(chain_id)])
+            error(['parameter ',pname,' is not controlled by ',chain_names{chain_id}])
         end
         % locate the state in the regimes
         regime_states=find(regimes(:,chain_id)==state);
