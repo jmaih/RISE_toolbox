@@ -12,31 +12,29 @@ generic=rise('fwz10_nasty');
 %% 3 parameterizations
 % the first parameterization has a unique solution
 pp_1=struct();
-pp_1.delta=0; % assumes a value of 0 in all states
-pp_1.betta=1; % assumes a value of 1 in all states
-pp_1.rho=.9;
+pp_1.delta_a_1=0; 
+pp_1.delta_a_2=0; 
+pp_1.betta_a_1=1; 
+pp_1.betta_a_2=1; 
+pp_1.rho_a_1=.9;
+pp_1.rho_a_2=.9;
 pp_1.phi_a_1=.5; % controled by markov chain 'a' and assumes .5 in state 1 and .8 in state 2
 pp_1.phi_a_2=.8;
 pp_1.a_tp_1_2=1-.8; % for all regimes
 pp_1.a_tp_2_1=1-.9; % for all regimes   
 
 % the second parameterization has 2 solutions
-pp_2=struct();
+pp_2=pp_1;
 pp_2.delta_a_1=-.7;
-pp_2.delta_a_2=.4;
-pp_2.betta=1;
-pp_2.rho=0;
-pp_2.phi_a_1=.5;
-pp_2.phi_a_2=.8;
+pp_2.delta_a_2=.4; 
+pp_2.rho_a_1=0;
+pp_2.rho_a_2=0;	
 pp_2.a_tp_1_2=1-1;
 pp_2.a_tp_2_1=1-.64;   
 
 % the third parameterization has more than 2 solutions
-pp_3=struct();
-pp_3.delta_a_1=-.7;
+pp_3=pp_2;
 pp_3.delta_a_2=-.2;
-pp_3.betta=1;
-pp_3.rho=0;
 pp_3.phi_a_1=.2;
 pp_3.phi_a_2=.4;
 pp_3.a_tp_1_2=1-.9;

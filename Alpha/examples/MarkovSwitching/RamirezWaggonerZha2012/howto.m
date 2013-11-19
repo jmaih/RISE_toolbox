@@ -3,7 +3,6 @@ clear all
 close all
 clc
 %% load RISE
-addpath('C:\Users\Junior\Documents\GitHub\RISE_toolbox')
 rise_startup()
 
 
@@ -32,7 +31,7 @@ myirfs=irf(frwz,'irf_periods',20);
 
 %% plot the impulse responses
 close all
-var_list={frwz_nk.varendo.name};
+var_list=frwz_nk.endogenous.name;
 figure('name','Impulse responses to a monetary policy shock');
 for ii=1:numel(var_list)
     subplot(3,1,ii)
