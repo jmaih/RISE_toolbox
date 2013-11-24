@@ -14,7 +14,7 @@ NoANb='(?<![\w])';% no alphanumeric before
 NoAf='(?![a-zA-Z])';% no alphabetic after
 switch flag
     case 'symbolic'
-        strout=regexprep(str,[NoANb,'(',var_types,')\((\d*)\)'],'$1_$2');
+        strout=regexprep(str,[NoANb,'(',var_types,')(\s*)\((\s*)(\d*)(\s*)\)'],'$1_$4');
         if nargout>1
             varlist = regexp(strout,[NoANb,'(',var_types,')_\d*',NoAf],'match');
             varlist=unique(varlist);
