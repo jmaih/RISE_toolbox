@@ -1,4 +1,4 @@
-function obj=normalpdf(a,b,c)
+function obj=normpdf(a,b,c)
 if nargin<3
     c=rise_sym(1);
     if nargin<2
@@ -16,9 +16,9 @@ if ~isa(c,'rise_sym')
     c=rise_sym(c);
 end
 if isnumeric(a.func) && isnumeric(b.func) && isnumeric(c.func)
-    obj=rise_sym(normalpdf(a.func,b.func,c.func));
+    obj=rise_sym(normpdf(a.func,b.func,c.func));
 else
-    obj=rise_sym.multinary_operation('normalpdf',a,b,c);
+    obj=rise_sym.multinary_operation('normpdf',a,b,c);
 end
 
 end

@@ -68,7 +68,7 @@ switch func
     case 'or'
         c=[varargin{1},'|',varargin{2}];
         % trinary functions
-    case {'normalpdf','normalcdf'}
+    case {'normpdf','normcdf'}
         c=[func,'(',varargin{1},',',varargin{2},',',varargin{3},')'];
     case 'if_then_else'
         if strcmp(varargin{3},'0')

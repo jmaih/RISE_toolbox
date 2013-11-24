@@ -25,7 +25,7 @@ end
                 for id=1:numel(digits)
                     jter=jter+1;
                     if jter==size(with_respect_to,2)
-                        with_respect_to(end+(1:300))={};
+                        with_respect_to{end+300}={};
                     end
                     with_respect_to{jter}=[xx,'_',sprintf('%0.0f',digits(id))]; 
                 end

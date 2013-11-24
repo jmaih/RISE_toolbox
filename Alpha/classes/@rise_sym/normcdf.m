@@ -1,4 +1,4 @@
-function obj=normalcdf(a,b,c)
+function obj=normcdf(a,b,c)
 if nargin<3
     c=rise_sym(1);
     if nargin<2
@@ -16,9 +16,9 @@ if ~isa(c,'rise_sym')
     c=rise_sym(c);
 end
 if isnumeric(a.func) && isnumeric(b.func) && isnumeric(c.func)
-    obj=rise_sym(normalcdf(a.func,b.func,c.func));
+    obj=rise_sym(normcdf(a.func,b.func,c.func));
 else
-    obj=rise_sym.multinary_operation('normalcdf',a,b,c);
+    obj=rise_sym.multinary_operation('normcdf',a,b,c);
 end
 
 end

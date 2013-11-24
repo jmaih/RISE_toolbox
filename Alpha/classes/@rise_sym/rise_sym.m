@@ -66,8 +66,8 @@ classdef rise_sym < handle
         varargout=ne(u,v)
         varargout=kron(u,v)
         % trinary functions
-        varargout=normalpdf(u,v,w)
-        varargout=normalcdf(u,v,w)
+        varargout=normpdf(u,v,w)
+        varargout=normcdf(u,v,w)
         varargout=if_then_else(u,v,w)
         varargout=if_elseif(varargin)
         % utility functions
