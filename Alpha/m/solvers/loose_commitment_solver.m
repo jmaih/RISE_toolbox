@@ -93,11 +93,11 @@ while conv_T>lc_TolFun && iter<lc_MaxIter && conv_T<lc_explosion_limit && ~any(a
             else
                 OMG0=loose_commitment_matrices_long(T0,Aminus,A0,Aplus,B,W,betta,gam,lc_reconvexify);
             end
-            % 		[T,control]=msre_aim(0,OMGlead,OMG0,OMGlag,0,m,1);
-%             [T,control]=msre_gensys(0,{OMGlead},{OMG0},{OMGlag},0,m,1);
-            [T,control]=msre_klein(0,{OMGlead},{OMG0},{OMGlag},0,m,1);
+            % 		[T,~,rcode]=msre_aim(0,OMGlead,OMG0,OMGlag,0,m,1);
+%             [T,~,rcode]=msre_gensys(0,{OMGlead},{OMG0},{OMGlag},0,m,1);
+            [T,~,rcode]=msre_klein(0,{OMGlead},{OMG0},{OMGlag},0,m,1);
 
-            if isnan(control)
+            if rcode
                 T=nan;
             else
                 T=T{1};
