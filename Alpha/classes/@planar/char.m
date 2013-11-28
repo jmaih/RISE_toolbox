@@ -12,66 +12,58 @@ if isnumeric(x)
 elseif isempty(x.args)
     c=x.func;
 else
-    if ~any(x.incidence)
-        c='0';
-        return
-    end
     args=x.args;
     for iarg=1:numel(args)
         args{iarg}=char(args{iarg},long);
     end
-    switch x.func
-        % unary functions
-        %----------------
-        case {'abs','acos','acosh','asin','asinh','atan','atanh','cos',...
-                'cosh','cot','erf','exp','log','log10','sign','sin','sinh',...
-                'tan'}
-            c=[x.func,'(',args{1},')'];
-        case 'uplus'
-            c=args{1};
-        case 'uminus'
-            if long,c=['uminus(',args{1},')']; else c=['-(',args{1},')'];end
-            % binary functions
-            %-----------------
-        case 'and'
-            if long,c=['and(',args{1},',',args{2},')'];else c=['(',args{1},' & ',args{2},')'];end
-        case 'eq'
-              if long,c=['eq(',args{1},',',args{2},')'];else c=['(',args{1},'==',args{2},')'];end
-        case 'ge'
-              if long,c=['ge(',args{1},',',args{2},')'];else c=['(',args{1},'>=',args{2},')'];end
-        case 'gt'
-               if long,c=['gt(',args{1},',',args{2},')'];else c=['(',args{1},'>',args{2},')'];end
-       case {'if_elseif','if_then_else'}
-            c=[x.func,'('];
-            for iarg=1:numel(args)
-                c=[c,args{iarg},','];
-            end
-            c=[c(1:end-1),')'];
-        case 'le'
-              if long,c=[x.func,'(',args{1},',',args{2},')'];else c=['(',args{1},'<=',args{2},')'];end
-        case 'lt'
-              if long,c=[x.func,'(',args{1},',',args{2},')'];else c=['(',args{1},'<',args{2},')'];end
-        case {'max','min'}
-            c=[x.func,'(',args{1},',',args{2},')'];
-        case 'minus'
-              if long,c=[x.func,'(',args{1},',',args{2},')'];else c=[args{1},'-(',args{2},')'];end
-        case 'mpower'
-            % use the vectorized form directly
-              if long,c=['power(',args{1},',',args{2},')'];else c=['(',args{1},').^(',args{2},')'];end
-        case 'mrdivide'
-            % use the vectorized form directly
-              if long,c=['divide(',args{1},',',args{2},')'];else c=['(',args{1},')./(',args{2},')'];end
-        case 'mtimes'
-            % use the vectorized form directly
-              if long,c=['times(',args{1},',',args{2},')'];else c=['(',args{1},').*(',args{2},')'];end
-        case 'ne'
-               if long,c=[x.func,'(',args{1},',',args{2},')'];else c=['(',args{1},'~=',args{2},')'];end
-       case 'or'
-              if long,c=[x.func,'(',args{1},',',args{2},')'];else c=['(',args{1},'|',args{2},')'];end
-        case 'plus'
-              c=[args{1},'+',args{2}];
-        case {'normalcdf','normalpdf'}
-              c=[x.func,'(',args{1},',',args{2},',',args{3},')'];
-        otherwise
+    the_func=x.func;
+    % use vectorized operation directly
+    %----------------------------------
+    if any(strcmp(the_func,{'mpower','mrdivide','mtimes'}))% <-- ismember(the_func,{'mpower','mrdivide','mtimes'})
+        the_func=the_func(2:end);
+    end
+    if strcmp(the_func,'plus')
+        c=[args{1},'+',args{2}];
+    elseif long||any(strcmp(the_func,{'abs','acos','acosh','asin','asinh','atan','atanh','cos',...
+            'cosh','cot','erf','exp','log','log10','sign','sin','sinh',...
+            'tan','if_elseif','if_then_else','normcdf','normpdf','max','min','sqrt'}))
+        c=cell2mat(strcat(args,','));
+        c=[the_func,'(',c(1:end-1),')'];
+    else
+        switch the_func
+            case 'uplus'
+                c=args{1};
+            case 'uminus'
+                c=['-(',args{1},')'];
+            case 'and'
+                c=['(',args{1},' & ',args{2},')'];
+            case 'eq'
+                c=['(',args{1},')==(',args{2},')'];
+            case 'ge'
+                c=['(',args{1},')>=(',args{2},')'];
+            case 'gt'
+                c=['(',args{1},')>(',args{2},')'];
+            case 'le'
+                c=['(',args{1},')<=(',args{2},')'];
+            case 'lt'
+                c=['(',args{1},')<(',args{2},')'];
+            case 'minus'
+                c=[args{1},'-(',args{2},')'];
+            case 'power'
+                % use the vectorized form directly
+                c=['(',args{1},').^(',args{2},')'];
+            case 'rdivide'
+                % use the vectorized form directly
+                c=['(',args{1},')./(',args{2},')'];
+            case 'times'
+                % use the vectorized form directly
+                c=['(',args{1},').*(',args{2},')'];
+            case 'ne'
+                c=['(',args{1},')~=(',args{2},')'];
+            case 'or'
+                c=['(',args{1},')|(',args{2},')'];
+            otherwise
+                error(['unknown function :: ',the_func])
+        end
     end
 end
