@@ -1293,7 +1293,7 @@ classdef planar
                 var_list{ivar}=set(var_list{ivar},'prototype',proto_);
             end
         end
-        function [derivs,DerivPartitions]=differentiate(eqtns,order,partitions,verbose,early_intercept)
+        function derivs=differentiate(eqtns,order,partitions,verbose,early_intercept)
             if nargin<5
                 early_intercept=true;
                 if nargin<4
@@ -1311,12 +1311,12 @@ classdef planar
             [labels,low,high,nlabels]=set_partitions();
 
             init_vector=repmat({planar.empty(0)},neqtns,1);
-            derivs=struct('size',{},'derivatives',{},'maxcols',{},'nnz_derivs',{},'map',{});
+            derivs=struct('size',{},'derivatives',{},'maxcols',{},...
+                'nnz_derivs',{},'map',{},'partitions',{});
             combos=[];
             old_ncols=1;
             MainGrid=[];
             LabelGrid=[];
-            DerivPartitions=cell(1,order);
             for oo=1:order
                 if verbose
                     tic
@@ -1337,7 +1337,7 @@ classdef planar
                 
                 % store the partitions
                 %---------------------
-                store_derivative_partitions();
+                DerivPartitions=store_derivative_partitions();
                 
                 % differentiate
                 %--------------
@@ -1398,7 +1398,9 @@ classdef planar
                         maxcols=max(maxcols,maxcols_ielt);
                     end
                 end
-                derivs(oo)=struct('size',{[neqtns,ncols]},'derivatives',{d},'maxcols',maxcols,'nnz_derivs',nnz_derivs,'map',[]);
+                derivs(oo)=struct('size',{[neqtns,ncols]},'derivatives',{d},...
+                    'maxcols',maxcols,'nnz_derivs',nnz_derivs,'map',[],...
+                    'partitions',DerivPartitions);
 
                 % spit out the time it took to compute
                 %-------------------------------------
@@ -1442,15 +1444,16 @@ classdef planar
                 old_ncols=iter;
                 newcombos=newcombos(1:iter);
             end
-            function  store_derivative_partitions()
+            function  DerivPartitions=store_derivative_partitions()
                 iG=MainGrid(:,end:-1:1); % flip the grid to put it into the wrt form
                 position=true(nwrt^oo,1);
+                DerivPartitions=struct();
                 for irow=1:size(LabelGrid,1)
                     for icol_=1:oo
                         position=position & iG(:,icol_)>low(LabelGrid(irow,icol_)) & iG(:,icol_)<high(LabelGrid(irow,icol_)); 
                     end
                     xxx=cell2mat(labels(LabelGrid(irow,:)));
-                    DerivPartitions{oo}.(xxx)=iG_DerivLocs(position);
+                    DerivPartitions.(xxx)=iG_DerivLocs(position);
                     iG=iG(~position,:); % <---iG(position,:)=[];
                     position=true(size(iG,1),1);
                 end
