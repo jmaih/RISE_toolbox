@@ -52,42 +52,45 @@ data_provided=obj.options.data.NumberOfVariables>0;
 % %     options.cond_data_ub=rise_time_series;
 
 if data_provided
-    The_data=rise_time_series.collect(obj.options.data);
-    if isempty(obj.options.estim_start_date)
-        obj.options.estim_start_date=The_data.start;
-    end
-    if isempty(obj.options.estim_end_date)
-        obj.options.estim_end_date=The_data.finish;
-    end
-    start=date2obs(The_data.start,obj.options.estim_start_date);
-    finish=date2obs(The_data.start,obj.options.estim_end_date);
-    if start<=0
-        error('estimation start date inferior to data start')
-    end
-    nobs__=The_data.NumberOfObservations;
-    missing=max(0,finish-nobs__);
-    if missing>0
-        warning('estimation end date greater than data end date: nan observations will be added')
-    end
-    nvarobs=sum(obj.observables.number);
-%     smpl=finish-start+1;
-    ids=locate_variables(obj.observables.name,The_data.varnames,true);
-    DataValues=double(The_data);
-    verdier=nan(nobs__,nvarobs);
-    for ivar=1:numel(ids)
-        if isnan(ids(ivar))
-            warning(['variable ',obj.observables(ivar).name,' not found in the database'])
-            continue
-        end
-        verdier(:,ivar)=DataValues(:,ids(ivar));
-    end
-    % extend as necessary
-    %--------------------
-    sizDV=size(verdier);
-    verdier=[verdier;nan(missing,sizDV(2))];
-    verdier=transpose(verdier);
-    % send forward only the data that are needed.
-    verdier=verdier(:,start:finish);
+%     The_data=rise_time_series.collect(obj.options.data);
+%     if isempty(obj.options.estim_start_date)
+%         obj.options.estim_start_date=The_data.start;
+%     end
+%     if isempty(obj.options.estim_end_date)
+%         obj.options.estim_end_date=The_data.finish;
+%     end
+%     start=date2obs(The_data.start,obj.options.estim_start_date);
+%     finish=date2obs(The_data.start,obj.options.estim_end_date);
+%     if start<=0
+%         error('estimation start date inferior to data start')
+%     end
+%     nobs__=The_data.NumberOfObservations;
+%     missing=max(0,finish-nobs__);
+%     if missing>0
+%         warning('estimation end date greater than data end date: nan observations will be added')
+%     end
+%     nvarobs=sum(obj.observables.number);
+% %     smpl=finish-start+1;
+%     ids=locate_variables(obj.observables.name,The_data.varnames,true);
+%     DataValues=double(The_data);
+%     verdier=nan(nobs__,nvarobs);
+%     for ivar=1:numel(ids)
+%         if isnan(ids(ivar))
+%             warning(['variable ',obj.observables(ivar).name,' not found in the database'])
+%             continue
+%         end
+%         verdier(:,ivar)=DataValues(:,ids(ivar));
+%     end
+%     % extend as necessary
+%     %--------------------
+%     sizDV=size(verdier);
+%     verdier=[verdier;nan(missing,sizDV(2))];
+%     verdier=transpose(verdier);
+%     % send forward only the data that are needed.
+%     verdier=verdier(:,start:finish);
+[verdier,obj.options.estim_start_date,obj.options.estim_end_date]=...
+    data_request(obj.options.data,obj.observables.name,...
+    obj.options.estim_start_date,obj.options.estim_end_date);
     % load exogenous and endogenous
     %------------------------------
     is_endogenous=obj.observables.is_endogenous;
