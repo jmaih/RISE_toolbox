@@ -281,8 +281,9 @@ end
         % first and second-order derivatives of the planner objective
         %------------------------------------------------------------
         if obj.is_optimal_policy_model || obj.is_optimal_simple_rule_model
-            [welfare_commitment_discount,first_derivatives,short_hessian]=online_function_evaluator(obj.planner_system.LossComDiscHessJac,...
-                ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
+            [welfare_commitment_discount,first_derivatives,short_hessian]=...
+                online_function_evaluator(obj.planner_system.LossComDiscHessJac,...
+                ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0); %#ok<ASGLU>
             structural_matrices.planner.objective=welfare_commitment_discount(1);
             structural_matrices.planner.commitment=welfare_commitment_discount(2);
             structural_matrices.planner.discount=welfare_commitment_discount(3);
