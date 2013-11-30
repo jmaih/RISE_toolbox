@@ -1,13 +1,17 @@
-function pp=plot_specs(date_number)
-
+function pp=plot_specs(date_number,nticks)
+if nargin<2
+    nticks=[];
+end
+if isempty(nticks)
+    nticks=8;
+end
 % see also plot_real_time
 
 pp=struct();
 pp.xdatenums=date_number;
-% nticks=numel(date_number);
-% pp.nticks=min(nticks,numel(pp.xdatenums));
-tickLocsRow=1:numel(pp.xdatenums);
-tickLocs=rem(tickLocsRow,2)>0;
+pp.nticks=min(nticks,numel(pp.xdatenums));
+tickLocs=ceil(linspace(1,numel(pp.xdatenums),pp.nticks));
+tickLocs=unique(tickLocs); % just in case I accidentally add the same element twice from the lines above
 % discard the even locations
 pp.tickLocs=pp.xdatenums(tickLocs);
 

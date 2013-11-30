@@ -4,7 +4,15 @@ if size(datta,3)>1
     error([mfilename,':: this operation is only defined for databases with one page'])
 end
 
-pp=plot_specs(this.date_number);
+nticks=[];
+for icol=1:2:length(varargin)
+    if strcmpi(varargin{icol},'nticks')
+        nticks=varargin{icol+1};
+        varargin(icol:icol+1)=[];
+    end
+end
+
+pp=plot_specs(this.date_number,nticks);
 
 tmp=bar(pp.xdatenums,datta,varargin{:});
 

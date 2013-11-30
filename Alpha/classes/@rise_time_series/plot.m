@@ -6,11 +6,40 @@ else
     datta=squeeze(datta);
 end
 
-pp=plot_specs(this.date_number);
+nticks=[];
+for icol=1:2:length(varargin)
+    if strcmpi(varargin{icol},'nticks')
+        nticks=varargin{icol+1};
+        varargin(icol:icol+1)=[];
+    end
+end
 
+pp=plot_specs(this.date_number,nticks);
+% %--------------------
+% [stamp,unstamp]=time_frequency_stamp();
+% s=this.date_number;
+% freq=unstamp(s(1)-floor(s(1)));
+% year=floor(s/freq);
+% period=round(s-year*freq+1-stamp(freq));
+% % convert period to months
+% switch freq
+%     case 1
+% dateFormat =10; %<--'yyyy';
+%     case {2,4}
+% dateFormat =17; %<--'yyyy';
+%     case 12
+% dateFormat =12; %<--'yyyy';
+%     otherwise
+% end
+% if freq~=1
+%     period=period*12/freq;
+% end
+% dd=datenum(year,period,1);
+% %--------------------
+% tmp=plot(dd,datta,varargin{:});
+% datetick('x',dateFormat);
 tmp=plot(pp.xdatenums,datta,varargin{:});
-
-set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels) %...
+set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels) %,'XTickMode','auto'...
 %     'ylim',[ymin,ymax])
 
 grid on

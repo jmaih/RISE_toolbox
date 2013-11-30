@@ -1,6 +1,9 @@
-function hh=plot_fanchart(data,MainColor)
-if nargin<2
-    MainColor=[];
+function hh=plot_fanchart(data,MainColor,nticks)
+if nargin<3
+    nticks=[];
+    if nargin<2
+        MainColor=[];
+    end
 end
 if isempty(MainColor)
     MainColor='nb';
@@ -13,12 +16,12 @@ transparency=1; % 1 opaque:,....,0 (invisible)
 for jj=1:numel(data.ci)
     ydata=data.quantiles(:,jj);
     zdata=data.quantiles(:,end-jj+1);
-    handle=plot_fill(data.x,ydata,zdata,Colors(end-jj+1,:));
+    handle=plot_fill(data.date_number,ydata,zdata,Colors(end-jj+1,:));
     set(handle,'EdgeColor',edge,'FaceAlpha',transparency,'EdgeAlpha',transparency,'linestyle','none');
     hold on
 end
-plot(data.x,data.mean,'--k','linewidth',2)
-pp=plot_specs(data.x);
+plot(data.date_number,data.mean,'--k','linewidth',2)
+pp=plot_specs(data.x,nticks);
 
 set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels) %...
 %     'ylim',[ymin,ymax])

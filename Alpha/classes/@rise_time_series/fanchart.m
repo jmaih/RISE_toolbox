@@ -21,4 +21,4 @@ out.variance=[emp_moms.variance];
 out.quantiles=vertcat(emp_moms.quantiles);
 out.prob_index=emp_moms(1).prob_index;
 out.probs=emp_moms(1).probs;
-out.x=data.date_number;
+out.date_number=data.date_number;
