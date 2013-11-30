@@ -119,9 +119,9 @@ end;
 
 varobs gp_obs gy_obs;
 
-stoch_simul;
+stoch_simul(order=1)m P c e W R k d n l ;
 
-keyboard
+return
 
 estimation(order=1, datafile=fsdat_simul, nobs=192, mh_replic=2000, mh_nblocks=2, mh_jscale=0.8, mode_compute=1);  //, loglinear
 

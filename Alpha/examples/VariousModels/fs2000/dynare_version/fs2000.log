@@ -1,0 +1,117 @@
+Starting Dynare (version 2013-11-14).
+Starting preprocessing of the model file ...
+Substitution of endo leads >= 2: added 1 auxiliary variables and equations.
+Found 15 equation(s).
+Evaluating expressions...done
+Computing static model derivatives:
+ - order 1
+Computing dynamic model derivatives:
+ - order 1
+Processing outputs ...done
+Preprocessing completed.
+Starting MATLAB/Octave computing.
+
+STEADY-STATE RESULTS:
+
+m                		 1.011
+P                		 2.25815
+c                		 0.447711
+e                		 1
+W                		 4.5959
+R                		 1.02121
+k                		 5.80121
+d                		 0.849425
+n                		 0.187216
+l                		 0.860425
+gy_obs           		 1.003
+gp_obs           		 1.00797
+y                		 0.580765
+dA               		 1.003
+
+EIGENVALUES:
+         Modulus             Real        Imaginary
+
+               0                0                0
+       3.234e-17       -3.234e-17                0
+             0.7              0.7                0
+          0.9467           0.9467                0
+           1.067            1.067                0
+       1.075e+15       -1.075e+15                0
+             Inf              Inf                0
+
+
+There are 3 eigenvalue(s) larger than 1 in modulus 
+for 3 forward-looking variable(s)
+
+The rank condition is verified.
+
+
+MODEL SUMMARY
+
+  Number of variables:         15
+  Number of stochastic shocks: 2
+  Number of state variables:   4
+  Number of jumpers:           3
+  Number of static variables:  9
+
+
+MATRIX OF COVARIANCE OF EXOGENOUS SHOCKS
+
+Variables      e_a       e_m   
+e_a          0.000196  0.000000
+e_m          0.000000  0.000025
+
+POLICY AND TRANSITION FUNCTIONS
+                        m               P               c               e               W               R               k               d               n               l               
+Constant                    1.011000        2.258155        0.447711        1.000000        4.595904        1.021212        5.801211        0.849425        0.187216        0.860425
+m(-1)                       0.700000        2.535643       -0.192739               0        3.079790        0.494949        0.155123       -0.206595       -0.018099        0.493405
+k(-1)                              0       -0.203516        0.040350               0       -0.062799               0        0.946668       -0.062799       -0.011106       -0.062799
+e_a                                0        1.180638       -0.234078        1.000000        0.364308               0       -5.491823        0.364308        0.064428        0.364308
+e_m                         1.011000        3.662193       -0.278370               0        4.448097        0.714848        0.224041       -0.298382       -0.026140        0.712618
+
+
+THEORETICAL MOMENTS
+
+VARIABLE      MEAN    STD. DEV.   VARIANCE 
+m              1.0110     0.0071     0.0001
+P              2.2582     0.0571     0.0033
+c              0.4477     0.0103     0.0001
+e              1.0000     0.0140     0.0002
+W              4.5959     0.0348     0.0012
+R              1.0212     0.0050     0.0000
+k              5.8012     0.2389     0.0571
+d              0.8494     0.0160     0.0003
+n              0.1872     0.0028     0.0000
+l              0.8604     0.0165     0.0003
+
+
+
+VARIANCE DECOMPOSITION (in percent)
+
+     e_a    e_m  
+m     0.00 100.00
+P    80.73  19.27
+c    96.75   3.25
+e   100.00   0.00
+W    20.74  79.26
+R     0.00 100.00
+k    99.80   0.20
+d    97.78   2.22
+n    99.23   0.77
+l    91.49   8.51
+
+
+
+MATRIX OF CORRELATIONS
+
+Variables      m       P       c       e       W       R       k       d       n       l   
+m            1.0000  0.4375 -0.1758  0.0000  0.8901  1.0000  0.0195 -0.1433 -0.0780  0.2891
+P            0.4375  1.0000 -0.9621  0.2895  0.7992  0.4375 -0.8905  0.8273  0.8624  0.9873
+c           -0.1758 -0.9621  1.0000 -0.3169 -0.6051 -0.1758  0.9808 -0.9491 -0.9677 -0.9932
+e            0.0000  0.2895 -0.3169  1.0000  0.1467  0.0000 -0.3219  0.3186  0.3210  0.3082
+W            0.8901  0.7992 -0.6051  0.1467  1.0000  0.8901 -0.4384  0.3235  0.3850  0.6937
+R            1.0000  0.4375 -0.1758  0.0000  0.8901  1.0000  0.0195 -0.1433 -0.0780  0.2891
+k            0.0195 -0.8905  0.9808 -0.3219 -0.4384  0.0195  1.0000 -0.9923 -0.9983 -0.9515
+d           -0.1433  0.8273 -0.9491  0.3186  0.3235 -0.1433 -0.9923  1.0000  0.9978  0.9060
+n           -0.0780  0.8624 -0.9677  0.3210  0.3850 -0.0780 -0.9983  0.9978  1.0000  0.9318
+l     
