@@ -8,7 +8,7 @@ for ii=1:definitions.number
     defcell=[defcell;{def_(1:equality-1),def_(equality+1:end-1)}]; %#ok<AGROW>
 end
 for ii=1:definitions.number
-    for jj=ii+1:numel(definitions.number)
+    for jj=ii+1:definitions.number
         defcell{jj,2}=strrep(defcell{jj,2},defcell{ii,1},['(',defcell{ii,2},')']);
     end
 end
