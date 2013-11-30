@@ -1332,7 +1332,6 @@ classdef planar
 
                 % compute all combinations and hash them up
                 %------------------------------------------
-%                 [combos,Container,iG_DerivLocs]=store_combinations(combos);
                 [combos,iG_DerivLocs,ncols]=store_combinations(combos);
                 
                 % store the partitions
@@ -1384,7 +1383,6 @@ classdef planar
                                 index_(id)=iG_DerivLocs(...
                                     locate_permutation([former,lineage__{end}(id)],nwrt,wrt_wise)...
                                     );
-%                                 index_(id)=Container(hashing_([former,lineage__{end}(id)]));
                             end
                             d0.location=index_;
                             % store the derivative if not zero
@@ -1413,7 +1411,6 @@ classdef planar
                 eqtns=d;
             end
             function [newcombos,iG_DerivLocs,iter]=store_combinations(oldcombos)
-%             function [newcombos,Container,iG_DerivLocs]=store_combinations(oldcombos)
                 iG_DerivLocs=nan(1,nwrt^oo);
                 iter=0;
                 newcombos=cell(1,nwrt*old_ncols);
@@ -1438,9 +1435,6 @@ classdef planar
                         iG_DerivLocs(extended_locs)=iter;
                    end
                 end
-%                 keyset=transpose(hashing_(cell2mat(newcombos')));
-%                 valueset=1:iter;
-%                 Container=containers.Map(keyset,valueset);
                 old_ncols=iter;
                 newcombos=newcombos(1:iter);
             end
