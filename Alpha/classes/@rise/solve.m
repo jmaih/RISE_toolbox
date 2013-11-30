@@ -54,7 +54,7 @@ if nobj>1
 end
 
 structural_matrices=[];
-partitions=[];
+% partitions=[];
 structure_only=nargout>2;
 solve_order=obj.options.solve_order;
 params=obj.parameter_values;
@@ -71,7 +71,7 @@ if solve_order>0 && ~retcode
     % the parameters may have changed during the computation of the zeroth
     % order or steady state. That is why they are reloaded here
     params=obj.parameter_values;
-    eqtns_number=obj.equations.number;
+%     eqtns_number=obj.equations.number;
     retcode=solve_first_order();
     if solve_order>1 && ~retcode
         retcode=solve_second_order();
@@ -162,16 +162,13 @@ end
         end
         % use the derivatives G1 to build Gp, Gc, Gm, Ge and Gt
         %------------------------------------------------------
-        partitions=obj.model_derivatives.Endogenous_Shocks_Parameters{2};
-        myfields=fieldnames(partitions(2).pairings);
+        partitions=obj.model_derivatives.Endogenous_Shocks_Parameters(1).partitions;
+        myfields=fieldnames(partitions);
         for s0=1:h
             for s1=1:h
                 for ifield=1:numel(myfields)
                     ff=myfields{ifield};
-                    tmp_=zeros(eqtns_number,partitions(2).pairings.(ff).ncols);
-                    lhs=real(partitions(2).pairings.(ff).pairs); rhs=imag(partitions(2).pairings.(ff).pairs);
-                    tmp_(:,lhs)=obj.G1{s0,s1}(:,rhs);
-                    structural_matrices.(['G',ff]){s0,s1}=sparse(tmp_);
+                    structural_matrices.(['G',ff]){s0,s1}=sparse(obj.G1{s0,s1}(:,partitions.(ff)));
                 end
             end
         end
@@ -192,15 +189,13 @@ end
         end
         % use the derivatives G2 to build Gpp, Gpc, ..., Gtt
         %---------------------------------------------------
-        myfields=fieldnames(partitions(3).pairings);
+        partitions=obj.model_derivatives.Endogenous_Shocks_Parameters(2).partitions;
+        myfields=fieldnames(partitions);
         for s0=1:h
             for s1=1:h
                 for ifield=1:numel(myfields)
                     ff=myfields{ifield};
-                    tmp_=zeros(eqtns_number,partitions(3).pairings.(ff).ncols);
-                    lhs=real(partitions(3).pairings.(ff).pairs); rhs=imag(partitions(3).pairings.(ff).pairs);
-                    tmp_(:,lhs)=obj.G2{s0,s1}(:,rhs);
-                    structural_matrices.(['G',ff]){s0,s1}=sparse(tmp_);
+                    structural_matrices.(['G',ff]){s0,s1}=sparse(obj.G2{s0,s1}(:,partitions.(ff)));
                 end
             end
         end
@@ -219,7 +214,7 @@ end
         derivative_type=obj.options.derivatives;
         switch derivative_type
             case 'symbolic'
-                derivatives=obj.model_derivatives.Endogenous_Shocks_Parameters{1};
+                derivatives=obj.model_derivatives.Endogenous_Shocks_Parameters;%<-- derivatives=obj.model_derivatives.Endogenous_Shocks_Parameters{1};
             case {'numerical','automatic'}
                 derivatives={obj.func_handles.vectorized_dynamic;
                     obj.func_handles.vectorized_dynamic_params};
@@ -286,15 +281,15 @@ end
         % first and second-order derivatives of the planner objective
         %------------------------------------------------------------
         if obj.is_optimal_policy_model || obj.is_optimal_simple_rule_model
-            [~,G2,...
-                structural_matrices.planner.commitment,...
-                structural_matrices.planner.discount]=online_function_evaluator(obj.planner_system.LossComDiscHessJac{1},...
+            [welfare_commitment_discount,first_derivatives,short_hessian]=online_function_evaluator(obj.planner_system.LossComDiscHessJac,...
                 ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
-            ncols=obj.planner_system.LossComDiscHessJac{2}(3).pairings.cc.ncols;
-            pairs=obj.planner_system.LossComDiscHessJac{2}(3).pairings.cc.pairs;
-            weights=zeros(ncols,1);
-            weights(real(pairs))=G2(imag(pairs));
-            structural_matrices.planner.weights=sparse(reshape(weights,sqrt(ncols),sqrt(ncols)));
+            structural_matrices.planner.objective=welfare_commitment_discount(1);
+            structural_matrices.planner.commitment=welfare_commitment_discount(2);
+            structural_matrices.planner.discount=welfare_commitment_discount(3);
+            partitions=obj.planner_system.LossComDiscHessJac(3).partitions.cc;
+            ncols=numel(partitions);
+            weights=short_hessian(obj.planner_system.LossComDiscHessJac(3).partitions.cc);
+            structural_matrices.planner.weights=reshape(weights,sqrt(ncols),sqrt(ncols));
         end
         function [junk,J]=my_numerical_derivatives(derivatives,y,xss,ss_i,param_i,def_i,s0,s1)
             junk=[];

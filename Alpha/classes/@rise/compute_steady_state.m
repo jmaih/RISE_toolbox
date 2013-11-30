@@ -65,7 +65,7 @@ endo_nbr=obj.endogenous.number(2);
 resid_func=@static_or_bgp_residuals;
 last_item=endo_nbr;
 func_ss=obj.func_handles.static;
-func_jac=obj.model_derivatives.StaticEndogenous{1};
+func_jac=obj.model_derivatives.StaticEndogenous; % <---func_jac=obj.model_derivatives.StaticEndogenous{1};
 % func_jac=obj.func_handles.static_model_derivatives;
 if ~isempty(obj.is_stationary_model)&& ~obj.is_stationary_model
     last_item=2*endo_nbr;

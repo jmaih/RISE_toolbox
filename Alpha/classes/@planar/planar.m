@@ -1235,7 +1235,7 @@ classdef planar
                     deriv.map{irow,1}=dindex;
                 end
             end
-            if compact
+            if compact && ~isempty(deriv.derivatives)
                 deriv.derivatives=deriv.derivatives(:,1);
                 deriv.map=deriv.map(:,1);
                 deriv.maxcols=1;
@@ -1405,7 +1405,7 @@ classdef planar
                 % spit out the time it took to compute
                 %-------------------------------------
                 if verbose
-                    fprintf(1,'order %0.0f done in %0.4f seconds\n',oo,toc);
+                    fprintf(1,'differentiation at order %0.0f done in %0.4f seconds\n',oo,toc);
                 end
                 
                 % next round
@@ -1446,26 +1446,32 @@ classdef planar
             end
             function  DerivPartitions=store_derivative_partitions()
                 iG=MainGrid(:,end:-1:1); % flip the grid to put it into the wrt form
-                position=true(nwrt^oo,1);
-                DerivPartitions=struct();
-                for irow=1:size(LabelGrid,1)
-                    for icol_=1:oo
-                        position=position & iG(:,icol_)>low(LabelGrid(irow,icol_)) & iG(:,icol_)<high(LabelGrid(irow,icol_)); 
+                test=true;
+                if test
+                    iG_DerivLocsShort=iG_DerivLocs;
+                    position=true(nwrt^oo,1);
+                    DerivPartitions=struct();
+                    for irow=1:size(LabelGrid,1)
+                        for icol_=1:oo
+                            position=position & iG(:,icol_)>low(LabelGrid(irow,icol_)) & iG(:,icol_)<high(LabelGrid(irow,icol_));
+                        end
+                        xxx=cell2mat(labels(LabelGrid(irow,:)));
+                        DerivPartitions.(xxx)=iG_DerivLocsShort(position);
+                        iG=iG(~position,:); % <---iG(position,:)=[];
+                        iG_DerivLocsShort=iG_DerivLocsShort(~position);
+                        position=true(size(iG,1),1);
                     end
-                    xxx=cell2mat(labels(LabelGrid(irow,:)));
-                    DerivPartitions.(xxx)=iG_DerivLocs(position);
-                    iG=iG(~position,:); % <---iG(position,:)=[];
-                    position=true(size(iG,1),1);
+                else
+                    id0=true(nwrt^oo,1);
+                    for irow=1:size(LabelGrid,1)
+                        position=id0;
+                        for icol_=1:oo
+                            position=position & iG(:,icol_)>low(LabelGrid(irow,icol_)) & iG(:,icol_)<high(LabelGrid(irow,icol_));
+                        end
+                        xxx=cell2mat(labels(LabelGrid(irow,:)));
+                        DerivPartitions{oo}.(xxx)=iG_DerivLocs(position);
+                    end
                 end
-%                 id0=true(nwrt^oo,1);
-%                 for irow=1:size(LabelGrid,1)
-%                     position=id0;
-%                     for icol_=1:oo
-%                         position=position & iG(:,icol_)>low(LabelGrid(irow,icol_)) & iG(:,icol_)<high(LabelGrid(irow,icol_)); 
-%                     end
-%                     xxx=cell2mat(labels(LabelGrid(irow,:)));
-%                     DerivPartitions{oo}.(xxx)=iG_DerivLocs(position);
-%                 end
             end
             function [labels,low,high,nparts]=set_partitions()
                 if isempty(partitions)

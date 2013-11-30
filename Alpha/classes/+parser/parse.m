@@ -641,11 +641,11 @@ myPartitions={'p','c','m','e','t';
     };
 %     [model_derivatives,~,zeroth_order,numEqtns,numVars,jac_toc]=differentiate_system(...
 % % profile off, profile on
-[model_derivatives,~,numEqtns,numVars,jac_toc]=differentiate_system(...
+[model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
     parser.burry_probabilities(dynamic.shadow_model,myifelseif),... % 
     dictionary.input_list,myIncidence,wrt,myPartitions,2);
 disp([mfilename,':: 1st and 2nd-order derivatives of dynamic model wrt y(+0-), x and theta ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.0f',jac_toc),' seconds'])
+    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 % % profile off, profile viewer
 % % keyboard
 
@@ -654,22 +654,22 @@ disp([mfilename,':: 1st and 2nd-order derivatives of dynamic model wrt y(+0-), x
 wrt={'y',1:orig_endo_nbr};
 myIncidence=logical(1:orig_endo_nbr)';
 myPartitions={'c';orig_endo_nbr};
-[static_model_derivatives,~,numEqtns,numVars,jac_toc]=differentiate_system(...
+[static_model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
     static.shadow_model,...
     dictionary.input_list,myIncidence,wrt,myPartitions,1);
 disp([mfilename,':: 1st-order derivatives of static model wrt y(0). ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.0f',jac_toc),' seconds'])
+    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 
 % balanced growth path model wrt y
 %---------------------------------
 wrt={'y',1:2*orig_endo_nbr};
 myIncidence=logical(1:2*orig_endo_nbr)';
 myPartitions={'c';2*orig_endo_nbr};
-[static_bgp_model_derivatives,~,numEqtns,numVars,jac_toc]=differentiate_system(...
+[static_bgp_model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
     static.shadow_BGP_model,...
     dictionary.input_list,myIncidence,wrt,myPartitions,1);
 disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.0f',jac_toc),' seconds'])
+    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 
 % dynamic model wrt param
 %------------------------
@@ -680,11 +680,11 @@ ppdd=@(x)x;%dynamic.shadow_model;
 if DefaultOptions.definitions_in_param_differentiation
     ppdd=@(x)parser.replace_definitions(x,shadow_definitions);
 end
-[param_derivatives,~,numEqtns,numVars,jac_toc]=differentiate_system(...
+[param_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
     ppdd(dynamic.shadow_model),...
     dictionary.input_list,myIncidence,wrt,myPartitions,1);
 disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.0f',jac_toc),' seconds'])
+    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 %% push derivatives in to functions
 % for the moment, put all in the same matrix
 dynamic.model_derivatives=struct(...
@@ -701,19 +701,19 @@ if is_model_with_planner_objective
     % do not chop the output because we are going to augment the function
     % with the loss, the degree of commitment and the discount. We achieve
     % this by setting the last argument of the function to false.
-    [LossComDiscHessJac,~,numEqtns,numVars,jac_toc]=differentiate_system(...
+    [LossComDiscHessJac,numEqtns,numVars,jac_toc]=differentiate_system(...
         dictionary.planner_system.shadow_model(1),...
         dictionary.input_list,myIncidence,wrt,myPartitions,2);
     disp([mfilename,':: 1st and 2nd-order derivatives of planner objective wrt y(0). ',...
         sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.0f',jac_toc),' seconds'])
     % add the loss, the commitment degree and discount
+    %-------------------------------------------------
     shadow_model=dictionary.planner_system.shadow_model;
-    % add both commitment and discount to the code
-    tmp=LossComDiscHessJac{1}.code;
-    tmp=[tmp,'if nargout_>3;commitment=',strrep(shadow_model{2},'commitment-',''),...
-        'discount=',strrep(shadow_model{3},'discount-',''),'end;'];
-    LossComDiscHessJac{1}.code=tmp; clear tmp
-    LossComDiscHessJac{1}.argouts=[LossComDiscHessJac{1}.argouts,{'commitment','discount'}];
+    tmp=code2func(strrep(strrep(shadow_model,'discount-',''),'commitment-',''),dictionary.input_list,true);
+    % add some empty fields to conform with the differentiation
+    tmp.map=[]; tmp.partitions=[];tmp.maxcols=[];
+    % put all in a single structure
+    LossComDiscHessJac=[tmp,LossComDiscHessJac];
     dictionary.planner_system.LossComDiscHessJac=LossComDiscHessJac;
 end
 %% Add final variables list to the dictionary as they may differ earlier ones
@@ -901,7 +901,7 @@ dictionary=orderfields(dictionary);
 
 end
 
-function [derivs,zeroth_order,numEqtns,numVars,jac_toc]=differentiate_system(myfunc,input_list,incidence,wrt,Partitions,order)
+function [derivs,numEqtns,numVars,jac_toc]=differentiate_system(myfunc,input_list,incidence,wrt,Partitions,order)
 
 with_respect_to=rise_sym.extend_differentiation_list(incidence,wrt);
 
@@ -910,26 +910,61 @@ myfunc=analytical_symbolic_form(myfunc,input_list,'symbolic');
 % list of symbols
 symb_list=collect_symbolic_list(myfunc,strcat(input_list,'_'));
 % force 's0' and 's1' to enter the list
-symb_list=union(symb_list,{'s0','s1'});
-
-tic
-[derivs,zeroth_order]=rise_sym.differentiate(myfunc,symb_list,with_respect_to,incidence,Partitions,order);
-jac_toc=toc;
-
-% put to analytic form and then to function form
-%-----------------------------------------------
-if ~isempty(zeroth_order)
-    zeroth_order=analytical_symbolic_form(zeroth_order,input_list,'analytic');
-    outputList={derivs{2}(1).tag};
-    zeroth_order=parser.code2func(zeroth_order,input_list(:)',outputList);
+state_inputs={'s0','s1'};
+input_list=input_list(:)';
+for ii=1:numel(state_inputs)
+    if ~any(strcmp(symb_list,state_inputs{ii}))
+        symb_list=[symb_list,state_inputs{ii}];
+    end
+    if ~any(strcmp(input_list,state_inputs{ii}))
+        input_list=[input_list,state_inputs{ii}];
+    end
 end
-derivs{1}=analytical_symbolic_form(derivs{1},input_list,'analytic');
+% sorting will be useful if we need to debug
+symb_list=sort(symb_list);
 
-outputList={derivs{2}.tag};
-outputList=outputList(~cellfun(@isempty,outputList));
-derivs{1}=parser.code2func(derivs{1},input_list(:)',outputList);
-
+args=planar.initialize(symb_list,with_respect_to);
 numEqtns=numel(myfunc);
 numVars=numel(with_respect_to);
+for ifunc=1:numEqtns
+    [occur,myfunc{ifunc}]=find_occurrences(myfunc{ifunc},symb_list);
+    % re-create the function
+    var_occur=symb_list(occur);
+    argfun=cell2mat(strcat(var_occur,','));
+    myfunc{ifunc}=str2func(['@(',argfun(1:end-1),')',myfunc{ifunc}]);
+    arg_occur=args(occur);
+    myfunc{ifunc}=myfunc{ifunc}(arg_occur{:});
+end
+verbose=true;
+compact_derivatives=true;
+tic
+derivs=planar.differentiate(myfunc,order,Partitions,verbose);
+for oo=1:order
+    if verbose
+        tic
+    end
+    derivs(oo)=planar.print(derivs(oo),false);
+    if verbose
+        fprintf(1,'printing of derivatives at order %0.0f done in %0.4f seconds\n',oo,toc);
+        tic
+    end
+    derivs(oo)=planar.derivatives2functions(derivs(oo),input_list,compact_derivatives);
+    if verbose
+        fprintf(1,'derivatives to functions at order %0.0f done in %0.4f seconds\n',oo,toc);
+    end
+end
+jac_toc=toc;
 
+myderivs=struct();
+ff=fieldnames(derivs);
+for oo=1:order
+    for ifield=1:numel(ff)
+        f1=ff{ifield};
+        if strcmp(f1,'derivatives')
+            f1='functions';
+        end
+        myderivs(oo).(f1)=derivs(oo).(ff{ifield});
+    end
+end
+derivs=myderivs;
 end
