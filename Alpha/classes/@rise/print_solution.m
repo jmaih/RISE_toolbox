@@ -77,7 +77,7 @@ for kk=1:numel(obj)
             body_format='';
             % start from the end
             for bb=size(B,2):-1:1
-                body_format=['%',int2str(B{2,bb}),'s ',body_format]; %#ok<AGROW>
+                body_format=['%',int2str(B{2,bb}),'s ',body_format]; 
             end
             nrows=size(B{1,1},1);
             number_of_headers=size(B,2);
@@ -88,7 +88,7 @@ for kk=1:numel(obj)
                     Bi=B{1,icols};
                     tmp=[Bi(1,:),'='];
                     for irows=2:size(Bi,1)
-                        tmp=[tmp,Bi(irows,:),B0(irows,:),'+']; %#ok<AGROW>
+                        tmp=[tmp,Bi(irows,:),B0(irows,:),'+']; 
                     end
                     tmp(isspace(tmp))=[];
                     tmp=strrep(tmp,'+-','-');
