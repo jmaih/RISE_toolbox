@@ -1,6 +1,11 @@
 function varargout=online_function_evaluator(F,varargin)
 
-% evaluates string code as a function with inputs and outputs
+% evaluates 3 types of functions:
+% A) function handles
+% B) structures containing functions in cell arrays as well as other
+% parameters determining the size output matrices and the location of the
+% different elements computed in those matrices.
+% C) string codes with inputs and outputs as follows:
 % inputs:
 % - F: structure with fields code, argins and argouts
 % - varargin instances of elements whose names are given in argins
@@ -25,30 +30,47 @@ end
 
 nargout_=nargout;
 nargin_=nargin; %#ok<NASGU>
-if isa(F,'function_handle')
-%     % get the number of output arguments of the function
-%     nout=nargout(F);
-%     varargout=cell(1,nout);
-%     % this is just pure beauty
-%     [varargout{1:nout}]=(F(varargin{:}));
-    varargout=cell(1,nargout_);
+varargout=cell(1,nargout_);
+if isempty(F)
+    % don't do any thing
+elseif isa(F,'function_handle')
+    % function handles are ready to go
+    %---------------------------------
+    % this is just pure beauty
     [varargout{1:nargout_}]=(F(varargin{:}));
+elseif isfield(F,'functions')
+    is_mapped=isfield(F,'map');
+    for iout=1:nargout_
+        siz=F(iout).size;
+        if isnan(siz)
+            tmp=F(iout).functions{1}(varargin{:});
+        else
+            tmp=zeros(siz);%<--tmp=spalloc(siz(1),siz(2),F(iout).nnz_derivs);
+            for irow=1:siz(1)
+                thisfunc=F(iout).functions{irow};
+                if ~isempty(thisfunc)
+                    if is_mapped
+                        tmp(irow,F(iout).map{irow})=thisfunc(varargin{:});
+                    else
+                        tmp(irow,:)=thisfunc(varargin{:});
+                    end
+                end
+            end
+        end
+        varargout{iout}=sparse(tmp);
+    end
 else
+    % here the code has to be evaluated
+    %----------------------------------
     MajorFields=fieldnames(Default);
     for ifield=1:numel(MajorFields)
         thisfield=MajorFields{ifield};
         if isfield(F,thisfield)
             Default.(thisfield)=F.(thisfield);
-%             F=rmfield(F,thisfield);
         else
             Default.(thisfield)='';
         end
     end
-%     remaining_fields=fieldnames(F);
-%     if ~isempty(remaining_fields)
-%         disp(remaining_fields)
-%         error('these fields are not recognized')
-%     end
     
     if isempty(Default.code)
         error('must have code')
@@ -76,6 +98,6 @@ else
     
     varargout=Default.argouts(1:nargout_);
     for ivar=1:nargout_
-        varargout{ivar}=eval(varargout{ivar});
+        varargout{ivar}=sparse(eval(varargout{ivar}));
     end
 end
