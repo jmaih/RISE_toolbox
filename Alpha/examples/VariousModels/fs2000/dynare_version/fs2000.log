@@ -114,4 +114,1111 @@ R            1.0000  0.4375 -0.1758  0.0000  0.8901  1.0000  0.0195 -0.1433 -0.0
 k            0.0195 -0.8905  0.9808 -0.3219 -0.4384  0.0195  1.0000 -0.9923 -0.9983 -0.9515
 d           -0.1433  0.8273 -0.9491  0.3186  0.3235 -0.1433 -0.9923  1.0000  0.9978  0.9060
 n           -0.0780  0.8624 -0.9677  0.3210  0.3850 -0.0780 -0.9983  0.9978  1.0000  0.9318
-l     
+l            0.2891  0.9873 -0.9932  0.3082  0.6937  0.2891 -0.9515  0.9060  0.9318  1.0000
+
+
+
+COEFFICIENTS OF AUTOCORRELATION
+
+Order      1       2       3       4       5   
+m        0.7000  0.4900  0.3430  0.2401  0.1681
+P        0.8958  0.8124  0.7441  0.6869  0.6381
+c        0.9374  0.8810  0.8294  0.7820  0.7381
+e       -0.0000 -0.0000 -0.0000 -0.0000 -0.0000
+W        0.7474  0.5681  0.4402  0.3484  0.2819
+R        0.7000  0.4900  0.3430  0.2401  0.1681
+k        0.9468  0.8963  0.8486  0.8033  0.7605
+d        0.9429  0.8900  0.8407  0.7946  0.7514
+n        0.9459  0.8949  0.8468  0.8014  0.7585
+l        0.9234  0.8579  0.8008  0.7501  0.7046
+close all
+{Undefined variable "rise_svar" or class "rise_svar.template".
+} 
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: '1947Q3'
+            estim_end_date: '2004Q4'
+                      rf_B: {[5x16 double]}
+                  rf_Sigma: {[5x5 double]}
+                      rf_C: {[5x5 double]}
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: '1947Q3'
+            estim_end_date: '2004Q4'
+                      rf_B: {[5x16 double]}
+                  rf_Sigma: {[5x5 double]}
+                      rf_C: {[5x5 double]}
+                     sf_A0: {[5x5 double]}
+                  sf_Alags: {[5x16 double]}
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+ans =
+
+   -0.1939    0.0832   -0.6090   -0.2151    5.1488
+    1.7628   -0.3332         0         0         0
+   -0.0000   -1.2038         0         0         0
+   -0.7059    0.9052   -2.3467         0         0
+   -0.5516   -0.0707    0.1974   -2.7104         0
+
+
+ans = 
+
+           []    'ad'        'as'             'junk'       'ls'         'mp'     
+    'dw'         [     0]    [     0.5673]    [-0.1570]    [      0]    [      0]
+    'dy'         [     0]    [-1.9429e-16]    [-0.8307]    [      0]    [      0]
+    'labobs'     [     0]    [    -0.1707]    [-0.2732]    [-0.4261]    [      0]
+    'pinfobs'    [     0]    [    -0.1279]    [ 0.0337]    [-0.0310]    [-0.3689]
+    'robs'       [0.1942]    [    -0.0042]    [-0.0234]    [-0.0517]    [-0.0154]
+
+
+A0 =
+
+     0   NaN   NaN
+     0   NaN   NaN
+   NaN     0   NaN
+
+
+A1 =
+
+     0   NaN   NaN
+     0   NaN   NaN
+   NaN     0   NaN
+
+
+A0 =
+
+     0   NaN   NaN
+     0   NaN   NaN
+   NaN     0     0
+
+
+A1 =
+
+     0   NaN   NaN
+     0   NaN   NaN
+   NaN     0   NaN
+
+
+A0 =
+
+   NaN   NaN     0   NaN   NaN
+     0   NaN     0   NaN   NaN
+     0     0   NaN   NaN   NaN
+     0     0   NaN   NaN   NaN
+     0     0     0     0   NaN
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: '1947Q3'
+            estim_end_date: '2004Q4'
+                      rf_B: {[5x16 double]}
+                  rf_Sigma: {[5x5 double]}
+                      rf_C: {[5x5 double]}
+                     sf_A0: {[5x5 double]}
+                  sf_Alags: {[5x16 double]}
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: '1947Q3'
+            estim_end_date: '2004Q4'
+                      rf_B: {[5x16 double]}
+                  rf_Sigma: {[5x5 double]}
+                      rf_C: {[5x5 double]}
+                     sf_A0: {[5x5 double]}
+                  sf_Alags: {[5x16 double]}
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+ans =
+
+   -0.1939    0.0832   -0.6090   -0.2151    5.1488
+    1.7628   -0.3332         0         0         0
+   -0.0000   -1.2038         0         0         0
+   -0.7059    0.9052   -2.3467         0         0
+   -0.5516   -0.0707    0.1974   -2.7104         0
+
+
+ans = 
+
+           []    'ad'        'as'             'junk'       'ls'         'mp'     
+    'dw'         [     0]    [     0.5673]    [-0.1570]    [      0]    [      0]
+    'dy'         [     0]    [-1.9429e-16]    [-0.8307]    [      0]    [      0]
+    'labobs'     [     0]    [    -0.1707]    [-0.2732]    [-0.4261]    [      0]
+    'pinfobs'    [     0]    [    -0.1279]    [ 0.0337]    [-0.0310]    [-0.3689]
+    'robs'       [0.1942]    [    -0.0042]    [-0.0234]    [-0.0517]    [-0.0154]
+
+regexprep('fadafd{-1}','(\w+)({|\()(-*\d+)(}|\))','$3')
+
+ans =
+
+-1
+
+regexprep('fadafd','(\w+)({|\()(-*\d+)(}|\))','$3')
+
+ans =
+
+fadafd
+
+regexprep('fadafd{0}','(\w+)({|\()(-*\d+)(}|\))','$3')
+
+ans =
+
+0
+
+regexprep('fadafd','(\w+)({|\()(-*\d+)(}|\))','$3')
+
+ans =
+
+fadafd
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [5x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+rv.f
+
+ans =
+
+     1     1     1     1     1
+     0     0     1     0     0
+     1     1     1     1     1
+     1     1     1     1     1
+     1     1     1     1     1
+
+
+rv = 
+
+{Error using <a href="matlab:helpUtils.errorDocCallback('eq')" style="font-weight:bold"> == </a>
+Matrix dimensions must agree.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 85)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',85,0)">line 85</a>)
+                            if any(v=='({')
+} 
+<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',85,1)">85  </a>                            if any(v=='({')
+{Error using <a href="matlab:helpUtils.errorDocCallback('eq')" style="font-weight:bold"> == </a>
+Matrix dimensions must agree.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 85)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',85,0)">line 85</a>)
+                            if any(v=='(')||any(v=='{')
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 154)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',154,0)">line 154</a>)
+                Q_init{ii,1} = double(diag(obj.f*E(:,ii)==0));
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q', 'C:\Users\jma\Documents\Work\rise_svar.m', 191)" style="font-weight:bold">rise_svar/get.Q</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',191,0)">line 191</a>)
+            Q=obj.Q_index_ident{1};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Attempted to access f(-3,1); index must be a positive integer or logical.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 101)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',101,0)">line 101</a>)
+                            f((pos-1)*obj.endo_nbr+endo_id,exo_id)=vals(irow);
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 154)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',154,0)">line 154</a>)
+                Q_init{ii,1} = double(diag(obj.f*E(:,ii)==0));
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.index', 'C:\Users\jma\Documents\Work\rise_svar.m', 194)" style="font-weight:bold">rise_svar/get.index</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',194,0)">line 194</a>)
+            index=obj.Q_index_ident{2};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Attempted to access f(-3,1); index must be a positive integer or logical.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 101)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',101,0)">line 101</a>)
+                            f((pos-1)*obj.endo_nbr+endo_id,exo_id)=vals(irow);
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 154)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',154,0)">line 154</a>)
+                Q_init{ii,1} = double(diag(obj.f*E(:,ii)==0));
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.identification_status', 'C:\Users\jma\Documents\Work\rise_svar.m', 197)" style="font-weight:bold">rise_svar/get.identification_status</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',197,0)">line 197</a>)
+            identification_status=obj.Q_index_ident{3};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Attempted to access f(-3,1); index must be a positive integer or logical.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 101)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',101,0)">line 101</a>)
+                            f((pos-1)*obj.endo_nbr+endo_id,exo_id)=vals(irow);
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 154)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',154,0)">line 154</a>)
+                Q_init{ii,1} = double(diag(obj.f*E(:,ii)==0));
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                        sr: [5x5 double]
+
+
+rv = 
+
+{Attempted to access f(-3,1); index must be a positive integer or logical.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 101)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',101,0)">line 101</a>)
+                            f((pos-1)*obj.endo_nbr+endo_id,exo_id)=vals(irow);
+} 
+<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',101,1)">101 </a>                            f((pos-1)*obj.endo_nbr+endo_id,exo_id)=vals(irow);
+{Attempted to access f(-3,1); index must be a positive integer or logical.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.f', 'C:\Users\jma\Documents\Work\rise_svar.m', 101)" style="font-weight:bold">rise_svar/get.f</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',101,0)">line 101</a>)
+                            f((pos-1)*obj.endo_nbr+endo_id,exo_id)=vals(irow);
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 154)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',154,0)">line 154</a>)
+                Q_init{ii,1} = double(diag(obj.f*E(:,ii)==0));
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q', 'C:\Users\jma\Documents\Work\rise_svar.m', 191)" style="font-weight:bold">rise_svar/get.Q</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',191,0)">line 191</a>)
+            Q=obj.Q_index_ident{1};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                        sr: [5x5 double]
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: '1947Q3'
+            estim_end_date: '2004Q4'
+                      rf_B: {[5x16 double]}
+                  rf_Sigma: {[5x5 double]}
+                      rf_C: {[5x5 double]}
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+rv = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 3
+    short_run_restrictions: {4x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'dw'  'dy'  'labobs'  'pinfobs'  'robs'}
+                 exo_names: {'ad'  'as'  'junk'  'ls'  'mp'}
+                      data: [1x1 rise_time_series]
+          estim_start_date: '1947Q3'
+            estim_end_date: '2004Q4'
+                      rf_B: {[5x16 double]}
+                  rf_Sigma: {[5x5 double]}
+                      rf_C: {[5x5 double]}
+                     sf_A0: {[5x5 double]}
+                  sf_Alags: {[5x16 double]}
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [10x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'under identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'under identified'}
+
+
+ans =
+
+    0.7651    0.4241   -0.9795   -0.9349    2.3534
+   -0.8963    0.1535   -0.3284    0.0527    4.4745
+    0.2331   -1.1293   -0.2984   -0.2848    0.7170
+   -1.2050    0.9551   -2.1473    0.1903   -0.4791
+   -1.0259   -0.0232    0.3869   -2.5295   -0.4554
+
+
+ans = 
+
+           []    'ad'         'as'            'junk'       'ls'             'mp'        
+    'dw'         [ 0.4491]    [   -0.2711]    [-0.0273]    [    -0.1926]    [   -0.1830]
+    'dy'         [ 0.2421]    [1.0353e-16]    [-0.7946]    [-1.4456e-16]    [1.4454e-16]
+    'labobs'     [-0.1801]    [    0.1212]    [-0.3404]    [    -0.3400]    [    0.0818]
+    'pinfobs'    [-0.2247]    [    0.0966]    [-0.0332]    [     0.0376]    [   -0.3037]
+    'robs'       [ 0.0711]    [    0.1769]    [-0.0028]    [    -0.0640]    [   -0.0271]
+
+rv.f
+
+ans =
+
+     1     1     1     1     1
+     1     0     1     0     0
+     1     1     1     1     1
+     1     1     1     1     1
+     1     1     1     1     1
+     1     1     1     1     1
+     0     1     1     1     1
+     1     1     1     1     1
+     1     1     1     1     1
+     1     1     1     1     1
+
+clc
+A
+
+A = 
+
+    [3x3 double]              []
+    [3x3 double]    [3x3 double]
+    [5x5 double]              []
+
+{Undefined variable "rise_var" or class "rise_var.empty".
+} 
+rv
+
+rv = 
+
+  3x1 <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> array with properties:
+
+    constant
+    nlags
+    short_run_restrictions
+    long_run_restrictions
+    sign_restrictions
+    endo_names
+    exo_names
+    data
+    estim_start_date
+    estim_end_date
+    rf_B
+    rf_Sigma
+    rf_C
+    sf_A0
+    sf_Alags
+    endo_nbr
+    exo_nbr
+    nstates
+    f
+    sr
+    Q
+    index
+    identification_status
+    Q_index_ident
+
+rv(1)
+
+ans = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {3x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [3x3 double]
+                        sr: [3x3 double]
+                         Q: {3x1 cell}
+                     index: [3x1 double]
+     identification_status: 'exactly identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'exactly identified'}
+
+rv(2)
+
+ans = 
+
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q', 'C:\Users\jma\Documents\Work\rise_svar.m', 191)" style="font-weight:bold">rise_svar/get.Q</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',191,0)">line 191</a>)
+            Q=obj.Q_index_ident{1};
+} 
+<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,1)">176 </a>                error('Rank condition not satisfied, the model is overidentified');
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.index', 'C:\Users\jma\Documents\Work\rise_svar.m', 194)" style="font-weight:bold">rise_svar/get.index</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',194,0)">line 194</a>)
+            index=obj.Q_index_ident{2};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.identification_status', 'C:\Users\jma\Documents\Work\rise_svar.m', 197)" style="font-weight:bold">rise_svar/get.identification_status</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',197,0)">line 197</a>)
+            identification_status=obj.Q_index_ident{3};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {7x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [6x3 double]
+                        sr: [3x3 double]
+
+clc
+rv(3)
+
+ans = 
+
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q', 'C:\Users\jma\Documents\Work\rise_svar.m', 191)" style="font-weight:bold">rise_svar/get.Q</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',191,0)">line 191</a>)
+            Q=obj.Q_index_ident{1};
+} 
+<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,1)">176 </a>                error('Rank condition not satisfied, the model is overidentified');
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.index', 'C:\Users\jma\Documents\Work\rise_svar.m', 194)" style="font-weight:bold">rise_svar/get.index</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',194,0)">line 194</a>)
+            index=obj.Q_index_ident{2};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.identification_status', 'C:\Users\jma\Documents\Work\rise_svar.m', 197)" style="font-weight:bold">rise_svar/get.identification_status</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',197,0)">line 197</a>)
+            identification_status=obj.Q_index_ident{3};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {11x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'  'endo_4'  'endo_5'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'  'exo_4'  'exo_5'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [5x5 double]
+                        sr: [5x5 double]
+
+clc
+rv(3)
+
+ans = 
+
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q', 'C:\Users\jma\Documents\Work\rise_svar.m', 191)" style="font-weight:bold">rise_svar/get.Q</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',191,0)">line 191</a>)
+            Q=obj.Q_index_ident{1};
+} 
+<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,1)">176 </a>                error('Rank condition not satisfied, the model is overidentified');
+{Error using <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 176)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',176,0)">line 176</a>)
+Rank condition not satisfied, the model is overidentified
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.index', 'C:\Users\jma\Documents\Work\rise_svar.m', 194)" style="font-weight:bold">rise_svar/get.index</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',194,0)">line 194</a>)
+        function index=get.index(obj)
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Undefined function or variable "ident".
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 189)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',189,0)">line 189</a>)
+            Q_index_ident={Q,index,ident,flag};
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.identification_status', 'C:\Users\jma\Documents\Work\rise_svar.m', 198)" style="font-weight:bold">rise_svar/get.identification_status</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',198,0)">line 198</a>)
+            identification_status=obj.Q_index_ident{3};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+{Undefined function or variable "ident".
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 189)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',189,0)">line 189</a>)
+            Q_index_ident={Q,index,ident,flag};
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {11x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'  'endo_4'  'endo_5'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'  'exo_4'  'exo_5'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [5x5 double]
+                        sr: [5x5 double]
+
+rv(1)
+
+ans = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {3x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [3x3 double]
+                        sr: [3x3 double]
+                         Q: {3x1 cell}
+                     index: [3x1 double]
+     identification_status: 'exactly identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'exactly identified'  [0]}
+                ident_flag: 0
+
+rv(2)
+
+ans = 
+
+{Undefined function or variable "ident".
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 189)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',189,0)">line 189</a>)
+            Q_index_ident={Q,index,ident,flag};
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q', 'C:\Users\jma\Documents\Work\rise_svar.m', 192)" style="font-weight:bold">rise_svar/get.Q</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',192,0)">line 192</a>)
+            Q=obj.Q_index_ident{1};
+} 
+<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',189,1)">189 </a>            Q_index_ident={Q,index,ident,flag};
+{Undefined function or variable "ident".
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.Q_index_ident', 'C:\Users\jma\Documents\Work\rise_svar.m', 189)" style="font-weight:bold">rise_svar/get.Q_index_ident</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',189,0)">line 189</a>)
+            end
+
+Error in <a href="matlab:helpUtils.errorDocCallback('rise_svar/get.index', 'C:\Users\jma\Documents\Work\rise_svar.m', 195)" style="font-weight:bold">rise_svar/get.index</a> (<a href="matlab: opentoline('C:\Users\jma\Documents\Work\rise_svar.m',195,0)">line 195</a>)
+        function index=get.index(obj)
+} 
+if system_dependent('IsDebugMode')==1, dbquit; end
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {7x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [6x3 double]
+                        sr: [3x3 double]
+     identification_status: 'over identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'over identified'  [1]}
+                ident_flag: 1
+
+clc
+[Warning: The class file for 'rise_svar' has been changed, but the change cannot be applied because objects based on the old class file still exist. If you use those objects, you
+might get unexpected results. You can use the 'clear' command to remove those objects. See 'help clear' for information on how to remove those objects.] 
+rv(2)
+
+ans = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {7x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [6x3 double]
+                        sr: [3x3 double]
+                         Q: {3x1 cell}
+                     index: [3x1 double]
+     identification_status: 'over identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'over identified'  [1]}
+                ident_flag: 1
+
+rv(3)
+
+ans = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {11x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'  'endo_4'  'endo_5'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'  'exo_4'  'exo_5'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 5
+                   exo_nbr: 5
+                   nstates: 1
+                         f: [5x5 double]
+                        sr: [5x5 double]
+                         Q: {5x1 cell}
+                     index: [5x1 double]
+     identification_status: 'over identified'
+             Q_index_ident: {{5x1 cell}  [5x1 double]  'over identified'  [1]}
+                ident_flag: 1
+
+rv(1)
+
+ans = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {3x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [3x3 double]
+                        sr: [3x3 double]
+                         Q: {3x1 cell}
+                     index: [3x1 double]
+     identification_status: 'exactly identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'exactly identified'  [0]}
+                ident_flag: 0
+
+rv(1).Q
+
+ans = 
+
+    [2x3 double]
+    [1x3 double]
+    [0x3 double]
+
+clc,rv(1).Q{:}
+
+ans =
+
+     1     0     0
+     0     1     0
+
+
+ans =
+
+     0     0     1
+
+
+ans =
+
+   Empty matrix: 0-by-3
+
+clc,rv(2).Q{:}
+
+ans =
+
+     1     0     0     0     0     0
+     0     1     0     0     0     0
+     0     0     0     1     0     0
+     0     0     0     0     1     0
+
+
+ans =
+
+     0     0     1     0     0     0
+     0     0     0     0     0     1
+
+
+ans =
+
+     0     0     1     0     0     0
+
+clc
+rv(1)
+
+ans = 
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {3x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [3x3 double]
+                        sr: [3x3 double]
+                         Q: {3x1 cell}
+                     index: [3x1 double]
+     identification_status: 'over identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'over identified'  [1]}
+                ident_flag: 1
+
+============model 1 =========
+   NaN     0   NaN
+   NaN   NaN     0
+     0   NaN   NaN
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {3x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
+                   nstates: 1
+                         f: [3x3 double]
+                        sr: [3x3 double]
+                         Q: {3x1 cell}
+                     index: [3x1 double]
+     identification_status: 'over identified'
+             Q_index_ident: {{3x1 cell}  [3x1 double]  'over identified'  [1]}
+                ident_flag: 1
+
+============model 2 =========
+     0   NaN   NaN
+     0   NaN   NaN
+   NaN     0   NaN
+
+  <a href="matlab:helpPopup rise_svar" style="font-weight:bold">rise_svar</a> with properties:
+
+                  constant: 1
+                     nlags: 4
+    short_run_restrictions: {3x2 cell}
+     long_run_restrictions: {}
+         sign_restrictions: {}
+                endo_names: {'endo_1'  'endo_2'  'endo_3'}
+                 exo_names: {'exo_1'  'exo_2'  'exo_3'}
+                      data: []
+          estim_start_date: []
+            estim_end_date: []
+                      rf_B: []
+                  rf_Sigma: []
+                      rf_C: []
+                     sf_A0: []
+                  sf_Alags: []
+                  endo_nbr: 3
+                   exo_nbr: 3
