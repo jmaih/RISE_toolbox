@@ -57,5 +57,5 @@ for ipar=1:npar
 	out(ipar).prob_index=prob_index;
 	out(ipar).probs=probs;
 	[out(ipar).fdens,out(ipar).xdens]=distributions.kernel_density(xx(ipar,:),lb(ipar),ub(ipar),kernel,number_of_grid_points);
-	[out(ipar).cdf]=distributions.empirical_cdf(xx(:,ipar),lb(ipar),ub(ipar),number_of_grid_points);
+	[out(ipar).cdf]=distributions.empirical_cdf(xx(ipar,:),lb(ipar),ub(ipar),number_of_grid_points);
 end
