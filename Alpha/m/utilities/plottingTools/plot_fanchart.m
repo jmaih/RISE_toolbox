@@ -21,7 +21,7 @@ for jj=1:numel(data.ci)
     hold on
 end
 plot(data.date_number,data.mean,'--k','linewidth',2)
-pp=plot_specs(data.x,nticks);
+pp=plot_specs(data.date_number,nticks);
 
 set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels) %...
 %     'ylim',[ymin,ymax])
