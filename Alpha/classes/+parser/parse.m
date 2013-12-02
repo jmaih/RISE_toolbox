@@ -935,7 +935,7 @@ for ifunc=1:numEqtns
     arg_occur=args(occur);
     myfunc{ifunc}=myfunc{ifunc}(arg_occur{:});
 end
-verbose=true;
+verbose=false;
 compact_derivatives=true;
 tic
 derivs=planar.differentiate(myfunc,order,Partitions,verbose);
