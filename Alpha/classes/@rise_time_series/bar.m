@@ -5,11 +5,17 @@ if size(datta,3)>1
 end
 
 nticks=[];
-for icol=1:2:length(varargin)
+n=length(varargin);
+extract=[];
+for icol=1:n
     if strcmpi(varargin{icol},'nticks')
         nticks=varargin{icol+1};
-        varargin(icol:icol+1)=[];
+        extract=[icol,icol+1];
+        break
     end
+end
+if ~isempty(extract)
+    varargin(extract)=[];
 end
 
 pp=plot_specs(this.date_number,nticks);
