@@ -6,19 +6,7 @@ else
     datta=squeeze(datta);
 end
 
-nticks=[];
-n=length(varargin);
-extract=[];
-for icol=1:n
-    if strcmpi(varargin{icol},'nticks')
-        nticks=varargin{icol+1};
-        extract=[icol,icol+1];
-        break
-    end
-end
-if ~isempty(extract)
-    varargin(extract)=[];
-end
+[nticks,varargs]=extract_number_of_ticks(varargin{:});
 
 pp=plot_specs(this.date_number,nticks);
 % %--------------------
@@ -44,7 +32,7 @@ pp=plot_specs(this.date_number,nticks);
 % %--------------------
 % tmp=plot(dd,datta,varargin{:});
 % datetick('x',dateFormat);
-tmp=plot(pp.xdatenums,datta,varargin{:});
+tmp=plot(pp.xdatenums,datta,varargs{:});
 set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels) %,'XTickMode','auto'...
 %     'ylim',[ymin,ymax])
 
