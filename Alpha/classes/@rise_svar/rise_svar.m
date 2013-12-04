@@ -27,6 +27,7 @@ classdef rise_svar
         rf_Sigma
         rf_C
         rf_residuals
+        number_of_observations
         sf_A0
         sf_Alags
         endo_nbr
@@ -83,6 +84,25 @@ classdef rise_svar
             end
             if ~isempty(obj.long_run_restrictions)
                 restrictions_structure=[restrictions_structure,inf];
+            end
+        end
+        function sf_residuals=structural_form_residuals(obj)
+            sf_residuals=[];
+            if ~isempty(obj.rf_residuals) && ~isempty(obj.R)
+                sf_residuals_=nan(obj.exo_nbr,obj.number_of_observations,obj.nstates);
+                init_date=obs2date(obj.estim_start_date,obj.nlags+1);
+                sf_residuals=struct();
+                for istate=1:obj.nstates
+                    sf_residuals_(:,:,istate)=obj.R{istate}*obj.rf_residuals;
+                    if obj.nstates==1
+                    sf_residuals=...
+                        pages2struct(rise_time_series(init_date,sf_residuals_(:,:,istate)',obj.exo_names));
+                    else
+                        regime_name=sprintf('regime_%0.0f',istate);
+                        sf_residuals.(regime_name)=...
+                            page2struct(rise_time_series(init_date,sf_residuals_(:,:,istate)',obj.exo_names));
+                    end
+                end
             end
         end
         function f=get.f(obj)
@@ -259,6 +279,7 @@ classdef rise_svar
                 if obj.constant
                     X=[ones(1,nobs);X];
                 end
+                obj.number_of_observations=nobs;
             end
             if isempty(Y)
                 error('data not provided')
