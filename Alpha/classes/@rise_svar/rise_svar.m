@@ -26,6 +26,7 @@ classdef rise_svar
         rf_B
         rf_Sigma
         rf_C
+        rf_residuals
         sf_A0
         sf_Alags
         endo_nbr
@@ -267,6 +268,7 @@ classdef rise_svar
             nrows=size(obj.rf_B{1},1);
             obj.rf_Sigma ={u*u'/(nobs-nrows)};
             obj.rf_C = {chol(obj.rf_Sigma{1},'lower')};
+            obj.rf_residuals=u;
         end
         function myirfs=irf(obj)
             if obj.is_sign_restriction && obj.exact_identification_flag==-1
