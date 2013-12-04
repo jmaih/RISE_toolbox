@@ -97,7 +97,6 @@ if add_data_plot
             plot_window(db.(obsList{ivar}),'',[],@plot,'linewidth',2);
             title([obsListTexnames(ivar),obsList(ivar)],'fontsize',12);
         end
-        xrotate(90)
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
@@ -224,7 +223,6 @@ if add_data_against_transition_probabilities
                     thisstates{istate}(1:end-2),', state: ',...
                     thisstates{istate}(end),')'],'fontsize',12)
             end
-            xrotate(90)
             myfigure=struct('name',fig,'title',mytitle,'angle',90);
             figure(xrep,myfigure);
             xrep.pagebreak();
@@ -248,7 +246,6 @@ if add_data_against_transition_probabilities
                         plotyy(smoothed.(vname),highvol,'linewidth',2)
                         title(obsListTexnames{ivar},'fontsize',12)
                     end
-                    xrotate(90)
                     myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
                     figure(xrep,myfigure);
                     xrep.pagebreak();
@@ -315,7 +312,6 @@ if add_historical_decomposition
             title(nk_models{imod},'interpreter','none',...
                 'fontsize',12)
         end
-        xrotate(90)
         orient(fig,'tall')
         hleg=legend(contrib_names,'location','SW','orientation','horizontal');
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
@@ -481,7 +477,6 @@ if add_smoothed_shocks
             end
         end
         orient(fig,'tall')
-        xrotate(90)
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
