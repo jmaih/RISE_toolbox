@@ -386,7 +386,7 @@ classdef rise_svar
                 end   
                 % prepare for the long run
                 %-------------------------
-                if isinf(restrictions(end))
+                if nrest && isinf(restrictions(end))
                     beta = zeros(obj.endo_nbr,obj.endo_nbr);
                     for ii = 1:obj.nlags
                         beta_i=beta_temp(:,(ii-1)*obj.endo_nbr+1:ii*obj.endo_nbr);
@@ -408,7 +408,6 @@ classdef rise_svar
                     P(:,ii) = P_temp;
                 end
                 P = P(:,obj.index);
-                
             end
         end
     end
