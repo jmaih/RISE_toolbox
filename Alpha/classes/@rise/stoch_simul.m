@@ -116,6 +116,9 @@ end
             var_list=get(obj,'endo_list(original)');
         end
         stoch_sim_hpfilter_lambda=obj.options.stoch_sim_hpfilter_lambda;
+        if ~isa(db,'rise_time_series')
+            db=rise_time_series.collect(db);
+        end
         
         ivar=locate_variables(var_list,db.varnames);
         oo_.mean=mean(db);
