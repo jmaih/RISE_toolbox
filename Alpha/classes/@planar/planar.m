@@ -1293,12 +1293,12 @@ classdef planar
                 var_list{ivar}=set(var_list{ivar},'prototype',proto_);
             end
         end
-        function derivs=differentiate(eqtns,order,partitions,verbose,early_intercept)
-            if nargin<5
+        function derivs=differentiate(eqtns,nwrt,order,partitions,verbose,early_intercept)
+            if nargin<6
                 early_intercept=true;
-                if nargin<4
+                if nargin<5
                     verbose=false;
-                    if nargin<3
+                    if nargin<4
                         partitions=[];
                     end
                 end
@@ -1306,7 +1306,6 @@ classdef planar
             wrt_wise=true;
             
             neqtns=size(eqtns,1);
-            nwrt=numel(eqtns{1}(1).incidence);
             
             [labels,low,high,nlabels]=set_partitions();
 

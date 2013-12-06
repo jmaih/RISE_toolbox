@@ -938,7 +938,7 @@ end
 verbose=false;
 compact_derivatives=true;
 tic
-derivs=planar.differentiate(myfunc,order,Partitions,verbose);
+derivs=planar.differentiate(myfunc,numVars,order,Partitions,verbose);
 for oo=1:order
     if verbose
         tic
