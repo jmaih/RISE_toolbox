@@ -841,7 +841,7 @@ classdef planar
                 obj.is_vector=numel(obj.func)>1;
             elseif ischar(b.func) && strcmp(b.func,'uminus')
                 % x + (-y) = x - y
-                obj=plus(a,b.args{1});
+                obj=minus(a,b.args{1});
             elseif is_zero(a)
                 % 0 + x = x
                 obj=b;
