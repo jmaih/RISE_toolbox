@@ -5,7 +5,8 @@ function dictionary=parse(FileName,varargin)
 
 DefaultOptions=...
     struct('definitions_in_param_differentiation',true,...
-    'rise_flags',struct(),'rise_save_macro',false);
+    'rise_flags',struct(),'rise_save_macro',false,...
+    'max_deriv_order',2);
 if nargin<1
     dictionary=DefaultOptions;
     return
@@ -627,6 +628,7 @@ dictionary.is_endogenous_switching_model=any(dictionary.markov_chains.chain_is_e
 disp(' ')
 disp('Now computing symbolic derivatives...')
 disp(' ')
+max_deriv_order=max(1,DefaultOptions.max_deriv_order);
 orig_exo_nbr=numel(dictionary.exogenous);
 param_nbr = numel(dictionary.parameters);
 switching_ones=find([dictionary.parameters.is_switching]);
@@ -639,12 +641,11 @@ myIncidence=logical([dictionary.Lead_lag_incidence(:)',1:orig_exo_nbr,1:numel(sw
 myPartitions={'p','c','m','e','t';
     orig_endo_nbr,orig_endo_nbr,orig_endo_nbr,orig_exo_nbr,numel(switching_ones)
     };
-%     [model_derivatives,~,zeroth_order,numEqtns,numVars,jac_toc]=differentiate_system(...
 % % profile off, profile on
 [model_derivatives,numEqtns,numVars,jac_toc]=differentiate_system(...
     parser.burry_probabilities(dynamic.shadow_model,myifelseif),... % 
-    dictionary.input_list,myIncidence,wrt,myPartitions,2);
-disp([mfilename,':: 1st and 2nd-order derivatives of dynamic model wrt y(+0-), x and theta ',...
+    dictionary.input_list,myIncidence,wrt,myPartitions,max_deriv_order);
+disp([mfilename,':: Derivatives of dynamic model wrt y(+0-), x and theta up to order ',sprintf('%0.0f',max_deriv_order),'. ',...
     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 % % profile off, profile viewer
 % % keyboard
