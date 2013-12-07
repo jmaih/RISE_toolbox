@@ -112,7 +112,10 @@ State=nan(simul_periods+1,1);
 for t=1:simul_burn+simul_periods
     % draw a state
     %-------------
-    [regime,Q,PAI]=choose_state(simul_regime,Q,PAI,y0);
+    [regime,Q,PAI,retcode]=choose_state(simul_regime,Q,PAI,y0);
+    if retcode
+        return
+    end
     % Simulate one step
     %------------------
     shocks=randn(exo_nbr,horizon);
@@ -139,11 +142,12 @@ db=rise_time_series(simul_start_date,y',obj.endogenous.name);
 db=pages2struct(db);
 end
 
-function [st,Q,PAI]=choose_state(st,Q,PAI,y)
+function [st,Q,PAI,retcode]=choose_state(st,Q,PAI,y)
 % st: state
 % Q: transition matrix or ...
 % PAI: current updated probabilities
 % y: data for current period
+retcode=0;
 if isempty(st)
     endogenous_switching=~isempty(Q{2});
     Q0=Q{1};
@@ -154,7 +158,10 @@ if isempty(st)
         % the transition matrix will change
         shadow_transition_matrix=Q{2};
         Vargs=Q{3};
-        Q0=shadow_transition_matrix(y,Vargs{:});
+        [Q0,retcode]=online_function_evaluator(shadow_transition_matrix,y,Vargs{:},[],[],[]);
+    end
+    if retcode
+        return
     end
     PAI=Q0'*PAI;
     csp=[0;cumsum(PAI)];

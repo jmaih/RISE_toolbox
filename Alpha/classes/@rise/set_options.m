@@ -174,7 +174,7 @@ else
             end
             
             if strcmp(propname,'solve_expect_order')
-                obj.options.shock_properties=struct('name',{obj.varexo.name}',...
+                obj.options.shock_properties=struct('name',transpose(obj.exogenous.name),...
                     'StandardDeviation',num2cell(nan(sum(obj.exogenous.number),1)),...
                     'horizon',num2cell(propval*ones(sum(obj.exogenous.number),1)));
             end
@@ -187,7 +187,7 @@ else
                 for jj=1:nshocks
                     % for each one, assert that the shock exists
                     shock=propval(jj).name;
-                    loc=find(strcmp(shock,{obj.varexo.name}),1);
+                    loc=find(strcmp(shock,obj.exogenous.name),1);
                     if isempty(loc)
                         error([mfilename,':: ',shock,' is not a declared shock in the model file'])
                     end
