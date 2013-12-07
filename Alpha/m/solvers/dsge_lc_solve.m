@@ -11,7 +11,6 @@ if nargin==0
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
     T=loose_commitment_solver();
-    T=mergestructures(T,struct('lc_accelerate_solver',true));
     return
 end
 
@@ -39,8 +38,8 @@ elseif nargin>11
     error([mfilename,':: number of arguments cannot exceed 10'])
 end
 
-if isfield(optim_opt,'lc_accelerate_solver')
-    lc_accelerate_solver=optim_opt.lc_accelerate_solver;
+if isfield(optim_opt,'solve_accelerate')
+    lc_accelerate_solver=optim_opt.solve_accelerate;
 else
     lc_accelerate_solver=true;
 end

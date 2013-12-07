@@ -68,9 +68,14 @@ if obj.is_optimal_policy_model
     end
 else
     sparam=obj.parameter_values(obj.parameters.is_switching,:);
-    
-    [TT,RR,gsig,theta_hat,retcode,obj.options] = msre_solve(Aminus,A0,Gplus,B,...
-        C,sparam,obj.is_unique_steady_state,Q,T0,obj.options);
+    if obj.options.solve_accelerate
+        [TT,RR,gsig,theta_hat,retcode,obj.options] = solve_small_msre_system(Aminus,A0,Gplus,B,...
+            C,sparam,obj.is_unique_steady_state,Q,T0,obj.options,...
+            obj.endogenous.is_static);
+    else
+        [TT,RR,gsig,theta_hat,retcode,obj.options] = msre_solve(Aminus,A0,Gplus,B,...
+            C,sparam,obj.is_unique_steady_state,Q,T0,obj.options);
+    end
     
     if obj.is_sticky_information_model
         for st=1:h
@@ -104,7 +109,7 @@ if ~retcode
             nshocks=sum(obj.exogenous.number);
             for ii=1:nshocks
                 shock=obj.options.shock_properties(ii).name;
-                shock_id=strcmp(shock,{obj.varexo.name});
+                shock_id=strcmp(shock,obj.exogenous.name);
                 horizon=obj.options.shock_properties(ii).horizon;
                 for istate=1:numel(RR)
                     RR{istate}(:,shock_id,horizon+1:end)=0;
@@ -175,3 +180,124 @@ end
     end
 end
 
+function [m_x,m_e,m_sig,theta_hat,retcode,options]=solve_small_msre_system(...
+    Aminus,A0,Gplus,B,C,sparam,is_unique_steady_state,Q,T0,options,stat_cols)
+% solve a smaller system, partialling out static variables and then
+% derive the solution for the bigger
+nstates=numel(A0);
+[AA0,AAminus,GBARplus,BB,CC]=msre_computational_savings();
+endo_nbr=numel(stat_cols);
+orig_order=1:endo_nbr;
+dyn_cols=~stat_cols;
+static_endo_nbr=sum(stat_cols);
+dd=static_endo_nbr+1:endo_nbr;
+if ~isempty(T0)
+    T0=T0(dyn_cols,dyn_cols,:);
+end
+AA0_=AA0;AAminus_=AAminus;GBARplus_=GBARplus;BB_=BB;CC_=CC;
+for istate=1:nstates
+    AA0_{istate}=AA0{istate}(dd,dd);
+    AAminus_{istate}=AAminus_{istate}(dd,dd);
+    BB_{istate}=BB_{istate}(dd,:,:);
+    CC_{istate}=CC_{istate}(dd,:);
+    for jstate=1:nstates
+        GBARplus_{istate,jstate}=GBARplus_{istate,jstate}(dd,dd);
+    end
+end
+[TT,RR,gsig,theta_hat,retcode,options] = msre_solve(...
+    AAminus_,AA0_,GBARplus_,BB_,...
+    CC_,sparam,is_unique_steady_state,Q,T0,options);
+
+m_x=[];m_e=[];m_sig=[];
+if ~retcode
+    if any(stat_cols)
+        m_sig=repmat({zeros(endo_nbr,1)},1,nstates);
+        m_x=repmat({zeros(endo_nbr)},1,nstates);
+        m_e=repmat({zeros(size(RR{1}))},1,nstates);
+        solve_order=[orig_order(stat_cols),orig_order(dyn_cols)];
+        stat_=1:static_endo_nbr;
+        expect_order=size(RR{1},3);
+        for istate=1:nstates
+            iR11=AA0{istate}(stat_,stat_)\eye(static_endo_nbr);
+            Di=AA0{istate}(stat_,dd);
+            for jstate=1:nstates
+                Di=Di+GBARplus{istate,jstate}(stat_,dd)*TT{jstate};
+            end
+            % risk
+            m_sig{istate}(dd)=gsig{istate};
+            tmp=Di*gsig{istate};
+            for jstate=1:nstates
+                tmp=tmp+GBARplus{istate,jstate}(stat_,dd)*gsig{jstate};
+            end
+            m_sig{istate}(stat_)=tmp;
+            m_sig{istate}(solve_order)=m_sig{istate};
+            
+            % autoregressive part
+            m_x{istate}(dd,dd)=TT{istate};
+            m_x{istate}(stat_,dd)=-iR11*(AAminus{istate}(stat_,dd)+Di*TT{istate});
+            m_x{istate}(solve_order,solve_order)=m_x{istate};
+            
+            % shock impact part
+            m_e{istate}(dd,:,1)=RR{istate}(:,:,1);
+            m_e{istate}(stat_,:,1)=-iR11*(BB{istate}(stat_,:)+Di*RR{istate}(:,:,1));
+            for l=2:expect_order
+                mei=Di*RR{istate}(:,:,l);
+                for jstate=1:nstates
+                    mei=mei+GBARplus{istate,jstate}(stat_,dd)*RR{jstate}(:,:,l-1);
+                end
+                m_e{istate}(stat_,:,l)=mei;
+            end
+            m_e{istate}(solve_order,:,:)=m_e{istate};
+        end
+    else
+        m_x=TT;
+        m_e=RR;
+        m_sig=gsig;
+    end
+end
+
+
+    function [AA0,AAminus,GBARplus,BB,CC,q]=msre_computational_savings()
+        % this function separates static variables from dynamic ones. It places all
+        % the static variables at the beginning and the dynamic ones following
+        % after.
+        % stat_cols is a logical vector indicating the original position of the
+        % static variables.
+        % the matrices are transformed in such a way that the dynamic equations
+        % appear at the bottom and can be solved independently. Once the solution
+        % for the dynamic variables is found, the solution for the static variables
+        % can be computed as a function of the dynamic variables.
+        
+        AA0=A0;
+        AAminus=Aminus;
+        GBARplus=Gplus;
+        BB=B;
+        CC=C;
+        q=cell(1,nstates);
+        for st=1:nstates
+            if any(stat_cols)
+                [AA0{st},AAminus{st}]=...
+                    re_order(A0{st},Aminus{st});
+                [q{st},r]=qr(AA0{st}); %#ok<NASGU>
+                AA0{st}=q{st}'*AA0{st};
+                AAminus{st}=q{st}'*AAminus{st};
+                CC{st}=q{st}'*CC{st};
+                BB{st}=q{st}'*BB{st};
+                for slead=1:nstates
+                    % Aplus still needs re-ordering before the application of the Q
+                    % scheme
+                    tmp=[GBARplus{st,slead}(:,stat_cols),GBARplus{st,slead}(:,~stat_cols)];
+                    GBARplus{st,slead}=q{st}'*tmp;
+                end
+            else
+                q{st}=1;
+            end
+        end
+        function varargout=re_order(varargin)
+            varargout=varargin;
+            for ii=1:numel(varargin)
+                varargout{ii}=[varargin{ii}(:,stat_cols),varargin{ii}(:,~stat_cols)];
+            end
+        end
+    end
+end
