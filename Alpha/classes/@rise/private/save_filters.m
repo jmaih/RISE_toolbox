@@ -112,7 +112,7 @@ end
             % now push in the unobserved shocks and the observed ones (only
             % for the first period)
             % locate the observed shocks
-            iobs=ismember(vnames,obj.observables.name(obj.observables.is_endogenous));
+            iobs=ismember(vnames,obj.observables.name(~obj.observables.is_endogenous));
             xxx=obj.data.x;
             if ~isempty(xxx)
                 tmp(:,iobs,:)=repmat(transpose(xxx),[1,1,current_reg_nbr]);
