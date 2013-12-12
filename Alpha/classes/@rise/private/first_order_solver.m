@@ -281,9 +281,9 @@ end
                 [q{st},r]=qr(AA0{st}); %#ok<NASGU>
                 AA0{st}=q{st}'*AA0{st};
                 AAminus{st}=q{st}'*AAminus{st};
-                CC{st}=q{st}'*CC{st};
                 BB{st}=q{st}'*BB{st};
                 for slead=1:nstates
+                    CC{st,slead}=q{st}'*CC{st,slead};
                     % Aplus still needs re-ordering before the application of the Q
                     % scheme
                     tmp=[GBARplus{st,slead}(:,stat_cols),GBARplus{st,slead}(:,~stat_cols)];
