@@ -248,7 +248,10 @@ end
                         function_on=function_on+left_parents-min(function_on,right_parents);
                     end
                     if ~isempty(rest_)
-                        equation.eqtn=[equation.eqtn,{rest_,[]}'];
+                        rest_(isspace(rest_))=[];
+                        if ~isempty(rest_)
+                            equation.eqtn=[equation.eqtn,{rest_,[]}'];
+                        end
                         rest_='';
                     end
                     last_status=parser.determine_status(dictionary,equation.eqtn{1,end}(end));
