@@ -199,8 +199,8 @@ for istate=1:nstates
     AA0_{istate}=AA0{istate}(dd,dd);
     AAminus_{istate}=AAminus_{istate}(dd,dd);
     BB_{istate}=BB_{istate}(dd,:,:);
-    CC_{istate}=CC_{istate}(dd,:);
     for jstate=1:nstates
+        CC_{istate,jstate}=CC_{istate,jstate}(dd,:);
         GBARplus_{istate,jstate}=GBARplus_{istate,jstate}(dd,dd);
     end
 end
