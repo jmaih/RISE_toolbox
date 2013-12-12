@@ -76,7 +76,13 @@ end
 number_of_regimes=obj.markov_chains.regimes_number;
 ss_and_bgp_start_vals=zeros(2*endo_nbr,number_of_regimes);
 
-obj=compute_definitions(obj);
+[obj,retcode]=compute_definitions(obj);
+if retcode
+    if obj.options.debug
+        decipher_error(retcode)
+    end
+    return
+end
 def=obj.solution.definitions;
 
 x_ss=zeros(sum(obj.exogenous.number),1);

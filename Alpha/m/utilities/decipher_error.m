@@ -11,6 +11,8 @@ switch code
         msg='Problem in transition matrix';
     case 4
         msg='Parameter restrictions violated';
+    case 5
+        msg='definitions are nan or inf or imaginary';
         % ====== solving the system ====== %
     case 21
         msg='Maximum Number of iterations reached or multiple solutions';
