@@ -26,7 +26,9 @@ if one_line
         separator=',';
     end
     for ii=1:max(siz)
-        func=[func,code{ii},separator]; %#ok<AGROW>
+        code_i=code{ii};
+        code_i(isspace(code_i))=[];
+        func=[func,code_i,separator]; %#ok<AGROW>
     end
     func=strrep([func(1:end-1),']'],';]',']');
     func={str2func(func)};
