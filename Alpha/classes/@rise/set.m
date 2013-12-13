@@ -19,6 +19,8 @@ if ismember(property,{'state_tex_names','chain_tex_names','regime_tex_names'})
         error(['number of elements in ',property,' should be the same as the number of elements in ',name])
     end
     obj.markov_chains.(property)=value(:)';
+elseif strcmpi(property,'priors')
+   obj=setup_priors(obj,value);
 elseif strcmpi(property,'parameters')
  % value is either a struct or a cell of the form {names,paramvector}
    obj=setup_calibration(obj,value);
