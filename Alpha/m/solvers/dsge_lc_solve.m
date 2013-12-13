@@ -157,8 +157,12 @@ if lc_accelerate_solver
     end
     
 else
+    tmpBB=B{1};
+    for ireg=2:numel(B)
+        tmpBB(:,:,ireg)=B{ireg};
+    end
     [T,R,retcode,optim_opt,itercode,algo_name]=loose_commitment_solver(...
-        Aminus,A0,Aplus,B{:},W,gam,betta,solve_expect_order,[],[],optim_opt);
+        Aminus,A0,Aplus,tmpBB,W,gam,betta,solve_expect_order,[],[],optim_opt);
 end
 
 if retcode
