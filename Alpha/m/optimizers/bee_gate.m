@@ -62,7 +62,11 @@ for ii=1:numel(bee_fields)
     end
 end
 
-obj=bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
+if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size')
+    obj=par_bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
+else
+    obj=bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
+end
 
 x=obj.best;
 f=obj.best_fval;
