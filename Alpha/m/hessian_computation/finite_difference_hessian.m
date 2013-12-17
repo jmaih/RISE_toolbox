@@ -50,27 +50,37 @@ f0 = zeros(npar,1);
 %     end
 % else
 %     disp([mfilename,':: using serial code'])
-    for i=1:npar
-        x1 = xparam+ee(:,i);
-        f1(i) = Objective(x1,varargin{:});
-        x0 = xparam-ee(:,i);
-        f0(i) = Objective(x0,varargin{:});
-        H(i,i) = (f1(i)+f0(i)-2*fx)./hh(i,i);
+theLoopBody=@loop_body;
+if matlabpool('size')>0
+    parfor ii=1:npar
+        theLoopBody()
     end
-    % Compute double steps
+else
+    for ii=1:npar
+        theLoopBody()
+    end
+end
     if ~diagonly
-        for i=1:npar
-            for j=i+1:npar
-                if i~=j
-                    xcross =  xparam+ee(:,i)-ee(:,j);
+        H=(H+H')./2;
+    end
+    function loop_body()
+        x1 = xparam+ee(:,ii);
+        f1(ii) = Objective(x1,varargin{:});
+        x0 = xparam-ee(:,ii);
+        f0(ii) = Objective(x0,varargin{:});
+        H(ii,ii) = (f1(ii)+f0(ii)-2*fx)./hh(ii,ii);
+        if ~diagonly
+            % Compute double steps
+            for jj=ii+1:npar
+                if ii~=jj
+                    xcross =  xparam+ee(:,ii)-ee(:,jj);
                     fxx=Objective(xcross,varargin{:});
-                    H(i,j) = (f1(i)+f0(j)-fx-fxx)./hh(i,j);
-                    H(j,i) =H(i,j);
+                    H(ii,jj) = (f1(ii)+f0(jj)-fx-fxx)./hh(ii,jj);
+                    H(jj,ii) =H(ii,jj);
                 end
             end
         end
-        H=(H+H')./2;
     end
-% end
+end
 
 
