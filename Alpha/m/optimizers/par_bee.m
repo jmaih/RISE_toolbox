@@ -303,10 +303,10 @@ obj.the_bees=the_bees;
         mutant(change)=mutant(change)+(mutant(change)-...
             ZZ(change,donor_id))*2.*(rand(numel(change),1)-.5);
         mutant(change)=recenter(mutant(change),lb(change),ub(change));
+        f_mut=objfun(mutant,vargs{:});
         viol=nonlcon(mutant);
         viol=viol(viol>0);
         viol_strength=sum(viol);
-        f_mut=objfun(mutant,vargs{:});
         fit_mut=compute_fitness(f_mut);
         bb=deb_selection(bb,viol_strength,mutant,fit_mut,f_mut);
     end
