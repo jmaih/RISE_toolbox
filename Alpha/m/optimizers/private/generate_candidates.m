@@ -12,7 +12,8 @@ funevals=0;
 % can we get 4 outputs?
 success=nargout(objective)>=2;
 msg='';
-for ii=1:n
+daev=@draw_and_evaluate_vector;
+parfor ii=1:n
     invalid=true;
     iter=0;
     while invalid
@@ -20,11 +21,11 @@ for ii=1:n
             error([mfilename,':: could not generate a valid candidate after ',...
                 int2str(MaxIter*max_trials),' attempts'])
         end
-        [x(:,ii),f(ii),viol{ii}]=draw_and_evaluate_vector();
+        [x(:,ii),f(ii),viol{ii}]=daev();
         iter2=0;
         while iter2<max_trials && sum(viol{ii})>0
             iter2=iter2+1;
-            [c,fc,violc]=draw_and_evaluate_vector();
+            [c,fc,violc]=daev();
             if sum(violc)<sum(viol{ii})
                 x(:,ii)=c;
                 f(ii)=fc;
