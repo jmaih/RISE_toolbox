@@ -62,7 +62,8 @@ for ii=1:numel(bee_fields)
     end
 end
 
-if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size')
+if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size') &&...
+	(isfield(options,'UseParallel') && strcmp(options.UseParallel,'always'))
     obj=par_bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
 else
     obj=bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
