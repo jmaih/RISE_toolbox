@@ -15,11 +15,57 @@ h = xh-xparam;
 ee = sparse(1:npar,1:npar,h,npar,npar);
 
 hh=h*h';
-H=zeros(npar,npar);
 
 % Compute forward and backward steps
 f1 = zeros(npar,1);
 f0 = zeros(npar,1);
+Hdiag = zeros(npar,1);
+theLoopBody1=@loop_body_diagonal;
+theLoopBody2=@loop_body_cross;
+if matlabpool('size')>0
+    parfor ii=1:npar
+        iter=ii;
+        [f1(ii),f0(ii),Hdiag(ii)]=theLoopBody1(iter);
+    end
+    H=diag(Hdiag);
+    if ~diagonly
+        parfor ii=1:npar
+            H(ii,:)=theLoopBody2(H(ii,:),f1,f0,ii);
+        end
+    end
+else
+    for ii=1:npar
+        [f1(ii),f0(ii),Hdiag(ii)]=theLoopBody1(ii);
+    end
+    H=diag(Hdiag);
+    if ~diagonly
+        for ii=1:npar
+            H(ii,:)=theLoopBody2(H(ii,:),f1,f0,ii);
+        end
+    end
+end
+if ~diagonly
+    H=H+triu(H,1)';
+    H=.5*(H+H');
+end
+
+    function [f1i,f0i,Hii]=loop_body_diagonal(ii)
+        x1 = xparam+ee(:,ii);
+        f1i = Objective(x1,varargin{:});
+        x0 = xparam-ee(:,ii);
+        f0i = Objective(x0,varargin{:});
+        Hii = (f1i+f0i-2*fx)./hh(ii,ii);
+    end
+    function H=loop_body_cross(H,f1,f0,ii)
+        for jj=ii+1:npar
+            xcross =  xparam+ee(:,ii)-ee(:,jj);
+            fxx=Objective(xcross,varargin{:});
+            H(jj) = (f1(ii)+f0(ii)-fx-fxx)./hh(ii,jj);
+        end
+    end
+end
+
+
 % if exist('matlabpool.m','file') && matlabpool('size')>0
 % %     disp([mfilename,':: using parallel code'])
 %     diag_terms=nan(npar,1);
@@ -50,37 +96,3 @@ f0 = zeros(npar,1);
 %     end
 % else
 %     disp([mfilename,':: using serial code'])
-theLoopBody=@loop_body;
-if matlabpool('size')>0
-    parfor ii=1:npar
-        theLoopBody()
-    end
-else
-    for ii=1:npar
-        theLoopBody()
-    end
-end
-    if ~diagonly
-        H=(H+H')./2;
-    end
-    function loop_body()
-        x1 = xparam+ee(:,ii);
-        f1(ii) = Objective(x1,varargin{:});
-        x0 = xparam-ee(:,ii);
-        f0(ii) = Objective(x0,varargin{:});
-        H(ii,ii) = (f1(ii)+f0(ii)-2*fx)./hh(ii,ii);
-        if ~diagonly
-            % Compute double steps
-            for jj=ii+1:npar
-                if ii~=jj
-                    xcross =  xparam+ee(:,ii)-ee(:,jj);
-                    fxx=Objective(xcross,varargin{:});
-                    H(ii,jj) = (f1(ii)+f0(jj)-fx-fxx)./hh(ii,jj);
-                    H(jj,ii) =H(ii,jj);
-                end
-            end
-        end
-    end
-end
-
-
