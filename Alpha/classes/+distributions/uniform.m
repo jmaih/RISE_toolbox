@@ -48,7 +48,7 @@ if hyperparameter_mode
     if ~isfinite(upperquantileORstdev)
         error([mfilename,'upperquantileORstdev must satisfy  -inf < x < inf'])
     end
-    if upperquantileORstdev<=lowerquantileORmean
+    if ~mean_stdev_flag && (upperquantileORstdev<=lowerquantileORmean)
         error([mfilename,':: upper bound cannot be less than or equal to lower bound'])
     end
     % find the hyperparameters space
