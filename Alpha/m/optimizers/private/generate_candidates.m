@@ -12,36 +12,45 @@ funevals=0;
 % can we get 4 outputs?
 success=nargout(objective)>=2;
 msg='';
-daev=@draw_and_evaluate_vector;
-parfor ii=1:n
-    invalid=true;
-    iter=0;
-    while invalid
-        if iter>=MaxIter
-            error([mfilename,':: could not generate a valid candidate after ',...
-                int2str(MaxIter*max_trials),' attempts'])
-        end
-        [x(:,ii),f(ii),viol{ii}]=daev();
-        iter2=0;
-        while iter2<max_trials && sum(viol{ii})>0
-            iter2=iter2+1;
-            [c,fc,violc]=daev();
-            if sum(violc)<sum(viol{ii})
-                x(:,ii)=c;
-                f(ii)=fc;
-                viol{ii}=violc;
-            end
-        end
-        funevals=funevals+1;
-        if f(ii)<penalty
-            invalid=false;
-        else
-            fprintf(1,'%5s %3.0d/%3.0d %8s %5.0d %8s %s \n',...
-                'warrior #',ii,n,'iter',iter,'pb',msg);
-        end
-        iter=iter+1;
+the_loop=@loop_body;
+if matlabpool('size')
+    parfor ii=1:n
+        the_loop()
+    end
+else
+    for ii=1:n
+        the_loop()
     end
 end
+    function loop_body()
+        invalid=true;
+        iter=0;
+        while invalid
+            if iter>=MaxIter
+                error([mfilename,':: could not generate a valid candidate after ',...
+                    int2str(MaxIter*max_trials),' attempts'])
+            end
+            [x(:,ii),f(ii),viol{ii}]=draw_and_evaluate_vector();
+            iter2=0;
+            while iter2<max_trials && sum(viol{ii})>0
+                iter2=iter2+1;
+                [c,fc,violc]=draw_and_evaluate_vector();
+                if sum(violc)<sum(viol{ii})
+                    x(:,ii)=c;
+                    f(ii)=fc;
+                    viol{ii}=violc;
+                end
+            end
+            funevals=funevals+1;
+            if f(ii)<penalty
+                invalid=false;
+            else
+                fprintf(1,'%5s %3.0d/%3.0d %8s %5.0d %8s %s \n',...
+                    'warrior #',ii,n,'iter',iter,'pb',msg);
+            end
+            iter=iter+1;
+        end
+    end
 
     function [c,fc,viol]=draw_and_evaluate_vector()
        c=lb+(ub-lb).*rand(npar,1);
