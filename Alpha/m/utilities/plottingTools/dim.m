@@ -8,14 +8,6 @@ function []=dim(start,finish,colorstr)
 if nargin<3 || isempty(colorstr)
     colorstr=[159 182 205]/256; 
 end;  % default is yellow
-if ~strcmp(class(start),'rise_date')
-    start=rise_date(start);
-end
-if ~strcmp(class(finish),'rise_date')
-    finish=rise_date(finish);
-end
-start=[start.date_number];
-finish=[finish.date_number];
 
 fig=gcf;
 kids=get(fig,'children');

@@ -50,6 +50,4 @@ switch upper(freq)
 end
 start=strcat(num2str(dates(:,1)),freq,num2str(periods(:,1)));
 finish=strcat(num2str(dates(:,3)),freq,num2str(periods(:,2)));
-start=rise_date(start);
-finish=rise_date(finish);
 

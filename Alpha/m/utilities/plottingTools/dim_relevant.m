@@ -8,14 +8,19 @@ else
     nber_datesfunc=fcnchk(nber_datesfunc);
     [start,finish]= nber_datesfunc(freq);
 end
-
+if ischar(start)
+    start= cellstr(start);
+end
+if ischar(finish)
+    finish=cellstr(finish);
+end
 % shadenber.m
 %
 %  Routine to shade the nberdates in a figure
 
 curax=axis;
-start_dn=[start.date_number];
-finish_dn=[finish.date_number];
+start_dn=date2serial(start);
+finish_dn=date2serial(finish);
 if start_dn(1)>curax(1)
     begin=find(start_dn>=curax(1),1,'first');  % First recession to include;
 else
@@ -24,11 +29,11 @@ end
 if finish_dn(end)>curax(2)
     last=find(finish_dn<=curax(2),1,'first');  % First recession to include;
 else
-    last=numel(finish);
+    last=numel(finish_dn);
 end
 
-start=start(begin:last);
-finish=finish(begin:last);
+start=start_dn(begin:last);
+finish=finish_dn(begin:last);
 
 colorstr=[159 182 205]/256;
 
