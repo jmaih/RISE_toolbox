@@ -1,6 +1,6 @@
 function [transition_matrix_symbolic,transition_matrix_shadow,markov_chain_info,myifelseif]=...
     transition_probabilities(...
-    input_list,parameters,markov_chains,shadow_tvp,shadow_definitions,probability_of_commitment)
+    input_list,parameter_names,markov_chains,shadow_tvp,shadow_definitions,probability_of_commitment)
 
 if ~isempty(shadow_definitions)
     shadow_definitions={shadow_definitions};
@@ -13,7 +13,6 @@ if ~isempty(shadow_tvp_left_right)
 end
 transition_matrix_symbolic=struct();
 symb_list={};
-parameter_names={parameters.name};
 for i1=1:size(markov_chains,2)
     chain=markov_chains(i1).name;
     states_nbr_ii=markov_chains(i1).number_of_states;
