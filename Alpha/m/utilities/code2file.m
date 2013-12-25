@@ -23,6 +23,32 @@ end
 if exist([fname,'.m'],'file')
     delete([fname,'.m'])
 end
+
+are_handles=isfield(F,'functions');
+
+if are_handles
+    nout=numel(F);
+    for iout=1:nout
+    is_mapped=isfield(F(iout),'map');
+        if iout==1
+            % collect input arguments
+        end
+        siz=F(iout).size;
+        Q=sprintf('Q%0.0f',iout);
+        if is_mapped
+        imap=F(iout).map;
+        % write the function according to the number of rows and columns
+        % without splitting
+        else
+            % we have a vector function: split the vector and write each
+            % formula
+        end
+        ff=F(iout).functions;
+        
+    end
+else
+end
+
 MajorFields=fieldnames(Default);
 for ifield=1:numel(MajorFields)
     thisfield=MajorFields{ifield};

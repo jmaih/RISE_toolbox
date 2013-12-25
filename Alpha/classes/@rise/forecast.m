@@ -68,7 +68,9 @@ if forecast_param_uncert
         end
     end
 else
-    parameters=vertcat(obj.estimated_parameters.mean);% 'mean'
+    if isfield(obj.estimation.posterior_simulation,'mean')
+        parameters=obj.estimation.posterior_simulation.mean;% 'mean'
+    end
     if isempty(parameters)
         parameters=obj.estimation.posterior_maximization.mode; % 'mode'
         if isempty(parameters)

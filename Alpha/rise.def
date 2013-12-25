@@ -15,6 +15,7 @@ endif
 endogenous
 exogenous
 exogenous_definition
+block_exogenous
 for
 if
 imposed
@@ -55,10 +56,9 @@ uniform_pdf
 weibull_pdf         
 wishart_pdf         
 
-short_run_restrictions
-long_run_restrictions
+irf_zero_restrictions
 lag_structure_restrictions
-sign_restrictions
+irf_sign_restrictions
 
 [functions]
 dsge_var
