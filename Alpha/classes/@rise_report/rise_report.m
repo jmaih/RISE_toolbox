@@ -35,7 +35,7 @@ classdef rise_report < handle
             item=item(:);
             nrows=size(item,1);
             while obj.ncells-nrows-obj.line_count<obj.lower_bound
-                obj.script(obj.line_count+(1:obj.iter))={};
+                obj.script(obj.line_count+(1:obj.iter))=cell(1,obj.iter);
                 obj.ncells=obj.ncells+obj.iter;
             end
             obj.script(obj.line_count+(1:nrows))=item;
