@@ -538,7 +538,6 @@ if add_forecast && ~isempty(obj.filtering)
     many_models=iscell(ts_fkst);
     pp=[];
     ergodic_mean=cell(1,nmod);
-    get(obj(imod),'sstate')
     for iobs=1:nvarobs
         fig_title=['real-time forecasts for ',obsListTexnames{iobs}];
         fig=figure('name',fig_title);
