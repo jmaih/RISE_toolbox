@@ -27,8 +27,8 @@ if ~retcode
     stdevmat=sqrt(diag(A(:,:,1)));
     bad=stdevmat<=0;
     if any(bad)
-        disp({obj.varendo(bad).name}')
-        error([mfilename,':: have zero or negative theoretical standard deviation'])
+        disp(obj.endogenous.name(bad))
+        warning([mfilename,':: have zero or negative theoretical standard deviation'])
     end
     stdevmat=stdevmat*stdevmat';
     for ii=1:autocorr_ar+1
