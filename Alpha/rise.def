@@ -62,6 +62,7 @@ irf_sign_restrictions
 
 [functions]
 dsge_var
+rfvar
 svar
 favar
 star
