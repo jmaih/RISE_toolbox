@@ -20,6 +20,12 @@ graph_nrows=4;
 graph_ncols=3;
 start=[];
 finish=[];
+modelsLegs={obj.legend};
+for imod=1:nmod
+    if isempty(obj(imod).legend)
+        modelsLegs{imod}=sprintf('model #%0.0f',imod);
+    end
+end
 %% variables of interest
 % irf_shocks={'ED','ER','ES'};
 shock_list=obj(1).options.lazy_report_shock_list;
@@ -39,21 +45,19 @@ add_declaration_description=true;
 add_model_equations=true;
 add_estimation_results=true;
 add_duration_probabilities=true;
-add_data_plot=false;
-add_transition_probabilities=false;
-add_data_against_transition_probabilities=false;
-add_irfs=false;
-add_historical_decomposition=false;
+add_data_plot=true;
+add_transition_probabilities=true;
+add_data_against_transition_probabilities=true;
+add_irfs=true;
+add_historical_decomposition=true;
 add_counterfactual=false;
 add_autocorrelations=true;
 add_variance_decomposition=true;
 add_forecast=true;
-add_shock_correlations=true;
 add_empirical_distribution_of_shocks=true;
 add_smoothed_shocks=true;
 add_shocks_correlations=true;
 add_estimated_shocks=true;
-
 
 %% locate the variables of interest
 endo_locs=locate_variables(var_list,obj(1).endogenous.name);
@@ -142,7 +146,7 @@ if add_data_plot
         end
         fig_title=['Observed data from the US',add_str];
         fig=figure('name',fig_title);
-        [Remains,r,c]=number_of_rows_and_columns_in_figure(ifig,nvarobs,graph_nrows,graph_ncols);
+        [~,r,c]=number_of_rows_and_columns_in_figure(ifig,nvarobs,graph_nrows,graph_ncols);
         for ivar=(ifig-1)*graph_nstar+1:min(nvarobs,ifig*graph_nstar)
             ii=ivar-(ifig-1)*graph_nstar;
             subplot(r,c,ii)
@@ -338,12 +342,12 @@ if add_data_against_transition_probabilities && ~isempty(obj.filtering)
                     fig_title=[obj(imod).legend,' model: Observed series against ',...
                         thislabels{istate},' ',add_str];
                     fig=figure('name',fig_title);
-                    [Remains,r,c]=number_of_rows_and_columns_in_figure(ifig,nvarobs,graph_nrows,graph_ncols);
+                    [~,r,c]=number_of_rows_and_columns_in_figure(ifig,nvarobs,graph_nrows,graph_ncols);
                     for ivar=(ifig-1)*graph_nstar+1:min(nvarobs,ifig*graph_nstar)
                         vname=obsList{ivar};
                         ii=ivar-(ifig-1)*graph_nstar;
                         subplot(r,c,ii)
-                        plotyy(smoothed.(vname),highvol,'linewidth',2)
+                        plotyy(smoothed{imod}.(vname),highvol,'linewidth',2)
                         title(obsListTexnames{ivar},'fontsize',12)
                     end
                     xrotate(90)
@@ -413,7 +417,7 @@ if add_irfs
             end
             fig_title=['IRFs to a ',shock_list_tex_names{ishock}, ' shock ',add_str];
             fig=figure('name',fig_title);
-            [Remains,r,c]=number_of_rows_and_columns_in_figure(ifig,nvar,graph_nrows,graph_ncols);
+            [~,r,c]=number_of_rows_and_columns_in_figure(ifig,nvar,graph_nrows,graph_ncols);
             for ivar=(ifig-1)*graph_nstar+1:min(nvar,ifig*graph_nstar)
                 endovar=var_list{ivar};
                 ii=ivar-(ifig-1)*graph_nstar;
@@ -467,7 +471,7 @@ if add_historical_decomposition && ~isempty(obj.filtering)
         end
         xrotate(90)
         orient(fig,'tall')
-        hleg=legend(contrib_names,'location','SW','orientation','horizontal');
+        legend(contrib_names,'location','SW','orientation','horizontal');
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
         xrep.pagebreak();
@@ -490,7 +494,7 @@ if add_variance_decomposition
         fig_title=['Variance decomposition of ',obsListTexnames{ivar}];
         fig=figure('name',fig_title);
         for imod=1:nmod
-            h0=subplot(nmod,1,imod);
+            subplot(nmod,1,imod)
             if iscell(vardec)
                 tmp=100*vardec{imod}.conditional.(vname);
                 tmp.varnames=vardec{imod}.conditional.(vname).varnames;
@@ -498,7 +502,7 @@ if add_variance_decomposition
                 tmp=100*vardec(imod).conditional.(vname);
                 tmp.varnames=vardec(imod).conditional.(vname).varnames;
             end
-            plt=plot_window(tmp,1,24,@plot_decomp);
+            plot_window(tmp,1,24,@plot_decomp);
             thismodel=obj(imod).legend;
             if isempty(thismodel)
                 thismodel=obj.filename;
@@ -529,32 +533,42 @@ if add_variance_decomposition
 end
 %% real-time forecasting performance of the estimated model
 if add_forecast && ~isempty(obj.filtering)
-    map=getappdata(0,'rise_default_plot_colors');
-    
-    [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj);
-    TimeInfo=ts_fkst{1}.(obsList{1}).TimeInfo;
+   
+    [ts_fkst,ts_rmse]=forecast_real_time(obj);
+    many_models=iscell(ts_fkst);
     pp=[];
-    Q=[];
+    ergodic_mean=cell(1,nmod);
+    get(obj(imod),'sstate')
     for iobs=1:nvarobs
         fig_title=['real-time forecasts for ',obsListTexnames{iobs}];
         fig=figure('name',fig_title);
         for imod=1:nmod
             subplot(nmod+1,1,imod)
+            if many_models
             [h,pp]=plot_real_time(ts_fkst{imod}.(obsList{iobs}),pp);
+            else
+            [h,pp]=plot_real_time(ts_fkst.(obsList{iobs}),pp);
+            end
             % add the steady state
-            vloc=locate_variables(obsList{iobs},{obj(imod).varendo.name});
+            vloc=locate_variables(obsList{iobs},obj(imod).endogenous.name);
             hold on
             xlim=get(h,'xlim');
-            ergodic_mean=obj(imod).varendo(vloc).det_steady_state;
-            if numel(ergodic_mean)>1
-                Q=obj(imod).Q;
-                nreg=size(Q,1);
-                pai=[eye(nreg)-Q';ones(1,nreg)]\[zeros(nreg,1);1];
-                ergodic_mean=ergodic_mean*pai;
+            if iobs==1
+                ergodic_mean{imod}=cell2mat(struct2cell(get(obj(imod),'sstate')));
+                if size(ergodic_mean{imod},2)>1
+                    Q=obj(imod).solution.Q;
+                    nreg=size(Q,1);
+                    pai=[eye(nreg)-Q';ones(1,nreg)]\[zeros(nreg,1);1];
+                    ergodic_mean{imod}=ergodic_mean{imod}*pai;
+                end
             end
-            plot(xlim,ergodic_mean*ones(1,2),'color',[1,0,0])
+            plot(xlim,ergodic_mean{imod}(vloc)*ones(1,2),'color',[1,0,0])
             hold off
-            title([obsListTexnames{iobs},'(',obj(imod).legend,')'],...
+            thisleg='';
+            if nmod>1
+                thisleg=['(',modelsLegs{imod},')'];
+            end
+            title([obsListTexnames{iobs},thisleg],...
                 'fontsize',12,'interpreter','none')
             grid on
         end
@@ -562,8 +576,10 @@ if add_forecast && ~isempty(obj.filtering)
         subplot(nmod+1,1,nmod+1)
         plot(ts_rmse.(obsList{iobs}))
         title('RMSE','fontsize',12)
-        leg=legend(nk_models);
-        set(leg,'interpreter','none')
+        if nmod>1
+            leg=legend(modelsLegs);
+            set(leg,'interpreter','none')
+        end
         orient(fig,'tall')
         myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
         figure(xrep,myfigure);
@@ -572,11 +588,21 @@ if add_forecast && ~isempty(obj.filtering)
 end
 %% vector autocorrelations
 if add_autocorrelations
-    [Auto,retcode]=theoretical_autocorrelations(obj,'ar',40);
+    [Auto,retcode]=theoretical_autocorrelations(obj,'autocorr_ar',40);
+    if retcode
+        warning('problem detected in the computation of theoretical autocorrelations')
+    end
+    cellmode=iscell(Auto);
+    if cellmode
     for ii=1:numel(Auto)
         Auto{ii}=Auto{ii}(endo_locs,endo_locs,:);
     end
     ar=size(Auto{1},3);
+    else
+        Auto=Auto(endo_locs,endo_locs,:);
+    ar=size(Auto,3);
+    end
+    
     xx=(1:ar)';
     add_str='';
     nfigs=ceil(nvar^2/graph_nstar);
@@ -587,14 +613,19 @@ if add_autocorrelations
         end
         fig_title=['Vector autocorrelations',add_str];
         fig=figure('name',fig_title);
-        [Remains,r,c]=number_of_rows_and_columns_in_figure(ifig,nvar^2,graph_nrows,graph_ncols);
+        [~,r,c]=number_of_rows_and_columns_in_figure(ifig,nvar^2,graph_nrows,graph_ncols);
         for ivar=(ifig-1)*graph_nstar+1:min(nvar^2,ifig*graph_nstar)
             vname1=var_list_tex_names{second_index(ivar)};
             vname2=var_list_tex_names{first_index(ivar)};
             ii=ivar-(ifig-1)*graph_nstar;
             ar_data=[];
             for imod=1:nmod
-                ar_data=[ar_data,squeeze(Auto{imod}(second_index(ivar),first_index(ivar),:))];
+                if cellmode
+                    this_auto=Auto{imod}(second_index(ivar),first_index(ivar),:);
+                else
+                    this_auto=Auto(second_index(ivar),first_index(ivar),:);
+                end
+                ar_data=[ar_data,squeeze(this_auto)];
             end
             subplot(r,c,ii)
             plot(xx,ar_data,'linewidth',2)
@@ -605,8 +636,8 @@ if add_autocorrelations
             if ii>(r-1)*c
                 xlabel(vname2)
             end
-            if ii==1
-                legend(nk_models)
+            if ii==1 && nmod
+                legend(modelsLegs)
             end
         end
         orient(fig,'tall')
@@ -615,7 +646,7 @@ if add_autocorrelations
         xrep.pagebreak();
     end
 end
-%% empirical distribution of shocks
+%% Smoothed shocks
 
 if add_smoothed_shocks && ~isempty(obj.filtering)
     add_str='';
@@ -625,13 +656,13 @@ if add_smoothed_shocks && ~isempty(obj.filtering)
         end
         fig_title=['Smoothed shocks',add_str];
         fig=figure('name',fig_title);
-        [Remains,r,c]=number_of_rows_and_columns_in_figure(ifig,nshocks,graph_nrows,graph_ncols);
+        [~,r,c]=number_of_rows_and_columns_in_figure(ifig,nshocks,graph_nrows,graph_ncols);
         for ivar=(ifig-1)*graph_nstar+1:min(nshocks,ifig*graph_nstar)
             ii=ivar-(ifig-1)*graph_nstar;
             vshock=shock_list{ii};
-            myshock_data=obj(1).Filters.Expected_smoothed_shocks.(vshock);
+            myshock_data=obj(1).filtering.Expected_smoothed_shocks.(vshock);
             for imod=2:numel(obj)
-                myshock_data=[myshock_data,obj(imod).Filters.Expected_smoothed_shocks.(vshock)];
+                myshock_data=[myshock_data,obj(imod).filtering.Expected_smoothed_shocks.(vshock)];
             end
             subplot(r,c,ii)
             plot(myshock_data,'linewidth',2)
@@ -653,7 +684,7 @@ end
 %% correlation of shocks
 if add_shocks_correlations && ~isempty(obj.filtering)
     for imod=1:numel(obj)
-        shock_corr=corrcoef(rise_time_series.collect(obj(imod).Filters.Expected_smoothed_shocks));
+        shock_corr=corrcoef(rise_time_series.collect(obj(imod).filtering.Expected_smoothed_shocks));
         mytable=[
             [' ',shock_list]
             shock_list',num2cell(shock_corr)
@@ -674,7 +705,7 @@ if add_empirical_distribution_of_shocks && ~isempty(obj.filtering)
         end
         fig_title=['Empirical PDF of shocks',add_str];
         fig=figure('name',fig_title);
-        [Remains,r,c]=number_of_rows_and_columns_in_figure(ifig,nshocks,graph_nrows,graph_ncols);
+        [~,r,c]=number_of_rows_and_columns_in_figure(ifig,nshocks,graph_nrows,graph_ncols);
         for ivar=(ifig-1)*graph_nstar+1:min(nshocks,ifig*graph_nstar)
             ii=ivar-(ifig-1)*graph_nstar;
             vshock=shock_list{ii};
@@ -682,7 +713,7 @@ if add_empirical_distribution_of_shocks && ~isempty(obj.filtering)
             lb=inf;
             ub=-inf;
             for imod=1:numel(obj)
-                myshock_data{imod}=double(obj(imod).Filters.Expected_smoothed_shocks.(vshock));
+                myshock_data{imod}=double(obj(imod).filtering.Expected_smoothed_shocks.(vshock));
                 lb=min(lb,min(myshock_data{imod}));
                 ub=max(ub,max(myshock_data{imod}));
             end
@@ -696,7 +727,7 @@ if add_empirical_distribution_of_shocks && ~isempty(obj.filtering)
             axis tight
             title(shock_list_tex_names{ivar},'fontsize',12)
             if ii==min(nshocks,ifig*graph_nstar)
-                leg=legend(nk_models,'location','SO','orientation','horizontal');
+                leg=legend(modelsLegs);%,'location','SO','orientation','horizontal'
                 set(leg,'interpreter','none')
             end
         end
