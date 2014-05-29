@@ -121,7 +121,7 @@ if USE_RISE_PLOT
         };
     
     rise_data=[rise_data
-        'rise_default_plot_colors',{rise_default_plot_colors}];
+        {'rise_default_plot_colors',rise_default_plot_colors}];
     
     
     %     set(0, 'DefaultAxesXColor', [0 0 0]);
