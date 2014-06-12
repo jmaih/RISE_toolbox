@@ -1,0 +1,13 @@
+wald
+normality
+heteroskedasticity
+lag selection
+diebold-mariano
+durbin-watson
+unit-roots
+cointegration
+granger-causality
+linearity
+exogeneity
+chow
+outliers
