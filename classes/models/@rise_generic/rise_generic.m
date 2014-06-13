@@ -1,4 +1,4 @@
-classdef rise_generic < matlab.mixin.Heterogeneous
+classdef rise_generic % < matlab.mixin.Heterogeneous
     properties
         legend='';
     end
