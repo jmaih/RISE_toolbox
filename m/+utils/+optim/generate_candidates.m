@@ -14,7 +14,7 @@ funevals=0;
 success=nargout(objective)>=2;
 msg='';
 the_loop=@loop_body;
-if matlabpool('size')
+if if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size')
     parfor ii=1:n
         iter_=ii;
         [x(:,ii),f(ii),viol{ii},fcount(ii)]=the_loop(iter_);

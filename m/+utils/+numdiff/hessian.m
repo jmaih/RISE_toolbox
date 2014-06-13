@@ -22,7 +22,7 @@ f0 = zeros(npar,1);
 Hdiag = zeros(npar,1);
 theLoopBody1=@loop_body_diagonal;
 theLoopBody2=@loop_body_cross;
-if matlabpool('size')>0
+if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size')
     parfor ii=1:npar
         iter=ii;
         [f1(ii),f0(ii),Hdiag(ii)]=theLoopBody1(iter);
