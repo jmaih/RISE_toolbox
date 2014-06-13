@@ -71,7 +71,7 @@ if data_provided
     obj.data.y=verdier(is_endogenous,:);
     obj.data.x=verdier(~is_endogenous,:);
     if obj.options.data_demean
-        obj.data.y=bsxfun(@minus,obj.data.y,nanmean(obj.data.y,2));
+        obj.data.y=bsxfun(@minus,obj.data.y,utils.stat.nanmean(obj.data.y,2));
     end
     obj.data.nobs=size(verdier,2);
     obj.data.start=1;

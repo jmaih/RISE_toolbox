@@ -74,8 +74,8 @@ for fig=1:nfig
         subplot(r,c,ii)
         plot(x,f)
         title(obj(1).estimation.priors(var_id).tex_name,'Interp','tex')% ,'interpreter','none'
-        low_f=nanmin(nanmin(f));
-        high_f=nanmax(nanmax(f));
+        low_f=utils.stat.nanmin(f(:));
+        high_f=utils.stat.nanmax(f(:));
         axis([min(min(x)),max(max(x)),low_f-abs(low_f)/1000,high_f+abs(high_f)/1000])% tight
         if nobj>1 && ii==1
             legend({obj.filename})
