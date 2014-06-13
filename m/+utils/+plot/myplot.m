@@ -107,8 +107,8 @@ end
             end
             hold on
             dall=[d{:}];
-            dmin=nanmin(dall(:));
-            dmax=nanmax(dall(:));
+            dmin=utils.stat.nanmin(dall(:));
+            dmax=utils.stat.nanmax(dall(:));
             add_vertical_lines();
             add_horizontal_lines();
             hold off

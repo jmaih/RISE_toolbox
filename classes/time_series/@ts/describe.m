@@ -13,7 +13,7 @@ info=set_row('',repmat(self.varnames,[1,1,size(data,3)]));
 % mean
 %-----
 info=[info
-    set_row('count',nanmean(data,1))
+    set_row('count',utils.stat.nanmean(data,1))
     ];
 
 % std
@@ -25,7 +25,7 @@ info=[info
 % min
 %-----
 info=[info
-    set_row('min',nanmin(data,[],1))
+    set_row('min',utils.stat.nanmin(data,[],1))
     ];
 
 % 25%
@@ -52,7 +52,7 @@ info=[info
 % max%
 %-----
 info=[info
-    set_row('max',nanmax(data,[],1))
+    set_row('max',utils.stat.nanmax(data,[],1))
     ];
 
 

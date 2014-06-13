@@ -1,3 +1,3 @@
 function m=mean(varargin)
-m=nanmean(varargin{:});
+m=utils.stat.nanmean(varargin{:});
 end
