@@ -1,7 +1,7 @@
-function X = fast_kronmult(X,varargin)
-% FAST_KRONMULT Efficient Kronecker Multiplication
+function X = X_times_kron_Q1_Qk(X,varargin)
+% X_TIMES_KRON_Q1_Qk Efficient Kronecker Multiplication
 %
-% Y=fast_kronmult(X,{Q1,n1},{Q2,n2},...,{Qk,nk}) computes
+% Y=X_times_kron_Q1_Qk(X,{Q1,n1},{Q2,n2},...,{Qk,nk}) computes
 %     Y = (kron^n1(Q1) kron kron^n2(Q2) ...  kron kron^nk(Qk))*X
 % without ever using a single kronecker.
 % The inputs are such that :
@@ -22,7 +22,7 @@ function X = fast_kronmult(X,varargin)
 % x = randn(nx,1); % generate data
 % A1={randn(n(1)),calls(1)};
 % A2={randn(n(2)),calls(2)};
-% tic,y = fast_kronmult(x,A1,A2);toc
+% tic,y = X_times_kron_Q1_Qk(x,A1,A2);toc
 % tic
 % Qfull = 1;
 % for ii=1:calls(1)
