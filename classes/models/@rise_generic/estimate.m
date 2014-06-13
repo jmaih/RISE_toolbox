@@ -366,7 +366,7 @@ warning('on','MATLAB:illConditionedMatrix')
             if isequal(x,xLast)
                 viol=violLast;
             else
-                warning('evaluating constraints before computing log-posterior ')
+% % % % % % % % % % % %                 warning('evaluating constraints before computing log-posterior ')
                 thisobj=assign_estimates(obj,x);
 % % % % % % % % % % % %                 thisobj=filter(thisobj);
                 viol=mynonlinear_constraints(x,thisobj);
