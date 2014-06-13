@@ -230,7 +230,7 @@ end
                     tmp_u=sparse(AT_0*tmp_u);
                     % use the fast kronecker only where it is really needed
                     %------------------------------------------------------
-                    AT_0=fast_kronmult(AT_0(:),{transpose(hz),oo},{speye(siz.nd),1});
+                    AT_0=utils.kronecker.X_times_kron_Q1_Qk(AT_0(:),{transpose(hz),oo},{speye(siz.nd),1});
                     AT(:,:,r00)=reshape(AT_0,[siz.nd,siz.nz^oo])+tmp_u+tau(:,:,r00);
                 end
                 AT=AT(:);
