@@ -368,7 +368,7 @@ warning('on','MATLAB:illConditionedMatrix')
             else
                 warning('evaluating constraints before computing log-posterior ')
                 thisobj=assign_estimates(obj,x);
-                thisobj=filter(thisobj);
+% % % % % % % % % % % %                 thisobj=filter(thisobj);
                 viol=mynonlinear_constraints(x,thisobj);
             end
         end
