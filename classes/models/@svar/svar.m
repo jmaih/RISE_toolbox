@@ -95,7 +95,7 @@ classdef svar < rise_generic
                     [varargout{1:nout}]=posterior_simulator(obj,...
                         'mcmc_gibbs_sampler_func',@stochvol_tools.gibbs_sampler);
                 else
-                    obj.func_handles.likelihood=@vartools.var_likelihood;
+                    obj.routines.likelihood=@vartools.var_likelihood;
                     if nout>nargout('rise_generic/estimate')
                         error('number of output arguments exceeds the maximum')
                     end
