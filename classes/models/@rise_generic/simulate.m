@@ -56,33 +56,10 @@ end
         y0=ovSolution.y0;
         T=ovSolution.T;
         steady_state=ovSolution.steady_state;
-                
-        h=obj.markov_chains.regimes_number;
-        solve_order=obj.options.solve_order;
-
-
-        hstar=h;
-        quash_regimes=false;
-        if quash_regimes
-            % start ergodic
-            y00_=0;
-            s_state=0;
-            for io=1:solve_order
-                tsol=0;
-                for ireg=1:h
-                    if io==1
-                        y00_=y00_+y0(ireg).y*PAI(ireg);
-                        s_state=s_state+steady_state{ireg}*PAI(ireg);
-                    end
-                    tsol=tsol+T{io,ireg}*PAI(ireg);
-                end
-                T(io,:)=repmat({tsol},1,h);
-            end
-            steady_state=repmat({s_state},1,h);
-            y0(1).y=y00_;
-            y0(1:end)=y0(1);
-            hstar=1;
-        end
+        
+        % here we need to start at one single point: and so we aggregate y0
+        %------------------------------------------------------------------
+        [y0]=utils.forecast.aggregate_initial_conditions(PAI,y0);
         
         % further options
         %----------------
@@ -92,9 +69,9 @@ end
         end
         options=struct('simul_sig',obj.options.simul_sig,...
             'simul_order',simul_order,...
-            'burn',0,...
+            'burn',obj.options.simul_burn,...
             'nsimul',1,...
-            'impulse',1*obj.options.irf_shock_sign,...
+            'impulse',[],...
             'random',true,...
             'girf',false,...
             'nsteps',obj.options.simul_periods);
@@ -103,18 +80,23 @@ end
         else
             options.k_future=0;
         end
-            
+        
+        shocks=Initcond.shocks;
+        if ~isempty(shocks)
+            options.burn=0;
+        else
+            exo_nbr=sum(obj.exogenous.number);
+            which_shocks=true(1,exo_nbr);
+            which_shocks(obj.exogenous.is_observed)=false;
+            shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,options);
+        end
+        states=nan(obj.options.simul_periods,1);
+        [y,states,retcode]=utils.forecast.multi_step(y0,steady_state,T,shocks,states,Q,PAI,options);
+
         % initialize output
         %------------------
-%         endo_nbr=obj.endogenous.number(end);
-%         Impulse_dsge=zeros(endo_nbr,irf_periods+1,nshocks,irf_draws,hstar);
-        states=nan(obj.options.simul_periods,1);
-        exo_nbr=sum(obj.exogenous.number);
-        which_shocks=true(1,exo_nbr);
-        which_shocks(obj.exogenous.is_observed)=false;
-        [y,retcode]=utils.forecast.irf(y0(1),T,steady_state,states,which_shocks,Q,PAI,options);
 
-%             State=State(simul_burn+1:end);
+%       State=State(simul_burn+1:end);
 
 % put y in the correct order before storing
 %------------------------------------------
@@ -131,7 +113,6 @@ db=ts(start_date,y',obj.endogenous.name);
 db=pages2struct(db);
 
 end
-
 
 function sim_data=format_simulated_data_output(sim_data)
 nobj=numel(sim_data);

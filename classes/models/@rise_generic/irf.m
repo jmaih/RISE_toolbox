@@ -113,23 +113,9 @@ dsge_irfs=format_irf_output(dsge_irfs);
         end
         hstar=h;
         if quash_regimes
-            % start ergodic
-            y00_=0;
-            s_state=0;
-            for io=1:solve_order
-                tsol=0;
-                for ireg=1:h
-                    if io==1
-                        y00_=y00_+y0(ireg).y*PAI(ireg);
-                        s_state=s_state+steady_state{ireg}*PAI(ireg);
-                    end
-                    tsol=tsol+T{io,ireg}*PAI(ireg);
-                end
-                T(io,:)=repmat({tsol},1,h);
-            end
-            steady_state=repmat({s_state},1,h);
-            y0(1).y=y00_;
-            y0(1:end)=y0(1);
+            [y0,T,steady_state]=...
+                utils.forecast.aggregate_initial_conditions(PAI,...
+                y0,T,steady_state);
             hstar=1;
         end
         
