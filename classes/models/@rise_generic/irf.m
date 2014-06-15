@@ -31,9 +31,12 @@ dsge_irfs=format_irf_output(dsge_irfs);
         obj=set(obj,varargin{:});
         is_dsge=isa(obj,'dsge');
         
+        obj.options.simul_periods=obj.options.irf_periods	  ;
+        obj.options.simul_burn=0;
+        obj.options.simul_historical_data=ts.empty(0);
+        obj.options.simul_history_end_date='';
         irf_shock_list        =obj.options.irf_shock_list;
         irf_var_list          =obj.options.irf_var_list  ;
-        irf_periods	          =obj.options.irf_periods	  ;
         irf_shock_sign        =obj.options.irf_shock_sign;
         irf_type	          =obj.options.irf_type	  ;
         irf_draws	          =obj.options.irf_draws	  ;
@@ -51,7 +54,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
         elseif ischar(irf_var_list)
             irf_var_list=cellstr(irf_var_list);
         end
-
+        
         exoList=get(obj,'exo_list(~observed)');
         if isempty(irf_shock_list)
             irf_shock_list=exoList;
@@ -89,14 +92,12 @@ dsge_irfs=format_irf_output(dsge_irfs);
         % initial conditions
         %-------------------
         Initcond=generic_tools.set_simulation_initial_conditions(obj);
-        PAI=Initcond.PAI;
-        Q=Initcond.Q;
-
+        
         ovSolution=load_order_var_solution(obj,Initcond.y);
         y0=ovSolution.y0;
         T=ovSolution.T;
         steady_state=ovSolution.steady_state;
-                
+        
         h=obj.markov_chains.regimes_number;
         solve_order=obj.options.solve_order;
         quash_regimes=h>1 && ~irf_regime_specific;
@@ -114,43 +115,38 @@ dsge_irfs=format_irf_output(dsge_irfs);
         hstar=h;
         if quash_regimes
             [y0,T,steady_state]=...
-                utils.forecast.aggregate_initial_conditions(PAI,...
+                utils.forecast.aggregate_initial_conditions(Initcond.PAI,...
                 y0,T,steady_state);
             hstar=1;
         end
         
         % further options
         %----------------
-        simul_order=obj.options.simul_order;
-        if isempty(simul_order)
-            simul_order=obj.options.solve_order;
+        further_options={
+            'nsimul',irf_draws
+            'impulse',1*irf_shock_sign
+            'random',irf_shock_uncertainty
+            'girf',girf
+            };
+        for irow=1:size(further_options,1)
+            opname=further_options{irow,1};
+            opval=further_options{irow,2};
+            Initcond.(opname)=opval;
         end
-        options=struct('simul_sig',obj.options.simul_sig,...
-            'simul_order',simul_order,...
-            'burn',0,...
-            'nsimul',irf_draws,...
-            'impulse',1*irf_shock_sign,...
-            'random',irf_shock_uncertainty,...
-            'girf',girf,...
-            'nsteps',irf_periods);
-        if is_dsge
-            options.k_future=max(obj.exogenous.shock_horizon);
-        else
-            options.k_future=0;
-        end
-            
+        % the shocks drawn in the initial conditions will be ignored
+        
         % initialize output
         %------------------
         endo_nbr=obj.endogenous.number(end);
-        Impulse_dsge=zeros(endo_nbr,irf_periods+1,nshocks,irf_draws,hstar);
-        states=nan(irf_periods,1);
+        Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,hstar);
         retcode=0;
         for istate=1:hstar
             if ~retcode
                 if ~quash_regimes
-                    states(:,1)=istate;
+                    Initcond.states(:,1)=istate;
                 end
-                [xxxx,retcode]=do_one_dsge_parameter(y0(istate));
+                [xxxx,retcode]=utils.forecast.irf(y0(istate),T,steady_state,...
+                    which_shocks,Initcond);
                 Impulse_dsge(:,:,:,:,istate)=xxxx;
             end
         end
@@ -188,9 +184,6 @@ dsge_irfs=format_irf_output(dsge_irfs);
             end
         end
         
-        function [irfs,retcode]=do_one_dsge_parameter(y0)
-            [irfs,retcode]=utils.forecast.irf(y0,T,steady_state,states,which_shocks,Q,PAI,options);
-        end
     end
 end
 

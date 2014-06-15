@@ -24,6 +24,7 @@ end
 simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
 shocks=[];
+states=[];
 if ~isempty(simul_historical_data)
     if isstruct(simul_historical_data)
         simul_historical_data=ts.collect(simul_historical_data);
@@ -44,7 +45,6 @@ if ~isempty(simul_historical_data)
     % check there are enough observations to define initial conditions
     %-----------------------------------------------------------------
     
-    raw_data=double(simul_historical_data).';
     % locate endogenous in the database
     %----------------------------------
     varnames=simul_historical_data.varnames;
@@ -56,6 +56,9 @@ if ~isempty(simul_historical_data)
     if flag_l||flag_r
         error('too few observations to define initial conditions. Maybe you should adjust simul_history_end_date?')
     end
+    % build y0
+    %---------
+    raw_data=double(simul_historical_data).';
     good=~isnan(endo_locs);
     for ireg=1:regimes_number
         y0(ireg).y(good,:)=raw_data(endo_locs(good),left:right);
@@ -109,7 +112,7 @@ if ~isempty(simul_historical_data)
         error(['regimes must be positive integers and cannot exceed ',int2str(h)])
     end
 end
-    
+
 Q={obj.solution.transition_matrices.Q,[],[]};
 if isa(obj,'dsge') && obj.is_endogenous_switching_model
     error('this part needs updating')
@@ -124,6 +127,7 @@ end
 simul_pruned=false;
 simul_sig=0;
 simul_order=1;
+k_future=0;
 if isa(obj,'dsge')
     simul_sig=obj.options.simul_sig;
     simul_pruned=obj.options.simul_pruned;
@@ -132,15 +136,41 @@ if isa(obj,'dsge')
     else
         simul_order=obj.options.simul_order;
     end
+    k_future=max(obj.exogenous.shock_horizon);
 end
 if ~simul_pruned
     y0=rmfield(y0,'y_lin');
 end
-
 Initcond=struct('y',{y0},...
     'PAI',PAI,...
     'simul_history_end_date',simul_history_end_date,...
     'simul_sig',simul_sig,...
     'simul_order',simul_order,...
-    'shocks',shocks,...
-    'Q',{Q});
+    'Q',{Q},...
+    'random',true,...
+    'nsteps',obj.options.simul_periods,...
+    'k_future',k_future);
+%-----------------------------------------
+Initcond.burn=obj.options.simul_burn;
+if ~isempty(shocks)
+    % shocks have already been set from the initial conditions no
+    % burn-in simulations necessary
+    Initcond.burn=0;
+else
+    exo_nbr=sum(obj.exogenous.number);
+    which_shocks=true(1,exo_nbr);
+    which_shocks(obj.exogenous.is_observed)=false;
+    shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
+end
+if isempty(states)
+    for ii=1:200
+        disp([mfilename,'(166)::states'' history has not been set yet'])
+        disp([mfilename,'(167)::PAI''s history should be set as well'])
+    end
+    states=nan(Initcond.nsteps+Initcond.burn,1);
+end
+
+%-----------------------------------------
+Initcond.states=states;
+Initcond.shocks=shocks;
+Initcond.states=states;

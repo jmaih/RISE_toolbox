@@ -1,5 +1,4 @@
-function [irfs,retcode]=irf(y0,T,ss,states,which_shocks,Q,PAI,options)
-% options=struct('simul_sig','simul_order','burn','nsimul','impulse','random','girf');
+function [irfs,retcode]=irf(y0,T,ss,which_shocks,options)
 
 new_impulse=0;
 
@@ -16,7 +15,8 @@ iter=0;
 det_vars=~which_shocks;
 
 retcode=0;
-
+path1=nan(endo_nbr,nlags+options.nsteps);
+path1(:,1:nlags)=y0.y;
 for ishock=1:exo_nbr
     if det_vars(ishock)
         continue
@@ -25,19 +25,24 @@ for ishock=1:exo_nbr
     shock_id=ishock;
     for isimul=1:options.nsimul
         if ~retcode
-            [shocks]=utils.forecast.create_shocks(exo_nbr,shock_id,det_vars,options);
+            options.shocks=utils.forecast.create_shocks(exo_nbr,shock_id,det_vars,options);
             if ~retcode
-                [path1,~,retcode]=utils.forecast.multi_step(y0,ss,T,shocks,states,Q,PAI,options);
+                [sim1,~,retcode]=utils.forecast.multi_step(y0,ss,T,options);
                 if ~retcode
+                    path1(:,nlags+1:end)=sim1;
                     if options.girf
-                        shocks=utils.forecast.replace_impulse(shocks,shock_id,options.k_future+1,new_impulse);
+                        if isimul==1
+                            path2=path1;
+                        end
+                        options.shocks=utils.forecast.replace_impulse(options.shocks,shock_id,options.k_future+1,new_impulse);
                         
-                        [path2,~,retcode]=utils.forecast.multi_step(y0,ss,T,shocks,states,Q,PAI,options);
-                        
-                        path1=path1-path2;
+                        [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,options);
+                        if ~retcode
+                            path2(:,nlags+1:end)=sim2;
+                            path1=path1-path2;
+                        end
                     end
-                    
-                    irfs(:,:,iter,isimul)=[y0.y,path1];
+                    irfs(:,:,iter,isimul)=path1;
                 end
             end
         end
