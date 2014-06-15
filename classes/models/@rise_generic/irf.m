@@ -1,7 +1,5 @@
 function dsge_irfs=irf(obj,varargin)
 
-% 4- shock surprises?
-
 too_small=1e-9;
 
 if isempty(obj)

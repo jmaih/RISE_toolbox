@@ -77,31 +77,3 @@ end
         z=sparse(z); 
     end
 end
-
-%{
-order=3;
-m=dsge('ex_frwz','max_deriv_order',order);
-m=solve(m,'solve_order',order);
-regimes_number=m.markov_chains.regimes_number;
-T=cell(order,regimes_number);
-zzz=repmat('z',1,order);
-ov=m.order_var.after_solve;
-t_pb=m.locations.after_solve.t.pb;
-ss=cell(1,regimes_number);
-for io=1:order
-    for ireg=1:regimes_number
-        if io==1
-            ss{ireg}=m.solution.ss{ireg}(ov);
-        end
-        T{io,ireg}=m.solution.(['T',zzz(1:io)]){ireg}(ov,:);
-    end
-end
-endo_nbr=m.endogenous.number(end);
-
-reg=1;
-initcond.y0=rand(endo_nbr,1);
-sig=1;
-shock=rand;
-utils.forecast.one_step(T(:,reg),initcond.y0,ss{reg},t_pb,sig,shock)
-
-%}
