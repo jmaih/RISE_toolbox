@@ -16,11 +16,6 @@ else
     error(['model of class ',class(obj),' not ready for simulation'])
 end
 
-if ~(ismember(class(obj.options.simul_shocks),{'double','logical'}) &&...
-        ismember(obj.options.simul_shocks,[false,true]))
-    error('simul_shocks must be true or false')
-end
-
 simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
 shocks=[];

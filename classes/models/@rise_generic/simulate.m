@@ -1,7 +1,5 @@
 function [db,states,retcode] = simulate(obj,varargin)
-% simul_shocks can be:
-%              - true : simul_periods and simul_burn are active
-%              - false : simul_periods is active, simul_burn=0
+
 % simul_historical_data contains the historical data as well as information
 %              over the forecast horizon. This also includes the future
 %              path of the regimes, which is denoted by "regime" in the
@@ -20,7 +18,6 @@ if isempty(obj)
         'simul_seed',0,...
         'simul_historical_data',ts.empty(0),...
         'simul_history_end_date','',...
-        'simul_shocks',true,... [true,false]
         'simul_start_date','',...
         'simul_regime',[]);
     return
