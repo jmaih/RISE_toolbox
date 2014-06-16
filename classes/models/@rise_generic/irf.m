@@ -98,24 +98,23 @@ dsge_irfs=format_irf_output(dsge_irfs);
         
         h=obj.markov_chains.regimes_number;
         solve_order=obj.options.solve_order;
-        quash_regimes=h>1 && ~irf_regime_specific;
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
-        
+%         quash_regimes=(h>1 && ~irf_regime_specific);
+        %||(solve_order==1 && girf)
         if ~girf
             irf_draws=1;
         end
         
-        if irf_draws==1
-            irf_shock_uncertainty=false;
-        else
-            irf_shock_uncertainty=true;
+        irf_shock_uncertainty=irf_draws>1;
+        number_of_threads=h;
+        if ~irf_regime_specific
+            number_of_threads=1;
         end
-        hstar=h;
-        if quash_regimes
-            [y0,T,steady_state]=...
-                utils.forecast.aggregate_initial_conditions(Initcond.PAI,...
-                y0,T,steady_state);
-            hstar=1;
+        if number_of_threads==1
+%             [y0,T,steady_state]=...
+%                 utils.forecast.aggregate_initial_conditions(Initcond.PAI,...
+%                 y0,T,steady_state);
+            y0=utils.forecast.aggregate_initial_conditions(Initcond.PAI,y0);
         end
         
         % further options
@@ -136,11 +135,11 @@ dsge_irfs=format_irf_output(dsge_irfs);
         % initialize output
         %------------------
         endo_nbr=obj.endogenous.number(end);
-        Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,hstar);
+        Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,number_of_threads);
         retcode=0;
-        for istate=1:hstar
+        for istate=1:number_of_threads
             if ~retcode
-                if ~quash_regimes
+                if h==1||number_of_threads==h
                     Initcond.states(:,1)=istate;
                 end
                 [xxxx,retcode]=utils.forecast.irf(y0(istate),T,steady_state,...
@@ -168,17 +167,19 @@ dsge_irfs=format_irf_output(dsge_irfs);
         % distribution of irfs
         %---------------------
         startdate=0;
-        RegimeNames=strcat('regime_',num2str((1:h)'));
-        if quash_regimes % strcmp(irf_type,'girf')
+        if number_of_threads>1
+            RegimeNames=strcat('regime_',num2str((1:h)'));
+        else
             RegimeNames=irf_type;
         end
-        RegimeNames=cellstr(RegimeNames);
+        RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
         dsge_irfs=struct();
+        vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
         for ishock=1:exo_nbr
             shock_name=irf_shock_list{ishock};
             for vv=1:numel(irf_var_list)
                 dsge_irfs.(shock_name).(irf_var_list{vv})=...
-                    ts(startdate,squeeze(Impulse_dsge(:,:,vv,ishock)),RegimeNames);
+                    ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),RegimeNames);
             end
         end
         

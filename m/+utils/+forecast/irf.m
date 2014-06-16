@@ -15,8 +15,6 @@ iter=0;
 det_vars=~which_shocks;
 
 retcode=0;
-path1=nan(endo_nbr,nlags+options.nsteps);
-path1(:,1:nlags)=y0.y;
 for ishock=1:exo_nbr
     if det_vars(ishock)
         continue
@@ -27,16 +25,17 @@ for ishock=1:exo_nbr
         if ~retcode
             options.shocks=utils.forecast.create_shocks(exo_nbr,shock_id,det_vars,options);
             if ~retcode
-                [sim1,~,retcode]=utils.forecast.multi_step(y0,ss,T,options);
+                [sim1,states1,retcode]=utils.forecast.multi_step(y0,ss,T,options);
                 if ~retcode
-                    path1(:,nlags+1:end)=sim1;
+                    path1=[y0.y,sim1];
                     if options.girf
                         if isimul==1
                             path2=path1;
                         end
-                        options.shocks=utils.forecast.replace_impulse(options.shocks,shock_id,options.k_future+1,new_impulse);
-                        
-                        [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,options);
+                        options2=options;
+                        options2.shocks=utils.forecast.replace_impulse(options.shocks,shock_id,options.k_future+1,new_impulse);
+                        options2.states=states1;
+                        [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,options2);
                         if ~retcode
                             path2(:,nlags+1:end)=sim2;
                             path1=path1-path2;
