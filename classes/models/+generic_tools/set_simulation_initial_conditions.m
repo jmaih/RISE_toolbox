@@ -102,10 +102,21 @@ if ~isempty(simul_historical_data)
     % make sure there is no regime exceeding h and all are positive integers
     %-----------------------------------------------------------------------
     regimes_row=shocks(end,:);
+    shocks(end,:)=[];
     h=obj.markov_chains.regimes_number;
     if ~all(ismember(regimes_row,1:h))
         error(['regimes must be positive integers and cannot exceed ',int2str(h)])
     end
+    
+    % Now load the states
+    %--------------------
+    if any(regimes_row)
+        states=regimes_row(:);
+    end
+    
+    % Now load the regimes probabilities
+    %-----------------------------------
+    
 end
 
 Q={obj.solution.transition_matrices.Q,[],[]};
@@ -158,10 +169,6 @@ else
     shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
 end
 if isempty(states)
-    for ii=1:200
-        disp([mfilename,'(166)::states'' history has not been set yet'])
-        disp([mfilename,'(167)::PAI''s history should be set as well'])
-    end
     states=nan(Initcond.nsteps+Initcond.burn,1);
 end
 
