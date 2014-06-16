@@ -34,7 +34,7 @@ if nobj>1
     return
 end
 
-[obj,retcode]=solve(obj);
+[obj,retcode]=solve(obj,varargin{:});
 % note that the solving of the model may change the perturbation
 % order. More explicitly optimal policy irfs will be computed for a
 % perturbation of order 1 no matter what order the user chooses.
