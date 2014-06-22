@@ -34,7 +34,7 @@ while max(conv_T,conv_F)>options.fix_point_TolFun && iter<options.fix_point_maxi
     conv_T=max(abs(T(:)-T0(:)));
     conv_F=max(abs(F0(:)));
     if fix_point_verbose
-        fprintf(1,'%8.0f %12.4f %12.4f\n',iter,conv_T,conv_F); 
+        fprintf(1,'%8.0f %12.4f %12.4f\n',iter,full(conv_T),conv_F); 
     end
     T0=T;
     if ~utils.error.valid(T)
