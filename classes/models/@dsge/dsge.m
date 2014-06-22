@@ -71,7 +71,9 @@ classdef dsge < rise_generic
         varargout=is_stable_system(varargin)
         varargout=monte_carlo_filtering(varargin) 
         varargout=resid(varargin) 
+        varargout=simulate_nonlinear(varargin) 
         % constructor
+        %------------
         function obj=dsge(model_filename,varargin)
             % default options
             obj=obj@rise_generic();
@@ -224,22 +226,11 @@ classdef dsge < rise_generic
     end
     methods(Sealed)
         varargout=simulate(varargin)
-%         varargout=get(varargin)
-%         varargout=estimate(varargin)
-%         varargout=irf(varargin)
     end
-    methods(Hidden=true)%
-%%%        varargout=simulation_engine(varargin)
+    methods(Hidden=true)
         varargout=dsge_load_data(varargin)
         varargout=do_not_anticipate_future_shocks(varargin)
         varargout=set_z_eplus_horizon(varargin)
     end
-%     methods(Access=private)
-%     end
-%     methods(Static)
-%     end
-% %     methods(Sealed)%,Access=protected
-% %         varargout=load_data(varargin)
-% %     end
 end
 
