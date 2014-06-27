@@ -193,14 +193,18 @@ end
         end
         
         function [X,retcode]=solve_generalized_sylvester(D,oo)
-            [X,retcode] = tfqmr(@afun,D(:),obj.options.fix_point_TolFun);
-            if retcode
-                %     0 tfqmr converged to the desired tolerance TOL within MAXIT iterations.
-                %     1 tfqmr iterated MAXIT times but did not converge.
-                %     2 preconditioner M was ill-conditioned.
-                %     3 tfqmr stagnated (two consecutive iterates were the same).
-                %     4 one of the scalar quantities calculated during tfqmr became too
-            else
+            % [X,retcode] = tfqmr(@afun,D(:),obj.options.fix_point_TolFun);
+            %     0 tfqmr converged to the desired tolerance TOL within MAXIT iterations.
+            %     1 tfqmr iterated MAXIT times but did not converge.
+            %     2 preconditioner M was ill-conditioned.
+            %     3 tfqmr stagnated (two consecutive iterates were the same).
+            %     4 one of the scalar quantities calculated during tfqmr became too
+			[X,retcode]=transpose_free_quasi_minimum_residual(@afun,D(:),... % right hand side
+					    [],... %x0 initial guess
+					    obj.options.fix_point_TolFun,... % tolerance level
+					    obj.options.fix_point_maxiter,... % maximum number of iterations
+					    obj.options.fix_point_verbose);
+            if ~retcode
                 X=reshape(X,[siz.nd,siz.nz^oo,siz.h]);
                 tmp=cell(1,siz.h);
                 for r0=1:siz.h
@@ -611,8 +615,10 @@ for r0=1:siz.h
 end
 dpb_minus=d_; clear d_
 
+is_evs=false;
 if isempty(options.solver)
-    if is_eigenvalue_solver()
+    is_evs=is_eigenvalue_solver();
+    if is_evs
         options.solver=1;
     else
         options.solver=3;
@@ -657,6 +663,9 @@ end
 
 if ~retcode
     npb=siz.np+siz.nb;
+    if is_evs && siz.h>1
+        Tz_pb=repmat(Tz_pb,[1,1,siz.h]);
+    end
     Tz_pb=reshape(Tz_pb,[nd_adjusted,npb,siz.h]);
     if accelerate
         % solve for the static variables
@@ -832,8 +841,13 @@ if kron_method
     %---------
     delta=G\W(:);
 else
-    delta=tfqmr(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),...
-        options.fix_point_TolFun);
+%    delta=tfqmr(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),...
+%        options.fix_point_TolFun);
+	[delta,retcode]=transpose_free_quasi_minimum_residual(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),... 
+			[],... %x0 initial guess
+			options.fix_point_TolFun,... % tolerance level
+			options.fix_point_maxiter,... % maximum number of iterations
+			options.fix_point_verbose);
 end
 
 T1=T0+reshape(delta,[n,npb,h]);
