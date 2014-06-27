@@ -624,7 +624,8 @@ kron_method=options.solver==4;
 if options.solver==3
     iterate_func=@(x)functional_iteration_h(x,dbf_plus,d0,dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
 elseif options.solver>3
-    iterate_func=@(x)newton_iteration_h(x,dbf_plus,d0,dpb_minus,bf_cols_adjusted,pb_cols_adjusted,kron_method);
+    iterate_func=@(x)newton_iteration_h(x,dbf_plus,d0,dpb_minus,...
+        bf_cols_adjusted,pb_cols_adjusted,kron_method,options);
 end
 eigval=[];
 
@@ -745,7 +746,8 @@ T0_T1=reshape(T0,[n,npb*h])-T1;
 
 end
 
-function [T1,W1]=newton_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,pb_cols,kron_method)
+function [T1,W1]=newton_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,...
+    pb_cols,kron_method,options)
 
 n=size(d0{1},1);
 h=size(d0,2);
@@ -830,8 +832,8 @@ if kron_method
     %---------
     delta=G\W(:);
 else
-    tol=sqrt(eps);
-    delta=tfqmr(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),tol);
+    delta=tfqmr(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),...
+        options.fix_point_TolFun);
 end
 
 T1=T0+reshape(delta,[n,npb,h]);
