@@ -20,7 +20,7 @@ end
 h=obj.markov_chains.regimes_number;
 nlags=obj.nlags;
 [B,SIG]=vartools.resolve(obj.solution,nlags,h);
-Q0=obj.solution.Q;
+Q0=obj.solution.transition_matrices.Q;
 
 [y,x,n,T]=vartools.set_y_and_x(obj.data.y,obj.data.x,nlags,obj.constant);
 
