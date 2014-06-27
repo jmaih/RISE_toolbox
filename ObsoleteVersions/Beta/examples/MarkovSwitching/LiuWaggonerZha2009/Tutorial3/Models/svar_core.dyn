@@ -1,0 +1,50 @@
+//-------------------------------------------------------------//
+//                   Declarations:
+//     names are separated by a comma, a space or both
+//     $...$ are used to describe the preceding variable
+//-------------------------------------------------------------//
+
+//Endogenous variables
+var	 Y, $Output gap$, PAI, $Inflation$, I, $Fed Funds rate$;
+
+//Exogenous variables
+varexo EPAI,  $Phil. curve shock$, EY, $IS curve shock$, EI, $Taylor rule shock$;
+
+//parameters
+parameters sig_pai, $\sigma_{\pi}$, c_pai, $c_{\pi}$, alpha_pai1, $\alpha_{\pi,1}$, alpha_pai2, $\alpha_{\pi,2}$, alpha_y, $\alpha_{y}$,
+sig_y, $\sigma_{y}$, c_y, $c_{y}$, beta_y1, $\beta_{y,1}$, beta_y2, $\beta_{y,2}$, beta_r, $\beta_{r}$,
+sig_i, $\sigma_{i}$, c_i, $c_{i}$, rho_i, $\rho_{i}$, gam_y, $\gamma_{y}$, gam_pai, $\gamma_{\pi}$;
+
+// observable variables
+varobs I, Y, PAI;
+
+
+model(linear)
+	// define auxiliary expression to be inserted into the model equations
+	// the strategy is to interpret the inverse of the elements below as
+	// standard deviations
+    # alpha_pai = 1/sig_pai;
+    # beta_y    = 1/sig_y;
+    # gam_i     = 1/sig_i;
+    // Phillips curve
+   alpha_pai*PAI   = c_pai + alpha_pai1*PAI{-1} + alpha_pai2*PAI{-2} +alpha_y*Y{-1} + EPAI;
+   
+   // IS curve
+   beta_y*Y = c_y + beta_y1*Y{-1} + beta_y2*Y{-2} -beta_r*(I{-1}-PAI{-1}) + EY;
+   
+   // Taylor rule
+   gam_i*I = c_i + gam_i*rho_i*I{-1} - gam_i*(1-rho_i)*(gam_y*Y+gam_pai*PAI) + EI;
+
+end
+
+// the non-policy parameters never switch, they will be controlled by the const markov chain
+parameterization
+    alpha_pai1, 	0.9, 	0.05, 	1.5, 	gamma_pdf , 	0.9;
+    alpha_pai2, 	0  , 	-1  , 	1  , 	normal_pdf, 	0.9; 
+    alpha_y,    	0.1, 	0.05, 	1.5, 	gamma_pdf , 	0.9;  
+    c_pai,      	0  , 	-1  , 	1  , 	normal_pdf, 	0.9;  
+    c_y,        	0  , 	-1  , 	1  , 	normal_pdf, 	0.9;
+    beta_y1,    	0.9, 	0.1 , 	1.5, 	gamma_pdf , 	0.9;
+    beta_y2,    	0  , 	-2  , 	2  , 	normal_pdf, 	0.9;
+    beta_r,     	0.1, 	0.05, 	1  , 	gamma_pdf , 	0.9; 
+end

@@ -1,0 +1,38 @@
+var	PAI,Y,R;
+
+// varexo cannot start if var is still active and vice-versa...
+// this needs to be added to the parser
+
+varexo EPS_R;
+
+parameters a_tp_1_2, a_tp_2_1, betta, eta, kappa, mu,
+mu_bar, psi, rhor
+sigr;
+
+model;
+//	// endogenous switching
+//	! a_tp_1_2=1/(1+(x-b)^2); Z<0; 
+//	! a_tp_2_1=Z>=0;
+
+	1-betta*(1-.5*kappa*(PAI-1)^2)*Y*R/((1-.5*kappa*(PAI(+1)-1)^2)*Y(+1)*exp(mu)*PAI(+1));
+	
+	1-eta+eta*(1-.5*kappa*(PAI-1)^2)*Y+betta*kappa*(1-.5*kappa*(PAI-1)^2)*(PAI(+1)-1)*PAI(+1)/(1-.5*kappa*(PAI(+1)-1)^2)
+	-kappa*(PAI-1)*PAI;
+
+	(R(-1)/steady_state(R))^rhor*(PAI/steady_state(PAI))^((1-rhor)*psi)*exp(sigr*EPS_R)-R/steady_state(R);
+end;
+
+parameterization;
+	a_tp_1_2,1-.9; 
+	a_tp_2_1,1-.9;
+	betta, .99;
+	kappa, 161;
+	eta, 10;
+	rhor, .8;
+	sigr, 0.0025;
+	mu_bar,0.02; 
+	mu(a,1), 0.03;
+	mu(a,2), 0.01;
+	psi(a,1), 3.1;
+	psi(a,2), 0.9;
+end;

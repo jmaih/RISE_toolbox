@@ -1,0 +1,49 @@
+// this files demonstrates the use of macro/pre-processing in RISE
+// many elements are written so as to mimick dynare, but we try to
+// be more general: both endif and endfor could simply be replaced
+// by end
+
+@#if DMP == 1
+   var vartheta tight wbar; // comment
+@#elseif DMP==0
+	var l;
+@#end	// endif as in dynare would also work
+
+MA_x = 1/@{2*window+1}*(
+@#for i in -window:window
++x(@{i})
+@#end // endfor as in dynare would also work
+);
+
+@#if DMP == 0
+    C=pstar*exp(a)*l;
+@#else // comment
+
+    s=(1-nu)*vartheta*exp(-a);
+
+	@#if hiring == 1
+	    kap=J;//comment
+	@#else // comment
+	    kap=Q*J;
+	@#end	// endif as in dynare would also work
+
+    Q = x/v;
+
+@#end	// endif as in dynare would also work
+
+@#for co in countries
+var Y_@{co} K_@{co} L_@{co} i_@{co} E_@{co};
+parameters a_@{co}; 
+@#end	// endfor as in dynare would also work
+
+@#for co in countries
+	Y_@{co} = K_@{co}^a_@{co} * L_@{co}^(1-a_@{co});
+	
+	@# if ~isequal(co,nth_co)
+		(1+i_@{co}) = (1+i_@{nth_co}) * E_@{co}(+1) / E_@{co}; // UIP relation
+	@# else
+		E_@{co} = 1;
+	@# end	// endif as in dynare would also work
+@#end	// endfor as in dynare would also work
+
+@#include "test_parse_include.dyn"
