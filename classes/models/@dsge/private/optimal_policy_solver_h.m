@@ -5,7 +5,8 @@ if isempty(obj)
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
     T=struct('lc_reconvexify',false,...
-        'lc_algorithm','short');
+        'lc_algorithm','short',...
+        'lc_initialization','zeros');
     return
 end
 gam=structural_matrices.planner.commitment{1};
@@ -117,10 +118,19 @@ y=1:ny;
 lamb=ny+1:n;
 multcols=[false(1,ny),true(1,nmult)];
 
+lc_reconvexify=options.lc_reconvexify;
+
 GAMm=big_gam1();
 
 if isempty(H0)
-    H0=zeros(n,n,h);
+    switch options.lc_initialization
+        case 'zeros'
+            H0=zeros(n,n,h);
+        case 'random'
+            H0=randn(n,n,h);
+        otherwise
+            error(['initialization ',parser.any2str(options.lc_initialization),' unknown'])
+    end
     use_pinv=true;
     H0=iterate_func(H0,use_pinv);
 end
@@ -196,13 +206,17 @@ end
         GAMm=cell(1,h);
         for r0=1:h
             GAM1(lamb,y)=Aminus{r0};
-            if gam>0
+            if gam>0||lc_reconvexify
                 tmp=0;
                 % this is just an approximation
                 for rplus=1:h
                     tmp=tmp+Aplus{r0,rplus};
                 end
-                GAM1(y,lamb)=1/beta*tmp.';
+                if lc_reconvexify
+                    GAM1(y,lamb)=gam/beta*tmp.';
+                else
+                    GAM1(y,lamb)=1/beta*tmp.';
+                end
             end
             GAMm{r0}=GAM1;
         end

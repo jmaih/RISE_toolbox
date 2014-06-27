@@ -111,7 +111,8 @@ if solve_order>0 && ~retcode && resolve_it
                 for ireg=1:bigh
                     bingo=all(bsxfun(@minus,big_regimes(ireg,:),small_regimes)==0,2);
                     Tsol=T.Tz{bingo};
-                    if loose_com_regimes(ireg)==2 % discretion: set multipliers to zero
+                    if loose_com_regimes(ireg)==2 && ... % discretion: set multipliers to zero
+                            ~obj.options.lc_reconvexify; % under reconvexification, we do not zero the multipliers
                         Tsol(:,zmultcols)=0;
                     end
                     Tz{ireg}=Tsol;
