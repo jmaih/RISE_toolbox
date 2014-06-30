@@ -36,7 +36,11 @@ for j=1:nvar
             error([mfilename,':: variable ',vj,' not found'])
         end
     elseif numel(vj_id)>1
-        error([mfilename,':: variable ',vj,' declared more than once'])
+        if silent
+            continue
+        else
+            error([mfilename,':: variable ',vj,' declared more than once'])
+        end
     end
     IDs(j)=vj_id;
 end
