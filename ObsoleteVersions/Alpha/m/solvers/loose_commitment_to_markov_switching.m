@@ -31,6 +31,10 @@ end
 tmpT=T;T=cell(1,nregs);
 tmpR=R;R=cell(1,nregs);
 for ireg=1:nregs
-    T{ireg}=tmpT(:,:,ireg);
+    if obj.options.lc_reconvexify||size(tmpT,3)==1
+        T{ireg}=tmpT;
+    else
+        T{ireg}=tmpT(:,:,ireg);
+    end
     R{ireg}=tmpR(:,:,:,ireg);
 end
