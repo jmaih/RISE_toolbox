@@ -26,7 +26,6 @@ for iparam=1:obj.parameters.number
     obj.parameters.is_trans_prob(1,iparam)=...
         parser.is_transition_probability(obj.parameters.name{iparam});
 end
-obj.routines=struct();
 [~,obj.routines.transition_matrix,obj.markov_chains]=...
     parser.transition_probabilities({'param'},obj.parameters.name,markov_chains_,'','',[]);
 end
