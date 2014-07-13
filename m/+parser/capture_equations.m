@@ -18,12 +18,33 @@ chain_states_number=[dictionary.markov_chains.number_of_states];
 parameter_names={dictionary.parameters.name};
 parameter_govern=[dictionary.parameters.governing_chain];
 
-for ii=1:size(listing,1)
+% profile off
+% profile on
+% [listing,nlist]=parser.insert_definitions(listing, dictionary.definitions_inserted);
+% profile off
+% profile viewer
+% keyboard
+nlist=size(listing,1);
+
+nblks=0;
+blocks_to_discard_coz_they_are_defs=false(nblks,1);
+definitions_loc=struct();
+% profile off
+% profile on
+for ii=1:nlist
     [block,equation]=capture_equations_engine(block,listing(ii,:),block_name,equation);
+end
+% profile off
+% profile viewer
+
+if dictionary.definitions_inserted
+    block=block(~blocks_to_discard_coz_they_are_defs,:);
+    % remove all definitions from the list
+    dictionary.definitions={};
 end
 
     function eqtn=initialize_equation()
-        eqtn=struct('max_lag',0,'max_lead',0,'eqtn',{cell(2,0)});
+        eqtn=struct('max_lag',0,'max_lead',0,'eqtn',{cell(2,0)},'is_def',false);
     end
     function [block,equation]=capture_equations_engine(block,cell_info,block_name,equation)
         
@@ -80,7 +101,7 @@ end
                 end
                 
                 if ~isempty(tokk)
-                    tok_status=parser.determine_status(dictionary,tokk);
+                    tok_status=dictionary.determine_status(tokk,dictionary);
                     if strcmp(tok_status,'param')
                         if strcmp(block_name,'exogenous_definition')
                             error([mfilename,':: exogenous definitions cannot contain parameters in file ',file_name_,' at line ',sprintf('%0.0f',iline_)])
@@ -91,6 +112,7 @@ end
                         position=strcmp(tokk,{dictionary.exogenous.name});
                         dictionary.exogenous(position).is_in_use=true;
                     end
+                    is_lhs_def=false;
                     if strcmp(tok_status,'#')||strcmp(tok_status,'!')
                         def_flag=strcmp(tok_status,'#');
                         if strcmp(block_name,'exogenous_definition')
@@ -99,7 +121,7 @@ end
                         endo_switch_flag=strcmp(tok_status,'!');
                         rest_=rest1;
                         [tokk,rest1]=strtok(rest_,DELIMITERS); %#ok<*STTOK>
-                        tok_status=parser.determine_status(dictionary,tokk);
+                        tok_status=dictionary.determine_status(tokk,dictionary);
                         if ~strcmp(tok_status,'unknown')
                             if strcmp(tok_status,'f')
                                 disp([mfilename,':: (gentle warning): ',tokk,' is also a matlab function'])
@@ -109,6 +131,9 @@ end
                         end
                         if def_flag
                             dictionary.definitions=[dictionary.definitions;{tokk}];
+                            is_lhs_def=true;
+                            equation.is_def=true;
+                            definitions_loc.(tokk)=nblks+1;
                         elseif endo_switch_flag
                             [istp,isdiagonal,chain_name]=parser.is_transition_probability(tokk);
                             if ~istp
@@ -133,7 +158,7 @@ end
                             error([mfilename,':: parsing error in ',file_name_,' at line ',sprintf('%0.0f',iline_),' please report this to junior.maih@gmail.com'])
                         end
                         % update the status above
-                        tok_status=parser.determine_status(dictionary,tokk);
+                        tok_status=dictionary.determine_status(tokk,dictionary);
                         if ~isempty(equation.eqtn)
                             error([mfilename,':: # and ! can only occur at the beginning of an equation check in ',file_name_,' line ',sprintf('%0.0f',iline_)])
                         end
@@ -141,7 +166,7 @@ end
                         error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                     end
                     
-                    if def_flag && (strcmp(tok_status,'y')||strcmp(tok_status,'x'))
+                    if def_flag && (strcmp(tok_status,'y')||strcmp(tok_status,'x')) && ~dictionary.definitions_inserted
                         error([mfilename,':: definitions cannot contain variables. ',...
                             'If this is an endogenous parameter, declare the definitions as ',...
                             'parameters and use a steady state file. check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
@@ -153,11 +178,11 @@ end
                     left_operator=parser.look_around(tokk,rest_);
                     
                     for i1=2:length(left_operator)
-                        first=parser.determine_status(dictionary,left_operator(i1-1));
+                        first=dictionary.determine_status(left_operator(i1-1),dictionary);
                         if strcmp(first,'unknown')
                             error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                         end
-                        second=parser.determine_status(dictionary,left_operator(i1));
+                        second=dictionary.determine_status(left_operator(i1),dictionary);
                         if strcmp(second,'unknown')
                             error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                         end
@@ -165,7 +190,7 @@ end
                     end
                     if ~isempty(left_operator)
                         if ~isempty(tokk)
-                            third=parser.determine_status(dictionary,left_operator(end));
+                            third=dictionary.determine_status(left_operator(end),dictionary);
                             if strcmp(third,'unknown')
                                 error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                             end
@@ -215,7 +240,32 @@ end
                     if time_on && strcmp(tok_status,'n')
                         fill_time=[fill_time,tokk];
                     else
-                        equation.eqtn=[equation.eqtn,{tokk,[]}'];
+                        % if it is a definition, get rid of it if the
+                        % definitions are to be inserted
+                        %----------------------------------------------
+                        if ~is_lhs_def && strcmp(tok_status,'def') && dictionary.definitions_inserted
+                            old_eqtn=block{definitions_loc.(tokk),1};
+                            middle_man=old_eqtn;
+                            % remove the first part
+                            %----------------------
+                            middle_man(:,1)=[];
+                            % remove the equality sign
+                            %-------------------------
+                            middle_man{1,1}(1)=[];
+                            if isempty(middle_man{1,1})
+                                middle_man(:,1)=[];
+                            end
+                            % remove the semicolon
+                            %---------------------
+                            middle_man{1,end}(end)=[];
+                            if isempty(middle_man{1,end})
+                                middle_man(:,end)=[];
+                            end
+                            block_def=[{'(',[]}',middle_man,{')',[]}'];
+                            equation.eqtn=[equation.eqtn,block_def];
+                        else
+                            equation.eqtn=[equation.eqtn,{tokk,[]}'];
+                        end
                         if (strcmp(tok_status,'y')||strcmp(tok_status,'x')||strcmp(tok_status,'param'))
                             equation.eqtn{2,end}=0;
                         end
@@ -244,7 +294,7 @@ end
                         end
                         rest_='';
                     end
-                    last_status=parser.determine_status(dictionary,equation.eqtn{1,end}(end));
+                    last_status=dictionary.determine_status(equation.eqtn{1,end}(end),dictionary);
                 end
             end
             if ~isempty(equation.eqtn)
@@ -253,6 +303,12 @@ end
                     % load it and reinitialize.
                     equation.eqtn=validate_equation(equation.eqtn);
                     block=[block;{equation.eqtn,equation.max_lag,equation.max_lead}];
+                    nblks=nblks+1; 
+                    if equation.is_def && dictionary.definitions_inserted
+                        blocks_to_discard_coz_they_are_defs(nblks,1)=true;
+                    else
+                        blocks_to_discard_coz_they_are_defs(nblks,1)=false;
+                    end
                     equation=initialize_equation();
                 end
             end
@@ -441,11 +497,11 @@ end
         end
     end
     function check_validity(syntax,file_name_,iline_,block_name)
-        good=ismember(syntax,dictionary.syntax_typical)||...
-            (ismember(syntax,dictionary.syntax_time) && ~strcmp(block_name,'steady_state_model'))||...
-            (ismember(syntax,dictionary.syntax_function) && function_on)||...
-            (ismember(syntax,dictionary.syntax_special) && strcmp(block_name,'steady_state_model'))||...
-            (ismember(syntax,dictionary.syntax_special) && strcmp(block_name,'parameter_restrictions'));
+        good=any(strcmp(syntax,dictionary.syntax_typical))||...
+            (any(strcmp(syntax,dictionary.syntax_time)) && ~strcmp(block_name,'steady_state_model'))||...
+            (any(strcmp(syntax,dictionary.syntax_function)) && function_on)||...
+            (any(strcmp(syntax,dictionary.syntax_special)) && strcmp(block_name,'steady_state_model'))||...
+            (any(strcmp(syntax,dictionary.syntax_special)) && strcmp(block_name,'parameter_restrictions'));
         if ~good
             error([mfilename,':: wrong syntax ',syntax,' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
         end
