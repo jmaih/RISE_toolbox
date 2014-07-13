@@ -3,7 +3,7 @@ function [date_numbers,datta,rows_dates,varloc,pages]=process_subs(obj,subs,call
 nsubs=numel(subs);
 date_numbers=obj.date_numbers;
 datta=obj.data;
-varloc=locate_variables(obj.varnames,obj.varnames);
+varloc=locate_variables(obj.varnames,obj.varnames,true);
 rows_dates=1:obj.NumberOfObservations;
 pages=1:obj.NumberOfPages;
 
@@ -70,7 +70,15 @@ switch nsubs
             rows_dates=select_from_serial(dates,freq);
         end
         variables=subs{2};
-        varloc=process_variables(variables);
+        if isnumeric(variables)
+            varloc=variables;
+            nvars=obj.NumberOfVariables;
+            if ~all(ismember(varloc,1:nvars))
+                error(['variables position must be in range [1,',sprintf('%0.0f',nvars),']'])
+            end
+        else
+            varloc=process_variables(variables);
+        end
         if nsubs==3 %and pages
             pages_=subs{3};
             if ischar(pages_)
