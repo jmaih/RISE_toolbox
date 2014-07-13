@@ -1,9 +1,10 @@
 function this=subsref(obj,s)
 % db=ts('1990q1',randn(10,4,3),{'v1','v2','v3','v4'});
-% pick a variable: 
+% pick a variable:
 %                db{'v1'}, db('v1')
-% pick variables: 
+% pick variables:
 %                db{'v1,v4'}, db('v1,v4') db{{'v1','v4'}}, db({'v1','v4'})
+%                db(:,1),
 % pick a year :
 %                db{'1991'} db('1991')
 % pick a date :
@@ -30,7 +31,7 @@ function this=subsref(obj,s)
 %                db{-1} db(-1)
 %                db{+3} db(+3)
 % boolean indexing
-%                db{db{'v1'}>0} db{db{'v1'}>0} 
+%                db{db{'v1'}>0} db{db{'v1'}>0}
 %--------------------------------------------------------------------------
 % truncate : same as window ?
 % plot(db,'subplots',true,'figsize',[3,3],'nticks',7,'logy',true)
@@ -42,34 +43,41 @@ function this=subsref(obj,s)
 % scatter_matrix([db1,db2],'figsize',[3,3],'diagonal','kde')
 % lag_plot : plot(y_t,y_{t+k})
 % autocorrelation_plot : plot(y_t): p. 437
-% db.head(n) n=min(5,smpl) by default : use date numbers
-% db.tail(n) n=min(5,smpl) by default
-% db.index to display the basic infos
-% db.describe(): cell array: count, mean, std, min,
+% head(db,n) n=min(5,smpl) by default : use date numbers
+% tail(db,n) n=min(5,smpl) by default
+% index(db) to display the basic infos
+% describe(db): cell array: count, mean, std, min,
 %                25%, 50%, 75%, max
-% db.transpose
-while ~isempty(s)
-    switch s(1).type
-        case '.'
-            % subs = character string
-            this=builtin(mfilename,obj,s);
-            s=[];
-        case {'()','{}'}
-            [date_numbers,datta,...
-                rows_dates,varloc,pages]=process_subs(obj,s(1).subs,mfilename);
-            if isvector(rows_dates)
-                rows_dates=rows_dates(:);
-            end
-            if size(rows_dates,2)>1||size(rows_dates,3)>1
-                error('I don''t know how to concatenate multiple series with different dates')
-            end
-            date_numbers=date_numbers(rows_dates);
+% transpose(db)
+
+switch s(1).type
+    case '.'
+        % subs = character string
+        this=builtin(mfilename,obj,s);
+    case {'()','{}'}
+        [date_numbers,datta,...
+            rows_dates,varloc,pages]=process_subs(obj,s(1).subs,mfilename);
+        if isvector(rows_dates)
+            rows_dates=rows_dates(:);
+        end
+        if size(rows_dates,2)>1||size(rows_dates,3)>1
+            error('I don''t know how to concatenate multiple series with different dates')
+        end
+        date_numbers=date_numbers(rows_dates);
+        if any(isnan(varloc))
+            datta=datta(rows_dates,:,pages);
+            this=ts(date_numbers(:),datta,obj.varnames);
+        else
             datta=datta(rows_dates,varloc,pages);
             this=ts(date_numbers(:),datta,obj.varnames(varloc));
-        otherwise
-            error(['unexpected type "',s(1).type,'"'])
-    end
-    s=s(2:end);
+        end
+    otherwise
+        error(['unexpected type "',s(1).type,'"'])
+end
+
+s=s(2:end);
+if ~isempty(s)
+    this=subsref(this,s);
 end
 
 end
