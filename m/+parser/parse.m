@@ -6,7 +6,8 @@ function dictionary=parse(FileName,varargin)
 DefaultOptions=...
     struct('definitions_in_param_differentiation',false,...
     'rise_flags',struct(),'rise_save_macro',false,...
-    'max_deriv_order',2);
+    'max_deriv_order',2,'definitions_inserted',false,...
+    'parse_debug',false);
 if nargin<1
     dictionary=DefaultOptions;
     return
@@ -30,7 +31,8 @@ end
 %% general initializations
 
 dictionary = parser.initialize_dictionary();
-
+dictionary.definitions_inserted=DefaultOptions.definitions_inserted;
+dictionary.parse_debug=DefaultOptions.parse_debug;
 %% set various blocks
 
 % first output: the dictionary.filename
@@ -100,14 +102,30 @@ dictionary.chain_names={dictionary.markov_chains.name};
 %% Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
 current_block_id=find(strcmp('model',{blocks.name}));
+more_string='';
+if dictionary.definitions_inserted
+    more_string='(& possibly definitions insertions)';
+end
+if dictionary.parse_debug
+    profile off
+    profile on
+else
+    tic
+end
 [Model_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'model');
+if dictionary.parse_debug
+    profile off
+    profile viewer
+    keyboard
+else
+    disp([mfilename,':: Model parsing ',more_string,'. ',sprintf('%0.4f',toc),' seconds'])
+end
 
 if isempty(Model_block)
     error([mfilename,':: no model declared'])
 end
 % remove item from block
 blocks(current_block_id)=[];
-
 %% after parsing the model block, update the markov chains (time-varying probabilities)
 % sorting the endogenous switching probabilities is more or less useless
 dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities);
@@ -232,7 +250,7 @@ for ii=1:number_of_equations
     for i2=1:size(eq_i,2)
         if ~isempty(eq_i{2,i2})
             vname=eq_i{1,i2};
-            status=parser.determine_status(dictionary,vname);
+            status=dictionary.determine_status(vname,dictionary);
             time=-1; new_item=false;
             if ~isempty(eq_i{2,i2})&& abs(eq_i{2,i2})>0
                 if strcmp(status,'param')
@@ -285,7 +303,20 @@ Occurrence=Occurrence(equation_type==1,:,:);
 
 static=struct('is_imposed_steady_state',false,'is_unique_steady_state',false);
 current_block_id=find(strcmp('steady_state_model',{blocks.name}));
+if dictionary.parse_debug
+    profile off
+    profile on
+else
+    tic
+end
 [SteadyStateModel_block,dictionary,static]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'steady_state_model',static);
+if dictionary.parse_debug
+    profile off
+    profile viewer
+    keyboard
+else
+    disp([mfilename,':: Steady State Model parsing . ',sprintf('%0.4f',toc),' seconds'])
+end
 
 % remove item from block
 blocks(current_block_id)=[];
@@ -301,7 +332,20 @@ end
 % will only be used when building the dataset for estimation and/or during
 % forecasting.
 current_block_id=find(strcmp('exogenous_definition',{blocks.name}));
+if dictionary.parse_debug
+    profile off
+    profile on
+else
+    tic
+end
 [ExogenousDefinition_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'exogenous_definition');
+if dictionary.parse_debug
+    profile off
+    profile viewer
+    keyboard
+else
+    disp([mfilename,':: exogenous definitions block parsing . ',sprintf('%0.4f',toc),' seconds'])
+end
 
 % remove item from block
 blocks(current_block_id)=[];
@@ -416,7 +460,7 @@ for ii=1:numel(equation_type)
     for jj=1:size(eq_i,2)
         item=eq_i{1,jj};
         lead_or_lag=eq_i{2,jj};
-        [status,pos]=parser.determine_status(dictionary,item);
+        [status,pos]=dictionary.determine_status(item,dictionary);
         switch status
             case 'y'
                 if is_sseq || is_planner
@@ -689,17 +733,28 @@ routines.dynamic=utils.code.code2func(dynamic.shadow_model);
     dictionary.inv_order_var.before_solve,...
     dictionary.steady_state_index]=dynamic_differentiation_list(...
     dictionary.lead_lag_incidence.before_solve,exo_nbr,switching_parameters_leads_index);
-
+%----------------------
+if dictionary.parse_debug
+    profile off
+    profile on
+end
 [routines.probs_times_dynamic_derivatives,numEqtns,numVars,jac_toc,...
     original_funcs]=differentiate_system(...
     parser.burry_probabilities(dynamic.shadow_model,myifelseif),...
     dictionary.input_list,...
     wrt,...
     max_deriv_order);
+if dictionary.parse_debug
+    profile off
+    profile viewer
+    keyboard
+else
+    disp([mfilename,':: Derivatives of dynamic model wrt y(+0-), x and theta up to order ',sprintf('%0.0f',max_deriv_order),'. ',...
+        sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+end
+%----------------------
 routines.symbolic.probs_times_dynamic={original_funcs,wrt};
 
-disp([mfilename,':: Derivatives of dynamic model wrt y(+0-), x and theta up to order ',sprintf('%0.0f',max_deriv_order),'. ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 % % profile off, profile viewer
 % % keyboard
 
@@ -736,10 +791,12 @@ disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
 param_nbr = numel(dictionary.parameters);
 wrt=dynamic_differentiation_list([],0,[],1:param_nbr);
 ppdd=@(x)x;%dynamic.shadow_model;
-if DefaultOptions.definitions_in_param_differentiation
-    ppdd=@(x)parser.replace_definitions(x,shadow_definitions);
-else
-    disp([mfilename,':: definitions not taken into account in the computation of derivatives wrt parameters'])
+if ~dictionary.definitions_inserted
+    if DefaultOptions.definitions_in_param_differentiation
+        ppdd=@(x)parser.replace_definitions(x,shadow_definitions);
+    else
+        disp([mfilename,':: definitions not taken into account in the computation of derivatives wrt parameters'])
+    end
 end
 [routines.parameter_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
     differentiate_system(...
