@@ -82,9 +82,8 @@ if ~isempty(steady_state_file)
     end
 elseif obj.options.steady_state_use_steady_state_model
     ssfunc=obj.routines.steady_state_model;
-    if ~isempty(ssfunc) && ~isempty(ssfunc.code)
-        optimopt=optimset('display','none','maxiter',400);
-        [ss,retcode]=steady_state_evaluation(optimopt,ssfunc);
+    if ~isempty(ssfunc) %%%%%%%%%% && ~isempty(ssfunc.code)
+        [ss,retcode]=steady_state_evaluation(ssfunc);
         if retcode
             retcode=1; % flag on the steady state
             if obj(1).options.debug
@@ -137,9 +136,11 @@ end
         end
     end
 
-    function [ss,retcode]=steady_state_evaluation(options,ssfunc) %#ok<INUSL>
+    function [ss,retcode]=steady_state_evaluation(ssfunc) 
         
-        options=optimset('display','none','maxiter',400,'tolfun',1e-6); %#ok<NASGU>
+        options=optimset('display','none',...
+            'maxiter',obj.options.fix_point_maxiter,...
+            'tolfun',obj.options.fix_point_TolFun); %#ok<NASGU>
         
         retcode=0;
         ss=[];
