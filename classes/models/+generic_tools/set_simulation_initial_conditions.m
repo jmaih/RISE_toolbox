@@ -107,6 +107,10 @@ if ~isempty(simul_historical_data)
     if ~all(ismember(regimes_row,1:h))
         error(['regimes must be positive integers and cannot exceed ',int2str(h)])
     end
+    % zero all nans in the shocks. In a conditional forecasting exercise,
+    % the nan locations have to be found, but this is not what we are doing
+    % here under simulation
+    shocks(isnan(shocks))=0;
     
     % Now load the states
     %--------------------
