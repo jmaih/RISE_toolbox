@@ -218,6 +218,7 @@ classdef ts
         varargout=isfinite(varargin) 
         varargout=isinf(varargin) 
         varargout=isnan(varargin) 
+        varargout=numel(varargin)
         varargout=pages2struct(varargin) 
         varargout=quantile(varargin)
         varargout=range(varargin)
