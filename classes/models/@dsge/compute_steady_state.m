@@ -85,7 +85,7 @@ else
     last_item=2*endo_nbr;
 end
 
-if ~obj.is_imposed_steady_state||obj.is_optimal_policy_model
+if obj.is_imposed_steady_state||obj.is_optimal_policy_model
     if isempty(obj.is_stationary_model)
         obj.is_stationary_model=true;
         % this will have to change some day...
