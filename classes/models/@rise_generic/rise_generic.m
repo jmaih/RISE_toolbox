@@ -24,7 +24,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         estim_distrib_locations={};
         parameter_restrictions
         list_of_issues
-        routines
+        routines=struct();
     end
     properties(SetAccess = private)%(SetAccess=protected), Hidden = true
     end
