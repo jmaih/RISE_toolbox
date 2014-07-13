@@ -6,6 +6,7 @@ else
     % obj=set(obj,'shock_horizon',struct('shock1',2,'shock3',4))
     % obj=set(obj,'shock_horizon',5)
     shock_horizon_id=[];
+    use_disc_id=[];
     nn=length(varargin);
     for ii=1:2:nn
         if strcmp(varargin{ii},'shock_horizon')
@@ -14,10 +15,15 @@ else
             else
                 shock_horizon_id=ii;
             end
+        elseif strcmp(varargin{ii},'solve_use_disc')
+            use_disc_id=[ii,ii+1];
         end
     end
     shock_horizon=varargin(shock_horizon_id);
+    solve_use_disc=varargin(use_disc_id);
     varargin(shock_horizon_id)=[];
+    % do not remove the disc property since that option has to be visible
+    % unlike the shocks horizon. varargin(use_disc_id)=[]; 
     obj=set@rise_generic(obj,varargin{:});
     if ~isempty(shock_horizon_id)
         if numel(shock_horizon_id)==1
@@ -27,7 +33,40 @@ else
             set_shock_horizon()
         end
     end
+    if ~isempty(solve_use_disc)
+        solve_use_disc=solve_use_disc{2};
+        swap_routines();
+    end
 end
+
+    function swap_routines()
+        if isempty(obj.online_routines)
+            obj.online_routines=obj.routines;
+        end
+        if solve_use_disc
+            % do this systematically, irrespective of whether the routines
+            % are the ones already written to disk or not
+            write_routines_to_disk();
+            obj.routines=obj.disc_routines;
+        else
+            obj.routines=obj.online_routines;
+        end
+        function write_routines_to_disk()
+            MainFolder=obj.options.results_folder;
+            obj.disc_routines=obj.routines;
+            routines_names=fieldnames(obj.disc_routines);
+            routines_names=setdiff(routines_names,{'symbolic','likelihood'});
+            curr_dir=pwd();
+            cd([MainFolder,filesep,'routines']);
+            for irout=1:numel(routines_names)
+                r_name=routines_names{irout};
+                fname=r_name;%[MainFolder,filesep,'routines',filesep,r_name]
+                utils.code.code2file(obj.disc_routines.(r_name),fname)
+                obj.disc_routines.(r_name)=str2func(['@',fname]);
+            end
+            cd(curr_dir)
+        end
+    end
 
     function set_shock_horizon()
         value=shock_horizon{2};
