@@ -1,4 +1,8 @@
 classdef dsge < rise_generic
+    properties (Hidden = true)
+		online_routines
+		disc_routines
+	end
     properties (SetAccess = private, Hidden = true)
         current_solution_state
         dates_filtering % those two options should be moved elsewhere so that they are visible...
@@ -199,7 +203,7 @@ classdef dsge < rise_generic
             
             function create_folders_and_add_further_routines()
                 MainFolder=obj.options.results_folder;
-                SubFoldersList={'graphs','estimation','simulations'}; %,'routines'
+                SubFoldersList={'graphs','estimation','simulations','routines'};
                 
                 if ~exist(MainFolder,'dir')
                     mkdir(MainFolder)
@@ -221,6 +225,9 @@ classdef dsge < rise_generic
                 else
                     obj.routines.likelihood=@likelihood_markov_switching_dsge;
                 end
+				% initialize the holders for routines in case of swap between online and disc
+				obj.online_routines=[];	
+				obj.disc_routines=[];	
             end
         end
     end
