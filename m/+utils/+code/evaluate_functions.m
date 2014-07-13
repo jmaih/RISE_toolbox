@@ -18,7 +18,7 @@ elseif isstruct(xcell)
 elseif isa(xcell,'function_handle')
     [varargout{1:nout}]=xcell(varargin{:});
 else
-    error('first input must be a cell or a struct')
+    error('first input must be a cell, a structure or a function handle')
 end
 
     function xout=derivative_engine()
