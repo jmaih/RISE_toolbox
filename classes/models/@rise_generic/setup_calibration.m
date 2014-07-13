@@ -43,11 +43,16 @@ end
             ptex=parser.valid_param_name_to_tex_name(pname,chain_names);
             left_par=strfind(ptex,'(');
             right_par=strfind(ptex,')');
-            pname=ptex(1:left_par-1);
             comma=strfind(ptex,',');
-            position=find(strcmp(pname,param_names));
-            if isempty(left_par)||isempty(right_par)||isempty(comma)||isempty(position)
-                error(['"',ptex(1:left_par-1),'" is not recognized as a parameter name'])
+            not_good=isempty(left_par)||isempty(right_par)||isempty(comma);
+            if ~not_good
+                pname=ptex(1:left_par-1);
+                position=find(strcmp(pname,param_names));
+                not_good=isempty(position);
+            end
+            if not_good
+%                 error(['"',pname,'" or ','"',ptex,'" not recognized as a parameter name'])
+                error(['"',pname,'" not recognized as a parameter name'])
             end
             chain=ptex(left_par+1:comma-1);
             state=str2double(ptex(comma+1:right_par-1));
