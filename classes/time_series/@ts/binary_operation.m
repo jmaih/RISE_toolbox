@@ -7,8 +7,12 @@ if isa(db1,'ts')
             error([mfilename,':: datasets must have same number of columns'])
         end
         newdata=operation(db1.data,db2.data);
-    elseif isa(db2,'double') && isscalar(db2)
-        newdata=operation(db1.data,db2);
+    elseif isa(db2,'double')
+        if isscalar(db2)||isequal(size(db1.data),size(db2))
+            newdata=operation(db1.data,db2);
+        else
+            error('wrong size of inputs')
+        end
     else
         error([mfilename,':: plus operation undefined for this case'])
     end
