@@ -82,7 +82,8 @@ if ~isempty(steady_state_file)
     end
 elseif obj.options.steady_state_use_steady_state_model
     ssfunc=obj.routines.steady_state_model;
-    if ~isempty(ssfunc) %%%%%%%%%% && ~isempty(ssfunc.code)
+    if ~isempty(ssfunc) && (isa(ssfunc,'function_handle')||...
+            (isstruct(ssfunc)&&~isempty(ssfunc.code)))
         [ss,retcode]=steady_state_evaluation(ssfunc);
         if retcode
             retcode=1; % flag on the steady state
