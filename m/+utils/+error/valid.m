@@ -1,6 +1,12 @@
 function flag=valid(x)
 
-flag=~any(isnan(x(:))) && ~any(isinf(x(:)));
+if iscell(x)
+    flag=all(cellfun(@(x)utils.error.valid(x),x));
+elseif isa(x,'double')
+    flag=~any(isnan(x(:))) && ~any(isinf(x(:)));
+else
+    error(['class ',class(x),' not a valid type for checking validity'])
+end
 
 % valid=@(x)~any(isnan(x(:))) && ~any(isinf(x(:))); % nans in jacobian
 end
