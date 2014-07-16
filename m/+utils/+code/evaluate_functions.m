@@ -9,7 +9,7 @@ elseif isstruct(xcell)
     derivative_fields={'size','functions','map','partitions'};%,'maxcols','nnz_derivs'
     eval_fields={'code','argins','argouts'};
     if all(isfield(xcell,derivative_fields))
-        varargout{1}=derivative_engine();
+        [varargout{1:nout}]=derivative_engine();
     elseif all(isfield(xcell,eval_fields))
         [varargout{1:nout}]=eval_engine(xcell,nout,varargin{:});
     else
@@ -21,19 +21,22 @@ else
     error('first input must be a cell, a structure or a function handle')
 end
 
-    function xout=derivative_engine()
+    function varargout=derivative_engine()
         tmp=xcell;
-        xcell=tmp.functions;
-        xout=zeros(tmp.size);
-        if ~isempty(xcell)
-            vals=main_engine();
-            for irows=1:size(xcell,1)
-                if ~isempty(vals{irows})
-                    xout(irows,tmp.map{irows})=vals{irows};
+        varargout=cell(1,nout);
+        for iout=1:nout
+            xcell=tmp(iout).functions;
+            xout=zeros(tmp.size);
+            if ~isempty(xcell)
+                vals=main_engine();
+                for irows=1:size(xcell,1)
+                    if ~isempty(vals{irows})
+                        xout(irows,tmp(iout).map{irows})=vals{irows};
+                    end
                 end
             end
+            varargout{iout}=sparse(xout(:,tmp(iout).partitions));
         end
-        xout=sparse(xout(:,tmp.partitions));
     end
 
     function xout=main_engine()
