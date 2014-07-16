@@ -55,6 +55,9 @@ switch code
         msg='Non-DSGE: Maximum Number of iterations reached or multiple solutions';
     case 202
         msg='Non-DSGE: Nans in solution or no solution';
+        % ====== writing functions to disc ====== %
+    case 603
+        msg='code2file: empty cell';
     otherwise
         error([mfilename,':: Unknown error code'])
 end
