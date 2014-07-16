@@ -159,51 +159,36 @@ end
         xxx=repmat('v',1,solve_order);
         % evaluate higher-order derivatives
         %----------------------------------
-        if symbolic_type
-            retcode=0;
-            is_fhandle=isa(obj.routines.probs_times_dynamic_derivatives,'function_handle');
-            for io=1:solve_order
-                for s0=1:h
-                    for s1=1:h
-                        sparam=params(:,s1);
-                        if ~retcode
-                            % Note: G(s0,s1) =: ps0(s0,s1)*F(s0)
-                            if is_fhandle
-                                G01=utils.code.evaluate_functions(obj.routines.probs_times_dynamic_derivatives,...
-                                    io,ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
-                            else
-                                G01=utils.code.evaluate_functions(obj.routines.probs_times_dynamic_derivatives(io),...
-                                    ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
-                            end
-                            if utils.error.valid(G01)
-                                % use the derivatives Gi to build dv, dvv, dvvv, ...
-                                %---------------------------------------------------
-                                structural_matrices.(['d',xxx(1:io)]){s0,s1}=G01;%
-                            else
-                                retcode=2; % nans in jacobian
-                            end
-                        end
-                    end
-                end
-            end
-        else
-            retcode=0;
+        retcode=0;
+        G01=cell(1,solve_order);
+        for s1=1:h
+            sparam=params(:,s1);
             for s0=1:h
-                for s1=1:h
-                    sparam=params(:,s1);
-                    if ~retcode
-                        [D01,retcode]=utils.code.compute_automatic_derivatives(...
+                if ~retcode
+                    % Note: G(s0,s1) =: ps0(s0,s1)*F(s0)
+                    if symbolic_type
+                        [G01{1:solve_order}]=utils.code.evaluate_functions(obj.routines.probs_times_dynamic_derivatives,...
+                            ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
+                    else
+                        G01=utils.code.evaluate_automatic_derivatives(...
                             obj.routines.symbolic.probs_times_dynamic,solve_order,...
                             ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
+                    end
+                    if utils.error.valid(G01)
+                        % use the derivatives Gi to build dv, dvv, dvvv, ...
+                        %---------------------------------------------------
                         for io=1:solve_order
-                            [nr,nc]=size(D01{io});
-                            structural_matrices.(['d',xxx(1:io)]){s0,s1}=...
-                                sparse(reshape(D01{io},nr,nc));
+                            if ~symbolic_type
+                                [nr,nc]=size(G01{io});
+                                G01{io}=sparse(reshape(G01{io},nr,nc));
+                            end
+                            structural_matrices.(['d',xxx(1:io)]){s0,s1}=G01{io};%
                         end
+                    else
+                        retcode=2; % nans in jacobian
                     end
                 end
             end
-            clear sparam
         end
         % Compute planner information first
         %----------------------------------
@@ -227,21 +212,13 @@ end
                         % pick the hessian directly
                         order__=2;
                         if symbolic_type
-                            is_fhandle=isa(obj.routines.planner_objective_derivatives,'function_handle');
-                            if is_fhandle
-                                weights=utils.code.evaluate_functions(...
-                                    obj.routines.planner_objective_derivatives,...
-                                    order__,ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
-                            else
-                                weights=utils.code.evaluate_functions(...
-                                    obj.routines.planner_objective_derivatives(order__),...
-                                    ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
-                            end
+                            [~,weights]=utils.code.evaluate_functions(...
+                                obj.routines.planner_objective_derivatives,...
+                                ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
                         else
-                            up_to_hessian=2;
                             s1=s0;
-                            [D01,retcode]=utils.code.compute_automatic_derivatives(...
-                                obj.routines.symbolic.planner_objective,up_to_hessian,...
+                            D01=utils.code.evaluate_automatic_derivatives(...
+                                obj.routines.symbolic.planner_objective,order__,...
                                 ys(:,s0),xss,ss(:,s0),params(:,s0),[],def{s0},s0,s1);
                             weights=D01{order__};
                         end
