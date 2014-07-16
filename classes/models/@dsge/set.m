@@ -60,11 +60,16 @@ end
             cd([MainFolder,filesep,'routines']);
             for irout=1:numel(routines_names)
                 r_name=routines_names{irout};
-                fname=r_name;%[MainFolder,filesep,'routines',filesep,r_name]
-                utils.code.code2file(obj.disc_routines.(r_name),fname)
-                obj.disc_routines.(r_name)=str2func(['@',fname]);
+                fname=r_name;
+                rcode=utils.code.code2file(obj.disc_routines.(r_name),fname);
+                if ~rcode
+                    obj.disc_routines.(r_name)=str2func(['@',fname]);
+                end
             end
             cd(curr_dir)
+            % make the function readily available for use if necessary
+            %---------------------------------------------------------
+            rehash()
         end
     end
 
