@@ -68,6 +68,13 @@ end
 
 optimopt=obj.options.optimset;
 optimopt.debug=obj.options.debug;
+optimopt.is_unique=obj.is_unique_steady_state ;
+optimopt.exo_nbr=sum(obj.exogenous.number);
+optimopt.trans_mat_func=obj.routines.transition_matrix;
+optimopt.is_linear_model=obj.is_linear_model;
+x_ss=zeros(sum(obj.exogenous.number),1);
+pp=obj.parameter_values;
+def=obj.solution.definitions;
 
 % don't look for this elsewhere. It has to be consistent with the above
 %----------------------------------------------------------------------
@@ -103,15 +110,16 @@ else
         ss_and_bgp_start_vals(1:last_item,:)=ys(1:last_item,:);
     else
         [ss_and_bgp_start_vals(1:last_item,:),retcode]=solve_steady_state(ss_and_bgp_start_vals(1:last_item,:),...
-            @(x)ss_residuals(x,func_ss,func_jac,obj),...
-            obj.is_linear_model,optimopt);
+            def,pp,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
     end
 end
 
 if ~retcode
-    pp=obj.parameter_values;
     
-    [obj.solution.transition_matrices,retcode]=compute_steady_state_transition_matrix(obj,ss_and_bgp_start_vals,pp);
+    [obj.solution.transition_matrices,retcode]=...
+        compute_steady_state_transition_matrix(obj.routines.transition_matrix,...
+        ss_and_bgp_start_vals(:,1),pp(:,1),def{1},...
+        sum(obj.exogenous.number));
     
     structural_matrices.transition_matrices=obj.solution.transition_matrices;
     
@@ -124,7 +132,7 @@ if ~retcode
             if obj.is_unique_steady_state
                 if s1==1 && s0==1
                     [pp_i,~,retcode]=ergodic_parameters(obj.solution.transition_matrices.Qinit,...
-                        obj.solution.definitions,pp);
+                        def,pp);
                 end
             else
                 pp_i=pp(:,s0);
@@ -148,8 +156,7 @@ end
         
         ys=ss_and_bgp;
         [ys(1:endo_nbr,:),retcode]=solve_steady_state(ss_and_bgp(1:endo_nbr,:),...
-            @(x)ss_residuals(x,func_ss,func_jac,obj),...
-            obj.is_linear_model,optimopt);
+            def,pp,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
         
         if retcode
             % try nonstationarity
@@ -157,8 +164,8 @@ end
             func_jac=ssfuncs.jac_bgp;
             
             [ys,retcode]=solve_steady_state(ss_and_bgp,...
-                @(x)ss_residuals(x,func_ss,func_jac,obj),...
-                obj.is_linear_model,optimopt);
+                def,pp,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
+
             if ~retcode
                 is_stationary=false;
                 disp([mfilename,':: model is not mean-stationary but allows for a BALANCED GROWTH PATH'])
