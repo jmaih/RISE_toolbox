@@ -26,7 +26,7 @@ end
         varargout=cell(1,nout);
         for iout=1:nout
             xcell=tmp(iout).functions;
-            xout=zeros(tmp.size);
+            xout=zeros(tmp(iout).size);
             if ~isempty(xcell)
                 vals=main_engine();
                 for irows=1:size(xcell,1)
