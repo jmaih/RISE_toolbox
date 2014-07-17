@@ -71,13 +71,13 @@ switch s(1).type
             datta=datta(rows_dates,varloc,pages);
             this=ts(date_numbers(:),datta,obj.varnames(varloc));
         end
+        s=s(2:end);
+        if ~isempty(s)
+            this=subsref(this,s);
+        end
     otherwise
         error(['unexpected type "',s(1).type,'"'])
 end
 
-s=s(2:end);
-if ~isempty(s)
-    this=subsref(this,s);
-end
 
 end
