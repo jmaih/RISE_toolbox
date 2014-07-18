@@ -23,7 +23,7 @@ function [Vardec,obj]=variance_decomposition(obj,varargin)
 % Junior Maih, Dept of Economics
 % The Central Bank of Norway
 % junior.maih@norges-bank.no
-% this update [December 09, 2012]
+% this update [July 18, 2014]
 
 if isempty(obj)
 Vardec=struct('vardec_ergodic',true,...
@@ -57,12 +57,12 @@ vardec_periods  =obj.options.vardec_periods  ;
 k=max(100,max(vardec_periods));
 
 % collect the state matrices
-Q=obj.solution.Q;
+Q=obj.solution.transition_matrices.Q;
 endo_nbr=obj.endogenous.number(end);
 exo_nbr=sum(obj.exogenous.number);
 horizon=1;
 if isa(obj,'dsge')
-    horizon=max(obj.exogenous.shock_horizon);
+    horizon=max(obj.exogenous.shock_horizon)+1;
 end
 nregs=obj.markov_chains.regimes_number;
 
@@ -165,59 +165,3 @@ end
         A={A};B={B};
     end
 end
-
-% function gg=cell2array(dd)
-% nregs=numel(dd);
-% siz=size(dd{1});
-% ndims=numel(siz);
-% gg=full(dd{1});
-% for ireg=2:nregs
-%     gg=cat(ndims+1,gg,full(dd{ireg}));
-% end
-% end
-
-%%%%function Packeddec_db=SelectionAndRepackagingEngine(Vardec,Packages,var_list)
-%%%%
-%%%%endo_names=fieldnames(Vardec);
-%%%%% indices of endogenous variables
-%%%%i_var=locate_variables(var_list,char(endo_names));
-%%%%out=setdiff(1:numel(endo_names),i_var);
-%%%%Packeddec_db=rmfield(Vardec,endo_names(out));
-%%%%
-%%%%NumberOfPackages=size(Packages,2);
-%%%%if NumberOfPackages==0
-%%%%    return
-%%%%end
-%%%%%
-%%%%ContributingNames=Packeddec_db.(deblank(var_list(1,:))).varnames;
-%%%%startdate=Packeddec_db.(deblank(var_list(1,:))).start;
-%%%%
-%%%%% Now Repackage things up
-%%%%DejaVu=[];
-%%%%PackNames='';
-%%%%Package_id=cell(1,NumberOfPackages);
-%%%%for j=1:NumberOfPackages
-%%%%    PackNames=strvcat(PackNames,Packages{1,j}); %#ok<VCAT>
-%%%%    Package_id{j} = locate_variables(Packages{2,j},ContributingNames);
-%%%%    tmp=intersect(DejaVu,Package_id{j});
-%%%%    if ~isempty(tmp)
-%%%%        tmp=mat2str(transpose(tmp(:)));
-%%%%        error([mfilename,':: shocks ',tmp,' have been declared at least twice'])
-%%%%    end
-%%%%    DejaVu=union(DejaVu,Package_id{j});
-%%%%end
-%%%%Rest=setdiff(1:Packeddec_db.(deblank(var_list(1,:))).NumberOfVariables,DejaVu);
-%%%%if ~isempty(Rest)
-%%%%    PackNames=strvcat(PackNames,'Rest'); %#ok<VCAT>
-%%%%    Package_id{NumberOfPackages+1}=Rest;
-%%%%    NumberOfPackages=NumberOfPackages+1;
-%%%%end
-%%%%for j=1:numel(i_var)
-%%%%    db=Packeddec_db.(deblank(var_list(j,:)));
-%%%%    data=cell2mat(db.data(2:end,2:end));
-%%%%    Newdata=nan(db.NumberOfObservations,NumberOfPackages);
-%%%%    for p=1:NumberOfPackages
-%%%%        Newdata(:,p)=sum(data(:,Package_id{p}),2);
-%%%%    end
-%%%%    Packeddec_db.(deblank(var_list(j,:)))=ts(startdate,Newdata,PackNames);
-%%%%end
