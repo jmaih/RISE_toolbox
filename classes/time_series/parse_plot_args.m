@@ -49,7 +49,9 @@ for iarg=1:nargs
                 if iarg+1>nargs
                     error('insufficient number of arguments')
                 end
-                rise_items.(viarg)=varargin{iarg+1};
+                if ~isempty(varargin{iarg+1})
+                    rise_items.(viarg)=varargin{iarg+1};
+                end
                 processed(iarg+[0,1])=true;
                 continue
             end
