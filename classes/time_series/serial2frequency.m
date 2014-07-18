@@ -9,12 +9,11 @@ if isnumeric(x)
     if ~all(freq_==freq_(1))
         error('dates should have the same frequency')
     end
-    freq_=freq_(1);
     fmap=frequency_map;
-    if any(freq_==fmap.code);
+    if any(freq_(1)==fmap.code);
         freq=freq_;
         if nargout>1
-            frequency=frequency2char(freq);
+            frequency=frequency2char(freq(1));
             if nargout>2
                 year=floor(x./freq);
                 period=round(x-year.*freq+1-stamp(freq));
