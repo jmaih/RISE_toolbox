@@ -61,7 +61,7 @@ exo_nbr = numel(exo_names);
 reg_nbr=obj.markov_chains.regimes_number;
 
 % collect the state matrices
-[T,R]=inv_order_var_solution();
+[T,R]=generic_tools.set_solution_to_companion(obj);
 SS=obj.solution.ss;
 
 smoothed_variables=ts.collect(obj.filtering.Expected_smoothed_variables);
@@ -115,28 +115,6 @@ for ii=1:endo_nbr
     Histdec.(endo_names{ii})=ts(serial2date(histdec_start_date),...
         theData,ContributingNames);
 end
-
-    function [Tz,Re]=inv_order_var_solution()
-        %         ov=obj.order_var.after_solve;
-        iov=obj.inv_order_var.after_solve;
-        z_pb=obj.locations.after_solve.z.pb;
-        t_pb=obj.locations.after_solve.t.pb;
-        e_0=obj.locations.after_solve.z.e_0;
-        Re=cell(1,reg_nbr);
-        Tz=Re;
-        tmp=zeros(endo_nbr);
-        for isol=1:reg_nbr
-            tmp(:,t_pb)=obj.solution.Tz{isol}(:,z_pb);
-            % separate autoregressive part from shocks
-            %----------------------------------------
-            Tz{isol}=tmp(iov,iov);
-            Re{isol}=obj.solution.Tz{isol}(:,e_0(1):end);
-            if isol==1
-                npges=size(Re{isol},2)/exo_nbr;
-            end
-            Re{isol}=reshape(Re{isol},[endo_nbr,exo_nbr,npges]);
-        end
-    end
 
     function z=HistoricalDecompositionEngine(z,epsilon)
         
