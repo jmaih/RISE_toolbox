@@ -1,4 +1,5 @@
-function [T,eigval,retcode]=dsge_solver_h(obj,structural_matrices)
+function [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices)
+% the obj going out probably contains the changed options
 
 if isempty(obj)
     if nargout>1
@@ -37,7 +38,7 @@ if obj.options.solve_order>=1
     others=struct();
     others.theta_hat=structural_matrices.theta_hat;
     
-    [T.Tz,others,eigval,retcode]=solve_first_order(structural_matrices.dv,...
+    [T.Tz,others,eigval,retcode,obj.options]=solve_first_order(structural_matrices.dv,...
         structural_matrices.transition_matrices.Q,others,siz,pos,obj.options,shock_horizon);
     
     % higher orders
@@ -241,14 +242,13 @@ end
             end
         end
     end
-
 end
 
-function [Tz,others,eigval,retcode]=solve_first_order(dv,Q,others,siz,pos,options,k_future)
+function [Tz,others,eigval,retcode,options]=solve_first_order(dv,Q,others,siz,pos,options,k_future)
 
 [dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus]=utils.solve.pull_first_order_partitions(dv,pos.v);
 
-[Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_h(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,Q,siz,pos,options);
+[Tz_pb,eigval,retcode,options]=dsge_solver_first_order_autoregress_h(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,Q,siz,pos,options);
 
 Tz=cell(1,siz.h);
 if ~retcode
@@ -369,24 +369,17 @@ end
 
 function [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,siz,options)
 rise_qz_criterium=sqrt(eps);
-switch options.solver
-    case 1
+switch lower(options.solver)
+    case {'rise_1'}
         [Tz_pb,eigval,retcode]=rise_solve_constant();
-    case 2
+    case {'klein'}
         [Tz_pb,eigval,retcode]=klein_solve();
-    case 22
+    case {'aim'}
         [Tz_pb,eigval,retcode]=aim_solve();
-    case 23
+    case {'sims'}
         [Tz_pb,eigval,retcode]=sims_solve();
     otherwise
-        % user-defined solver
-        %--------------------
-        Aplus=[zeros(siz.nd,siz.ns+siz.np),dbf_plus{1,1}];
-        A0=[ds_0{1,1},dp_0{1,1},db_0{1,1},df_0{1,1}];
-        Aminus=[zeros(siz.nd,siz.ns),dpb_minus{1,1},zeros(siz.nd,siz.nf)];
-        [Tz_pb,eigval,retcode]=options.solver(Aplus,A0,Aminus);
-        Tz_pb=Tz_pb(:,siz.ns+(1:siz.np+siz.nb));
-        % error(['solver ',parser.any2str(options.solver),' not implemented'])
+        error(['unknown solver ',parser.any2str(options.solver)])
 end
 
     function [Tz_pb,eigval,retcode]=aim_solve(varargin)
@@ -563,17 +556,17 @@ end
     end
 end
 
-function [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_h(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,Q,siz,pos,options)
+function [Tz_pb,eigval,retcode,options]=...
+    dsge_solver_first_order_autoregress_h(dbf_plus,ds_0,dp_0,db_0,df_0,...
+    dpb_minus,Q,siz,pos,options)
 
 % options
 %--------
-
-
 bf_cols_adjusted=pos.t.bf;
 pb_cols_adjusted=pos.t.pb;
 
 nd_adjusted=siz.nd;
-siz_adjusted=siz;
+siz_adj=siz; % adjusted sizes
 accelerate=options.solve_accelerate && siz.ns;
 if accelerate
     Abar_minus_s=cell(1,siz.h);
@@ -583,9 +576,9 @@ if accelerate
     nd_adjusted=nd_adjusted-siz.ns;
     bf_cols_adjusted=bf_cols_adjusted-siz.ns;
     pb_cols_adjusted=pb_cols_adjusted-siz.ns;
-    siz_adjusted.ns=0;
-    siz_adjusted.nd=siz_adjusted.nd-siz.ns;
-    siz_adjusted.nT=siz_adjusted.nT-siz.ns;
+    siz_adj.ns=0;
+    siz_adj.nd=siz_adj.nd-siz.ns;
+    siz_adj.nT=siz_adj.nT-siz.ns;
 end
 % aggregate A0 and A_
 %--------------------
@@ -619,46 +612,67 @@ is_evs=false;
 if isempty(options.solver)
     is_evs=is_eigenvalue_solver();
     if is_evs
-        options.solver=1;
+        options.solver='rise_1';
     else
-        options.solver=3;
+        options.solver='mfi';
     end
 end
 
-kron_method=options.solver==4;
+T0=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,...
+    options.solve_initialization);
 
-if options.solver==3
-    iterate_func=@(x)functional_iteration_h(x,dbf_plus,d0,dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
-elseif options.solver>3
-    iterate_func=@(x)newton_iteration_h(x,dbf_plus,d0,dpb_minus,...
+kron_method=strncmpi(options.solver,'mnk',3);
+
+% [T1,W1]=newton_iteration_h_full(T0,Gplus01,A0,Aminus,kron_method,options)
+
+if strcmpi(options.solver,'mfi')
+    iterate_func=@(x)msre_solvers.functional_iteration_h(x,dbf_plus,d0,...
+        dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
+elseif strcmpi(options.solver,'mfi_full')
+    [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+    iterate_func=@(x)msre_solvers.functional_iteration_h_full(x,Gplus01,A0,Aminus);
+elseif any(strcmpi(options.solver,{'mnk','mn'}))
+    iterate_func=@(x)msre_solvers.newton_iteration_h(x,dbf_plus,d0,dpb_minus,...
         bf_cols_adjusted,pb_cols_adjusted,kron_method,options);
+elseif any(strcmpi(options.solver,{'mnk_full','mn_full'}))
+    [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+    iterate_func=@(x)msre_solvers.newton_iteration_h_full(x,Gplus01,A0,Aminus,...
+        kron_method,options);
+elseif strcmpi(options.solver,'fwz')
+    [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+    [iterate_func,solution_func,inverse_solution_func]= ...,sampling_func
+     msre_solvers.fwz_newton_system(Gplus01,A0,Aminus,Q);
+    T0=inverse_solution_func(T0);
 end
 eigval=[];
 
-T0=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,options.solve_initialization);
-
-switch options.solver
-    case {1,2}
-        [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adjusted,options);
-    case {3,4,5}
-        % T00=evalin('base','T00');
+switch lower(options.solver)
+    case {'rise_1','klein','aim','sims'}
+        [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(...
+            dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adj,options);
+    case {'mfi','mfi_full','mnk','mnk_full','mn','mn_full','fwz'}
         [Tz_pb,~,retcode]=fix_point_iterator(iterate_func,T0,options);
+        if  ~retcode && strcmpi(options.solver,'fwz')
+            Tz_pb=solution_func(Tz_pb);
+        end
+        if any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
+            Tz_pb=reshape(Tz_pb,[size(Tz_pb,1),size(Tz_pb,1),siz_adj.h]);
+        end
+        if any(strcmpi(options.solver,{'fwz','mfi_full','mnk_full','mn_full'}))
+            Tz_pb=Tz_pb(:,siz_adj.ns+(1:siz_adj.np+siz_adj.nb),:);
+        end
     otherwise
         % user-defined solver
         %--------------------
-        Aplus=zeros(siz_adjusted.nd,siz_adjusted.nd,siz_adjusted.h,siz_adjusted.h);
-        A0=zeros(siz_adjusted.nd,siz_adjusted.nd,siz_adjusted.h);
-        Aminus=zeros(siz_adjusted.nd,siz_adjusted.nd,siz_adjusted.h);
-        for r0=1:siz_adjusted.h
-            A0(:,:,r0)=d0{r0};
-            Aminus(:,siz_adjusted.ns+(1:siz_adjusted.np+siz_adjusted.nb),r0)=dpb_minus{r0};
-            for r1=1:siz_adjusted.h
-                Aplus(:,siz_adjusted.ns+siz_adjusted.np+(1:siz_adjusted.nb+siz_adjusted.nf),r0,r1)=dbf_plus{r0,r1};
-            end
+        [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+        
+        [Tz_pb,~,retcode]=options.solver(Gplus01,A0,Aminus,Q,T0);
+        
+        % collect the relevant part
+        %--------------------------
+        if ~retcode
+            Tz_pb=Tz_pb(:,siz_adj.ns+(1:siz_adj.np+siz_adj.nb),:);
         end
-        [Tz_pb,~,retcode]=options.solver(Aplus,A0,Aminus);
-        Tz_pb=Tz_pb(:,siz_adjusted.ns+(1:siz_adjusted.np+siz_adjusted.nb));
-        % error(['undefined solver :: ',parser.any2str(options.solver)])
 end
 
 if ~retcode
@@ -712,187 +726,4 @@ end
             m=max(abs(x(:)));
         end
     end
-
 end
-
-function [T1,T0_T1]=functional_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,pb_cols,~)
-n=size(d0{1},1);
-h=size(d0,2);
-if nargin<6
-    pb_cols=[];
-    if nargin<5
-        bf_cols=[];
-    end
-end
-if isempty(bf_cols)
-    bf_cols=1:n;
-end
-if isempty(pb_cols)
-    pb_cols=1:n;
-end
-npb=numel(pb_cols);
-if size(dbf_plus{1},2)~=numel(bf_cols)
-    error('number of columns of dbf_plus inconsistent with the number of bf variables')
-end
-if size(dpb_minus{1},2)~=npb
-    error('number of columns of dpb_minus inconsistent with the number of bp variables')
-end
-
-T0=reshape(T0,[n,npb,h]);
-T1=T0;
-for r0=1:h
-    U=d0{r0};
-    for r1=1:h
-        U(:,pb_cols)=U(:,pb_cols)+dbf_plus{r0,r1}*T0(bf_cols,:,r1);
-    end
-    T1(:,:,r0)=-U\dpb_minus{r0};
-end
-% update T
-%---------
-T1=reshape(T1,[n,npb*h]);
-
-T0_T1=reshape(T0,[n,npb*h])-T1;
-
-end
-
-function [T1,W1]=newton_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,...
-    pb_cols,kron_method,options)
-
-n=size(d0{1},1);
-h=size(d0,2);
-if nargin<7
-    kron_method=[];
-    if nargin<6
-        pb_cols=[];
-        if nargin<5
-            bf_cols=[];
-        end
-    end
-end
-
-if isempty(kron_method)
-    kron_method=true;
-end
-if isempty(bf_cols)
-    bf_cols=1:n;
-end
-if isempty(pb_cols)
-    pb_cols=1:n;
-end
-npb=numel(pb_cols);
-if size(dbf_plus{1},2)~=numel(bf_cols)
-    error('number of columns of dbf_plus inconsistent with the number of bf variables')
-end
-if size(dpb_minus{1},2)~=npb
-    error('number of columns of dpb_minus inconsistent with the number of bp variables')
-end
-
-if isempty(T0)
-    T0=zeros(n,npb,h);
-end
-
-n_npb=n*npb;
-T0=reshape(T0,[n,npb,h]);
-W=T0;
-if kron_method
-    G=zeros(n_npb*h);
-else
-    LMINUS=cell(1,h);
-    LPLUS=cell(h);
-end
-% Lminus=zeros(npb);
-Lplus01=zeros(n);
-I_nx_nd=speye(n_npb);
-for r0=1:h
-    U=d0{r0};
-    for r1=1:h
-        U(:,pb_cols)=U(:,pb_cols)+dbf_plus{r0,r1}*T0(bf_cols,:,r1);
-    end
-    Ui=U\speye(n);
-    T1_fi=-Ui*dpb_minus{r0};
-    W(:,:,r0)=W(:,:,r0)-T1_fi;
-    
-    Lminus=-T1_fi(pb_cols,:);
-    if kron_method
-        Lminus_prime=Lminus.';
-    else
-        LMINUS{r0}=sparse(Lminus);
-    end
-    rows=(r0-1)*n_npb+1:r0*n_npb;
-    for r1=1:h
-        cols=(r1-1)*n_npb+1:r1*n_npb;
-        Lplus01(:,bf_cols)=Ui*dbf_plus{r0,r1};
-        if kron_method
-            % build G
-            %--------
-            tmp=kron(Lminus_prime,Lplus01);
-            if r0==r1
-                tmp=tmp-I_nx_nd;
-            end
-            G(rows,cols)=tmp;
-        else
-            LPLUS{r0,r1}=sparse(Lplus01);
-        end
-    end
-end
-W=reshape(W,[n,npb*h]);
-if kron_method
-    % update T
-    %---------
-    delta=G\W(:);
-else
-%    delta=tfqmr(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),...
-%        options.fix_point_TolFun);
-	[delta,retcode]=transpose_free_quasi_minimum_residual(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),... 
-			[],... %x0 initial guess
-			options.fix_point_TolFun,... % tolerance level
-			options.fix_point_maxiter,... % maximum number of iterations
-			options.fix_point_verbose);
-end
-
-T1=T0+reshape(delta,[n,npb,h]);
-if nargout>1
-    W1=update_criterion();
-end
-T1=reshape(T1,[n,npb*h]);
-
-    function W1=update_criterion()
-        W1=T1;
-        for r00=1:h
-            U=d0{r00};
-            for r11=1:h
-                U(:,pb_cols)=U(:,pb_cols)+dbf_plus{r00,r11}*T1(bf_cols,:,r11);
-            end
-            Ui=U\eye(n);
-            T1_fi=-Ui*dpb_minus{r00};
-            W1(:,:,r00)=W1(:,:,r00)-T1_fi;
-        end
-    end
-
-    function Gd=find_newton_step(delta,Lplus,Lminus)
-        Gd=zeros(n*npb,h); % G*delta
-        delta=reshape(delta,[n*npb,h]);
-        for r00=1:h
-            for r11=1:h
-                Gd(:,r00)=Gd(:,r00)+vec(Lplus{r00,r11}*reshape(delta(:,r11),n,npb)*Lminus{r00});
-            end
-        end
-        Gd=delta-Gd;
-        Gd=Gd(:);
-    end
-    function x=vec(x)
-        x=x(:);
-    end
-end
-
-
-%             function res=hz_hzz()
-%                 %res=kron(hz,hzz); res=omega_1(res);
-%                 res=kron(hz,hzz)+kron(hzz,hz);
-%                 tmp=reshape(hzz,[siz.nz,siz.nz,siz.nz]);
-%                 tmp2=zeros(siz.nz^2,siz.nz^2,siz.nz);
-%                 for ipage=1:siz.nz
-%                     tmp2(:,:,ipage)=kron(hz,tmp(:,:,ipage));
-%                 end
-%                 res=res+reshape(tmp2,[siz.nz^2,siz.nz^3]);
-%             end
