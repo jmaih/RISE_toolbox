@@ -9,16 +9,16 @@ function [iterating_function,...
 % to 1.
 % N.B: The case where A, as constructed below, is singular is not
 % implemented.
-Aplus=unearth_frwrd_matrix(Gplus01,Q);
+hh=size(Q,1);
+Aplus=unearth_frwrd_matrix();
  
-fwl=any(Aplus{1});
-hh=numel(Aplus);
+fwl=any(Aplus(:,:,1));
 for istate=2:hh
-    fwl=fwl|any(Aplus{istate});
+    fwl=fwl|any(Aplus(:,:,istate));
 end
 
 ll=sum(fwl);
-nn=size(Aplus{1},1)+ll;
+nn=size(Aplus,1)+ll;
 Inl=eye(nn-ll);
 Il=eye(ll);
 Inl0=[Inl,zeros(nn-ll,ll)];
@@ -28,9 +28,9 @@ A=zeros(nn,nn,hh);
 B=zeros(nn,nn,hh);
 PIE=[zeros(nn-ll,ll);Il]; % SAME common across states
 for istate=1:hh
-    A(1:nn-ll,:,istate)=[A0{istate},Aplus{istate}(:,fwl)];
+    A(1:nn-ll,:,istate)=[A0(:,:,istate),Aplus(:,fwl,istate)];
     A(nn-ll+(1:ll),fwl,istate)=eye(ll);
-    B(1:nn-ll,1:nn-ll,istate)=-Aminus{istate};
+    B(1:nn-ll,1:nn-ll,istate)=-Aminus(:,:,istate);
     B(nn-ll+(1:ll),nn-ll+(1:ll),istate)=eye(ll);
 end
 
@@ -114,6 +114,19 @@ sampling_function=@sample_guess;
     function T=final_solution(X)
         GAM=X2Gamma(X);
         T=GAM(1:nn-ll,1:nn-ll,:);
+    end
+
+    function Aplus=unearth_frwrd_matrix()
+        % this function extracts Aplus from Gplus and is used for solving models
+        % using the Waggoner-Zha approach, which states the problem to solve as
+        % Aplus(st)*X_{t+1}+A0(st)*X_{t}+Aminus(st)*X_{t-1}+B(st)*Et=0 whereas in
+        % my approach, the problem solved would be
+        % Aplus(st+1)*X_{t+1}+A0(st)*X_{t}+Aminus(st)*X_{t-1}+B(st)*Et=0
+        endo_nbr=size(Gplus01,1);
+        Aplus=zeros(endo_nbr,endo_nbr,hh);
+        for reg=1:hh
+            Aplus(:,:,reg)=Gplus01(:,:,reg,reg)/Q(reg,reg);
+        end
     end
 end
 
