@@ -623,8 +623,6 @@ T0=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,...
 
 kron_method=strncmpi(options.solver,'mnk',3);
 
-% [T1,W1]=newton_iteration_h_full(T0,Gplus01,A0,Aminus,kron_method,options)
-
 if strcmpi(options.solver,'mfi')
     iterate_func=@(x)msre_solvers.functional_iteration_h(x,dbf_plus,d0,...
         dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
