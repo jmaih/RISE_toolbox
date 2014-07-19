@@ -126,8 +126,14 @@ if solve_order>0 && ~retcode && resolve_it
                 obj.solution.bgp=bgp_;
                 T.Tz=Tz;
             end
+			% set the name of the solver
+			%---------------------------
+			if isempty(obj.options.solver)
+				obj.options.solver='loose_commitment';
+			end
         else
-            [T,eigval,retcode]=dsge_solver_h(obj,structural_matrices);
+            [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices);
+			% options may have changed and so we re-collect obj
         end
         inv_order_var=obj.inv_order_var.after_solve;
         if ~retcode
