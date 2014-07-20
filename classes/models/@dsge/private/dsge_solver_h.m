@@ -5,7 +5,7 @@ if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
-    T=struct('solve_disable_theta',false); 
+    T=struct('solve_disable_theta',false);
     % gather the defaults from fix point iterator and initial guess
     T=utils.miscellaneous.mergestructures(T,fix_point_iterator(),...
         dsge_tools.utils.msre_initial_guess());
@@ -32,7 +32,7 @@ if obj.options.solve_order>=1
     siz.nz=siz.np+siz.nb+1+siz.ne*(1+shock_horizon);
     siz.nd=size(structural_matrices.dv{1,1},1); % number of equations
     pos.z.e_plus=pos.z.e_0(end)+(1:shock_horizon*siz.ne);
-
+    
     % Structure of elements that will move across different orders
     %-------------------------------------------------------------
     others=struct();
@@ -88,10 +88,10 @@ end
             a0_z=sparse(a0_z);
             a1_z=sparse(a1_z);
             hz=sparse(hz);
-                % third-order moments: no skewed shocks
-                %--------------------------------------
-                % Eu_u_u=sparse(siz.nz^3,siz.nz^3);
-                        
+            % third-order moments: no skewed shocks
+            %--------------------------------------
+            % Eu_u_u=sparse(siz.nz^3,siz.nz^3);
+            
             Dzzz=third_order_rhs();
             [T.Tzzz,retcode]=solve_generalized_sylvester(Dzzz,3);
             clear Dzzz
@@ -150,7 +150,7 @@ end
                     
                     a0_zz(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hzz+T.Tzz{r1}(pos.t.bf,:)*kron(hz,hz);
                     a1_zz(pos.v.bf_plus,:)=T.Tzz{r1}(pos.t.bf,:);
-
+                    
                     Dzzz(:,:,r0)=Dzzz(:,:,r0)+...
                         dvvv_Evz_vz_vz()+...
                         dvv_Evz_vzz()+...
@@ -200,11 +200,11 @@ end
             %     2 preconditioner M was ill-conditioned.
             %     3 tfqmr stagnated (two consecutive iterates were the same).
             %     4 one of the scalar quantities calculated during tfqmr became too
-			[X,retcode]=transpose_free_quasi_minimum_residual(@afun,D(:),... % right hand side
-					    [],... %x0 initial guess
-					    obj.options.fix_point_TolFun,... % tolerance level
-					    obj.options.fix_point_maxiter,... % maximum number of iterations
-					    obj.options.fix_point_verbose);
+            [X,retcode]=transpose_free_quasi_minimum_residual(@afun,D(:),... % right hand side
+                [],... %x0 initial guess
+                obj.options.fix_point_TolFun,... % tolerance level
+                obj.options.fix_point_maxiter,... % maximum number of iterations
+                obj.options.fix_point_verbose);
             if ~retcode
                 X=reshape(X,[siz.nd,siz.nz^oo,siz.h]);
                 tmp=cell(1,siz.h);
@@ -252,69 +252,69 @@ function [Tz,others,eigval,retcode,options]=solve_first_order(dv,Q,others,siz,po
 
 Tz=cell(1,siz.h);
 if ~retcode
-% (non-)certainty equivalence
-%----------------------------
-dt_t=zeros(siz.nd,siz.h);
-A0sig=zeros(siz.nd,siz.nT,siz.h);
-A0=zeros(siz.nd,siz.nT,siz.h);
-Tz_sig=zeros(siz.nT,siz.h);
-df_Lf_Tzp_Lp=zeros(siz.nd,siz.nT);
-db_Lb_Tzb_Lb=zeros(siz.nd,siz.nT);
-UUi=zeros(siz.nd,siz.nT,siz.h);
-others.dbf_plus=cell(siz.h);
-for rt=1:siz.h
-    de_0_rt=0;
-    Sdbf_plus_rt=0;
-    for rplus=1:siz.h
-        ds_0=dv{rt,rplus}(:,pos.v.s_0);
-        dp_0=dv{rt,rplus}(:,pos.v.p_0);
-        db_0=dv{rt,rplus}(:,pos.v.b_0);
-        df_0=dv{rt,rplus}(:,pos.v.f_0);
-        A0_0_1=[ds_0,dp_0,db_0,df_0];
-        A0(:,:,rt)=A0(:,:,rt)+A0_0_1;
-        % provision for non-certainty equivalence
-        %----------------------------------------
-        dtheta_plus=dv{rt,rplus}(:,pos.v.theta_plus);
-        df_plus=dv{rt,rplus}(:,pos.v.f_plus);
-        db_plus=dv{rt,rplus}(:,pos.v.b_plus);
-        df_Lf_Tzp_Lp(:,pos.t.p)=df_plus*Tz_pb(pos.t.f,1:siz.np,rplus);% place in the p position
-        db_Lb_Tzb_Lb(:,pos.t.b)=db_plus*Tz_pb(pos.t.b,siz.np+(1:siz.nb),rplus);% place in the b position
-        A0sig(:,:,rt) = A0sig(:,:,rt) + A0_0_1 + df_Lf_Tzp_Lp + db_Lb_Tzb_Lb;
-        dt_t(:,rt)=dt_t(:,rt)+dtheta_plus*others.theta_hat{rt,rplus};
-        
-        % provision for shock impacts
-        %----------------------------
-        de_0=dv{rt,rplus}(:,pos.v.e_0);
-        others.dbf_plus{rt,rplus}=dv{rt,rplus}(:,pos.v.bf_plus);
-        UUi(:,:,rt)=UUi(:,:,rt)+A0_0_1;
-        UUi(:,pos.t.pb,rt)=UUi(:,pos.t.pb,rt)+others.dbf_plus{rt,rplus}*Tz_pb(pos.t.bf,:,rplus);
-        de_0_rt=de_0_rt+de_0;
-        if k_future
-            Sdbf_plus_rt=Sdbf_plus_rt+others.dbf_plus{rt,rplus};
+    % (non-)certainty equivalence
+    %----------------------------
+    dt_t=zeros(siz.nd,siz.h);
+    A0sig=zeros(siz.nd,siz.nT,siz.h);
+    A0=zeros(siz.nd,siz.nT,siz.h);
+    Tz_sig=zeros(siz.nT,siz.h);
+    df_Lf_Tzp_Lp=zeros(siz.nd,siz.nT);
+    db_Lb_Tzb_Lb=zeros(siz.nd,siz.nT);
+    UUi=zeros(siz.nd,siz.nT,siz.h);
+    others.dbf_plus=cell(siz.h);
+    for rt=1:siz.h
+        de_0_rt=0;
+        Sdbf_plus_rt=0;
+        for rplus=1:siz.h
+            ds_0=dv{rt,rplus}(:,pos.v.s_0);
+            dp_0=dv{rt,rplus}(:,pos.v.p_0);
+            db_0=dv{rt,rplus}(:,pos.v.b_0);
+            df_0=dv{rt,rplus}(:,pos.v.f_0);
+            A0_0_1=[ds_0,dp_0,db_0,df_0];
+            A0(:,:,rt)=A0(:,:,rt)+A0_0_1;
+            % provision for non-certainty equivalence
+            %----------------------------------------
+            dtheta_plus=dv{rt,rplus}(:,pos.v.theta_plus);
+            df_plus=dv{rt,rplus}(:,pos.v.f_plus);
+            db_plus=dv{rt,rplus}(:,pos.v.b_plus);
+            df_Lf_Tzp_Lp(:,pos.t.p)=df_plus*Tz_pb(pos.t.f,1:siz.np,rplus);% place in the p position
+            db_Lb_Tzb_Lb(:,pos.t.b)=db_plus*Tz_pb(pos.t.b,siz.np+(1:siz.nb),rplus);% place in the b position
+            A0sig(:,:,rt) = A0sig(:,:,rt) + A0_0_1 + df_Lf_Tzp_Lp + db_Lb_Tzb_Lb;
+            dt_t(:,rt)=dt_t(:,rt)+dtheta_plus*others.theta_hat{rt,rplus};
+            
+            % provision for shock impacts
+            %----------------------------
+            de_0=dv{rt,rplus}(:,pos.v.e_0);
+            others.dbf_plus{rt,rplus}=dv{rt,rplus}(:,pos.v.bf_plus);
+            UUi(:,:,rt)=UUi(:,:,rt)+A0_0_1;
+            UUi(:,pos.t.pb,rt)=UUi(:,pos.t.pb,rt)+others.dbf_plus{rt,rplus}*Tz_pb(pos.t.bf,:,rplus);
+            de_0_rt=de_0_rt+de_0;
+            if k_future
+                Sdbf_plus_rt=Sdbf_plus_rt+others.dbf_plus{rt,rplus};
+            end
+        end
+        % shock impacts (current)
+        %------------------------
+        UUi(:,:,rt)=UUi(:,:,rt)\eye(siz.nT);
+        Tz_e_rt=-UUi(:,:,rt)*de_0_rt;
+        % shock impacts (future)
+        %-----------------------
+        for ik=1:k_future
+            Tz_e_rt(:,:,ik+1)=-UUi(:,:,rt)*Sdbf_plus_rt*Tz_e_rt(pos.t.bf,:,ik);
+        end
+        Tz_e_rt=reshape(Tz_e_rt,siz.nd,siz.ne*(k_future+1));
+        Tz{rt}=[Tz_pb(:,:,rt),Tz_sig(:,rt),Tz_e_rt];
+    end
+    
+    % now solve sum(A+*Tz_sig(+)+A0_sig*Tz_sig+dt_t=0
+    %-------------------------------------------------
+    Tz_sig=solve_perturbation_impact(Tz_sig,A0sig,others.dbf_plus,dt_t);
+    if any(Tz_sig(:))
+        for rt=1:siz.h
+            Tz{rt}(:,siz.np+siz.nb+1)=Tz_sig(:,rt);
         end
     end
-    % shock impacts (current)
-    %------------------------
-    UUi(:,:,rt)=UUi(:,:,rt)\eye(siz.nT);
-    Tz_e_rt=-UUi(:,:,rt)*de_0_rt;
-    % shock impacts (future)
-    %-----------------------
-    for ik=1:k_future
-        Tz_e_rt(:,:,ik+1)=-UUi(:,:,rt)*Sdbf_plus_rt*Tz_e_rt(pos.t.bf,:,ik);
-    end
-    Tz_e_rt=reshape(Tz_e_rt,siz.nd,siz.ne*(k_future+1));
-    Tz{rt}=[Tz_pb(:,:,rt),Tz_sig(:,rt),Tz_e_rt];
-end
-
-% now solve sum(A+*Tz_sig(+)+A0_sig*Tz_sig+dt_t=0
-%-------------------------------------------------
-Tz_sig=solve_perturbation_impact(Tz_sig,A0sig,others.dbf_plus,dt_t);
-if any(Tz_sig(:))
-    for rt=1:siz.h
-        Tz{rt}(:,siz.np+siz.nb+1)=Tz_sig(:,rt);
-    end
-end
-others.Ui=UUi;
+    others.Ui=UUi;
 end
 
     function Tz_sig=solve_perturbation_impact(Tz_sig,A0sig,dbf_plus,dt_t)
@@ -367,7 +367,60 @@ end
     end
 end
 
-function [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,siz,options)
+function [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(...
+    dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,siz,options)
+nregs=numel(dbf_plus);
+tolerance=1e-9;
+all_same=true;
+if nregs>1
+    ncols_bf=siz.nb+siz.nf;
+    ncols_pb=siz.np+siz.nb;
+    if ncols_bf
+        lead_=@(x)vec(dbf_plus{x});
+        lead_1=lead_(1);
+    end
+    curr_=@(x)vec([ds_0{x},dp_0{x},db_0{x},df_0{x}]);
+    curr_1=curr_(1);
+    if ncols_pb
+        lag_=@(x)vec(dpb_minus{x});
+        lag_1=lag_(1);
+    end
+    for ireg=2:nregs
+        if ncols_bf
+            all_same=all_same && max(abs(lead_1-lead_(ireg)))<tolerance;
+        end
+        all_same=all_same && max(abs(curr_1-curr_(ireg)))<tolerance;
+        if ncols_pb
+            all_same=all_same && max(abs(lag_1-lag_(ireg)))<tolerance;
+        end
+        if ~all_same
+            break
+        end
+    end
+end
+
+if ~all_same % a diagonal transition matrix with entirely different regimes
+    % solve one at a time
+    retcode=0;
+    nvars=siz.ns+siz.np+siz.nb+siz.nf;
+    Tz_pb=zeros(nvars,siz.np+siz.nb,nregs);
+    eigval=cell(1,nregs);
+    for ireg=1:nregs
+        if ~retcode
+            [Tsol,eigval{ireg},retcode]=dsge_solver_first_order_autoregress_1(...
+                dbf_plus(ireg),ds_0(ireg),dp_0(ireg),db_0(ireg),df_0(ireg),...
+                dpb_minus(ireg),siz,options);
+            if ~retcode
+                Tz_pb(:,:,ireg)=Tsol;
+            end
+        end
+    end
+    if ~retcode
+        eigval=cell2mat(eigval);
+    end
+    return
+end
+
 rise_qz_criterium=sqrt(eps);
 switch lower(options.solver)
     case {'rise_1'}
@@ -382,6 +435,10 @@ switch lower(options.solver)
         error(['unknown solver ',parser.any2str(options.solver)])
 end
 
+if nregs>1
+    Tz_pb=Tz_pb(:,:,ones(1,nregs));
+end
+
     function [Tz_pb,eigval,retcode]=aim_solve(varargin)
         error('the aim solver is not yet implemented')
     end
@@ -391,43 +448,43 @@ end
     end
 
     function [TT,SS,Z,eigval,retcode]=process_eigenvalues(TT,SS,Q,Z,npred)
-            % Ordered inverse eigenvalues
-            %----------------------------
-            eigval = ordeig(TT,SS);
-            stable = abs(eigval) >= 1 + rise_qz_criterium;
-            nstable = sum(stable);
-            unit = abs(abs(eigval)-1) < rise_qz_criterium;
-            nunit = sum(unit);
+        % Ordered inverse eigenvalues
+        %----------------------------
+        eigval = ordeig(TT,SS);
+        stable = abs(eigval) >= 1 + rise_qz_criterium;
+        nstable = sum(stable);
+        unit = abs(abs(eigval)-1) < rise_qz_criterium;
+        nunit = sum(unit);
+        
+        retcode=0;
+        if nstable+nunit<npred
+            retcode=22; % no solution
+        elseif nstable+nunit>npred
+            retcode=21; % multiple solutions
+        else
+            % Clusters of unit, stable, and unstable eigenvalues.
+            clusters = zeros(size(eigval));
             
-            retcode=0;
-            if nstable+nunit<npred
-                retcode=22; % no solution
-            elseif nstable+nunit>npred
-                retcode=21; % multiple solutions
-            else
-                % Clusters of unit, stable, and unstable eigenvalues.
-                clusters = zeros(size(eigval));
-                
-                % Unit roots first.
-                %------------------
-                clusters(unit) = 2;
-                
-                % Stable roots second.
-                %---------------------
-                clusters(stable) = 1;
-                
-                % Unstable roots last.
-                %---------------------
-                
-                % Re-order by the clusters.
-                %--------------------------
-                [TT,SS,~,Z] = ordqz(TT,SS,Q,Z,clusters);
-            end
-            % Undo the eigval inversion.
-            %---------------------------
-            infeigval = eigval == 0;
-            eigval(~infeigval) = 1./eigval(~infeigval);
-            eigval(infeigval) = Inf;
+            % Unit roots first.
+            %------------------
+            clusters(unit) = 2;
+            
+            % Stable roots second.
+            %---------------------
+            clusters(stable) = 1;
+            
+            % Unstable roots last.
+            %---------------------
+            
+            % Re-order by the clusters.
+            %--------------------------
+            [TT,SS,~,Z] = ordqz(TT,SS,Q,Z,clusters);
+        end
+        % Undo the eigval inversion.
+        %---------------------------
+        infeigval = eigval == 0;
+        eigval(~infeigval) = 1./eigval(~infeigval);
+        eigval(infeigval) = Inf;
     end
 
     function [Tz_pb,eigval,retcode]=klein_solve()
@@ -436,8 +493,8 @@ end
         nbf=siz.nb+siz.nf;
         bf_loc=siz.ns+siz.np+(1:siz.nb+siz.nf);
         pb_loc=siz.ns+(1:siz.np+siz.nb);
-            B0=[ds_0{1,1},dp_0{1,1},db_0{1,1},df_0{1,1}];
-            Bminus=[zeros(siz.nd,siz.ns),dpb_minus{1,1},zeros(siz.nd,siz.nf)];
+        B0=[ds_0{1,1},dp_0{1,1},db_0{1,1},df_0{1,1}];
+        Bminus=[zeros(siz.nd,siz.ns),dpb_minus{1,1},zeros(siz.nd,siz.nf)];
         
         a=[B0,dbf_plus{1,1}
             zeros(nbf,siz.nd+nbf)];
@@ -461,7 +518,7 @@ end
             [TT,SS,Z,eigval,retcode]=process_eigenvalues(TT,SS,Q,Z,npred);
             
             sol=[];
-            if ~retcode                
+            if ~retcode
                 z11 = Z(1:npred,1:npred);
                 
                 z11i = z11\eye(npred);
@@ -568,34 +625,37 @@ pb_cols_adjusted=pos.t.pb;
 nd_adjusted=siz.nd;
 siz_adj=siz; % adjusted sizes
 accelerate=options.solve_accelerate && siz.ns;
-if accelerate
-    Abar_minus_s=cell(1,siz.h);
-    R_s_s=cell(1,siz.h);
-    R_s_ns=cell(1,siz.h);
-    Abar_plus_s=cell(siz.h);
-    nd_adjusted=nd_adjusted-siz.ns;
-    bf_cols_adjusted=bf_cols_adjusted-siz.ns;
-    pb_cols_adjusted=pb_cols_adjusted-siz.ns;
-    siz_adj.ns=0;
-    siz_adj.nd=siz_adj.nd-siz.ns;
-    siz_adj.nT=siz_adj.nT-siz.ns;
-end
 % aggregate A0 and A_
 %--------------------
-d0=num2cell(zeros(1,siz.h));
-d_=num2cell(zeros(1,siz.h));
+d0=cell(1,siz.h);
 for r0=1:siz.h
-    for r1=1:siz.h
-        d0{r0}=d0{r0}+[ds_0{r0,r1},dp_0{r0,r1},db_0{r0,r1},df_0{r0,r1}];
-        d_{r0}=d_{r0}+dpb_minus{r0,r1};
+    for r1=2:siz.h
+        ds_0{r0,1}=ds_0{r0,1}+ds_0{r0,r1};
+        dp_0{r0,1}=dp_0{r0,1}+dp_0{r0,r1};
+        db_0{r0,1}=db_0{r0,1}+db_0{r0,r1};
+        df_0{r0,1}=df_0{r0,1}+df_0{r0,r1};
+        dpb_minus{r0,1}=dpb_minus{r0,1}+dpb_minus{r0,r1};
     end
+    d0{r0}=[ds_0{r0,1},dp_0{r0,1},db_0{r0,1},df_0{r0,1}];
     % eliminate static variables for speed
     %-------------------------------------
     if accelerate
+        if r0==1
+            Abar_minus_s=cell(1,siz.h);
+            R_s_s=cell(1,siz.h);
+            R_s_ns=cell(1,siz.h);
+            Abar_plus_s=cell(siz.h);
+            nd_adjusted=nd_adjusted-siz.ns;
+            bf_cols_adjusted=bf_cols_adjusted-siz.ns;
+            pb_cols_adjusted=pb_cols_adjusted-siz.ns;
+            siz_adj.ns=0;
+            siz_adj.nd=siz_adj.nd-siz.ns;
+            siz_adj.nT=siz_adj.nT-siz.ns;
+        end
         [Q0,d0{r0}]=qr(d0{r0});
-        d_{r0}=Q0'*d_{r0};
-        Abar_minus_s{r0}=d_{r0}(1:siz.ns,:);
-        d_{r0}=d_{r0}(siz.ns+1:end,:);
+        dpb_minus{r0,1}=Q0'*dpb_minus{r0,1};
+        Abar_minus_s{r0}=dpb_minus{r0,1}(1:siz.ns,:);
+        dpb_minus{r0,1}=dpb_minus{r0,1}(siz.ns+1:end,:);
         for r1=1:siz.h
             dbf_plus{r0,r1}=Q0'*dbf_plus{r0,r1};
             Abar_plus_s{r0,r1}=dbf_plus{r0,r1}(1:siz.ns,:);
@@ -604,9 +664,16 @@ for r0=1:siz.h
         R_s_s{r0}=d0{r0}(1:siz.ns,1:siz.ns);
         R_s_ns{r0}=d0{r0}(1:siz.ns,siz.ns+1:end);
         d0{r0}=d0{r0}(siz.ns+1:end,siz.ns+1:end);
+        ds_0{r0,1}=d0{r0}(:,1:siz_adj.ns);
+        dp_0{r0,1}=d0{r0}(:,siz_adj.ns+(1:siz_adj.np));
+        db_0{r0,1}=d0{r0}(:,siz_adj.ns+siz_adj.np+(1:siz_adj.nb));
+        df_0{r0,1}=d0{r0}(:,siz_adj.ns+siz_adj.np+siz_adj.nb+(1:siz_adj.nf));
     end
 end
-dpb_minus=d_; clear d_
+ds_0=ds_0(:,1)';
+dp_0=dp_0(:,1)';
+db_0=db_0(:,1)';
+df_0=df_0(:,1)';
 
 is_evs=false;
 if isempty(options.solver)
@@ -640,15 +707,16 @@ elseif any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
 elseif strcmpi(options.solver,'fwz')
     [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
     [iterate_func,solution_func,inverse_solution_func]= ...,sampling_func
-     msre_solvers.fwz_newton_system(Gplus01,A0,Aminus,Q);
+        msre_solvers.fwz_newton_system(Gplus01,A0,Aminus,Q);
     T0=inverse_solution_func(T0);
 end
 eigval=[];
 
 switch lower(options.solver)
     case {'rise_1','klein','aim','sims'}
+        dbf_plus_row=reconfigure_aplus();
         [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(...
-            dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adj,options);
+            dbf_plus_row,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adj,options);
     case {'mfi','mfi_full','mnk','mnk_full','mn','mn_full','fwz'}
         [Tz_pb,~,retcode]=fix_point_iterator(iterate_func,T0,options);
         if  ~retcode && strcmpi(options.solver,'fwz')
@@ -676,9 +744,6 @@ end
 
 if ~retcode
     npb=siz.np+siz.nb;
-    if is_evs && siz.h>1
-        Tz_pb=repmat(Tz_pb,[1,1,siz.h]);
-    end
     Tz_pb=reshape(Tz_pb,[nd_adjusted,npb,siz.h]);
     if accelerate
         % solve for the static variables
@@ -695,6 +760,12 @@ if ~retcode
         Tz_pb=cat(1,Sz_pb,Tz_pb);
     end
 end
+    function Apl=reconfigure_aplus()
+        Apl=cell(siz.h,1);
+        for ii=1:siz.h
+            Apl{ii}=dbf_plus{ii,ii}/Q(ii,ii);
+        end
+    end
 
     function flag=is_eigenvalue_solver()
         flag=true;
@@ -713,12 +784,6 @@ end
                     flag=false;
                     break
                 end
-            end
-        end
-        function Apl=reconfigure_aplus()
-            Apl=cell(siz.h,1);
-            for ii=1:siz.h
-                Apl{ii}=dbf_plus{ii,ii}/Q(ii,ii);
             end
         end
         function m=get_max(x)
