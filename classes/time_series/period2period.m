@@ -18,17 +18,17 @@ freq0=frequency2num(freq0);
 freq1=frequency2num(freq1);
 if numel(p0)==2 && isempty(head)
     p=p0;
-    p(1)=period2period(p0(1),freq0,freq1,true);
-    p(2)=period2period(p0(2),freq0,freq1,false);
+    p(1)=period2period(p0(1),freq0(1),freq1(1),true);
+    p(2)=period2period(p0(2),freq0(1),freq1(1),false);
     return
 elseif isempty(head)
     error('head or tail must be specified in the last argument')
 end
 
 if head
-    p=floor((p0-1)*freq1/freq0+1);
+    p=floor((p0-1)*freq1(1)/freq0(1)+1);
 else
-    p=ceil(p0*freq1/freq0);
+    p=ceil(p0*freq1(1)/freq0(1));
 end
 
 end
