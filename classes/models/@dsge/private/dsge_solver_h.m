@@ -626,16 +626,17 @@ kron_method=strncmpi(options.solver,'mnk',3);
 if strcmpi(options.solver,'mfi')
     iterate_func=@(x)msre_solvers.functional_iteration_h(x,dbf_plus,d0,...
         dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
-elseif strcmpi(options.solver,'mfi_full')
-    [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
-    iterate_func=@(x)msre_solvers.functional_iteration_h_full(x,Gplus01,A0,Aminus);
 elseif any(strcmpi(options.solver,{'mnk','mn'}))
     iterate_func=@(x)msre_solvers.newton_iteration_h(x,dbf_plus,d0,dpb_minus,...
         bf_cols_adjusted,pb_cols_adjusted,kron_method,options);
-elseif any(strcmpi(options.solver,{'mnk_full','mn_full'}))
+elseif any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
     [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
-    iterate_func=@(x)msre_solvers.newton_iteration_h_full(x,Gplus01,A0,Aminus,...
-        kron_method,options);
+    if strcmpi(options.solver,'mfi_full')
+        iterate_func=@(x)msre_solvers.functional_iteration_h_full(x,Gplus01,A0,Aminus);
+    else
+        iterate_func=@(x)msre_solvers.newton_iteration_h_full(x,Gplus01,A0,Aminus,...
+            kron_method,options);
+    end
 elseif strcmpi(options.solver,'fwz')
     [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
     [iterate_func,solution_func,inverse_solution_func]= ...,sampling_func
