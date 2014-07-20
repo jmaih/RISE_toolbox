@@ -123,7 +123,4 @@ T1=reshape(T1,[n,npb*h]);
         Gd=delta-Gd;
         Gd=Gd(:);
     end
-    function x=vec(x)
-        x=x(:);
-    end
 end
