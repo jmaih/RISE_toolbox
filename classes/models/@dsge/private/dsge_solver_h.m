@@ -675,7 +675,6 @@ dp_0=dp_0(:,1)';
 db_0=db_0(:,1)';
 df_0=df_0(:,1)';
 
-is_evs=false;
 if isempty(options.solver)
     is_evs=is_eigenvalue_solver();
     if is_evs
