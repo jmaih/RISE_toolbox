@@ -49,10 +49,10 @@ def=obj.solution.definitions{s1};
 % dynamic model
 %--------------
 dynamic_model=obj.routines.dynamic;
-order__=1;
 if isa(obj.routines.probs_times_dynamic_derivatives,'function_handle')
-    jacobian_dynamic_model=@(varargin)obj.routines.probs_times_dynamic_derivatives(order__,varargin{:});
+    jacobian_dynamic_model=@(varargin)obj.routines.probs_times_dynamic_derivatives(varargin{:});
 else
+    order__=1;
     jacobian_dynamic_model=obj.routines.probs_times_dynamic_derivatives(order__);
 end
 order_var=obj.order_var.after_solve;
