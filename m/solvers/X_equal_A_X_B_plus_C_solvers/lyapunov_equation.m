@@ -58,18 +58,10 @@ switch algo
             state_vars=any(T);
             T=T(state_vars,state_vars);
             Q=Q(state_vars,state_vars);
-            V0=Q;
-            G0=T;
-        else
-            V0=Q;
-            G0=T;
         end
-        if lyapunov_fast_doubling && ~any(state_vars)
-            V=0;
-            retcode=0;
-        else
-            [V,~,retcode]=fix_point_iterator(@iterator,V0,options);
-        end
+        V0=Q;
+        G0=T;
+        [V,~,retcode]=fix_point_iterator(@iterator,V0,options);
         if retcode
             retcode=280+retcode;
         else
