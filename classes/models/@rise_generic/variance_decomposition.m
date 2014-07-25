@@ -126,8 +126,8 @@ end
             [Vi(:,:,i),Vii]=decompose_variance(Vi(:,:,i),V,Vii);
         end
         Vinfi=zeros(grand_endo_nbr,exo_nbr);
-        [Vinf,retcode0]=lyapunov_equation(T,RR);
-        if retcode0 && any(~isfinite(Vinf(:)))
+        [Vinf,retcode0]=lyapunov_equation(T,RR,obj.options);
+        if retcode0 || any(~isfinite(Vinf(:)))
             error('Variance could not be solved')
         end
         % deal with zero variances
@@ -141,7 +141,7 @@ end
                 Ri(:,locs)=R(:,locs);
                 RRi=Ri*Ri';
                 if nargin<3
-                    [V00,retcode1]=lyapunov_equation(T,RRi);
+                    [V00,retcode1]=lyapunov_equation(T,RRi,obj.options);
                     if retcode1 && any(~isfinite(V00(:)))
                         error('Variance could not be solved')
                     end
