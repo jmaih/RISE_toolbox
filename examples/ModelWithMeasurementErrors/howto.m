@@ -3,7 +3,6 @@ close all
 clear
 clc
 %% add the necessary paths
-setpaths
 
 %% there is nothing complicated about measurement errors.
 
