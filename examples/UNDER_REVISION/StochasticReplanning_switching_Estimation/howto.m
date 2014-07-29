@@ -17,7 +17,7 @@ data=ts(data_start,data,vnames);
 sw=rise('usmodel_sr_switch','data',data,...
     'estim_start_date',obs2date(data_start,71),... % retrieve the date of the 71st observation
     'kf_presample',4,...
-    'lc_MaxIter',5000,... % jack up the number of iterations to increase the probability of solving
+    'fix_point_maxiter',5000,... % jack up the number of iterations to increase the probability of solving
     'check_stability',false); % save some time by avoiding the checking of stability all the time
     
 
