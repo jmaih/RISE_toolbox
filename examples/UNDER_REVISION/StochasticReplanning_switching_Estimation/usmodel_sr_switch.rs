@@ -16,8 +16,8 @@ ctrend cg, sig_a, sig_b,sig_w,sig_pinf,sig_m,sig_qs,sig_g
 % loss function weights
 parameters wy, wr
 
-% we begin by specifying the transition probabilities
-parameters pelin_tp_1_2, pelin_tp_2_1
+% we specify the probability of commitment (if it is to vary)
+parameters gamma_prob
 
 model(linear) 
 
@@ -103,9 +103,9 @@ model(linear)
 		robs =    1*(r) + conster;
 		labobs = lab + constelab;
 
-observables dy dc dinve dw pinfobs robs labobs;
+observables dy dc dinve dw pinfobs robs labobs
 
-planner_objective{discount = 0.99,commitment=1-pelin_tp_1_2} -.5*(1*pinf_target^2+wy*y^2+wr*dr^2);	
+planner_objective{discount = 0.99,commitment=gamma_prob} -.5*(1*pinf_target^2+wy*y^2+wr*dr^2);	
 
 steady_state_model(imposed)
 	dy=ctrend;
@@ -176,6 +176,5 @@ parameterization
 	constepinf, .7,.425,.825,gamma_pdf(.9);
 	constelab,  1.2918,-4,4,normal_pdf(.9);
 
-	pelin_tp_1_2,.1,0.3,0.7,beta_pdf(.9);
-	pelin_tp_2_1,.1,0.3,0.7,beta_pdf(.9);
+	gamma_prob,.5,0.3,0.7,beta_pdf(.9);
 
