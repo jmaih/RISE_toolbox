@@ -1,12 +1,12 @@
-var y r pai g x a theta c z;
+endogenous y r pai g x a theta c z
 
-varexo e_a, e_theta, e_z, e_r;
+exogenous e_a, e_theta, e_z, e_r
 
 parameters rho_a, a_ss sig_a rho_theta theta_ss sig_theta
-z_ss sig_z pai_ss beta sig_r omega rho_pai rho_g rho_x psi rho_r;
+z_ss sig_z pai_ss beta sig_r omega rho_pai rho_g rho_x psi rho_r
  
 
-model;
+model
 	# eta=1/omega;
 	# phi=eta*(theta_ss-1)/psi;
 	
@@ -28,10 +28,9 @@ model;
 
 	log(r/steady_state(r))=rho_r*log(r{-1}/steady_state(r))+rho_pai*log(pai/pai_ss)+
 		rho_g*log(g/steady_state(g))+rho_x*log(x/steady_state(x))+sig_r*e_r;
-end;
 
-parameterization;
-	// fixed parameters
+parameterization
+	% fixed parameters
 	a_ss      ,1.0000;
 	z_ss      ,1.0048;
 	pai_ss    ,1.0086;
@@ -41,8 +40,8 @@ parameterization;
 	theta_ss  ,6.0000;
 	
 	omega     ,0.0617;
-//	alpha_x   ,0.0836; 
-//	alpha_pai ,0.0000; 
+%	alpha_x   ,0.0836; 
+%	alpha_pai ,0.0000; 
 	rho_pai   ,0.3597; 
 	rho_g     ,0.2536; 
 	rho_x     ,0.0347; 
@@ -52,4 +51,3 @@ parameterization;
 	sig_theta ,0.0012; 
 	sig_z     ,0.0109; 
 	sig_r     ,0.0031; 
-end;
