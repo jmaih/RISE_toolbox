@@ -146,7 +146,10 @@ classdef bee %< handle
             end
             obj.vargs=varargin;
             obj.number_of_parameters=size(obj.lb,1);
-            obj.Objective=fcnchk(Objective,length(obj.vargs));
+            if ischar(Objective)
+                Objective=str2func(Objective);
+            end
+            obj.Objective=Objective;
             n0=size(obj.x0,2);
             if n0
                 n0=min(n0,obj.MaxNodes);
