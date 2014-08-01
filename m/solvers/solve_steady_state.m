@@ -16,7 +16,8 @@ if optim_opt.is_unique
         optim_opt.trans_mat_func,...
         ys0(:,1),pp(:,1),def{1},optim_opt.exo_nbr);
     if ~retcode
-        [pp_unique,def_unique,retcode]=ergodic_parameters(TransMat.Qinit,def,pp);
+        [pp_unique,def_unique,retcode]=...
+            dsge_tools.ergodic_parameters(TransMat.Qinit,def,pp);
     end
 end
 if ~retcode

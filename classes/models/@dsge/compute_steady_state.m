@@ -131,7 +131,7 @@ if ~retcode
         for s0=1:number_of_regimes
             if obj.is_unique_steady_state
                 if s1==1 && s0==1
-                    [pp_i,~,retcode]=ergodic_parameters(obj.solution.transition_matrices.Qinit,...
+                    [pp_i,~,retcode]=dsge_tools.ergodic_parameters(obj.solution.transition_matrices.Qinit,...
                         def,pp);
                 end
             else
