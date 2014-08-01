@@ -118,11 +118,15 @@ while isempty(stopflag)
         %         else
         if blk<=nblks
             this=blocks{blk};
+            disp('--------------------------------------------------------')
             disp(['optimizing block : ',int2str(blk),'/',int2str(nblks),' : ',int2str(numel(this)),' parameters'])
+            disp('--------------------------------------------------------')
         else
             % now optimize the whole vector
             this=1:npar;
+            disp('--------------------------------------------------------')
             disp(['optimizing block the entire vector: ',int2str(numel(this)),' parameters'])
+            disp('--------------------------------------------------------')
         end
         %         end
         
