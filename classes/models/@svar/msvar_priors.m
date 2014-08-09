@@ -1,4 +1,4 @@
-function obj=msvar_priors(obj)
+function obj=msvar_priors(obj,estim_names)
 
 if isempty(obj)
     obj=struct('minnesota_overall_tightness',3,...1
@@ -14,7 +14,6 @@ if isempty(obj)
         'minnesota_use_priors',true);
     return
 end
-estim_names=obj.estimated_parameters_list;
 s=quick_ar1_processes();
 
 MyPriors=set_priors_structure();

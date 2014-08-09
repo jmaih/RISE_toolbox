@@ -1,4 +1,4 @@
-function obj=create_estimated_parameters_list(obj)
+function estim_names=create_estimated_parameters_list(obj)
 
 if isempty(obj)
     obj=struct();
@@ -19,10 +19,6 @@ chain_names=Regimes(1,2:end);
 npar=sum(obj.parameters.number);
 
 estim_names=generate_estim_names();
-
-obj.estimation_restrictions=parameters_links(obj,estim_names);
-
-obj.estimated_parameters_list=estim_names;
 
     function estim_names=generate_estim_names()
         incmnt=300;

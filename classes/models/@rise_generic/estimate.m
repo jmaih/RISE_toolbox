@@ -15,6 +15,7 @@ if nobj==0
         'estim_max_trials',500,... % maximum number of trials when generating admissible starting values
         'estim_start_vals',[],...
         'estim_general_restrictions',[],... % holds a function that takes as input the model object and returns the
+        'estim_linear_restrictions',[],... 
         'estim_blocks',[],...
         'estim_priors',[],...
         'estim_penalty',1e+8);
@@ -151,6 +152,12 @@ x0=x0(:);
 lb=[obj(1).estimation.priors.lower_bound]; lb=lb(:);
 ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 
+% get the linear restrictions if any. a_func takes a2tilde as input and
+% returns "a", while a2tilde_func takes "a" as input and returns a2tilde.
+% na2tilde<=npar is the number of parameters to estimate
+%-----------------------------------------------------------------------
+[a_func,a2tilde_func,npar_short]=setup_linear_restrictions(obj);
+
 [nonlcon,nconst]=reprocess_nonlinear_restrictions(obj(1).parameter_restrictions);
 % the functions in obj(1).parameter_random_draws_restrictions only check
 % whether the restrictions are violated or not but do not give the strength
@@ -162,8 +169,19 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 funevals=0;
 npar=size(x0,1);
 Nsim=max(1,estim_parallel);
-x0=[x0,nan(npar,Nsim-1)];
+% now shorten everything
+%-----------------------
+x0=a2tilde_func(x0);
+x0=[x0,nan(npar_short,Nsim-1)];
 f0=nan(1,Nsim);
+lb=a2tilde_func(lb);
+ub=a2tilde_func(ub);
+bad=lb>ub;
+if any(bad)
+    tmp=lb;
+    lb(bad)=ub(bad);
+    ub(bad)=tmp(bad);
+end
 % all objects are evaluated at the same point. Without a second argument,
 % this is exactly what will happen.
 [~,f0(1),~,retcode0,viol]=big_wrapper(x0(:,1));
@@ -210,6 +228,11 @@ for ii=beg:Nsim
 end
 
 [x1,f1,H,issue,viol,obj]=big_wrapper(x0,'estimate'); %#ok<ASGLU>
+% both vector x1 and H here are short: extend them
+%-------------------------------------------------
+x1 = a_func(x1);
+H = a_func(H,true); % the second arguments indicates that it is a covariance term
+
 viol=viol(viol>0);
 numberOfActiveInequalities=numel(viol);
 
@@ -272,7 +295,7 @@ warning('on','MATLAB:illConditionedMatrix')
         if nargin<2
             action='eval';
             if nargin<1
-                x0=lb+(ub-lb).*rand(npar,1);
+                x0=lb+(ub-lb).*rand(npar_short,1);
             end
         end
         violLast=[];
@@ -281,7 +304,6 @@ warning('on','MATLAB:illConditionedMatrix')
         ngen_restr=[];
         switch action
             case 'estimate'
-                %         [x,f,eflag,output]=problem.optimizer(@fh_wrapper,@nonlcon_with_gradient);
                 PROBLEM_=struct('objective',@fh_wrapper,...
                     'x0',x0,...
                     'lb',lb,...
@@ -302,7 +324,7 @@ warning('on','MATLAB:illConditionedMatrix')
         end
         finalobj=obj;
         
-        function [minus_log_post,retcode]=fh_wrapper(x)
+        function [minus_log_post,retcode]=fh_wrapper(xtilde)
             % this function returns the minimax if there are many objects
             % evaluated simultaneously
             
@@ -310,6 +332,11 @@ warning('on','MATLAB:illConditionedMatrix')
             % the reason you want to output the object here is because it potentially
             % contains crucial information going forward. In particular, it contains
             % information about whether the model is stationary or not.
+            
+            % expand x before doing anything
+            %-------------------------------
+            x=a_func(xtilde);
+            
             fval=obj(1).options.estim_penalty*ones(1,nobj);
             for mo=1:nobj
                 [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
@@ -361,8 +388,11 @@ warning('on','MATLAB:illConditionedMatrix')
             viol=[viol_simple(:);viol_general(:)];
         end
         
-        function [viol,grad]=nonlcon_with_gradient(x)
+        function [viol,grad]=nonlcon_with_gradient(xtilde)
             grad=[];
+            % expand x before doing anything
+            %-------------------------------
+            x=a_func(xtilde);
             if isequal(x,xLast)
                 viol=violLast;
             else

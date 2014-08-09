@@ -104,6 +104,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=parameters_links(varargin)
         varargout=setup_priors(varargin)
         varargout=setup_calibration(varargin)
+        varargout=setup_linear_restrictions(varargin)
     end
     methods(Access=protected,Hidden=true)
         varargout=do_names(varargin)

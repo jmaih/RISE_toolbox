@@ -7,12 +7,10 @@ classdef svar < rise_generic
     end
     properties(SetAccess = private, Hidden = true)%Access=private
         nx
-        estim_param_template
-        estim_linear_restrictions        
+        estim_param_template        
         % the elements below should be for reduced-form vars only
 		% hence, the var shall inherit from the structural var
         construction_data
-        estimated_parameters_list
     end
     properties(Access=protected,Hidden = true)
         param_template
@@ -61,7 +59,6 @@ classdef svar < rise_generic
                 obj.markov_chains.regimes_number);
         end
         varargout=solve(varargin)
-        varargout=apply_zero_restrictions(varargin)
     end
     methods(Sealed)
         function varargout=estimate(obj,varargin)
@@ -75,22 +72,21 @@ classdef svar < rise_generic
                 % exogeneity
                 %----------------------------------------------------------
                 obj.estim_param_template=obj.param_template;
-                % apply the zero restrictions on the svar. This will be
-                % important for defining the parameter list later on
-                %------------------------------------------------------
-                obj=apply_zero_restrictions(obj);
                 % get the names of the estimated parameters from the
                 % information in obj.estim_param_template: the transition
                 % probabilities are automatically estimated.
                 %----------------------------------------------------------
-                obj=create_estimated_parameters_list(obj);
+                estim_names=create_estimated_parameters_list(obj);
+                
+                obj.estimation_restrictions=parameters_links(obj,estim_names);
+
                 % load the data
                 %--------------
                 [obj,issue,retcode]=load_data(obj,varargin{:});
                 if retcode
                     error(issue)
                 end
-                obj=msvar_priors(obj);
+                obj=msvar_priors(obj,estim_names);
                 if isa(obj,'stochvol')
                     [varargout{1:nout}]=posterior_simulator(obj,...
                         'mcmc_gibbs_sampler_func',@stochvol_tools.gibbs_sampler);
