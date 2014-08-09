@@ -75,11 +75,17 @@ classdef coef
             obj=mtimes(a,1/b);
         end
         function [R,r]=linear_restrictions(obj,r,self,est_list)
-            %--------------------------------
+            % This function construct the linear restrictions system R*a=r
+            % given the coef vector "obj", the "r" vector which may be
+            % modified, "self", which is a rise object (dsge, rfvar, svar,
+            % etc.) and "est_list", which is the list of the parameters to
+            % estimate.
+            
+            % load the main object fields
+            %----------------------------
             [param_names,governing_chain,parameter_values,chain_names,...
                 grand_chains_to_small,regimes,endo_names]=...
                 main_object_environment();
-            %--------------------------------
             nest=numel(est_list);
             nrest=numel(obj);
             if ~isequal(size(r),[nrest,1])
