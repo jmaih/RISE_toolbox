@@ -10,7 +10,7 @@ end
 LR=obj.options.estim_linear_restrictions;
 
 a_func=@(x,~)x;
-a2tilde_func=@(x)x;
+a2tilde_func=@(x,~)x;
 estim_names=parser.param_name_to_valid_param_name({obj.estimation.priors.name});
 nparam=numel(estim_names);
 na2=nparam;
@@ -70,13 +70,19 @@ end
         end
     end
 
-    function a2tilde=get_alpha2_tilde(a)
-        % get atilde first
-        %-----------------
-        atilde=a(evec);
-        % then extract the relevant part
-        %-------------------------------
-        a2tilde=atilde(na1+1:end);
+    function a2tilde=get_alpha2_tilde(a,covflag)
+        if nargin<2
+            covflag=false;
+        end
+        % get atilde first then extract the relevant part
+        %------------------------------------------------
+        if covflag
+            atilde=a(evec,evec);
+            a2tilde=atilde(na1+1:end,na1+1:end);
+        else
+            atilde=a(evec);
+            a2tilde=atilde(na1+1:end);
+        end
     end
 end
 
