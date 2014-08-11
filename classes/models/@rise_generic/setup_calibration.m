@@ -31,9 +31,8 @@ pnames=fieldnames(Calibration);
 [position,regime_states]=generic_tools.parameter_position_and_regimes(pnames,...
     param_names,governing_chain,chain_names,grand_chains_to_small,regimes);
 
-fields=fieldnames(Calibration);
-for ii=1:numel(fields)
-    tmp=Calibration.(fields{ii});
+for ii=1:numel(pnames)
+    tmp=Calibration.(pnames{ii});
     obj.parameter_values(position(ii),regime_states{ii})=tmp;
 end
 end
