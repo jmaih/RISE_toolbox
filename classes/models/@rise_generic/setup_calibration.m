@@ -24,6 +24,8 @@ if iscell(Calibration)
     end
 end
 
+pnames=fieldnames(Calibration);
+
 % push the calibration
 %---------------------
 [position,regime_states]=generic_tools.parameter_position_and_regimes(pnames,...
