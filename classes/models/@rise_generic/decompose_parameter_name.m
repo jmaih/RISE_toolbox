@@ -21,11 +21,14 @@ else
     ptex=parser.valid_param_name_to_tex_name(pname,chain_names);
     left_par=strfind(ptex,'(');
     right_par=strfind(ptex,')');
-    pname=ptex(1:left_par-1);
     comma=strfind(ptex,',');
+    if isempty(left_par)||isempty(right_par)||isempty(comma)
+        error(['"',ptex,'" or "',pname,'" is not recognized as a parameter name'])
+    end
+    pname=ptex(1:left_par-1);
     position=find(strcmp(pname,param_names));
-    if isempty(left_par)||isempty(right_par)||isempty(comma)||isempty(position)
-        error(['"',ptex(1:left_par-1),'" is not recognized as a parameter name'])
+    if isempty(position)
+        error(['"',pname,'" is not recognized as a parameter name'])
     end
     chain=ptex(left_par+1:comma-1);
     state=str2double(ptex(comma+1:right_par-1));
