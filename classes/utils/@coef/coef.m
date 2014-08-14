@@ -213,8 +213,8 @@ classdef coef
             obj=cell(siz_obj,2);
             iter=0;
             for ieqtn=1:nv
-                home_equation=~any(strcmp(endo_list{ieqtn},blk_exo_list));
-                if home_equation
+                foreign_equation=any(strcmp(endo_list{ieqtn},blk_exo_list));
+                if ~foreign_equation
                     continue
                 end
                 for ilag=1:nlags
