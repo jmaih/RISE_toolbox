@@ -1,17 +1,17 @@
 function stopflag=check_convergence(obj)
 stopflag=[];
 if obj.iterations>=obj.MaxIter;
-    stopflag='maximum number of iterations reached';
+    stopflag=sprintf('iterations budget of %0.4f exhausted',obj.MaxIter);
 elseif etime(clock,obj.start_time)>=obj.MaxTime
-    stopflag='time budget exhausted';
+    stopflag=sprintf('time budget of %0.4f exhausted',obj.MaxTime);
 elseif obj.funcCount>=obj.MaxFunEvals
-    stopflag='maximum number of function evaluations reached';
+    stopflag=sprintf('function evaluations budget of %0.4f exhausted',obj.MaxFunEvals);
 elseif isfield(obj,'known_optimum_reached')&& obj.known_optimum_reached
     stopflag='known optimum reached';
 else
     ms=utils.optim.manual_stopping(1);
     if ms==1
-        stopflag='manually aborted';
+        stopflag='manually aborted (without extreme prejudice)';
     elseif ms==2
         keyboard
     end
