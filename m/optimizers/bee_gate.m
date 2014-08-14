@@ -53,7 +53,7 @@ function [x,f,exitflag,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 % OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
 
 
-bee_fields= properties('optimization.bee');
+bee_fields= properties('bee');
 bee_options=struct();
 for ii=1:numel(bee_fields)
     fi=bee_fields{ii};
