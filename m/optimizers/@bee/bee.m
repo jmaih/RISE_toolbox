@@ -212,6 +212,7 @@ else
     end
 end
 stopflag=utils.optim.check_convergence(obj);
+optimizer_nodes_nparam=sprintf('%s(#nodes=%0.0f,#params=%0.0f)',obj.optimizer,obj.MaxNodes,obj.number_of_parameters);
 while isempty(stopflag)
     obj.iterations=obj.iterations+1;
     obj=send_employed_bees(obj);
@@ -223,7 +224,7 @@ while isempty(stopflag)
         fmin_iter=obj.best_fval;
         disperse=utils.optim.dispersion(obj.xx,obj.lb,obj.ub);
         utils.optim.display_progress(restart,obj.iterations,obj.best_fval,fmin_iter,...
-            disperse,obj.funcCount,obj.optimizer);
+            disperse,obj.funcCount,optimizer_nodes_nparam);
     end
     stopflag=utils.optim.check_convergence(obj);
 end
