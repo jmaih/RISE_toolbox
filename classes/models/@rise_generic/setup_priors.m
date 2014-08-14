@@ -1,4 +1,18 @@
-function obj=setup_priors(obj,MyPriors,error_control)% is_switching=[ParameterInfo.is_switching];
+function obj=setup_priors(obj,MyPriors,error_control)
+% different ways of setting priors outside the model file
+% P.pname={start_value,lower_bound,upper_bound};
+% P.pname={start_value,prior_mean,prior_stdev,'distribution'};
+% P.pname={start_value,prior_mean,prior_stdev,'distribution',lower_bound};
+% P.pname={start_value,prior_mean,prior_stdev,'distribution',lower_bound,upper_bound};
+% P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)'};
+% P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound};
+% P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound,upper_bound};
+%
+% distribution can be any of the following: beta_pdf, cauchy_pdf,
+% gamma_pdf, inv_gamma_pdf, laplace_pdf, left_triang_pdf, logistic_pdf,
+% lognormal_pdf, normal_pdf, pareto_pdf, right_triang_pdf, uniform_pdf,
+% weibull_pdf 
+
 if nargin<3
     error_control=[];
 end
