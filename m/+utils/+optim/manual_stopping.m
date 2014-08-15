@@ -19,7 +19,10 @@ switch action
                 rawline = rawfile(iline,:);
                 rawline(isspace(rawline))=[];
                 if ~isempty(rawline)
-                    if ismember(rawline,{'pause','keyboard'})
+                    if any(strcmp(rawline,{'progress','report'}))
+                        flag=3;
+                        utils.optim.manual_stopping(0);
+                    elseif any(strcmp(rawline,{'pause','keyboard'}))
                         flag=2;
                     else
                         flag=1;
