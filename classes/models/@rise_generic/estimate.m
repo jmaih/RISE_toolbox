@@ -15,7 +15,7 @@ if nobj==0
         'estim_max_trials',500,... % maximum number of trials when generating admissible starting values
         'estim_start_vals',[],...
         'estim_general_restrictions',[],... % holds a function that takes as input the model object and returns the
-        'estim_linear_restrictions',[],... 
+        'estim_linear_restrictions',[],...
         'estim_blocks',[],...
         'estim_priors',[],...
         'estim_penalty',1e+8);
@@ -154,86 +154,127 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 
 % get the linear restrictions if any. a_func takes a2tilde as input and
 % returns "a", while a2tilde_func takes "a" as input and returns a2tilde.
+% restr_var_data_func takes obj as input and returns a structure with
+% ytilde, Xtilde, which are the transformed y and X given the restrictions.
 % na2tilde<=npar is the number of parameters to estimate
 %-----------------------------------------------------------------------
-[a_func,a2tilde_func,npar_short]=setup_linear_restrictions(obj);
+[a_func,a2tilde_func,restr_var_data_func,npar_short]=setup_linear_restrictions(obj);
 
-[nonlcon,nconst]=reprocess_nonlinear_restrictions(obj(1).parameter_restrictions);
-% the functions in obj(1).parameter_random_draws_restrictions only check
-% whether the restrictions are violated or not but do not give the strength
-% of the violation, which we need in order to apply DEB. So we need to use
-% the reprocessed form.
-
-% initialize the number of function calls
-%----------------------------------------
-funevals=0;
 npar=size(x0,1);
-Nsim=max(1,estim_parallel);
-% now shorten everything
-%-----------------------
-x0=a2tilde_func(x0);
-x0=[x0,nan(npar_short,Nsim-1)];
-f0=nan(1,Nsim);
-lb=a2tilde_func(lb);
-ub=a2tilde_func(ub);
-bad=lb>ub;
-if any(bad)
-    tmp=lb;
-    lb(bad)=ub(bad);
-    ub(bad)=tmp(bad);
-end
-% all objects are evaluated at the same point. Without a second argument,
-% this is exactly what will happen.
-[~,f0(1),~,retcode0,viol]=big_wrapper(x0(:,1));
-if retcode0||any(viol>0)
-    % first check constraint violations
-    f0(1)=obj(1).options.estim_penalty;
-end
-% the objects are automatically updated and potentially contain crucial
-% information going forward. In particular, they contain information
-% about whether the models are stationary or not.
-
-if f0(1)<obj(1).options.estim_penalty
-    beg=2;
-else
-    beg=1;
-end
-
-%% disable those elements
-warning('off','MATLAB:nearlySingularMatrix')
-warning('off','MATLAB:illConditionedMatrix')
-
-fprintf(1,'%s\n','Looking for good enough start values. Please wait...');
-for ii=beg:Nsim
-    NotDone=true;
-    iter=0;
-    while NotDone
-        [xtest,ftest,retcode]=utils.estim.generate_starting_point(@big_wrapper);
-        if ftest<obj(1).options.estim_penalty
-            NotDone=false;
-            f0(ii)=ftest;
-            x0(:,ii)=xtest;
-        end
-        iter=iter+1;
-        if iter>=obj(1).options.estim_max_trials
-            error([mfilename,':: No admissible starting value after ',...
-                int2str(obj(1).options.estim_max_trials),' trials'])
-        else
-            fprintf(1,'%3.0d :: %s\n',iter,utils.error.decipher(retcode));
+if isa(obj,'rfvar') && ...
+        obj.markov_chains.regimes_number==1 && ...
+        obj.options.vp_analytical_post_mode
+    vdata=restr_var_data_func(obj);
+    a_prior=[obj.estimation.priors.prior_mean];
+    a_prior=a_prior(vdata.estim_locs);
+    a_prior=a_prior(:);
+    va_prior=[obj.estimation.priors.prior_stdev];
+    va_prior=diag(va_prior(vdata.estim_locs).^2);
+    a2tilde_prior=a2tilde_func(a_prior);
+    va2tilde_prior=a2tilde_func(va_prior,true);
+    
+    [a2tilde_post,~,resid_post]=vartools.analytic_posterior_mode(...
+        vdata.Xtilde,vdata.ytilde,a2tilde_prior,va2tilde_prior);
+    resid_post=reshape(resid_post,obj.endogenous.number(end),[]);
+    [nvars,nobs]=size(resid_post);
+    a_post=a_func(a2tilde_post);
+    
+    x1=nan(npar,1);
+    x1(vdata.estim_locs)=a_post;
+    vcov=(resid_post*resid_post.')/(nobs-npar_short/nvars);
+    sdev=sqrt(diag(vcov));
+    for irow=1:nvars
+        sig_name=sprintf('sig_%0.0f_%0.0f',irow,irow);
+        sig_pos=strcmp(sig_name,vdata.orig_estim_names);
+        x1(sig_pos)=sdev(irow);
+        for icol=1:irow-1
+            corr_name=sprintf('omg_%0.0f_%0.0f',irow,icol);
+            corr_pos=strcmp(corr_name,vdata.orig_estim_names);
+            x1(corr_pos)=vcov(irow,icol)/(sdev(irow)*sdev(icol));
         end
     end
-    disp(['Starting value # ',int2str(ii),' found after ',int2str(iter),' iterations'])
-    ratio=ii/Nsim;
-    fprintf(1,'%s\n',['...', num2str(100*ratio),'% done']);
+%     keyboard
+    H=eye(npar);
+    
+    viol=[];
+    funevals=0;
+else
+    [nonlcon,nconst]=reprocess_nonlinear_restrictions(obj(1).parameter_restrictions);
+    % the functions in obj(1).parameter_random_draws_restrictions only check
+    % whether the restrictions are violated or not but do not give the strength
+    % of the violation, which we need in order to apply DEB. So we need to use
+    % the reprocessed form.
+    
+    % initialize the number of function calls
+    %----------------------------------------
+    funevals=0;
+    Nsim=max(1,estim_parallel);
+    % now shorten everything
+    %-----------------------
+    x0=a2tilde_func(x0);
+    x0=[x0,nan(npar_short,Nsim-1)];
+    f0=nan(1,Nsim);
+    lb=a2tilde_func(lb);
+    ub=a2tilde_func(ub);
+    bad=lb>ub;
+    if any(bad)
+        tmp=lb;
+        lb(bad)=ub(bad);
+        ub(bad)=tmp(bad);
+    end
+    % all objects are evaluated at the same point. Without a second argument,
+    % this is exactly what will happen.
+    [~,f0(1),~,retcode0,viol]=big_wrapper(x0(:,1));
+    if retcode0||any(viol>0)
+        % first check constraint violations
+        f0(1)=obj(1).options.estim_penalty;
+    end
+    % the objects are automatically updated and potentially contain crucial
+    % information going forward. In particular, they contain information
+    % about whether the models are stationary or not.
+    
+    if f0(1)<obj(1).options.estim_penalty
+        beg=2;
+    else
+        beg=1;
+    end
+    
+    %% disable those elements
+    warning('off','MATLAB:nearlySingularMatrix')
+    warning('off','MATLAB:illConditionedMatrix')
+    
+    fprintf(1,'%s\n','Looking for good enough start values. Please wait...');
+    for ii=beg:Nsim
+        NotDone=true;
+        iter=0;
+        while NotDone
+            [xtest,ftest,retcode]=utils.estim.generate_starting_point(@big_wrapper);
+            if ftest<obj(1).options.estim_penalty
+                NotDone=false;
+                f0(ii)=ftest;
+                x0(:,ii)=xtest;
+            end
+            iter=iter+1;
+            if iter>=obj(1).options.estim_max_trials
+                error([mfilename,':: No admissible starting value after ',...
+                    int2str(obj(1).options.estim_max_trials),' trials'])
+            else
+                fprintf(1,'%3.0d :: %s\n',iter,utils.error.decipher(retcode));
+            end
+        end
+        disp(['Starting value # ',int2str(ii),' found after ',int2str(iter),' iterations'])
+        ratio=ii/Nsim;
+        fprintf(1,'%s\n',['...', num2str(100*ratio),'% done']);
+    end
+    
+    [x1,f1,H,issue,viol,obj]=big_wrapper(x0,'estimate'); %#ok<ASGLU>
+    % both vector x1 and H here are short: extend them
+    %-------------------------------------------------
+    x1 = a_func(x1);
+    H = a_func(H,true); % the second arguments indicates that it is a covariance term
+    
+    viol=viol(viol>0);
 end
-
-[x1,f1,H,issue,viol,obj]=big_wrapper(x0,'estimate'); %#ok<ASGLU>
-% both vector x1 and H here are short: extend them
-%-------------------------------------------------
-x1 = a_func(x1);
-H = a_func(H,true); % the second arguments indicates that it is a covariance term
-
-viol=viol(viol>0);
 numberOfActiveInequalities=numel(viol);
 
 % make the hessian positive definite if necessary
@@ -396,9 +437,9 @@ warning('on','MATLAB:illConditionedMatrix')
             if isequal(x,xLast)
                 viol=violLast;
             else
-% % % % % % % % % % % %                 warning('evaluating constraints before computing log-posterior ')
+                % % % % % % % % % % % %                 warning('evaluating constraints before computing log-posterior ')
                 thisobj=assign_estimates(obj,x);
-% % % % % % % % % % % %                 thisobj=filter(thisobj);
+                % % % % % % % % % % % %                 thisobj=filter(thisobj);
                 viol=mynonlinear_constraints(x,thisobj);
             end
         end
