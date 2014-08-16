@@ -87,11 +87,11 @@ end
             case 1
                 % call to lsqnonlin
                 %------------------
-                [x1,resnorm,residuals,exitflag]=lsqnonlin(resid_func,x0(:),[],[],optim_opt);  %#ok<*ASGLU>
+                [x1,resnorm,residuals,exitflag]=lsqnonlin(resid_func,x0(:),[],[],optim_opt,pp_i,def_i);  %#ok<*ASGLU>
             case 2
                 % call to fsolve
                 %------------------
-                [x1,fval,exitflag]=fsolve(resid_func,x0(:),optim_opt);
+                [x1,fval,exitflag]=fsolve(resid_func,x0(:),optim_opt,pp_i,def_i);
                 resnorm=norm(fval);
             otherwise
                 error('arg_zero_solver must be either 1 or 2')
