@@ -16,7 +16,12 @@ classdef text < rise_report.generic_report
             obj.log=log_;
         end
         function b = get.batch(obj)
-            b=rise_report.text_verbatim_log(obj);
+            b=batch_implementation(obj,obj.log(:));
         end 
+    end
+    methods(Access = private)
+        function b=batch_implementation(~,b)
+            % this function does nothing
+        end
     end
 end
