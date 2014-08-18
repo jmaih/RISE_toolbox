@@ -77,7 +77,7 @@ end
 
 function eqtns=model_equations(model_objects)
 eqtns=cell(0,1);
-dynamic={model_objects(1).equations.dynamic};
+dynamic=model_objects(1).equations.dynamic;
 
 for ieq=1:numel(dynamic)
     myeq=['EQ',int2str(ieq),': ',dynamic{ieq}];
