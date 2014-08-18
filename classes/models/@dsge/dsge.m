@@ -238,6 +238,7 @@ classdef dsge < rise_generic
         varargout=dsge_load_data(varargin)
         varargout=do_not_anticipate_future_shocks(varargin)
         varargout=set_z_eplus_horizon(varargin)
+        varargout=latex_model_file(varargin)
     end
 end
 
