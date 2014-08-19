@@ -1,78 +1,116 @@
-function mytable=report(obj,varargin)
-% rep_type ='endogenous','exogenous','observables','parameters','solution'
+function mytable=report(obj,destination_root,rep_items,varargin)
+% rep_items ='endogenous','exogenous','observables','parameters','solution'
 % 'estimation','estimation_statistics','equations'
 
 if isempty(obj)
-mytable=struct('rep_type','endogenous',...
-    'rep_var_list','',...
-    'rep_precision','%8.6f');
+    mytable=struct('rep_var_list','',...
+        'rep_precision','%8.6f');
     return
 end
-
+if nargout
+    mytable=[];
+end
 obj=set(obj,varargin{:});
 
-nobj=numel(obj);
-type=obj(1).options.rep_type;
-varlist=obj(1).options.rep_var_list;
-precision=obj(1).options.rep_precision;
-switch type
-    case {'varendo','endogenous'}
-        if nobj>1
-            warning('reporting the endogenous for the first model only')
-        end
-        governing=obj(1).endogenous.is_original & ...
-            ~obj(1).endogenous.is_auxiliary;
-        mytable=[{'Model code','Description'};
-            obj(1).endogenous.name(governing)',obj(1).endogenous.tex_name(governing)'];
-    case {'varexo','exogenous'}
-        if nobj>1
-            warning('reporting the exogenous for the first model only')
-        end
-        mytable=[{'Model code','Description'}
-            obj(1).exogenous.name',obj(1).exogenous.tex_name']; 
-    case {'varobs','observables'}
-        if nobj>1
-            warning('reporting the observables for the first model only')
-        end
-        mytable=[{'Model code','Description'}
-            obj(1).observables.name',obj(1).observables.tex_name'];
-    case 'parameters'
-        if nobj>1
-            warning('reporting the parameters for the first model only')
-        end
-        texnames=obj(1).parameters.tex_name';
-        for iname=1:numel(texnames)
-            underscores=texnames{iname}=='_';
-            if sum(underscores)>1
-                texnames{iname}=regexprep(texnames{iname},'(?<!\\)_','\\_');
-            end
-        end
-        mytable=[{'Model code','Description'}
-            obj(1).parameters.name',texnames];
-    case 'solution'
-        if isempty(varlist) && obj(1).endogenous.number(end)>5
-            warning(['Reporting the solution for perhaps too many variables. ',...
-                'All the columns might not fit a the report'])
-        end
-        mytable=print_solution(obj,varlist,precision);
-    case 'estimation'
-        mytable=model_estimation_results(obj);
-    case 'estimation_statistics'
-        mytable=estimation_statistics(obj);
-    case 'equations'
-        if nobj>1
-            warning('reporting the parameters for the first model only')
-        end
-        mytable=model_equations(obj);
-    case 'code'
-        model_syntax=true;
-        model_line_numbers=true;
-        tex_code = latex_model_file(obj,model_syntax,model_line_numbers);
-        mytable=tex_code;
-    otherwise
-        error(['unknown flag :: ',type])
+if ~isa(destination_root,'rise_report.report')
+    error('second argument should be a rise_report.report object')
 end
 
+nobj=numel(obj);
+varlist=obj(1).options.rep_var_list;
+precision=obj(1).options.rep_precision;
+if isempty(rep_items)
+    error('no item to report')
+end
+if ischar(rep_items);
+    rep_items=cellstr(rep_items);
+end
+if ~iscellstr(rep_items)
+    error('third argument must be a char or a cellstr')
+end
+rep_list ={'endogenous','exogenous','observables','parameters','solution',...
+'estimation','estimation_statistics','equations','code'};
+bad=cellfun(@(x)~any(strcmp(x,rep_list)),rep_items,'uniformOutput',false);
+if iscell(bad)
+    bad=[bad{:}];
+end
+if any(bad)
+    disp(rep_items(bad))
+    error(['the items above are not valid reporting items for ',...
+        'rise/dsge/svar/rfvar/stochvol objects'])
+end
+
+for it=1:numel(rep_items)
+    report_engine(rep_items{it});
+end
+
+    function report_engine(type)
+        switch type
+            case {'endogenous'}
+                if nobj>1
+                    warning('reporting the endogenous for the first model only')
+                end
+                governing=obj(1).endogenous.is_original & ...
+                    ~obj(1).endogenous.is_auxiliary;
+                this_table=[{'Model code','Description'};
+                    obj(1).endogenous.name(governing)',...
+                    obj(1).endogenous.tex_name(governing)'];
+                destination_root.table('title','Endogenous Variables','log',this_table)
+            case {'exogenous'}
+                if nobj>1
+                    warning('reporting the exogenous for the first model only')
+                end
+                this_table=[{'Model code','Description'}
+                    obj(1).exogenous.name',obj(1).exogenous.tex_name'];
+                destination_root.table('title','Exogenous Variables','log',this_table)
+            case {'observables'}
+                if nobj>1
+                    warning('reporting the observables for the first model only')
+                end
+                this_table=[{'Model code','Description'}
+                    obj(1).observables.name',obj(1).observables.tex_name'];
+                destination_root.table('title','Observed Variables','log',this_table)
+            case 'parameters'
+                if nobj>1
+                    warning('reporting the parameters for the first model only')
+                end
+                texnames=obj(1).parameters.tex_name';
+                for iname=1:numel(texnames)
+                    underscores=texnames{iname}=='_';
+                    if sum(underscores)>1
+                        texnames{iname}=regexprep(texnames{iname},'(?<!\\)_','\\_');
+                    end
+                end
+                this_table=[{'Model code','Description'}
+                    obj(1).parameters.name',texnames];
+                destination_root.table('title','Model Parameters','log',this_table)
+            case 'solution'
+                if isempty(varlist) && obj(1).endogenous.number(end)>5
+                    warning(['Reporting the solution for perhaps too many variables. ',...
+                        'All the columns might not fit a the report'])
+                end
+                solution=print_solution(obj,varlist,precision);
+                destination_root.table('title','Model Solution','log',solution)
+            case 'estimation'
+                destination_root.table('title','Estimation Results',...
+                    'log',model_estimation_results(obj))
+            case 'estimation_statistics'
+                destination_root.table('title','Estimation Statistics',...
+                    'log',estimation_statistics(obj))
+            case 'equations'
+                if nobj>1
+                    warning('reporting the parameters for the first model only')
+                end
+                destination_root.verbatim(model_equations(obj))
+            case 'code'
+                model_syntax=true;
+                model_line_numbers=true;
+                tex_code = latex_model_file(obj,model_syntax,model_line_numbers);
+                destination_root.text(tex_code)
+            otherwise
+                error(['unknown flag :: ',type])
+        end
+    end
 end
 
 function eqtns=model_equations(model_objects)
@@ -158,7 +196,7 @@ for ic=1:ncases
             PALL{ic}{irow,5}=bounds(2);
         end
     end
-
+    
 end
 nparams=numel(ordered_names);
 
@@ -179,7 +217,7 @@ for iparam=1:nparams
                 estim{iparam+1,5+imod}=param_info{6};
                 PALL{imod}(1,:)=[];
                 % add the dollars
-%                 estim{iparam+1,1}=['$',estim{iparam+1,1},'$'];
+                %                 estim{iparam+1,1}=['$',estim{iparam+1,1},'$'];
                 underscores=estim{iparam+1,1}=='_';
                 if sum(underscores)>1
                     estim{iparam+1,1}=regexprep(estim{iparam+1,1},'(?<!\\)_','\\_');
@@ -214,7 +252,7 @@ stats={
     'estimation sample'
     'number of observations '
     'number of parameters '
-	'number of func. evals '
+    'number of func. evals '
     'estimation algorithm '
     'solution algorithm '
     'start time:'
@@ -225,24 +263,24 @@ model_names=get_model_names(obj);
 
 for icu=1:numel(obj)
     this_ic={obj(icu).estimation.posterior_maximization.log_post,...
-	    obj(icu).estimation.posterior_maximization.log_lik,...
-		obj(icu).estimation.posterior_maximization.log_prior,...
+        obj(icu).estimation.posterior_maximization.log_lik,...
+        obj(icu).estimation.posterior_maximization.log_prior,...
         obj(icu).estimation.posterior_maximization.log_endog_prior,...
-		obj(icu).estimation.posterior_maximization.active_inequalities_number,...
+        obj(icu).estimation.posterior_maximization.active_inequalities_number,...
         obj(icu).estimation.posterior_maximization.log_marginal_data_density_laplace,...
         [parser.any2str(obj(icu).options.estim_start_date),':',parser.any2str(obj(icu).options.estim_end_date)],...
         obj(icu).data.nobs,numel(obj(icu).estimation.priors),...
-		obj(icu).estimation.posterior_maximization.funevals,...
+        obj(icu).estimation.posterior_maximization.funevals,...
         obj(icu).options.optimizer,...
         obj(icu).options.solver,nan,nan,nan}';
-        t2=obj(icu).estimation.posterior_maximization.estim_end_time;
-        t1=obj(icu).estimation.posterior_maximization.estim_start_time;
-        estimation_time=etime(t2,t1);
-        hrs=floor(estimation_time/3600);
-        secs=estimation_time-hrs*3600;
-        mins=floor(secs/60);
-        secs=secs-mins*60;
-        this_ic(end-(2:-1:0))={datestr(t1),datestr(t2),[int2str(hrs),':',int2str(mins),':',int2str(secs)]};
-    stats=[stats,[model_names(icu);this_ic]]; 
+    t2=obj(icu).estimation.posterior_maximization.estim_end_time;
+    t1=obj(icu).estimation.posterior_maximization.estim_start_time;
+    estimation_time=etime(t2,t1);
+    hrs=floor(estimation_time/3600);
+    secs=estimation_time-hrs*3600;
+    mins=floor(secs/60);
+    secs=secs-mins*60;
+    this_ic(end-(2:-1:0))={datestr(t1),datestr(t2),[int2str(hrs),':',int2str(mins),':',int2str(secs)]};
+    stats=[stats,[model_names(icu);this_ic]];
 end
 end
