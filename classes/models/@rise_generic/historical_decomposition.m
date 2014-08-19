@@ -118,7 +118,7 @@ end
 
     function z=HistoricalDecompositionEngine(z,epsilon)
         
-        NumberOfAnticipatedSteps=size(R,3);
+        NumberOfAnticipatedSteps=size(R{1},3);
         
         for t=1:NumberOfObservations
             [A,B,SS_t]=expected_state_matrices(t);
@@ -156,6 +156,13 @@ end
                 % initial conditions
                 z(:,exo_nbr+1,t) = smoothed_variables(:,t) - sum(z(:,1:exo_nbr,t),2);
             end
+            if obj.options.debug
+                fprintf(1,'t=%0.0f discrep=%0.15f \n',t,...
+                    max(sum(z(:,1:exo_nbr+1,t),2)-smoothed_variables(:,t)));
+            end
+        end
+        if obj.options.debug
+            keyboard
         end
         
         function [A,B,SS_t]=expected_state_matrices(t)
