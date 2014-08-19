@@ -8,10 +8,11 @@ end
 
 tex_code = '';
 
-par_list = prepare_list(get(model,'par_list')); % bold
-exo_list = prepare_list(get(model,'exo_list'));
-endo_list = prepare_list(get(model,'endo_list')); 
-chain_list = prepare_list(get(model,'chain_list')); % red
+% par_list = prepare_list(get(model,'par_list')); % bold
+% exo_list = prepare_list(get(model,'exo_list'));
+% endo_list = prepare_list(get(model,'endo_list')); 
+% chain_list = prepare_list(get(model,'chain_list')); % red
+
 kwd_list=prepare_list(load_keywords()); % blue
 
 br = sprintf('\n');
@@ -49,7 +50,7 @@ end
 tex_code=strrep(tex_code,'#','\#');
 
     function xx = process_line(xx)
-        myprescreen=@pre_screen;
+        myprescreen=@pre_screen; %#ok<NASGU>
         if model_syntax
             % keywords
             pat1=['(?<!\w)',kwd_list,'(?!\w)']; 
