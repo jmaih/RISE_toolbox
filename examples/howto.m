@@ -1,5 +1,8 @@
 clear all
 clear classes
+%% IMPORTANT
+% Please remind Junior Maih to include an example connecting
+% a model report to a general report
 %% Initialization of the report object and the title page
 with_title_page=~false;
 if with_title_page
