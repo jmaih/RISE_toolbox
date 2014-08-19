@@ -1,6 +1,6 @@
 classdef report < rise_report.titlepage
     properties
-        name = ''
+        name = 'rise_report_default_name'
         graphicspath='';
         documentclass='article'
         packages={'graphicx','amsmath','geometry','amsfonts',...
@@ -267,7 +267,7 @@ classdef report < rise_report.titlepage
                         packages_=cell2mat(strcat(packages_(:)',','));
                         fprintf(fid, '\\usepackage{%s}\n',packages_(1:end-1));
                     end
-                    fprintf(fid,'\\graphicspath{{%s}}',obj.graphicspath);
+                    fprintf(fid,'\\graphicspath{{%s}}\n',obj.graphicspath);
                     fprintf(fid, '\\numberwithin{equation}{section}\n');
                     %                 fprintf(fid, '\\usepackage[margin=%f%s',...
                     %                     obj.margin, obj.marginUnit);
