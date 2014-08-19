@@ -49,7 +49,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=forecast(varargin)
         varargout=get(varargin)
         varargout=set(varargin)
-        varargout=lazy_report(varargin)
         varargout=log_prior_density(varargin)
         varargout=prior_plots(varargin)
         varargout=variance_decomposition(varargin)
