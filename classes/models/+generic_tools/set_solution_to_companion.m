@@ -27,8 +27,10 @@ end
         for isol=1:reg_nbr
             tmp(:,t_pb)=obj.solution.Tz{isol}(:,z_pb);
             % separate autoregressive part from shocks
-            %----------------------------------------
-            Tz{isol}=tmp(iov,iov);
+            % the rows are already ordered in the iov order and so we
+            % re-order the columns only
+            %--------------------------------------------------------------
+            Tz{isol}=tmp(:,iov);
             Re{isol}=obj.solution.Tz{isol}(:,e_0(1):end);
             if isol==1
                 npges=size(Re{isol},2)/exo_nbr;
