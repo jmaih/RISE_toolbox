@@ -4,7 +4,7 @@ classdef verbatim < rise_report.text
             obj=obj@rise_report.text(varargin{:});
         end
     end
-    methods(Access = private)
+    methods(Access = protected)
         function b=batch_implementation(~,b)
             b=['\begin{verbatim}';b(:);'\end{verbatim}'];
         end

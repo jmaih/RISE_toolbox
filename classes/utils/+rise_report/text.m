@@ -19,7 +19,7 @@ classdef text < rise_report.generic_report
             b=batch_implementation(obj,obj.log(:));
         end 
     end
-    methods(Access = private)
+    methods(Access = protected)
         function b=batch_implementation(~,b)
             % this function does nothing
         end
