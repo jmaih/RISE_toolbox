@@ -4,7 +4,7 @@ classdef clearpage < rise_report.generic_report
     end
     methods
         function obj=clearpage()
-            obj.batch={'\clearpage'};
+            obj.batch={' ';'\clearpage'};
         end
     end
 end

@@ -21,7 +21,7 @@ classdef newpage < rise_report.generic_report
             end
         end
         function b = get.batch(obj)
-            b={'\newpage'};
+            b={' ';'\newpage'};
             if ~isempty(obj.thispagestyle)
                 b=[
                     b

@@ -4,7 +4,7 @@ classdef cleardoublepage < rise_report.generic_report
     end
     methods
         function obj=cleardoublepage()
-            obj.batch={'\cleardoublepage'};
+            obj.batch={' ';'\cleardoublepage'};
         end
     end
 end

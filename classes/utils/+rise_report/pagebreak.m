@@ -4,7 +4,7 @@ classdef pagebreak < rise_report.generic_report
     end
     methods
         function obj=pagebreak()
-            obj.batch={'\pagebreak'};
+            obj.batch={' ';'\pagebreak'};
         end
     end
 end
