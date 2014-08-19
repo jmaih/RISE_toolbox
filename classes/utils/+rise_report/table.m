@@ -28,7 +28,6 @@ classdef table < rise_report.generic_report
                         titel=sprintf('Table \\# %0.0f: %s',obj.table_number,titel);
                     end
                     b=[b
-                        '\centering'
                         best_title(titel)];
                 end
                 [nrows,ncols]=size(obj.log);
