@@ -1,9 +1,17 @@
 function pp=plot_specs(date_numbers,nticks,date_format)
+default_nticks=8;
 if nargin<3
     date_format=[];
+    if nargin<2
+        nticks=[];
+        if nargin<1
+            pp=default_nticks;
+            return
+        end
+    end
 end
-if nargin<2|| isempty(nticks)
-    nticks=[];
+if isempty(nticks)
+    nticks=default_nticks;
 end
 % see also plot_real_time
 
