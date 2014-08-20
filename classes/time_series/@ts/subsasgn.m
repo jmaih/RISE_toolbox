@@ -3,7 +3,7 @@ function obj=subsasgn(obj,s,b)% subsasgn
 switch s.type
     case '.'
         % subs = character string
-        obj=builtin(mfilename,obj,s);
+        obj=builtin(mfilename,obj,s,b);
     case {'()','{}'}
         [date_numbers,datta,...
             rows_dates,varloc,pages]=process_subs(obj,s.subs,mfilename);
