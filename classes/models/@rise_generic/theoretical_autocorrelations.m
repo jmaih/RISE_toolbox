@@ -19,7 +19,7 @@ if nobj>1
 end
 obj=set(obj,varargin{:});
 autocorr_ar=obj.options.autocorr_ar;
-[A,retcode]=theoretical_autocovariances(obj,'autocorr_ar',autocorr_ar);%,resolve_flag
+[A,retcode]=theoretical_autocovariances(obj,'autocov_ar',autocorr_ar);%,resolve_flag
 
 if ~retcode
     stdevmat=sqrt(diag(A(:,:,1)));
