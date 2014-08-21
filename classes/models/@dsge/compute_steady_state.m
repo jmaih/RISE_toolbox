@@ -66,6 +66,8 @@ if retcode
     return
 end
 
+obj=apply_linear_restrictions_to_parameters(obj);
+
 optimopt=obj.options.optimset;
 optimopt.debug=obj.options.debug;
 optimopt.is_unique=obj.is_unique_steady_state ;
