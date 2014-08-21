@@ -135,6 +135,10 @@ block.error_control=error_control;
                 start_=push_if_validated(eval(rawline_(commas(1)+1:end)),'start');
                 PP.(par_name)=[PP.(par_name),{start_}];
             else
+                if ncom<3
+                    error(['an estimated parameter should have at least 3 components ',old_tex_name,...
+                        ' in ',file_name_,' at line(s) ',iline_])
+                end
                 is_estimated(ii)=true;
                 start_=push_if_validated(eval(rawline_(commas(1)+1:commas(2)-1)),'start');
                 PP.(par_name)=[PP.(par_name),{start_}];
