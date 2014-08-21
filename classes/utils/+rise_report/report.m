@@ -5,7 +5,6 @@ classdef report < rise_report.titlepage
         documentclass='article'
         packages={'graphicx','amsmath','geometry','amsfonts',...
             'color','hyperref','longtable','float'}
-        clean_up = true
         %----------------------------------------
         orientation='landscape'
         points='12pt'
@@ -58,7 +57,6 @@ classdef report < rise_report.titlepage
                 'twoside',@(x)any(strcmp(x,{'twoside','oneside'}))
                 'openright',@(x)any(strcmp(x,{'openright','openany'}))
                 'graphicspath',@(x)ischar(x) && isdir(x)
-                'clean_up',@(x)islogical(x)
                 };
             nop=size(own_props,1);
             own_vals=cell(nop,1);
@@ -157,15 +155,20 @@ classdef report < rise_report.titlepage
             if rem(n,2)
                 error([mfilename,':: arguments must come in pairs'])
             end
-            default_options=struct('write2disk',true);
+            default_options=struct('write2disk',true,'clean_up',true);
+                                    
             fields=fieldnames(default_options);
             for iarg=1:2:n
                 if ~any(strcmp(varargin{iarg},fields))
                     error([varargin{iarg},' is not a valid of option for publish'])
                 end
+                if ~islogical(varargin{iarg+1})
+                    error('Each second argument should be a logical (true or false)')
+                end
                 default_options.(varargin{iarg})=varargin{iarg+1};
             end
             write2disk=default_options.write2disk;
+            clean_up=default_options.clean_up;
             report_name=parser.remove_file_extension(obj.name);
             do_write_up()
 
@@ -187,7 +190,7 @@ classdef report < rise_report.titlepage
             end
             % delete all useless files
             useless_extensions={'.log','.bbl','.blg','.aux','.bak','.out'};
-            if obj.clean_up
+            if clean_up
                 useless_extensions=[useless_extensions,'.tex'];
                 for ifolder=1:numel(obj.folders_created)
                     rmdir(obj.folders_created{ifolder},'s');
