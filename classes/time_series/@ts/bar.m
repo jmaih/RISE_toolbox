@@ -47,6 +47,9 @@ function plot_handle=bar(varargin)
 %     'date_format',17);
 % xrotate(90)
 
-plot_handle=utils.plot.myplot(@bar,varargin{:});
+plot_handle0=utils.plot.myplot(@bar,varargin{:});
+if nargout
+    plot_handle=plot_handle0;
+end
 
 end
