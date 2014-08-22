@@ -31,8 +31,6 @@ set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
 hold off
 grid on
 
-rotateXLabels(gca,90);
-
 h=gca;
 
 end
