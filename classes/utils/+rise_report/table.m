@@ -21,15 +21,6 @@ classdef table < rise_report.generic_report
         function b = get.batch(obj)
             b={};
             if ~isempty(obj.log)
-                if ~isempty(obj.title)
-                    best_title=@(x)rise_report.generic_report.best_title(x);
-                    titel=obj.title;
-                    if obj.numbering
-                        titel=sprintf('Table \\# %0.0f: %s',obj.table_number,titel);
-                    end
-                    b=[b
-                        best_title(titel)];
-                end
                 [nrows,ncols]=size(obj.log);
                 AllBatch=cell(nrows,1);
                 reprocess=@(x)rise_report.generic_report.reprocess(x,obj.precision);
@@ -52,7 +43,7 @@ classdef table < rise_report.generic_report
                     str=[str,' \\'];
                     AllBatch{irow}=str;
                 end
-                theHeader=AllBatch{1};
+                theHeader=AllBatch(1);
                 AllBatch=AllBatch(2:end);
                 tablestyle='table';
                 if obj.longtable
@@ -66,11 +57,22 @@ classdef table < rise_report.generic_report
                         ['\begin{tabular}{',repmat('r',1,ncols),'}']
                         }];
                 end
-                b=[b;{
+                if ~isempty(obj.title)
+                    titel=obj.title;
+                    if obj.numbering
+                        titel=sprintf('Table \\# %0.0f: %s',obj.table_number,titel);
+                    end
+                    titel=reprocess(titel);
+                    b=[
+                        b
+                        ['\multicolumn{',int2str(ncols),'}{c}{\large\bfseries ',titel,'}\\']
+                        ];
+                end
+                b=[b
                     '\hline\hline'
                     theHeader
                     '\hline'
-                    }];
+                    ];
                 if obj.longtable
                     b=[b;{
                         '\endfirsthead'
