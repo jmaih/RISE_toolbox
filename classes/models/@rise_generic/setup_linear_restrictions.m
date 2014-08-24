@@ -1,4 +1,5 @@
-function [a_func,a2tilde_func,restr_var_data_func,na2]=setup_linear_restrictions(obj)
+function [basics]=setup_linear_restrictions(obj,estim_names)
+
 if isa(obj,'stochvol')
     error('linear restrictions on stochastic volatility model need to be updated')
     % for the stochastic volatility obj, I may still want to do as before, i.e.
@@ -6,24 +7,13 @@ if isa(obj,'stochvol')
     % parameters and not the other way around as it is done here, i.e. use the
     % list of estimated parameters to determine the restriction matrices.
 end
+
 % system is Aa=b
 LR=obj.options.estim_linear_restrictions;
 
 a_func=@(x,~)x;
 a2tilde_func=@(x,~)x;
-estim_names=parser.param_name_to_valid_param_name({obj.estimation.priors.name});
-% if constant paramater and analytical solution, keep only the ai and ci
-% parameters
-is_constant_parameter_var=isa(obj,'rfvar') && ...
-        obj.markov_chains.regimes_number==1 && ...
-        obj.options.vp_analytical_post_mode;
-if is_constant_parameter_var
-    [lag_names,lag_locs]=vartools.select_parameter_type(estim_names,'lag_coef');
-    [det_names,det_locs]=vartools.select_parameter_type(estim_names,'det_coef');
-    orig_estim_names=estim_names;
-    estim_names=[lag_names,det_names];
-    estim_locs=[lag_locs(:).',det_locs(:).'];
-end
+
 nparam=numel(estim_names);
 na2=nparam;
 R1i_r_0=0;
@@ -71,27 +61,13 @@ if ~isempty(LR)
     a_func=@get_alpha;
     a2tilde_func=@get_alpha2_tilde;
 end
-restr_var_data_func=@restricted_var_data_;
-
-    function vd=restricted_var_data_(obj)
-        [bigy,bigx,nv]=vartools.set_y_and_x(obj.data.y,obj.data.x,...
-            obj.nlags,obj.constant);
-        vd=struct();
-        xi=kron(bigx',eye(nv));
-        f=R1i_r_0;
-        G=R1i_R2_I2;
-        vd.ytilde=bigy(:);
-        if any(f)
-            vd.ytilde=vd.ytilde-xi*f(ievec);
-        end
-        vd.Xtilde=xi*G(ievec,:);
-        %-----------------------
-        if is_constant_parameter_var
-            vd.orig_estim_names=orig_estim_names;
-            vd.estim_names=estim_names;
-            vd.estim_locs=estim_locs;
-        end
-    end
+basics=struct('R1i_r_0',R1i_r_0,...
+    'R1i_R2_I2',R1i_R2_I2,...
+    'ievec',ievec,...
+    'estim_names',{estim_names},...
+    'a_func',a_func,...
+    'a2tilde_func',a2tilde_func,...
+    'npar_short',na2);
 
     function a=get_alpha(a2tilde,covflag)
         if nargin<2
