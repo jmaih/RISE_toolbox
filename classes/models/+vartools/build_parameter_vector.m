@@ -9,7 +9,6 @@ if initialize
 end
 x1=nan(npar,1);
 x1(vdata.estim_locs)=a_post;
-sdev=sqrt(diag(vcov));
 if initialize
     nan_locs=find(isnan(x1));
     pp=regexp(vdata.orig_estim_names(nan_locs),...
@@ -20,11 +19,14 @@ if initialize
     same=p1==p2;
 end
 
+[SIG,OMG]=vartools.covariance_decomposition(vcov);
+
 pvals=nan(size(same));
-pvals(same)=sdev(p1(same));
-pvals(~same)=diag(vcov(p1(~same),p2(~same)))./(sdev(p1(~same)).*sdev(p2(~same)));
+pvals(same)=SIG(p1(same));
+pvals(~same)=diag(OMG(p1(~same),p2(~same)));
 
 x1(nan_locs)=pvals;
+
 end
 
 % %     for ipar=1:numel(pp)
