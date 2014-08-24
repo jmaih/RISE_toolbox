@@ -20,8 +20,6 @@ classdef rfvar < svar
         varargout=structural_form(varargin)
         varargout=check_identification(varargin)
     end
-    methods(Sealed)
-    end
     methods(Access=private)
         varargout=translate_restrictions(varargin)
         varargout=set_structural_shocks(varargin)
@@ -29,6 +27,10 @@ classdef rfvar < svar
     methods(Static,Access=private)
         varargout=sort_Q(varargin)
         varargout=var_rotation(varargin)
+    end
+    methods(Access=protected,Hidden=true)
+        varargout=update_estimated_parameter_names(varargin)
+        varargout=find_posterior_mode(varargin)
     end
     methods(Static)
         function r=template()
