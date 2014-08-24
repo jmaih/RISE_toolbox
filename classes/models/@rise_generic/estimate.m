@@ -155,7 +155,7 @@ basics=setup_linear_restrictions(obj,estim_names);
 npar=size(x0,1);
 
 [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,ub,basics,...
-    estim_general_restrictions,estim_gen_restr_args);
+    estim_general_restrictions,estim_gen_restr_args); %#ok<ASGLU>
 
 numberOfActiveInequalities=numel(viol);
 
