@@ -146,7 +146,7 @@ end
             end
             lik_t=sum(pf);
             if ~isreal(lik_t)||lik_t<=0
-                retcode=303; % unlikely parameter vector
+                retcode=306; % unlikely parameter vector
                 return
             end
             % compute the updated probabilities
