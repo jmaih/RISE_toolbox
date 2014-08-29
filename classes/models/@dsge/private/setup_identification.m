@@ -67,26 +67,66 @@ for ii=1:n_restr
         RestrictionsBlock{ii}=full_eqtn;
     end
 end
-obj.routines.linear_restrictions=linear_restrictions(is_linear_restriction,:);
+obj.routines.derived_parameters=linear_restrictions(is_linear_restriction,:);
+
 RestrictionsBlock=RestrictionsBlock(~is_linear_restriction);
 %---------------------------------------------
+RestrictionsBlock=transpose(RestrictionsBlock(:));
+
+obj.routines.nonlinear_restrictions=reprocess_nonlinear_restrictions(RestrictionsBlock);
+obj.number_of_restrictions=struct('auxiliary',sum(is_linear_restriction),...
+    'linear',nan,...
+    'nonlinear',sum(~is_linear_restriction));
+
+end
+
+function [nonlcon,nconst]=reprocess_nonlinear_restrictions(nonlcon)
 % parameter restrictions
 % for the moment,I only allow the matrix of parameters. the idea is that if
 % the restrictions are violated, evaluation should fail and the steady
 % state should not be computed. In general, one could think of allowing the
 % steady state to enter this game, but I already have enough problems with
 % defining the steady state in markov switching, etc.
-obj.parameter_restrictions=transpose(RestrictionsBlock(:));
-tmp=['@(M)4*any([',cell2mat(transpose(RestrictionsBlock(:))),']==0)'];
-% restrictions are violated if the function returns 4, which is the retcode
-if ~isempty(obj.parameter_restrictions)
-    tmp(isspace(tmp))=[];
-    semcols=strfind(tmp,';');
-    tmp(semcols(end))=[]; % remove last semicolon
-% Get rid of definitions
-    tmp=parser.substitute_definitions(tmp,obj.definitions.shadow_dynamic);
-end
 
-% add it to the handle of functions
-obj.routines.parameter_restrictions=str2func(tmp);
-%---------------------------------------------
+% transform the nonlinear constraints. I would like to keep the
+% flexibility of knowning what parameters enter the constraints and
+% so I do not do this in format parameters
+nconst=numel(nonlcon);
+for iconstr=1:nconst
+    % remove semicolon
+    nonlcon{iconstr}=strrep(nonlcon{iconstr},';','');
+    % now remove inequalities
+    cutoff_type={'>=','<=','>','<','='};
+    for itype=1:numel(cutoff_type)
+        cutoff_locs=strfind(nonlcon{iconstr},cutoff_type{itype});
+        if ~isempty(cutoff_locs)
+            cutoff_type=cutoff_type{itype};
+            break
+        end
+    end
+    if ~isempty(cutoff_locs)
+        span=length(cutoff_type);
+        left=nonlcon{iconstr}(1:cutoff_locs-1);
+        right=nonlcon{iconstr}(cutoff_locs+span:end);
+        switch cutoff_type
+            case '>='
+                nonlcon{iconstr}=[right,'-(',left,')-eps;'];
+            case '<='
+                nonlcon{iconstr}=[left,'-(',right,')-eps;'];
+            case '>'
+                nonlcon{iconstr}=[right,'-(',left,');'];
+            case '<'
+                nonlcon{iconstr}=[left,'-(',right,');'];
+            case '='
+                nonlcon{iconstr}=['abs(',left,'-(',right,'))-eps;'];
+        end
+    end
+end
+nonlcon=cell2mat(nonlcon(:)');
+nonlcon=nonlcon(1:end-1);
+if isempty(nonlcon)
+    nonlcon='0';
+    nconst=1;
+end
+nonlcon=str2func(['@(M)[',nonlcon,']']);
+end
