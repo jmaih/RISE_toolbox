@@ -1,4 +1,4 @@
-function [basics]=setup_linear_restrictions(obj,estim_names)
+function obj=setup_linear_restrictions(obj)
 
 if isa(obj,'stochvol')
     error('linear restrictions on stochastic volatility model need to be updated')
@@ -7,6 +7,13 @@ if isa(obj,'stochvol')
     % parameters and not the other way around as it is done here, i.e. use the
     % list of estimated parameters to determine the restriction matrices.
 end
+
+estim_names=get_estimated_parameter_names(obj);
+% get the linear restrictions if any. basics.a_func takes a2tilde as input
+% and returns "a", while basics.a2tilde_func takes "a" as input and returns
+% a2tilde. 
+% npar_short<=npar is the number of parameters to estimate
+%-----------------------------------------------------------------------
 
 % system is Aa=b
 LR=obj.options.estim_linear_restrictions;
@@ -61,7 +68,7 @@ if ~isempty(LR)
     a_func=@get_alpha;
     a2tilde_func=@get_alpha2_tilde;
 end
-basics=struct('R1i_r_0',R1i_r_0,...
+obj.linear_restrictions_data=struct('R1i_r_0',R1i_r_0,...
     'R1i_R2_I2',R1i_R2_I2,...
     'ievec',ievec,...
     'estim_names',{estim_names},...
