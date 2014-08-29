@@ -9,6 +9,7 @@ opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify
     'MaxTime',3600);%: [ positive scalar | {7200} ]
 opt.optimizer='fmincon'; % default is fmincon
 opt.hessian_type='fd';  % (finite differences) alternatives: 'opg' (outer-product gradient)
+opt.hessian_repare=false;  % repare the hessian at the end of estimation
 
 if nargin==0
     if nargout>1
