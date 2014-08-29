@@ -1,7 +1,7 @@
-function obj=apply_linear_restrictions_to_parameters(obj)
+function obj=derive_auxiliary_parameters(obj)
 
-if ~isempty(obj.routines.linear_restrictions)
-    linrest=obj.routines.linear_restrictions;
+if ~isempty(obj.routines.derived_parameters)
+    linrest=obj.routines.derived_parameters;
     M=obj.parameter_values;
     for irest=1:size(linrest,1)
         row=linrest{irest,1};

@@ -66,7 +66,7 @@ if retcode
     return
 end
 
-obj=apply_linear_restrictions_to_parameters(obj);
+obj=derive_auxiliary_parameters(obj);
 
 optimopt=obj.options.optimset;
 optimopt.debug=obj.options.debug;
