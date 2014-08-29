@@ -15,6 +15,8 @@ switch code
         msg='definitions are nan or inf or imaginary';
     case 6
         msg='Nans or Infs in planner objective';
+    case 7
+        msg='bounds or restrictions violations';
         % ====== solving the system ====== %
     case 21
         msg='Maximum Number of iterations reached or multiple solutions';
