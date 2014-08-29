@@ -22,7 +22,8 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         estim_hyperparams=[];
         estim_distributions={};
         estim_distrib_locations={};
-        parameter_restrictions
+        linear_restrictions_data
+        general_restrictions_data
         list_of_issues
         routines=struct();
     end
@@ -104,12 +105,14 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=setup_priors(varargin)
         varargout=setup_calibration(varargin)
         varargout=setup_linear_restrictions(varargin)
+        varargout=setup_general_restrictions(varargin)
     end
     methods(Access=protected,Hidden=true)
         varargout=do_names(varargin)
         varargout=get_estimated_parameter_names(varargin)
         varargout=update_estimated_parameter_names(varargin)
         varargout=find_posterior_mode(varargin)
+        varargout=estimation_wrapper(varargin)
     end
     methods(Hidden=true)
         varargout=load_data(varargin)
