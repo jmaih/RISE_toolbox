@@ -1,5 +1,5 @@
 function [x1,f1,accepted,funevals,alpha_prob]=random_walk_mcmc(...
-    minus_log_post_func,x0,f0,cCS,lb,ub,mcmc_delay_rejection,funevals)
+    minus_log_post_func,x0,f0,cCS,mcmc_delay_rejection,funevals)
 npar=numel(x0);
 [theta_s,minusLogPost_s]=new_proposal();
 alpha_prob=utils.mcmc.alpha_probability(-minusLogPost_s,-f0);
@@ -30,11 +30,7 @@ end
     end
     function [d,minusLogPost]=new_proposal()
         d=x0+cCS*randn(npar,1);
-        if any(d<lb)||any(d>ub)
-            minusLogPost=inf;
-        else
-            minusLogPost=minus_log_post_func(d);
-            funevals=funevals+1;
-        end
+        minusLogPost=minus_log_post_func(d);
+        funevals=funevals+1;
     end
 end
