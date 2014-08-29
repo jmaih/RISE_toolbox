@@ -62,8 +62,6 @@ estim_start_from_mode=obj(1).options.estim_start_from_mode;
 % preliminary checks:
 param_names={obj(1).estimation.priors.name};
 % Load the function that computes the likelihood
-estim_general_restrictions=cell(1,nobj);
-estim_gen_restr_args=cell(1,nobj);
 for ii=1:nobj
     if ~isequal(param_names,{obj(ii).estimation.priors.name})
         error([mfilename,':: optimization parameters should be the same across all models and ordered in the same way'])
@@ -79,21 +77,6 @@ for ii=1:nobj
     % optimal_simple_rule_posterior, in which case there is no filtering going
     % on.
     obj(ii).options.kf_filtering_level=0;
-    if ~isempty(obj(ii).options.estim_general_restrictions)
-        if iscell(obj(ii).options.estim_general_restrictions)
-            estim_general_restrictions(ii)=obj(ii).options.estim_general_restrictions(1);
-            estim_gen_restr_args{ii}=obj(ii).options.estim_general_restrictions(2:end);
-        else
-            estim_general_restrictions{ii}=obj(ii).options.estim_general_restrictions;
-            estim_gen_restr_args{ii}={};
-        end
-        % collect the information about the degree of filtering
-        % 0 (no filters), 1(filtered), 2(filtered+updated), 3(filtered+updated+smoothed)
-        obj(ii).options.kf_filtering_level=estim_general_restrictions{ii}();
-        if obj(ii).options.kf_filtering_level && obj(ii).is_optimal_simple_rule_model
-            error([mfilename,':: Cannot do filtering under estimation of optimal simple rules'])
-        end
-    end
 end
 
 % this will record the different problems encounter during estimation
@@ -102,8 +85,6 @@ list_of_issues=cell(0);
 if ~isempty(estim_start_from_mode) && ~islogical(estim_start_from_mode)
     estim_start_from_mode=logical(estim_start_from_mode);
 end
-% prior_trunc=obj.options.prior_trunc;
-% debug=obj(1).options.debug;
 
 [obj,issue,retcode]=load_data(obj);
 if retcode
@@ -114,8 +95,6 @@ end
 if ~isempty(issue)
     list_of_issues=[list_of_issues;{issue}];
 end
-% eventually I should put options for recursive estimation
-% and for passing new data to the model on the fly.
 
 xmode=obj(1).estimation.posterior_maximization.mode;
 response='n';
@@ -144,26 +123,24 @@ x0=x0(:);
 lb=[obj(1).estimation.priors.lower_bound]; lb=lb(:);
 ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 
-estim_names=get_estimated_parameter_names(obj);
-% get the linear restrictions if any. basics.a_func takes a2tilde as input
-% and returns "a", while basics.a2tilde_func takes "a" as input and returns
-% a2tilde. 
-% npar_short<=npar is the number of parameters to estimate
-%-----------------------------------------------------------------------
-basics=setup_linear_restrictions(obj,estim_names);
+obj=setup_linear_restrictions(obj);
+obj=setup_general_restrictions(obj);
 
 npar=size(x0,1);
 
-[x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,ub,basics,...
-    estim_general_restrictions,estim_gen_restr_args); %#ok<ASGLU>
+[x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,ub); %#ok<ASGLU>
 
 numberOfActiveInequalities=numel(viol);
 
 % make the hessian positive definite if necessary
-[Hc,Hinv] = utils.hessian.conditioner(H);
-if max(abs(Hc(:)-H(:)))>1e-6
-    warning([mfilename,':: non-positive definite hessian made diagonally dominant']) %#ok<WNTAG>
-    H=Hc; clear Hc
+if obj(1).options.hessian_repare
+    [Hc,Hinv] = utils.hessian.conditioner(H);
+    if max(abs(Hc(:)-H(:)))>1e-6
+        warning([mfilename,':: non-positive definite hessian made diagonally dominant']) %#ok<WNTAG>
+        H=Hc; clear Hc
+        Hinv=inv(H);
+    end
+else
     Hinv=inv(H);
 end
 % the standard deviations
