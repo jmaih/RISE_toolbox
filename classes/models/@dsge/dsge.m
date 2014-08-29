@@ -27,6 +27,7 @@ classdef dsge < rise_generic
         lead_lag_incidence
         measurement_errors_restrictions
         model_derivatives
+        number_of_restrictions
         orig_endo_names_current
         planner_system
         raw_file
