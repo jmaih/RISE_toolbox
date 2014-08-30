@@ -139,6 +139,9 @@ classdef report < rise_report.titlepage
         function figure(obj,varargin)
             record(obj,'figure',varargin{:})
         end
+        function quotation(obj,varargin)
+            record(obj,'quotation',varargin{:})
+        end
         %-----------------------------------
         %         function graph(obj,varargin)
         %             record(obj,'graph',varargin{:})
