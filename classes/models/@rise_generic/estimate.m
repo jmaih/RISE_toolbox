@@ -133,7 +133,7 @@ npar=size(x0,1);
 numberOfActiveInequalities=numel(viol);
 
 % make the hessian positive definite if necessary
-if obj(1).options.hessian_repare
+if obj(1).options.hessian_repair
     [Hc,Hinv] = utils.hessian.conditioner(H);
     if max(abs(Hc(:)-H(:)))>1e-6
         warning([mfilename,':: non-positive definite hessian made diagonally dominant']) %#ok<WNTAG>
