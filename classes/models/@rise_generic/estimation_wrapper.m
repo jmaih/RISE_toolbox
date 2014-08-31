@@ -7,7 +7,14 @@ if isempty(action)
 end
 nonlcon=obj(1).routines.nonlinear_restrictions;
 nconst=obj(1).number_of_restrictions.nonlinear;
-if isempty(general_restrictions)
+if isempty(linear_restricts)
+    if isempty(obj(1).linear_restrictions_data)
+        % the model has not been estimated for the posterior mode yet. In
+        % that case load the restrictions
+        %-----------------------------------------------------------------
+        obj=setup_linear_restrictions(obj);
+        obj=setup_general_restrictions(obj);
+    end
     % In order to avoid recomputing the stationarity status we
     % create a copy of the original object and use it throughout
     oldobj=obj;
