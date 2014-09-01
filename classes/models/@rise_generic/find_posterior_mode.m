@@ -46,7 +46,7 @@ for ii=beg:Nsim
     NotDone=true;
     iter=0;
     while NotDone
-        [xtest,ftest,retcode,~,~,funevals]=...
+        [xtest,ftest,retcode]=...
             utils.estim.generate_starting_point(gen_start);
         if ftest<obj(1).options.estim_penalty
             NotDone=false;
