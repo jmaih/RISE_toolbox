@@ -115,31 +115,43 @@ final_funevals=old_funevals;
                 violLast=ones(nconst+ngen_restr,1)*realmax/(nconst+ngen_restr);
             end
         else
-            violLast=mynonlinear_constraints(x,oldobj);
+            violLast=mynonlinear_constraints(x,oldobj,true);
         end
         % update this element right here, so that it is ready when
         % calling nonlcon_with_gradient
         xLast=x;
     end
 
-    function viol=mynonlinear_constraints(x,obj) %#ok<INUSL>
+    function viol=mynonlinear_constraints(x,obj,params_pushed) 
+        if nargin<3
+            params_pushed=false;
+        end
         % this function assumes that the first argument has already
         % been pushed into the second one... I will need to make sure
         % that this is actually the case.
-        viol_general=[];
-        viol_simple=[];
-        for iobj=1:nobj
-            vv=nonlcon(obj(iobj).parameter_values);
-            viol_simple=[viol_simple,vv(:)]; %#ok<AGROW>
-            if ~isempty(general_restrictions{iobj})
-                vv=general_restrictions{iobj}(obj(iobj));
-                viol_general=[viol_general,vv(:)]; %#ok<AGROW>
+        if isequal(x,xLast)
+            viol=violLast;
+        else
+            if ~params_pushed
+                obj=assign_estimates(obj,x);
             end
+            viol_general=[];
+            viol_simple=[];
+            for iobj=1:nobj
+                vv=nonlcon(obj(iobj).parameter_values);
+                viol_simple=[viol_simple,vv(:)]; %#ok<AGROW>
+                if ~isempty(general_restrictions{iobj})
+                    vv=general_restrictions{iobj}(obj(iobj));
+                    viol_general=[viol_general,vv(:)]; %#ok<AGROW>
+                end
+            end
+            if isempty(ngen_restr)
+                ngen_restr=numel(viol_general);
+            end
+            viol=[viol_simple(:);viol_general(:)];
+            xLast=x;
+            violLast=viol;
         end
-        if isempty(ngen_restr)
-            ngen_restr=numel(viol_general);
-        end
-        viol=[viol_simple(:);viol_general(:)];
     end
 
     function [viol,grad]=nonlcon_with_gradient(xtilde)
@@ -147,12 +159,6 @@ final_funevals=old_funevals;
         % expand x before doing anything
         %-------------------------------
         x=linear_restricts.a_func(xtilde);
-        if isequal(x,xLast)
-            viol=violLast;
-        else
-            %                 thisobj=assign_estimates(obj,x);
-            %                 viol=mynonlinear_constraints(x,thisobj);
-            error('evaluating constraints before computing log-posterior: please report this to junior.maih@gmail.com')
-        end
+        viol=mynonlinear_constraints(x,oldobj);
     end
 end
