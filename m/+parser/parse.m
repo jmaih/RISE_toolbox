@@ -463,7 +463,10 @@ for ii=1:numel(equation_type)
         [status,pos]=dictionary.determine_status(item,dictionary);
         switch status
             case 'y'
-                if is_sseq || is_planner
+                if is_sseq ||is_planner ||is_tvp 
+                    % is_tvp is added here because only contemporaneous
+                    % variables enter the tvp be it in steady state or
+                    % during filtering.  
                     index=pos;
                 else
                     index=abs(lead_or_lag-2);
