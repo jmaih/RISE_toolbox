@@ -85,7 +85,7 @@ for pc=1:mcmc_number_of_parallel_chains
     store_index=0;
     matrix_index=0;
     ithin=0;
-                newpeak=false;
+    newpeak=false;
     for d=1:nsimu
         [theta,f_theta]=metropolis_hastings_sampler(theta,f_theta);
         if d>number_of_burns
