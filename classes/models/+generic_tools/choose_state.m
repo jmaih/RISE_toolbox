@@ -14,7 +14,7 @@ if isempty(st)||isnan(st)
         % the transition matrix will change
         shadow_transition_matrix=Q{2};
         Vargs=Q{3};
-        [Q0,retcode]=utils.code.evaluate_transition_matrices(shadow_transition_matrix,y,Vargs{:},[],[],[]);
+        [Q0,retcode]=utils.code.evaluate_transition_matrices(shadow_transition_matrix,y,Vargs{:});
     end
     if retcode
         return
