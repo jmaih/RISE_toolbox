@@ -114,12 +114,12 @@ final_funevals=old_funevals;
             else
                 violLast=ones(nconst+ngen_restr,1)*realmax/(nconst+ngen_restr);
             end
+            % update this element right here, so that it is ready when
+            % calling nonlcon_with_gradient.
+            xLast=x;
         else
             violLast=mynonlinear_constraints(x,oldobj,true);
         end
-        % update this element right here, so that it is ready when
-        % calling nonlcon_with_gradient
-        xLast=x;
     end
 
     function viol=mynonlinear_constraints(x,obj,params_pushed) 
