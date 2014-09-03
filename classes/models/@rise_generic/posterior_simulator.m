@@ -197,7 +197,7 @@ obj.estimation.posterior_simulation=orderfields(...
         if c<=0
             error([mfilename,':: mcmc_initial_covariance_tune must be positive'])
         end
-        vcov=obj.estimation.posterior_maximization.vcov;
+        vcov=repair_covariance_matrix(obj.estimation.posterior_maximization.vcov);
         objective=@(x)fh_wrapper(x);
         x0=obj.estimation.posterior_maximization.mode;
         not_optimized=isempty(x0);
@@ -221,6 +221,10 @@ obj.estimation.posterior_simulation=orderfields(...
         %--------------------------------------------------------------
         adapt_covariance=all(all(abs(diag(diag(vcov))-vcov)<1e-12));
         adapt_covariance=adapt_covariance||options.mcmc_adapt_covariance;
+        function A_psd = repair_covariance_matrix(vcov)
+            [V,D] = eig(vcov);
+            A_psd = V*diag(max(diag(D),sqrt(eps)))*V';
+        end
     end
 
     function [minus_log_post,retcode]=fh_wrapper(x)
