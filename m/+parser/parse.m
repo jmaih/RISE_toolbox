@@ -137,7 +137,8 @@ dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities
 auxiliary_steady_state_equations=cell(0,3);
 orig_endogenous_current=dictionary.orig_endogenous; % these are the variables without the augmentation add-on
 all_fields=fieldnames(parser.listing);
-main_endo_fields={'name','tex_name','max_lead','max_lag','is_log_var','is_auxiliary'};
+main_endo_fields={'name','tex_name','max_lead','max_lag','is_log_var',...
+    'is_auxiliary','is_trans_prob'};
 useless_fields=setdiff(all_fields,main_endo_fields);
 overall_max_lead_lag=max([dictionary.orig_endogenous.max_lead]);
 overall_max_lead_lag=max([abs([dictionary.orig_endogenous.max_lag]),overall_max_lead_lag]);
@@ -150,7 +151,8 @@ for ii=1:numel(dictionary.orig_endogenous)
     vold=vname;
     for i2=2:lead_i
         new_var=struct('name',[vname,'_AUX_F_',sprintf('%0.0f',i2-1)],...
-            'tex_name','','max_lead',1,'max_lag',0,'is_log_var',false,'is_auxiliary',true);
+            'tex_name','','max_lead',1,'max_lag',0,'is_log_var',false,...
+            'is_auxiliary',true,'is_trans_prob',false);
         Model_block=[Model_block;
             {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}'],0,1}]; %#ok<*AGROW> %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
@@ -182,7 +184,8 @@ for ii=1:numel(variables)
         % then create an auxiliary variable and an auxiliary equation
         % before proceeding
         new_var=struct('name',[vname,'_0'],'tex_name','','max_lead',0,...
-            'max_lag',-1,'is_log_var',false,'is_auxiliary',true);
+            'max_lag',-1,'is_log_var',false,'is_auxiliary',true,...
+            'is_trans_prob',false);
         Model_block=[Model_block;
             {[{new_var.name,0}',{'-',[]}',{vname,0}',{';',[]}'],0,0}]; %
         % The steady state is computed with zero shocks. and so instead of
@@ -209,7 +212,7 @@ for ii=1:numel(variables)
         end
         new_var=struct('name',[vname,'_AUX_L_',sprintf('%0.0f',i2-1)],...
             'tex_name','','max_lead',0,'max_lag',-1,'is_log_var',false,...
-            'is_auxiliary',true);
+            'is_auxiliary',true,'is_trans_prob',false);
         Model_block=[Model_block;
             {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}'],-1,0}]; %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
@@ -476,6 +479,8 @@ for ii=1:numel(equation_type)
                     error([mfilename,':: definitions cannot contain variables']);
                 elseif is_tvp
                     sh_tvp=[sh_tvp,'y(',sprintf('%0.0f',index),')'];
+                    dictionary.orig_endogenous(pos).is_trans_prob=true;
+                    orig_endogenous_current(pos).is_trans_prob=true;
                 elseif is_sseq
                     sh_ssm=[sh_ssm,'y(',sprintf('%0.0f',index),')'];
                 elseif is_planner
@@ -873,7 +878,7 @@ if dictionary.is_optimal_policy_model
         new_var=struct('name',['mult_',sprintf('%0.0f',eq)],'tex_name','',...
             'max_lead',-equations_maxLag_maxLead(eq,1),... % lags govern the leads
             'max_lag',-equations_maxLag_maxLead(eq,2),... % leads govern the lags
-            'is_log_var',false,'is_auxiliary',false);
+            'is_log_var',false,'is_auxiliary',false,'is_trans_prob',false);
         for ifield=1:numel(useless_fields)
             new_var.(useless_fields{ifield})=nan;
         end
@@ -895,8 +900,8 @@ else
         for ii=1:numel(dictionary.forward_looking_ids)
             id=dictionary.forward_looking_ids(ii);
             new_var=struct('name',['SI_',dictionary.orig_endogenous{id}],'tex_name','',...
-                'max_lead',0,'max_lag',0,...
-                'is_log_var',false,'is_auxiliary',true);
+                'max_lead',0,'max_lag',0,'is_log_var',false,...
+                'is_auxiliary',true,'is_trans_prob',false);
             for ifield=1:numel(useless_fields)
                 new_var.(useless_fields{ifield})=nan;
             end
@@ -975,6 +980,7 @@ dictionary.endogenous.is_state=dictionary.endogenous.is_predetermined|...
 dictionary.endogenous.is_frwrd_looking=sparse((logical_incidence(:,1) & ~logical_incidence(:,3))');
 dictionary.endogenous.is_log_var=sparse([endogenous.is_log_var]);
 dictionary.endogenous.is_auxiliary=sparse([endogenous.is_auxiliary]);
+dictionary.endogenous.is_affect_trans_probs=sparse([endogenous.is_trans_prob]);
 clear endogenous logical_incidence
 
 exogenous=dictionary.exogenous;

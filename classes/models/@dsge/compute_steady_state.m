@@ -145,9 +145,20 @@ if ~retcode
     end
     structural_matrices.theta_hat=theta_hat;
     
+    ss_=ss_and_bgp_start_vals(1:endo_nbr,:);
+    bgp_=ss_and_bgp_start_vals(endo_nbr+1:end,:);
+    ss_tvp=ss_(obj.endogenous.is_affect_trans_probs,:);
+    bad=any(abs(bsxfun(@minus,ss_tvp,ss_tvp(:,1)))>1e-9,2);
+    if any(bad)
+        bad_endo_vars=get(obj,'endo_list(affect_trans_probs)');
+        bad_endo_vars=bad_endo_vars(bad);
+        disp(bad_endo_vars)
+        error(['The variables above affect the transition probabilities but ',...
+            'do not have the same steady state in each regime'])
+    end
     for ii=1:number_of_regimes
-        obj.solution.ss{ii}=sparse(ss_and_bgp_start_vals(1:endo_nbr,ii));
-        obj.solution.bgp{ii}=sparse(ss_and_bgp_start_vals(endo_nbr+1:end,ii));
+        obj.solution.ss{ii}=sparse(ss_(:,ii));
+        obj.solution.bgp{ii}=sparse(bgp_(:,ii));
     end
 end
 
