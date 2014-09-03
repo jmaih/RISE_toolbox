@@ -687,59 +687,72 @@ end
 T0=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,...
     options.solve_initialization);
 
-kron_method=strncmpi(options.solver,'mnk',3);
+model_class=isempty(pb_cols_adjusted)+2*isempty(bf_cols_adjusted);
 
-if strcmpi(options.solver,'mfi')
-    iterate_func=@(x)msre_solvers.functional_iteration_h(x,dbf_plus,d0,...
-        dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
-elseif any(strcmpi(options.solver,{'mnk','mn'}))
-    iterate_func=@(x)msre_solvers.newton_iteration_h(x,dbf_plus,d0,dpb_minus,...
-        bf_cols_adjusted,pb_cols_adjusted,kron_method,options);
-elseif any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
-    [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
-    if strcmpi(options.solver,'mfi_full')
-        iterate_func=@(x)msre_solvers.functional_iteration_h_full(x,Gplus01,A0,Aminus);
-    else
-        iterate_func=@(x)msre_solvers.newton_iteration_h_full(x,Gplus01,A0,Aminus,...
-            kron_method,options);
-    end
-elseif strcmpi(options.solver,'fwz')
-    [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
-    [iterate_func,solution_func,inverse_solution_func]= ...,sampling_func
-        msre_solvers.fwz_newton_system(Gplus01,A0,Aminus,Q);
-    T0=inverse_solution_func(T0);
-end
+retcode=0;
 eigval=[];
-
-switch lower(options.solver)
-    case {'rise_1','klein','aim','sims'}
-        dbf_plus_row=reconfigure_aplus();
-        [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(...
-            dbf_plus_row,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adj,options);
-    case {'mfi','mfi_full','mnk','mnk_full','mn','mn_full','fwz'}
-        [Tz_pb,~,retcode]=fix_point_iterator(iterate_func,T0,options);
-        if  ~retcode && strcmpi(options.solver,'fwz')
-            Tz_pb=solution_func(Tz_pb);
-        end
-        if any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
-            Tz_pb=reshape(Tz_pb,[size(Tz_pb,1),size(Tz_pb,1),siz_adj.h]);
-        end
-        if any(strcmpi(options.solver,{'fwz','mfi_full','mnk_full','mn_full'}))
-            Tz_pb=Tz_pb(:,siz_adj.ns+(1:siz_adj.np+siz_adj.nb),:);
-        end
-    otherwise
-        % user-defined solver
-        %--------------------
-        [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+switch model_class
+    case 1 % forward-looking models
+        Tz_pb=0*T0;
+    case 2 % backward-looking models
+        Tz_pb=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,'backward');
+    case 3 % static models
+        Tz_pb=0*T0;
+    case 0 % hybrid models
+        kron_method=strncmpi(options.solver,'mnk',3);
         
-        [Tz_pb,~,retcode]=options.solver(Gplus01,A0,Aminus,Q,T0);
+        if strcmpi(options.solver,'mfi')
+            iterate_func=@(x)msre_solvers.functional_iteration_h(x,dbf_plus,d0,...
+                dpb_minus,bf_cols_adjusted,pb_cols_adjusted);
+        elseif any(strcmpi(options.solver,{'mnk','mn'}))
+            iterate_func=@(x)msre_solvers.newton_iteration_h(x,dbf_plus,d0,dpb_minus,...
+                bf_cols_adjusted,pb_cols_adjusted,kron_method,options);
+        elseif any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
+            [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+            if strcmpi(options.solver,'mfi_full')
+                iterate_func=@(x)msre_solvers.functional_iteration_h_full(x,Gplus01,A0,Aminus);
+            else
+                iterate_func=@(x)msre_solvers.newton_iteration_h_full(x,Gplus01,A0,Aminus,...
+                    kron_method,options);
+            end
+        elseif strcmpi(options.solver,'fwz')
+            [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+            [iterate_func,solution_func,inverse_solution_func]= ...,sampling_func
+                msre_solvers.fwz_newton_system(Gplus01,A0,Aminus,Q);
+            T0=inverse_solution_func(T0);
+        end
         
-        % collect the relevant part
-        %--------------------------
-        if ~retcode
-            Tz_pb=Tz_pb(:,siz_adj.ns+(1:siz_adj.np+siz_adj.nb),:);
+        switch lower(options.solver)
+            case {'rise_1','klein','aim','sims'}
+                dbf_plus_row=reconfigure_aplus();
+                [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(...
+                    dbf_plus_row,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adj,options);
+            case {'mfi','mfi_full','mnk','mnk_full','mn','mn_full','fwz'}
+                [Tz_pb,~,retcode]=fix_point_iterator(iterate_func,T0,options);
+                if  ~retcode && strcmpi(options.solver,'fwz')
+                    Tz_pb=solution_func(Tz_pb);
+                end
+                if any(strcmpi(options.solver,{'mfi_full','mnk_full','mn_full'}))
+                    Tz_pb=reshape(Tz_pb,[size(Tz_pb,1),size(Tz_pb,1),siz_adj.h]);
+                end
+                if any(strcmpi(options.solver,{'fwz','mfi_full','mnk_full','mn_full'}))
+                    Tz_pb=Tz_pb(:,siz_adj.ns+(1:siz_adj.np+siz_adj.nb),:);
+                end
+            otherwise
+                % user-defined solver
+                %--------------------
+                [Gplus01,A0,Aminus,T0]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
+                
+                [Tz_pb,~,retcode]=options.solver(Gplus01,A0,Aminus,Q,T0);
+                
+                % collect the relevant part
+                %--------------------------
+                if ~retcode
+                    Tz_pb=Tz_pb(:,siz_adj.ns+(1:siz_adj.np+siz_adj.nb),:);
+                end
         end
 end
+
 
 if ~retcode
     npb=siz.np+siz.nb;
