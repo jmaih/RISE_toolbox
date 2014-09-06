@@ -48,14 +48,14 @@ classdef table < rise_report.generic_report
                 tablestyle='table';
                 if obj.longtable
                     tablestyle=['long',tablestyle];
-                    b=[b;{
+                    b=[b;
                         ['\begin{',tablestyle,'}[H]{',repmat('r',1,ncols),'}']
-                        }];
+                        ];
                 else
-                    b=[b;{
+                    b=[b
                         ['\begin{',tablestyle,'}[H] \centering']
                         ['\begin{tabular}{',repmat('r',1,ncols),'}']
-                        }];
+                        ];
                 end
                 if ~isempty(obj.title)
                     titel=obj.title;
@@ -74,7 +74,7 @@ classdef table < rise_report.generic_report
                     '\hline'
                     ];
                 if obj.longtable
-                    b=[b;{
+                    b=[b;
                         '\endfirsthead'
                         ['\multicolumn{',int2str(ncols),'}{c}{ -- \textit{Continued from previous page}} \\']
                         '\hline\hline'
@@ -85,17 +85,19 @@ classdef table < rise_report.generic_report
                         '\endfoot'
                         '\hline\hline'
                         '\endlastfoot'
-                        }];
+                        ];
                 end
                 b=[b
                     AllBatch];
                 if ~obj.longtable
                     b=[b
-                        {'\hline\hline'
-                        '\end{tabular}'}
+                        '\hline\hline'
+                        '\end{tabular}'
                         ];
                 end
-                b=[b;{['\end{',tablestyle,'}']}];
+                b=[b
+                    ['\end{',tablestyle,'}']
+                    ];
             end
         end
     end
