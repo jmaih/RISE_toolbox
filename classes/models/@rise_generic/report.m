@@ -94,7 +94,7 @@ end
                 destination_root.table('title','Model Solution','log',solution)
             case 'estimation'
                 destination_root.table('title','Estimation Results',...
-                    'log',model_estimation_results(obj))
+                    'log',model_estimation_results(obj),'longtable',true)
             case 'estimation_statistics'
                 destination_root.table('title','Estimation Statistics',...
                     'log',estimation_statistics(obj))
