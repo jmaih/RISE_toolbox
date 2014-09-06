@@ -56,21 +56,24 @@ end
                 this_table=[{'Model code','Description'};
                     obj(1).endogenous.name(governing)',...
                     obj(1).endogenous.tex_name(governing)'];
-                destination_root.table('title','Endogenous Variables','log',this_table)
+                destination_root.table('title','Endogenous Variables',...
+                    'log',this_table,'longtable',true)
             case {'exogenous'}
                 if nobj>1
                     warning('reporting the exogenous for the first model only')
                 end
                 this_table=[{'Model code','Description'}
                     obj(1).exogenous.name',obj(1).exogenous.tex_name'];
-                destination_root.table('title','Exogenous Variables','log',this_table)
+                destination_root.table('title','Exogenous Variables',...
+                    'log',this_table,'longtable',true)
             case {'observables'}
                 if nobj>1
                     warning('reporting the observables for the first model only')
                 end
                 this_table=[{'Model code','Description'}
                     obj(1).observables.name',obj(1).observables.tex_name'];
-                destination_root.table('title','Observed Variables','log',this_table)
+                destination_root.table('title','Observed Variables',...
+                    'log',this_table,'longtable',true)
             case 'parameters'
                 if nobj>1
                     warning('reporting the parameters for the first model only')
@@ -84,14 +87,16 @@ end
                 end
                 this_table=[{'Model code','Description'}
                     obj(1).parameters.name',texnames];
-                destination_root.table('title','Model Parameters','log',this_table)
+                destination_root.table('title','Model Parameters',...
+                    'log',this_table,'longtable',true)
             case 'solution'
                 if isempty(varlist) && obj(1).endogenous.number(end)>5
                     warning(['Reporting the solution for perhaps too many variables. ',...
                         'All the columns might not fit a the report'])
                 end
                 solution=print_solution(obj,varlist,precision);
-                destination_root.table('title','Model Solution','log',solution)
+                destination_root.table('title','Model Solution','log',solution,...
+                    'longtable',true)
             case 'estimation'
                 destination_root.table('title','Estimation Results',...
                     'log',model_estimation_results(obj),'longtable',true)
