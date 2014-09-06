@@ -1,47 +1,43 @@
-function [x1,f1,H,issue,viol,final_obj,final_funevals]=...
+function [x1,f1,H,issue,viol,obj,funevals]=...
     estimation_wrapper(obj,action,x0,lb,ub,funevals)
-persistent general_restrictions linear_restricts ngen_restr nobj ...
-    estim_blocks lb_short ub_short npar_short oldobj old_funevals
 if isempty(action)
     action='eval';
 end
 nonlcon=obj(1).routines.nonlinear_restrictions;
 nconst=obj(1).number_of_restrictions.nonlinear;
-if isempty(linear_restricts)
-    if isempty(obj(1).linear_restrictions_data)
-        % the model has not been estimated for the posterior mode yet. In
-        % that case load the restrictions
-        %-----------------------------------------------------------------
-        obj=setup_linear_restrictions(obj);
-        obj=setup_general_restrictions(obj);
-    end
-    % In order to avoid recomputing the stationarity status we
-    % create a copy of the original object and use it throughout
-    oldobj=obj;
-    old_funevals=funevals;
-    linear_restricts=oldobj(1).linear_restrictions_data;
-    nobj=numel(oldobj);
-    general_restrictions=cell(1,nobj);
-    for iii=1:nobj
-        general_restrictions{iii}=oldobj(iii).general_restrictions_data;
-    end
-    estim_blocks=oldobj(1).options.estim_blocks;
-    if ~isempty(estim_blocks)
-        estim_blocks=create_estimation_blocks(oldobj(1),estim_blocks);
-    end
-    lb_short=linear_restricts.a2tilde_func(lb);
-    ub_short=linear_restricts.a2tilde_func(ub);
-    npar_short=size(lb_short,1);
-    bad=lb_short>ub_short;
-    if any(bad)
-        tmp=lb_short;
-        lb_short(bad)=ub_short(bad);
-        ub_short(bad)=tmp(bad);
-    end
+
+if isempty(obj(1).linear_restrictions_data)
+    % the model has not been estimated for the posterior mode yet. In
+    % that case load the restrictions
+    %-----------------------------------------------------------------
+    obj=setup_linear_restrictions(obj);
+    obj=setup_general_restrictions(obj);
 end
+
+linear_restricts=obj(1).linear_restrictions_data;
+nobj=numel(obj);
+general_restrictions=cell(1,nobj);
+for iii=1:nobj
+    general_restrictions{iii}=obj(iii).general_restrictions_data;
+end
+estim_blocks=obj(1).options.estim_blocks;
+if ~isempty(estim_blocks)
+    estim_blocks=create_estimation_blocks(obj(1),estim_blocks);
+end
+lb_short=linear_restricts.a2tilde_func(lb);
+ub_short=linear_restricts.a2tilde_func(ub);
+npar_short=size(lb_short,1);
+bad=lb_short>ub_short;
+if any(bad)
+    tmp=lb_short;
+    lb_short(bad)=ub_short(bad);
+    ub_short(bad)=tmp(bad);
+end
+
 violLast=[];
 xLast=[];
 viol=[];
+ngen_restr=[];
 if isempty(x0)
     x0=lb_short+(ub_short-lb_short).*rand(npar_short,1);
 else
@@ -54,11 +50,11 @@ switch action
             'lb',lb_short,...
             'ub',ub_short,...
             'nonlcon',@nonlcon_with_gradient,... % the nonlinear constraints restrictions take the same inputs as fh_wrapper
-            'options',oldobj(1).options.optimset,...
-            'solver',oldobj(1).options.optimizer);
+            'options',obj(1).options.optimset,...
+            'solver',obj(1).options.optimizer);
         
         [x1,f1,H,issue]=optimization.estimation_engine(PROBLEM_,...
-            oldobj(1).options.hessian_type,estim_blocks);
+            obj(1).options.hessian_type,estim_blocks);
     case 'eval'
         [f1,retcode_0]=fh_wrapper(x0);
         x1=x0;
@@ -75,8 +71,6 @@ if ~isempty(H)
     % the second arguments indicates that it is a covariance term
     H = linear_restricts.a_func(H,true);
 end
-final_obj=obj;
-final_funevals=old_funevals;
 
     function [minus_log_post,retcode]=fh_wrapper(xtilde)
         % this function returns the minimax if there are many objects
@@ -91,14 +85,14 @@ final_funevals=old_funevals;
         %-------------------------------
         x=linear_restricts.a_func(xtilde);
         
-        fval=oldobj(1).options.estim_penalty*ones(1,nobj);
+        fval=obj(1).options.estim_penalty*ones(1,nobj);
         for mo=1:nobj
-            [fval(mo),~,~,~,retcode,oldobj(mo)]=log_posterior_kernel(oldobj(mo),x);
+            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
             if retcode
                 break
             end
         end
-        old_funevals=old_funevals+1;
+        funevals=funevals+1;
         % Now take the negative for minimization
         minus_log_post=-min(fval);
         % nonlinear constraints might be incompatible with blockwise
@@ -118,11 +112,11 @@ final_funevals=old_funevals;
             % calling nonlcon_with_gradient.
             xLast=x;
         else
-            violLast=mynonlinear_constraints(x,oldobj,true);
+            violLast=mynonlinear_constraints(x,obj,true);
         end
     end
 
-    function viol=mynonlinear_constraints(x,obj,params_pushed) 
+    function viol=mynonlinear_constraints(x,obj,params_pushed)
         if nargin<3
             params_pushed=false;
         end
@@ -159,6 +153,6 @@ final_funevals=old_funevals;
         % expand x before doing anything
         %-------------------------------
         x=linear_restricts.a_func(xtilde);
-        viol=mynonlinear_constraints(x,oldobj);
+        viol=mynonlinear_constraints(x,obj);
     end
 end
