@@ -141,6 +141,13 @@ end
                     type='endogenous';
                 end
                 obj.(type).tex_name{loc}=propval.(thisfield);
+                if ~isempty(obj.observables.name) && ...
+                        any(strcmp(type,{'endogenous','exogenous'}))
+                    loc=find(strcmp(thisfield,obj.observables.name));
+                    if ~isempty(loc)
+                        obj.observables.tex_name{loc}=propval.(thisfield);
+                    end
+                end
             end
         end
         function set_one_option()
