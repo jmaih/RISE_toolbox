@@ -132,8 +132,10 @@ end
             viol_general=[];
             viol_simple=[];
             for iobj=1:nobj
-                vv=nonlcon(obj(iobj).parameter_values);
-                viol_simple=[viol_simple,vv(:)]; %#ok<AGROW>
+                if ~isempty(nonlcon)
+                    vv=nonlcon(obj(iobj).parameter_values);
+                    viol_simple=[viol_simple,vv(:)]; %#ok<AGROW>
+                end
                 if ~isempty(general_restrictions{iobj})
                     vv=general_restrictions{iobj}(obj(iobj));
                     viol_general=[viol_general,vv(:)]; %#ok<AGROW>

@@ -124,9 +124,7 @@ for iconstr=1:nconst
 end
 nonlcon=cell2mat(nonlcon(:)');
 nonlcon=nonlcon(1:end-1);
-if isempty(nonlcon)
-    nonlcon='0';
-    nconst=1;
+if ~isempty(nonlcon)
+    nonlcon=str2func(['@(M)[',nonlcon,']']);
 end
-nonlcon=str2func(['@(M)[',nonlcon,']']);
 end
