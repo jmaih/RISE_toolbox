@@ -9,7 +9,7 @@ if isempty(obj)
         'vp_mnst_stationary_var_mean',0.5,... % unit root = 1
         'vp_natconj_normwish_variance',10,...
         'vp_analytical_post_mode',true,... % compute the posterior mode analytically if possible
-        'vp_prior_type','minnesota'); % {minnesota},none,natconj,normal_wishart,jeffrey 
+        'vp_prior_type','minnesota'); % {minnesota},none,normal_wishart,indep_normal_wishart,jeffrey(diffuse) 
 %         'vp_mnst_weight_on_nvar_sum_coef',1,...
 %         'vp_mnst_flat',0,...
 %         'vp_mnst_weight_on_single_dummy_initial',1,...
@@ -214,7 +214,8 @@ obj=setup_priors(obj,MyPriors);
     function [m,sd]=set_var_prior(eqtn,vn,lag)
         m=0;
         switch prior_type
-            case 'none'
+            case {'diffuse','jeffrey', 'none'}
+                sd = sqrt(realmax);
             case 'minnesota'
                 is_variable=~isnan(vn);
                 if is_variable
@@ -231,12 +232,10 @@ obj=setup_priors(obj,MyPriors);
                 else
                     sd=lam_3*s(eqtn);
                 end
-            case {'natconj','normal_wishart'}
+            case {'normal_wishart','indep_normal_wishart'}
                 sd = sqrt(obj.options.vp_natconj_normwish_variance);
                 % Maybe allow the user to specify their own matrix here
                 % p.v_prior = nvar + 1; p.S_prior = eye(nvar);
-            case 'jeffrey'
-                error('Jeffrey not yet implemented')
             otherwise
                 error(['unknown prior type "',prior_type,'"'])
         end
