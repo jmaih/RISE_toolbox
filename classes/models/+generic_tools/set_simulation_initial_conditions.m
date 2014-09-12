@@ -74,7 +74,10 @@ if ~isempty(simul_historical_data)
     % This exo_nbr includes the place holder for the regime
     %------------------------------------------------------
     exo_plus_regime_nbr=numel(new_shock_names);
-    k=max(obj.exogenous.shock_horizon);
+    k=0;
+    if isa(obj,'dsge')
+        k=max(obj.exogenous.shock_horizon);
+    end
     shocks_raw_data=raw_data(:,right+1:end);
     nperiods=size(shocks_raw_data,2);
     % initialize shocks and nan the regime row
