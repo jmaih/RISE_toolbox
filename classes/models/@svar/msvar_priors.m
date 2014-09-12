@@ -9,7 +9,7 @@ if isempty(obj)
         'vp_mnst_stationary_var_mean',0.5,... % unit root = 1
         'vp_natconj_normwish_variance',10,...
         'vp_analytical_post_mode',true,... % compute the posterior mode analytically if possible
-        'vp_prior_type','minnesota'); % {minnesota},none,natconj,normwish,jeffrey 
+        'vp_prior_type','minnesota'); % {minnesota},none,natconj,normal_wishart,jeffrey 
 %         'vp_mnst_weight_on_nvar_sum_coef',1,...
 %         'vp_mnst_flat',0,...
 %         'vp_mnst_weight_on_single_dummy_initial',1,...
@@ -231,7 +231,7 @@ obj=setup_priors(obj,MyPriors);
                 else
                     sd=lam_3*s(eqtn);
                 end
-            case {'natconj','normwish'}
+            case {'natconj','normal_wishart'}
                 sd = sqrt(obj.options.vp_natconj_normwish_variance);
                 % Maybe allow the user to specify their own matrix here
                 % p.v_prior = nvar + 1; p.S_prior = eye(nvar);
