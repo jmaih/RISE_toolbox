@@ -52,7 +52,7 @@ function [smpl,fsmpl,accept_rate,start] = mh_sampling_engine(start,nsamples,vara
 %        proprnd = @(x) sum ...               % proposal random sampler
 %                   (exprnd(floor(alpha)/alpha,floor(alpha),1));
 %        nsamples = 5000;
-%        smpl = mhsampler(1,nsamples,'pdf',pdf,'proprnd', ...
+%        smpl = mh_sampling_engine(1,nsamples,'pdf',pdf,'proprnd', ...
 %                   proprnd,'proppdf',proppdf);
 %        xxhat = cumsum(smpl.^2)./(1:nsamples)';
 %        plot(1:nsamples,xxhat)
@@ -66,7 +66,7 @@ function [smpl,fsmpl,accept_rate,start] = mh_sampling_engine(start,nsamples,vara
 %    proprnd = @(x)x + 2*rand(npar,size(x,2))*delta - delta;   % proposal random sampler
 %    nsamples = 10000;
 %    nchains=4;
-%    [x,fx,accept] = mhsampler(rand(npar,nchains),nsamples,...
+%    [x,fx,accept] = mh_sampling_engine(rand(npar,nchains),nsamples,...
 %     'pdf',pdf,'proprnd',proprnd,'burnin',300);
 
 % modified from Mathworks' mhsample
