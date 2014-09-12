@@ -63,12 +63,12 @@ end
     function x1=one_constant_var_posterior_draw()
         
         switch prior_type
-            case 'diffuse' % prior == 1
+            case {'diffuse','jeffrey'} % prior == 1
                 % Posterior of alpha|SIGMA,Data ~ Normal
-                alpha2tilde = ols_a2tilde.a + chol(a2tilde.post.V)'*randn(na2,1);% Draw alpha
+                alpha2tilde = a2tilde.ols.a + chol(a2tilde.post.V)'*randn(na2,1);% Draw alpha
                 
                 % Posterior of SIGMA|Data ~ iW(ols.SSE,T-K)
-                start.SIGMA = inverse_wishart_draw(ols_a2tilde.SSE,nobs-K);% Draw SIGMA
+                start.SIGMA = inverse_wishart_draw(a2tilde.ols.SSE,nobs-K);% Draw SIGMA
                 
             case 'minnesota' % prior == 2
                 alpha2tilde = a2tilde.post.a + chol(a2tilde.post.V)'*randn(na2,1); % Draw alpha
@@ -77,7 +77,7 @@ end
                 % the prior
                 % start.SIGMA=start.SIGMA; % start.SIGMA=a2tilde.prior.SIGMA;
                 
-            case 'normal_wishart' % prior == 3
+            case {'normal_wishart','natconj'} % prior == 3
                 % This is the covariance for the posterior density of alpha
                 COV = kron(start.SIGMA,a2tilde.post.V);
                 
