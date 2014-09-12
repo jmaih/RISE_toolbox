@@ -1,5 +1,6 @@
 classdef rfvar < svar
-    properties
+    properties(Hidden = true)
+        constant_var_data
     end
     properties(SetAccess=protected)
         identification
@@ -31,6 +32,8 @@ classdef rfvar < svar
     methods(Access=protected,Hidden=true)
         varargout=update_estimated_parameter_names(varargin)
         varargout=find_posterior_mode(varargin)
+        varargout=update_posterior_simulation_initial_conditions(varargin)
+        varargout=initialize_posterior_simulation(varargin)
     end
     methods(Static)
         function r=template()
