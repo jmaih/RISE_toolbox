@@ -1,6 +1,6 @@
 function waitbar(task,x,varargin)
 
-persistent waitbar_handle init_clock 
+persistent waitbar_handle init_clock title_size_reset
 
 switch lower(task)
     case 'init'
@@ -12,6 +12,7 @@ switch lower(task)
             'CreateCancelBtn','delete(gcbf)',...
             varargin{:});
         init_clock=clock;
+        title_size_reset=false;
     case 'close'
         if ishandle(waitbar_handle)
             delete(waitbar_handle)
@@ -20,6 +21,17 @@ switch lower(task)
         if ishandle(waitbar_handle)
             [hrs,mins,secs]=utils.miscellaneous.estimated_time_of_arrival(init_clock,x);
             msg=sprintf('%0.4f complete. ETA: %g:%02g:%02g',x,hrs,mins,secs);
+            if ~isempty(varargin) && ischar(varargin{1})
+                msg=[varargin(:)
+                    msg];
+                if ~title_size_reset
+                    title_size_reset=true;
+                    pos=get(waitbar_handle,'position');
+                    pos(end)=(1+.25*numel(varargin))*pos(end);
+                    set(waitbar_handle,'position',pos)
+                end
+                % msg=sprintf('%s -- %s',varargin{1},msg);
+            end
             waitbar(x,waitbar_handle,msg);
             drawnow
         else
