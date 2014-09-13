@@ -80,7 +80,9 @@ dsge_irfs=format_irf_output(dsge_irfs);
         if retcode
             error('model cannot be solved')
         end
+        solve_order=1;
         if is_dsge
+            solve_order=obj.options.solve_order;
             % hide future shocks if required
             %-------------------------------
             obj=do_not_anticipate_future_shocks(obj);
@@ -91,15 +93,17 @@ dsge_irfs=format_irf_output(dsge_irfs);
         %-------------------
         Initcond=generic_tools.set_simulation_initial_conditions(obj);
         
-        ovSolution=load_order_var_solution(obj,Initcond.y);
-        y0=ovSolution.y0;
-        T=ovSolution.T;
-        steady_state=ovSolution.steady_state;
-        
         h=obj.markov_chains.regimes_number;
-        solve_order=obj.options.solve_order;
+        % load the order_var solution
+        %-----------------------------
+        [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+        y0=Initcond.y;
+        for ireg=1:h
+            y0(ireg).y=y0(ireg).y(new_order,:);
+        end
+        
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
-%         quash_regimes=(h>1 && ~irf_regime_specific);
+        %         quash_regimes=(h>1 && ~irf_regime_specific);
         %||(solve_order==1 && girf)
         if ~girf
             irf_draws=1;
@@ -111,9 +115,9 @@ dsge_irfs=format_irf_output(dsge_irfs);
             number_of_threads=1;
         end
         if number_of_threads==1
-%             [y0,T,steady_state]=...
-%                 utils.forecast.aggregate_initial_conditions(Initcond.PAI,...
-%                 y0,T,steady_state);
+            %             [y0,T,steady_state]=...
+            %                 utils.forecast.aggregate_initial_conditions(Initcond.PAI,...
+            %                 y0,T,steady_state);
             y0=utils.forecast.aggregate_initial_conditions(Initcond.PAI,y0);
         end
         
@@ -143,8 +147,11 @@ dsge_irfs=format_irf_output(dsge_irfs);
                     Initcond.states(:,1)=istate;
                 end
                 [xxxx,retcode]=utils.forecast.irf(y0(istate),T,steady_state,...
-                    which_shocks,Initcond);
-                Impulse_dsge(:,:,:,:,istate)=xxxx;
+                    state_vars_location,which_shocks,Initcond);
+                % select only the relevant rows in case we are dealing with
+                % a VAR with many lags
+                %----------------------------------------------------------
+                Impulse_dsge(:,:,:,:,istate)=xxxx(1:endo_nbr,:,:,:);
             end
         end
         
