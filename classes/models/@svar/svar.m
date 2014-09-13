@@ -151,10 +151,9 @@ classdef svar < rise_generic
     methods(Hidden=true)
         varargout=simulation_engine(varargin)
         varargout=conclude_estimation(varargin)
-        varargout=load_order_var_solution(varargin)
-    end
-    methods(Access=protected,Hidden=true) 
         varargout=load_solution(varargin)
+    end
+    methods(Access=protected,Hidden=true)
     end
     methods(Static)
         function r=template()

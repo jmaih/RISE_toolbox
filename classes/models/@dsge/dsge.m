@@ -62,7 +62,6 @@ classdef dsge < rise_generic
     end
     methods(Hidden)
         varargout=conclude_estimation(varargin)
-        varargout=load_order_var_solution(varargin)
     end
     methods
         varargout=check_derivatives(varargin)
@@ -236,15 +235,15 @@ classdef dsge < rise_generic
     methods(Sealed)
         varargout=simulate(varargin)
     end
-    methods(Access=protected,Hidden=true) 
-        varargout=load_solution(varargin)
+    methods(Access=protected,Hidden=true)
         varargout=re_order_output_rows(varargin)
     end
     methods(Hidden=true)
         varargout=dsge_load_data(varargin)
         varargout=do_not_anticipate_future_shocks(varargin)
         varargout=set_z_eplus_horizon(varargin)
-        varargout=latex_model_file(varargin)
+        varargout=latex_model_file(varargin) 
+        varargout=load_solution(varargin)
     end
 end
 

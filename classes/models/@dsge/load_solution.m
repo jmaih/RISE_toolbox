@@ -1,4 +1,4 @@
-function [T,R,steady_state,state_vars_location]=load_solution(obj,type)
+function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,type)
 % when the type is ov, R is empty while T is of size solve_order x
 % regimes_number. Basically, T is returned as Tz, Tzz, Tzzz, etc. where the
 % rows that were originally in alphabetical order are put in order of
@@ -25,7 +25,9 @@ order=obj.options.solve_order;
 T=cell(order,regimes_number);
 R=cell(1,regimes_number);
 steady_state=obj.solution.ss;
+new_order=ov;
 state_vars_location=obj.locations.after_solve.t.pb;
+
 % update T and steady state
 %--------------------------
 order_var_solution();
@@ -36,6 +38,7 @@ if is_alphabetical_order
     iov=obj.inv_order_var.after_solve;
     % only for order 1
     inv_order_var_solution()
+	new_order=1:numel(new_order);
 	state_vars_location=[];
 end
     function inv_order_var_solution()
@@ -43,7 +46,6 @@ end
         exo_nbr_=sum(obj.exogenous.number);
         z_pb=obj.locations.after_solve.z.pb;
         t_pb=state_vars_location;
-        state_vars_location=[];
         e_0=obj.locations.after_solve.z.e_0;
         Tz=R;
         tmp=zeros(endo_nbr_);
