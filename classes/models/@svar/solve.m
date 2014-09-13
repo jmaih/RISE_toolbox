@@ -21,15 +21,28 @@ end
     utils.code.evaluate_transition_matrices(obj.routines.transition_matrix,obj.parameter_values(:,1));
 if ~retcode
     links=obj.param_to_mat_links;
-    for istate=1:obj.markov_chains.regimes_number
+    reg_nbr=obj.markov_chains.regimes_number;
+    endo_nbr=obj.endogenous.number(end);
+    steady_state=repmat({zeros(endo_nbr,1)},1,reg_nbr);
+    for istate=1:reg_nbr
         for ilink=1:numel(links)
             mat=obj.param_template{2,ilink};
             mat(real(links{ilink}))=obj.parameter_values(imag(links{ilink}),istate);
                 obj.solution.(obj.param_template{1,ilink}){istate}=mat;
         end
-    end 
-    if isa(obj,'rfvar')
-        obj=structural_form(obj);
+        if obj.constant
+            constant=obj.solution.c{istate}(:,1);
+            LEFT=eye(endo_nbr);
+            if isfield(obj.solution,'a0')
+                LEFT=obj.solution.a0{istate};
+            end
+            for ilag=1:obj.nlags
+                lag_name=sprintf('a%0.0f',ilag);
+                LEFT=LEFT-obj.solution.(lag_name){istate};
+            end
+            steady_state{istate}=LEFT\constant;
+        end
     end
+    obj.solution.ss=steady_state;
 end
 
