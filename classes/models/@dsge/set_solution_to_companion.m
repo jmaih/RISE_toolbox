@@ -1,4 +1,4 @@
-function [A,B]=set_solution_to_companion(obj)
+function [A,B,steady_state]=set_solution_to_companion(obj)
 if isempty(obj)
     if nargout>1
         error([mfilename,':: number of output arguments cannot exceed 1 when the object is empty'])
@@ -12,5 +12,7 @@ if isempty(obj.solution)
 end
 
 [A,B]=load_solution(obj,'iov');
+
+steady_state=obj.solution.ss;
 
 end
