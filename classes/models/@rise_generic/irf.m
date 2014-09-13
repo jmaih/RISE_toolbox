@@ -232,8 +232,8 @@ else
     end
     shockList=fieldnames(dsge_irfs{1});
     tmp=struct();
+    shock_models=cell(1,nobj);
     for ishock=1:numel(shockList)
-        shock_models=cell(1,nobj);
         for mm=1:nobj
             shock_models{mm}=dsge_irfs{mm}.(shockList{ishock});
         end
