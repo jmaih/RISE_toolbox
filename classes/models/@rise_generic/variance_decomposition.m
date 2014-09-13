@@ -66,7 +66,7 @@ if isa(obj,'dsge')
 end
 nregs=obj.markov_chains.regimes_number;
 
-[T,R]=generic_tools.set_solution_to_companion(obj);
+[T,R]=set_solution_to_companion(obj);
 if vardec_ergodic
     [T,R]=expected_state_matrices(T,R);
 end

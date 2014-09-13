@@ -61,7 +61,7 @@ exo_nbr = numel(exo_names);
 reg_nbr=obj.markov_chains.regimes_number;
 
 % collect the state matrices
-[T,R]=generic_tools.set_solution_to_companion(obj);
+[T,R]=set_solution_to_companion(obj);
 SS=obj.solution.ss;
 
 smoothed_variables=ts.collect(obj.filtering.Expected_smoothed_variables);

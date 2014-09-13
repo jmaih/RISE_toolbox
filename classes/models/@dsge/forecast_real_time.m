@@ -55,7 +55,7 @@ for ivar=1:endo_nbr
 end
 Updates=permute(Updates,[2,1,3]);
 
-[T]=generic_tools.set_solution_to_companion(obj1);% T=obj1.solution.m_x;
+[T]=set_solution_to_companion(obj1);% T=obj1.solution.m_x;
 Q=obj1.solution.transition_matrices.Q;% Q=obj1.solution.Q;
 
 ss=obj1.solution.ss;
