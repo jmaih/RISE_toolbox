@@ -236,6 +236,9 @@ classdef dsge < rise_generic
     methods(Sealed)
         varargout=simulate(varargin)
     end
+    methods(Access=protected,Hidden=true) 
+        varargout=load_solution(varargin)
+    end
     methods(Hidden=true)
         varargout=dsge_load_data(varargin)
         varargout=do_not_anticipate_future_shocks(varargin)
