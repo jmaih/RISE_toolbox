@@ -7,7 +7,7 @@ c=obj.options.mcmc_initial_covariance_tune;
 if c<=0
     error([mfilename,':: mcmc_initial_covariance_tune must be positive'])
 end
-vcov=repair_covariance_matrix(obj.estimation.posterior_maximization.vcov);
+vcov=utils.cov.nearest(obj.estimation.posterior_maximization.vcov);
 x0=obj.estimation.posterior_maximization.mode;
 not_optimized=isempty(x0);
 if not_optimized
@@ -43,10 +43,6 @@ init=struct('x0',x0,'f0',f0,'CS',CS,...'lb',lb,'ub',ub,
     'burnin',number_of_burns,...
     'funevals',0);
 total_draws=number_of_burns+obj.options.mcmc_number_of_simulations;
-    function A_psd = repair_covariance_matrix(vcov)
-        [V,D] = eig(vcov);
-        A_psd = V*diag(max(diag(D),sqrt(eps)))*V';
-    end
 
     function [minus_log_post,retcode]=fh_wrapper(x)
         % this function returns the minimax if there are many objects
