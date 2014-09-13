@@ -77,6 +77,7 @@ classdef dsge < rise_generic
         varargout=monte_carlo_filtering(varargin) 
         varargout=resid(varargin) 
         varargout=simulate_nonlinear(varargin) 
+        varargout=set_solution_to_companion(varargin)
         % constructor
         %------------
         function obj=dsge(model_filename,varargin)

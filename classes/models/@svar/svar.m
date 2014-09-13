@@ -59,6 +59,7 @@ classdef svar < rise_generic
                 obj.markov_chains.regimes_number);
         end
         varargout=solve(varargin)
+        varargout=set_solution_to_companion(varargin)
     end
     methods(Sealed)
         function varargout=estimate(obj,varargin)
