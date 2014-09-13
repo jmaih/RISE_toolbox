@@ -3,7 +3,7 @@ function varargout=integrate_regimes(Q,varargin)
 reg_nbr=size(Q,1);
 
 assert(size(Q,2)==reg_nbr,'transition matrix should be square')
-assert(all(sum(Q,2)==1),'Bad transition matrix')
+assert(all(abs(sum(Q,2)-1)<sqrt(eps)),'Bad transition matrix')
 nout=nargout;
 assert(nout==length(varargin),...
     'number of output arguments must be equal to the number of input arguments minus 1')
