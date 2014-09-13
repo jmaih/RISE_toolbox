@@ -20,6 +20,7 @@ classdef rfvar < svar
         end
         varargout=structural_form(varargin)
         varargout=check_identification(varargin)
+        varargout=solve(varargin)
     end
     methods(Access=private)
         varargout=translate_restrictions(varargin)

@@ -16,8 +16,6 @@ classdef svar < rise_generic
         param_template
         param_to_mat_links
     end
-    properties(Constant,Access=protected)
-    end
     methods
         function obj=svar(varargin)
             obj=obj@rise_generic();
@@ -155,7 +153,8 @@ classdef svar < rise_generic
         varargout=conclude_estimation(varargin)
         varargout=load_order_var_solution(varargin)
     end
-    methods(Access=private)
+    methods(Access=protected,Hidden=true) 
+        varargout=load_solution(varargin)
     end
     methods(Static)
         function r=template()
