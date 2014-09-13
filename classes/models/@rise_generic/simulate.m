@@ -48,16 +48,20 @@ end
 %-------------------
 Initcond=generic_tools.set_simulation_initial_conditions(obj);
 
-ovSolution=load_order_var_solution(obj,Initcond.y);
-y0=ovSolution.y0;
-T=ovSolution.T;
-steady_state=ovSolution.steady_state;
+% load the order_var solution
+%-----------------------------
+[T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+y0=Initcond.y;
+for ireg=1:numel(y0)
+    y0(ireg).y=y0(ireg).y(new_order,:);
+end
 
 % here we need to start at one single point: and so we aggregate y0
 %------------------------------------------------------------------
 [y0]=utils.forecast.aggregate_initial_conditions(Initcond.PAI,y0);
 
-[y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,Initcond);
+[y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
+    state_vars_location,Initcond);
 
 % put y in the correct order before storing
 %------------------------------------------
@@ -68,7 +72,9 @@ y=re_order_output_rows(obj,y);
 %--------------------------------------------------------------------------
 y0cols=size(y0(1).y,2);
 start_date=serial2date(date2serial(0)-y0cols+1);
-db=ts(start_date,y',obj.endogenous.name);
+% store only the relevant rows in case we are dealing with a VAR with many
+% lags
+db=ts(start_date,y(1:obj.endogenous.number(end),:)',obj.endogenous.name);
 db=pages2struct(db);
 
 end
