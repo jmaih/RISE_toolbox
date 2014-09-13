@@ -27,8 +27,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         list_of_issues
         routines=struct();
     end
-    properties(SetAccess = private)%(SetAccess=protected), Hidden = true
-    end
+	
     methods(Abstract)
         % methods that must be implemented by the subclasses
         varargout=solve(varargin)
@@ -37,7 +36,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     methods(Abstract, Hidden = true)
         % methods that must be implemented by the subclasses
         varargout=conclude_estimation(varargin)
-        varargout=load_order_var_solution(varargin)
     end
     methods
         function obj=rise_generic(varargin)
