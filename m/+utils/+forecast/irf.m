@@ -1,4 +1,4 @@
-function [irfs,retcode]=irf(y0,T,ss,which_shocks,options)
+function [irfs,retcode]=irf(y0,T,ss,state_vars_location,which_shocks,options)
 
 new_impulse=0;
 
@@ -25,7 +25,7 @@ for ishock=1:exo_nbr
         if ~retcode
             options.shocks=utils.forecast.create_shocks(exo_nbr,shock_id,det_vars,options);
             if ~retcode
-                [sim1,states1,retcode]=utils.forecast.multi_step(y0,ss,T,options);
+                [sim1,states1,retcode]=utils.forecast.multi_step(y0,ss,T,state_vars_location,options);
                 if ~retcode
                     path1=[y0.y,sim1];
                     if options.girf
@@ -35,7 +35,7 @@ for ishock=1:exo_nbr
                         options2=options;
                         options2.shocks=utils.forecast.replace_impulse(options.shocks,shock_id,options.k_future+1,new_impulse);
                         options2.states=states1;
-                        [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,options2);
+                        [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,state_vars_location,options2);
                         if ~retcode
                             path2(:,nlags+1:end)=sim2;
                             path1=path1-path2;

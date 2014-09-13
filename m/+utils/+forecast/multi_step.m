@@ -1,4 +1,4 @@
-function [sims,states,retcode]=multi_step(y0,ss,T,options)
+function [sims,states,retcode]=multi_step(y0,ss,T,state_vars_location,options)
 endo_nbr=size(y0.y,1);
 PAI=options.PAI;
 Q=options.Q;
@@ -16,8 +16,6 @@ for t=1:span
     if ~retcode
         
         rt=states(t);
-        
-        state_vars_location=T{end,rt}; % last row includes the state variables
         
         y1=utils.forecast.one_step(T(:,rt),y0,ss{rt},state_vars_location,...
             options.simul_sig,shocks(:,t+(0:options.k_future)),options.simul_order);
