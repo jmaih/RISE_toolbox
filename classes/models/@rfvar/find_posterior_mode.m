@@ -58,17 +58,20 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     
     if any(strcmp(obj.options.vp_prior_type,{'normal_wishart','indep_normal_wishart'}))
         % Hyperparameters on inv(SIGMA) ~ W(prior.dof_SIGMA,inv(prior.scale_SIGMA))
-        a2tilde.prior.dof_SIGMA = endo_nbr+1;         %<---- prior Degrees of Freedom (DoF) of SIGMA
-        a2tilde.prior.scale_SIGMA = eye(endo_nbr);    %<---- prior scale of SIGMA
+        a2tilde.prior.dof_SIGMA = nvars+1;         %<---- prior Degrees of Freedom (DoF) of SIGMA
+        a2tilde.prior.scale_SIGMA = eye(nvars);    %<---- prior scale of SIGMA
         % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
         a2tilde.post.dof_SIGMA = nobs + a2tilde.prior.dof_SIGMA;
-        if strcmp(prior_type,'normal_wishart')
+        if strcmp(obj.options.vp_prior_type,'normal_wishart')
             % we invert and then apply the function:probably the simplest thing
             % to do
             %------------------------------------------------------------------
-            iVa=a_func(inv(a2tilde.prior.V),true);
+            iVa=obj.linear_restrictions_data.a_func(inv(a2tilde.prior.V),true);
             XpX=bigx*bigx';
             A_OLS=a2Aprime(a2tilde.ols.a);
+            A_prior=a2Aprime(a2tilde.prior.a);
+            A_post=a2Aprime(a2tilde.post.a);
+% %             iVa=reshape(diag(iVa),size(A_post));
             a2tilde.post.scale_SIGMA = a2tilde.ols.SSE + a2tilde.prior.scale_SIGMA + ...
                 A_OLS'*XpX*A_OLS + ...
                 A_prior'*iVa*A_prior - ...
