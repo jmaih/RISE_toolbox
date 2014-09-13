@@ -1,19 +1,19 @@
 function Initcond=set_simulation_initial_conditions(obj)
 
 regimes_number=obj.markov_chains.regimes_number;
-endo_nbr=obj.endogenous.number(end);
 PAI=1/regimes_number*ones(regimes_number,1); % ErgodicDistribution(Q)
 
+y0=struct('y',{},'y_lin',{});
 nlags=1;
-y0=struct('y',zeros(endo_nbr,nlags),'y_lin',[]);
-y0(1:regimes_number)=y0;
 if isa(obj,'svar')
+    nlags=obj.nlags;
 elseif isa(obj,'dsge')
-    for ireg=1:regimes_number
-        y0(ireg).y=obj.solution.ss{ireg};
-    end
 else
     error(['model of class ',class(obj),' not ready for simulation'])
+end
+
+for ireg=1:regimes_number
+    y0(ireg).y=vec(obj.solution.ss{ireg}(:,ones(1,nlags)));
 end
 
 simul_history_end_date=0;
