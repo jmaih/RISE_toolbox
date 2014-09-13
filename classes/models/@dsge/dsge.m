@@ -238,6 +238,7 @@ classdef dsge < rise_generic
     end
     methods(Access=protected,Hidden=true) 
         varargout=load_solution(varargin)
+        varargout=re_order_output_rows(varargin)
     end
     methods(Hidden=true)
         varargout=dsge_load_data(varargin)

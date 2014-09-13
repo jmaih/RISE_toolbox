@@ -61,9 +61,7 @@ steady_state=ovSolution.steady_state;
 
 % put y in the correct order before storing
 %------------------------------------------
-if isa(obj,'dsge')
-    y=y(obj.inv_order_var.after_solve,:);
-end
+y=re_order_output_rows(obj,y);
 
 % store the simulations in a database: use the date for last observation in
 % history and not first date of forecast
