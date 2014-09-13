@@ -32,6 +32,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     methods(Abstract)
         % methods that must be implemented by the subclasses
         varargout=solve(varargin)
+        varargout=set_solution_to_companion(varargin)
     end
     methods(Abstract, Hidden = true)
         % methods that must be implemented by the subclasses
