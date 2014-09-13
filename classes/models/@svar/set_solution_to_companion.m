@@ -15,13 +15,17 @@ endo_nbr=obj.endogenous.number(end);
 exo_nbr=sum(obj.exogenous.number);
 reg_nbr=obj.markov_chains.regimes_number;
 
-A=obj.solution.m_x;
-B=obj.solution.m_e;
+A=cell(1,reg_nbr);
+B=A;
 cc=(obj.nlags-1)*endo_nbr;
 for ireg=1:reg_nbr
+    for ilag=1:obj.nlags
+        ai=sprintf('a%0.0f',ilag);
+        A{ireg}=[A{ireg},obj.solution.(ai){ireg}];
+    end
     A{ireg}=[A{ireg}(:,1:obj.nlags*endo_nbr);
         eye(cc),zeros(cc,endo_nbr)];
-    B{ireg}=[B{ireg};
+    B{ireg}=[obj.solution.omg{ireg}*obj.solution.sig{ireg};
         zeros(cc,exo_nbr)];
 end
 
