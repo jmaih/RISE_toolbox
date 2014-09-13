@@ -17,7 +17,7 @@ if nobj>1
     return
 end
 
-[obj,retcode]=solve@svar(obj,varargin);
+[obj,retcode]=solve@svar(obj);
 
 if ~retcode        
     obj=structural_form(obj);
