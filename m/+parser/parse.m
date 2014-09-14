@@ -150,8 +150,9 @@ for ii=1:numel(dictionary.orig_endogenous)
     lead_i=dictionary.orig_endogenous(ii).max_lead;
     vold=vname;
     for i2=2:lead_i
-        new_var=struct('name',[vname,'_AUX_F_',sprintf('%0.0f',i2-1)],...
-            'tex_name','','max_lead',1,'max_lag',0,'is_log_var',false,...
+        new_name=parser.create_auxiliary_name(vname,i2-1);
+        new_var=struct('name',new_name,'tex_name','','max_lead',1,...
+            'max_lag',0,'is_log_var',false,...
             'is_auxiliary',true,'is_trans_prob',false);
         Model_block=[Model_block;
             {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}'],0,1}]; %#ok<*AGROW> %
@@ -210,9 +211,11 @@ for ii=1:numel(variables)
             vloc=strcmp(variables(ii).name,{dictionary.orig_endogenous.name});
             dictionary.orig_endogenous(vloc).max_lag=-1;
         end
-        new_var=struct('name',[vname,'_AUX_L_',sprintf('%0.0f',i2-1)],...
-            'tex_name','','max_lead',0,'max_lag',-1,'is_log_var',false,...
-            'is_auxiliary',true,'is_trans_prob',false);
+        new_name=parser.create_auxiliary_name(vname,uminus(i2-1));
+        new_var=struct('name',new_name,'tex_name','','max_lead',0,...
+            'max_lag',-1,'is_log_var',false,'is_auxiliary',true,...
+            'is_trans_prob',false);
+        
         Model_block=[Model_block;
             {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}'],-1,0}]; %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
@@ -267,16 +270,16 @@ for ii=1:number_of_equations
                         eq_i{1,i2}=[vname,'_0'];
                     else
                         % change both the name and the lag structure
-                        eq_i{1,i2}=[vname,'_0','_AUX_L_',sprintf('%0.0f',abs(eq_i{2,i2})-1)];
+                        eq_i{1,i2}=parser.create_auxiliary_name([vname,'_0'],eq_i{2,i2}+1);
                     end
                 elseif strcmp(status,'y')&& abs(eq_i{2,i2})>1
                     new_item=true;
                     % change both the name and the lag structure
                     if eq_i{2,i2}>0
-                        eq_i{1,i2}=[vname,'_AUX_F_',sprintf('%0.0f',abs(eq_i{2,i2})-1)];
+                        eq_i{1,i2}=parser.create_auxiliary_name(vname,eq_i{2,i2}-1);
                         time=1;
                     elseif eq_i{2,i2}<0
-                        eq_i{1,i2}=[vname,'_AUX_L_',sprintf('%0.0f',abs(eq_i{2,i2})-1)];
+                        eq_i{1,i2}=parser.create_auxiliary_name(vname,eq_i{2,i2}+1);
                     end
                 end
             end
