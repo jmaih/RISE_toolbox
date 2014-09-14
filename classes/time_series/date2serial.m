@@ -6,6 +6,8 @@ if isempty(dat)
     s=[];
     frequency=[];
     return
+elseif is_serial(dat)
+    dat=serial2date(dat);
 end
 % test=(date2serial(1990):date2serial(1995))
 % serial2date(test)
