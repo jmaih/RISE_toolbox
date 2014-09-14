@@ -488,7 +488,7 @@ end
                 position=find(strcmp(variable,{dictionary.exogenous.name}));
                 if ~isempty(position)
                     if leadorlag>0
-                        error([mfilename,':: exogenous variable ',equation{1,end},' cannot have leads. Check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                        error([mfilename,':: exogenous variable ',equation.eqtn{1,end},' cannot have leads. Check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                     end
                     dictionary.exogenous(position).max_lag=min(dictionary.exogenous(position).max_lag,leadorlag);
                 end
