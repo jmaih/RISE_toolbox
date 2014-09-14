@@ -1,9 +1,11 @@
 function out=translate_auxiliary_names(names)
 
 % variables with lags
-out=regexprep(names,'(\w+)_AUX_L_(\d+)','$1{-$2}');
+negative_str=parser.lead_lag_string(-1);
+out=regexprep(names,['(\w+)',negative_str,'(\d+)'],'$1{-$2}');
 
 % variables with leads
-out=regexprep(out,'(\w+)_AUX_F_(\d+)','$1{+$2}');
+positive_str=parser.lead_lag_string(+1);
+out=regexprep(out,['(\w+)',positive_str,'(\d+)'],'$1{+$2}');
 
 end
