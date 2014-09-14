@@ -31,99 +31,14 @@ if ~isempty(simul_historical_data)
     if isempty(simul_history_end_date)
         simul_history_end_date=simul_historical_data.finish;
     end
-    endo_names=obj.endogenous.name;
-    left_date=simul_history_end_date;
-    right_date=simul_history_end_date;
-    if nlags>1
-        left_date=obs2date(left_date,-nlags+1);
-    end
-    % check there are enough observations to define initial conditions
-    %-----------------------------------------------------------------
     
-    % locate endogenous in the database
-    %----------------------------------
-    varnames=simul_historical_data.varnames;
-    endo_locs=locate_variables(endo_names,varnames,true);
-    % locate the left_date and right_date in the historical database dates
-    %---------------------------------------------------------------------
-    [left,flag_l]=date2obs(simul_historical_data.start,left_date);
-    [right,flag_r]=date2obs(simul_historical_data.start,right_date);
-    if flag_l||flag_r
-        error('too few observations to define initial conditions. Maybe you should adjust simul_history_end_date?')
-    end
-    % build y0
-    %---------
-    raw_data=double(simul_historical_data).';
-    good=~isnan(endo_locs);
-    for ireg=1:regimes_number
-        y0(ireg).y(good,:)=raw_data(endo_locs(good),left:right);
-    end
-    
-    warning('a correction is needed here for DSGE models with many lags')
-    
+    % set the endogenous variables
+    %-----------------------------
+     set_endogenous_variables()
+        
     % now load shocks
     %----------------
-    % check there is no shock with name regime (this should be done right
-    % from the parser)
-    %--------------------------------------------------------------------
-    warning('the lines below should be moved to the parser')
-    if any(strcmp(obj.exogenous.name,'regime'))
-        error('no exogenous variable can be called regime')
-    end
-    new_shock_names=[obj.exogenous.name,'regime'];
-    % This exo_nbr includes the place holder for the regime
-    %------------------------------------------------------
-    exo_plus_regime_nbr=numel(new_shock_names);
-    k=0;
-    if isa(obj,'dsge')
-        k=max(obj.exogenous.shock_horizon);
-    end
-    shocks_raw_data=raw_data(:,right+1:end);
-    nperiods=size(shocks_raw_data,2);
-    % initialize shocks and nan the regime row
-    %-----------------------------------------
-    simul_periods=obj.options.simul_periods;
-    shocks=zeros(exo_plus_regime_nbr,max(simul_periods,nperiods)+k);
-    shocks(end,:)=1;
-    exo_locs=locate_variables(new_shock_names,varnames,true);
-    
-    good=~isnan(exo_locs);
-    shocks(good,1:nperiods)=raw_data(exo_locs(good),right+1:end);
-    % make sure the regime row does not have nans
-    %--------------------------------------------
-    for icol=1:nperiods+k
-        if isnan(shocks(end,icol))
-            if icol==1
-                % set the first period to the first regime
-                shocks(end,icol)=1;
-                warning('the first regime was nan and has been set to 1 in the simulations')
-            else
-                shocks(end,icol)=shocks(end,icol-1);
-            end
-        end
-    end
-    % make sure there is no regime exceeding h and all are positive integers
-    %-----------------------------------------------------------------------
-    regimes_row=shocks(end,:);
-    shocks(end,:)=[];
-    h=obj.markov_chains.regimes_number;
-    if ~all(ismember(regimes_row,1:h))
-        error(['regimes must be positive integers and cannot exceed ',int2str(h)])
-    end
-    % zero all nans in the shocks. In a conditional forecasting exercise,
-    % the nan locations have to be found, but this is not what we are doing
-    % here under simulation
-    shocks(isnan(shocks))=0;
-    
-    % Now load the states
-    %--------------------
-    if any(regimes_row)
-        states=regimes_row(:);
-    end
-    
-    % Now load the regimes probabilities
-    %-----------------------------------
-    
+    set_shocks_and_states()
 end
 
 Q={obj.solution.transition_matrices.Q,[],[]};
@@ -184,3 +99,97 @@ end
 Initcond.states=states;
 Initcond.shocks=shocks;
 Initcond.states=states;
+
+    function set_shocks_and_states()
+        % check there is no shock with name regime (this should be done right
+        % from the parser)
+        %--------------------------------------------------------------------
+        warning('the lines below should be moved to the parser')
+        if any(strcmp(obj.exogenous.name,'regime'))
+            error('no exogenous variable can be called regime')
+        end
+        new_shock_names=[obj.exogenous.name,'regime'];
+        
+        varnames=simul_historical_data.varnames;
+        if any(ismember(new_shock_names,varnames))
+            % locate the left_date and right_date in the historical database dates
+            %---------------------------------------------------------------------
+            [right,flag_r]=date2obs(simul_historical_data.start,...
+                date2serial(simul_history_end_date)+1);
+            if flag_r
+                warning(['too few observations to define initial conditions for shocks. ',...
+                    'Maybe you should adjust simul_history_end_date?'])
+            else
+                raw_data=double(simul_historical_data).';
+                % This exo_nbr includes the place holder for the regime
+                %------------------------------------------------------
+                exo_plus_regime_nbr=numel(new_shock_names);
+                k=0;
+                if isa(obj,'dsge')
+                    k=max(obj.exogenous.shock_horizon);
+                end
+                nperiods=size(raw_data(:,right:end),2);
+                % initialize shocks and nan the regime row
+                %-----------------------------------------
+                simul_periods=obj.options.simul_periods;
+                shocks=zeros(exo_plus_regime_nbr,max(simul_periods,nperiods)+k);
+                shocks(end,:)=nan;
+                exo_locs=locate_variables(new_shock_names,varnames,true);
+                good=~isnan(exo_locs);
+                shocks(good,1:nperiods)=raw_data(exo_locs(good),right:end);
+                % make sure the regime row does not have nans
+                %--------------------------------------------
+                for icol=1:nperiods+k
+                    if isnan(shocks(end,icol))
+                        if icol==1
+                            % set the first period to the first regime
+                            shocks(end,icol)=1;
+                            warning('the first regime was nan and has been set to 1 in the simulations')
+                        else
+                            shocks(end,icol)=shocks(end,icol-1);
+                        end
+                    end
+                end
+                % make sure there is no regime exceeding h and all are positive integers
+                %-----------------------------------------------------------------------
+                regimes_row=shocks(end,:);
+                shocks(end,:)=[];
+                h=obj.markov_chains.regimes_number;
+                if ~all(ismember(regimes_row,1:h))
+                    error(['regimes must be positive integers and cannot exceed ',int2str(h)])
+                end
+                % zero all nans in the shocks. In a conditional forecasting exercise,
+                % the nan locations have to be found, but this is not what we are doing
+                % here under simulation
+                shocks(isnan(shocks))=0;
+                
+                % Now load the states
+                %--------------------
+                if any(regimes_row)
+                    states=regimes_row(:);
+                end
+                
+                % Now load the regimes probabilities
+                %-----------------------------------
+                
+            end
+        end
+    end
+
+    function set_endogenous_variables()
+        endo_names=obj.endogenous.name;
+        tmp=endo_names;
+        for ilag=1:nlags-1
+            endo_names=[endo_names,strcat(tmp,sprintf('{-%0.0f}',ilag))];
+        end
+        %--------------------------------
+        y00=y0(1).y;
+        y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
+            simul_history_end_date,y0(1).y);
+        is_changed=abs(y00-y0(1).y)>sqrt(eps);
+        for istate=2:regimes_number
+            % replace only the changed locations
+            y0(istate).y(is_changed)=y0(1).y(is_changed);
+        end
+    end
+end
