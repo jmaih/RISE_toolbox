@@ -295,6 +295,10 @@ end
                         error(['atom ''',tokk,''' has been declared twice in ',...
                             file_name,' at line ',sprintf('%0.0f',line_number)])
                     end
+                    [flag,mess]=parser.is_forbidden_name(tokk);
+                    if flag
+                        error([mess,' in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                    end
                     %----------- {name,tex_name,in-use-flag} --------------
                     nvars=numel(block.listing)+1;
                     block.listing(nvars).name=tokk;
