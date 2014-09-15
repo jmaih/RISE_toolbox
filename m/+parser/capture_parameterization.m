@@ -96,7 +96,8 @@ block.error_control=error_control;
                             ' is not recognized as a chain name in ',file_name_,' at line(s) ',iline_])
                     end
                     if ~(parameter_chains(param_location)==chain_loc)
-                        error([' parameter ',par_name,' is governed by markov chain "',markov_chain_names(parameter_chains(param_location)),...
+                        error([' parameter ',par_name,' is governed by markov chain "',...
+                            markov_chain_names{parameter_chains(param_location)},...
                             '" and not "',first,'" as in ',file_name_,' at line(s) ',iline_])
                     end
                         eval_tok=eval(second);
