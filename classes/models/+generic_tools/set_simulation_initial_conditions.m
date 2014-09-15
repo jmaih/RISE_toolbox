@@ -104,10 +104,6 @@ Initcond.states=states;
         % check there is no shock with name regime (this should be done right
         % from the parser)
         %--------------------------------------------------------------------
-        warning('the lines below should be moved to the parser')
-        if any(strcmp(obj.exogenous.name,'regime'))
-            error('no exogenous variable can be called regime')
-        end
         new_shock_names=[obj.exogenous.name,'regime'];
         
         varnames=simul_historical_data.varnames;
@@ -177,11 +173,12 @@ Initcond.states=states;
     end
 
     function set_endogenous_variables()
-        endo_names=obj.endogenous.name;
-        tmp=endo_names;
-        for ilag=1:nlags-1
-            endo_names=[endo_names,strcat(tmp,sprintf('{-%0.0f}',ilag))];
+        endo_names=obj.endogenous.name(:);
+        endo_names=endo_names(:,ones(1,nlags));
+        for ilag=2:nlags
+            endo_names(:,ilag)=strcat(endo_names(:,ilag),sprintf('{-%0.0f}',ilag-1));
         end
+        endo_names=endo_names(:).';
         %--------------------------------
         y00=y0(1).y;
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
