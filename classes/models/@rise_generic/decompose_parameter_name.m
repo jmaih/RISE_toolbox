@@ -1,6 +1,6 @@
 function [position,regime_states,pname,chain,state]=...
     decompose_parameter_name(obj,pname,initialize)
-persistent regimes chain_names governing_chain param_names
+persistent regimes chain_names param_names
 if nargin<3
     initialize=false;
 end
@@ -9,7 +9,6 @@ if isempty(regimes)||initialize
     regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
     chain_names=obj.markov_chains.regimes(1,2:end);
     param_names=obj.parameters.name;
-    governing_chain=obj.parameters.governing_chain;
 end
 
 position=find(strcmp(pname,param_names));
