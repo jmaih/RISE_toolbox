@@ -1,107 +1,130 @@
-function retcode=posterior_marginal_and_prior_densities(obj)
+function ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
+% computes the posterior and marginal densities.
+% - the optional argument simulation_folder can either be the output of
+% posterior_simulator.m or the path where the posterior simulations are
+% stored.
+% - the optional output argument ppdata is a structure containing the
+% information needed to plot the posterior and prior densities. The user
+% can always plot those using utils.plot.prior_posterior(ppdata.(pname))
+% where pname is the name of one particular parameter of interest.
+% - if there are no output arguments, figures with posterior and prior
+% marginal densities are plotted, but not saved!!!.
+% see also utils.plot.prior_posterior
 if isempty(obj)
-    retcode=struct();
+    ppdata=struct();
     return
 end
-retcode=0;
-correct_for_range=true;
-simulation_folder=obj.folders_paths.simulations;
-W = what(simulation_folder);
-W=W.mat;
-locs=find(strncmp('chain_',W,6));
-if isempty(locs)
-    error([mfilename,':: no simulations found'])
+
+if nargin<2
+    simulation_folder=obj.folders_paths.simulations;
 end
-W=W(locs);
+
+is_saved_to_disk=ischar(simulation_folder);
+if is_saved_to_disk
+    W = what(simulation_folder);
+    W=W.mat;
+    locs=find(strncmp('chain_',W,6));
+    if isempty(locs)
+        error([mfilename,':: no simulations found'])
+    end
+    W=strrep(W(locs),'.mat','');
+elseif isstruct(simulation_folder)
+    W=fieldnames(simulation_folder);
+else
+    error('wrong specification of input')
+end
 number_of_matrices=numel(W);
+
+
 N=obj.options.prior_discretize^2;
-%=================
-distr={obj.estimated_parameters.distribution};
+
+distr={obj.estimation.priors.prior_distrib};
 % recollect the densities
 for idistr=1:numel(distr)
     distr{idistr}=distributions.(distr{idistr});
 end
-lb=vertcat(obj.estimated_parameters.lb);
-ub=vertcat(obj.estimated_parameters.ub);
-%=================
-x0=obj.estimation.posterior_maximization.mode;
-f0=obj.estimation.posterior_maximization.log_post;
-post_mode=x0;
-f_post_mode=f0;
-npar=size(x0,1);
-r0=obj.options.graphics(1);
-c0=obj.options.graphics(2);
-nstar=r0*c0;
-nfig=ceil(npar/nstar);
-SaveUnderName0=[obj.options.results_folder,filesep,'graphs',filesep,'PriorsAndPosteriors'];
-titel='priors and posterior marginal densities';
-for fig=1:nfig
-    [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,npar,r0,c0);
-    if nfig>1
-        titelfig=[titel,' ',int2str(fig)];
-		SaveUnderName=[SaveUnderName0,int2str(fig)];
-    else
-        titelfig=titel;
-		SaveUnderName=SaveUnderName0;
-    end
-    hfig=figure('name',titelfig);
-    for plt=1:min(nstar,Remains)
-        par_id=(fig-1)*nstar+plt;
-        all_vals=[];
-        for m=1:number_of_matrices
+lb=vertcat(obj.estimation.priors.lower_bound);
+ub=vertcat(obj.estimation.priors.upper_bound);
+
+post_mode=obj.estimation.posterior_maximization.mode;
+f_post_mode=obj.estimation.posterior_maximization.log_post;
+post_mode_sim=post_mode;
+f_post_mode_sim=f_post_mode;
+
+hypers=obj.estim_hyperparams;
+
+vnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+    {obj.estimation.priors.name},'uniformOutput',false);
+tex_names={obj.estimation.priors.tex_name};
+
+% create the data
+%----------------
+npar=size(post_mode,1);
+ppdata_=struct();
+for ipar=1:npar
+    all_vals=[];
+    for m=1:number_of_matrices
+        if is_saved_to_disk
             tmp=load([simulation_folder,filesep,W{m}]);
-            Params=tmp.Params(par_id,:);
-            if fig==1 && plt==1
-                % try and locate the sampling posterior mode
-                fm=-tmp.minus_logpost_params;
-                best=find(fm==max(fm),1,'first');
-                if fm(best)>f_post_mode
-                    post_mode=Params(:,best);
-                    f_post_mode=fm(best);
-                end
+        else
+            tmp=simulation_folder.(W{m});
+        end
+        Params=tmp.Params(ipar,:);
+        if ipar==1
+            % try and locate the sampling posterior mode
+            fm=-tmp.minus_logpost_params;
+            best=find(fm==max(fm),1,'first');
+            if fm(best)>f_post_mode_sim
+                post_mode_sim=Params(:,best);
+                f_post_mode_sim=fm(best);
             end
-            all_vals=[all_vals;Params(:)]; %#ok<AGROW>
         end
-        
-        figure(hfig)
-		mm=mean(all_vals);
-        xmin = min(all_vals);
-        xmax = max(all_vals);
-		[F,XI]=distributions.kernel_density(all_vals,[],[],'normal',N);
-        [x_mode,x_mode_id]=utils.miscellaneous.find_nearest(XI,x0(par_id));
-		
-        [x_post_mode,x_post_mode_id]=utils.miscellaneous.find_nearest(XI,post_mode(par_id));
-        [x_mm,x_mm_id]=utils.miscellaneous.find_nearest(XI,mm);
-        x_prior=linspace(lb(par_id),ub(par_id),N);
-        x_prior=x_prior(:);
-        f_prior=distr{par_id}(Params(par_id),...
-            obj.estim_hyperparams(par_id,1),obj.estim_hyperparams(par_id,2));
-        if correct_for_range
-            % give it the same range as F
-            if max(f_prior)==min(f_prior)
-                ratio=.5;
-            else
-                ratio=(f_prior-min(f_prior))/(max(f_prior)-min(f_prior));
-            end
-            f_prior=min(F)+ratio*(max(F)-min(F));
-        end
-        subplot(r,c,plt)
-        plot(XI,F,'LineStyle','-','Color','b','LineWidth',2.5), hold on
-        plot(x_prior,f_prior,'LineStyle','-','Color','green','LineWidth',2.5), hold on
-        plot([x_mm x_mm], [0 F(x_mm_id)],'LineStyle',':','Color','black','LineWidth',2.5 ),
-        plot([x_mode x_mode], [0 F(x_mode_id)],'LineStyle',':','Color','green','LineWidth',2.5 ),
-        plot([x_post_mode x_post_mode], [0 F(x_post_mode_id)],'LineStyle',':','Color','red','LineWidth',2.5 ),
-        hold off
-        xlow=min(xmin,min(x_prior));
-        xhigh=max(xmax,max(x_prior));
-        axis([xlow xhigh 0 1.4*max(F)]);
-        title(obj.estimated_parameters(par_id).tex_name,...
-            'FontSize',12,'FontWeight','bold')%'interpreter','none',
-        if plt==1
-            legend('post density','prior density','mean','mode','post_mode')
-        end
+        all_vals=[all_vals;Params(:)]; %#ok<AGROW>
     end
-	saveas(hfig,[SaveUnderName,'.pdf'])
-    saveas(hfig,[SaveUnderName,'.fig'])
-    saveas(hfig,[SaveUnderName,'.eps'])
+    ppdata_.(vnames{ipar})=do_one_post_prior(ipar);
 end
+
+if nargout
+    ppdata=ppdata_;
+else
+    % plot the data
+    %--------------
+    r0=obj.options.graphics(1);
+    c0=obj.options.graphics(2);
+    titel='priors and posterior marginal densities';
+    
+    utils.plot.multiple(@(xname)plotfunc(xname,ppdata_),...
+        vnames,titel,r0,c0,...
+        'FontSize',11,'FontWeight','normal');
+end
+
+    function ss=do_one_post_prior(ipar)
+        ss=struct();
+        ss.tex_name=tex_names{ipar};
+        ss.mean_sim=mean(all_vals);
+        ss.min_sim = min(all_vals);
+        ss.max_sim = max(all_vals);
+        [ss.f_kdens,ss.x_kdens]=distributions.kernel_density(all_vals,[],[],'normal',N);
+        ss.post_mode=post_mode(ipar);
+        ss.post_mode_sim=post_mode_sim(ipar);
+        ss.x_prior=linspace(lb(ipar),ub(ipar),N);
+        ss.x_prior=ss.x_prior(:);
+        ss.f_prior=distr{ipar}(ss.x_prior,hypers(ipar,1),hypers(ipar,2));
+        
+        % give it the same range as ss.f_kdens
+        %-------------------------------------
+        if max(ss.f_prior)==min(ss.f_prior)
+            ratio=.5;
+        else
+            ratio=(ss.f_prior-min(ss.f_prior))/(max(ss.f_prior)-min(ss.f_prior));
+        end
+        ss.f_prior=min(ss.f_kdens)+ratio*(max(ss.f_kdens)-min(ss.f_kdens));
+    end
+
+end
+
+function [tex_name,legend_]=plotfunc(pname,ppdata)
+tex_name=ppdata.(pname).tex_name;
+[~,legend_]=utils.plot.prior_posterior(ppdata.(pname),'LineWidth',2.5);
+end
+
