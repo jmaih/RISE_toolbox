@@ -1,6 +1,6 @@
 function [position,regime_states,pname,chain,state]=...
     decompose_parameter_name(obj,pname,initialize)
-persistent regimes chain_names param_names
+persistent regimes chain_names param_names governing_chain
 if nargin<3
     initialize=false;
 end
@@ -9,6 +9,7 @@ if isempty(regimes)||initialize
     regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
     chain_names=obj.markov_chains.regimes(1,2:end);
     param_names=obj.parameters.name;
+    governing_chain=obj.parameters.governing_chain;
 end
 
 position=find(strcmp(pname,param_names));
@@ -33,8 +34,8 @@ else
     state=str2double(ptex(comma+1:right_par-1));
     chain_id=find(strcmp(chain,chain_names));
 end
-governing_chain=obj.parameters.governing_chain(position);
-if ~(chain_id==governing_chain)
+
+if ~(chain_id==governing_chain(position))
     error(['parameter ',pname,' is not controlled by ',chain_names(chain_id)])
 end
 % locate the state in the regimes
