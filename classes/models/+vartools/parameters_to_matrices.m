@@ -6,10 +6,16 @@ if nargin<4
         numberOfRegimes=1;
     end
 end
+
+% Make sure that the names are sorted
+%------------------------------------
+assert(isequal(param_names,sort(param_names)))
+
 % link the parameters to the structural matrices : M(i,j)=p(k)
 %-------------------------------------------------------------
 ncell=size(param_template,2);
 links=cell(1,ncell);
+
 for ii=1:ncell
     themat=param_template{2,ii};
     header=param_template{1,ii};
