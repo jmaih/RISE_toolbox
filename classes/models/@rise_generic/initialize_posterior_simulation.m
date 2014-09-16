@@ -2,7 +2,7 @@ function [init,sampler,total_draws]=initialize_posterior_simulation(obj)
 lb=[obj.estimation.priors.lower_bound]';
 ub=[obj.estimation.priors.upper_bound]';
 drawfun=@(x,cCs)truncated_multivariate_normal.quick_and_dirty(x,cCs,lb,ub);
-sampler=@utils.mcmc.mhsampler;
+sampler=@utils.mcmc.mh_sampler;
 c=obj.options.mcmc_initial_covariance_tune;
 if c<=0
     error([mfilename,':: mcmc_initial_covariance_tune must be positive'])
