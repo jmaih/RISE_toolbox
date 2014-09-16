@@ -1,13 +1,5 @@
 function obj=setup_linear_restrictions(obj)
 
-if isa(obj,'stochvol')
-    error('linear restrictions on stochastic volatility model need to be updated')
-    % for the stochastic volatility obj, I may still want to do as before, i.e.
-    % applying the zero restrictions to determine the list of the estimated
-    % parameters and not the other way around as it is done here, i.e. use the
-    % list of estimated parameters to determine the restriction matrices.
-end
-
 estim_names=get_estimated_parameter_names(obj);
 % get the linear restrictions if any. basics.a_func takes a2tilde as input
 % and returns "a", while basics.a2tilde_func takes "a" as input and returns

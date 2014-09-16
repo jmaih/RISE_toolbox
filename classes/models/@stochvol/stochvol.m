@@ -41,6 +41,9 @@ classdef  stochvol < rfvar
         varargout=format_blocks(varargin)
 % % % % % % % % % % % % % %         varargout=gibbs_sampler(varargin)
     end
+    methods(Access=protected)
+        varargout=setup_linear_restrictions(varargin)
+    end
     methods(Static)
         function r=template()
             r=rfvar.template();
