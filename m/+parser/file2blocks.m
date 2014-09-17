@@ -14,7 +14,7 @@ current_list={};
 current_markov_chain_name='';
 current_number_of_states=[];
 new_markov_chain_tex_names={};
-markov_chains=parser.initialize_markov_chain('const',1,false);
+markov_chains=parser.initialize_markov_chain('const',1,'is_endogenous',false);
 
 all_chain_names={markov_chains.name};
 blocks={

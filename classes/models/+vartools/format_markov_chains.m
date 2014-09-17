@@ -40,14 +40,13 @@ cparam{2,nmc+1}=plist(:)';
 
 % redo the markov chains
 %-----------------------
-mc=struct('name',[],'number_of_states',[],'is_endogenous',[],...
-    'param_list',[],'param_list_tex',[],'is_switching',[],...
-    'duration',[]);
+mc=parser.initialize_markov_chain();
+
 for im=1:size(cparam,2)
     chain_name=cparam{1,im};
     nstates=1;
-    pnames=cparam(2,im);
-    ptex_names=cparam(2,im);
+    pnames=cparam{2,im};
+    ptex_names=pnames;
     is_switching=false;
     duration=inf;
     if ~strcmp(chain_name,'const')
@@ -61,8 +60,7 @@ for im=1:size(cparam,2)
         end
         is_switching=true;
     end
-    mc(im)=struct('name',chain_name,...
-        'number_of_states',nstates,...
+    mc(im)=parser.initialize_markov_chain(chain_name,nstates,...
         'is_endogenous',false,'param_list',pnames,...
         'param_list_tex',ptex_names,'is_switching',is_switching,...
         'duration',duration);
