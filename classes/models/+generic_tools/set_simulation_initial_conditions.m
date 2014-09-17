@@ -20,6 +20,7 @@ simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
 shocks=[];
 states=[];
+scale_shocks=1;
 if ~isempty(simul_historical_data)
     if isstruct(simul_historical_data)
         simul_historical_data=ts.collect(simul_historical_data);
@@ -39,6 +40,9 @@ if ~isempty(simul_historical_data)
     % now load shocks
     %----------------
     set_shocks_and_states()
+    % in case shocks are not produced right above, set to 0 all the shocks
+    % that will be created randomly below
+    scale_shocks=0; 
 end
 
 Q={obj.solution.transition_matrices.Q,[],[]};
@@ -89,7 +93,7 @@ else
     exo_nbr=sum(obj.exogenous.number);
     which_shocks=true(1,exo_nbr);
     which_shocks(obj.exogenous.is_observed)=false;
-    shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
+    shocks=scale_shocks*utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
 end
 if isempty(states)
     states=nan(Initcond.nsteps+Initcond.burn,1);
@@ -151,7 +155,10 @@ Initcond.states=states;
                 regimes_row=shocks(end,:);
                 shocks(end,:)=[];
                 h=obj.markov_chains.regimes_number;
-                if ~all(ismember(regimes_row,1:h))
+                good=~isnan(regimes_row);
+                if ~(all(ceil(regimes_row(good))==floor(regimes_row(good))) && ...
+                        all(regimes_row(good)>=1) &&...
+                        all(regimes_row(good)<=h))
                     error(['regimes must be positive integers and cannot exceed ',int2str(h)])
                 end
                 % zero all nans in the shocks. In a conditional forecasting exercise,
@@ -179,7 +186,7 @@ Initcond.states=states;
             endo_names(:,ilag)=strcat(endo_names(:,ilag),sprintf('{-%0.0f}',ilag-1));
         end
         endo_names=endo_names(:).';
-        %--------------------------------
+
         y00=y0(1).y;
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
             simul_history_end_date,y0(1).y);
