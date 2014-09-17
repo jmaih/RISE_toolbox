@@ -88,33 +88,31 @@ markov_chain_info=orderfields(markov_chain_info);
             end
         end
     end
-end
 
-
-function [reg_info,Journal]=update_markov_chains_info_add_regimes(reg_info,nstates,chain_names)
-[tmp,Journal]=utils.gridfuncs.chain_grid(nstates);
-reg_info.regimes_number=size(tmp,1);
-reg_info.chains_number=numel(chain_names);
-reg_info.regime_names=list_names('regime',reg_info.regimes_number);
-reg_info.regimes=[
-    {''},chain_names(:)'
-    reg_info.regime_names(:),num2cell(tmp)
-    ];
-reg_info.regime_tex_names=reg_info.regime_names;
-reg_info.chain_names=sort(chain_names(:))';
-reg_info.chain_tex_names=reg_info.chain_names;
-%-------------
-state_names={};
-for ichain=1:reg_info.chains_number
-    nstates=max(tmp(:,ichain));
-    state_names=[state_names,list_names(chain_names{ichain},nstates)]; %#ok<AGROW>
-end
-reg_info.state_names=state_names;
-reg_info.state_tex_names=reg_info.state_names;
-%-------------
-    function x=list_names(name,number)
-        x=cellstr(strcat(name,'_',num2str((1:number)')));
-        x=cellfun(@(z)z(~isspace(z)),x,'uniformOutput',false);
-        x=x(:)';
+    function [reg_info,Journal]=update_markov_chains_info_add_regimes(reg_info,nstates,chain_names)
+        [tmp,Journal]=utils.gridfuncs.chain_grid(nstates);
+        reg_info.regimes_number=size(tmp,1);
+        reg_info.chains_number=numel(chain_names);
+        reg_info.regime_names=parser.create_state_list('regime',reg_info.regimes_number);
+        reg_info.regimes=[
+            {''},chain_names(:)'
+            reg_info.regime_names(:),num2cell(tmp)
+            ];
+        reg_info.regime_tex_names=reg_info.regime_names;
+        reg_info.chain_names=sort(chain_names(:))';
+        reg_info.chain_tex_names=reg_info.chain_names;
+        %-------------
+        state_names={};
+        state_tex_names={};
+        for ichain__=1:reg_info.chains_number
+            cn=reg_info.chain_names{ichain__};
+            loc=strcmp(cn,{markov_chains.name});
+            new_states=markov_chains(loc).state_names;
+            new_state_tex_names=markov_chains(loc).state_tex_names;
+            state_names=[state_names,new_states]; %#ok<AGROW>
+            state_tex_names=[state_tex_names,new_state_tex_names]; %#ok<AGROW>
+        end
+        reg_info.state_names=state_names;
+        reg_info.state_tex_names=state_tex_names;
     end
 end
