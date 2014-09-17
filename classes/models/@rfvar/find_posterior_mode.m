@@ -10,10 +10,14 @@ if nobj==0
 end
 
 if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
+    % the following is hard-coded
+    %----------------------------
+    compute_hessian=false;
+    
     npar=size(x0,1);
     a2tilde=struct();
     
-    [vdata,bigx,bigy]=restricted_var_data(obj);
+    [vdata,bigx,bigy,orig_order]=restricted_var_data(obj);
     a_prior=[obj.estimation.priors.prior_mean];
     a_prior=a_prior(vdata.estim_locs);
     a_prior=a_prior(:);
@@ -43,18 +47,42 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     a2tilde.ols=a2tilde_ols;
     a2tilde.post=a2tilde_post;
     
-    f1=uminus(log_posterior_kernel(obj,x1));
-    f0=uminus(log_posterior_kernel(obj,x0));
-    warning([mfilename,':: this wrong variance for one-regime VARs has to change'])
-    H=eye(npar);
+    fh=@(x)uminus(log_posterior_kernel(obj,x));
+    f1=fh(x1);
+    f0=fh(x0);
+    % compute Hessian
+    %----------------
+    if compute_hessian
+        switch lower(obj.options.hessian_type)
+            case 'fd'
+                H = utils.hessian.finite_differences(fh,x1);
+            case 'opg'
+                H = utils.hessian.outer_product(fh,x1);
+                if any(any(isnan(H)))||any(any(isinf(H)))
+                    issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
+                    warning([mfilename,':: ',issue]) %#ok<WNTAG>
+                    warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
+                    H = finite_difference_hessian(fh,x1);
+                end
+            otherwise
+                issue=['unknow hessian option ',hessian_type,' using finite differences'];
+                warning([mfilename,':: ',issue]) %#ok<WNTAG>
+                H = finite_difference_hessian(fh,x1);
+        end
+    else
+        warning([mfilename,':: this variance for one-regime VARs is wrong'])
+        H=eye(npar);
+    end
+    % add remaining items
+    %--------------------
     viol=[];
-    funevals=1;
-    issue={};
+    funevals=2;
+    issue='';%issue={};
     
     % prepare for subsequent simulation
     %----------------------------------
     
-    a2Aprime=@(x)transpose(reshape(obj.linear_restrictions_data.a_func(x),nvars,K));
+    a2Aprime=@(x)transform_to_matrix_form(obj.linear_restrictions_data.a_func(x));
     
     if any(strcmp(obj.options.vp_prior_type,{'normal_wishart','indep_normal_wishart'}))
         % Hyperparameters on inv(SIGMA) ~ W(prior.dof_SIGMA,inv(prior.scale_SIGMA))
@@ -71,7 +99,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
             A_OLS=a2Aprime(a2tilde.ols.a);
             A_prior=a2Aprime(a2tilde.prior.a);
             A_post=a2Aprime(a2tilde.post.a);
-% %             iVa=reshape(diag(iVa),size(A_post));
+            % %             iVa=reshape(diag(iVa),size(A_post));
             a2tilde.post.scale_SIGMA = a2tilde.ols.SSE + a2tilde.prior.scale_SIGMA + ...
                 A_OLS'*XpX*A_OLS + ...
                 A_prior'*iVa*A_prior - ...
@@ -98,6 +126,11 @@ else
     [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode@rise_generic(obj,x0,lb,ub);
 end
 
+    function A=transform_to_matrix_form(x)
+        x=x(orig_order);
+        A=reshape(x(:),nvars,K);
+    end
+
     function [post,ols]=posterior_mode_engine(X,y,prior)
         
         npar_short=obj.linear_restrictions_data.npar_short;
@@ -117,11 +150,25 @@ end
     end
 end
 
-function [vd,bigx,bigy]=restricted_var_data(obj)
+function [vd,bigx,bigy,orig_order]=restricted_var_data(obj)
 [bigy,bigx,nv]=vartools.set_y_and_x(obj.data.y,obj.data.x,...
     obj.nlags,obj.constant);
 vd=struct();
 xi=kron(bigx',eye(nv));
+% re-order the columns of xi to conform with the order of the names of the
+% estimated parameters
+inv_order=locate_variables(obj.all_param_names_vec,obj.linear_restrictions_data.estim_names,true);
+good=~isnan(inv_order);
+% tmp=obj.all_param_names_vec(good);
+inv_order=inv_order(good);
+if numel(inv_order)~=numel(obj.linear_restrictions_data.estim_names)
+    error('Please contact junior.maih@gmail.com with this')
+end
+% this is expected to be perfectly symmetric such that orig_order =
+% inv_order
+orig_order(inv_order)=1:numel(inv_order);
+xi=xi(:,inv_order);
+
 f=obj.linear_restrictions_data.R1i_r_0;
 G=obj.linear_restrictions_data.R1i_R2_I2;
 vd.ytilde=bigy(:);
@@ -133,5 +180,13 @@ vd.Xtilde=xi*G(obj.linear_restrictions_data.ievec,:);
 vd.orig_estim_names={obj.estimation.priors.name};
 % vd.estim_names=estim_names;
 vd.estim_locs=locate_variables(obj.linear_restrictions_data.estim_names,vd.orig_estim_names);
+vd.not_estimated=setdiff(1:numel(vd.orig_estim_names),vd.estim_locs);
+
+pp=regexp(vd.orig_estim_names(vd.not_estimated),...
+    '\w+(?<first>\d+)_(?<second>\d+)','names');
+pp=[pp{:}];
+vd.p1=cell2mat(cellfun(@(x)str2double(x),{pp.first},'uniformOutput',false));
+vd.p2=cell2mat(cellfun(@(x)str2double(x),{pp.second},'uniformOutput',false));
+vd.same=vd.p1==vd.p2;
 end
 %}
