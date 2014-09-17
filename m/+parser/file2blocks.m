@@ -14,7 +14,7 @@ current_list={};
 current_markov_chain_name='';
 current_number_of_states=[];
 new_markov_chain_tex_names={};
-markov_chains=new_markov_chains('const',1,false);
+markov_chains=parser.initialize_markov_chain('const',1,false);
 
 all_chain_names={markov_chains.name};
 blocks={
@@ -225,23 +225,6 @@ end
 
 %--------------------------------------------------------------------------
 
-    function nmc=new_markov_chains(name,nstates,endo_flag)
-        if nargin<3
-            endo_flag=[];
-        end
-        if isempty(endo_flag)
-            endo_flag=nan;
-        elseif ~islogical(endo_flag)
-            error('endo_flag must be logical')
-        end
-        state_names=parser.create_state_list(name,nstates);
-        nmc=struct('name',name,...
-            'number_of_states',nstates,...
-            'is_endogenous',endo_flag,...
-            'state_names',{state_names(:).'},...
-            'state_tex_names',{state_names(:).'});
-    end
-
     function block=construct_list(block,rawline_,tokk)
         if is_trigger
             if left_parenth_4_markov_chains_open
@@ -450,7 +433,7 @@ end
                     %-------------------------------------
                     loc_=find(strcmp(current_markov_chain_name,all_chain_names));
                     if isempty(loc_)
-                        markov_chains(end+1)=new_markov_chains(current_markov_chain_name,current_number_of_states);
+                        markov_chains(end+1)=parser.initialize_markov_chain(current_markov_chain_name,current_number_of_states);
                         all_chain_names={markov_chains.name};
                     else
                         if ~isequal(markov_chains(loc_).number_of_states,current_number_of_states)
