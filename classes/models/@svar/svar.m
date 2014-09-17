@@ -15,6 +15,7 @@ classdef svar < rise_generic
     properties(Access=protected,Hidden = true)
         param_template
         param_to_mat_links
+        all_param_names_vec
     end
     methods
         function obj=svar(varargin)
@@ -51,7 +52,7 @@ classdef svar < rise_generic
             obj.solution=struct();
             % link the parameters to the structural matrices and initialize
             %--------------------------------------------------------------
-			[obj.param_to_mat_links,obj.parameter_values]=...
+			[obj.param_to_mat_links,obj.parameter_values,obj.all_param_names_vec]=...
                 vartools.parameters_to_matrices(...
                 obj.param_template,obj.parameters.name,...
                 obj.markov_chains.regimes_number);
