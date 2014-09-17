@@ -438,7 +438,7 @@ if any(~appear_as_current)
     error('do not appear as current')
 end
 
-%%
+%% models in shadow/technical/tactical form
 
 dynamic.model=cell(0,1);
 dynamic.shadow_model=cell(0,1);
