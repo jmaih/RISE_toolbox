@@ -31,7 +31,9 @@ if ~retcode
                 obj.solution.(obj.param_template{1,ilink}){istate}=mat;
         end
         if obj.constant
-            constant=obj.solution.c{istate}(:,1);
+            % constant is at the end according to vartools.set_y_and_x 
+            %---------------------------------------------------------
+            constant=obj.solution.c{istate}(:,end);
             LEFT=eye(endo_nbr);
             if isfield(obj.solution,'a0')
                 LEFT=obj.solution.a0{istate};
