@@ -408,7 +408,9 @@ end
             end
             % now remove all blanks
             %----------------------
-            rawline_(isspace(rawline_))=[];
+            if all(isspace(rawline_))
+                rawline_=[];
+            end
             % try closing the parenthesis
             %----------------------------
             if ~isempty(rawline_)
