@@ -226,6 +226,11 @@ end
 %--------------------------------------------------------------------------
 
     function block=construct_list(block,rawline_,tokk)
+        end_game=~isempty(strfind(rawline_,';'));
+        if end_game
+            warning(['ending declaration listings with a'';'' is no longer required. In ',...
+                file_name,' at line ',sprintf('%0.0f',line_number)])
+        end
         if is_trigger
             if left_parenth_4_markov_chains_open
                 error('new trigger cannot start before a listing a switching parameter block is complete')
@@ -241,20 +246,48 @@ end
                 new_markov_chain_tex_names={};
             end
         end
-        if left_parenth_4_markov_chains_open
-            % parse until closing is found
-            update_markov_chains()
-            % now we can parse the rest as parameters
-        end
-        end_game=~isempty(strfind(rawline_,';'));
-        if end_game
-            warning(['ending declaration listings with a'';'' is no longer required. In ',...
-                file_name,' at line ',sprintf('%0.0f',line_number)])
-        end
         while ~isempty(rawline_)
+            if left_parenth_4_markov_chains_open && ~quote_active
+                % close it if the next item is a ')'
+                tokk=strtok(rawline_,strrep(DELIMITERS,')',''));
+                if strcmp(tokk,')')
+                    % make sure possibly only space was in between
+                    right_par=find(rawline_==')',1,'first');
+                    in_between=rawline_(1:right_par-1);
+                    if isempty(in_between)||all(isspace(in_between))
+                        % make sure it is not empty
+                        if isempty(current_markov_chain_name)
+                            error(['could not find the markov chain after "parameters" in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                        end
+                        % make sure the number of tex names is adequate before
+                        % pushing
+                        %------------------------------------------------------
+                        if ~isempty(new_markov_chain_tex_names)
+                            if ~isequal(numel(new_markov_chain_tex_names),current_number_of_states)
+                                error(['# descriptions for markov chain does not ',...
+                                    'match the # of states ',file_name,' at line ',...
+                                    sprintf('%0.0f',line_number)])
+                            end
+                            markov_chains(end).state_tex_names=new_markov_chain_tex_names;
+                        end
+                        % reset everything except the chain name as it will be
+                        % used to dispatch the parameters
+                        %------------------------------------------------------
+                        current_number_of_states=[];
+                        new_markov_chain_tex_names={};
+                        left_parenth_4_markov_chains_open=false;
+                        % update rawline_
+                        %-----------------
+                        rawline_=rawline_(right_par+1:end);
+                    else
+                        error(['"',in_between,'" not expected before closing of parenthesis in ',...
+                            file_name,' at line ',sprintf('%0.0f',line_number)])
+                    end
+                end
+            end
             [tokk,rest_]=strtok(rawline_,DELIMITERS);
             if ismember(tokk,blknames)
-                error([tokk,'not admissible as a declaration or block name ',...
+                error([tokk,' not admissible as a declaration or block name ',...
                     'should start at the beginning of a line. In ',...
                     file_name,' at line ',sprintf('%0.0f',line_number)])
             end
@@ -290,179 +323,116 @@ end
                     end
                     if ~isempty(second_quote)
                         quote_active=false;
-                        if ~isempty(block.listing(end).tex_name)
-                            error([mfilename,':: found two consecutive tex names in ',...
-                                file_name,' at line ',sprintf('%0.0f',line_number)])
+                        if left_parenth_4_markov_chains_open
+                            new_markov_chain_tex_names=[new_markov_chain_tex_names,...
+                                tex_name];
+                        else
+                            if ~isempty(block.listing(end).tex_name)
+                                error([mfilename,':: found two consecutive tex names in ',...
+                                    file_name,' at line ',sprintf('%0.0f',line_number)])
+                            end
+                            block.listing(end).tex_name=tex_name;
                         end
-                        block.listing(end).tex_name=tex_name;
                         tex_name='';
                     end
                 else
-                    if ~isvarname(tokk)
-                        error([' atom ''',tokk,''' in ',...
-                            file_name,' at line ',sprintf('%0.0f',line_number),' is not a valid variable or parameter name'])
-                    end
-                    if exist([tokk,'.m'],'file')
-                        disp([mfilename,':: (gentle warning): ',tokk,' is also a matlab function'])
-                    end
-                    if ~isempty(current_list) &&  ismember(tokk,current_list)
-                        error(['atom ''',tokk,''' has been declared twice in ',...
-                            file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    [flag,mess]=parser.is_forbidden_name(tokk);
-                    if flag
-                        error([mess,' in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    %----------- {name,tex_name,in-use-flag} --------------
-                    nvars=numel(block.listing)+1;
-                    block.listing(nvars).name=tokk;
-                    block.listing(nvars).tex_name='';
-                    block.listing(nvars).max_lead=0;
-                    block.listing(nvars).max_lag=0;
-                    block.listing(nvars).is_in_use=false;
-                    block.listing(nvars).is_trans_prob=false;
-                    block.listing(nvars).is_log_var=false;
-                    block.listing(nvars).is_auxiliary=false;
-                    
-                    if strcmp(current_block_name,'parameters')
-                        block.listing(nvars).governing_chain=current_markov_chain_name;
-                        % exogenous transition probabilities can only be
-                        % controlled by the const markov chain
-                        %-----------------------------------------------
-                        [istp,is_diagonal]=parser.is_transition_probability(tokk);
-                        if is_diagonal
-                            error(['Declaring diagonal transition probabilities is not allowed in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                        end
-                        if isempty(current_markov_chain_name) % constant chain
-                            block.listing(nvars).is_switching=false;
-                        else
-                            if istp
-                                error(['Transition probability "',tokk,'" cannot switch in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                    isv_name=isvarname(tokk);
+                    if left_parenth_4_markov_chains_open
+                        if isv_name
+                            % markov chain name
+                            %------------------
+                            if isempty(current_markov_chain_name)
+                                current_markov_chain_name=tokk;
+                                % make sure it does not contain any _
+                                if any(current_markov_chain_name=='_')
+                                    error(['Markov chain names cannot contain "_" in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                                end
+                                % make sure it is not the constant markov chain
+                                if strcmp(current_markov_chain_name,'const')
+                                    error(['"const" cannot be used as a name for a markov chain in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                                end
+                            else
+                                error([' two consecutive chain names in ',file_name,' at line ',sprintf('%0.0f',line_number)])
                             end
-                            block.listing(nvars).is_switching=true;
+                        else
+                            % number of states
+                            %------------------
+                            tmp=str2double(tokk);
+                            if isnan(tmp)||~(tmp==floor(tmp))
+                                error([tokk,' is not a valid number of states in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                            end
+                            if isempty(current_number_of_states)
+                                current_number_of_states=tmp;
+                                if isempty(current_markov_chain_name)
+                                    error(['chain name must come before the number of states in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                                end
+                                if current_number_of_states<=1
+                                    error(['A declared markov chain must have more than one state. ',...
+                                        'Remove the markov chain info if the parameters will ',...
+                                        'remain unchanged across regimes. See ',file_name,...
+                                        ' at line ',sprintf('%0.0f',line_number)])
+                                end
+                                % update the markov chain information
+                                %-------------------------------------
+                                loc_=find(strcmp(current_markov_chain_name,all_chain_names));
+                                if isempty(loc_)
+                                    markov_chains(end+1)=parser.initialize_markov_chain(current_markov_chain_name,current_number_of_states);
+                                    all_chain_names={markov_chains.name};
+                                else
+                                    if ~isequal(markov_chains(loc_).number_of_states,current_number_of_states)
+                                        error([current_markov_chain_name,' was previously declared to have ',...
+                                            sprintf('%0.0f',markov_chains(loc_).number_of_states),' states but now has ',...
+                                            sprintf('%0.0f',current_number_of_states),' in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                                    end
+                                end
+                            else
+                                error([' two consecutive number of states in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                            end
                         end
-                        block.listing(nvars).is_measurement_error=false;
+                    else
+                        if ~isv_name
+                            error([' atom ''',tokk,''' in ',...
+                                file_name,' at line ',sprintf('%0.0f',line_number),' is not a valid variable or parameter name'])
+                        end
+                        if exist([tokk,'.m'],'file')
+                            disp([mfilename,':: (gentle warning): ',tokk,' is also a matlab function'])
+                        end
+                        [flag,mess]=parser.is_forbidden_name(tokk);
+                        if flag
+                            error([mess,' in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                        end
+                        if ~isempty(current_list) &&  ismember(tokk,current_list)
+                            error(['atom ''',tokk,''' has been declared twice in ',...
+                                file_name,' at line ',sprintf('%0.0f',line_number)])
+                        end
+                        %----------- {name,tex_name,in-use-flag} --------------
+                        nvars=numel(block.listing)+1;
+                        block.listing(nvars)=parser.listing('name',tokk);
+                        
+                        if strcmp(current_block_name,'parameters')
+                            block.listing(nvars).governing_chain=current_markov_chain_name;
+                            % exogenous transition probabilities can only be
+                            % controlled by the const markov chain
+                            %-----------------------------------------------
+                            [istp,is_diagonal]=parser.is_transition_probability(tokk);
+                            if is_diagonal
+                                error(['Declaring diagonal transition probabilities is not allowed in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                            end
+                            if isempty(current_markov_chain_name) % constant chain
+                                block.listing(nvars).is_switching=false;
+                            else
+                                if istp
+                                    error(['Transition probability "',tokk,'" cannot switch in ',file_name,' at line ',sprintf('%0.0f',line_number)])
+                                end
+                                block.listing(nvars).is_switching=true;
+                            end
+                            block.listing(nvars).is_measurement_error=false;
+                        end
+                        current_list={block.listing.name};
                     end
-                    current_list={block.listing.name};
                 end
             end
             rawline_=rest_;
-        end
-        
-        
-        function update_markov_chains()
-            if ~strcmp(current_block_name,'parameters')
-                error([current_block_name,' blocks do not have markov chains in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-            end
-            % markov chain name
-            %------------------
-            if isempty(current_markov_chain_name)
-                left=strfind(rawline_,'(');
-                rawline_=rawline_(left(1)+1:end);
-                [current_markov_chain_name,rawline_]=strtok(rawline_,parser.delimiters());
-                if ~isvarname(current_markov_chain_name)
-                    error([current_markov_chain_name,' is not a valid name for a markov chain in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                end
-            end
-            % number of states
-            %------------------
-            if isempty(current_number_of_states)
-                [tmp,rawline_]=strtok(rawline_,parser.delimiters());
-                current_number_of_states=str2double(tmp);
-                if isnan(current_number_of_states)||...
-                        ~(current_number_of_states==floor(current_number_of_states))
-                    error([tmp,' is not a valid number of states in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                end
-                if current_number_of_states<=1
-                    error(['A declared markov chain must have more than one state. ',...
-                        'Remove the markov chain info if the parameters will ',...
-                        'remain unchanged across regimes. See ',file_name,...
-                        ' at line ',sprintf('%0.0f',line_number)])
-                end
-            end
-            % trim because of a potential closing parenthesis
-            %------------------------------------------------
-            rawline_=strtrim(rawline_);
-            % now add the tex names
-            %----------------------
-            double_apps=find(rawline_=='"');
-            if ~isempty(double_apps)
-                if double_apps(1)==1
-                    if rem(numel(double_apps),2)
-                        error(['''"'' must come in pairs in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    for iap=1:.5*numel(double_apps)
-                        left__=double_apps(2*(iap-1)+1)+1;
-                        right__=double_apps(2*iap)-1;
-                        new_markov_chain_tex_names=[new_markov_chain_tex_names,...
-                            rawline_(left__:right__)];
-                    end
-                    rawline_=strtrim(rawline_(right__+2:end));
-                else
-                   % there is something before the first ' " '. And that
-                   % thing must be a closing parenthesis
-                   if ~strcmp(rawline_(1),')')
-                        error(['expecting a closing parenthesis after last ''"'' in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                   end
-                end
-            end
-            % now remove all blanks
-            %----------------------
-            if all(isspace(rawline_))
-                rawline_=[];
-            end
-            % try closing the parenthesis
-            %----------------------------
-            if ~isempty(rawline_)
-                right=strfind(rawline_,')');
-                if ~isempty(right)
-                    if numel(right)>1
-                        error(['multiple closing parentheses (I do not understand this) in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    % make sure it is not empty
-                    if isempty(current_markov_chain_name)
-                        error(['could not find the markov chain after "parameters" in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    % make sure it does not contain any _
-                    if any(current_markov_chain_name=='_')
-                        error(['Markov chain names cannot contain "_" in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    % make sure it is not the constant markov chain
-                    if strcmp(current_markov_chain_name,'const')
-                        error(['"const" cannot be used as a name for a markov chain in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                    end
-                    % update the markov chain information
-                    %-------------------------------------
-                    loc_=find(strcmp(current_markov_chain_name,all_chain_names));
-                    if isempty(loc_)
-                        markov_chains(end+1)=parser.initialize_markov_chain(current_markov_chain_name,current_number_of_states);
-                        all_chain_names={markov_chains.name};
-                    else
-                        if ~isequal(markov_chains(loc_).number_of_states,current_number_of_states)
-                            error([current_markov_chain_name,' was previously declared to have ',...
-                                sprintf('%0.0f',markov_chains(loc_).number_of_states),' states but now has ',...
-                                sprintf('%0.0f',current_number_of_states),' in ',file_name,' at line ',sprintf('%0.0f',line_number)])
-                        end
-                    end
-                    % make sure the number of tex names is adequate before
-                    % pushing
-                    %------------------------------------------------------
-                    if ~isempty(new_markov_chain_tex_names)
-                        if ~isequal(numel(new_markov_chain_tex_names),current_number_of_states)
-                            error(['# descriptions for markov chain does not ',...
-                                'match the # of states ',file_name,' at line ',...
-                                sprintf('%0.0f',line_number)])
-                        end
-                        markov_chains(end).state_tex_names=new_markov_chain_tex_names;
-                    end
-                    % reset everything except the chain name as it will be
-                    % used to dispatch the parameters
-                    %------------------------------------------------------
-                    current_number_of_states=[];
-                    new_markov_chain_tex_names={};
-                    left_parenth_4_markov_chains_open=false;
-                end
-            end
         end
     end
 end
