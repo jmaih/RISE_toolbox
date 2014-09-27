@@ -22,7 +22,7 @@ data=data_info.y;
 T=syst.T;
 R=syst.R;
 H=syst.H;
-Q=syst.Q0;
+Qfunc=syst.Qfunc;
 
 % initial conditions
 %-------------------
@@ -35,20 +35,7 @@ RR=init.RR;
 %---------------
 clear data_info syst init
 
-is_endogenous_switching=false;
-if iscell(Q)
-    Q0=Q{1};
-    % check the possibility of endogenous probabilities
-    is_endogenous_switching=numel(Q)>1 && ~isempty(Q{2});
-    if is_endogenous_switching
-        transition_matrix=Q{2};
-        Vargs={};
-        if numel(Q)>2
-            Vargs=Q{3};
-        end
-    end
-    Q=Q0;
-end
+Q=Qfunc(a{1});
 PAI=transpose(Q)*PAItt;
 
 % matrices' sizes
@@ -201,12 +188,11 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     if ~is_steady
         Ptt=P;
     end
-    if is_endogenous_switching
-        [Q,retcode]=utils.code.evaluate_transition_matrices(transition_matrix,att{1},Vargs{:});
+    
+    [Q,retcode]=Qfunc(att{1});
         if retcode
             return
         end
-    end
     
     % Probabilities predictions
     %--------------------------
@@ -248,7 +234,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         store_predictions()
     end
     
-    if ~is_endogenous_switching && ~is_steady % && h==1
+    if ~is_steady % && h==1
         is_steady=check_steady_state_kalman(is_steady);
     end
 end

@@ -1,4 +1,4 @@
-function [init,retcode]=kalman_initialization(T,R,steadystate,risk,transition_matrix,options)
+function [init,retcode]=kalman_initialization(T,R,steadystate,risk,transition_function,options)
 % There is no documentation of this function yet.
 
 % diffuse initialization for all elements in the state vector including
@@ -56,7 +56,8 @@ end
         if PAI00_given
             PAI00=kf_user_init{3};
         else
-            [PAI00,retcode]=initial_markov_distribution(transition_matrix,kf_ergodic);
+            Q=transition_function(steadystate(:,1));
+            [PAI00,retcode]=initial_markov_distribution(Q,kf_ergodic);
         end
         P0=[];
         a0=[];
