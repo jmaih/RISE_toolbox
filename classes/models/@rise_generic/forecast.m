@@ -47,22 +47,22 @@ if retcode
 end
 
 %% initial conditions
-if isempty(obj.options.simul_histval)
-    error('historical values not provided')
-end
 % note that initial conditions for the probabilities should also be given
 % by the smoother in case of forecasting. This is something that should
 % implemented later on
 %--------------------------------------------------------------------------
-Initcond=generic_tools.set_simulation_initial_conditions(obj);
-y0=Initcond.y0;
+Initcond=set_simulation_initial_conditions(obj);
+y0=Initcond.y.y;
 PAI=Initcond.PAI;
 % exogenous_observed=Initcond.exogenous_observed;
-simul_burn=Initcond.simul_burn;
-endo_nbr=Initcond.endo_nbr;
-Q=Initcond.Q;
+simul_burn=Initcond.burn;
+endo_nbr=obj.endogenous.number(end);
+Qfunc=Initcond.Qfunc;
 y0cols=size(y0,2);
 
+% if isempty(obj.options.simul_histval)
+%     error('historical values not provided')
+% end
 %% conditional information
 
 conditional_info=obj.options.forecast_conditional_info;
@@ -169,7 +169,6 @@ end
 %-----------------------------------------
 y=compute_forecasts_conditional_on_shocks(shocks);
 
-
 %% store the simulations in a database
 %------------------------------------
 hist_start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
@@ -197,7 +196,7 @@ end
         for t=1:nsteps
             % draw a state
             %-------------
-            [State(t+1),Q,PAI,retcode]=generic_tools.choose_state(State(t+1),Q,PAI,y0_(1:endo_nbr,end));
+            [State(t+1),Q0,PAI,retcode]=generic_tools.choose_state(State(t+1),Qfunc,PAI,y0_(1:endo_nbr,end));
             if retcode
                 return
             end
