@@ -163,7 +163,11 @@ end
                             error([mfilename,':: # and ! can only occur at the beginning of an equation check in ',file_name_,' line ',sprintf('%0.0f',iline_)])
                         end
                     elseif strcmp(tok_status,'unknown')
-                        error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                        if parser.is_transition_probability(tokk) && strcmp(block_name,'model')
+                            error([mfilename,':: equations for endogenous transition probabilities must start with a "!" in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                        else
+                            error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                        end
                     end
                     
                     if def_flag && (strcmp(tok_status,'y')||strcmp(tok_status,'x')) && ~dictionary.definitions_inserted
