@@ -46,7 +46,7 @@ end
 
 % initial conditions
 %-------------------
-Initcond=generic_tools.set_simulation_initial_conditions(obj);
+Initcond=set_simulation_initial_conditions(obj);
 
 % load the order_var solution
 %-----------------------------
