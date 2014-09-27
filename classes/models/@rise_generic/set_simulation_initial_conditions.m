@@ -45,18 +45,8 @@ if ~isempty(simul_historical_data)
     scale_shocks=0; 
 end
 
-Q={obj.solution.transition_matrices.Q,[],[]};
-if isa(obj,'dsge') && obj.is_endogenous_switching_model
-    % take a handle to a private function. we can't access it otherwise
-    Q{2}=obj.routines.transition_matrix;
-    M=obj.parameter_values;
-    % transition matrix should be invariant. And so, hopefully, the first
-    % argument to Q{2} could be the updated data in any state.
-    % order of the input arguments is y,x,ss,param,sparam,def,s0,s1 
-    % remaining arguments of Q{2} after the first one
-    %-------------------------------------------------
-    Q{3}={[],obj.solution.ss{1},mean(M,2),[],[],[],[]};
-end
+Qfunc=prepare_transition_routine(obj);
+
 simul_pruned=false;
 simul_sig=0;
 simul_order=1;
@@ -79,7 +69,7 @@ Initcond=struct('y',{y0},...
     'simul_history_end_date',simul_history_end_date,...
     'simul_sig',simul_sig,...
     'simul_order',simul_order,...
-    'Q',{Q},...
+    'Qfunc',Qfunc,...
     'random',true,...
     'nsteps',obj.options.simul_periods,...
     'k_future',k_future);
