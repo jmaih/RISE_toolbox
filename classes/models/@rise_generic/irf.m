@@ -91,7 +91,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
         
         % initial conditions
         %-------------------
-        Initcond=generic_tools.set_simulation_initial_conditions(obj);
+        Initcond=set_simulation_initial_conditions(obj);
         
         h=obj.markov_chains.regimes_number;
         % load the order_var solution
