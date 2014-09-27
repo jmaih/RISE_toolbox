@@ -1,22 +1,15 @@
-function [st,Q,PAI,retcode]=choose_state(st,Q,PAI,y)
+function [st,Q0,PAI,retcode]=choose_state(st,Qfunc,PAI,y)
 % st: state
-% Q: transition matrix or ...
+% Qfunc: function that returns the transition matrix evaluated at y ...
 % PAI: current updated probabilities
 % y: data for current period
+% Q0: is nan if st is given
 retcode=0;
+Q0=nan(size(PAI,1));
 if isempty(st)||isnan(st)
-    endogenous_switching=~isempty(Q{2});
-    Q0=Q{1};
+    [Q0,retcode]=Qfunc(y);
     % update probabilities
     %---------------------
-    if endogenous_switching
-        % in the endogenous probability case the configuration of
-        % the transition matrix will change
-        shadow_transition_matrix=Q{2};
-        Vargs=Q{3};
-        [Qall,retcode]=utils.code.evaluate_transition_matrices(shadow_transition_matrix,y,Vargs{:});
-        Q0=Qall.Q;
-    end
     if retcode
         return
     end
