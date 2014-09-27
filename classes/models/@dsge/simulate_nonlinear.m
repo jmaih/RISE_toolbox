@@ -18,7 +18,7 @@ end
 
 % initial conditions
 %-------------------
-Initcond=generic_tools.set_simulation_initial_conditions(obj);
+Initcond=set_simulation_initial_conditions(obj);
 bigt=obj.options.simul_periods;
 
 simul_stack_solve_algo=obj.options.simul_stack_solve_algo;
