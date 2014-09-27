@@ -86,22 +86,7 @@ if reorder_rows
     data.varobs_id=iov(data.varobs_id);
 end
 
-Q={obj.solution.transition_matrices.Q,[],[]};
-
-if  obj.is_endogenous_switching_model
-    % take a handle to a private function. we can't access it otherwise
-    Q{2}=obj.routines.transition_matrix;
-
-    % collect the parameters for all regimes
-%     M=vertcat(obj.parameters.startval);
-    M=obj.parameter_values;
-    % transition matrix should be invariant. And so, hopefully, the first
-    % argument to Q{2} could be the updated data in any state.
-    % order of the input arguments is y,x,param,ss
-    Q{3}={[],mean(M,2),SS{1}}; % remaining arguments of Q{2} after the first one
-%    Q{3}={ss(:,1),mean(M,2),transition_script}; % remaining arguments of Q{2}
-    % [obj.Q,retcode]=transition_matrix_evaluation(ss_i,ss_i,M(:,1),transition_matrix); % should be invariant
-end
+Qfunc=prepare_transition_routine(obj);
 
 H=obj.solution.H;% measurement errors
 
@@ -132,7 +117,7 @@ end
 % initialization
 %---------------
 
-syst=struct('T',{T},'R',{R},'H',{H},'Q0',{Q});
+syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc});
 
 data_trend=[];
 [LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,data_trend,State_trend,SS,risk,obj.options);
