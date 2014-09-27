@@ -26,7 +26,7 @@ end
 %---------------------------------------
 minimum_state_for_estimation()
 
-[init,retcode]=kalman_initialization(syst.T,syst.R,SS,risk,syst.Q0{1},options);
+[init,retcode]=kalman_initialization(syst.T,syst.R,SS,risk,syst.Qfunc,options);
 
 if retcode
     loglik=[];
@@ -59,8 +59,15 @@ end
     % case where we don't need all the smoothed variables. This will have
     % to be done from the parser, when reading the list of the observables.
     % Or something along those lines...
-        is_endogenous_switching=~isempty(syst.Q0{2});
-        if options.kf_filtering_level==0 && ~is_endogenous_switching
+    
+    % IF THE STATE IS SHRUNK, JUST WRITE A WRAPPER THAT WILL INFLATE IT
+    % BEFORE IT IS APPLIED TO SYST.QFUNC. IN BRIEF, SYST.QFUNC WILL BE
+    % MODIFIED TO SOMETHING LIKE syst.Qfunc=@(x)syst.Qfunc(inflator(x)).
+    % The problem is that the inflator should know how to reset the grand
+    % vector and the variables entering the transition matrix should be
+    % forced to be states...
+    return
+        if options.kf_filtering_level==0 
             tmp=syst.T;
             h=numel(tmp);
             % The step below is critical for speed, though it may add some noise
