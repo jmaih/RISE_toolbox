@@ -14,8 +14,11 @@ if retcode
     end
     obs=[];
 else
-    span=start_serial:new_serial;
-    obs=numel(span);
+    obs=nan(size(new_serial));
+    for iserial=1:numel(obs)
+        span=start_serial:new_serial(iserial);
+        obs(iserial)=numel(span);
+    end
 end
 end
 
