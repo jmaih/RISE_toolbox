@@ -55,6 +55,10 @@ y0=Initcond.y;
 for ireg=1:numel(y0)
     y0(ireg).y=y0(ireg).y(new_order,:);
 end
+% adjust the transition function according to the order_var
+%-----------------------------------------------------------
+iov(new_order)=1:numel(new_order);
+Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
 
 % here we need to start at one single point: and so we aggregate y0
 %------------------------------------------------------------------
