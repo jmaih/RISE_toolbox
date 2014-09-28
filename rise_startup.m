@@ -3,6 +3,8 @@ if nargin<1
     flag=false;
 end
 
+% latex and reporting
+%--------------------
 latex_progs={'pdflatex','epstopdf'};
 latex_paths=latex_progs;
 retcode=0;
@@ -24,16 +26,10 @@ for iprog=1:numel(latex_progs)
     retcode=retcode||rcode;
 end
 
-%-----------------------------------------------------------------------
 % Decide if using or not the RISE print and plot settings
+%--------------------------------------------------------
 USE_RISE_PLOT = true;
-USE_RISE_PRINT = false;
-
-%--------------------------------------------------------------------------
-
-%  %--------------------------------------------------------------------------
-%  % format of numbers on MATLAB terminal
-%  format long g
+USE_RISE_PRINT = true;
 
 rise_data=cell(0,2);
 
@@ -63,21 +59,15 @@ if USE_RISE_PRINT
         end
     end
     rise_data=[rise_data
-        'matlab_version', matlab_version
+        {'matlab_version', matlab_version
         'optimization_version', optimization_version
         'statistics_version', statistics_version
         'rise_version', rise_version
-        'rise_required_matlab_version', '7.11'
+        'rise_required_matlab_version', '7.11'}
         ];
     
-    
-    %%  %--------------------------------------------------------------------------
-    %%  % Check and load user parameters
-    %%  %
-    %%  loadPrefs;
-    
-    %--------------------------------------------------------------------------
     % set page properties for printing
+    %---------------------------------
     set(0, 'DefaultFigurePaperOrientation','landscape');
     set(0, 'DefaultFigurePaperType','A4');
     set(0, 'DefaultFigurePaperUnits', 'centimeters');
@@ -86,13 +76,10 @@ if USE_RISE_PRINT
 end
 
 
-%--------------------------------------------------------------------------
 % Plot settings
+%--------------
 if USE_RISE_PLOT
-    
-    % ------------------------------------------------------------------------
-    % General Variables
-    
+        
     rise_default_plot_colors={ ...
         [0 0 1],     ...  % 'b'
         [1 0 0],     ...  % 'r'
@@ -166,15 +153,8 @@ end
 
     function welcome_message()
         target=which('rise_startup');
-        rst=strfind(target,'rise_startup');
-        tlbx_roots={'RISE_toolbox','RISE'};
-        root_=tlbx_roots{1};
-        rtb=strfind(target,root_);
-        if isempty(rtb)
-            root_=tlbx_roots{2};
-            rtb=strfind(target,root_);
-        end
-        target=target(rtb+length(root_)+1:rst-2);
+        separators=find(target==filesep);
+        target=target(separators(end-1)+1:separators(end)-1);
         vv = ver(target);
         l1 = '+--------------------------------------------------+';
         
@@ -213,4 +193,3 @@ else
 end
 
 end
-
