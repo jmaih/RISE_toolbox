@@ -22,6 +22,11 @@ if nargin==0
     return
 end
 
+
+% apply the presample to the data
+%--------------------------------
+data_info.include_in_likelihood(1:options.kf_presample)=false;
+
 % Trim the system matrices if possible
 %---------------------------------------
 minimum_state_for_estimation()
