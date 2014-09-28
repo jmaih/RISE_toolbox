@@ -92,7 +92,6 @@ end
 %-----------------------------------------
 Initcond.states=states;
 Initcond.shocks=shocks;
-Initcond.states=states;
 
     function set_shocks_and_states()
         % check there is no shock with name regime (this should be done right
@@ -127,19 +126,23 @@ Initcond.states=states;
                 exo_locs=locate_variables(new_shock_names,varnames,true);
                 good=~isnan(exo_locs);
                 shocks(good,1:nperiods)=raw_data(exo_locs(good),right:end);
+                
                 % make sure the regime row does not have nans
                 %--------------------------------------------
-                for icol=1:nperiods+k
-                    if isnan(shocks(end,icol))
-                        if icol==1
-                            % set the first period to the first regime
-                            shocks(end,icol)=1;
-                            warning('the first regime was nan and has been set to 1 in the simulations')
-                        else
-                            shocks(end,icol)=shocks(end,icol-1);
-                        end
-                    end
+                if any(isnan(shocks(end,:)))
+                    warning('the nan locations in the regimes will be chosen randomly according to the transition probabilities')
                 end
+%                 for icol=1:nperiods+k
+%                     if isnan(shocks(end,icol))
+%                         if icol==1
+%                             % set the first period to the first regime
+%                             shocks(end,icol)=1;
+%                             warning('the first regime was nan and has been set to 1 in the simulations')
+%                         else
+%                             shocks(end,icol)=shocks(end,icol-1);
+%                         end
+%                     end
+%                 end
                 % make sure there is no regime exceeding h and all are positive integers
                 %-----------------------------------------------------------------------
                 regimes_row=shocks(end,:);
