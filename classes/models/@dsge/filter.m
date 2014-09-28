@@ -27,7 +27,7 @@ if ~obj.data_are_loaded
     obj=obj.load_data;
 end
 
-resolve_flag=isempty(obj.solution.Tz{1});
+resolve_flag=isempty(obj.solution)||isempty(obj.solution.Tz{1});
 %
 %% solve the object
 if resolve_flag
