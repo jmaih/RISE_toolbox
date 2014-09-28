@@ -35,10 +35,13 @@ switch nsubs
                 error('# elements in the logical call must match # observations')
             end
             rows_dates=subs1;
-        elseif ischar(subs1) % dates or variable
-            subs1(isspace(subs1))=[];
+        elseif ischar(subs1)|| iscellstr(subs1) % dates or variable
+            if ischar(subs1)
+                subs1=cellstr(subs1); 
+            end
+            subs1=cellfun(@(x)x(~isspace(x)),subs1,'uniformOutput',false);
             % if starts with a digit: date
-            date_style=isstrprop(subs1(1),'digit');
+            date_style=~isvarname(subs1{1});
             if date_style
                 ss=char2serial(subs1);
                 freq=serial2frequency(ss); 
@@ -49,8 +52,6 @@ switch nsubs
             else
                 varloc=process_variables(subs1);
             end
-        elseif iscellstr(subs1) % variables only
-            varloc=process_variables(subs1);
         else
             error('wrong format for dates and/or variables')
         end
