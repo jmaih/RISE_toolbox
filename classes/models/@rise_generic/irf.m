@@ -9,7 +9,8 @@ if isempty(obj)
         'irf_shock_sign',1,...
         'irf_draws',50,...
         'irf_type','irf',...
-        'irf_regime_specific',true);
+        'irf_regime_specific',true,...
+        'irf_use_historical_data',false);
     return
 end
 
@@ -31,8 +32,10 @@ dsge_irfs=format_irf_output(dsge_irfs);
         
         obj.options.simul_periods=obj.options.irf_periods	  ;
         obj.options.simul_burn=0;
-        obj.options.simul_historical_data=ts.empty(0);
-        obj.options.simul_history_end_date='';
+        if ~obj.options.irf_use_historical_data
+            obj.options.simul_historical_data=ts.empty(0);
+            obj.options.simul_history_end_date='';
+        end
         irf_shock_list        =obj.options.irf_shock_list;
         irf_var_list          =obj.options.irf_var_list  ;
         irf_shock_sign        =obj.options.irf_shock_sign;
@@ -40,8 +43,6 @@ dsge_irfs=format_irf_output(dsge_irfs);
         irf_draws	          =obj.options.irf_draws	  ;
         irf_regime_specific   =obj.options.irf_regime_specific;
         exo_nbr=sum(obj.exogenous.number);
-        which_shocks=true(1,exo_nbr);
-        which_shocks(obj.exogenous.is_observed)=false;
         
         if isempty(irf_var_list)
             if is_dsge
@@ -53,9 +54,10 @@ dsge_irfs=format_irf_output(dsge_irfs);
             irf_var_list=cellstr(irf_var_list);
         end
         
-        exoList=get(obj,'exo_list(~observed)');
+        detList=get(obj,'exo_list(observed)');
+        exoList=get(obj,'exo_list');
         if isempty(irf_shock_list)
-            irf_shock_list=exoList;
+            irf_shock_list=get(obj,'exo_list(~observed)');
         end
         if ischar(irf_shock_list)
             irf_shock_list=cellstr(irf_shock_list);
@@ -70,7 +72,14 @@ dsge_irfs=format_irf_output(dsge_irfs);
                 error('The above list of shocks cannot be used in irf')
             end
         end
-        
+        if any(ismember(irf_shock_list,get(obj,'exo_list(observed)')))
+            error('cannot compute irfs of observed shocks')
+        end
+        which_shocks=false(1,exo_nbr);
+        which_shocks(position)=true;
+        det_shocks=false(1,exo_nbr);
+        det_pos=locate_variables(detList,exoList,true);
+        det_shocks(det_pos)=true;
         [obj,retcode]=solve(obj);
         % note that the solving of the model may change the perturbation
         % order. More explicitly optimal policy irfs will be computed for a
@@ -87,7 +96,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
             %-------------------------------
             obj=do_not_anticipate_future_shocks(obj);
         end
-        nshocks=numel(irf_shock_list);
+        nshocks=sum(which_shocks);
         
         % initial conditions
         %-------------------
@@ -98,9 +107,15 @@ dsge_irfs=format_irf_output(dsge_irfs);
         %-----------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
         y0=Initcond.y;
+        % adjust the start values according to the order_var
+        %---------------------------------------------------
         for ireg=1:h
             y0(ireg).y=y0(ireg).y(new_order,:);
         end
+        % adjust the transition function according to the order_var
+        %-----------------------------------------------------------
+        iov(new_order)=1:numel(new_order);
+        Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
         
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
         %         quash_regimes=(h>1 && ~irf_regime_specific);
@@ -147,7 +162,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
                     Initcond.states(:,1)=istate;
                 end
                 [xxxx,retcode]=utils.forecast.irf(y0(istate),T,steady_state,...
-                    state_vars_location,which_shocks,Initcond);
+                    state_vars_location,which_shocks,det_shocks,Initcond);
                 % select only the relevant rows in case we are dealing with
                 % a VAR with many lags
                 %----------------------------------------------------------
@@ -159,9 +174,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
         Impulse_dsge(abs(Impulse_dsge)<=too_small)=0;
         
         % re-order the variables according to the inv_order_var;
-        if is_dsge
-            Impulse_dsge=Impulse_dsge(obj.inv_order_var.after_solve,:,:,:,:);
-        end
+        Impulse_dsge=re_order_output_rows(obj,Impulse_dsge);
         % going from variables x time x shocks x irf_draws x regimes
         % reshape as time x regimes x variables x shocks x irf_draws
         %------------------------------------------------------------
@@ -182,7 +195,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
         RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
         dsge_irfs=struct();
         vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
-        for ishock=1:exo_nbr
+        for ishock=1:nshocks
             shock_name=irf_shock_list{ishock};
             for vv=1:numel(irf_var_list)
                 dsge_irfs.(shock_name).(irf_var_list{vv})=...
