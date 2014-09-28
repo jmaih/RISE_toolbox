@@ -14,15 +14,8 @@ funevals=0;
 success=nargout(objective)>=2;
 msg='';
 the_loop=@loop_body;
-if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size')
-    parfor ii=1:n
-        iter_=ii;
-        [x(:,ii),f(ii),viol{ii},fcount(ii)]=the_loop(iter_);
-    end
-else
-    for ii=1:n
-        [x(:,ii),f(ii),viol{ii},fcount(ii)]=the_loop(ii);
-    end
+for ii=1:n
+    [x(:,ii),f(ii),viol{ii},fcount(ii)]=the_loop(ii);
 end
 funevals=funevals+sum(fcount);
 
