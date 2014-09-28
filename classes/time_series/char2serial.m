@@ -1,4 +1,13 @@
 function ss=char2serial(x)
+if iscellstr(x)
+    if numel(x)>1
+        error('I cannot process more than one element at a time')
+    end
+    x=char(x);
+end
+if size(x,1)>1
+    error('I cannot process more than one element at a time')
+end
 x(isspace(x))=[];
 ss=[];
 while ~isempty(x)
