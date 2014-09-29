@@ -47,7 +47,7 @@ end
 if isempty(output),output=cell(0,3);end
 if isempty(has_macro),has_macro=false;end
 
-SPACE_DELIMITERS=char([9:13,32]);
+remove_space=@(x)x(~isspace(x));
 
 depth=0;
 iter=0;
@@ -138,16 +138,18 @@ end
         rline.FileName= RawFile{iter,2};
         rline.row_number_string= int2str(RawFile{iter,3});
         
-        [tokk,rest_]=strtok(rline.rawline ,SPACE_DELIMITERS);
-        if strncmp(tokk,'@#',2)
-            if length(tokk)==2
-                oldtokk=tokk;
-                [tokk,rest_]=strtok(rest_,SPACE_DELIMITERS);
-                tokk=[oldtokk,tokk];
-            end
+        [startIndex,endIndex] = regexp(rline.rawline,['@\s*(?#0 or more spaces)',...
+            '#\s*(include|if|for|else(if)?|end(if|for)?',...
+            '(?#optionally followed by if or for))']);
+        if numel(startIndex)>1
+            error('')
+        elseif numel(startIndex)==1
+            rline.first_tok=remove_space(rline.rawline(startIndex:endIndex));
+            rline.rest=rline.rawline(endIndex+1:end);
+        else
+            rline.first_tok='';
+            rline.rest=rline.rawline;
         end
-        rline.first_tok=tokk;
-        rline.rest=rest_;
     end
 end
 
