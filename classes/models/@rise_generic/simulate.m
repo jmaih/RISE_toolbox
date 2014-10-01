@@ -19,7 +19,16 @@ if isempty(obj)
         'simul_historical_data',ts.empty(0),...
         'simul_history_end_date','',...
         'simul_start_date','',...
-        'simul_regime',[]);
+        'simul_regime',[],...
+        'simul_update_shocks_handle',[],...
+        'simul_do_update_shocks',false);
+    % we may want to update the shocks if some condition on the state of
+    % the economy is satisfied. For instance, shock monetary policy to keep
+    % the interest rate at the floor for an extented period of time if we
+    % already are at the ZLB/ZIF. simul_update_shocks_handle is then a
+    % function handle that takes as inputs the current shocks and the state
+    % vector (all the endogenous variables). The user also has to turn on
+    % simul_do_update_shocks by setting it to true
     return
 end
 nobj=numel(obj);
