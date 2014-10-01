@@ -775,7 +775,11 @@ end
     function Apl=reconfigure_aplus()
         Apl=cell(siz.h,1);
         for ii=1:siz.h
-            Apl{ii}=dbf_plus{ii,ii}/Q(ii,ii);
+            if Q(ii,ii)
+                Apl{ii}=dbf_plus{ii,ii}/Q(ii,ii);
+            else
+                error('knife-edge probability matrix prevents from recovering a matrix')
+            end
         end
     end
 
