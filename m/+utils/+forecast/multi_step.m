@@ -81,6 +81,9 @@ states=states(options.burn+1:end);
         y1=utils.forecast.one_step(T(:,rt),y0,ss{rt},state_vars_location,...
             options.simul_sig,shocks_t,options.simul_order);
         if ~options.complementarity(y1.y)
+            if ~isnan(states(t))
+                error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',states(t))) %#ok<SPERR>
+            end
             state_list(state_list==rt)=[];
             rt=nan;
         end
