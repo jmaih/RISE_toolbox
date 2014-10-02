@@ -9,8 +9,9 @@ fill_time='';
 time_opening='';
 def_flag=false;
 endo_switch_flag=false;
+mcp_flag=false;
 equation=initialize_equation();%cell(2,0);
-block=cell(0,3);
+block=cell(0,4);
 DELIMITERS=parser.delimiters();
 
 chain_names={dictionary.markov_chains.name};
@@ -44,7 +45,12 @@ if dictionary.definitions_inserted
 end
 
     function eqtn=initialize_equation()
-        eqtn=struct('max_lag',0,'max_lead',0,'eqtn',{cell(2,0)},'is_def',false);
+        eqtn=struct('max_lag',0,'max_lead',0,...
+            'eqtn',{cell(2,0)},...
+            'type','normal',...
+            'is_def',false,... % definitions
+            'is_tvp',false,... % endogenous probabilities
+            'is_mcp',false); % complementarity condition
     end
     function [block,equation]=capture_equations_engine(block,cell_info,block_name,equation)
         
@@ -64,7 +70,6 @@ end
             end
             
             if isempty(equation.eqtn)
-                % % % % %                 last_status='';
                 endo_switch_flag=false;
                 def_flag=false;
                 if time_on
@@ -113,16 +118,17 @@ end
                         dictionary.exogenous(position).is_in_use=true;
                     end
                     is_lhs_def=false;
-                    if strcmp(tok_status,'#')||strcmp(tok_status,'!')
+                    if strcmp(tok_status,'#')||strcmp(tok_status,'!')||strcmp(tok_status,'?')
                         def_flag=strcmp(tok_status,'#');
                         if strcmp(block_name,'exogenous_definition')
-                            error([mfilename,':: the exogenous definition block cannot contain ''#'' or ''!'' ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                            error([mfilename,':: the exogenous definition block cannot contain ''#'' or ''!'' or ''?'' ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                         end
                         endo_switch_flag=strcmp(tok_status,'!');
+                        mcp_flag=strcmp(tok_status,'?');
                         rest_=rest1;
                         [tokk,rest1]=strtok(rest_,DELIMITERS); %#ok<*STTOK>
                         tok_status=dictionary.determine_status(tokk,dictionary);
-                        if ~strcmp(tok_status,'unknown')
+                        if ~mcp_flag && ~strcmp(tok_status,'unknown')
                             if strcmp(tok_status,'f')
                                 disp([mfilename,':: (gentle warning): ',tokk,' is also a matlab function'])
                             else
@@ -133,8 +139,18 @@ end
                             dictionary.definitions=[dictionary.definitions;{tokk}];
                             is_lhs_def=true;
                             equation.is_def=true;
+                            equation.type='def';
                             definitions_loc.(tokk)=nblks+1;
+                        elseif mcp_flag
+                            equation.is_mcp=true;
+                            equation.type='mcp';
+                            % everything shall be parse as normal
+                            % equations. but still, perhaps this is the
+                            % place where to stamp the equations for their
+                            % type=
                         elseif endo_switch_flag
+                            equation.is_tvp=true;
+                            equation.type='tvp';
                             [istp,isdiagonal,chain_name]=parser.is_transition_probability(tokk);
                             if ~istp
                                 error([mfilename,':: string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_),' is not an appropriate name for an endogenous switching probability'])
@@ -307,9 +323,10 @@ end
                 if strcmp(equation.eqtn{1,end}(end),';')
                     % we've reach the end of the equation, validate it,
                     % load it and reinitialize.
-                    equation.eqtn=validate_equation(equation.eqtn);
-                    block=[block;{equation.eqtn,equation.max_lag,equation.max_lead}];
-                    nblks=nblks+1; 
+                    equation.eqtn=validate_equation(equation.eqtn,...
+                        max(abs([equation.max_lag,equation.max_lead])));
+                    block=[block;{equation.eqtn,equation.max_lag,equation.max_lead,equation.type}];
+                    nblks=nblks+1;
                     if equation.is_def && dictionary.definitions_inserted
                         blocks_to_discard_coz_they_are_defs(nblks,1)=true;
                     else
@@ -319,7 +336,17 @@ end
                 end
             end
         end
-        function equation=validate_equation(equation)
+        function equation=validate_equation(equation,max_lead_lag)
+            if mcp_flag
+                if max_lead_lag
+                    % 3- cannot contain lags or leads
+                    error(['A complementarity constraint cannot contain leads or lags in ',...
+                        file_name_,' at line ',sprintf('%0.0f',iline_)])
+                end
+                mcp_test_passed=false;
+                mcp_inequalities={'ge','gt','le','lt',...
+                    '>=','>','<=','<'};
+            end
             checked=false;
             % look for equality signs
             equality_signs=cell(2,0);
@@ -331,9 +358,30 @@ end
                 if ~isempty(eq_s)
                     equality_signs=[equality_signs,transpose({ic,eq_s})];
                 end
-                if strcmp(block_name,'parameter_restrictions')
-                    % the following restrictions must be fulfilled for the
-                    % parameter restriction block
+                if mcp_flag
+                    % Restrictions for complementarity constraints
+                    % 1- no switching parameter
+                    loc=strcmp(equation{1,ic},{dictionary.parameters.name});
+                    if any(loc) && dictionary.parameters(loc).is_switching
+                        error(['A complementarity constraint cannot contain switching parameters in ',...
+                            file_name_,' at line ',sprintf('%0.0f',iline_)])
+                    end
+                    % 2- one of the following ge gt le lt
+                    if any(strcmp(equation{1,ic},mcp_inequalities))
+                        if ~mcp_test_passed
+                            if any(strcmp(equation{1,ic},mcp_inequalities(5:end))) &&...
+                                    (ic==1||ic==size(equation,2)-1)
+                                error(['inequality mis-placed in complementarity constraint in ',...
+                                    file_name_,' at line ',sprintf('%0.0f',iline_)])
+                            end
+                            mcp_test_passed=true;
+                        else
+                            error(['A complementarity constraint cannot contain more than one inequality in ',...
+                                file_name_,' at line ',sprintf('%0.0f',iline_)])
+                        end
+                    end
+                elseif strcmp(block_name,'parameter_restrictions')
+                    % Restrictions for the parameter restriction block
                     % 1- no variable
                     if ismember(equation{1,ic},{dictionary.orig_endogenous.name})
                         error([mfilename,':: no variable allowed in the parameter_restrictions block'])
@@ -384,46 +432,48 @@ end
             if size(equality_signs,2)>1
                 error([mfilename,':: multiple equality signs found in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
             elseif size(equality_signs,2)==1
-                % validate the lhs and the rhs of the equality separately
-                lhs=equation(:,1:equality_signs{1}-1);
-                rhs=equation(:,equality_signs{1}+1:end);
-                % split the middle cell and isolate the equality sign
-                string=equation{1,equality_signs{1}};
-                left_string=string(1:equality_signs{2}-1);
-                right_string=string(equality_signs{2}+1:end);
-                if ~isempty(left_string)
-                    % add to the lhs
-                    lhs=[lhs,transpose({left_string,[]})];
+                if ~mcp_flag
+                    % validate the lhs and the rhs of the equality separately
+                    lhs=equation(:,1:equality_signs{1}-1);
+                    rhs=equation(:,equality_signs{1}+1:end);
+                    % split the middle cell and isolate the equality sign
+                    string=equation{1,equality_signs{1}};
+                    left_string=string(1:equality_signs{2}-1);
+                    right_string=string(equality_signs{2}+1:end);
+                    if ~isempty(left_string)
+                        % add to the lhs
+                        lhs=[lhs,transpose({left_string,[]})];
+                    end
+                    msg=count_parentheses(lhs(1,:));
+                    if ~isempty(msg)
+                        error([mfilename,':: ',msg,' on left hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                    end
+                    
+                    if ~isempty(right_string)
+                        % add to the rhs but before !
+                        rhs=[transpose({right_string,[]}),rhs];
+                    end
+                    msg=count_parentheses(rhs(1,:));
+                    if ~isempty(msg)
+                        error([mfilename,':: ',msg,' on right hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                    end
+                    checked=true;
+                    % Putting the equation back together: what to do with the
+                    % equality sign?
+                    if ~strcmp(block_name,'parameter_restrictions') &&...
+                            ~strcmp(block_name,'steady_state_model') &&...
+                            ~strcmp(block_name,'exogenous_definition') &&...
+                            ~ def_flag &&... % <--- should do the same as here with TVP below
+                            ~ismember(equation{1,1},dictionary.time_varying_probabilities)
+                        % % % % %                         ~ismember(equation{1,1},dictionary.known_words) &&... % I don't remember why this is here !
+                        % modify the last item of the right hand side
+                        rhs{1,end}=[rhs{1,end}(1:end-1),');'];
+                        middle=transpose({'-(',[]});
+                    else
+                        middle=transpose({'=',[]});
+                    end
+                    equation=[lhs,middle,rhs];
                 end
-                msg=count_parentheses(lhs(1,:));
-                if ~isempty(msg)
-                    error([mfilename,':: ',msg,' on left hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-                
-                if ~isempty(right_string)
-                    % add to the rhs but before !
-                    rhs=[transpose({right_string,[]}),rhs];
-                end
-                msg=count_parentheses(rhs(1,:));
-                if ~isempty(msg)
-                    error([mfilename,':: ',msg,' on right hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-                checked=true;
-                % Putting the equation back together: what to do with the
-                % equality sign?
-                if ~strcmp(block_name,'parameter_restrictions') &&...
-                        ~strcmp(block_name,'steady_state_model') &&...
-                        ~strcmp(block_name,'exogenous_definition') &&...
-                        ~ def_flag &&... % <--- should do the same as here with TVP below
-                        ~ismember(equation{1,1},dictionary.time_varying_probabilities)
-                    % % % % %                         ~ismember(equation{1,1},dictionary.known_words) &&... % I don't remember why this is here !
-                    % modify the last item of the right hand side
-                    rhs{1,end}=[rhs{1,end}(1:end-1),');'];
-                    middle=transpose({'-(',[]});
-                else
-                    middle=transpose({'=',[]});
-                end
-                equation=[lhs,middle,rhs];
             end
             if ~checked
                 % then there was no equality sign and so, check the whole
@@ -458,6 +508,13 @@ end
                     end
                 end
             end
+            if mcp_flag
+                if ~mcp_test_passed
+                    disp(mcp_inequalities)
+                    error([' A complementarity condition must contain one of the above ''=''  in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                end
+            end
+            
             function msg=count_parentheses(equation)
                 equation=cell2mat(equation);
                 leftpars=numel(strfind(equation,'('));
@@ -503,11 +560,13 @@ end
         end
     end
     function check_validity(syntax,file_name_,iline_,block_name)
+        special_syntax=any(strcmp(syntax,dictionary.syntax_special));
         good=any(strcmp(syntax,dictionary.syntax_typical))||...
             (any(strcmp(syntax,dictionary.syntax_time)) && ~strcmp(block_name,'steady_state_model'))||...
             (any(strcmp(syntax,dictionary.syntax_function)) && function_on)||...
-            (any(strcmp(syntax,dictionary.syntax_special)) && strcmp(block_name,'steady_state_model'))||...
-            (any(strcmp(syntax,dictionary.syntax_special)) && strcmp(block_name,'parameter_restrictions'));
+            (special_syntax && strcmp(block_name,'steady_state_model'))||...
+            (special_syntax && strcmp(block_name,'parameter_restrictions'))||...
+            (special_syntax && strcmp(block_name,'model') && mcp_flag);
         if ~good
             error([mfilename,':: wrong syntax ',syntax,' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
         end

@@ -1,5 +1,15 @@
 function Initcond=set_simulation_initial_conditions(obj)
 
+
+% complementarity: do it here so as to keep the memory light
+%-----------------------------------------------------------
+if ~isfield(obj.routines,'complementarity')||... I do not expect VARs to have this although in theory they could.
+        isempty(obj.routines.complementarity)
+    complementarity=@(varargin)true;
+else
+    complementarity=@build_complementarity;
+end
+
 regimes_number=obj.markov_chains.regimes_number;
 PAI=1/regimes_number*ones(regimes_number,1); % ErgodicDistribution(Q)
 
@@ -64,12 +74,20 @@ end
 if ~simul_pruned
     y0=rmfield(y0,'y_lin');
 end
+if ~isfield(obj.options,'simul_update_shocks_handle')
+    obj.options.simul_update_shocks_handle=[];
+end
+if ~isfield(obj.options,'simul_do_update_shocks')
+    obj.options.simul_do_update_shocks=[];
+end
+
 Initcond=struct('y',{y0},...
     'PAI',PAI,...
     'simul_history_end_date',simul_history_end_date,...
     'simul_sig',simul_sig,...
     'simul_order',simul_order,...
     'Qfunc',Qfunc,...
+    'complementarity',complementarity,...
     'random',true,...
     'nsteps',obj.options.simul_periods,...
     'k_future',k_future,...
@@ -94,6 +112,23 @@ end
 %-----------------------------------------
 Initcond.states=states;
 Initcond.shocks=shocks;
+
+    function c=build_complementarity(y)
+        c=true;
+        param=obj.parameter_values(:,1);
+        x=[];
+        ss=obj.solution.ss{1};
+        sparam=[];
+        def=obj.solution.definitions{1};
+        s0=1;
+        s1=1;
+        for ii=1:numel(obj.routines.complementarity)
+            c= c && obj.routines.complementarity{ii}(y,x,ss,param,sparam,def,s0,s1); 
+            if ~c
+                break
+            end
+        end
+    end
 
     function set_shocks_and_states()
         % check there is no shock with name regime (this should be done right

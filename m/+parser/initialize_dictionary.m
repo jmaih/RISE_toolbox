@@ -10,7 +10,7 @@ dictionary.known_words={'steady_state','argzero','x0_','x1_','param_obj','commit
     'log','exp','cos','sin','normpdf','normcdf'};
 % dictionary.steady_state_parameters={};
 dictionary.time_varying_probabilities={};
-dictionary.symbols={'#','!',')','(','}','{',']','[',',',';','.','=','@'};
+dictionary.symbols={'#','!','?',')','(','}','{',']','[',',',';','.','=','@'};
 dictionary.add_operators={'+','-'};
 dictionary.mult_operators={'*','^','/'};
 dictionary.relational_operators={'<','>'};

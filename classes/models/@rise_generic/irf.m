@@ -116,6 +116,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
         %-----------------------------------------------------------
         iov(new_order)=1:numel(new_order);
         Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
+        Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
         
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
         %         quash_regimes=(h>1 && ~irf_regime_specific);
@@ -123,16 +124,15 @@ dsge_irfs=format_irf_output(dsge_irfs);
         if ~girf
             irf_draws=1;
         end
-        
+        if ~obj.options.irf_use_historical_data
+            Initcond.shocks=0*Initcond.shocks;
+        end
         irf_shock_uncertainty=irf_draws>1;
         number_of_threads=h;
         if ~irf_regime_specific
             number_of_threads=1;
         end
         if number_of_threads==1
-            %             [y0,T,steady_state]=...
-            %                 utils.forecast.aggregate_initial_conditions(Initcond.PAI,...
-            %                 y0,T,steady_state);
             y0=utils.forecast.aggregate_initial_conditions(Initcond.PAI,y0);
         end
         

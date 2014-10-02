@@ -51,6 +51,10 @@ for ishock=1:exo_nbr
                         %------------------------------------------
                         options2.shocks(inherited_shocks)=0;
                         options2.states=states1;
+                        % ensure that the shocks are not updated in the
+                        % alternative scenario
+                        %-----------------------------------------------
+                        options2.simul_do_update_shocks=false;
                         [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,state_vars_location,options2);
                         if ~retcode
                             path2(:,nlags+1:end)=sim2;

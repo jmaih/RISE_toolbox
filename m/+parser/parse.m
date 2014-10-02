@@ -134,7 +134,7 @@ dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities
 % replace exogenous lags with auxiliary endogenous variables
 % update the number of endogenous variables accordingly
 % Also keep the same equations to be added to the steady state model
-auxiliary_steady_state_equations=cell(0,3);
+auxiliary_steady_state_equations=cell(0,4);
 orig_endogenous_current=dictionary.orig_endogenous; % these are the variables without the augmentation add-on
 all_fields=fieldnames(parser.listing);
 main_endo_fields={'name','tex_name','max_lead','max_lag','is_log_var',...
@@ -155,9 +155,9 @@ for ii=1:numel(dictionary.orig_endogenous)
             'max_lag',0,'is_log_var',false,...
             'is_auxiliary',true,'is_trans_prob',false);
         Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}'],0,1}]; %#ok<*AGROW> %
+            {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}'],0,1,'normal'}]; %#ok<*AGROW> %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0}]; %<-- add maxLag and maxLead
+            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0,'normal'}]; %<-- add maxLag and maxLead
         if i2-1==1 % set the lead to 1
             dictionary.orig_endogenous(ii).max_lead=1;
         end
@@ -188,11 +188,11 @@ for ii=1:numel(variables)
             'max_lag',-1,'is_log_var',false,'is_auxiliary',true,...
             'is_trans_prob',false);
         Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vname,0}',{';',[]}'],0,0}]; %
+            {[{new_var.name,0}',{'-',[]}',{vname,0}',{';',[]}'],0,0,'normal'}]; %
         % The steady state is computed with zero shocks. and so instead of
         % setting the name of the shock, I write 0
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{'0',0}',{';',[]}'],0,0}]; %<-- add maxLag and maxLead
+            {[{new_var.name,0}',{'=',[]}',{'0',0}',{';',[]}'],0,0,'normal'}]; %<-- add maxLag and maxLead
         for ifield=1:numel(useless_fields)
             new_var.(useless_fields{ifield})=nan;
         end
@@ -217,9 +217,9 @@ for ii=1:numel(variables)
             'is_trans_prob',false);
         
         Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}'],-1,0}]; %
+            {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}'],-1,0,'normal'}]; %
         auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0}]; %<-- add maxLag and maxLead
+            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0,'normal'}]; %<-- add maxLag and maxLead
         for ifield=1:numel(useless_fields)
             new_var.(useless_fields{ifield})=nan;
         end
@@ -248,10 +248,12 @@ for ii=1:number_of_equations
     eq_i= Model_block{ii,1};
     maxLag= Model_block{ii,2};
     maxLead= Model_block{ii,3};
-    if ismember(eq_i{1,1},dictionary.definitions) && strcmp(eq_i{1,2}(1),'=')
+    if strcmp(Model_block{ii,4},'def') % <---ismember(eq_i{1,1},dictionary.definitions) && strcmp(eq_i{1,2}(1),'=')
         equation_type(ii)=2;
-    elseif ismember(eq_i{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i{1,2}(1),'=')
+    elseif strcmp(Model_block{ii,4},'tvp') % <---ismember(eq_i{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i{1,2}(1),'=')
         equation_type(ii)=3;
+    elseif strcmp(Model_block{ii,4},'mcp') % <---ismember(eq_i{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i{1,2}(1),'=')
+        equation_type(ii)=4;
     end
     for i2=1:size(eq_i,2)
         if ~isempty(eq_i{2,i2})
@@ -406,16 +408,16 @@ AllModels=[Model_block;
     SteadyStateModel_block;
     PlannerObjective_block];
 ss_eq_nbr=size(SteadyStateModel_block,1);
-% steady state equations are identified by number 4
+% steady state equations are identified by number 5
 planobj_eq_nbr=size(PlannerObjective_block,1);
-% dictionary.planner_system objective equations are identified by number 5
-equation_type=[equation_type;4*ones(ss_eq_nbr,1);5*ones(planobj_eq_nbr,1)];
+% dictionary.planner_system objective equations are identified by number 6
+equation_type=[equation_type;5*ones(ss_eq_nbr,1);6*ones(planobj_eq_nbr,1)];
 
 % collect information about leads and lags which will be used to determine
 % the status of the lagrange multipliers later on. But keep only the
 % information about the structural equations
 %--------------------------------------------------------------------------
-equations_maxLag_maxLead=cell2mat(Model_block(equation_type==1,2:end));
+equations_maxLag_maxLead=cell2mat(Model_block(equation_type==1,2:3));
 
 clear Model_block SteadyStateModel_block PlannerObjective_block
 %% Incidence matrix
@@ -451,6 +453,7 @@ static.steady_state_shadow_model=cell(0,1);
 shadow_definitions=cell(0,1);
 orig_definitions=cell(0,1);
 shadow_tvp=cell(0,1);
+shadow_complementarity=cell(0,1);
 
 for ii=1:numel(equation_type)
     % we don't need the semicolons anymore
@@ -458,10 +461,12 @@ for ii=1:numel(equation_type)
     o_m='';s_m='';sh_o='';sh_s='';sh_b1='';sh_b2='';
     sh_d='';sh_tvp='';sh_ssm='';
     sh_pl='';o_d='';
+    sh_mcp='';
     is_def=equation_type(ii)==2;
     is_tvp=equation_type(ii)==3;
-    is_sseq=equation_type(ii)==4;
-    is_planner=equation_type(ii)==5;
+    is_mcp=equation_type(ii)==4;
+    is_sseq=equation_type(ii)==5;
+    is_planner=equation_type(ii)==6;
     
     for jj=1:size(eq_i,2)
         item=eq_i{1,jj};
@@ -469,7 +474,7 @@ for ii=1:numel(equation_type)
         [status,pos]=dictionary.determine_status(item,dictionary);
         switch status
             case 'y'
-                if is_sseq ||is_planner ||is_tvp 
+                if any([is_sseq,is_planner,is_tvp,is_mcp]) 
                     % is_tvp is added here because only contemporaneous
                     % variables enter the tvp be it in steady state or
                     % during filtering.  
@@ -488,6 +493,8 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,'y(',sprintf('%0.0f',index),')'];
                 elseif is_planner
                     sh_pl=[sh_pl,'y(',sprintf('%0.0f',index),')'];
+                elseif is_mcp
+                    sh_mcp=[sh_mcp,'y(',sprintf('%0.0f',index),')'];
                 else
                     o_m=[o_m,item];
                     if lead_or_lag
@@ -516,14 +523,10 @@ for ii=1:numel(equation_type)
                     end
                 end
             case 'x'
-                if is_def
-                    error([mfilename,':: definitions cannot contain variables']);
-                elseif is_tvp
-                    error([mfilename,':: endogenous switching probabilities cannot contain shocks. Use auxiliary variables if necessary']);
+                if is_def||is_mcp|| is_tvp|| is_planner
+                    error([mfilename,':: definitions, complementarity restrictions, endogenous probabilities and planner objective cannot contain shocks. Use auxiliary variables if necessary']);
                 elseif is_sseq
                     sh_ssm=[sh_ssm,'x(',sprintf('%0.0f',pos),')'];
-                elseif is_planner
-                    error([mfilename,':: planner objectives cannot include shocks. Use auxiliary variables if necessary'])
                 else
                     o_m=[o_m,item];
                     sh_o=[sh_o,'x(',sprintf('%0.0f',pos),')'];
@@ -534,26 +537,28 @@ for ii=1:numel(equation_type)
                 end
             case 'param'
                 if is_def
-                    if lead_or_lag
+                    if lead_or_lag % 'param(',sprintf('%0.0f',pos),')'
                         error('leads on parameters not allowed in definitions')
                     end
-                    sh_d=[sh_d,'param(',sprintf('%0.0f',pos),')'];
+                    sh_d=[sh_d,sprintf('param(%0.0f)',pos)];% 
                     o_d=[o_d,item];
                 elseif is_tvp
                     if lead_or_lag
                         error('leads on parameters not allowed in time-varying probabilities')
                     end
-                    sh_tvp=[sh_tvp,'param(',sprintf('%0.0f',pos),')'];
+                    sh_tvp=[sh_tvp,sprintf('param(%0.0f)',pos)];
                 elseif is_sseq
                     if lead_or_lag
                         error('leads on parameters not allowed in steady state equations')
                     end
-                    sh_ssm=[sh_ssm,'param(',sprintf('%0.0f',pos),')'];
+                    sh_ssm=[sh_ssm,sprintf('param(%0.0f)',pos)];
                 elseif is_planner
                     if lead_or_lag
                         error('leads on parameters not allowed in the planner objective')
                     end
-                    sh_pl=[sh_pl,'param(',sprintf('%0.0f',pos),')'];
+                    sh_pl=[sh_pl,sprintf('param(%0.0f)',pos)];
+                elseif is_mcp % leads and lags already checked at capture
+                    sh_mcp=[sh_mcp,sprintf('param(%0.0f)',pos)];
                 else
                     pname='param';
                     if lead_or_lag
@@ -565,9 +570,9 @@ for ii=1:numel(equation_type)
                     o_m=[o_m,item];
                     sh_o=[sh_o,pname,'(',sprintf('%0.0f',pos),')'];
                     s_m=[s_m,item];
-                    sh_s=[sh_s,'param(',sprintf('%0.0f',pos),')'];
-                    sh_b1=[sh_b1,'param(',sprintf('%0.0f',pos),')'];
-                    sh_b2=[sh_b2,'param(',sprintf('%0.0f',pos),')'];
+                    sh_s=[sh_s,sprintf('param(%0.0f)',pos)];
+                    sh_b1=[sh_b1,sprintf('param(%0.0f)',pos)];
+                    sh_b2=[sh_b2,sprintf('param(%0.0f)',pos)];
                 end
             case 'def'
                 if is_def
@@ -579,6 +584,8 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,'def(',sprintf('%0.0f',pos),')'];
                 elseif is_planner
                     sh_pl=[sh_pl,'def(',sprintf('%0.0f',pos),')'];
+                elseif is_mcp
+                    sh_mcp=[sh_mcp,'def(',sprintf('%0.0f',pos),')'];
                 else
                     o_m=[o_m,item];
                     s_m=[s_m,item];
@@ -589,7 +596,7 @@ for ii=1:numel(equation_type)
                 end
             case 'tvp'
                 if ~is_tvp
-                    error([mfilename,':: endogenous probability cannot be used in the model equations'])
+                    error([mfilename,':: endogenous probability cannot be used elsewhere than in their block'])
                 end
                 sh_tvp=[sh_tvp,item];
             otherwise
@@ -608,6 +615,8 @@ for ii=1:numel(equation_type)
                     sh_ssm=[sh_ssm,item];
                 elseif is_planner
                     sh_pl=[sh_pl,item];
+                elseif is_mcp
+                    sh_mcp=[sh_mcp,item];
                 else
                     o_m=[o_m,item];
                     s_m=[s_m,item];
@@ -628,6 +637,8 @@ for ii=1:numel(equation_type)
         % put back the semicolon as this is going to be evaluated
     elseif is_planner
         dictionary.planner_system.shadow_model=[dictionary.planner_system.shadow_model;{sh_pl}];
+    elseif is_mcp
+        shadow_complementarity=[shadow_complementarity;{sh_mcp}];
     else
         dynamic.model=[dynamic.model;{o_m}];
         static.model=[static.model;{s_m}];
@@ -688,7 +699,8 @@ routines=struct();
 %% definitions routine
 routines.definitions=utils.code.code2func(...
     parser.substitute_definitions(shadow_definitions),'param');
-
+%% complementarity routine
+routines.complementarity=utils.code.code2func(shadow_complementarity,parser.input_list);
 %% steady state model routine (cannot be written as a function)
 routines.steady_state_model=parser.substitute_definitions(...
     static.steady_state_shadow_model,shadow_definitions);
