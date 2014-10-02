@@ -68,6 +68,7 @@ end
 %-----------------------------------------------------------
 iov(new_order)=1:numel(new_order);
 Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
+Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
 
 % here we need to start at one single point: and so we aggregate y0
 %------------------------------------------------------------------
