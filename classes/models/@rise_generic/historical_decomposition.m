@@ -27,9 +27,11 @@ function [Histdec,obj]=historical_decomposition(obj,varargin)
 
 if isempty(obj)
     Histdec=struct('histdec_start_date','',...
+        'histdec_add_constant',false,...
         'histdec_method',0);
     return
 end
+
 
 nobj=numel(obj);
 if nobj>1
@@ -38,6 +40,10 @@ if nobj>1
         [Histdec{iobj},obj(iobj)]=historical_decomposition(obj(iobj),varargin{:});
     end
     return
+end
+
+if ~isfield(obj.options,'histdec_add_constant')
+    obj.options.histdec_add_constant=true;
 end
 
 obj=set(obj,varargin{:});
@@ -99,7 +105,9 @@ smoothed_variables=smoothed_variables(varlocs,:);
 varlocs=locate_variables(shockList,exo_names);
 smoothed_shocks=smoothed_shocks(varlocs,:);
 
-z = zeros(endo_nbr,exo_nbr+1,NumberOfObservations);
+% exogenous--initial condition--steady state
+%-------------------------------------------
+z = zeros(endo_nbr,exo_nbr+2,NumberOfObservations);
 
 z=HistoricalDecompositionEngine(z,smoothed_shocks);
 
@@ -107,22 +115,24 @@ if max(max(abs(squeeze(sum(z,2))-smoothed_variables)))>1e-9
     error([mfilename,':: Decomposition failed'])
 end
 
-ContributingNames=[exo_names,'InitialConditions'];
+ContributingNames=[exo_names,'InitialConditions','steady_state'];
+
+ncontribs=numel(ContributingNames)-(1-obj.options.histdec_add_constant);
 
 Histdec=struct();
 for ii=1:endo_nbr
     theData=transpose(squeeze(z(ii,1:end,:)));
     Histdec.(endo_names{ii})=ts(serial2date(histdec_start_date),...
-        theData,ContributingNames);
+        theData(:,1:ncontribs),ContributingNames(1:ncontribs));
 end
 
     function z=HistoricalDecompositionEngine(z,epsilon)
-        
+        exo_plus_steady=[(1:exo_nbr),exo_nbr+2];
         NumberOfAnticipatedSteps=size(R{1},3);
         
         for t=1:NumberOfObservations
             [A,B,SS_t]=expected_state_matrices(t);
-            smoothed_variables(:,t)=smoothed_variables(:,t)-SS_t;
+            z(:,end,t)=SS_t;
             if histdec_method
                 if t==1
                     % Collect the shocks
@@ -131,8 +141,8 @@ end
                             B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                     end
                     % Find initial condition contribution
-                    z(:,exo_nbr+1,t) = smoothed_variables(:,t) - ...
-                        sum(z(:,1:exo_nbr,t),2);
+                    z(:,exo_nbr+1,t) = smoothed_variables(:,t)-SS_t - ...
+                        sum(z(:,exo_plus_steady,t),2);
                 else
                     % evolve initial condition
                     z(:,exo_nbr+1,t)=A*z(:,exo_nbr+1,t-1);
@@ -154,11 +164,11 @@ end
                         B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
                 end
                 % initial conditions
-                z(:,exo_nbr+1,t) = smoothed_variables(:,t) - sum(z(:,1:exo_nbr,t),2);
+                z(:,exo_nbr+1,t) = smoothed_variables(:,t) - sum(z(:,exo_plus_steady,t),2);
             end
             if obj.options.debug
-                fprintf(1,'t=%0.0f discrep=%0.15f \n',t,...
-                    max(sum(z(:,1:exo_nbr+1,t),2)-smoothed_variables(:,t)));
+                discrep=max(abs(sum(z(:,1:end,t),2)-smoothed_variables(:,t)));
+                fprintf(1,'t=%0.0f discrep=%0.15f \n',t,discrep);
             end
         end
         if obj.options.debug
