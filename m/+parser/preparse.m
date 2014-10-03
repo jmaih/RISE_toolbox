@@ -1,7 +1,18 @@
-function [output,has_macro]=preparse(FileName,definitions)
+function [output,has_macro]=preparse(FileName,parsing_definitions)
 % int2str(x)=sprintf('%.0f',x)
 if nargin<2
-    definitions=struct();
+    parsing_definitions=struct();
+end
+
+if ~isstruct(parsing_definitions)
+    if ~iscell(parsing_definitions)||(iscell(parsing_definitions) && size(parsing_definitions,2)~=2)
+        error('parsing definitions must be a struct or a cell array with two columns')
+    end
+    tmp=struct();
+    for irow=1:size(parsing_definitions,1)
+        tmp.(parsing_definitions{irow,1})=parsing_definitions{irow,2};
+    end
+    parsing_definitions=tmp;
 end
 
 valid_extensions={'rs','rz','dsge'};
@@ -30,7 +41,7 @@ RawFile=parser.read_file(FileName);
 
 % second sweep: process the if else end for and include comments
 % include should also go through preparsing
-[output,has_macro]=preparse_expand(RawFile,definitions);
+[output,has_macro]=preparse_expand(RawFile,parsing_definitions);
 
 end
 
