@@ -2,6 +2,10 @@ function [output,has_macro]=preparse(FileName,parsing_definitions)
 % int2str(x)=sprintf('%.0f',x)
 if nargin<2
     parsing_definitions=struct();
+    if nargin<1
+        output=struct('rise_flags',struct());
+        return
+    end
 end
 
 if ~isstruct(parsing_definitions)
