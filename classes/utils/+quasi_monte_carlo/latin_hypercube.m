@@ -1,7 +1,10 @@
-function theta_=latin_hypercube(n,K,lb,ub,center)
-if nargin<5
+function theta_=latin_hypercube(lb,ub,K,center)
+
+if nargin<3
     center=true;
 end
+n=size(lb,1);
+
 batch=linspace(0,1,K+1);
 control=true(n,K);
 seq=nan(n,K);

@@ -1,4 +1,4 @@
-function theta_ = sobol(n,K,lb,ub,scramble_flag)
+function theta_ = sobol(lb,ub,K,scramble_flag)
 
 %   Examples:
 %
@@ -17,9 +17,11 @@ function theta_ = sobol(n,K,lb,ub,scramble_flag)
 %
 %   See also NET, QRANDSTREAM, SCRAMBLE, SUBSREF.
 
-if nargin<5
+if nargin<4
     scramble_flag=true;
 end
+
+n=size(lb,1);
 
 if exist([mfilename,'set.m'],'file')
     P = sobolset(n);
