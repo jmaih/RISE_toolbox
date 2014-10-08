@@ -1,5 +1,10 @@
 function obj=setup_calibration(obj,Calibration)
-% Calibration is either a struct or a cell of the form {names,paramvector}
+% Calibration is either a struct or a cell of the form {names,param_data}
+% the parameter values could be vectors if e.g. we want to take the entire
+% parameterization of one model and push it into an identical model. But it
+% is not allowed to have situations where one parameter is a vector and
+% some other is not. Then RISE will complain that the parameter is not
+% controlled by the const markov chain.
 param_names=obj.parameters.name;
 
 grand_chains_to_small=obj.markov_chains.grand_chains_to_small;
@@ -20,19 +25,47 @@ if iscell(Calibration)
     param_draw=Calibration(:,2);
     Calibration=struct();
     for iname=1:numel(pnames)
-        Calibration.(pnames{iname})=param_draw{iname};
+        Calibration.(pnames{iname})=param_draw{iname,:};
     end
 end
 
 pnames=fieldnames(Calibration);
 
-% push the calibration
-%---------------------
-[position,regime_states]=generic_tools.parameter_position_and_regimes(pnames,...
-    param_names,governing_chain,chain_names,grand_chains_to_small,regimes);
-
-for ii=1:numel(pnames)
-    tmp=Calibration.(pnames{ii});
-    obj.parameter_values(position(ii),regime_states{ii})=tmp;
+if vector_style()
+    % do nothing, the parameters are pushed automagically
+else
+    % find positions
+    %---------------
+    [position,regime_states]=generic_tools.parameter_position_and_regimes(pnames,...
+        param_names,governing_chain,chain_names,grand_chains_to_small,regimes);
+    
+    % push the calibration
+    %---------------------
+    for ii=1:numel(pnames)
+        tmp=Calibration.(pnames{ii});
+        obj.parameter_values(position(ii),regime_states{ii})=tmp;
+    end
 end
+
+    function flag=vector_style()
+        silent=true;
+        position=locate_variables(pnames,param_names,silent);
+        flag=~any(isnan(position));
+        if flag
+            regimes_number=obj.markov_chains.regimes_number;
+            parameter_values=obj.parameter_values;
+            for ip=1:numel(pnames)
+                values=Calibration.(pnames{ip});
+                if ~(size(values,2)==regimes_number);
+                    parameter_values=[];
+                    break
+                end
+                parameter_values(position(ip),:)=values;
+            end
+            flag=~isempty(parameter_values);
+            if flag
+                obj.parameter_values=parameter_values;
+            end
+        end
+    end
 end

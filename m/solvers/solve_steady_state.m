@@ -9,27 +9,35 @@ debug=optim_opt.debug;
 nregs=size(ys0,2);
 ys=ys0;
 retcode=0;
+%{
 % compute the unique steady state based on the ergodic distribution
 %------------------------------------------------------------------
 if optim_opt.is_unique
+    % if the steady state is unique and the probabilities are endogenous,
+    % then the steady state transition matrix cannot be computed
+    % independently of the value of the endogenous variables. This is
+    % something to correct as soon as possible
     [TransMat,retcode]=compute_steady_state_transition_matrix(...
         optim_opt.trans_mat_func,...
         ys0(:,1),pp(:,1),def{1},optim_opt.exo_nbr);
     if ~retcode
         [pp_unique,def_unique,retcode]=...
             dsge_tools.ergodic_parameters(TransMat.Qinit,def,pp);
+        % override the parameters and the definitions as they might be used
+        % for further processing in case the steady state is imposed
+        %------------------------------------------------------------------
+        pp=pp_unique(:,ones(1,nregs));
+        def=cellfun(@(x)def_unique,def,'uniformOutput',false);
     end
 end
+%}
 if ~retcode
     exitflag=1;
     for ireg=1:nregs
-        if optim_opt.is_unique
-            pp_i=pp_unique;
-            def_i=def_unique;
-        else
-            pp_i=pp(:,ireg);
-            def_i=def{ireg};
-        end
+        % the parameters may have been overriden in case the steady state
+        % is unique
+        pp_i=pp(:,ireg);
+        def_i=def{ireg};
         if exitflag==1
             if optim_opt.is_linear_model
                 % compute the constant
