@@ -38,8 +38,8 @@ if obj.options.solve_order>=1
     others=struct();
     others.theta_hat=structural_matrices.theta_hat;
     
-    [T.Tz,others,eigval,retcode,obj.options]=solve_first_order(structural_matrices.dv,...
-        structural_matrices.transition_matrices.Q,others,siz,pos,obj.options,shock_horizon);
+    [T.Tz,others,eigval,retcode,obj.options]=solve_first_order(structural_matrices,...
+        others,siz,pos,obj.options,shock_horizon);
     
     % higher orders
     %--------------
@@ -244,7 +244,9 @@ end
     end
 end
 
-function [Tz,others,eigval,retcode,options]=solve_first_order(dv,Q,others,siz,pos,options,k_future)
+function [Tz,others,eigval,retcode,options]=solve_first_order(structural_matrices,others,siz,pos,options,k_future)
+dv=structural_matrices.dv;
+Q=structural_matrices.transition_matrices.Q;
 
 [dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus]=utils.solve.pull_first_order_partitions(dv,pos.v);
 
@@ -308,6 +310,9 @@ if ~retcode
     
     % now solve sum(A+*Tz_sig(+)+A0_sig*Tz_sig+dt_t=0
     %-------------------------------------------------
+    % first we augment dt_t with the user_resid so that the first-order
+    % approximation recoups the zero-th order approximation.
+    dt_t=dt_t+structural_matrices.user_resids;
     Tz_sig=solve_perturbation_impact(Tz_sig,A0sig,others.dbf_plus,dt_t);
     if any(Tz_sig(:))
         for rt=1:siz.h

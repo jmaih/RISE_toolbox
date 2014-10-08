@@ -93,8 +93,37 @@ if isempty(obj.is_stationary_model)|| obj.is_stationary_model
 else
     last_item=2*endo_nbr;
 end
+structural_matrices.user_resids=sparse(endo_nbr,number_of_regimes);
 
-if obj.is_imposed_steady_state||obj.is_optimal_policy_model
+% compute the unique steady state based on the ergodic distribution
+%------------------------------------------------------------------
+def_sstate=def;
+pp_sstate=pp;
+if optimopt.is_unique
+    % Something here to improve upon: we compute the steady state based on
+    % some information that we don't have yet, namely ys0. It seems both
+    % should be computed simultaneously... in other words, nonlinearly.
+    % This may destroy the ergodic distribution or even return some
+    % errors... The problem does not occurr with constant probabilities or
+    % when steady states are different
+    ys0=ss_and_bgp_start_vals(1:last_item,1);
+    [TransMat,retcode]=compute_steady_state_transition_matrix(...
+        optimopt.trans_mat_func,ys0,pp(:,1),def{1},optimopt.exo_nbr);
+    if ~retcode
+        [pp_unique,def_unique,retcode]=...
+            dsge_tools.ergodic_parameters(TransMat.Qinit,def,pp);
+        % override the parameters and the definitions as they might be used
+        % for further processing in case the steady state is imposed
+        %------------------------------------------------------------------
+        pp_sstate=pp_unique(:,ones(1,number_of_regimes));
+        def_sstate=cellfun(@(x)def_unique,def_sstate,'uniformOutput',false);
+    end
+    if retcode
+        return
+    end
+end
+
+if obj.is_optimal_policy_model||obj.is_imposed_steady_state
     if isempty(obj.is_stationary_model)
         obj.is_stationary_model=true;
         % this will have to change some day...
@@ -109,14 +138,25 @@ else
                 last_item=2*endo_nbr;
             end
         end
-        ss_and_bgp_start_vals(1:last_item,:)=ys(1:last_item,:);
     else
-        [ss_and_bgp_start_vals(1:last_item,:),retcode]=solve_steady_state(ss_and_bgp_start_vals(1:last_item,:),...
-            def,pp,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
+        [ys,retcode]=solve_steady_state(ss_and_bgp_start_vals(1:last_item,:),...
+            def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
     end
+    ss_and_bgp_start_vals(1:last_item,:)=ys(1:last_item,:);
 end
 
 if ~retcode
+    if obj.is_imposed_steady_state
+        % compute the residuals
+        %----------------------
+        user_resids=nan(endo_nbr,number_of_regimes);
+        for ireg=1:number_of_regimes
+            user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
+                func_ss,func_jac,x_ss,pp_sstate(:,ireg),def_sstate{ireg});
+        end
+        user_resids(abs(user_resids)<1e-9)=0;
+        structural_matrices.user_resids=sparse(user_resids);
+    end
     
     [obj.solution.transition_matrices,retcode]=...
         compute_steady_state_transition_matrix(obj.routines.transition_matrix,...
@@ -169,7 +209,7 @@ end
         
         ys=ss_and_bgp;
         [ys(1:endo_nbr,:),retcode]=solve_steady_state(ss_and_bgp(1:endo_nbr,:),...
-            def,pp,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
+            def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
         
         if retcode
             % try nonstationarity
@@ -177,7 +217,7 @@ end
             func_jac=ssfuncs.jac_bgp;
             
             [ys,retcode]=solve_steady_state(ss_and_bgp,...
-                def,pp,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
+                def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
 
             if ~retcode
                 is_stationary=false;
