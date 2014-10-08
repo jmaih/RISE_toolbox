@@ -151,6 +151,7 @@ if solve_order>0 && ~retcode && resolve_it
             obj.solution.eigval=eigval;
             
             obj=set_z_eplus_horizon(obj);
+            obj.solution.user_resids=structural_matrices.user_resids;
         end
     end
 end
