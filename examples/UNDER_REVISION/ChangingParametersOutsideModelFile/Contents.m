@@ -1,3 +1,0 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\ChangingParametersOutsideModelFile   %%%%%%%%%%%%%%%%%%%%
-%
-%   <a href="matlab:help examples\ChangingParametersOutsideModelFile\howto">examples\ChangingParametersOutsideModelFile\howto</a> - ,...
