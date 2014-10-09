@@ -1,6 +1,26 @@
 function [ys,retcode]=solve_steady_state(ys0,def,pp,resid_func,...
     optim_opt,arg_zero_solver)
 
+% solve_steady_state solves the steady state
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<6
     arg_zero_solver=1;
 end

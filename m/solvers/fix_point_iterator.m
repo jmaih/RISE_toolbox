@@ -1,11 +1,44 @@
 function [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargin) 
-% this function solves for a fix point. Inputs are:
-% 1-iterate_func: a function handle which returns 2 elements: The improved
-% value of T and F0, the value of the function whose discrepancy is to be
-% minmized 
-% 2- T0 is the initial guess for the solution
-% 3- options is a structure with fields 'fix_point_explosion_limit' (maximum
-% divergence of F0), 'fix_point_TolFun', 'fix_point_maxiter', 'fix_point_verbose' 
+% fix_point_iterator solves the fix point of a function
+%
+% Syntax
+% -------
+% ::
+%   [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargin)
+%
+% Inputs
+% -------
+% - iterate_func : [func_handle]: a function handle which returns 2
+%   elements: The improved value of T and F0, the value of the function
+%   whose discrepancy is to be minmized  
+% - T0 : is the initial guess for the solution
+% - options : [struct] with fields
+%   - fix_point_explosion_limit : [positive scalar |{1e+6}] : maximum
+%     divergence of F0 
+%   - fix_point_TolFun : [positive scalar |{sqrt(eps)}] : tolerance
+%     criterion
+%   - fix_point_maxiter : [positive scalar |{1000}] : maximum number of 
+%     iterations
+%   - fix_point_verbose : [true|{false}] : show iterations or not
+% - varargin
+%
+% Outputs
+% --------
+% - T : final solution
+% - itercode : final number of iterations
+% - retcode : return code
+%   - 0 : successful
+%   - 21 : maximum number of iterations reached
+%   - 22 : nan or inf in F0 or T
+%   - 23 : divergence
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 default_solve=struct('fix_point_explosion_limit',1e+6,...
     'fix_point_TolFun',sqrt(eps),...
