@@ -1,6 +1,6 @@
-classdef rise_ts<ts
+classdef rseries<ts
     methods
-        function obj=rise_ts(varargin)
+        function obj=rseries(varargin)
             obj=obj@ts(varargin{:});
         end
     end
