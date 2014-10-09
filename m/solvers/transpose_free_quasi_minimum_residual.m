@@ -6,6 +6,39 @@ function [x0,retcode,tau]=transpose_free_quasi_minimum_residual(...
     MaxIter,... % maximum number of iterations
     verbose) % flag for printing progress or not
 
+% transpose_free_quasi_minimum_residual attempts to solve Ax=b
+%
+% Syntax
+% -------
+% ::
+%   [x0,retcode,tau]=transpose_free_quasi_minimum_residual(A,b,x0) 
+%   [x0,retcode,tau]=transpose_free_quasi_minimum_residual(A,b,x0,tol) 
+%   [x0,retcode,tau]=transpose_free_quasi_minimum_residual(A,b,x0,tol,MaxIter) 
+%   [x0,retcode,tau]=transpose_free_quasi_minimum_residual(A,b,x0,tol,MaxIter,verbose) 
+%
+% Inputs
+% -------
+% - A :
+% - b :
+% - x0:
+% - tol:
+% - MaxIter:
+% - verbose :
+%
+% Outputs
+% --------
+% - x0 :
+% - retcode :
+% - tau :
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % attempts to solve Ax=b
 
