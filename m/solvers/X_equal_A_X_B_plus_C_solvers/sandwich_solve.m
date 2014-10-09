@@ -1,5 +1,31 @@
 function [X,retcode]=sandwich_solve(A,B,C)
-% solves the linear equation X=A*X*B+C
+% sandwich_solve solves the linear equation X=A*X*B+C
+%
+% Syntax
+% -------
+% ::
+%   [X,retcode]=sandwich_solve(A,B,C)
+%
+% Inputs
+% -------
+% - A :
+% - B :
+% - C :
+%
+% Outputs
+% --------
+% - X :
+% - retcode :
+% 
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
+% 
 [U,R]=schur(B,'complex'); 
 % we take the complex just to make sure that R is upper triangular
 n=size(A,1);

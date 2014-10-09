@@ -1,5 +1,31 @@
-function [P,retcode]=doubling_solve(A,B,C,options)%MaxIter,TolFun,verbose
-% solves the linear equation X=A*X*B+C
+function [P,retcode]=doubling_solve(A,B,C,options)
+% doubling_solve solves the linear equation X=A*X*B+C
+%
+% Syntax
+% -------
+% ::
+%   [P,retcode]=doubling_solve(A,B,C)
+%   [P,retcode]=doubling_solve(A,B,C,options)
+%
+% Inputs
+% -------
+% - A :
+% - B :
+% - C :
+% - options :
+% 
+% Outputs
+% --------
+% - P :
+% - retcode :
+%
+% Description
+% ------------
+% 
+% Examples
+% ---------
+%
+% See also: 
 
 if nargin==0
 	if nargout>1

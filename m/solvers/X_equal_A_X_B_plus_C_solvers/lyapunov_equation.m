@@ -1,4 +1,31 @@
 function [V,retcode]=lyapunov_equation(T,Q,options)
+% lyapunov_equation solves the equation V=T*V*T'+Q
+%
+% Syntax
+% -------
+% ::
+%   [V,retcode]=lyapunov_equation(T,Q)
+%   [V,retcode]=lyapunov_equation(T,Q,options)
+%
+% Inputs
+% -------
+% - T :
+% - Q :
+% - options :
+%
+% Outputs
+% --------
+% - V :
+% - retcode :
+% 
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % example
 % we would like to compute the variance of the system
 % y_t=ay*y_{t-1}+ax*x_{t-1}+ae*e_t
@@ -6,7 +33,7 @@ function [V,retcode]=lyapunov_equation(T,Q,options)
 % the matrix representation is 
 % X_t=[ay ax;by bx]*X_{t-1}+[ae be]'*e_t;
 
-% solves the equation V=T*V*T'+Q
+% 
 defaults=struct('lyapunov_algo','doubling',...
     'lyapunov_diffuse_factor',0,...
     'lyapunov_fast_doubling',true);

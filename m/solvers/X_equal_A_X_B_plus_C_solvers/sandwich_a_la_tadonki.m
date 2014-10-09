@@ -1,5 +1,25 @@
 function [V,retcode]=sandwich_a_la_tadonki(A,B,C,solve_options)
-% attempts to solve the equation V=A*V*B+C
+% sandwich_a_la_tadonki attempts to solve the equation V=A*V*B+C
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
+%
 if nargin<4
     solve_options=[];
 end
