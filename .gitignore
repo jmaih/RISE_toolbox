@@ -1,15 +1,17 @@
 doc/*
+development/*
+trash/*
 junk/*
-*.html
+# *.html
 *.asv
 *.bak
 *old*
 *- Copy*
-*.pdf
+# *.pdf
 rise_create_version.m
 contents_maker.m
 !/examples/VariousModels/KaijiTutorial/Tutorial.pdf
 !/doc/svar.pdf
 !old_versions
-help/*
+# help/*
 # doc/*: all files in doc directory
