@@ -1,4 +1,24 @@
 function A=ivech(v)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 v=v(:);
 nv=numel(v);

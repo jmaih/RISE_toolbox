@@ -1,4 +1,24 @@
 function [Reply,retcode]=get(obj,PropertyName)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     Reply=struct();

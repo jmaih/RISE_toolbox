@@ -1,4 +1,24 @@
 function C=evaluate_automatic_derivatives(funcs,order,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 input_list=parser.input_list();
 ninput=numel(input_list);

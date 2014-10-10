@@ -1,4 +1,24 @@
 function v=vech(A)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 [nr,nc]=size(A);
 if ~isequal(nr,nc)
     error([mfilename,':: matrix should be square'])

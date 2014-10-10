@@ -1,4 +1,24 @@
 function this=drop(this,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 survive=true(1,this.NumberOfVariables);
 for ii=1:length(varargin)
     ids=locate_variables(varargin{ii},this.varnames);

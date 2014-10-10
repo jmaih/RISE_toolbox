@@ -1,4 +1,24 @@
 function string=replace_steady_state_call(string,flag)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<2
     flag='';
 end

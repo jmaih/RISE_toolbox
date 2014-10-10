@@ -1,5 +1,25 @@
 function [x1,f1,H,issue,viol,obj,funevals]=...
     estimation_wrapper(obj,action,x0,lb,ub,funevals)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(action)
     action='eval';
 end

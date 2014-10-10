@@ -1,4 +1,24 @@
 function obj=setup_linear_restrictions(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     obj=setup_linear_restrictions@rise_generic(obj);

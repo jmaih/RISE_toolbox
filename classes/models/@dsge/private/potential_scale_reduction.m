@@ -1,4 +1,24 @@
 function [R,B,W]=potential_scale_reduction(x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 [npar,Nsim]=size(x);
 R=nan(npar,Nsim-1);

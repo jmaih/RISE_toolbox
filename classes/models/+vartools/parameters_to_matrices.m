@@ -1,5 +1,25 @@
 function [links,parameter_values,all_param_names_vec]=parameters_to_matrices(param_template,...
     param_names,numberOfRegimes,debug)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     debug=false;
     if nargin<3

@@ -1,4 +1,24 @@
 function param_template=set_structural_matrices_structure(model_class,n,nlags,nx,iblx) % block exogenous indices
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % the nan terms are the ones that are to be estimated
 % the diagonal terms of the a0 matrix are moved to SIG so as to have a way
 % of normalizing the switching of volatility. A natural question is whether

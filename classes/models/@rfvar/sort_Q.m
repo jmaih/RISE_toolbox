@@ -1,4 +1,24 @@
 function [Q,the_ranks,tags]=sort_Q(Q)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 the_ranks=cell2mat(Q(2,:));
 the_ranks=the_ranks(:);

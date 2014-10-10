@@ -1,4 +1,23 @@
 function [r,c]=one_figure_rows_columns(nitems)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 r=ceil(sqrt(nitems));
 c=floor(sqrt(nitems));

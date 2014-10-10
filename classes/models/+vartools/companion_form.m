@@ -1,4 +1,24 @@
 function [T,eigvals]=companion_form(B,nlags,endo_nbr,nz)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % the VAR has the form y=A1*y{-1}+A2*y{-2}+...+Ap*y{-p}+C*z+u
 dd=endo_nbr*(nlags-1);
 T=[B(:,1:end-nz);

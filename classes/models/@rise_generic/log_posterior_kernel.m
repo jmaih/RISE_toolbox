@@ -1,4 +1,24 @@
 function [log_post,log_lik,log_prior,Incr,retcode,obj]=log_posterior_kernel(obj,param)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 nobj=numel(obj);
 if nobj==0

@@ -1,4 +1,24 @@
 function m=median(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 this=varargin{1}.data;
 dim=1;
 if nargin>1

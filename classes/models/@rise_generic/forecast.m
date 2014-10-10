@@ -1,4 +1,24 @@
 function cond_fkst_db=forecast(obj,varargin)% historical_db
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % hist_db,conditions,ShockProperties,uncertainty,Nsteps,Nsim,Hypothesis,method)
 % HistDB,CondDB,OMGy,OMGx
 % 'forecast_conditional_info' to be structure with fields:

@@ -1,4 +1,24 @@
 function obj=store_probabilities(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 nstates=numel(obj.markov_chains.state_names);
 nobs=obj.data.finish;
 filt=zeros(nstates,nobs+1);

@@ -1,4 +1,24 @@
 function T0=msre_initial_guess(A0,dpb_minus,dbf_plus,solve_initialization)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin==0
     T0=struct('solve_initialization','backward');
     return

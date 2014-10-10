@@ -1,4 +1,24 @@
 function FinalResults=automatic_model_selection(tsdata,endo_name,exo_names,options)%[final_mod,x]
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % automatic model selection for single-equation models
 % tsdata: Time series represented as a table
 % endo_name: list of endogenous variables, provided they all share the same

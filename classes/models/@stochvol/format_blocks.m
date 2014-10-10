@@ -1,4 +1,24 @@
 function [endo_ids,exo_ids,params_ids,build_A,vectorize_A,build_OMG,vectorize_OMG]=format_blocks(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % y-variables and y-shocks locations
 %-----------------------------------

@@ -1,4 +1,24 @@
 function pp=dynamic_penalty(vector,k,alpha_)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<3
     alpha_=100;
 end

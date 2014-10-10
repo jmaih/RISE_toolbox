@@ -1,4 +1,24 @@
 function [block,dictionary,static]=capture_equations(dictionary,listing,block_name,static)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     static=struct();
 end

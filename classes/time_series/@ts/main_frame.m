@@ -1,4 +1,24 @@
 function tmp=main_frame(self,name_down)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<2
     name_down=true;
 end

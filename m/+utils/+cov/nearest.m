@@ -1,4 +1,24 @@
 function vcov=nearest(vcov0)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % nearest covariance matrix
 vcov=.5*(vcov0+vcov0.');
 [V,D] = eig(vcov);

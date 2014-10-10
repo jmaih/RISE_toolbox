@@ -1,11 +1,44 @@
 classdef mcf < handle
     % mcf Monte Carlo Filtering
     %
-    % main methods
-    % ------------
-    % - ` mcf `
-    % - ` cdf `
-    % - ` cdf_plot `
+    % methods
+    % --------
+    %
+    % - [addlistener](mcf/addlistener)
+    % - [cdf](mcf/cdf)
+    % - [cdf_plot](mcf/cdf_plot)
+    % - [correlation_patterns_plot](mcf/correlation_patterns_plot)
+    % - [delete](mcf/delete)
+    % - [eq](mcf/eq)
+    % - [findobj](mcf/findobj)
+    % - [findprop](mcf/findprop)
+    % - [ge](mcf/ge)
+    % - [gt](mcf/gt)
+    % - [isvalid](mcf/isvalid)
+    % - [kolmogorov_smirnov_test](mcf/kolmogorov_smirnov_test)
+    % - [le](mcf/le)
+    % - [lt](mcf/lt)
+    % - [mcf](mcf/mcf)
+    % - [ne](mcf/ne)
+    % - [notify](mcf/notify)
+    % - [scatter](mcf/scatter)
+    %
+    % properties
+    % -----------
+    %
+    % - [lb] -
+    % - [ub] -
+    % - [nsim] -
+    % - [procedure] -
+    % - [parameter_names] -
+    % - [samples] -
+    % - [is_behaved] -
+    % - [nparam] -
+    % - [is_sampled] -
+    % - [check_behavior] -
+    % - [number_of_outputs] -
+    % - [user_outputs] -
+    % - [known_procedures] -
     properties
         % lower bounds for the parameters
         lb

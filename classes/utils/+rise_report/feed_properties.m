@@ -1,4 +1,24 @@
 function obj=feed_properties(classname,obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 n=length(varargin);
 if rem(n,2)

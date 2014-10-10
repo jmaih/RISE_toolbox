@@ -1,4 +1,24 @@
 function J=jacobian(func,x,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 tol=eps^(1/3);
 
 x=x(:);

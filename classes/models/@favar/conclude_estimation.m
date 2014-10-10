@@ -1,4 +1,24 @@
 function [log_post,log_lik,log_prior,Incr,retcode,obj]=conclude_estimation(obj,x1)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 obj.estimation_under_way=false;
 

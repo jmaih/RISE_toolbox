@@ -1,4 +1,24 @@
 function PHI=vma(THETA,order,debug)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % Computes the Vector Moving Average representation of a reduced-form VAR
 
 if nargin<3

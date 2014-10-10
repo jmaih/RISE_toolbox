@@ -1,4 +1,24 @@
 function x1=build_parameter_vector(vdata,a_post,vcov)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 npar=numel(vdata.orig_estim_names);
 

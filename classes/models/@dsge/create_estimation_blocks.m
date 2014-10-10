@@ -1,4 +1,24 @@
 function blocks=create_estimation_blocks(obj,blocks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this function separates the parameters to estimate into blocks controled
 % by one or several markov chains, depending on the information provided in
 % blocks

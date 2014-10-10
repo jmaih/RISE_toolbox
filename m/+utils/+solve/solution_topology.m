@@ -4,6 +4,26 @@ function [siz,t,z,parts,order_var,inv_order_var]=solution_topology(...
     kfuture,... number of shocks periods beyond the current
     ntheta... future switching parameters
     )
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     ntheta=0;
     if nargin<3

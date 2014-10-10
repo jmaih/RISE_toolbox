@@ -1,8 +1,70 @@
 classdef dsge < rise_generic
+    % dsge model class for dsge models
+    %
+    % methods
+    % --------
+    %
+    % - [check_derivatives](dsge/check_derivatives)
+    % - [check_optimum](dsge/check_optimum)
+    % - [compute_steady_state](dsge/compute_steady_state)
+    % - [create_estimation_blocks](dsge/create_estimation_blocks)
+    % - [draw_parameter](dsge/draw_parameter)
+    % - [dsge](dsge/dsge)
+    % - [estimate](dsge/estimate)
+    % - [filter](dsge/filter)
+    % - [forecast](dsge/forecast)
+    % - [forecast_real_time](dsge/forecast_real_time)
+    % - [get](dsge/get)
+    % - [historical_decomposition](dsge/historical_decomposition)
+    % - [irf](dsge/irf)
+    % - [is_stable_system](dsge/is_stable_system)
+    % - [isnan](dsge/isnan)
+    % - [load_parameters](dsge/load_parameters)
+    % - [log_marginal_data_density](dsge/log_marginal_data_density)
+    % - [log_posterior_kernel](dsge/log_posterior_kernel)
+    % - [log_prior_density](dsge/log_prior_density)
+    % - [monte_carlo_filtering](dsge/monte_carlo_filtering)
+    % - [posterior_marginal_and_prior_densities](dsge/posterior_marginal_and_prior_densities)
+    % - [posterior_simulator](dsge/posterior_simulator)
+    % - [print_estimation_results](dsge/print_estimation_results)
+    % - [print_solution](dsge/print_solution)
+    % - [prior_plots](dsge/prior_plots)
+    % - [report](dsge/report)
+    % - [resid](dsge/resid)
+    % - [set](dsge/set)
+    % - [set_solution_to_companion](dsge/set_solution_to_companion)
+    % - [simulate](dsge/simulate)
+    % - [simulate_nonlinear](dsge/simulate_nonlinear)
+    % - [simulation_diagnostics](dsge/simulation_diagnostics)
+    % - [solve](dsge/solve)
+    % - [solve_alternatives](dsge/solve_alternatives)
+    % - [stoch_simul](dsge/stoch_simul)
+    % - [theoretical_autocorrelations](dsge/theoretical_autocorrelations)
+    % - [theoretical_autocovariances](dsge/theoretical_autocovariances)
+    % - [variance_decomposition](dsge/variance_decomposition)
+    %
+    % properties
+    % -----------
+    %
+    % - [definitions] -
+    % - [equations] -
+    % - [folders_paths] -
+    % - [dsge_var] -
+    % - [filename] -
+    % - [legend] -
+    % - [endogenous] -
+    % - [exogenous] -
+    % - [parameters] -
+    % - [observables] -
+    % - [markov_chains] -
+    % - [options] -
+    % - [estimation] -
+    % - [solution] -
+    % - [filtering] -
     properties (Hidden = true)
-		online_routines
-		disc_routines
-	end
+        online_routines
+        disc_routines
+    end
     properties (SetAccess = private, Hidden = true)
         current_solution_state
         dates_filtering % those two options should be moved elsewhere so that they are visible...
@@ -73,9 +135,9 @@ classdef dsge < rise_generic
         % regimes. This is something to address
         varargout=forecast_real_time(varargin)
         varargout=is_stable_system(varargin)
-        varargout=monte_carlo_filtering(varargin) 
-        varargout=resid(varargin) 
-        varargout=simulate_nonlinear(varargin) 
+        varargout=monte_carlo_filtering(varargin)
+        varargout=resid(varargin)
+        varargout=simulate_nonlinear(varargin)
         varargout=set_solution_to_companion(varargin)
         % constructor
         %------------
@@ -135,7 +197,7 @@ classdef dsge < rise_generic
             
             for ii=1:numel(quick_fill)
                 obj.(quick_fill{ii})=dictionary.(quick_fill{ii});
-            end                        
+            end
             
             % flags for the different types of models
             if obj.is_hybrid_expectations_model
@@ -148,7 +210,7 @@ classdef dsge < rise_generic
             end
             
             % Once the names of the exogenous variables are known, we can
-            % build the options. 
+            % build the options.
             %--------------------------------------------------------------
             obj=set(obj,varargin{:});
             % Then load the functions/routines: should consider doing this
@@ -174,7 +236,7 @@ classdef dsge < rise_generic
             % separate the reading of the model with everything else
             obj=format_parameters(obj,dictionary.Parameterization_block,...
                 dictionary.Param_rest_block);
-                        
+            
             % conclude
             disp(' ')
             if obj.is_sticky_information_model
@@ -226,9 +288,9 @@ classdef dsge < rise_generic
                 else
                     obj.routines.likelihood=@likelihood_markov_switching_dsge;
                 end
-				% initialize the holders for routines in case of swap between online and disc
-				obj.online_routines=[];	
-				obj.disc_routines=[];	
+                % initialize the holders for routines in case of swap between online and disc
+                obj.online_routines=[];
+                obj.disc_routines=[];
             end
         end
     end
@@ -243,7 +305,7 @@ classdef dsge < rise_generic
         varargout=dsge_load_data(varargin)
         varargout=do_not_anticipate_future_shocks(varargin)
         varargout=set_z_eplus_horizon(varargin)
-        varargout=latex_model_file(varargin) 
+        varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
     end
 end

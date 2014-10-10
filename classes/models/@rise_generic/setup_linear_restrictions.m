@@ -1,4 +1,24 @@
 function obj=setup_linear_restrictions(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 estim_names=get_estimated_parameter_names(obj);
 % get the linear restrictions if any. basics.a_func takes a2tilde as input

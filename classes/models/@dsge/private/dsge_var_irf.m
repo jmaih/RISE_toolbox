@@ -1,4 +1,24 @@
 function irfs=dsge_var_irf(obj,params,steps,filter_flag,verbose,resolve_flag)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<6
     resolve_flag=[];
     if nargin<5

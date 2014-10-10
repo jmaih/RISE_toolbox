@@ -1,4 +1,24 @@
 function K=commutation(m,n,fast)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % properties of the commutation matrix
 %                i) Kmn'=Knm
 %                ii) inv(Kmn)=Knm

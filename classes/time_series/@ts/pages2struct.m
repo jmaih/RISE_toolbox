@@ -1,4 +1,24 @@
 function this=pages2struct(this0)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 vnames=this0.varnames;
 if numel(unique(vnames))~=this0.NumberOfVariables
     error([mfilename,':: number of unique variable names different from number of columns of data matrix'])

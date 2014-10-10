@@ -1,4 +1,24 @@
 function retcode=code2file(xcell,fname)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 retcode=0;
 if isempty(xcell)

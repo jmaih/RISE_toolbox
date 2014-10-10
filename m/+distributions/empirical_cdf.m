@@ -1,4 +1,24 @@
 function [f,xx]=empirical_cdf(x,lb,ub,N)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if nargin<4
     N=[];

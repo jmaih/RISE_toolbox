@@ -1,4 +1,24 @@
 function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,type)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % when the type is ov, R is empty while T is of size solve_order x
 % regimes_number. Basically, T is returned as Tz, Tzz, Tzzz, etc. where the
 % rows that were originally in alphabetical order are put in order of

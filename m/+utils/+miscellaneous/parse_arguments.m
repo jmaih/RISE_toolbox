@@ -1,4 +1,24 @@
 function varargout=parse_arguments(args,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % {names,defaults,check_funcs,error_msg}
 assert(iscell(args) && any(size(args,2)==[3,4]),...
     'the first input argument must be a cell array with 3 or 4 columns')

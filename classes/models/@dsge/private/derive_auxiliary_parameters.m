@@ -1,4 +1,24 @@
 function obj=derive_auxiliary_parameters(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if ~isempty(obj.routines.derived_parameters)
     linrest=obj.routines.derived_parameters;

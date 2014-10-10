@@ -1,4 +1,24 @@
 function [db,states,retcode] = simulate(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % simul_historical_data contains the historical data as well as information
 %              over the forecast horizon. This also includes the future

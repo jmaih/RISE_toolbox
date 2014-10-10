@@ -1,4 +1,24 @@
 function obj=do_names(obj,val,type)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if nargin==0||isempty(obj)
     obj=struct();

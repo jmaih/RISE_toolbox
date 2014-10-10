@@ -1,4 +1,24 @@
 function equation=greekify(equation)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % so far I will just greekify names but later on, I might also greekify
 % equations
 greek_letters={'alpha','beta','gamma','delta','epsilon','kappa',...

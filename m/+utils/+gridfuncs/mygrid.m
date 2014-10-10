@@ -1,4 +1,24 @@
 function Regimes=mygrid(v)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % v is a vector of the number of states in each dimension
 % Regimes is an prod(v) x NumberOfDimensions matrix describing the different
 % composite regimes

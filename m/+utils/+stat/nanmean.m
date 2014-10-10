@@ -1,4 +1,23 @@
 function m = nanmean(x,dim)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 nans = isnan(x);
 x(nans) = 0;

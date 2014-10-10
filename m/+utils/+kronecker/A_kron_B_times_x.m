@@ -1,4 +1,24 @@
 function z=A_kron_B_times_x(A,B,x,xr,xc)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % computes the kron(A,B)*x
 if nargin<4
     xc=size(A,2);

@@ -1,4 +1,24 @@
 function obj=estimate(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % varargin: data,optimset,optimizer,hessian_type,estim_start_from_mode,estim_parallel
 % recursive estimation may be done easily by passing a different
 % estim_end_date at the beginning of each estimation run.

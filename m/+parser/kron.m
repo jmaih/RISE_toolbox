@@ -1,4 +1,24 @@
 function xout=kron(a,b)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % kronecker multiplication of cell arrays of strings
 
 if ischar(a)

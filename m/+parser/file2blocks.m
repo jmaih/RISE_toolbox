@@ -1,4 +1,24 @@
 function [blocks,markov_chains]=file2blocks(RawFile)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here

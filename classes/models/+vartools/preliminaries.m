@@ -1,4 +1,24 @@
 function out=preliminaries(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 out=struct.empty(0);
 if nargin==0
     return

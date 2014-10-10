@@ -1,4 +1,24 @@
 function this=interpolate(this,method,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 %     dbq = interpolate(db) interpolates to find dbq, the values of the
 %     underlying function V=F(X) at the query points found to be the

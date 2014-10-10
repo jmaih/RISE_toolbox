@@ -1,4 +1,24 @@
 function retcode=check_derivatives(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     if nargout>1

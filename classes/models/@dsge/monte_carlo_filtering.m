@@ -1,6 +1,26 @@
 function [xparam,retcode,could_solve,behave,logpost,...
     LogLik,log_prior]=monte_carlo_filtering(obj,varargin)
 
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])

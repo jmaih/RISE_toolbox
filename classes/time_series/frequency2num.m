@@ -1,4 +1,24 @@
 function fq=frequency2num(fq)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 fmap=frequency_map();
 if ischar(fq)
     fq=cellstr(fq);

@@ -1,4 +1,24 @@
 function [init,sampler,total_draws]=initialize_posterior_simulation(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 lb=[obj.estimation.priors.lower_bound]';
 ub=[obj.estimation.priors.upper_bound]';
 drawfun=@(x,cCs)truncated_multivariate_normal.quick_and_dirty(x,cCs,lb,ub);

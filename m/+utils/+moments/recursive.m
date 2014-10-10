@@ -1,4 +1,23 @@
 function [m1,V1,n]=recursive(m0,V0,Xn,n)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 % npar=11;
 % ndraws=3000;

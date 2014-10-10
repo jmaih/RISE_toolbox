@@ -1,4 +1,24 @@
 function A=CheckArgument(A,expected_size,id)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if expected_size(end)==1 && numel(expected_size)>2
     expected_size=expected_size(1:end-1);
 end

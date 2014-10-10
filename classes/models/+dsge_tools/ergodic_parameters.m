@@ -1,4 +1,24 @@
 function [pp_i,def_i,retcode]=ergodic_parameters(Q,def,pp)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 ergodic=true;
 [PAI00,retcode]=initial_markov_distribution(Q,ergodic);
 pp_i=0;

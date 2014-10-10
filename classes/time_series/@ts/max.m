@@ -1,4 +1,24 @@
 function m=max(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin==1||nargin==3
     this=varargin{1}.data;
     dim=1;

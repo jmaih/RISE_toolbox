@@ -1,4 +1,24 @@
 function [T1,T0_T1]=functional_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,pb_cols,~)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 n=size(d0{1},1);
 h=size(d0,2);

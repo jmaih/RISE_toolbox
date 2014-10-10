@@ -1,4 +1,24 @@
 function ypred=locate_permutation(x,n,wrt_wise)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<3
     % [111 211 311 121 221 321 131 231 331 112 212 312 122 222 322 132 232
     % 332 113 213 313 123 223 323 133 233 333] <== wrt_wise

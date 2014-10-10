@@ -1,4 +1,24 @@
 function [lnprior,retcode]=log_prior_density(obj,param)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 nobj=numel(obj);
 if nobj==0
     if nargout>1

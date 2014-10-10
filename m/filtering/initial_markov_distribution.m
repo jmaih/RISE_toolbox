@@ -1,4 +1,24 @@
 function [PAI00,retcode]=initial_markov_distribution(q_now_lead,ergodic)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<2
     ergodic=true;
 end

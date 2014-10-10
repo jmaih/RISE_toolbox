@@ -1,5 +1,25 @@
 function conditions=parse_information(conditional_info,endo_names,...
     exo_names,forecast_start_date)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(conditional_info)
     conditions=[];
     return

@@ -1,4 +1,24 @@
 function [Histdec,obj]=historical_decomposition(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % PURPOSE: Computes historical decompositions of a DSGE model
 %-------------------------------------------------------------

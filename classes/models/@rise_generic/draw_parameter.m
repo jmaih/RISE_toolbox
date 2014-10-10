@@ -1,4 +1,24 @@
 function [draw,obj]=draw_parameter(obj,simulation_folder)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % outputed are the draw and the rise object in which the draw has been
 % pushed.
 if isempty(obj)

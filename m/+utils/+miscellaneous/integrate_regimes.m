@@ -1,4 +1,24 @@
 function varargout=integrate_regimes(Q,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 reg_nbr=size(Q,1);
 

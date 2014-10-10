@@ -1,4 +1,24 @@
 function [Aplus,A0,Aminus,B,Q,T,R]=generate_markov_switching_rational_expectations_problem(n,h,x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<3
     x=0;
     if nargin<2

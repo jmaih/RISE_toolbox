@@ -1,4 +1,24 @@
 function obj=set_structural_shocks(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 stshocks=obj.options.structural_shocks;
 if ~isempty(stshocks)

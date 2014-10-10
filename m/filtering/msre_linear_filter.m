@@ -1,4 +1,24 @@
 function [loglik,Incr,retcode,Filters]=msre_linear_filter(syst,data_info,data_trend,state_trend,SS,risk,options)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % all rows of Q should sum to 1
 % 0: no filters,
 % 1: filtering,

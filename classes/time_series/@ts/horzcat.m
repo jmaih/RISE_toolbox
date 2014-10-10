@@ -1,4 +1,24 @@
 function this=horzcat(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 for ii=1:length(varargin)
     if ~isequal(class(varargin{ii}),'ts')

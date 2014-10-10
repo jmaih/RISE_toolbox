@@ -1,4 +1,24 @@
 function [T1,T0_T1]=functional_iteration_h_full(T0,Gplus01,A0,Aminus)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 [~,n,h]=size(A0);
 if size(Gplus01,2)~=n

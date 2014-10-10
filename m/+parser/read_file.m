@@ -1,4 +1,24 @@
 function RawFile=read_file(FileName)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 RawFile=cell(0,1);
 if isempty(FileName)

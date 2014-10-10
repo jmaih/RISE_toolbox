@@ -1,4 +1,24 @@
 function varargout=logistic(lowerquantileORmean,upperquantileORstdev,prob,c,d)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
 % the lower and the upper bounds of the distribution with hyperparameters a

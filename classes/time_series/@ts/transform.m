@@ -1,4 +1,24 @@
 function data=transform(datam,type)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % type is one of the following:
 % 1 or 'level': Untransformed data - level (default)

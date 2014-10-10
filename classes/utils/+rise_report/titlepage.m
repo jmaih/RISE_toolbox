@@ -1,4 +1,38 @@
 classdef titlepage < rise_report.generic_report
+    % titlepage report title page object
+    %
+    % methods
+    % --------
+    %
+    % - [addlistener](rise_report.titlepage/addlistener)
+    % - [best_title](rise_report.titlepage/best_title)
+    % - [delete](rise_report.titlepage/delete)
+    % - [eq](rise_report.titlepage/eq)
+    % - [findobj](rise_report.titlepage/findobj)
+    % - [findprop](rise_report.titlepage/findprop)
+    % - [ge](rise_report.titlepage/ge)
+    % - [gt](rise_report.titlepage/gt)
+    % - [isvalid](rise_report.titlepage/isvalid)
+    % - [le](rise_report.titlepage/le)
+    % - [lt](rise_report.titlepage/lt)
+    % - [ne](rise_report.titlepage/ne)
+    % - [notify](rise_report.titlepage/notify)
+    % - [reprocess](rise_report.titlepage/reprocess)
+    % - [titlepage](rise_report.titlepage/titlepage)
+    % - [write](rise_report.titlepage/write)
+    %
+    % properties
+    % -----------
+    %
+    % - [title] -
+    % - [date] -
+    % - [author] -
+    % - [address] -
+    % - [email] -
+    % - [abstract] -
+    % - [latex_date_format] -
+    % - [batch] -
+    % - [id] -
     properties
         title=''
         date=''

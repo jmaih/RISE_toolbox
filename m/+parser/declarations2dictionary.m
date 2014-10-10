@@ -1,4 +1,24 @@
 function [dictionary,blocks] = declarations2dictionary(dictionary,blocks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %UNTITLED11 Summary of this function goes here
 %   Detailed explanation goes here
 

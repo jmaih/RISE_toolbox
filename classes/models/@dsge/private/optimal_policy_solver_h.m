@@ -1,4 +1,24 @@
 function [T,eigval,zmultcols,retcode]=optimal_policy_solver_h(obj,structural_matrices)...
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     if nargout>1

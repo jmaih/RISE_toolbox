@@ -1,4 +1,71 @@
 classdef report < rise_report.titlepage
+    % report reporting
+    %
+    % methods
+    % --------
+    %
+    % - [addlistener](rise_report.report/addlistener)
+    % - [best_title](rise_report.report/best_title)
+    % - [chapter](rise_report.report/chapter)
+    % - [cleardoublepage](rise_report.report/cleardoublepage)
+    % - [clearpage](rise_report.report/clearpage)
+    % - [delete](rise_report.report/delete)
+    % - [enumerate](rise_report.report/enumerate)
+    % - [eq](rise_report.report/eq)
+    % - [figure](rise_report.report/figure)
+    % - [findobj](rise_report.report/findobj)
+    % - [findprop](rise_report.report/findprop)
+    % - [footnote](rise_report.report/footnote)
+    % - [ge](rise_report.report/ge)
+    % - [gt](rise_report.report/gt)
+    % - [include](rise_report.report/include)
+    % - [isvalid](rise_report.report/isvalid)
+    % - [itemize](rise_report.report/itemize)
+    % - [le](rise_report.report/le)
+    % - [lt](rise_report.report/lt)
+    % - [ne](rise_report.report/ne)
+    % - [newpage](rise_report.report/newpage)
+    % - [notify](rise_report.report/notify)
+    % - [pagebreak](rise_report.report/pagebreak)
+    % - [paragraph](rise_report.report/paragraph)
+    % - [publish](rise_report.report/publish)
+    % - [quotation](rise_report.report/quotation)
+    % - [report](rise_report.report/report)
+    % - [reprocess](rise_report.report/reprocess)
+    % - [section](rise_report.report/section)
+    % - [subparagraph](rise_report.report/subparagraph)
+    % - [subsection](rise_report.report/subsection)
+    % - [subsubsection](rise_report.report/subsubsection)
+    % - [table](rise_report.report/table)
+    % - [text](rise_report.report/text)
+    % - [verbatim](rise_report.report/verbatim)
+    % - [write](rise_report.report/write)
+    %
+    % properties
+    % -----------
+    %
+    % - [name] -
+    % - [graphicspath] -
+    % - [documentclass] -
+    % - [packages] -
+    % - [orientation] -
+    % - [points] -
+    % - [papersize] -
+    % - [fleqn] -
+    % - [leqno] -
+    % - [titlepage] -
+    % - [onecolumn] -
+    % - [twoside] -
+    % - [openright] -
+    % - [title] -
+    % - [date] -
+    % - [author] -
+    % - [address] -
+    % - [email] -
+    % - [abstract] -
+    % - [latex_date_format] -
+    % - [batch] -
+    % - [id] -
     properties
         name = 'rise_report_default_name'
         graphicspath='';
@@ -159,7 +226,7 @@ classdef report < rise_report.titlepage
                 error([mfilename,':: arguments must come in pairs'])
             end
             default_options=struct('write2disk',true,'clean_up',true);
-                                    
+            
             fields=fieldnames(default_options);
             for iarg=1:2:n
                 if ~any(strcmp(varargin{iarg},fields))
@@ -174,7 +241,7 @@ classdef report < rise_report.titlepage
             clean_up=default_options.clean_up;
             report_name=parser.remove_file_extension(obj.name);
             do_write_up()
-
+            
             if write2disk
                 % get the compiler from the rise_root
                 compiler=getappdata(0,'rise_pdflatex');
@@ -281,37 +348,37 @@ classdef report < rise_report.titlepage
                     %                     fprintf(fid, ',landscape');
                     %                 end
                     %                 fprintf(fid, ']{geometry}\n');
-%                     
-%                     fprintf(fid, '\\usepackage{pdflscape, pgf, booktabs}\n');
-%                     fprintf(fid, ['\\makeatletter\n' ...
-%                         '\\def\\blfootnote{\\gdef\\@thefnmark{}\\@footnotetext}\n' ...
-%                         '\\makeatother\n']);
-%                     
-%                     fprintf(fid, '\\usepackage{pgfplots}\n');
-%                     
-%                     fprintf(fid, '\\usepackage{color, colortbl}\n');
-%                     fprintf(fid, '\\definecolor{LightCyan}{rgb}{0.88,1,1}\n');
-%                     fprintf(fid, '\\definecolor{Gray}{gray}{0.9}\n');
+                    %
+                    %                     fprintf(fid, '\\usepackage{pdflscape, pgf, booktabs}\n');
+                    %                     fprintf(fid, ['\\makeatletter\n' ...
+                    %                         '\\def\\blfootnote{\\gdef\\@thefnmark{}\\@footnotetext}\n' ...
+                    %                         '\\makeatother\n']);
+                    %
+                    %                     fprintf(fid, '\\usepackage{pgfplots}\n');
+                    %
+                    %                     fprintf(fid, '\\usepackage{color, colortbl}\n');
+                    %                     fprintf(fid, '\\definecolor{LightCyan}{rgb}{0.88,1,1}\n');
+                    %                     fprintf(fid, '\\definecolor{Gray}{gray}{0.9}\n');
                     
-%                     if obj.showDate
-%                         fprintf(fid, '\\usepackage{fancyhdr, datetime}\n');
-%                         fprintf(fid, '\\newdateformat{reportdate}{\\THEDAY\\ \\shortmonthname\\ \\THEYEAR}\n');
-%                         fprintf(fid, '\\pagestyle{fancy}\n');
-%                         fprintf(fid, '\\renewcommand{\\headrulewidth}{0pt}\n');
-%                         fprintf(fid, '\\renewcommand{\\footrulewidth}{0.5pt}\n');
-%                         fprintf(fid, '\\rfoot{\\scriptsize\\reportdate\\today\\ -- \\currenttime}\n');
-%                     end
+                    %                     if obj.showDate
+                    %                         fprintf(fid, '\\usepackage{fancyhdr, datetime}\n');
+                    %                         fprintf(fid, '\\newdateformat{reportdate}{\\THEDAY\\ \\shortmonthname\\ \\THEYEAR}\n');
+                    %                         fprintf(fid, '\\pagestyle{fancy}\n');
+                    %                         fprintf(fid, '\\renewcommand{\\headrulewidth}{0pt}\n');
+                    %                         fprintf(fid, '\\renewcommand{\\footrulewidth}{0.5pt}\n');
+                    %                         fprintf(fid, '\\rfoot{\\scriptsize\\reportdate\\today\\ -- \\currenttime}\n');
+                    %                     end
                     
                     % May not need these.....
-%                     fprintf(fid, '\\renewcommand{\\textfraction}{0.05}\n');
-%                     fprintf(fid, '\\renewcommand{\\topfraction}{0.8}\n');
-%                     fprintf(fid, '\\renewcommand{\\bottomfraction}{0.8}\n');
-%                     fprintf(fid, '\\usepackage[Export,PGF]{adjustbox}\n');
-%                     fprintf(fid, '\\setlength{\\parindent}{0in}\n');
-%                     fprintf(fid, '\\newlength\\sectionheight\n');
+                    %                     fprintf(fid, '\\renewcommand{\\textfraction}{0.05}\n');
+                    %                     fprintf(fid, '\\renewcommand{\\topfraction}{0.8}\n');
+                    %                     fprintf(fid, '\\renewcommand{\\bottomfraction}{0.8}\n');
+                    %                     fprintf(fid, '\\usepackage[Export,PGF]{adjustbox}\n');
+                    %                     fprintf(fid, '\\setlength{\\parindent}{0in}\n');
+                    %                     fprintf(fid, '\\newlength\\sectionheight\n');
                     fprintf(fid, '\\begin{document}\n');
-%                     fprintf(fid, '\\centering\n');
-%                     fprintf(fid, '\\pagestyle{myheadings}\n'); 
+                    %                     fprintf(fid, '\\centering\n');
+                    %                     fprintf(fid, '\\pagestyle{myheadings}\n');
                 end
             end
         end
@@ -326,7 +393,7 @@ if strcmp(method,'figure')
         newitem.graphicspath=obj.graphicspath;
     end
     newitem.figure_number=obj.figure_count;
-elseif strcmp(method,'table') 
+elseif strcmp(method,'table')
     obj.table_count=obj.table_count+1;
     newitem.table_number=obj.table_count;
 end

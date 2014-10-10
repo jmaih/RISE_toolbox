@@ -1,4 +1,24 @@
 function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,restrictions,penalty,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(restrictions)
     restrictions=@(z)[];
 end

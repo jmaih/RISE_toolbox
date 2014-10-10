@@ -1,4 +1,24 @@
 function new_date=obs2date(start_date,obs)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 start_serial=date2serial(start_date);
 nobs=numel(obs);
 new_serial=nan(size(obs));

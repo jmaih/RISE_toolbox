@@ -1,4 +1,24 @@
 function [obj,retcode,structural_matrices]=solve(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % structrual_matrices not stored into the object in case we need to "get"
 % it? in that case we enter the solving operations without solving and
 % there is a flag to solve or not.

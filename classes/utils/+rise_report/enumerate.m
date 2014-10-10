@@ -1,5 +1,34 @@
 classdef enumerate < rise_report.generic_report
-    properties % cellstring 
+    % enumerate report enumerate object
+    %
+    % methods
+    % --------
+    %
+    % - [addlistener](rise_report.enumerate/addlistener)
+    % - [best_title](rise_report.enumerate/best_title)
+    % - [delete](rise_report.enumerate/delete)
+    % - [enumerate](rise_report.enumerate/enumerate)
+    % - [eq](rise_report.enumerate/eq)
+    % - [findobj](rise_report.enumerate/findobj)
+    % - [findprop](rise_report.enumerate/findprop)
+    % - [ge](rise_report.enumerate/ge)
+    % - [gt](rise_report.enumerate/gt)
+    % - [isvalid](rise_report.enumerate/isvalid)
+    % - [le](rise_report.enumerate/le)
+    % - [lt](rise_report.enumerate/lt)
+    % - [ne](rise_report.enumerate/ne)
+    % - [notify](rise_report.enumerate/notify)
+    % - [reprocess](rise_report.enumerate/reprocess)
+    % - [write](rise_report.enumerate/write)
+    %
+    % properties
+    % -----------
+    %
+    % - [items] -
+    % - [markers] -
+    % - [batch] -
+    % - [id] -
+    properties % cellstring
         items={}
         % cellstrings to customize the things of the items e.g.
         % \item[Stupid] \item[Smart] \item[-]

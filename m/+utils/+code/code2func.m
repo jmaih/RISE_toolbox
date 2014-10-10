@@ -1,4 +1,24 @@
 function func=code2func(code,argins)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % writes a cell array of strings into a structure with a field containing
 % functions, a field with information about the size of the matrix to be
 % computed and a field with the number of non-zero elements

@@ -1,4 +1,24 @@
 function Z=A_times_B_kron_C(A,B,C)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % computes the A*kron(B,C)
 
 [rb,cb]=size(B);

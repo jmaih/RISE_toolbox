@@ -1,4 +1,24 @@
 function dictionary = initialize_dictionary()
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
 

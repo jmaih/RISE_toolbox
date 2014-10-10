@@ -1,5 +1,25 @@
 function [position,regime_states,pname,chain,state]=...
     decompose_parameter_name(obj,pname,initialize)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 persistent regimes chain_names param_names governing_chain
 if nargin<3
     initialize=false;

@@ -1,4 +1,30 @@
 classdef generic_report < handle
+    % generic_report generic class for report objects
+    %
+    % methods
+    % --------
+    %
+    % - [addlistener](rise_report.generic_report/addlistener)
+    % - [best_title](rise_report.generic_report/best_title)
+    % - [delete](rise_report.generic_report/delete)
+    % - [eq](rise_report.generic_report/eq)
+    % - [findobj](rise_report.generic_report/findobj)
+    % - [findprop](rise_report.generic_report/findprop)
+    % - [ge](rise_report.generic_report/ge)
+    % - [generic_report](rise_report.generic_report/generic_report)
+    % - [gt](rise_report.generic_report/gt)
+    % - [isvalid](rise_report.generic_report/isvalid)
+    % - [le](rise_report.generic_report/le)
+    % - [lt](rise_report.generic_report/lt)
+    % - [ne](rise_report.generic_report/ne)
+    % - [notify](rise_report.generic_report/notify)
+    % - [reprocess](rise_report.generic_report/reprocess)
+    % - [write](rise_report.generic_report/write)
+    %
+    % properties
+    % -----------
+    %
+    % - [id] -
     properties
         id
     end

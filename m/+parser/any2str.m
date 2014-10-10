@@ -1,4 +1,24 @@
 function str=any2str(whatever)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if ischar(whatever)
     str=whatever;
 elseif isnumeric(whatever)

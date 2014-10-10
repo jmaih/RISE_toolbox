@@ -1,4 +1,24 @@
 function [smpl,fsmpl,accept_rate,start] = constant_bvar_sampler(start,nsamples,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 pnames_defaults = {
     'burnin',0,@(x)isa(x,'double') && isscalar(x) && x==round(x) && x>=0

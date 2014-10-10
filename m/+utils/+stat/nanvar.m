@@ -1,4 +1,23 @@
 function y = nanvar(x,w,dim)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 if nargin < 2 || isempty(w), w = 0; end
 

@@ -1,4 +1,24 @@
 function nmc=initialize_markov_chain(name,nstates,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % parse the information in the name/value pairs
 pnames_defaults = {
     'is_endogenous' ,nan,@(x)islogical(x) && isscalar(x)

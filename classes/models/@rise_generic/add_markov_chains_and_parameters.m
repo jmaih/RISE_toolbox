@@ -1,4 +1,24 @@
 function obj=add_markov_chains_and_parameters(obj,markov_chains_)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if ~isfield(markov_chains_,'param_list')
     return
 end

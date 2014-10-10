@@ -1,4 +1,24 @@
 function ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % computes the posterior and marginal densities.
 % - the optional argument simulation_folder can either be the output of
 % posterior_simulator.m or the path where the posterior simulations are

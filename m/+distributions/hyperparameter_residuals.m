@@ -1,4 +1,24 @@
 function resid=hyperparameter_residuals(x,cdfn,plb,pub,prob,callingfun,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 a=x(1);
 b=x(2);

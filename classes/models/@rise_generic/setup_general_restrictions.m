@@ -1,4 +1,24 @@
 function obj=setup_general_restrictions(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this can be useful also for checking restrictions such as explosive VARs,
 % etc. and not just restrictions on DSGEs
 nobj=numel(obj);

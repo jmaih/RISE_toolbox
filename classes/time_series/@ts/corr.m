@@ -1,4 +1,24 @@
 function varargout=corr(this,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if ~isempty(varargin) && isa(varargin{1},'ts')
     this=this & varargin{1};
     varargin=varargin(2:end);

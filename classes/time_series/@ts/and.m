@@ -1,4 +1,24 @@
 function this3=and(this1,this2)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this1= ts(1990,rand(10,1))
 % this2= ts('1990Q1',rand(10,1))
 % this3= this1 & this2

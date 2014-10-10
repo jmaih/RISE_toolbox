@@ -1,4 +1,24 @@
 function ed=distance(a,b)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(a)||isempty(b)
     ed=inf;
 else

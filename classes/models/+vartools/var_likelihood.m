@@ -1,4 +1,24 @@
 function [LogLik,Incr,retcode,obj]=var_likelihood(params,obj)%
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     LogLik=struct();

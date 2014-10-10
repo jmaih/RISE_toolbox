@@ -1,4 +1,24 @@
 function [sims,retcode]=simulate_nonlinear(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(obj)
     sims=struct('simul_stack_solve_algo','sparse',...
         'simul_recursive',false,...

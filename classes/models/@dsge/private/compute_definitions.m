@@ -1,4 +1,24 @@
 function [obj,retcode]=compute_definitions(obj,pp)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 definitions=obj.routines.definitions;
 number_of_regimes=obj.markov_chains.small_markov_chain_info.regimes_number;

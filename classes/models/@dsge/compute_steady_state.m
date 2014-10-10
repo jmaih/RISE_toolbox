@@ -1,4 +1,24 @@
 function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % In this file, there are two ways the steady state can be computed:
 % case 1: a steady state function is passed as an argument

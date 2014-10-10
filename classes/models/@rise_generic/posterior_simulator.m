@@ -1,4 +1,24 @@
 function [obj,postSims]=posterior_simulator(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % simulate the posterior distribution using a Metropolis Hastings algorithm
 % with adaptation and delayed rejection. It is possible to start simulating
 % the posterior distribution even without having maximized the posterior.

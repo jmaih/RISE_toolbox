@@ -1,4 +1,24 @@
 function x=gibbs(mu,SIG,lb,ub,Nsim,burn)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<6
     burn=0;
     if nargin<5

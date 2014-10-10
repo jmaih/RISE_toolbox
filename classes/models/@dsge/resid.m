@@ -1,4 +1,24 @@
 function r=resid(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this function displays the initial residuals of a model (before checking
 % that the inital guess actually delivers the steady state)
 if isempty(obj)

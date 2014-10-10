@@ -1,4 +1,24 @@
 function flag=valid(x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if iscell(x)
     flag=all(cellfun(@(x)utils.error.valid(x),x));

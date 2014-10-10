@@ -1,4 +1,24 @@
 function [oo_]=stoch_simul(obj,var_list,varargin)%,omega
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(obj)
     oo_=struct('stoch_sim_hpfilter_lambda',false);
     return

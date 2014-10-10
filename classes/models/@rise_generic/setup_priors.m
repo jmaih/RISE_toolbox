@@ -1,4 +1,24 @@
 function obj=setup_priors(obj,MyPriors,error_control)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % different ways of setting priors outside the model file
 % P.pname={start_value,lower_bound,upper_bound};
 % P.pname={start_value,prior_mean,prior_stdev,'distribution'};

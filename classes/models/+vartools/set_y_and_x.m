@@ -1,4 +1,24 @@
 function [y,x,n,T]=set_y_and_x(datay,datax,nlags,constant)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 [n,smpl]=size(datay);
 if constant
     datax=[datax;ones(1,smpl)];

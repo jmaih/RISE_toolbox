@@ -4,6 +4,26 @@ function [x1,x1_linear]=simulation_engine(obj,...
     z,... % deterministic variables
     regime,...
     shocks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 persistent m_x m_e simul_with_shocks is_observed exo_nbr nlags endo_nbr
 if nargin<6
     shocks=[];

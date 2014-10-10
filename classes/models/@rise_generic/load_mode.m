@@ -1,4 +1,24 @@
 function model=load_mode(model)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % reload the start values for the estimated parameters from a structure.
 
 nobj=numel(model);

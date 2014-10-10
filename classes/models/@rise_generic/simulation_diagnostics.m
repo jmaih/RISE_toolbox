@@ -1,4 +1,24 @@
 function simdiags=simulation_diagnostics(obj,simulation_folder)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(obj)
     simdiags=struct();
     return

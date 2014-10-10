@@ -1,4 +1,24 @@
 function [smpl,fsmpl,accept_rate,start] = mh_sampling_engine(start,nsamples,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % MH_SAMPLING_ENGINE Generate Markov chain using Metropolis-Hasting algorithm
 %   SMPL = MH_SAMPLING_ENGINE(START,NSAMPLES,'pdf',PDF,'proppdf',PROPPDF,'proprnd',PROPRND)
 %   draws NSAMPLES random samples from a target stationary distribution PDF

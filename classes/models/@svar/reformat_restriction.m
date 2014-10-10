@@ -1,4 +1,24 @@
 function x=reformat_restriction(x,convertfunc1,convertfunc2) %#ok<INUSD>
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % the first conversion function finds the equation
 % the second conversion function finds the column, which may be
 % either an endogenous variable or a shock

@@ -1,4 +1,24 @@
 function parts=partition_variables(LLI)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this function assumes that LLI is ordered alphabetically
 parts=struct();
 static = []; pred = []; both = []; frwrd = [];

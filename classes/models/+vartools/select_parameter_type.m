@@ -1,4 +1,24 @@
 function [names,locs]=select_parameter_type(estim_names,type)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 switch type
     case 'lag_coef'
         % lag matrices a0, a1,...,ap

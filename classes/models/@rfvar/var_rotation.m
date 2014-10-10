@@ -1,4 +1,24 @@
 function P=var_rotation(fa0ap,Q)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 n=size(fa0ap,2);
 [Q,~,tags]=sort_Q(Q);
 P=nan(n);

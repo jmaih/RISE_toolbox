@@ -1,4 +1,24 @@
 function obj=redo_declarations(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 old_exo_names=obj.exogenous.name;
 observed_exo_names=get(obj,'exo_list(observed)');

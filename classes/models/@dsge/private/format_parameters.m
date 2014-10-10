@@ -1,4 +1,24 @@
 function obj=format_parameters(obj,ParameterizationArray,Param_rest_block)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 param_names=obj.parameters.name;
 

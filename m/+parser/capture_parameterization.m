@@ -1,4 +1,24 @@
 function block=capture_parameterization(dictionary,listing)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 PARAM_DELIMITERS=[char([9:13,32]),',;'];
 
 parameter_names={dictionary.parameters.name};

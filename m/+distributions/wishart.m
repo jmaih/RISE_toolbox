@@ -1,4 +1,24 @@
 function varargout=wishart(S,v,~,~)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 hyperparameter_mode=nargin>0;
 

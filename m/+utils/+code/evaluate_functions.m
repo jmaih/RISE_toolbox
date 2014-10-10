@@ -1,4 +1,24 @@
 function varargout=evaluate_functions(xcell,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 nout=nargout;
 varargout=cell(1,nout);

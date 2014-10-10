@@ -1,4 +1,24 @@
 function [Regimes,journal]=chain_grid(v)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % v is a vector of the number of states in each markov chain
 % Regimes is an prod(v) x NumberOfParameters matrix describing the different
 % composite regimes

@@ -1,4 +1,24 @@
 function [dat,frequency,year,period]=serial2date(s,silent)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<2
     silent=false;
 end

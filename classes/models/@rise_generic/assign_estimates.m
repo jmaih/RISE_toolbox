@@ -1,4 +1,24 @@
 function obj=assign_estimates(obj,params)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this is the routine called during estimation for assigning new estimates
 % to the model
 if isempty(obj)

@@ -1,4 +1,24 @@
 function A = mergestructures(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % Merge structures with unique fields.
 % based on MERGESTRUCT by Loren Shure (Mathworks)
 

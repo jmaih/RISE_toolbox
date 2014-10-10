@@ -1,4 +1,24 @@
 function obj=setup_measurement_errors(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 param_names=obj.parameters.name;
 obj.measurement_errors_restrictions=[];

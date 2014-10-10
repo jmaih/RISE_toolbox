@@ -1,4 +1,24 @@
 function [LogLik,Incr,retcode,obj]=likelihood_markov_switching_dsge(params,obj)%
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if nargin~=2
     error([mfilename,':: Number of arguments must be 2'])

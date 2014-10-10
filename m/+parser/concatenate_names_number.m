@@ -1,4 +1,24 @@
 function out=concatenate_names_number(names,lag)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 test=@myadd; %#ok<NASGU>
 % translate auxiliaries
 %----------------------

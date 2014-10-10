@@ -1,4 +1,24 @@
 function p=mypermutation(v,p)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % finds all permutations of a vector v
 % example v=[1,2,3];
 % res=cell2mat(utils.gridfuncs.mypermutation(1:3));

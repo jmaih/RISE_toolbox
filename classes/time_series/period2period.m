@@ -1,4 +1,24 @@
 function p=period2period(p0,freq0,freq1,head)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % transform a period a particular frequency into a period of another
 % frequency
 % p0 is the initial period and freq0 is the initial frequency. freq1 is the

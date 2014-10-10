@@ -1,4 +1,24 @@
 function output=append_file(output,rline,definitions)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 rf=include_file();
 output=[output;rf];

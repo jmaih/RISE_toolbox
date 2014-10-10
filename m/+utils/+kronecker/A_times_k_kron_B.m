@@ -1,4 +1,24 @@
 function C=A_times_k_kron_B(A,B,k)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % computes C=A*(BxBx...xB)
 

@@ -1,4 +1,24 @@
 function b=title_item(type,title,numbering,tableOfContentsTitle)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     tableOfContentsTitle='';
 if nargin<3

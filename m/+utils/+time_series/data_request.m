@@ -1,4 +1,24 @@
 function [data_values,start_date,end_date,missing]=data_request(data,varlist,start_date,end_date)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     end_date='';
     if nargin<3

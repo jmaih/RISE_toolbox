@@ -1,4 +1,24 @@
 function preserve(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 wh=evalin('base','who');
 nvar=numel(varargin);
 discard=nan(nvar,1);

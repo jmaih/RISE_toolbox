@@ -1,4 +1,24 @@
 function [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % change the parameter names from name(chain,state) to name_chain_state
 

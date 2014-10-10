@@ -1,4 +1,8 @@
 classdef chib_jeliazkov
+    % chib_jeliazkov computation of the MDD using chib and jeliazkov
+    % - [chib_jeliazkov](chib_jeliazkov/chib_jeliazkov)
+    % - [conclude](chib_jeliazkov/conclude)
+    % - [update](chib_jeliazkov/update)
     properties
         xmode
         vcov_mode

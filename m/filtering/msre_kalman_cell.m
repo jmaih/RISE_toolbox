@@ -1,4 +1,24 @@
 function [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,data_trend,state_trend,init,options)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % this filter assumes a state space of the form
 % X_t=c_t{st}+T{st}*X_{t-1}+R{st}*eps_t

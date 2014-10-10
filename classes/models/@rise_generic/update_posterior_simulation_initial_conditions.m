@@ -1,4 +1,24 @@
 function start=update_posterior_simulation_initial_conditions(obj,start,new_vcov,acceptance_rate)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if start.adapt_covariance
     npar=size(new_vcov,1);
     [R,p]=chol(new_vcov+obj.options.mcmc_diagcov_adjust_coef*eye(npar));

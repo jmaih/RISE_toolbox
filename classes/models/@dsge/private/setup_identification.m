@@ -1,4 +1,24 @@
 function obj=setup_identification(obj,RestrictionsBlock)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 param_names=obj.parameters.name;
 

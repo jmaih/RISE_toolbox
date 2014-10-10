@@ -1,4 +1,24 @@
 function varargout=plotyy(varargin) 
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 %  plotyy Graphs with y tick labels on the left and right
 %     plotyy(Y1,Y2) plots Y1 with y-axis labeling on the left and plots Y2

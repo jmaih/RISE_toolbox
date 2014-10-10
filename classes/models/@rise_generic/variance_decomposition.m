@@ -1,4 +1,24 @@
 function [Vardec,obj]=variance_decomposition(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % PURPOSE: Computes variance decompositions of a MSRE model
 %-------------------------------------------------------------

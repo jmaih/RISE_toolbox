@@ -1,4 +1,24 @@
 function [ab,fval,retcode]=find_hyperparameters(space,cdfn,plb,pub,prob,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 number_of_starting_values=10;
 debug=~true;
 lb=space(:,1);

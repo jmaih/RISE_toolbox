@@ -1,5 +1,24 @@
-% function [r,Jac,retcode]=ss_residuals(ss_0,resid_func,func_jac,obj)
 function [r,Jac,retcode]=ss_residuals(ss_i,resid_func,func_jac,x_ss,pp_i,def_i)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 retcode=0;
 Jac=[];

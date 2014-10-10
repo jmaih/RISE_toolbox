@@ -1,4 +1,24 @@
 function [dictionary,blocks,old_endo_names]=logvars2logvars(dictionary,blocks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 logvarnames={dictionary.log_vars.name};
 % old endo names will be useful if there is a problem in the model and has
 % to be constructed prior to changing the names of the variables.

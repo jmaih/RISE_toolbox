@@ -1,4 +1,24 @@
 function r=weighted_sampling(pop_size,howmany,weights)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % samples without repetition
 error(nargchk(2,3,nargin))
 

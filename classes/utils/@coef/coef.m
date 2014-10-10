@@ -1,6 +1,22 @@
 classdef coef
-    % utility class for coef class for setting linear restrictions on
+    % coef utility class for coef class for setting linear restrictions on
     % models
+    %
+    % methods
+    % --------
+    %
+    % - [block_exogenous](coef/block_exogenous)
+    % - [coef](coef/coef)
+    % - [linear_restrictions](coef/linear_restrictions)
+    % - [minus](coef/minus)
+    % - [mrdivide](coef/mrdivide)
+    % - [mtimes](coef/mtimes)
+    % - [plus](coef/plus)
+    %
+    % properties
+    % -----------
+    %
+    % - [par_name] -
     properties
         % place holder for the parameter name, which is either
         %    - a string: this assumes that the name of the parameter is

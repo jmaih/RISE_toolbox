@@ -1,4 +1,24 @@
 function [freq,frequency,year,period]=serial2frequency(x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 freq=[];
 frequency=[];
 year=[];

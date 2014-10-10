@@ -1,4 +1,24 @@
 function varargout=resort(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 nout=nargout;
 if nout~=nargin
     error([mfilename,':: number of inputs and outputs should be the same'])

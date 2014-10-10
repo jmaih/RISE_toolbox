@@ -1,4 +1,23 @@
 function [init,sampler,total_draws]=initialize_posterior_simulation(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 nobj=numel(obj);
 if nobj==0

@@ -1,4 +1,24 @@
 function plot_handle=plot(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 %     plot(X,db) plots time series db versus vector of dates X. X can be of
 %     multiple forms and need not be of the same length as db:

@@ -1,4 +1,24 @@
 function [C,hyper_class]=object2cell(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % nobj=numel(obj);
 if isempty(obj)
     C=obj;

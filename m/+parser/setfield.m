@@ -1,4 +1,24 @@
 function S = setfield(S,name,value)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %UNTITLED10 Summary of this function goes here
 %   Detailed explanation goes here
 

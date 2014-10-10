@@ -1,4 +1,24 @@
 function struct_forms=structural_form(obj,initcall)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 persistent oldobj endo_nbr nlags exo_nbr nx regimes_number B R Qzero ...
     zero_restr myperm_lags myperm_irfs sign_restr irf_sample_max Qsign %tags
 if isempty(obj)

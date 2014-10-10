@@ -1,4 +1,24 @@
 function fmap=frequency_map()
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 fmap={
     'W',52
     'M',12

@@ -1,4 +1,24 @@
 function [istp,diagonal,chain_name,max_state]=is_transition_probability(name)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 istp=false;
 diagonal=false;
 chain_name='';

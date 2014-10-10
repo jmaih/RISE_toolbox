@@ -1,4 +1,24 @@
 function relinkings=parameters_links(obj,estim_names)%,y,s
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 incmnt=300;
 

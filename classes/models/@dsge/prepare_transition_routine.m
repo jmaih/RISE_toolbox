@@ -1,4 +1,24 @@
 function Qfunc=prepare_transition_routine(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if obj.is_endogenous_switching_model
     M=obj.parameter_values;

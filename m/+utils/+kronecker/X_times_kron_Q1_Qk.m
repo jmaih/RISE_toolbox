@@ -1,4 +1,24 @@
 function X = X_times_kron_Q1_Qk(X,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % X_TIMES_KRON_Q1_Qk Efficient Kronecker Multiplication
 %
 % Y=X_times_kron_Q1_Qk(X,{Q1,n1},{Q2,n2},...,{Qk,nk}) computes

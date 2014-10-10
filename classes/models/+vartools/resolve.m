@@ -1,4 +1,24 @@
 function [B,SIG,SIG05]=resolve(solution,nlags,h)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 B=cell(1,h);
 SIG=cell(1,h);

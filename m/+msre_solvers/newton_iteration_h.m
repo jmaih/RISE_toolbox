@@ -1,6 +1,26 @@
 function [T1,W1]=newton_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,...
     pb_cols,kron_method,options)
 
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 n=size(d0{1},1);
 h=size(d0,2);
 if nargin<7

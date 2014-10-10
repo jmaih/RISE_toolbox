@@ -1,4 +1,32 @@
 classdef newpage < rise_report.generic_report
+    % newpage report new page object
+    %
+    % methods
+    % --------
+    %
+    % - [addlistener](rise_report.newpage/addlistener)
+    % - [best_title](rise_report.newpage/best_title)
+    % - [delete](rise_report.newpage/delete)
+    % - [eq](rise_report.newpage/eq)
+    % - [findobj](rise_report.newpage/findobj)
+    % - [findprop](rise_report.newpage/findprop)
+    % - [ge](rise_report.newpage/ge)
+    % - [gt](rise_report.newpage/gt)
+    % - [isvalid](rise_report.newpage/isvalid)
+    % - [le](rise_report.newpage/le)
+    % - [lt](rise_report.newpage/lt)
+    % - [ne](rise_report.newpage/ne)
+    % - [newpage](rise_report.newpage/newpage)
+    % - [notify](rise_report.newpage/notify)
+    % - [reprocess](rise_report.newpage/reprocess)
+    % - [write](rise_report.newpage/write)
+    %
+    % properties
+    % -----------
+    %
+    % - [thispagestyle] -
+    % - [batch] -
+    % - [id] -
     properties(Constant)
         % plain prints the page numbers on the bottom of the page, in the
         % middle of the footer. This is the default page style.

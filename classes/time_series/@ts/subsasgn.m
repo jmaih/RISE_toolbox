@@ -1,4 +1,24 @@
 function obj=subsasgn(obj,s,b)% subsasgn
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 switch s.type
     case '.'

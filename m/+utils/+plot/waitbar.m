@@ -1,4 +1,23 @@
 function waitbar(task,x,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 persistent waitbar_handle init_clock title_size_reset
 

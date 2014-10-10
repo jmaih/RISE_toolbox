@@ -1,4 +1,24 @@
 function start=update_posterior_simulation_initial_conditions(obj,start,new_vcov,acceptance_rate)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 nobj=numel(obj);
 if nobj==0

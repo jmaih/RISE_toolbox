@@ -1,4 +1,24 @@
 function [this,rise_items,matlab_args]=parse_plot_args(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %    Defines further plotting arguments for rise time series objects 
 %     The following properties allow to control for:
 %     - the figure size (multiple plots): 'figsize', with default [3,3]

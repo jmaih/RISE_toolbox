@@ -1,4 +1,24 @@
 function markov_chains_=format_markov_chains(markov_chains_,plist,endo_names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 nmc=numel(markov_chains_);
 cparam=cell(2,nmc+1);
 mc_names={markov_chains_.name};

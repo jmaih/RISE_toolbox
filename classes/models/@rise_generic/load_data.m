@@ -1,4 +1,24 @@
 function [obj,issue,retcode]=load_data(obj,varargin)%,estimation_flag
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     obj=struct('data',ts,...

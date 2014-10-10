@@ -1,4 +1,24 @@
 function dictionary=parse(FileName,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % by the way, I can still declare exogenous and make them observable at the
 % same time. The exogenous that are observed are determisitic. This opens
 % the door for estimating partial equilibrium models

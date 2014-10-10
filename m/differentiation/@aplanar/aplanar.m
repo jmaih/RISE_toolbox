@@ -1,4 +1,53 @@
 classdef aplanar
+    % aplanar automatic "planar" differentiation
+    %
+    % - [abs](aplanar/abs)
+    % - [acos](aplanar/acos)
+    % - [acosh](aplanar/acosh)
+    % - [and](aplanar/and)
+    % - [aplanar](aplanar/aplanar)
+    % - [asin](aplanar/asin)
+    % - [asinh](aplanar/asinh)
+    % - [atan](aplanar/atan)
+    % - [atanh](aplanar/atanh)
+    % - [cos](aplanar/cos)
+    % - [cosh](aplanar/cosh)
+    % - [cot](aplanar/cot)
+    % - [coth](aplanar/coth)
+    % - [diff](aplanar/diff)
+    % - [eq](aplanar/eq)
+    % - [erf](aplanar/erf)
+    % - [exp](aplanar/exp)
+    % - [ge](aplanar/ge)
+    % - [gt](aplanar/gt)
+    % - [if_elseif](aplanar/if_elseif)
+    % - [if_then_else](aplanar/if_then_else)
+    % - [le](aplanar/le)
+    % - [log](aplanar/log)
+    % - [log10](aplanar/log10)
+    % - [lt](aplanar/lt)
+    % - [max](aplanar/max)
+    % - [min](aplanar/min)
+    % - [minus](aplanar/minus)
+    % - [mpower](aplanar/mpower)
+    % - [mrdivide](aplanar/mrdivide)
+    % - [mtimes](aplanar/mtimes)
+    % - [ne](aplanar/ne)
+    % - [normcdf](aplanar/normcdf)
+    % - [normpdf](aplanar/normpdf)
+    % - [or](aplanar/or)
+    % - [plus](aplanar/plus)
+    % - [power](aplanar/power)
+    % - [rdivide](aplanar/rdivide)
+    % - [sign](aplanar/sign)
+    % - [sin](aplanar/sin)
+    % - [sinh](aplanar/sinh)
+    % - [sqrt](aplanar/sqrt)
+    % - [tan](aplanar/tan)
+    % - [tanh](aplanar/tanh)
+    % - [times](aplanar/times)
+    % - [uminus](aplanar/uminus)
+    % - [uplus](aplanar/uplus)
     properties
         x
         dx
@@ -493,7 +542,7 @@ classdef aplanar
                 C{ii}=zeros([n,nv*ones(1,ii)]);
             end
             silent=true;
-            xxx=repmat('x',1,order); 
+            xxx=repmat('x',1,order);
             for ifunc=1:n
                 % get info
                 %---------

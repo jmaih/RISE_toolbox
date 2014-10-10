@@ -1,4 +1,24 @@
 function plot_handle=bar(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 %     bar(X,db) draws the columns of the M-by-N matrix db as M groups of N
 %     vertical bars versus vector of dates X. X can be of

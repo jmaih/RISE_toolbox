@@ -1,6 +1,26 @@
 function [A,RHO_A,THETA_A,...
     SIG,RHO_SIG,THETA_SIG,...
     OMG,RHO_OMG,THETA_OMG]=form_parameter_matrices(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 obj=solve(obj);
 
 SIG=obj.solution.sig;

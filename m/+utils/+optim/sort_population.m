@@ -1,4 +1,24 @@
 function [pop,order]=sort_population(pop,iteration)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<2
     iteration=[];
 end

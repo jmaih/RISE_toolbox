@@ -1,4 +1,24 @@
 function y=univariate_draw(lb,ub)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 [nr,nc]=size(lb);
 lb=lb(:);
 ub=ub(:);

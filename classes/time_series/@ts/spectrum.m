@@ -1,4 +1,24 @@
 function [sw,jj,T]=spectrum(this)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 y=this.data;
 if size(y,3)>1
     error([mfilename,':: this operation is only defined for databases with one page'])

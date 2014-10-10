@@ -1,4 +1,24 @@
 function [st,Q0,PAI,retcode]=choose_state(st,Qfunc,PAI,y)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % st: state
 % Qfunc: function that returns the transition matrix evaluated at y ...
 % PAI: current updated probabilities

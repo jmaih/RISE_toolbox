@@ -1,4 +1,24 @@
 function obj=do_not_anticipate_future_shocks(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 kmax=max(obj.exogenous.shock_horizon);
 % deterministic variables can also be anticipated...
 if kmax>0 && ~obj.options.irf_anticipate

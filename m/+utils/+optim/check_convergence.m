@@ -1,4 +1,24 @@
 function stopflag=check_convergence(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 stopflag=[];
 if obj.iterations>=obj.MaxIter;
     stopflag=sprintf('iterations budget of %0.0f counts exhausted',obj.MaxIter);

@@ -1,4 +1,24 @@
 function Initcond=set_simulation_initial_conditions(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 
 % complementarity: do it here so as to keep the memory light

@@ -1,4 +1,24 @@
 function db=ts_roll_or_expand(db,func,window,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 data=db.data;
 

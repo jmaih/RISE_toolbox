@@ -1,4 +1,24 @@
 function rawline_=remove_comments(rawline_)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % locate comments
 loc_=strfind(rawline_,'%');
 if ~isempty(loc_)

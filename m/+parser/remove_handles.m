@@ -1,4 +1,24 @@
 function myfunc=remove_handles(myfunc)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if ischar(myfunc)
     myfunc=cellstr(myfunc);
 end

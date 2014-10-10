@@ -1,4 +1,50 @@
 classdef rise_generic % < matlab.mixin.Heterogeneous
+    % rise_generic generic class for various types of models
+    %
+    % methods
+    % --------
+    %
+    % - [check_optimum](rise_generic/check_optimum)
+    % - [draw_parameter](rise_generic/draw_parameter)
+    % - [estimate](rise_generic/estimate)
+    % - [forecast](rise_generic/forecast)
+    % - [get](rise_generic/get)
+    % - [historical_decomposition](rise_generic/historical_decomposition)
+    % - [irf](rise_generic/irf)
+    % - [isnan](rise_generic/isnan)
+    % - [load_parameters](rise_generic/load_parameters)
+    % - [log_marginal_data_density](rise_generic/log_marginal_data_density)
+    % - [log_posterior_kernel](rise_generic/log_posterior_kernel)
+    % - [log_prior_density](rise_generic/log_prior_density)
+    % - [posterior_marginal_and_prior_densities](rise_generic/posterior_marginal_and_prior_densities)
+    % - [posterior_simulator](rise_generic/posterior_simulator)
+    % - [print_estimation_results](rise_generic/print_estimation_results)
+    % - [prior_plots](rise_generic/prior_plots)
+    % - [report](rise_generic/report)
+    % - [rise_generic](rise_generic/rise_generic)
+    % - [set](rise_generic/set)
+    % - [set_solution_to_companion](rise_generic/set_solution_to_companion)
+    % - [simulate](rise_generic/simulate)
+    % - [simulation_diagnostics](rise_generic/simulation_diagnostics)
+    % - [solve](rise_generic/solve)
+    % - [stoch_simul](rise_generic/stoch_simul)
+    % - [theoretical_autocorrelations](rise_generic/theoretical_autocorrelations)
+    % - [theoretical_autocovariances](rise_generic/theoretical_autocovariances)
+    % - [variance_decomposition](rise_generic/variance_decomposition)
+    %
+    % properties
+    % -----------
+    %
+    % - [legend] -
+    % - [endogenous] -
+    % - [exogenous] -
+    % - [parameters] -
+    % - [observables] -
+    % - [markov_chains] -
+    % - [options] -
+    % - [estimation] -
+    % - [solution] -
+    % - [filtering] -
     properties
         legend='';
     end
@@ -27,7 +73,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         list_of_issues
         routines=struct();
     end
-	
+    
     methods(Abstract)
         % methods that must be implemented by the subclasses
         varargout=solve(varargin)
@@ -81,9 +127,9 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
                 %  mssvar dsge-var dsge-kulish star stvar stochvol
                 error(['"',model_type,'" model class not yet implemented'])
             end
-%             % model type
-%             %-----------
-%             obj.model_class=model_type;
+            %             % model type
+            %             %-----------
+            %             obj.model_class=model_type;
             % further declarations
             %----------------------
             obj=do_names(obj,endogen,'endogenous');

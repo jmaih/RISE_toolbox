@@ -1,4 +1,24 @@
 function output=concatenate_series_from_different_models(dbcell)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % dbcell is a cell array of structures of time series objects
 % all elements should have the same dimensions else there will be a crash
 % returns a structure whose fields are the concatenated time series objects

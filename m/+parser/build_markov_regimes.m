@@ -1,4 +1,24 @@
 function [TM,markov_chain_info,myifelseif]=build_markov_regimes(transition_matrices,markov_chains)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 chain_names=sort(fieldnames(transition_matrices));
 markov_chain_info=struct();

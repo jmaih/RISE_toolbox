@@ -1,4 +1,24 @@
 function [markov_chains_]=reset_markov_chains(param_template,markov_chains_,endo_names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % create the parameters
 %-----------------------

@@ -1,4 +1,24 @@
 function [h,p,jbstat,critval]=jbtest(this,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % -H: H=0 means null hypothesis ("the data are normally
 % distributed") cannot be rejected at the 5% significance
 % level. H=1 means null can be rejected at the 5% level.

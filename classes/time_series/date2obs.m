@@ -1,4 +1,24 @@
 function [obs,flag_]=date2obs(start_date,new_date)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 [start_serial,start_frequency]=date2serial(start_date);
 [new_serial,new_frequency]=date2serial(new_date);
 if ~strcmp(start_frequency,new_frequency)

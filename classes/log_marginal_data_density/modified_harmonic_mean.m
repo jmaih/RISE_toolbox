@@ -1,4 +1,8 @@
 classdef modified_harmonic_mean
+    % modified_harmonic_mean computation of the MDD using modified harmonic mean
+    % - [conclude](modified_harmonic_mean/conclude)
+    % - [modified_harmonic_mean](modified_harmonic_mean/modified_harmonic_mean)
+    % - [update](modified_harmonic_mean/update)
     properties
         xmean
         vcov_mean

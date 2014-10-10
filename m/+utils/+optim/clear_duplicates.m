@@ -1,4 +1,24 @@
 function [islands,ids]=clear_duplicates(islands,lb,ub,newdeal)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     newdeal=false;
 end

@@ -1,4 +1,24 @@
 function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % - B: vector of regression coefficients in the linear model Y = X*B.
 % - BINT: of 95% confidence intervals for B
 % - R: vector of residuals

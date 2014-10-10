@@ -1,4 +1,24 @@
 function obj=set_z_eplus_horizon(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 shock_horizon=obj.exogenous.shock_horizon;
 kmax=max(obj.exogenous.shock_horizon);
 % deterministic variables can also be anticipated...

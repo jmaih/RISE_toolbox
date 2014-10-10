@@ -1,4 +1,24 @@
 function [newstruct,retcode]=evaluate_transition_matrices(xstruct,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isa(xstruct,'function_handle')
     [newstruct,retcode]=xstruct(varargin{:});

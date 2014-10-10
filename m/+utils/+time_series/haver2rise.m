@@ -1,5 +1,24 @@
-
 function [data,varinfo] = haver2rise(tickers)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %% haver2rise.m
 
 yourPathToHaver = '//imfdata/econ/DATA/DLX/DATA/';

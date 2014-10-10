@@ -1,4 +1,24 @@
 function allobj=solve_alternatives(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % syntax is allobj=solve_alternatives(obj,solver,file2save2)
 
 if isempty(obj)

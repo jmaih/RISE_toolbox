@@ -1,4 +1,24 @@
 function [LogLik,Incr,retcode,obj]=likelihood_dsge_var(params,obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % N.B: This function assumes the likelihood is to be maximized
 
 if nargin~=2

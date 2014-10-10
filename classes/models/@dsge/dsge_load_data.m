@@ -1,4 +1,24 @@
 function obj=dsge_load_data(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 data_provided=obj.options.data.NumberOfVariables>0;
 if data_provided %simulation_available || 
     estim_start_date=obj.options.estim_start_date;

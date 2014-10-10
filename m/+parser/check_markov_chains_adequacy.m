@@ -1,4 +1,24 @@
 function check_markov_chains_adequacy(dictionary)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % check that the markov chain is parameterized in all of its elements
 %---------------------------------------------------------------------

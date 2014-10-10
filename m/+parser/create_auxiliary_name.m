@@ -1,4 +1,24 @@
 function new_name=create_auxiliary_name(name,lead_or_lag)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if ~(ischar(name)||iscellstr(name))
     error('first argument must be a char or a cellstr')

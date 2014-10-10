@@ -1,4 +1,24 @@
 function H = hessian(Objective,xparam,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 tol      = eps.^(1/4);
 diagonly = false;
 

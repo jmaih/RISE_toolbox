@@ -1,4 +1,24 @@
 function add_str=lead_lag_string(lead_or_lag)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if lead_or_lag>0
     add_str='_AUX_F_';
 elseif lead_or_lag<0

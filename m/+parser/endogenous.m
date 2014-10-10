@@ -1,4 +1,24 @@
 function new=endogenous()
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % format endogenous, parameters, observables, etc
 new=struct('name',{},...

@@ -1,4 +1,24 @@
 function [flag,msg]=is_forbidden_name(name)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 fn={
     'regime','used for setting up simulations '

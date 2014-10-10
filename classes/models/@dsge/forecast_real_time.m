@@ -1,4 +1,24 @@
 function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % see also plot_real_time
 

@@ -1,4 +1,24 @@
 function obj=save_filters(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 Fields={'filtered_variables','Expected_filtered_variables',...
     'updated_variables','Expected_updated_variables',...

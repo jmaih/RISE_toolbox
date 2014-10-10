@@ -1,4 +1,24 @@
 function [obj,ss_and_bgp_start_vals,ssfuncs,retcode]=initial_steady_state(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 obj=set(obj,varargin{:});
 

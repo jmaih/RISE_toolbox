@@ -1,4 +1,24 @@
 function m=allmean(this)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 vnames=this.varnames;
 this=this.data;
 if size(this,3)>1

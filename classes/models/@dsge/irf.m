@@ -1,4 +1,24 @@
 function out=irf(obj,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if isempty(obj)
     out=irf@rise_generic(obj);
     out=utils.miscellaneous.mergestructures(out,...

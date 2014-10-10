@@ -1,4 +1,24 @@
 function universal_options = optimization_universal_options()
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % optimization_universal_options: sets the common default options for all
 % optimizers.
 %   No Detailed explanation needed

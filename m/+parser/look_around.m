@@ -1,4 +1,24 @@
 function [look_behind,loc_,look_forward]=look_around(tokk,to_process,preserve_space)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 

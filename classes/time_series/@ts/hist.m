@@ -1,4 +1,24 @@
 function h=hist(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 %     h = hist(db) bins the elements of db into 10 equally spaced containers
 %     and returns the number of elements in each container.  If db is a

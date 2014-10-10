@@ -1,4 +1,24 @@
 function Qfunc=prepare_transition_routine(obj)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 Qfunc=@(x)load_transition_matrix;
 

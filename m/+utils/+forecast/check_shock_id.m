@@ -1,4 +1,24 @@
 function check_shock_id(id,nx)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 id=id(:);
 if any(id>nx)||...
         any(id<=0)||...

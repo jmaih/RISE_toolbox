@@ -1,4 +1,36 @@
 classdef table < rise_report.generic_report
+    % table report table object
+    %
+    % methods
+    % --------
+    %
+    % - [addlistener](rise_report.table/addlistener)
+    % - [best_title](rise_report.table/best_title)
+    % - [delete](rise_report.table/delete)
+    % - [eq](rise_report.table/eq)
+    % - [findobj](rise_report.table/findobj)
+    % - [findprop](rise_report.table/findprop)
+    % - [ge](rise_report.table/ge)
+    % - [gt](rise_report.table/gt)
+    % - [isvalid](rise_report.table/isvalid)
+    % - [le](rise_report.table/le)
+    % - [lt](rise_report.table/lt)
+    % - [ne](rise_report.table/ne)
+    % - [notify](rise_report.table/notify)
+    % - [reprocess](rise_report.table/reprocess)
+    % - [table](rise_report.table/table)
+    % - [write](rise_report.table/write)
+    %
+    % properties
+    % -----------
+    %
+    % - [title] -
+    % - [longtable] -
+    % - [log] -
+    % - [precision] -
+    % - [numbering] -
+    % - [batch] -
+    % - [id] -
     properties
         title=''
         longtable=false
@@ -29,16 +61,16 @@ classdef table < rise_report.generic_report
                     for icol=1:ncols
                         tmp=reprocess(obj.log{irow,icol});
                         % the leftmost elements are probably strings,
-                        % aligned them left 
+                        % aligned them left
                         if icol==1
                             tmp=['\multicolumn{1}{l}{',tmp,'}']; %#ok<*AGROW>
                         end
                         str=[str,tmp];
-                        if icol<ncols 
+                        if icol<ncols
                             % skip to next column
                             str=[str,' &'];
                         end
-                    end 
+                    end
                     % end of line
                     str=[str,' \\'];
                     AllBatch{irow}=str;

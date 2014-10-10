@@ -1,4 +1,24 @@
 function names=load_varlist(obj,names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % retrieves the list of all the variables
 % entering the object or equation
     if nargin<2

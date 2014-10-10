@@ -1,4 +1,24 @@
 function msgout=decipher(code)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 msg='';
 switch code
     % ====== evaluating the system ====== %

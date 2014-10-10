@@ -1,4 +1,24 @@
 function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_blocks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify | notify-detailed | final | final-detailed ]
     'MaxFunEvals',inf,...% [ positive scalar ]

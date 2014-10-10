@@ -1,4 +1,24 @@
 function Y = kron_times_vector(T1,T2,X)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this function computes kron(T1,T2)*vec(X)
 % kron(T1,T2)*U = [kron(T1,I)*kron(I,T2)]*U=kron(T1,I)*[kron(I,T2)*U]
 W = kron_it(T2,X);

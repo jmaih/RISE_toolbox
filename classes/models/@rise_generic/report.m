@@ -1,4 +1,24 @@
 function mytable=report(obj,destination_root,rep_items,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % rep_items ='endogenous','exogenous','observables','parameters','solution'
 % 'estimation','estimation_statistics','equations'
 

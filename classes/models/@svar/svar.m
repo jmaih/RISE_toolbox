@@ -1,4 +1,54 @@
 classdef svar < rise_generic
+    % svar class for structural VAR models
+    %
+    % methods
+    % --------
+    %
+    % - [check_optimum](svar/check_optimum)
+    % - [draw_parameter](svar/draw_parameter)
+    % - [estimate](svar/estimate)
+    % - [forecast](svar/forecast)
+    % - [get](svar/get)
+    % - [historical_decomposition](svar/historical_decomposition)
+    % - [irf](svar/irf)
+    % - [isnan](svar/isnan)
+    % - [load_parameters](svar/load_parameters)
+    % - [log_marginal_data_density](svar/log_marginal_data_density)
+    % - [log_posterior_kernel](svar/log_posterior_kernel)
+    % - [log_prior_density](svar/log_prior_density)
+    % - [msvar_priors](svar/msvar_priors)
+    % - [posterior_marginal_and_prior_densities](svar/posterior_marginal_and_prior_densities)
+    % - [posterior_simulator](svar/posterior_simulator)
+    % - [print_estimation_results](svar/print_estimation_results)
+    % - [prior_plots](svar/prior_plots)
+    % - [report](svar/report)
+    % - [set](svar/set)
+    % - [set_solution_to_companion](svar/set_solution_to_companion)
+    % - [simulate](svar/simulate)
+    % - [simulation_diagnostics](svar/simulation_diagnostics)
+    % - [solve](svar/solve)
+    % - [stoch_simul](svar/stoch_simul)
+    % - [svar](svar/svar)
+    % - [template](svar/template)
+    % - [theoretical_autocorrelations](svar/theoretical_autocorrelations)
+    % - [theoretical_autocovariances](svar/theoretical_autocovariances)
+    % - [variance_decomposition](svar/variance_decomposition)
+    %
+    % properties
+    % -----------
+    %
+    % - [constant] -
+    % - [nlags] -
+    % - [legend] -
+    % - [endogenous] -
+    % - [exogenous] -
+    % - [parameters] -
+    % - [observables] -
+    % - [markov_chains] -
+    % - [options] -
+    % - [estimation] -
+    % - [solution] -
+    % - [filtering] -
     properties
     end
     properties(SetAccess=protected)
@@ -7,9 +57,9 @@ classdef svar < rise_generic
     end
     properties(SetAccess = private, Hidden = true)%Access=private
         nx
-        estim_param_template        
+        estim_param_template
         % the elements below should be for reduced-form vars only
-		% hence, the var shall inherit from the structural var
+        % hence, the var shall inherit from the structural var
         construction_data
     end
     properties(Access=protected,Hidden = true)
@@ -52,7 +102,7 @@ classdef svar < rise_generic
             obj.solution=struct();
             % link the parameters to the structural matrices and initialize
             %--------------------------------------------------------------
-			[obj.param_to_mat_links,obj.parameter_values,obj.all_param_names_vec]=...
+            [obj.param_to_mat_links,obj.parameter_values,obj.all_param_names_vec]=...
                 vartools.parameters_to_matrices(...
                 obj.param_template,obj.parameters.name,...
                 obj.markov_chains.regimes_number);
@@ -79,7 +129,7 @@ classdef svar < rise_generic
                 estim_names=create_estimated_parameters_list(obj);
                 
                 obj.estimation_restrictions=parameters_links(obj,estim_names);
-
+                
                 % load the data
                 %--------------
                 [obj,issue,retcode]=load_data(obj,varargin{:});
@@ -100,7 +150,7 @@ classdef svar < rise_generic
             end
         end
         function obj=set(obj,varargin)
-                nn=length(varargin);
+            nn=length(varargin);
             % override the rise_generic set method
             if isempty(obj)|| nn==1
                 obj=set@rise_generic(obj,varargin{:});

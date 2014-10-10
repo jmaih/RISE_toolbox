@@ -1,4 +1,24 @@
 function [hptrend,hpcycle] = hpfilter(db,lambda)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % HP filters a collection of time series.
 % 
 % INPUTS 

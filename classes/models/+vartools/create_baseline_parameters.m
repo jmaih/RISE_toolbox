@@ -1,4 +1,24 @@
 function [nan_list,fixed]=create_baseline_parameters(param_template,param_names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 nan_list=[];
 fixed=struct();

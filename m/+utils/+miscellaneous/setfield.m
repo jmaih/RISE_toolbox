@@ -1,4 +1,24 @@
 function [fresh_options,missing]=setfield(default_options,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 nn=length(varargin);
 if nn==1 

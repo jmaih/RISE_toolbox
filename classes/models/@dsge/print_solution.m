@@ -1,4 +1,24 @@
 function outcell=print_solution(obj,varlist,compact_form,precision,equation_format,file2save2)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     outcell=struct();

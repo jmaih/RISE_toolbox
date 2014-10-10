@@ -1,4 +1,24 @@
 function ss=char2serial(x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if iscellstr(x)
     if numel(x)>1
         error('I cannot process more than one element at a time')

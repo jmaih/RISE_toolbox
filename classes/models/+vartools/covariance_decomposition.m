@@ -1,4 +1,24 @@
 function [D,W]=covariance_decomposition(SIGu)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % This function decomposes SIGu = W*diag(D)^2*W', where D is a
 % vector of positive numbers and W is lower triangular matrix with
 % ones on its main diagonal.

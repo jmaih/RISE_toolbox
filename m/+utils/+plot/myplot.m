@@ -1,4 +1,23 @@
 function varargout=myplot(plotfunc,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 funct_type=func2str(plotfunc);
 

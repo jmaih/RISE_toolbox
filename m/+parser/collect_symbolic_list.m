@@ -1,4 +1,24 @@
 function list_ss=collect_symbolic_list(batch,items)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<2
     items=parser.input_list();
 end

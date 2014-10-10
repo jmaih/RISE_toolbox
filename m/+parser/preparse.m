@@ -1,4 +1,24 @@
 function [output,has_macro]=preparse(FileName,parsing_definitions)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % int2str(x)=sprintf('%.0f',x)
 if nargin<2
     parsing_definitions=struct();

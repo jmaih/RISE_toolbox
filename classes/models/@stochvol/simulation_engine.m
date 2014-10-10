@@ -4,6 +4,26 @@ function [x1,x1_linear]=simulation_engine(obj,...
     z,... % deterministic variables
     istate,... % regime
     shocks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 persistent simul_with_shocks is_observed exo_nbr endo_nbr ...
     A RHO_A THETA_A SIG RHO_SIG THETA_SIG OMG RHO_OMG THETA_OMG ...
     build_A vectorize_A build_OMG vectorize_OMG ...

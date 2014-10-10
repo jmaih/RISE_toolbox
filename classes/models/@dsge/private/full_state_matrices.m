@@ -1,4 +1,24 @@
 function [Aplus,A0,Aminus,T0]=full_state_matrices(siz,dbf_plus,d0,dpb_minus,T0)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % builds state matrices for the system
 % Aplus*X_{t+1}+A0*X_{t}+Aminus*X_{t-1}=0
 % the variables are ordered in the order_var order i.e.

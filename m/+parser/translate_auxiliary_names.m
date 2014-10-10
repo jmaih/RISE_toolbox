@@ -1,4 +1,24 @@
 function out=translate_auxiliary_names(names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % variables with lags
 negative_str=parser.lead_lag_string(-1);

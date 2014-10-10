@@ -1,4 +1,24 @@
 function obj=setup_calibration(obj,Calibration)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % Calibration is either a struct or a cell of the form {names,param_data}
 % the parameter values could be vectors if e.g. we want to take the entire
 % parameterization of one model and push it into an identical model. But it

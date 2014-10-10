@@ -1,4 +1,24 @@
 function db=cat(dim,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 n=length(varargin);
 dn1=cell(1,n);

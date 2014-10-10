@@ -1,4 +1,24 @@
 function C=A_times_kron_B_I(A,B,q)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % computes C=A*kron(B,Iq)
 
 % clc,rb=10;cb=7;q=9;ra=3;ca=rb*q;

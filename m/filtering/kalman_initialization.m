@@ -1,5 +1,24 @@
 function [init,retcode]=kalman_initialization(T,R,steadystate,risk,transition_function,options)
-% There is no documentation of this function yet.
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 % diffuse initialization for all elements in the state vector including
 % stationary ones. This is what Waggoner and Zha do, but then they take

@@ -1,4 +1,24 @@
 function y=second_order_logistic(x,g,c1,c2)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<4
     c2=[];
     if nargin<3

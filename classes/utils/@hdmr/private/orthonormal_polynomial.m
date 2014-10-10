@@ -1,5 +1,25 @@
 function [pol,fval,exitflag]=orthonormal_polynomial(...
     max_order,x,optimal,debug)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 a=0;
 b=1;
 tol=sqrt(eps);

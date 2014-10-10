@@ -1,4 +1,24 @@
 function [results,stats]=ols(y0,xdata,nlags,const,expand_results,order)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<6
     order=5;
     if nargin<5

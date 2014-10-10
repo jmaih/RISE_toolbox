@@ -1,4 +1,24 @@
 function locs=set_locations(dnx,dn)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % find the locations of dnx in dn. It is assumed that dn has
 % consecutive dates.
 if ~is_consecutive(dn)

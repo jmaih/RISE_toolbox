@@ -1,4 +1,24 @@
 function [h,legend_]=prior_posterior(ss,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % initialize the legend items
 %----------------------------
 legend_={};

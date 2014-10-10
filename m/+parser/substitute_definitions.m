@@ -1,4 +1,24 @@
 function string=substitute_definitions(string,definitions)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 n = nargin;
 if n==1
     definitions=string;

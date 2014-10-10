@@ -1,4 +1,24 @@
 function obj=cell2object(C,the_class)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 fields=C(1,:);
 vals=C(2,:);
 types=C(3,:); %#ok<NASGU>

@@ -1,4 +1,24 @@
 function [sim_smooth,smooth,filt]=simulation_smoother(y,Z,T,R,H,Q,P1,a1,c,d)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % the model 
 % y_t=Z_t*alpha_t+d_t+e_t
 % alpha_{t+1}=T_t*alpha_t+c_t+R_t*eta_t

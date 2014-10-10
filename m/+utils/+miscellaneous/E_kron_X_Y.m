@@ -1,4 +1,24 @@
 function E=E_kron_X_Y(Mx,Ny,Oyx)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % problems:
 %         1- X and Y should have the same # rows
 %         2- How to get the COV(vec(Y),vec(X)) ?

@@ -1,4 +1,24 @@
 function a=smin(x,tol)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % smooth approximation of min(x,0)
 if nargin<2
     tol=1e-5;

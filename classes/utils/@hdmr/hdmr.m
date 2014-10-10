@@ -1,6 +1,41 @@
 classdef hdmr
-    % objective is either : f and theta or a function that will help
-    % calculate f and theta
+    % hdmr High dimensional model representation
+    %
+    % methods
+    % --------
+    %
+    % - [estimate](hdmr/estimate)
+    % - [first_order_effect](hdmr/first_order_effect)
+    % - [hdmr](hdmr/hdmr)
+    % - [metamodel](hdmr/metamodel)
+    % - [plot_fit](hdmr/plot_fit)
+    % - [polynomial_evaluation](hdmr/polynomial_evaluation)
+    % - [polynomial_integration](hdmr/polynomial_integration)
+    % - [polynomial_multiplication](hdmr/polynomial_multiplication)
+    %
+    % properties
+    % -----------
+    %
+    % - [N] -
+    % - [Nobs] -
+    % - [n] -
+    % - [output_nbr] -
+    % - [theta] -
+    % - [theta_low] -
+    % - [theta_high] -
+    % - [g] -
+    % - [x] -
+    % - [expansion_order] -
+    % - [pol_max_order] -
+    % - [poly_coefs] -
+    % - [Indices] -
+    % - [coefficients] -
+    % - [aggregate] -
+    % - [f0] -
+    % - [D] -
+    % - [sample_percentage] -
+    % - [optimal] -
+    % - [param_names] -
     properties
         N
         Nobs
@@ -30,6 +65,8 @@ classdef hdmr
         %         %================
         function obj=hdmr(objective,param_names,bounds,expansion_order,pol_max_order,...
                 pol_optimal,sample_percentage)
+            % objective is either : f and theta or a function that will
+            % help calculate f and theta 
             if nargin<7
                 sample_percentage=[];
                 if nargin<6
@@ -43,7 +80,7 @@ classdef hdmr
                                 if nargin<2
                                     param_names=[];
                                     if nargin<1
-                                    return
+                                        return
                                     end
                                 end
                             end
@@ -167,7 +204,7 @@ classdef hdmr
                         for cc=1:ncols
                             vc=ind(cc); % variable
                             pol_ord_c=Regimes(kk,cc); % polynomial order
-% %                             koefs=obj.poly_coefs{pol_ord_c}(:,vc);
+                            % %                             koefs=obj.poly_coefs{pol_ord_c}(:,vc);
                             koefs=obj.poly_coefs{pol_ord_c};%(:,vc)
                             regressor_c=hdmr.polynomial_evaluation(koefs,POLS(:,:,vc));
                             f_phi=bsxfun(@times,f_phi,regressor_c);
@@ -240,7 +277,7 @@ classdef hdmr
                                 fijk_name=[fijk_name,'_',int2str(vc)]; %#ok<AGROW>
                             end
                             pol_ord_c=Regimes(kk,cc); % polynomial order
-% %                             koefs=obj.poly_coefs{pol_ord_c}(:,vc);
+                            % %                             koefs=obj.poly_coefs{pol_ord_c}(:,vc);
                             koefs=obj.poly_coefs{pol_ord_c};%(:,vc)
                             regressor_c=hdmr.polynomial_evaluation(koefs,xx(vc,:)');
                             phi_pqrst=phi_pqrst.*regressor_c;
@@ -367,7 +404,7 @@ classdef hdmr
             for oo=order+1:-1:1
                 val=(val+pbar(oo))*b_a;
             end
-        end      
+        end
     end
 end
 

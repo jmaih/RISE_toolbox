@@ -1,4 +1,24 @@
 function db=binary_operation(db1,db2,op_string)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 operation=str2func(['@(x,y)',op_string,'(x,y)']);
 if isa(db1,'ts')
     if isa(db2,'ts')

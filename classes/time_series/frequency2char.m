@@ -1,4 +1,24 @@
 function fq=frequency2char(fq)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 fmap=frequency_map();
 if isnumeric(fq)
     locs=nan(size(fq));

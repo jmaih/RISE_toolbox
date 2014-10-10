@@ -1,4 +1,24 @@
 function [dictionary,PlannerObjective_block,is_model_with_planner_objective]=planner_objective(dictionary,listing)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 is_model_with_planner_objective=~isempty(listing);
 PlannerObjective_block=cell(0,1);

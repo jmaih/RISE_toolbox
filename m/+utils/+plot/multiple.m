@@ -1,4 +1,24 @@
 function hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 % this function plots multiple graphs and figures
 % input arguments
 %   - plotfunc: a function handle which takes as input a valid variable

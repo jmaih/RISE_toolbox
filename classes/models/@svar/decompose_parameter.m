@@ -1,4 +1,24 @@
 function [a_loc,eqtn_loc,var_loc]=decompose_parameter(x,headers)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 underscores=find(x=='_');
 aa=x(1:underscores(1)-1);
 a_loc=[];

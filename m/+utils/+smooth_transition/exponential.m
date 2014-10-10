@@ -1,4 +1,24 @@
 function y=exponential(x,g,c)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<3
     c=0;
     if nargin<2

@@ -1,4 +1,24 @@
 function obj=msvar_priors(obj,estim_names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if isempty(obj)
     obj=struct('vp_mnst_overall_tightness',3,...1

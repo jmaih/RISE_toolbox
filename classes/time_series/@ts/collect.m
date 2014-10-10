@@ -1,4 +1,24 @@
 function this=collect(varargin)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 nn=length(varargin);
 exitflag= nn==0||isempty(varargin{1})||...
     (nn==1 && isa(varargin{1},'ts'));

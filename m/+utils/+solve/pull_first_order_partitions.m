@@ -1,4 +1,24 @@
 function [dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,de_0]=pull_first_order_partitions(dv,posv)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 h=size(dv,2);
 dbf_plus=cell(h);
 ds_0=cell(h);

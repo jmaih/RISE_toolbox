@@ -1,4 +1,24 @@
 function correction=saveaspdf(fig,filename)%%
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 theDot=find(filename=='.');
 if ~isempty(theDot)
     filename=filename(1:theDot-1);

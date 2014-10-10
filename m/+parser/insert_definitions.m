@@ -1,4 +1,24 @@
 function [listing,nlist]=insert_definitions(listing,flag)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 nlist=size(listing,1);
 
 if flag

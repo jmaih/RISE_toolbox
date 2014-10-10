@@ -1,4 +1,24 @@
 function estim_names=update_estimated_parameter_names(obj,estim_names)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 is_constant_parameter_var=obj.markov_chains.regimes_number==1 && ...
         obj.options.vp_analytical_post_mode;
