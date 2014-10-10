@@ -9,6 +9,7 @@ junk/*
 *.bat
 *.py
 *.rst
+*.css
 *.doctree
 Makefile
 *.bak
