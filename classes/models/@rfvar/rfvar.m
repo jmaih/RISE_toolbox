@@ -1,5 +1,5 @@
 classdef rfvar < svar
-    % rfvar class for reduced-form VAR models
+    % rfvar Reduced-form VAR modeling
     %
     % methods
     % --------

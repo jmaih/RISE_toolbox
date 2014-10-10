@@ -1,5 +1,7 @@
 doc/*
 development/*
+doctrees/*
+help/build/html/_sources/*
 trash/*
 junk/*
 # *.html
@@ -7,6 +9,7 @@ junk/*
 *.bat
 *.py
 *.rst
+*.doctree
 Makefile
 *.bak
 *old*

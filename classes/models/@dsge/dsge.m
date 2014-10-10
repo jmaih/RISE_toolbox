@@ -1,5 +1,5 @@
 classdef dsge < rise_generic
-    % dsge model class for dsge models
+    % dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
     %
     % methods
     % --------

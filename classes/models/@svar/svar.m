@@ -1,5 +1,5 @@
 classdef svar < rise_generic
-    % svar class for structural VAR models
+    % svar Structural VAR modeling
     %
     % methods
     % --------
