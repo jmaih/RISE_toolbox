@@ -1,4 +1,12 @@
 classdef bee %< handle
+    % BEE attempts to find the global minimum of a constrained function of
+    %  several variables.
+    %
+    % Constructor
+    % ------------
+    % 
+    % - [bee](bee/bee)
+    
     properties
         stopping_created=false;
         start_time

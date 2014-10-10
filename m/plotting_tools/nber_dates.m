@@ -1,4 +1,24 @@
 function [start,finish]= nber_dates(freq)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<1 || isempty(freq)
     freq='Q';
 end

@@ -1,4 +1,24 @@
 function [x,f,exitflag,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
+% bee_gate gateway to bee
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %  BEE_GATE attempts to find the global minimum of a constrained function of
 %  several variables.
 %   BEE_GATE attempts to solve problems of the form:

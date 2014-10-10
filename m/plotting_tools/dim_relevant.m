@@ -1,4 +1,24 @@
 function []=dim_relevant(freq,nber_datesfunc)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<1
     freq=[];
 end

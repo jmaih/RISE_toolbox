@@ -1,4 +1,24 @@
 function [h,pp]=plot_real_time(rts,pp,nticks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<3
     nticks=[];
 end

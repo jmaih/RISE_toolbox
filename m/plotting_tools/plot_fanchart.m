@@ -1,4 +1,24 @@
 function hh=plot_fanchart(data,MainColor,nticks)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 if nargin<3
     nticks=[];
     if nargin<2
@@ -30,14 +50,15 @@ hh=gca();
 
 grid on
 
+end
 
-%             deciles=thisdata(dd,:);
-%             mybase=min(deciles(1,:));
-%             h1 = area(0:nobs-1,deciles(end,:),'FaceColor',[.9 .9 .9],'BaseValue',mybase);
-%             hold on
-%             h2 = area(0:nobs-1,deciles(1,:),'FaceColor',[1 1 1],'BaseValue',mybase);
-%             plot(0:nobs-1,m,'-k','linewidth',3)
-%             keyboard
+function hh=plot_fill(x,ydown,yup,color)
+good=~isnan(ydown) & ~isnan(yup);
+filled=[yup(good);flipud(ydown(good))];
+x=x(good);
+x=[x(:);flipud(x(:))];
+hh=fill(x,filled,color);
+end
 
 function BaseColors=InterpolateColors(ci,maincolor)
 ci=ci(:);
@@ -80,15 +101,4 @@ switch maincolor
         end
 end
 
-% Colors=zeros(numel(ci),3);
-% for i=1:numel(ci)
-%     t=ci(i);
-%     tt0=t-c_nb;
-%     for k=1:n
-%         j=[1:k-1,k+1:n];
-%         tk_m_tj=c_nb(k)-c_nb(j);
-%         Colors(i,:)=Colors(i,:)+prod(tt0(j)./tk_m_tj)*BaseColor(k,:);
-%     end
-% end
-% Colors(Colors<0)=0;
-% Colors(Colors>1)=1;
+end

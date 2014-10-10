@@ -1,4 +1,24 @@
 function hh = rotateXLabels( ax, angle, varargin )
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 %rotateXLabels: rotate any xticklabels
 %
 %   hh = rotateXLabels(ax,angle) rotates all XLabels on axes AX by an angle

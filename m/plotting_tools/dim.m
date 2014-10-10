@@ -1,4 +1,23 @@
 function []=dim(start,finish,colorstr)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% Description
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 % function []=shade(start,finish,colorstr);
 %
