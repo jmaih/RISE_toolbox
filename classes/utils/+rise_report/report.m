@@ -1,5 +1,5 @@
 classdef report < rise_report.titlepage
-    % report reporting
+    % report Reporting system
     %
     % methods
     % --------
