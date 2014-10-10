@@ -633,6 +633,10 @@ end
                 % final solution matrix: Forward-looking+predetermined
                 %-----------------------------------------------------
                 Tzp=[Fzp;Pzp];
+                % check again
+                if any(isnan(Tzp(:)))
+                    retcode=22;
+                end
             end
         end
     end
