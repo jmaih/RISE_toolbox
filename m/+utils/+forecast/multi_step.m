@@ -30,7 +30,7 @@ simul_do_update_shocks=options.simul_do_update_shocks;
 options=rmfield(options,{'states','shocks','PAI','Qfunc','y'});
 
 sims=nan(endo_nbr,options.nsteps);
-h=numel(T);
+h=size(T,2);
 
 do_Qt=nargout>3;
 span=options.nsteps+options.burn;
