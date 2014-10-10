@@ -4,6 +4,10 @@ trash/*
 junk/*
 # *.html
 *.asv
+*.bat
+*.py
+*.rst
+Makefile
 *.bak
 *old*
 *- Copy*
