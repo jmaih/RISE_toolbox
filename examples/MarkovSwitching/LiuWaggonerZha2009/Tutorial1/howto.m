@@ -21,7 +21,7 @@ clc
 % try to understand intuitively what rise does when you pass an empty
 % object to a particular method.
 %% Now, turn on the game
-% open all the files with extension dyn in this folder and try to
+% open all the files with extension .rs in this folder and try to
 % understand what they mean and how they are related to one another
 
 %% Read the model(s)
@@ -111,7 +111,7 @@ newlist=varlist;
 
 % plot the simulations for all those variables and for all models
 %----------------------------------------------------------------
-figure('name',['simulated data for model ',sprintf('%0.f',choice)]);
+figure('name','simulated data ');
 for ivar=1:numel(newlist)
     subplot(3,1,ivar)
     % pick a variable
@@ -128,8 +128,7 @@ set(tmp,'fontsize',15)
 
 %% alternatively plot the simulations each model separately
 for imod=1:numel(m)
-    choice=1;
-    figure('name',['simulated data for model ',sprintf('%0.f',choice)]);
+    figure('name',['simulated data for model ',sprintf('%0.f',imod)]);
     for ivar=1:numel(newlist)
         subplot(3,1,ivar)
         % pick a variable
