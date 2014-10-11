@@ -1,3 +1,4 @@
+
 classdef figure < rise_report.generic_report
     % figure report figure object
     %
@@ -58,6 +59,51 @@ classdef figure < rise_report.generic_report
     end
     methods
         function obj=figure(varargin)
+            % FIGURE constructs a reporting figure
+            %
+            % Syntax
+            % -------
+            % ::
+            %   obj=FIGURE(varargin)
+            %
+            % Inputs
+            % -------
+            %
+            % the input arguments must come in pairs :
+            %   - ['title',[char]] : title for the figure to be reported
+            %
+            %   - ['name',[char|handle]] : name of the pdf file (on the
+            %     matlab path) or the handle to the figure to be reported
+            %
+            %   - ['width',[numeric|{}]] : width for resizing the figure to
+            %     be plotted
+            %
+            %   - ['height',[numeric|{}]] : height for resizing the figure to
+            %     be plotted
+            %
+            %   - ['angle',[numeric|{0}]] : rotation angle
+            %
+            %   - ['scale',[numeric|{0.85}]] : scale for resizing the figure to
+            %     be plotted
+            %
+            %   - ['graphicspath',[char|{''}]] : path to the location of
+            %     the graph or figure
+            %
+            %   - ['numbering',[{true}|false]] : whether or not the table
+            %     should be numbered in the final report
+            %
+            % Outputs
+            % --------
+            %
+            % - obj [figure object]
+            %
+            % Description
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
             obj=rise_report.feed_properties(mfilename,obj,varargin{:});
             own_props={
                 'name',@(x)ischar(x)||ishandle(x)

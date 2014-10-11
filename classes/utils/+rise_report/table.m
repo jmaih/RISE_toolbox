@@ -48,6 +48,42 @@ classdef table < rise_report.generic_report
     end
     methods
         function obj=table(varargin)
+            % TABLE constructs a reporting table
+            %
+            % Syntax
+            % -------
+            % ::
+            %   obj=TABLE(varargin)
+            %
+            % Inputs
+            % -------
+            %
+            % the input arguments must come in pairs :
+            %   - ['log',[cell array]] : table comes in the form of a cell
+            %      array
+            %
+            %   - ['title',[char]]
+            %
+            %   - ['longtable',[true|{false}]]
+            %
+            %   - ['precision',[numeric|{4}]] : number of decimal points
+            %
+            %   - ['numbering',[{true}|false]] : whether or not the table
+            %     should be numbered in the final report
+            %
+            % Outputs
+            % --------
+            %
+            % - obj [table object]
+            %
+            % Description
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
+            
             obj=rise_report.feed_properties(mfilename,obj,varargin{:});
         end
         function b = get.batch(obj)
