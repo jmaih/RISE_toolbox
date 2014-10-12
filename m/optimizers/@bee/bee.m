@@ -1,6 +1,5 @@
 classdef bee %< handle
-    % BEE attempts to find the global minimum of a constrained function of
-    %  several variables.
+    % BEE global optimization of constrained functions using bees
     %
     % Constructor
     % ------------
@@ -52,8 +51,7 @@ classdef bee %< handle
     end
     methods
         function obj=bee(Objective,x0,f0,lb,ub,options,varargin)
-            %  BEE attempts to find the global minimum of a constrained function of
-            %  several variables.
+            %  BEE attempts to find the global minimum of a constrained function of several variables.
             %   BEE attempts to solve problems of the form:
             %    min F(X)  subject to:  LB <= X <= UB   (bounds)
             %     X
