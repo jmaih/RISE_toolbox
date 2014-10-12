@@ -176,13 +176,17 @@ end
         separators=find(target==filesep);
         target=target(separators(end-1)+1:separators(end)-1);
         vv = ver(target);
-        l1 = '+--------------------------------------------------+';
+        l1 = '+---------------------------------------------------------------+';
         
         disp(l1);
         disp(['Welcome to the ', vv.Name])
         disp(['Version: ', vv.Version])
         disp(['Release: ', vv.Release])
         disp(['Date: ', vv.Date])
+        disp(' ')
+        disp(['please check out the <a href="build/html/master_doc.html">html documentation</a> ',...
+            'or the <a href="build/latex/RISE.pdf">pdf documentation</a> '])
+        disp(' ')
         disp('For concerns, problems, suggestions and desideratas')
         disp('please send email to <a href="junior.maih@gmail.com">this address</a>')
         disp('Thank you in advance for your feedback !!!')
