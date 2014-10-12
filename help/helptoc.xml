@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding="utf-8"?>
+
+<toc version="1.0">
+    
+    <tocitem image="$toolbox/matlab/icons/book_mat.gif" target="build/html/master_doc.html">
+        
+        <tocitem target="FunctionReference.html" image="HelpIcon.FUNCTION">Function reference
+            
+            <tocitem target="build/html/getting_started.html">Getting started</tocitem>
+            
+            <tocitem target="build/html/capabilities.html">Modeling</tocitem>
+            
+            <tocitem target="build/html/dsge_interface.html">Language fundamentals</tocitem>
+        </tocitem>
+        
+    <!-- Getting Started -->
+    <tocitem target="build/html/getting_started.html" image="HelpIcon.GETTING_STARTED">Getting Started with the RISE Toolbox
+      <tocitem target="build/html/intro_folder/rise_at_a_glance.html">RISE at a glance </tocitem>
+      <tocitem target="build/html/getting_started_folder/installation_configuration.html">Installing RISE </tocitem>
+      <tocitem target="build/html/getting_started_folder/troubleshooting.html">Trouble-shooting</tocitem>
+    </tocitem>
+    
+    <!-- Getting Started -->
+        <tocitem target="build/html/master_doc.html" image="HelpIcon.USER_GUIDE" useHtmlTemplate="false">User Guide
+            
+            <!-- Introduction to dsge -->
+            <tocitem >DSGE modeling
+                <tocitem target="build/html/dsge_interface.html">The model language: Do you speak RISE?</tocitem>
+                <tocitem target="build/html/classes/models/@dsge/dsge.html"> The DSGE or RISE class </tocitem>
+            </tocitem>
+            
+            <!-- Introduction to rfvar -->
+            <tocitem >Reduced-form VAR modeling
+                <tocitem target="build/html/rfvar_interface.html">The rfvar language</tocitem>
+                <tocitem target="build/html/classes/models/@rfvar/rfvar.html"> The RFVAR class </tocitem>
+            </tocitem>
+            
+            <!-- Introduction to svar -->
+            <tocitem >Structural VAR modeling
+                <tocitem target="build/html/svar_interface.html">The svar language</tocitem>
+                <tocitem target="build/html/classes/models/@svar/svar.html"> The SVAR class </tocitem>
+            </tocitem>
+            
+            <tocitem target="build/html/classes/time_series/@ts/ts.html">Time series</tocitem>
+            <!-- modelling -->
+            <!-- simulation -->
+            <!-- estimation -->
+            <!-- forecasting -->
+            <!-- hdmr -->
+            <!-- mcf -->
+            <!-- ts -->
+            <!-- hdmr -->
+            <!-- hdmr -->
+
+        </tocitem>
+        
+        <!-- - Tutorials
+        
+        <tocitem target="build/html/rise_training_2_intro.html" image="HelpIcon.DEMOS">RISE Training Session 1
+                       
+            <tocitem target="build/html/rise_training_2_topic_1.html" image="$toolbox/matlab/icons/pagesicon.gif">Topic 1 - RISE Review.
+                <tocitem target="build/html/rise_training_2_topic_1_1.html" image="$toolbox/matlab/icons/pagesicon.gif">Introducing objects in RISE</tocitem>
+                <tocitem target="build/html/rise_training_2_topic_1_2.html" image="$toolbox/matlab/icons/pagesicon.gif">Saving and loading objects</tocitem>
+            </tocitem>
+             
+             
+            
+            <tocitem target="build/html/rise_training_2_topic_3.html" image="$toolbox/matlab/icons/pagesicon.gif">Topic 3 - Estimation of equivalent acceleration.
+                <tocitem target="build/html/rise_training_2_topic_3_1.html" image="$toolbox/matlab/icons/pagesicon.gif">Principles and theory</tocitem>
+                <tocitem target="build/html/rise_training_2_topic_3_2.html" image="$toolbox/matlab/icons/pagesicon.gif">Tools for estimating the equivalent acceleration in RISE</tocitem>
+                <tocitem target="build/html/rise_training_2_topic_3_3.html" image="$toolbox/matlab/icons/pagesicon.gif">Estimate equivalent acceleration from simulation data</tocitem>
+            </tocitem>
+             
+            
+        </tocitem>  
+         -->
+         
+        <!-- Examples, Demos, ,Release Notes , 
+        <tocitem target="build/html/examplesindex.html" image="HelpIcon.EXAMPLES">Examples</tocitem>
+        
+        <tocreference target="demos/demos.xml">Demos</tocreference>
+        
+        <tocitem target="build/html/releasenotes.html" image="HelpIcon.RELEASE_NOTES">Release Notes
+        </tocitem>
+          -->
+       
+        <!-- Web side -->
+        <tocitem target="http://github.com/jmaih/RISE_toolbox" image="$toolbox/matlab/icons/webicon.gif">RISE Web Site</tocitem>
+    </tocitem>
+    
+</toc>

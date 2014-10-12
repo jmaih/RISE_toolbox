@@ -9,9 +9,9 @@
 
          
 
-  <matlabrelease>R2010b</matlabrelease>
+  <matlabrelease>R2014a</matlabrelease>
 
-  <name>RISE_Toolbox</name>
+  <name>RISE</name>
 
   <type>toolbox</type>
 
@@ -39,21 +39,9 @@
 
     <listitem>
 
-      <label>Examples</label>
+      <label>RISE Web Site</label>
 
-      <callback>disp('coming soon...')</callback>
-
-      <icon>$toolbox/matlab/icons/demoicon.gif</icon>
-
-    </listitem>
-
-             
-
-    <listitem>
-
-      <label>LTPDA Web Site</label>
-
-      <callback>web http://www.dynare.org/ -browser;</callback>
+      <callback>web http://github.com/jmaih/RISE_toolbox -browser;</callback>
 
       <icon>$toolbox/matlab/icons/webicon.gif</icon>
 
