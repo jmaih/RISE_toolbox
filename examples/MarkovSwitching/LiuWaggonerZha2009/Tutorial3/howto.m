@@ -23,17 +23,6 @@ if setpaths
     % from the examples folder but does not write to them. Here is an
     % example of how to do that. It assumes that your main folder is not
     % under github!
-    %----------------------------------------------------------------------
-%     MainPath='C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha\examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial3';
-%     addpath([MainPath,filesep,'Models']) % folder with the models
-%     addpath([MainPath,filesep,'Data']) % folder containing the data
-
-    % change the path below according to your own system
-    %----------------------------------------------------
-    addpath('C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha')
-    % start RISE
-    %-----------
-    rise_startup()
 end
 %% Bring in some data and transform them into rise_time_series
 
@@ -48,12 +37,10 @@ startdate='1985Q1';
 for id=1:size(dataList,1)
     % we just give the start date, RISE automatically understands that we
     % are dealing with quarterly data by the format startdate
-    mydata.(dataList{id,1})=rise_time_series(startdate,... start date
+    mydata.(dataList{id,1})=ts(startdate,... start date
         tmp.qdatae(:,id+1),... the data
         dataList{id,2}); % list of variables
 end
-
-%% do further transformations if necessary
 
 %% plot your data, compute basic statistics and look at both carefully
 varlist=fieldnames(mydata);
@@ -68,11 +55,6 @@ for id=1:nvars
 end
 [~,tmp]=sup_label(['US data ',mydata.(varlist{id}).start,':', mydata.(varlist{id}).finish],'t');
 set(tmp,'fontsize',15)
-% rotate the x-axis labels since there are too many observations. The
-% optimal number of ticks will be updated in a future release of RISE.
-%---------------------------------------------------------------------
-xrotate(90)
-
 %% Read the model(s)
 
 model_names={'svar_constant','svar_policy','svar_volatility',...
@@ -103,6 +85,8 @@ end
 close all
 % if we have the parallel computing toolbox, we can estimate all models in
 % one go
+% parpool(nmodels)
+% parfor imod=1:nmodels %
 for imod=1:nmodels %
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
@@ -170,7 +154,7 @@ end
 myreplications=200;
 
 batch_irfs=cell(1,nmodels);
-for imod=1:nmodels
+parfor imod=1:nmodels
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
     disp(['*-------- Bayesian IRFs for ',model_names{imod},' model--------*'])
@@ -217,7 +201,7 @@ for imod=1:nmodels
                     % put back into time series format
                     %---------------------------------
                     batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar})=...
-                        rise_time_series(0,...
+                        ts(0,...
                         batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar}),...
                         regime_names);
                 end
@@ -225,6 +209,29 @@ for imod=1:nmodels
         end
     end
 end
+%% prepare a report but now instead of publishing directly, we will add the irfs below
+close all
+rep_data=struct();
+myfields={'name','title','address','author','email','abstract'};
+
+rep_data.name='RudebuschSvensson'; % Name under which the report will be saved
+rep_data.title='Switches in the US Macroeconomic Data using the Rudebusch-Svensson VAR model';
+rep_data.address='Your institution'; 
+rep_data.author='first\_name last\_name'; % your name 
+rep_data.email='first\_name@last\_name.com'; % your email
+myabstract={['This report investigates switches in the parameters of a ',...
+    ' simple VAR model by Rudebusch and Svensson (1999) estimated on US data. 4 variants of the model',...
+    'are estimated: (i) the first model has constant parameters; ',...
+    '(ii) the second model allows for switches in the policy parameters only; ',...
+    '(iii) the third specification allows for switches in volatility only ;',...
+    '(iv) the fourth variant allows for independent switches in both parameters and the ',...
+    'volatility of shocks.']
+    ' ' % leave a blank space to start the next sentence in a new line
+    'We find ample evidence in favor of switching parameters... '
+    };
+rep_data.abstract=myabstract;
+
+xrep=Tao_report([obj{:}],rep_data);
 %% distribution of the irfs
 % set the confidence regions for your irfs
 %-----------------------------------------
@@ -237,7 +244,7 @@ mycolors=mycolors{1};
 % RISE
 %-----------------------------------------------------------------------
 irf_plot_horizon=40;
-
+myrange=sprintf('0:%0.0f',irf_plot_horizon);
 for imod=1:nmodels
     disp('*--------------------------------------------------------------*')
     disp(['*-------- Plotting IRFs for ',model_names{imod},' model--------*'])
@@ -263,7 +270,7 @@ for imod=1:nmodels
         for ivar=1:numel(vnames)
             mydata=batch_irfs{imod}.(shock_names{ishock}).(vnames{ivar});
             for iregime=1:numel(regime_names)
-                out=fanchart(window(mydata,[],irf_plot_horizon,mydata.varnames{iregime}),confi_irfs);
+                out=fanchart(mydata(myrange,mydata.varnames{iregime},:),confi_irfs);
                 figure(figh(iregime))
                 % you may want to change the line below if you want a
                 % different configuration for your plots
@@ -277,7 +284,15 @@ for imod=1:nmodels
                 end
             end
         end
+        for ifig=1:numel(figh)
+            xrep.figure('name',figh(ifig),'title',get(figh(ifig),'Name'))
+            xrep.pagebreak();
+        end
     end
 end
+
+%% now we publish the report
+publish(xrep)
+close all
 
 
