@@ -15,15 +15,8 @@ setpaths=true;
 if setpaths
     addpath Models % folder with the models
     addpath Data % folder containing the data
-    
-    % change the path below according to your own system
-    %----------------------------------------------------
-%     addpath('C:\Users\jma\Documents\GitHub\RISE_toolbox\Alpha')
-    % start RISE
-    %-----------
-    rise_startup()
 end
-%% Bring in some data and transform them into ts
+%% Bring in some data and transform them into RISE's time series format (ts)
 
 tmp=load('Data/data_nk3eq_8501_1301');  %qdatae
 dataList={
@@ -41,8 +34,6 @@ for id=1:size(dataList,1)
         dataList{id,2});
 end
 
-%% do further transformations if necessary
-
 %% plot your data, compute basic statistics and look at both carefully
 varlist=fieldnames(mydata);
 figure('name','US data')
@@ -56,20 +47,6 @@ for id=1:nvars
 end
 [~,tmp]=sup_label(['US data ',mydata.(varlist{id}).start,':', mydata.(varlist{id}).finish],'t');
 set(tmp,'fontsize',15)
-% rotate the x-axis labels since there are too many observations. The
-% optimal number of ticks will be updated in a future release of RISE.
-%---------------------------------------------------------------------
-%% start parallel computing if possible
-
-% it is possible to run estimation in parallel. Uncomment this if you have
-% and wish to use parallel computation for increased efficiency
-
-% if license('checkout','Distrib_Computing_Toolbox')
-%     if matlabpool('size')
-%         matlabpool close
-%     end
-%     matlabpool open 4
-% end
 
 %% Read the model(s)
 
@@ -85,7 +62,7 @@ estim_models=cell(1,nmodels);
 % beyond the scope of these lectures.
 
 % we loop through the different models using the information in the labels
-parfor imod=1:nmodels 
+for imod=1:nmodels 
     % replace "for" by "parfor" if you want to use parallel computation
     estim_models{imod}=rise(model_names{imod},... % name of the file to read
         'rise_save_macro',true,... % we ask rise to write the expanded model to disk
@@ -101,7 +78,7 @@ end
 close all,clc
 % if we have the parallel computing toolbox, we can estimate all models in
 % one go
-parfor imod=1:nmodels 
+for imod=1:nmodels 
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
     disp(['*---------Estimation of ',model_names{imod},' model-----------*'])
@@ -133,19 +110,6 @@ for imod=1:nmodels
     end
     [junk,tmp]=sup_label(mytitle,'t');
     set(tmp,'fontsize',15)
-    orient tall
-    % rotate the labels of the x-axis
-    %--------------------------------
-    
+    orient tall    
 end
 
-%% closing the pool of workers 
-% uncomment the lines below if you want to use parallel computation
-% 
-% if license('checkout','Distrib_Computing_Toolbox')
-%     matlabpool close
-% end
-
-%% reporting
-% you may explore the contents of the estimated objects and/or go to
-% reporting: open howto_report

@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\ModelsWithSteadyStateFile   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\ModelsWithSteadyStateFile   -------------------%
 %
-%   <a href="matlab:help examples\ModelsWithSteadyStateFile\howto">examples\ModelsWithSteadyStateFile\howto</a>                          - % housekeeping
-%   <a href="matlab:help examples\ModelsWithSteadyStateFile\steady_state_4_Canonical_Const">examples\ModelsWithSteadyStateFile\steady_state_4_Canonical_Const</a> - unction [ss,param_obj,retcode,imposed]=steady_state_4_Canonical_Const(param_obj,flag)%param_struct=struct(parlist,parvals)
+%   examples\ModelsWithSteadyStateFile\howto                                                                    - (No help available)
+%   examples\ModelsWithSteadyStateFile\steady_state_4_Canonical_Const                                           - (No help available)

@@ -15,25 +15,21 @@ myabstract={['This report investigates switches in the parameters of a ',...
     ' ' % leave a blank space to start the next sentence in a new line
     'We find ample evidence in favor of switching parameters... '
     };
-mytitlepage=struct('title','Switches in the US Macroeconomic Data: Policy or Volatility?',...
-    'address','Your address',...
-    'author','Your name',...
-    'email','your email',...
+xrep=newreport('name','newkeynesswitch',...
+    'title','Switches in the US Macroeconomic Data: Policy or Volatility?',...
+    'author','Tao Zha',...
     'date',datestr(now),...
-    'abstract',{myabstract});
-xrep=rise_report('report_name','newkeynesswitch',...
-    'titlepage',mytitlepage);
+    'abstract',myabstract);
 xrep.pagebreak();
 %% What to include in the report
 add_declaration_description=true;
 add_model_equations=true;
 add_estimation_results=true;
 add_duration_probabilities=true;
-add_data_plot=false;
+add_data_plot=true;
 add_data_against_transition_probabilities=true;
 add_irfs=true;
 add_historical_decomposition=true;
-add_counterfactual=false;
 add_autocorrelations=true;
 add_variance_decomposition=true;
 add_forecast=true;
@@ -94,11 +90,10 @@ if add_data_plot
         for ivar=(ifig-1)*graph_nstar+1:min(nvarobs,ifig*graph_nstar)
             ii=ivar-(ifig-1)*graph_nstar;
             subplot(r,c,ii)
-            plot_window(db.(obsList{ivar}),'',[],@plot,'linewidth',2);
+            plot(db.(obsList{ivar}),'linewidth',2);
             title([obsListTexnames(ivar),obsList(ivar)],'fontsize',12);
         end
-        myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
-        figure(xrep,myfigure);
+        xrep.figure('name',fig,'title',fig_title)
         xrep.pagebreak();
     end
 end
@@ -108,95 +103,68 @@ end
 if add_declaration_description
     % here we are using the last model has it contains all the parameters,
     % unlike say the first one.
-    % all the code
-    %-------------
-    xrep.section('Model code',report(model_objects(end),'rep_type','code'))
+    xrep.section('title','Description of variables')
+    rep_items ={'code','endogenous','exogenous','parameters','observables'};
+    
+    report(model_objects(end),xrep,rep_items)
+    
     xrep.pagebreak();
-    % endogenous
-    %-----------
-    mytable=struct('title','Declarations: Legend for endogenous variables',...
-        'table',{report(model_objects(end),'rep_type','endogenous')});
-    table(xrep,mytable);
-    % exogenous
-    %-----------
-    mytable=struct('title','Declarations: Legend for exogenous variables',...
-        'table',{report(model_objects(end),'rep_type','exogenous')});
-    table(xrep,mytable);
-    xrep.pagebreak();
-    % parameters
-    %-----------
-    mytable=struct('title','Declarations: Legend for parameters',...
-        'table',{report(model_objects(end),'rep_type','parameters')});
-    table(xrep,mytable);
-    xrep.pagebreak();
-    % parameters
-    %-----------
-    mytable=struct('title','Declarations: Legend for observables',...
-        'table',{report(model_objects(end),'rep_type','observables')});
-    table(xrep,mytable);
-    xrep.pagebreak();
-
+    
 end
 
 %% add the estimation results
 if add_estimation_results
-    mytable=struct('title','Posterior modes',...
-        'table',{report(model_objects,'rep_type','estimation')},...
-        'longtable',true);
-    table(xrep,mytable);
-    xrep.pagebreak();
-    mytable=struct('title','Estimation statistics',...
-        'table',{report(model_objects,'rep_type','estimation_statistics')});
-    table(xrep,mytable);
+    xrep.section('title','Estimation results')
+    report(model_objects,xrep,'estimation')
+    xrep.pagebreak()
+    report(model_objects,xrep,'estimation_statistics')
     xrep.pagebreak();
 end
 %% add duration probabilities
 
 if add_duration_probabilities
-for imod=1:numel(nk_models)%nk_models
-    mytable={'','Probability of staying','Duration (quarters)'};
-    est_par_names={model_objects(imod).estimation.priors.name};
-    Regimes=model_objects(imod).markov_chains.regimes;
-    for ich=1:model_objects(imod).markov_chains.chains_number
-        chain= model_objects(imod).markov_chains.chain_names{ich};
-        mytable=[mytable;{['markov chain name=',chain],'',''}]; %#ok<*AGROW>
-        nstates=max(cell2mat(Regimes(2:end,ich+1)));
-        for ist=1:nstates
-            guide=[chain,'_tp_',int2str(ist)];
-            lg=length(guide);
-            locs= strncmp(guide,est_par_names,lg);
-            sumProbs=sum([model_objects(imod).estimation.posterior_maximization.mode(locs)]);
-            duration=1/sumProbs;
-            mytable=[mytable;{['state ',int2str(ist)],1-sumProbs,duration}];
-        end
-    end
-    mytable=struct('title',[nk_models{imod},' model: Expected duration in each state'],...
-        'table',{mytable});
-    table(xrep,mytable);
-    xrep.pagebreak();
-    
-    if model_objects(imod).markov_chains.regimes_number>2
-        Q=model_objects(imod).solution.Q;
-        qsize=size(Q,1);
+    for imod=1:numel(nk_models)%nk_models
         mytable={'','Probability of staying','Duration (quarters)'};
-        for iq=1:qsize
-            thisprobs=Q(iq,:);thisprobs(iq)=[];
-            sumProbs=sum(thisprobs);
-            duration=1/sumProbs;
-            this_regime='';
-            for ich=1:model_objects(imod).markov_chains.chains_number
-                chain=model_objects(imod).markov_chains.chain_names{ich};
-                this_regime=[this_regime,', ',chain,'=',int2str(Regimes{iq+1,ich+1})];
+        est_par_names={model_objects(imod).estimation.priors.name};
+        Regimes=model_objects(imod).markov_chains.regimes;
+        for ich=1:model_objects(imod).markov_chains.chains_number
+            chain= model_objects(imod).markov_chains.chain_names{ich};
+            mytable=[mytable;{['markov chain name=',chain],'',''}]; %#ok<*AGROW>
+            nstates=max(cell2mat(Regimes(2:end,ich+1)));
+            for ist=1:nstates
+                guide=[chain,'_tp_',int2str(ist)];
+                lg=length(guide);
+                locs= strncmp(guide,est_par_names,lg);
+                sumProbs=sum([model_objects(imod).estimation.posterior_maximization.mode(locs)]);
+                duration=1/sumProbs;
+                mytable=[mytable;{['state ',int2str(ist)],1-sumProbs,duration}];
             end
-            this_regime=strtrim(this_regime(2:end));
-            mytable=[mytable;{['regime ',int2str(iq),'(',this_regime,')'],1-sumProbs,duration}];
         end
-        mytable=struct('title',[nk_models{imod},' model: Expected duration in each Regime'],...
-            'table',{mytable});
-        table(xrep,mytable);
+        xrep.table('title',[nk_models{imod},' model: Expected duration in each state'],...
+            'log',mytable);
         xrep.pagebreak();
+        
+        if model_objects(imod).markov_chains.regimes_number>2
+            Q=model_objects(imod).solution.transition_matrices.Q;
+            qsize=size(Q,1);
+            mytable={'','Probability of staying','Duration (quarters)'};
+            for iq=1:qsize
+                thisprobs=Q(iq,:);thisprobs(iq)=[];
+                sumProbs=sum(thisprobs);
+                duration=1/sumProbs;
+                this_regime='';
+                for ich=1:model_objects(imod).markov_chains.chains_number
+                    chain=model_objects(imod).markov_chains.chain_names{ich};
+                    this_regime=[this_regime,', ',chain,'=',int2str(Regimes{iq+1,ich+1})];
+                end
+                this_regime=strtrim(this_regime(2:end));
+                mytable=[mytable;{['regime ',int2str(iq),'(',this_regime,')'],1-sumProbs,duration}];
+            end
+            xrep.table('title',[nk_models{imod},' model: Expected duration in each Regime'],...
+                'log',mytable);
+            xrep.pagebreak();
+        end
     end
-end
 end
 %% plot the observables against the transition probabilities
 
@@ -223,8 +191,7 @@ if add_data_against_transition_probabilities
                     thisstates{istate}(1:end-2),', state: ',...
                     thisstates{istate}(end),')'],'fontsize',12)
             end
-            myfigure=struct('name',fig,'title',mytitle,'angle',90);
-            figure(xrep,myfigure);
+            xrep.figure('name',fig,'title',mytitle);
             xrep.pagebreak();
             %----------------------------
             smoothed=model_objects(imod).filtering.Expected_smoothed_variables;
@@ -246,8 +213,7 @@ if add_data_against_transition_probabilities
                         plotyy(smoothed.(vname),highvol,'linewidth',2)
                         title(obsListTexnames{ivar},'fontsize',12)
                     end
-                    myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
-                    figure(xrep,myfigure);
+                    xrep.figure('name',fig,'title',fig_title);
                     xrep.pagebreak();
                 end
             end
@@ -283,8 +249,7 @@ if add_irfs
                 end
             end
             orient(fig,'tall')
-            myfigure=struct('name',fig,'title',fig_title,'scale',0.85);
-            figure(xrep,myfigure);
+            xrep.figure('name',fig,'title',fig_title);
             xrep.pagebreak();
         end
     end
@@ -320,12 +285,6 @@ if add_historical_decomposition
     end
 end
 
-%% counterfactual: what if the economy had been ...
-if add_counterfactual
-    for ii=1:10
-        disp('the code for doing counterfactuals has been temporarily removed')
-    end
-end
 %% variance decomposition
 
 if add_variance_decomposition

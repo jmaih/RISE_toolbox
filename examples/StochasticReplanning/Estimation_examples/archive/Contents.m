@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\StochasticReplanning_switching_Estimation\archive   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\StochasticReplanning\Estimation_examples\archive   -------------------%
 %
-%   <a href="matlab:help examples\StochasticReplanning_switching_Estimation\archive\usmodel_steadystate">examples\StochasticReplanning_switching_Estimation\archive\usmodel_steadystate</a> - computes the steady state for the observed variables in the smets-wouters
+%   examples\StochasticReplanning\Estimation_examples\archive\usmodel_steadystate                                           - (No help available)

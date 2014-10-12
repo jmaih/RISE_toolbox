@@ -1,5 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\StochasticReplanning_switching_Estimation   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\StochasticReplanning\Estimation_examples   -------------------%
 %
-%   <a href="matlab:help examples\StochasticReplanning_switching_Estimation\howto">examples\StochasticReplanning_switching_Estimation\howto</a>                   - % housekeeping
-%   <a href="matlab:help examples\StochasticReplanning_switching_Estimation\howto_steady_state">examples\StochasticReplanning_switching_Estimation\howto_steady_state</a>      - % housekeeping
-%   <a href="matlab:help examples\StochasticReplanning_switching_Estimation\usmodel_lc_steady_state">examples\StochasticReplanning_switching_Estimation\usmodel_lc_steady_state</a> - % push back the parameter inside the params
+%   examples\StochasticReplanning\Estimation_examples\howto                                                             - (No help available)
+%   examples\StochasticReplanning\Estimation_examples\howto_steady_state                                                - (No help available)
+%   examples\StochasticReplanning\Estimation_examples\usmodel_lc_steady_state                                           - (No help available)

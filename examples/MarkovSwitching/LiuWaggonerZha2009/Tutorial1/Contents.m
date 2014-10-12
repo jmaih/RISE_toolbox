@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial1   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial1   -------------------%
 %
-%   <a href="matlab:help examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial1\howto">examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial1\howto</a> - % housekeeping
+%   examples\MarkovSwitching\LiuWaggonerZha2009\Tutorial1\howto                                           - (No help available)

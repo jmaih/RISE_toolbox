@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\VariousModels\fs2000   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\VariousModels\fs2000   -------------------%
 %
-%   examples\VariousModels\fs2000\csminwellwrap - (No help available)
-%   <a href="matlab:help examples\VariousModels\fs2000\howto">examples\VariousModels\fs2000\howto</a>         - % housekeeping
+%   examples\VariousModels\fs2000\csminwellwrap                                           - (No help available)
+%   examples\VariousModels\fs2000\howto                                                   - (No help available)

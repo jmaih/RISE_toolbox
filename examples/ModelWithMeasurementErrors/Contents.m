@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\ModelWithMeasurementErrors   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\ModelWithMeasurementErrors   -------------------%
 %
-%   <a href="matlab:help examples\ModelWithMeasurementErrors\howto">examples\ModelWithMeasurementErrors\howto</a> - % housekeeping
+%   examples\ModelWithMeasurementErrors\howto                                           - (No help available)

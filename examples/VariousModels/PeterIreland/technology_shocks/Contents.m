@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\VariousModels\PeterIreland\technology_shocks   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\VariousModels\PeterIreland\technology_shocks   -------------------%
 %
-%   <a href="matlab:help examples\VariousModels\PeterIreland\technology_shocks\howto">examples\VariousModels\PeterIreland\technology_shocks\howto</a> - % housekeeping
+%   examples\VariousModels\PeterIreland\technology_shocks\howto                                           - (No help available)

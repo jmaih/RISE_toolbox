@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\VariousModels\LiuWangZha2009   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\VariousModels\LiuWangZha2009   -------------------%
 %
-%   examples\VariousModels\LiuWangZha2009\data_diff_FHFA - (No help available)
-%   <a href="matlab:help examples\VariousModels\LiuWangZha2009\howto">examples\VariousModels\LiuWangZha2009\howto</a>          - % housekeeping
+%   examples\VariousModels\LiuWangZha2009\data_diff_FHFA                                           - (No help available)
+%   examples\VariousModels\LiuWangZha2009\howto                                                    - (No help available)

@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\MonteCarloFiltering   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\MonteCarloFiltering   -------------------%
 %
-%   <a href="matlab:help examples\MonteCarloFiltering\howto">examples\MonteCarloFiltering\howto</a>        - % housekeeping
-%   <a href="matlab:help examples\MonteCarloFiltering\price_puzzle">examples\MonteCarloFiltering\price_puzzle</a> - % inflation
+%   examples\MonteCarloFiltering\howto                                                  - (No help available)
+%   examples\MonteCarloFiltering\price_puzzle                                           - (No help available)

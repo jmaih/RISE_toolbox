@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\MomentsToBounds   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\MomentsToBounds_BoundsToMoments   -------------------%
 %
-%   <a href="matlab:help examples\MomentsToBounds\howto">examples\MomentsToBounds\howto</a> - % computing the bounds from the mean and standard deviations from dynare
+%   examples\MomentsToBounds_BoundsToMoments\howto                                           - (No help available)

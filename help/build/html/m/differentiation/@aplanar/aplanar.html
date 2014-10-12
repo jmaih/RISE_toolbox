@@ -1,0 +1,344 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>automatic “planar” differentiation &mdash; RISE 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RISE 1.0.0 documentation" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../master_doc.html">RISE 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="automatic-planar-differentiation">
+<h1>automatic &#8220;planar&#8221; differentiation<a class="headerlink" href="#automatic-planar-differentiation" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>[ <a class="reference internal" href="#abs">abs</a> ](aplanar/abs)</li>
+<li>[ <a class="reference internal" href="#acos">acos</a> ](aplanar/acos)</li>
+<li>[ <a class="reference internal" href="#acosh">acosh</a> ](aplanar/acosh)</li>
+<li>[ <a class="reference internal" href="#and">and</a> ](aplanar/and)</li>
+<li>[ <a class="reference internal" href="#aplanar">aplanar</a> ](aplanar/aplanar)</li>
+<li>[ <a class="reference internal" href="#asin">asin</a> ](aplanar/asin)</li>
+<li>[ <a class="reference internal" href="#asinh">asinh</a> ](aplanar/asinh)</li>
+<li>[ <a class="reference internal" href="#atan">atan</a> ](aplanar/atan)</li>
+<li>[ <a class="reference internal" href="#atanh">atanh</a> ](aplanar/atanh)</li>
+<li>[ <a class="reference internal" href="#cos">cos</a> ](aplanar/cos)</li>
+<li>[ <a class="reference internal" href="#cosh">cosh</a> ](aplanar/cosh)</li>
+<li>[ <a class="reference internal" href="#cot">cot</a> ](aplanar/cot)</li>
+<li>[ <a class="reference internal" href="#coth">coth</a> ](aplanar/coth)</li>
+<li>[ <a class="reference internal" href="#diff">diff</a> ](aplanar/diff)</li>
+<li>[ <a class="reference internal" href="#eq">eq</a> ](aplanar/eq)</li>
+<li>[ <a class="reference internal" href="#erf">erf</a> ](aplanar/erf)</li>
+<li>[ <a class="reference internal" href="#exp">exp</a> ](aplanar/exp)</li>
+<li>[ <a class="reference internal" href="#ge">ge</a> ](aplanar/ge)</li>
+<li>[ <a class="reference internal" href="#gt">gt</a> ](aplanar/gt)</li>
+<li>[ <a class="reference internal" href="#if-elseif">if_elseif</a> ](aplanar/if_elseif)</li>
+<li>[ <a class="reference internal" href="#if-then-else">if_then_else</a> ](aplanar/if_then_else)</li>
+<li>[ <a class="reference internal" href="#le">le</a> ](aplanar/le)</li>
+<li>[ <a class="reference internal" href="#log">log</a> ](aplanar/log)</li>
+<li>[ <a class="reference internal" href="#log10">log10</a> ](aplanar/log10)</li>
+<li>[ <a class="reference internal" href="#lt">lt</a> ](aplanar/lt)</li>
+<li>[ <a class="reference internal" href="#max">max</a> ](aplanar/max)</li>
+<li>[ <a class="reference internal" href="#min">min</a> ](aplanar/min)</li>
+<li>[ <a class="reference internal" href="#minus">minus</a> ](aplanar/minus)</li>
+<li>[ <a class="reference internal" href="#mpower">mpower</a> ](aplanar/mpower)</li>
+<li>[ <a class="reference internal" href="#mrdivide">mrdivide</a> ](aplanar/mrdivide)</li>
+<li>[ <a class="reference internal" href="#mtimes">mtimes</a> ](aplanar/mtimes)</li>
+<li>[ <a class="reference internal" href="#ne">ne</a> ](aplanar/ne)</li>
+<li>[ <a class="reference internal" href="#normcdf">normcdf</a> ](aplanar/normcdf)</li>
+<li>[ <a class="reference internal" href="#normpdf">normpdf</a> ](aplanar/normpdf)</li>
+<li>[ <a class="reference internal" href="#or">or</a> ](aplanar/or)</li>
+<li>[ <a class="reference internal" href="#plus">plus</a> ](aplanar/plus)</li>
+<li>[ <a class="reference internal" href="#power">power</a> ](aplanar/power)</li>
+<li>[ <a class="reference internal" href="#rdivide">rdivide</a> ](aplanar/rdivide)</li>
+<li>[ <a class="reference internal" href="#sign">sign</a> ](aplanar/sign)</li>
+<li>[ <a class="reference internal" href="#sin">sin</a> ](aplanar/sin)</li>
+<li>[ <a class="reference internal" href="#sinh">sinh</a> ](aplanar/sinh)</li>
+<li>[ <a class="reference internal" href="#sqrt">sqrt</a> ](aplanar/sqrt)</li>
+<li>[ <a class="reference internal" href="#tan">tan</a> ](aplanar/tan)</li>
+<li>[ <a class="reference internal" href="#tanh">tanh</a> ](aplanar/tanh)</li>
+<li>[ <a class="reference internal" href="#times">times</a> ](aplanar/times)</li>
+<li>[ <a class="reference internal" href="#uminus">uminus</a> ](aplanar/uminus)</li>
+<li>[ <a class="reference internal" href="#uplus">uplus</a> ](aplanar/uplus)</li>
+</ul>
+<div class="section" id="synopsis-and-description-on-methods">
+<h2>Synopsis and description on methods<a class="headerlink" href="#synopsis-and-description-on-methods" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p id="abs"><strong>abs</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="acos"><strong>acos</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="acosh"><strong>acosh</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="and"><strong>and</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="aplanar"><strong>aplanar</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="asin"><strong>asin</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="asinh"><strong>asinh</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="atan"><strong>atan</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="atanh"><strong>atanh</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="cos"><strong>cos</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="cosh"><strong>cosh</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="cot"><strong>cot</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="coth"><strong>coth</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="diff"><strong>diff</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="eq"><strong>eq</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="erf"><strong>erf</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="exp"><strong>exp</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="ge"><strong>ge</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="gt"><strong>gt</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<div class="section" id="if-elseif">
+<span id="id1"></span><h3>if_elseif<a class="headerlink" href="#if-elseif" title="Permalink to this headline">¶</a></h3>
+<p>just pick the first element corresponding to the location
+that evaluates to true</p>
+<hr class="docutils" />
+<p id="if-then-else"><strong>if_then_else</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="le"><strong>le</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="log"><strong>log</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="log10"><strong>log10</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="lt"><strong>lt</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="max"><strong>max</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="min"><strong>min</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="minus"><strong>minus</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="mpower"><strong>mpower</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="mrdivide"><strong>mrdivide</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="mtimes"><strong>mtimes</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="ne"><strong>ne</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="normcdf"><strong>normcdf</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="normpdf"><strong>normpdf</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="or"><strong>or</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="plus"><strong>plus</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="power"><strong>power</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="rdivide"><strong>rdivide</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="sign"><strong>sign</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="sin"><strong>sin</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="sinh"><strong>sinh</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="sqrt"><strong>sqrt</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="tan"><strong>tan</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="tanh"><strong>tanh</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="times"><strong>times</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="uminus"><strong>uminus</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+<hr class="docutils" />
+<p id="uplus"><strong>uplus</strong></p>
+<blockquote>
+<div>&#8211; no help found</div></blockquote>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">automatic &#8220;planar&#8221; differentiation</a><ul>
+<li><a class="reference internal" href="#synopsis-and-description-on-methods">Synopsis and description on methods</a><ul>
+<li><a class="reference internal" href="#if-elseif">if_elseif</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/m/differentiation/@aplanar/aplanar.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../master_doc.html">RISE 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Junior Maih.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

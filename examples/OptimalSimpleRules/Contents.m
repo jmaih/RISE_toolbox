@@ -1,3 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\OptimalSimpleRules   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\OptimalSimpleRules   -------------------%
 %
-%   <a href="matlab:help examples\OptimalSimpleRules\howto">examples\OptimalSimpleRules\howto</a> - % housekeeping
+%   examples\OptimalSimpleRules\howto                                           - (No help available)

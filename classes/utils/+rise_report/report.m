@@ -243,20 +243,7 @@ classdef report < rise_report.titlepage
             do_write_up()
             
             if write2disk
-                % get the compiler from the rise_root
-                compiler=getappdata(0,'rise_pdflatex');
-                if exist([report_name,'.pdf'],'file')
-                    delete([report_name,'.pdf'])
-                end
-                the_string=[compiler,' ',report_name];
-                % close all hanging fids
-                fclose('all');
-                retcode=system(the_string);
-                if ~retcode
-                    % run again in order to make sure the references are shown
-                    system(the_string);
-                    system(the_string);
-                end
+                utils.latex.pdflatex(report_name)
             end
             % delete all useless files
             useless_extensions={'.log','.bbl','.blg','.aux','.bak','.out'};

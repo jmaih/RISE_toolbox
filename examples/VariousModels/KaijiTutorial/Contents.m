@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%   path: examples\VariousModels\KaijiTutorial   %%%%%%%%%%%%%%%%%%%%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\examples\VariousModels\KaijiTutorial   -------------------%
 %
-%   <a href="matlab:help examples\VariousModels\KaijiTutorial\howto">examples\VariousModels\KaijiTutorial\howto</a>     - % housekeeping
-%   <a href="matlab:help examples\VariousModels\KaijiTutorial\howto_exp">examples\VariousModels\KaijiTutorial\howto_exp</a> - % housekeeping
+%   examples\VariousModels\KaijiTutorial\howto                                               - (No help available)
+%   examples\VariousModels\KaijiTutorial\howto_exp                                           - (No help available)
