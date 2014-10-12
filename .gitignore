@@ -10,17 +10,20 @@ junk/*
 *.log
 *old*
 *- Copy*
-.aux
+*.aux
+*.out
+*.toc
 # python stuff
+*.idx
 *.py
 *.rst
 *.css
 *.doctree
 *.pickle
-.buildinfo
-.cls
-.sty
-.ist
+*.buildinfo
+*.cls
+*.sty
+*.ist
 Makefile
 !/examples/VariousModels/KaijiTutorial/Tutorial.pdf
 !/doc/svar.pdf
