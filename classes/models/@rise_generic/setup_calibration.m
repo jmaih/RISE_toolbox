@@ -40,9 +40,15 @@ governing_chain=obj.parameters.governing_chain;
 %---------------------------------
 if iscell(Calibration)
     pnames=Calibration(:,1);
+    if iscell(pnames{1})
+        pnames=pnames{1};
+    end
     % make sure the names are not in the tex form
     pnames=parser.param_name_to_valid_param_name(pnames);
     param_draw=Calibration(:,2);
+    if numel(param_draw)==1 && numel(param_draw{1})>1
+        param_draw=num2cell(param_draw{1});
+    end
     Calibration=struct();
     for iname=1:numel(pnames)
         Calibration.(pnames{iname})=param_draw{iname,:};
