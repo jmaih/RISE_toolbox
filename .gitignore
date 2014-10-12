@@ -7,14 +7,20 @@ junk/*
 *.asv
 *.bat
 *.bak
+*.log
 *old*
 *- Copy*
+.aux
 # python stuff
 *.py
 *.rst
 *.css
 *.doctree
 *.pickle
+.buildinfo
+.cls
+.sty
+.ist
 Makefile
 !/examples/VariousModels/KaijiTutorial/Tutorial.pdf
 !/doc/svar.pdf
