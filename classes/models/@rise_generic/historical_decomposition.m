@@ -57,7 +57,7 @@ nobj=numel(obj);
 if nobj>1
     Histdec=cell(1,nobj);
     for iobj=1:nobj
-        [Histdec{iobj},obj(iobj)]=history_dec(obj(iobj),varargin{:});
+        [Histdec{iobj},obj(iobj)]=historical_decomposition(obj(iobj),varargin{:});
     end
     return
 end
