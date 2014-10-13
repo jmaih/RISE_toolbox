@@ -17,7 +17,7 @@ function rise_startup(flag)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if nargin<1
     flag=false;
@@ -55,8 +55,8 @@ rise_data=cell(0,2);
 
 if USE_RISE_PRINT
     
-    % ------------------------------------------------------------------------
     % Version Variables
+    % ------------------
     
     NOT_INSTALLED = 'Not installed';
     matlab_version = NOT_INSTALLED;
@@ -99,7 +99,7 @@ end
 % Plot settings
 %--------------
 if USE_RISE_PLOT
-        
+    
     rise_default_plot_colors={ ...
         [0 0 1],     ...  % 'b'
         [1 0 0],     ...  % 'r'
@@ -129,14 +129,7 @@ if USE_RISE_PLOT
     
     rise_data=[rise_data
         {'rise_default_plot_colors',rise_default_plot_colors}];
-    
-    
-    %     set(0, 'DefaultAxesXColor', [0 0 0]);
-    %     set(0, 'DefaultAxesYColor', [0 0 0]);
-    %    set(0, 'defaultfigurenumbertitle', 'on');
     set(0, 'DefaultFigureColor', 'w');
-    %     set(0, 'DefaultFigurePosition', [0 0 1200 700]);
-    %     set(0, 'DefaultAxesPosition', [0.13 0.15 0.775 0.75]);
 end
 
 searchPaths=collect_paths(mfilename);
@@ -149,18 +142,20 @@ for jj = 1:numel(searchPaths)
 end
 
 %--------------------------------------------------------------------------
-rise_root=strrep(which('rise'), fullfile('rise', 'classes', '@rise', 'rise.m'), '');
+target=which(mfilename);
+separators=find(target==filesep);
+rise_root=target(1:separators(end)-1);
+toolbox_folder_name=target(separators(end-1)+1:separators(end)-1);
 rise_data=[rise_data
     {'rise_root',rise_root}];
 rise_data=[rise_data
-    [strcat('rise_',latex_progs(:)),latex_paths(:)] 
-    ];
+    [strcat('rise_',latex_progs(:)),latex_paths(:)]
+    {'paths',searchPaths}];
 
 for id=1:size(rise_data,1)
     if flag
         rmappdata(0,rise_data{id,1});
     else
-        % Set RISE Root dir
         setappdata(0, rise_data{id,1}, rise_data{id,2});
     end
 end
@@ -172,10 +167,12 @@ else
 end
 
     function welcome_message()
-        target=which('rise_startup');
-        separators=find(target==filesep);
-        target=target(separators(end-1)+1:separators(end)-1);
-        vv = ver(target);
+        vv = ver(toolbox_folder_name);
+        % paths to documentation should be dynamic
+        %-----------------------------------------
+        pdf_doc=[rise_root,filesep,'help',filesep,'build',filesep,'latex',filesep,'RISE.pdf'];
+        html_doc=[rise_root,filesep,'help',filesep,'build',filesep,'html',filesep,'master_doc.html'];
+        
         l1 = '+---------------------------------------------------------------+';
         
         disp(l1);
@@ -184,8 +181,8 @@ end
         disp(['Release: ', vv.Release])
         disp(['Date: ', vv.Date])
         disp(' ')
-        disp(['please check out the <a href="build/html/master_doc.html">html documentation</a> ',...
-            'or the <a href="build/latex/RISE.pdf">pdf documentation</a> '])
+        disp(['please check out the <a href="',html_doc,'">html documentation</a> ',...
+            'or the <a href="',pdf_doc,'">pdf documentation</a> '])
         disp(' ')
         disp('For concerns, problems, suggestions and desideratas')
         disp('please send email to <a href="junior.maih@gmail.com">this address</a>')
@@ -194,7 +191,6 @@ end
             disp('pdflatex/epstopdf (Miktex) could not be located')
         end
         disp(l1);
-        
     end
 end
 
