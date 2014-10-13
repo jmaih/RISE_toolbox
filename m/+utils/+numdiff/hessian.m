@@ -42,11 +42,12 @@ f0 = zeros(npar,1);
 Hdiag = zeros(npar,1);
 theLoopBody1=@loop_body_diagonal;
 theLoopBody2=@loop_body_cross;
-try
-	some_workers=~isempty(gcp('nocreate'));
-catch
-	some_workers=matlabpool('size');
-end
+some_workers=false;
+%try
+%	some_workers=~isempty(gcp('nocreate'));
+%catch
+%	some_workers=matlabpool('size');
+%end
 if license('checkout','Distrib_Computing_Toolbox') && some_workers
     parfor ii=1:npar
         iter=ii;
