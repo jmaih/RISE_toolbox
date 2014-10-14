@@ -134,16 +134,21 @@ smoothed_shocks=smoothed_shocks(varlocs,:);
 
 % exogenous--initial condition--perturbation--switch--steady state
 %------------------------------------------------------------------
-
 z = zeros(endo_nbr,exo_nbr+4,NumberOfObservations);
+
+init_id=exo_nbr+1;
+risk_id=exo_nbr+2;
+switch_id=exo_nbr+3;
+ss_id=exo_nbr+4;
+exo_plus_risk_plus_steady=[(1:exo_nbr),risk_id,ss_id];
+exo_plus_init_plus_risk_plus_steady=[(1:exo_nbr),init_id,risk_id,ss_id];
+ContributingNames=[exo_names,'InitialConditions','risk','switch','steady_state'];
 
 z=HistoricalDecompositionEngine(z,smoothed_shocks);
 
 if max(max(abs(squeeze(sum(z,2))-smoothed_variables)))>1e-9
     error([mfilename,':: Decomposition failed'])
 end
-
-ContributingNames=[exo_names,'InitialConditions','risk','switch','steady_state'];
 
 % discard non-contributing names : could be set as an option
 %------------------------------------------------------------
@@ -169,13 +174,7 @@ end
 
     function [z,SS]=HistoricalDecompositionEngine(z,epsilon)
         [SS,Tsig_t]=smooth_vector(obj.solution.ss,Tsig);
-        switch_id=exo_nbr+3;
-        risk_id=exo_nbr+2;
-        init_id=exo_nbr+1;
-        ss_id=exo_nbr+4;
         z(:,ss_id,:)=SS;
-        exo_plus_risk_plus_steady=[(1:exo_nbr),risk_id,ss_id];
-        exo_plus_init_plus_risk_plus_steady=[(1:exo_nbr),init_id,risk_id,ss_id];
         NumberOfAnticipatedSteps=size(R{1},3);
         
         for t=1:NumberOfObservations
