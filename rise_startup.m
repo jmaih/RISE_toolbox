@@ -173,24 +173,31 @@ end
         pdf_doc=[rise_root,filesep,'help',filesep,'build',filesep,'latex',filesep,'RISE.pdf'];
         html_doc=[rise_root,filesep,'help',filesep,'build',filesep,'html',filesep,'master_doc.html'];
         
-        l1 = '+---------------------------------------------------------------+';
         
-        disp(l1);
-        disp(['Welcome to the ', vv.Name])
-        disp(['Version: ', vv.Version])
-        disp(['Release: ', vv.Release])
-        disp(['Date: ', vv.Date])
-        disp(' ')
-        disp(['please check out the <a href="',html_doc,'">html documentation</a> ',...
-            'or the <a href="',pdf_doc,'">pdf documentation</a> '])
-        disp(' ')
-        disp('For concerns, problems, suggestions and desideratas')
-        disp('please send email to <a href="junior.maih@gmail.com">this address</a>')
-        disp('Thank you in advance for your feedback !!!')
+        tmp={
+            ' _____	  _  ____  _____\n'
+            ['|  _  |  (_)|  __||  ___|   |	Welcome to the ',vv.Name,'\n']
+            ['| (_) /  | || |__ | |___    |	Version: ',vv.Version,'\n']
+            ['|  __ \\  | ||__  ||  ___|   |	Release: ',vv.Release,'\n']
+            ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date,'\n']
+            '|_|   \\_\\|_||____||_____|   |\n'
+            ['please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
+            'or the <a href="',strrep(pdf_doc,'\','\\'),'">pdf documentation</a> \n']
+            'For concerns, problems, suggestions and desideratas\n'
+            'please send email to this address\n'
+            'Thank you in advance for your feedback !!!\n'
+            ''
+            };
+%         l1 = '+---------------------------------------------------------------+';
+        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
+%         l1 = ['+',char('-'*ones(1,size(char(tmp),2))),'+'];
+        
+        disp(l1)
+        fprintf(1,strjoin(strrep(tmp,'\n','')','\n'));
         if retcode
             disp('pdflatex/epstopdf (Miktex) could not be located')
         end
-        disp(l1);
+        disp(l1)
     end
 end
 
