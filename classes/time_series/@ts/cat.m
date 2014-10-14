@@ -31,10 +31,13 @@ function db=cat(dim,varargin)
 % - if names are specified in the first time series, then names should be
 %   specified in all of the others as well.
 %
+% - empty time series are discarded but there should be at least one
+%   non-empty time series
+%
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 n=length(varargin);
@@ -44,10 +47,30 @@ npages1=nan(1,n);
 freq1=nan(1,n);
 dn_max=-inf;
 dn_min=inf;
+discard=false(1,n);
 for idb=1:n
+    db_i=varargin{idb};
+    if isempty(db_i)
+        discard(idb)=true;
+        continue
+    end
     [dn1{idb},dn1_max,dn1_min,nvar1(idb),npages1(idb),freq1(idb)]=decompose_series(varargin{idb});
     dn_max=max(dn_max,dn1_max);
     dn_min=min(dn_min,dn1_min);
+end
+dn1=dn1(~discard);
+nvar1=nvar1(~discard);
+npages1=npages1(~discard);
+freq1=freq1(~discard);
+varargin=varargin(~discard);
+n=sum(~discard);
+if n==1
+    db=varargin{1};
+    return
+end
+
+if isempty(dn1)
+    error('no valid time series to concatenate')
 end
 if ~all(freq1==freq1(1))
     error('data should have same frequency')
@@ -55,7 +78,7 @@ end
 dn=dn_min:dn_max;
 nobs=numel(dn);
 
-        no_names=isempty(varargin{1}.varnames{1});
+no_names=isempty(varargin{1}.varnames{1});
 switch dim
     case {1,3}
         if dim==1
@@ -91,7 +114,7 @@ switch dim
             varnames=[varnames(:);varargin{idb}.varnames(:)];
             datta(rows1,offset_cols+(1:nvar1(idb)),1:npages1(idb))=varargin{idb}.data;
             offset_cols=offset_cols+nvar1(idb);
-        end        
+        end
     otherwise
         error('concatenation of time series allowed only for dimensions 1, 2 or 3')
 end
