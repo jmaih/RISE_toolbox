@@ -160,9 +160,7 @@ obj.nonlinear_restrictions=nonlinear_restrictions;
             %--------------------------------------------------------------
             f(isnan(f))=0.5;
         end
-        % The following two lines were added correct by Andrew Binning on
-        % 2014/10/10
-        [~,ord]=sort([Q{2,:},2,'descend']); 
+        [~,ord]=sort([Q{2,:}],2,'descend'); 
         Q=Q(:,ord);
     end
     function fill_array()
