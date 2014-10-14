@@ -55,10 +55,18 @@ if isempty(obj.options.forecast_start_date)
     obj=set(obj,'forecast_start_date',serial2date(date2serial(obj.options.estim_end_date)+1));
 end
 
+end_date='';
+if ~isempty(obj.options.forecast_start_date)
+    end_date=serial2date(date2serial(obj.options.forecast_start_date)-1);
+end
+fkstdata='';
+if ~isempty(obj.options.data)
+    fkstdata=obj.options.data;
+end
 obj=set(obj,...
     'simul_periods',obj.options.forecast_nsteps,...
-    'simul_start_date',obj.options.forecast_start_date,...
-    'simul_historical_data',obj.options.data);
+    'simul_history_end_date',end_date,...
+    'simul_historical_data',fkstdata);
 
 cond_fkst_db=simulate(obj);
 
