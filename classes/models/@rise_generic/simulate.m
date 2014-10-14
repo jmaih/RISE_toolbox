@@ -105,7 +105,7 @@ y=re_order_output_rows(obj,y);
 % history and not first date of forecast
 %--------------------------------------------------------------------------
 y0cols=size(y0(1).y,2);
-start_date=serial2date(date2serial(0)-y0cols+1);
+start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
 % store only the relevant rows in case we are dealing with a VAR with many
 % lags
 db=ts(start_date,y(1:obj.endogenous.number(end),:)',obj.endogenous.name);
