@@ -48,9 +48,21 @@ end
 obj=set(obj,varargin{:});
 
 %% pass some options to the simulate method
-obj.options.forecast_nsteps=12;
-obj=set(obj,'simul_periods',obj.options.forecast_nsteps);
+if isempty(obj.options.forecast_start_date)
+    if isempty(obj.options.estim_end_date)
+        error('cannot find a date to start the forecast')
+    end
+    obj=set(obj,'forecast_start_date',serial2date(date2serial(obj.options.estim_end_date)+1));
+end
 
+obj=set(obj,...
+    'simul_periods',obj.options.forecast_nsteps,...
+    'simul_start_date',obj.options.forecast_start_date,...
+    'simul_historical_data',obj.options.data);
+
+cond_fkst_db=simulate(obj);
+
+return
 %% re-collect the options
 if obj.markov_chains.regimes_number==1
     obj.options.forecast_regime=1;
