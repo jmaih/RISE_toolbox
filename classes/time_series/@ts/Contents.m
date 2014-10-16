@@ -18,7 +18,7 @@
 %   classes\time_series\ts\binary_operation                                                     - (No help available)
 %   <a href="matlab:help classes\time_series\ts\boxplot">classes\time_series\ts\boxplot</a>                                                              - H1 line
 %   <a href="matlab:help classes\time_series\ts\bsxfun">classes\time_series\ts\bsxfun</a>                                                               - H1 line
-%   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  -  concatenates time series along the specified dimension
 %   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              - H1 line
 %   classes\time_series\ts\comparison                                                           - (No help available)
 %   <a href="matlab:help classes\time_series\ts\corr">classes\time_series\ts\corr</a>                                                                 - H1 line
@@ -72,7 +72,7 @@
 %   <a href="matlab:help classes\time_series\ts\nan">classes\time_series\ts\nan</a>                                                                  - H1 line
 %   <a href="matlab:help classes\time_series\ts\ne">classes\time_series\ts\ne</a>                                                                   - H1 line
 %   <a href="matlab:help classes\time_series\ts\numel">classes\time_series\ts\numel</a>                                                                - H1 line
-%   <a href="matlab:help classes\time_series\ts\ones">classes\time_series\ts\ones</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\ones">classes\time_series\ts\ones</a>                                                                 -  overloads ones for ts objects
 %   <a href="matlab:help classes\time_series\ts\pages2struct">classes\time_series\ts\pages2struct</a>                                                         - H1 line
 %   <a href="matlab:help classes\time_series\ts\plot">classes\time_series\ts\plot</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\plotyy">classes\time_series\ts\plotyy</a>                                                               - H1 line

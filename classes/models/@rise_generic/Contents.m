@@ -12,7 +12,7 @@
 %   <a href="matlab:help classes\models\rise_generic\forecast">classes\models\rise_generic\forecast</a>                                                                                  - H1 line
 %   <a href="matlab:help classes\models\rise_generic\get">classes\models\rise_generic\get</a>                                                                                       - H1 line
 %   classes\models\rise_generic\get_estimated_parameter_names                                                             - (No help available)
-%   <a href="matlab:help classes\models\rise_generic\historical_decomposition">classes\models\rise_generic\historical_decomposition</a>                                                                  - H1 line
+%   <a href="matlab:help classes\models\rise_generic\historical_decomposition">classes\models\rise_generic\historical_decomposition</a>                                                                  -  Computes historical decompositions of a DSGE model
 %   classes\models\rise_generic\initialize_posterior_simulation                                                           - (No help available)
 %   <a href="matlab:help classes\models\rise_generic\irf">classes\models\rise_generic\irf</a>                                                                                       - H1 line
 %   <a href="matlab:help classes\models\rise_generic\isnan">classes\models\rise_generic\isnan</a>                                                                                     - H1 line

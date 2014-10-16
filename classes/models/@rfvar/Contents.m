@@ -7,7 +7,7 @@
 %   classes\models\rfvar\set_structural_shocks                                                                     - (No help available)
 %   <a href="matlab:help classes\models\rfvar\solve">classes\models\rfvar\solve</a>                                                                                     - H1 line
 %   classes\models\rfvar\sort_Q                                                                                    - (No help available)
-%   <a href="matlab:help classes\models\rfvar\structural_form">classes\models\rfvar\structural_form</a>                                                                           - H1 line
+%   <a href="matlab:help classes\models\rfvar\structural_form">classes\models\rfvar\structural_form</a>                                                                           -  finds A structural form given the imposed restrictions
 %   classes\models\rfvar\translate_restrictions                                                                    - (No help available)
 %   classes\models\rfvar\update_estimated_parameter_names                                                          - (No help available)
 %   classes\models\rfvar\update_posterior_simulation_initial_conditions                                            - (No help available)

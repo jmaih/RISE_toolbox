@@ -4,8 +4,9 @@ function newobj=structural_form(obj,varargin)
 % Syntax
 % -------
 % ::
+%
 %   newobj=structural_form(obj)
-%   newobj=structural_form(obj,initcall)
+%   newobj=structural_form(obj,varargin)
 %
 % Inputs
 % -------
@@ -13,25 +14,27 @@ function newobj=structural_form(obj,varargin)
 % - **obj** : [rfvar] : reduced form VAR object
 %
 % - varargin : standard optional inputs **coming in pairs**. Among which:
-%   - **restrict_lags** : [cell array|{''}] : restrictions on the lag
+%
+%   - **restrict_lags** \: [cell array|{''}] \: restrictions on the lag
 %       structure. There are two equivalent syntaxes for this:
+%
 %       - {'var_name1@var_name2{lag}'}
-%       - {'alag(var_name1,var_name2)'} : here alag should be understood as
+%       - {'alag(var_name1,var_name2)'} \: here alag should be understood as
 %         a-lag, where lag is the "lag" e.g. a1(infl,unemp) means unemp
 %         does not enter the infl equation at lag 1.
-%   - **restrict_irf_sign** : [cell array|{''}] : sign restrictions on the
+%   - **restrict_irf_sign** \: [cell array|{''}] \: sign restrictions on the
 %       impulse responses. The general syntax is
 %       {'var_name{period}@shock_name','sign'} and the default period is
 %       "0" (for contemporaneous). That means
 %       {'var_name{0}@shock_name','+'} and {'var_name@shock_name','+'}
 %       are equivalent
-%   - **restrict_irf_zero** : [cell array|{''}] : zero restrictions on the
+%   - **restrict_irf_zero** \: [cell array|{''}] \: zero restrictions on the
 %       impulse responses. The general syntax is
 %       {'var_name{period}@shock_name'} and the default period is
 %       "0" (for contemporaneous). That means
 %       {'var_name{0}@shock_name'} and {'var_name@shock_name'}
 %       are equivalent
-%   - **structural_shocks** : [cell array|{''}] : List of structural
+%   - **structural_shocks** \: [cell array|{''}] \: List of structural
 %       shocks. The shock names can be entered with or without their
 %       description. For instance : 
 %       - {'E_PAI','E_U','E_MP'}

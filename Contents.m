@@ -1,10 +1,10 @@
 % RISE Toolbox
-% Version 1.0.0 (R2014a) 12-Oct-2014
+% Version 1.0.0 (R2014a) 16-Oct-2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Toolbox        RISE
 %
-% Version        1.0.0 12-Oct-2014
+% Version        1.0.0 16-Oct-2014
 %
 % Contents path  C:\Users\jma\Documents\GitHub\RISE_toolbox\help
 %
@@ -111,7 +111,7 @@
 %   classes\models\rfvar\set_structural_shocks                                                                     - (No help available)
 %   <a href="matlab:help classes\models\rfvar\solve">classes\models\rfvar\solve</a>                                                                                     - H1 line
 %   classes\models\rfvar\sort_Q                                                                                    - (No help available)
-%   <a href="matlab:help classes\models\rfvar\structural_form">classes\models\rfvar\structural_form</a>                                                                           - H1 line
+%   <a href="matlab:help classes\models\rfvar\structural_form">classes\models\rfvar\structural_form</a>                                                                           -  finds A structural form given the imposed restrictions
 %   classes\models\rfvar\translate_restrictions                                                                    - (No help available)
 %   classes\models\rfvar\update_estimated_parameter_names                                                          - (No help available)
 %   classes\models\rfvar\update_posterior_simulation_initial_conditions                                            - (No help available)
@@ -137,7 +137,7 @@
 %   <a href="matlab:help classes\models\rise_generic\forecast">classes\models\rise_generic\forecast</a>                                                                                  - H1 line
 %   <a href="matlab:help classes\models\rise_generic\get">classes\models\rise_generic\get</a>                                                                                       - H1 line
 %   classes\models\rise_generic\get_estimated_parameter_names                                                             - (No help available)
-%   <a href="matlab:help classes\models\rise_generic\historical_decomposition">classes\models\rise_generic\historical_decomposition</a>                                                                  - H1 line
+%   <a href="matlab:help classes\models\rise_generic\historical_decomposition">classes\models\rise_generic\historical_decomposition</a>                                                                  -  Computes historical decompositions of a DSGE model
 %   classes\models\rise_generic\initialize_posterior_simulation                                                           - (No help available)
 %   <a href="matlab:help classes\models\rise_generic\irf">classes\models\rise_generic\irf</a>                                                                                       - H1 line
 %   <a href="matlab:help classes\models\rise_generic\isnan">classes\models\rise_generic\isnan</a>                                                                                     - H1 line
@@ -239,7 +239,7 @@
 %   classes\time_series\ts\binary_operation                                                     - (No help available)
 %   <a href="matlab:help classes\time_series\ts\boxplot">classes\time_series\ts\boxplot</a>                                                              - H1 line
 %   <a href="matlab:help classes\time_series\ts\bsxfun">classes\time_series\ts\bsxfun</a>                                                               - H1 line
-%   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  -  concatenates time series along the specified dimension
 %   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              - H1 line
 %   classes\time_series\ts\comparison                                                           - (No help available)
 %   <a href="matlab:help classes\time_series\ts\corr">classes\time_series\ts\corr</a>                                                                 - H1 line
@@ -293,7 +293,7 @@
 %   <a href="matlab:help classes\time_series\ts\nan">classes\time_series\ts\nan</a>                                                                  - H1 line
 %   <a href="matlab:help classes\time_series\ts\ne">classes\time_series\ts\ne</a>                                                                   - H1 line
 %   <a href="matlab:help classes\time_series\ts\numel">classes\time_series\ts\numel</a>                                                                - H1 line
-%   <a href="matlab:help classes\time_series\ts\ones">classes\time_series\ts\ones</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\ones">classes\time_series\ts\ones</a>                                                                 -  overloads ones for ts objects
 %   <a href="matlab:help classes\time_series\ts\pages2struct">classes\time_series\ts\pages2struct</a>                                                         - H1 line
 %   <a href="matlab:help classes\time_series\ts\plot">classes\time_series\ts\plot</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\plotyy">classes\time_series\ts\plotyy</a>                                                               - H1 line
@@ -383,6 +383,11 @@
 %   <a href="matlab:help classes\utils\mcf\mcf">classes\utils\mcf\mcf</a>                                            -  Monte Carlo Filtering
 %
 %
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+ar1_approximation   -------------------%
+%
+%   <a href="matlab:help m\+ar1_approximation\rouwenhorst">m\+ar1_approximation\rouwenhorst</a>                                           -  approximates and AR(1) process with a Markov chain
+%
+%
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+distributions   -------------------%
 %
 %   <a href="matlab:help m\+distributions\beta">m\+distributions\beta</a>                                                               - H1 line
@@ -422,68 +427,6 @@
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+optimization   -------------------%
 %
 %   <a href="matlab:help m\+optimization\estimation_engine">m\+optimization\estimation_engine</a>                                           - H1 line
-%
-%
-%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+parser   -------------------%
-%
-%   <a href="matlab:help m\+parser\analytic_model">m\+parser\analytic_model</a>                                                           - H1 line
-%   <a href="matlab:help m\+parser\analytical_symbolic_form">m\+parser\analytical_symbolic_form</a>                                                 - H1 line
-%   <a href="matlab:help m\+parser\any2str">m\+parser\any2str</a>                                                                  - H1 line
-%   <a href="matlab:help m\+parser\append_file">m\+parser\append_file</a>                                                              - H1 line
-%   <a href="matlab:help m\+parser\build_markov_regimes">m\+parser\build_markov_regimes</a>                                                     - H1 line
-%   <a href="matlab:help m\+parser\burry_probabilities">m\+parser\burry_probabilities</a>                                                      - H1 line
-%   <a href="matlab:help m\+parser\capture_equations">m\+parser\capture_equations</a>                                                        - H1 line
-%   <a href="matlab:help m\+parser\capture_parameterization">m\+parser\capture_parameterization</a>                                                 - H1 line
-%   <a href="matlab:help m\+parser\check_markov_chains_adequacy">m\+parser\check_markov_chains_adequacy</a>                                             - H1 line
-%   <a href="matlab:help m\+parser\collect_symbolic_list">m\+parser\collect_symbolic_list</a>                                                    - H1 line
-%   <a href="matlab:help m\+parser\concatenate_names_number">m\+parser\concatenate_names_number</a>                                                 - H1 line
-%   <a href="matlab:help m\+parser\create_auxiliary_name">m\+parser\create_auxiliary_name</a>                                                    - H1 line
-%   <a href="matlab:help m\+parser\create_state_list">m\+parser\create_state_list</a>                                                        - H1 line
-%   <a href="matlab:help m\+parser\declarations2dictionary">m\+parser\declarations2dictionary</a>                                                  - H1 line
-%   <a href="matlab:help m\+parser\delimiters">m\+parser\delimiters</a>                                                               - H1 line
-%   <a href="matlab:help m\+parser\endogenous">m\+parser\endogenous</a>                                                               - H1 line
-%   <a href="matlab:help m\+parser\exogenous">m\+parser\exogenous</a>                                                                - H1 line
-%   <a href="matlab:help m\+parser\file2blocks">m\+parser\file2blocks</a>                                                              - H1 line
-%   <a href="matlab:help m\+parser\find_occurrences">m\+parser\find_occurrences</a>                                                         - H1 line
-%   <a href="matlab:help m\+parser\greekify">m\+parser\greekify</a>                                                                 - H1 line
-%   <a href="matlab:help m\+parser\initialize_dictionary">m\+parser\initialize_dictionary</a>                                                    - H1 line
-%   <a href="matlab:help m\+parser\initialize_markov_chain">m\+parser\initialize_markov_chain</a>                                                  - H1 line
-%   <a href="matlab:help m\+parser\input_list">m\+parser\input_list</a>                                                               - H1 line
-%   <a href="matlab:help m\+parser\insert_definitions">m\+parser\insert_definitions</a>                                                       - H1 line
-%   <a href="matlab:help m\+parser\is_forbidden_name">m\+parser\is_forbidden_name</a>                                                        - H1 line
-%   <a href="matlab:help m\+parser\is_transition_probability">m\+parser\is_transition_probability</a>                                                - H1 line
-%   <a href="matlab:help m\+parser\kron">m\+parser\kron</a>                                                                     - H1 line
-%   <a href="matlab:help m\+parser\lag_names">m\+parser\lag_names</a>                                                                - H1 line
-%   <a href="matlab:help m\+parser\lead_lag_string">m\+parser\lead_lag_string</a>                                                          - H1 line
-%   <a href="matlab:help m\+parser\lead_names">m\+parser\lead_names</a>                                                               - H1 line
-%   <a href="matlab:help m\+parser\listing">m\+parser\listing</a>                                                                  - H1 line
-%   <a href="matlab:help m\+parser\logvars2logvars">m\+parser\logvars2logvars</a>                                                          - H1 line
-%   <a href="matlab:help m\+parser\look_around">m\+parser\look_around</a>                                                              - H1 line
-%   <a href="matlab:help m\+parser\loose_commit">m\+parser\loose_commit</a>                                                             - H1 line
-%   <a href="matlab:help m\+parser\observable">m\+parser\observable</a>                                                               - H1 line
-%   <a href="matlab:help m\+parser\param_name_to_valid_param_name">m\+parser\param_name_to_valid_param_name</a>                                           - H1 line
-%   <a href="matlab:help m\+parser\parameter">m\+parser\parameter</a>                                                                - H1 line
-%   <a href="matlab:help m\+parser\parameters">m\+parser\parameters</a>                                                               - H1 line
-%   <a href="matlab:help m\+parser\parse">m\+parser\parse</a>                                                                    - H1 line
-%   <a href="matlab:help m\+parser\planner_objective">m\+parser\planner_objective</a>                                                        - H1 line
-%   <a href="matlab:help m\+parser\preparse">m\+parser\preparse</a>                                                                 - H1 line
-%   <a href="matlab:help m\+parser\push_if_validated">m\+parser\push_if_validated</a>                                                        - H1 line
-%   <a href="matlab:help m\+parser\read_file">m\+parser\read_file</a>                                                                - H1 line
-%   <a href="matlab:help m\+parser\remove_comments">m\+parser\remove_comments</a>                                                          - H1 line
-%   <a href="matlab:help m\+parser\remove_definitions">m\+parser\remove_definitions</a>                                                       - H1 line
-%   <a href="matlab:help m\+parser\remove_file_extension">m\+parser\remove_file_extension</a>                                                    - H1 line
-%   <a href="matlab:help m\+parser\remove_handles">m\+parser\remove_handles</a>                                                           - H1 line
-%   <a href="matlab:help m\+parser\replace_definitions">m\+parser\replace_definitions</a>                                                      - H1 line
-%   <a href="matlab:help m\+parser\replace_steady_state_call">m\+parser\replace_steady_state_call</a>                                                - H1 line
-%   <a href="matlab:help m\+parser\setfield">m\+parser\setfield</a>                                                                 - H1 line
-%   <a href="matlab:help m\+parser\string_mult">m\+parser\string_mult</a>                                                              - H1 line
-%   <a href="matlab:help m\+parser\substitute_definitions">m\+parser\substitute_definitions</a>                                                   - H1 line
-%   <a href="matlab:help m\+parser\symbolic_model">m\+parser\symbolic_model</a>                                                           - H1 line
-%   <a href="matlab:help m\+parser\transition_probabilities">m\+parser\transition_probabilities</a>                                                 - H1 line
-%   <a href="matlab:help m\+parser\translate_auxiliary_names">m\+parser\translate_auxiliary_names</a>                                                - H1 line
-%   <a href="matlab:help m\+parser\valid_names_in_text">m\+parser\valid_names_in_text</a>                                                      - H1 line
-%   <a href="matlab:help m\+parser\valid_param_name_to_tex_name">m\+parser\valid_param_name_to_tex_name</a>                                             - H1 line
-%   <a href="matlab:help m\+parser\vectorized_model">m\+parser\vectorized_model</a>                                                         - H1 line
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+truncated_multivariate_normal   -------------------%
@@ -709,6 +652,11 @@
 %   <a href="matlab:help m\+utils\+stat\std">m\+utils\+stat\std</a>                                                - H1 line
 %   <a href="matlab:help m\+utils\+stat\sum">m\+utils\+stat\sum</a>                                                - H1 line
 %   <a href="matlab:help m\+utils\+stat\var">m\+utils\+stat\var</a>                                                - H1 line
+%
+%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+struct   -------------------%
+%
+%   <a href="matlab:help m\+utils\+struct\pad">m\+utils\+struct\pad</a>                                           -  concatenates fields structures horizontally
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+table   -------------------%
