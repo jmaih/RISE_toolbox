@@ -178,7 +178,7 @@ end
             ' _____	  _  ____  _____\n'
             ['|  _  |  (_)|  __||  ___|   |	Welcome to the ',vv.Name,'\n']
             ['| (_) /  | || |__ | |___    |	Version: ',vv.Version,'\n']
-            ['|  __ \\  | ||__  ||  ___|   |	Release: ',vv.Release,'\n']
+            ['|  __ \\  | ||__  ||  ___|   |	Tested with Matlab: ',vv.Release,'\n']
             ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date,'\n']
             '|_|   \\_\\|_||____||_____|   |\n'
             ['please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
