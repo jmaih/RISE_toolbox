@@ -1,78 +1,136 @@
-function struct_forms=structural_form(obj,initcall)
-% H1 line
+function newobj=structural_form(obj,varargin)
+% structural_form finds A structural form given the imposed restrictions
 %
 % Syntax
 % -------
 % ::
+%   newobj=structural_form(obj)
+%   newobj=structural_form(obj,initcall)
 %
 % Inputs
 % -------
 %
+% - **obj** : [rfvar] : reduced form VAR object
+%
+% - varargin : standard optional inputs **coming in pairs**. Among which:
+%   - **restrict_lags** : [cell array|{''}] : restrictions on the lag
+%       structure. There are two equivalent syntaxes for this:
+%       - {'var_name1@var_name2{lag}'}
+%       - {'alag(var_name1,var_name2)'} : here alag should be understood as
+%         a-lag, where lag is the "lag" e.g. a1(infl,unemp) means unemp
+%         does not enter the infl equation at lag 1.
+%   - **restrict_irf_sign** : [cell array|{''}] : sign restrictions on the
+%       impulse responses. The general syntax is
+%       {'var_name{period}@shock_name','sign'} and the default period is
+%       "0" (for contemporaneous). That means
+%       {'var_name{0}@shock_name','+'} and {'var_name@shock_name','+'}
+%       are equivalent
+%   - **restrict_irf_zero** : [cell array|{''}] : zero restrictions on the
+%       impulse responses. The general syntax is
+%       {'var_name{period}@shock_name'} and the default period is
+%       "0" (for contemporaneous). That means
+%       {'var_name{0}@shock_name'} and {'var_name@shock_name'}
+%       are equivalent
+%   - **structural_shocks** : [cell array|{''}] : List of structural
+%       shocks. The shock names can be entered with or without their
+%       description. For instance : 
+%       - {'E_PAI','E_U','E_MP'}
+%       - {'E_PAI','"inflation shock"','E_U','"unempl shock"','E_MP'}
+%   - **irf_sample_max** : [numeric|{10000}] : maximum number of trials in
+%       the drawing of rotation matrices
+%
 % Outputs
 % --------
+%
+% - newobj : [rfvar]: new rfvar object with the drawn structural form
 %
 % Description
 % ------------
 %
+% - RISE automatically orders the endogenous variables alphabetically and
+%   tags each equation with one of the endogenous variables. This may be
+%   useful for understanding the behavior of **restrict_lags** above.
+%
+% - The Choleski identification scheme is not implemented per se. The user
+%   has to explicitly enter the zeros in the right places. This gives the
+%   flexibility in implementing the restrictions. For instance, one could
+%   imagine a scheme in which choleski restrictions hold only in the long
+%   run.
+%
+% - With only zero restrictions, one cannot expect the impulse responses to
+%   automatically have the correct sign. The rotation imposes zero
+%   restrictions but not the sign. If you would like to have
+%   correctly-signed impulse responses there are two choices:
+%   - explicitly add sign restrictions
+%   - multiply the impulse responses for the wrongly-signed shock with
+%   minus.
+%
+% - Many periods can be entered simultaneously. For instance 
+%   'var_name{0,3,5,10:20,inf}@shock_name' 
+%
+% - long-run restrictions are denoted by "inf". For instance 
+%   'var_name{inf}@shock_name' 
+%
+% - Identification for Markov switching VARs is not implemented/supported. 
+%
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
-persistent oldobj endo_nbr nlags exo_nbr nx regimes_number B R Qzero ...
-    zero_restr myperm_lags myperm_irfs sign_restr irf_sample_max Qsign %tags
 if isempty(obj)
-    struct_forms=struct('restrict_lags',{{}},...
-		'restrict_irf_sign',{{}},'restrict_irf_zero',{{}},...
+    newobj=struct('restrict_lags',{{}},...
+        'restrict_irf_sign',{{}},'restrict_irf_zero',{{}},...
         'structural_shocks',{{}},'irf_sample_max',10000);
     return
 end
 
-if nargin<2
-    initcall=true;
-end
-
 if isempty(obj.options.structural_shocks)
-    struct_forms=obj;
+    newobj=obj;
     if obj.options.debug
         disp('structural shocks and restrictions not declared for identification')
     end
     return
 end
 
-if initcall
-    myperm_lags=@(x)transpose(x);
-    myperm_irfs=@(x)x;
-    obj=check_identification(obj);
-    if obj.identification.over
-        error('error the model is over-identified and cannot be rotated')
-    end
-    
-    endo_nbr=obj.endogenous.number(1);
-    nlags=obj.nlags;
-    nx=obj.nx;
-    exo_nbr=obj.exogenous.number(1);
-    regimes_number=obj.markov_chains.regimes_number;
-    irf_sample_max=obj.options.irf_sample_max;
-    
-    % get solution
-    %-------------
-    [B,~,R]=vartools.resolve(obj.solution,nlags,regimes_number);
-    
-    % build the F matrix
-    %-------------------
-    rest_names={obj.nonlinear_restrictions.name};
-    zero_restr=strcmp(rest_names,'lag_struct_Then_irf_zero_restr');
-    sign_restr=obj.nonlinear_restrictions(~zero_restr);
-    zero_restr=obj.nonlinear_restrictions(zero_restr);
-    % Here we don't even need to sort this... usefull only for checking
-    % identification
-    Qzero=zero_restr.Q(1,:);% [Qzero,~,tags]=rfvar.sort_Q(zero_restr.Q);
-    Qsign=sign_restr.Q(1,:);
-    oldobj=obj;
+obj=set(obj,varargin{:});
+
+myperm_lags=@(x)transpose(x);
+myperm_irfs=@(x)x;
+obj=check_identification(obj);
+if obj.identification.over
+    error('error the model is over-identified and cannot be rotated')
 end
 
-% struct_forms=rfvar.empty(0,1); %struct('A0',{},'Aplus',{});
+endo_nbr=obj.endogenous.number(1);
+nlags=obj.nlags;
+nx=obj.nx;
+exo_nbr=obj.exogenous.number(1);
+regimes_number=obj.markov_chains.regimes_number;
+
+if regimes_number>1
+    error('identification for Markov-switching VARs is not implemented')
+end
+
+irf_sample_max=obj.options.irf_sample_max;
+
+% get solution
+%-------------
+[B,~,R]=vartools.resolve(obj.solution,nlags,regimes_number);
+
+% build the F matrix
+%-------------------
+rest_names={obj.nonlinear_restrictions.name};
+zero_restr=strcmp(rest_names,'lag_struct_Then_irf_zero_restr');
+sign_restr=obj.nonlinear_restrictions(~zero_restr);
+zero_restr=obj.nonlinear_restrictions(zero_restr);
+% Here we don't even need to sort this... usefull only for checking
+% identification
+Qsign=sign_restr.Q(1,:);
+[Qzero,~,tags_zero]=rfvar.sort_Q(zero_restr.Q);
+itags_zero(tags_zero)=1:numel(tags_zero);
+
+% newobj=rfvar.empty(0,1); %struct('A0',{},'Aplus',{});
 % One can either write a loop around this function or change the default
 % number of rotations...
 %-------------------------------------------------------------------------
@@ -81,7 +139,7 @@ rounds=0;
 while ~success && rounds<irf_sample_max
     % rotate R to get a new impact matrix C
     %--------------------------------------
-    if oldobj.identification.exact
+    if obj.identification.exact
         C=R;
     else
         C=generate_new_impact_matrix();
@@ -101,14 +159,23 @@ while ~success && rounds<irf_sample_max
         is_lag_structure=~is_lag_structure;
     end
     
-    n=size(Fzero{1},2);
+    number_of_zero_restrictions=size(Fzero{1},2);
     Cnew=C;
     for istate=1:regimes_number
         P=var_rotation(Fzero{istate});
         % Compute corresponding short-run impact
         %---------------------------------------
-        Cnew{istate} = C{istate}*P;
+        Cnew{istate} = C{istate}*P(:,itags_zero);
         Cnew{istate}(abs(Cnew{istate})<1e-12)=0;
+        if obj.options.debug
+            check_rotation_adequacy(C{istate},Cnew{istate});
+            bigtable=cell(obj.endogenous.number(end)+1,sum(obj.exogenous.number)+1);
+            bigtable(2:end,1)=obj.endogenous.name;
+            bigtable(1,2:end)=obj.exogenous.name;
+            bigtable(2:end,2:end)=num2cell(Cnew{istate});
+            disp(bigtable)
+            keyboard
+        end
     end
     
     success=isempty(sign_restr.f);
@@ -146,9 +213,18 @@ end
 % push the successful object
 %---------------------------
 for istate=1:regimes_number
-    [oldobj.solution.omg{istate},oldobj.solution.sig{istate}]=vartools.decompose_impact(Cnew{istate});
+    [obj.solution.omg{istate},obj.solution.sig{istate}]=vartools.decompose_impact(Cnew{istate});
 end
-struct_forms=oldobj;
+newobj=obj;
+
+    function check_rotation_adequacy(C,Cnew)
+        SIG=C*C';
+        SIG_new=Cnew*Cnew';
+        discrepancy=max(abs(SIG(:)-SIG_new(:)));
+        if discrepancy>1e-9
+            error('rotation code does not work')
+        end
+    end
 
     function C=generate_new_impact_matrix()
         C=cell(1,regimes_number);
@@ -246,13 +322,17 @@ struct_forms=oldobj;
         end
     end
     function P=var_rotation(fa0ap)
-        P=zeros(n);
-        for jj=1:n
-            Qj=Qzero{1,jj};% <-- Qj=Qzero{1,tags(jj)}; % we don't even need to sort anything here
-            Qtilde=[Qj*fa0ap
-                P(:,1:jj-1)'];% P'
-            [q,~]=qr(Qtilde');
-            P(:,jj)=q(:,end);
+        if number_of_zero_restrictions
+            P=zeros(number_of_zero_restrictions);
+            for jj=1:number_of_zero_restrictions
+                Qj=Qzero{1,jj};
+                Qtilde=[Qj*fa0ap
+                    P(:,1:jj-1)'];
+                [q,~]=qr(Qtilde');
+                P(:,jj)=q(:,end);
+            end
+        else
+            P=eye(endo_nbr);
         end
     end
 end

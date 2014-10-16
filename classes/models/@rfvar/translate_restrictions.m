@@ -47,6 +47,7 @@ for itype=1:numel(types)
     if ~isempty(thisRestriction)
         % standardize all restrictions to Y@R{}
         %--------------------------------------
+        % turn a3(infl,ouput) into infl@ouput{3}
         thisRestriction(:,1)=regexprep(thisRestriction(:,1),'a(\d+)\((\w+),(\w+)\)','$2@$3{$1}');
         
         left=thisRestriction(:,1);
@@ -160,8 +161,6 @@ obj.nonlinear_restrictions=nonlinear_restrictions;
             %--------------------------------------------------------------
             f(isnan(f))=0.5;
         end
-        [~,ord]=sort([Q{2,:}],2,'descend'); 
-        Q=Q(:,ord);
     end
     function fill_array()
         for irow=1:nrows
