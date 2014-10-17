@@ -173,7 +173,7 @@ end
         pdf_doc=[rise_root,filesep,'help',filesep,'build',filesep,'latex',filesep,'RISE.pdf'];
         html_doc=[rise_root,filesep,'help',filesep,'build',filesep,'html',filesep,'master_doc.html'];
         
-        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
+        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
         
         tmp={
             l1
@@ -183,15 +183,15 @@ end
             ['|  __ \\  | ||__  ||  ___|   |	Tested with Matlab: ',vv.Release,'']
             ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date,'']
             '|_|   \\_\\|_||____||_____|   |'
-            ['please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
+            ['* Please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
             'or the <a href="',strrep(pdf_doc,'\','\\'),'">pdf documentation</a> ']
-            'For concerns, problems, suggestions and desideratas'
+            '* For concerns, problems, suggestions and desideratas'
             'please send email to this <a href="mailto:junior.maih@gmail.com">address</a>'
-            'Thank you in advance for your feedback !!!'
+            '* Thank you in advance for your feedback !!!'
             };
         if retcode
             tmp=[tmp
-                'pdflatex/epstopdf (Miktex) could not be located!!!'
+                '* pdflatex/epstopdf (Miktex) could not be located!!!'
                 ];
         end
         tmp=[tmp
