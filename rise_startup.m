@@ -173,31 +173,37 @@ end
         pdf_doc=[rise_root,filesep,'help',filesep,'build',filesep,'latex',filesep,'RISE.pdf'];
         html_doc=[rise_root,filesep,'help',filesep,'build',filesep,'html',filesep,'master_doc.html'];
         
+        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
         
         tmp={
-            ' _____	  _  ____  _____\n'
-            ['|  _  |  (_)|  __||  ___|   |	Welcome to the ',vv.Name,'\n']
-            ['| (_) /  | || |__ | |___    |	Version: ',vv.Version,'\n']
-            ['|  __ \\  | ||__  ||  ___|   |	Tested with Matlab: ',vv.Release,'\n']
-            ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date,'\n']
-            '|_|   \\_\\|_||____||_____|   |\n'
+            l1
+            ' _____	  _  ____  _____'
+            ['|  _  |  (_)|  __||  ___|   |	Welcome to the ',vv.Name,'']
+            ['| (_) /  | || |__ | |___    |	Version: ',vv.Version,'']
+            ['|  __ \\  | ||__  ||  ___|   |	Tested with Matlab: ',vv.Release,'']
+            ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date,'']
+            '|_|   \\_\\|_||____||_____|   |'
             ['please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
-            'or the <a href="',strrep(pdf_doc,'\','\\'),'">pdf documentation</a> \n']
-            'For concerns, problems, suggestions and desideratas\n'
-            'please send email to this address\n'
-            'Thank you in advance for your feedback !!!\n'
-            ''
+            'or the <a href="',strrep(pdf_doc,'\','\\'),'">pdf documentation</a> ']
+            'For concerns, problems, suggestions and desideratas'
+            'please send email to this <a href="mailto:junior.maih@gmail.com">address</a>'
+            'Thank you in advance for your feedback !!!'
             };
-%         l1 = '+---------------------------------------------------------------+';
-        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
-%         l1 = ['+',char('-'*ones(1,size(char(tmp),2))),'+'];
-        
-        disp(l1)
-        fprintf(1,strjoin(strrep(tmp,'\n','')','\n'));
         if retcode
-            disp('pdflatex/epstopdf (Miktex) could not be located')
+            tmp=[tmp
+                'pdflatex/epstopdf (Miktex) could not be located!!!'
+                ];
         end
-        disp(l1)
+        tmp=[tmp
+            l1
+            ' '];
+        try
+            fprintf(1,strjoin(tmp(:).','\n'));
+        catch
+            for irow=1:numel(tmp)
+                fprintf(1,[tmp{irow},'\n']);
+            end
+        end
     end
 end
 
