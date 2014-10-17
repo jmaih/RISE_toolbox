@@ -37,7 +37,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     npar=size(x0,1);
     a2tilde=struct();
     
-    [vdata,bigx,bigy,orig_order]=restricted_var_data(obj);
+    [vdata,bigx,bigy,orig_order,smpl]=restricted_var_data(obj);
     a_prior=[obj.estimation.priors.prior_mean];
     a_prior=a_prior(vdata.estim_locs);
     a_prior=a_prior(:);
@@ -156,11 +156,26 @@ end
         npar_short=obj.linear_restrictions_data.npar_short;
         iVa_prior=prior.V\eye(npar_short);
         
-        % ols
+        % gls
         %----
-        ols.a=X\y;
+        iSIGU=1;
+        switch obj.options.vp_prior_type
+            case {'minnesota','indep_normal_wishart'}
+                results=vartools.ols(bigy,bigx,0,false);
+                iSIGU=results.SIGols\eye(obj.endogenous.number(end));% iSIGU=diag(1./diag(obj.constant_var_data.sigma_));
+                iSIGU=kron(iSIGU,eye(smpl));
+                % N.B: for the indep_normal_wishart, This is not the exact
+                % formula but we still need to start somewhere for the
+                % initialization of the Gibbs sampler.
+            case 'none'
+                iVa_prior(:)=0;
+            case 'normal_wishart'
+            case {'jeffrey','diffuse'}
+            otherwise
+        end
+        iV_ols=(X'*iSIGU*X);
+        ols.a=(X'*iSIGU*X)\(X'*iSIGU*y);
         ols.resid=y-X*ols.a;
-        iV_ols=(X'*X);
         
         % posterior
         %----------
@@ -170,8 +185,8 @@ end
     end
 end
 
-function [vd,bigx,bigy,orig_order]=restricted_var_data(obj)
-[bigy,bigx,nv]=vartools.set_y_and_x(obj.data.y,obj.data.x,...
+function [vd,bigx,bigy,orig_order,smpl]=restricted_var_data(obj)
+[bigy,bigx,nv,smpl]=vartools.set_y_and_x(obj.data.y,obj.data.x,...
     obj.nlags,obj.constant);
 vd=struct();
 xi=kron(bigx',eye(nv));
