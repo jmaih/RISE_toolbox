@@ -11,7 +11,7 @@ function varargout=resort(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

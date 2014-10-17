@@ -11,7 +11,7 @@ function obj=set(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

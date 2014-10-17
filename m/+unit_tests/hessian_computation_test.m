@@ -11,7 +11,7 @@ function hessian_computation_test
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

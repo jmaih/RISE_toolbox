@@ -11,7 +11,7 @@ function varargout=simulate(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

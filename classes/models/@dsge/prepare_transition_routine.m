@@ -11,7 +11,7 @@ function Qfunc=prepare_transition_routine(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

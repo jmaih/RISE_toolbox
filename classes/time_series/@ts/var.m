@@ -11,7 +11,7 @@ function m=var(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

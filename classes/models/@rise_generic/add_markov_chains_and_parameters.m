@@ -11,7 +11,7 @@ function obj=add_markov_chains_and_parameters(obj,markov_chains_)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [flag,msg]=is_forbidden_name(name)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

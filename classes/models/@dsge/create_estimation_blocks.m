@@ -11,7 +11,7 @@ function blocks=create_estimation_blocks(obj,blocks)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

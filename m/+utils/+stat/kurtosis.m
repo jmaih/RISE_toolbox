@@ -11,7 +11,7 @@ function varargout=kurtosis(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

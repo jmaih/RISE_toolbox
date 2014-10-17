@@ -11,7 +11,7 @@ function [init,retcode]=kalman_initialization(T,R,steadystate,risk,transition_fu
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

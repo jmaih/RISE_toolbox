@@ -11,7 +11,7 @@ function [irfs,retcode]=irf(y0,T,ss,state_vars_location,which_shocks,det_vars,op
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

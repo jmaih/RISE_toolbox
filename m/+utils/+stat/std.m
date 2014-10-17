@@ -11,7 +11,7 @@ function varargout=std(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function tex_code = latex_model_file(model,model_syntax,model_line_numbers)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

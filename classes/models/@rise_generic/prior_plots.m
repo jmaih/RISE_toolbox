@@ -11,7 +11,7 @@ function retcode=prior_plots(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

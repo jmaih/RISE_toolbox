@@ -12,7 +12,7 @@ function [pol,fval,exitflag]=orthonormal_polynomial(...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function m=max(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

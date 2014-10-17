@@ -11,7 +11,7 @@ function this=cosh(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function this=uminus(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [freq,frequency,year,period]=serial2frequency(x)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

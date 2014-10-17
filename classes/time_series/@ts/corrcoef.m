@@ -11,7 +11,7 @@ function varargout=corrcoef(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

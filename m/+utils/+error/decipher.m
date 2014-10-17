@@ -11,7 +11,7 @@ function msgout=decipher(code)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

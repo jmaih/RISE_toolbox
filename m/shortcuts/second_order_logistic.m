@@ -11,7 +11,7 @@ function varargout=second_order_logistic(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

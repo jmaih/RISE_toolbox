@@ -11,7 +11,7 @@ function this=asinh(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

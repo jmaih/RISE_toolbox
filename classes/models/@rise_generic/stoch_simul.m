@@ -11,7 +11,7 @@ function [oo_]=stoch_simul(obj,var_list,varargin)%,omega
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

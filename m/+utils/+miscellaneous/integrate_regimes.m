@@ -11,7 +11,7 @@ function varargout=integrate_regimes(Q,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

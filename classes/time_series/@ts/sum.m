@@ -11,7 +11,7 @@ function m=sum(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

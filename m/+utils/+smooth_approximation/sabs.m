@@ -11,7 +11,7 @@ function a=sabs(x,tol)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

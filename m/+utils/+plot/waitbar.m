@@ -11,7 +11,7 @@ function waitbar(task,x,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

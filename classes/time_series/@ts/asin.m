@@ -11,7 +11,7 @@ function this=asin(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

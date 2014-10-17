@@ -11,7 +11,7 @@ function ss=char2serial(x)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

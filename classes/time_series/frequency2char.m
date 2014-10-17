@@ -11,7 +11,7 @@ function fq=frequency2char(fq)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

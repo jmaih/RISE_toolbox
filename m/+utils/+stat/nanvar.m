@@ -11,7 +11,7 @@ function y = nanvar(x,w,dim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

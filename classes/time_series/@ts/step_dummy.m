@@ -11,7 +11,7 @@ function db=step_dummy(start_date,end_date,dummy_start_date)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

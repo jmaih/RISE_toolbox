@@ -11,7 +11,7 @@ function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

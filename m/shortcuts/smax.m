@@ -11,7 +11,7 @@ function a=smax(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

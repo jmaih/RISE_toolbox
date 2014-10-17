@@ -11,7 +11,7 @@ function [m1,V1,n]=recursive(m0,V0,Xn,n)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

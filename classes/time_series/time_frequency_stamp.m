@@ -11,7 +11,7 @@ function [stamp,unstamp]=time_frequency_stamp()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

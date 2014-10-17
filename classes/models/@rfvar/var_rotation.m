@@ -11,7 +11,7 @@ function P=var_rotation(fa0ap,Q)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

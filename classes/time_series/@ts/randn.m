@@ -11,7 +11,7 @@ function db=randn(start_date,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

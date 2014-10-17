@@ -11,7 +11,7 @@ function [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,data_tren
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

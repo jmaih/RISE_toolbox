@@ -11,7 +11,7 @@ function varargout=laplace(lowerquantileORmean,upperquantileORstdev,prob,c,d)% d
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

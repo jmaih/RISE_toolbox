@@ -11,7 +11,7 @@ function flag=ne(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

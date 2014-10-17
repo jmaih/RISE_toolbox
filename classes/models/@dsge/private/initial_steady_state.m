@@ -11,7 +11,7 @@ function [obj,ss_and_bgp_start_vals,ssfuncs,retcode]=initial_steady_state(obj,va
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function varargout=parse_arguments(args,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

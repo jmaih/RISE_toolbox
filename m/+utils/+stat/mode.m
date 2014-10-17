@@ -11,7 +11,7 @@ function varargout=mode(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

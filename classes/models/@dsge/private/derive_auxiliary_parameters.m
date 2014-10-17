@@ -11,7 +11,7 @@ function obj=derive_auxiliary_parameters(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

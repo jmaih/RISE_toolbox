@@ -11,7 +11,7 @@ function flag=gt(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [this,rise_items,matlab_args]=parse_plot_args(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

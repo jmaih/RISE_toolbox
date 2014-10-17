@@ -11,7 +11,7 @@ function obj=store_probabilities(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

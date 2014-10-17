@@ -11,7 +11,7 @@ function [H,iH,dH] = conditioner(H0,tol)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [ax,h]=sup_label(text,whichLabel,supAxes)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

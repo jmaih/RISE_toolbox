@@ -11,7 +11,7 @@ function val=get(obj,prop)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

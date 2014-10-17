@@ -11,7 +11,7 @@ function correction=saveaspdf(fig,filename)%%
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

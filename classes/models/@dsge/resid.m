@@ -11,7 +11,7 @@ function r=resid(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

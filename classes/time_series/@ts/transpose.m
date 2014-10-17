@@ -11,7 +11,7 @@ d% H1 line
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

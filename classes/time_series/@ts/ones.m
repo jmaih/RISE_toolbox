@@ -18,7 +18,7 @@ function db=ones(start_date,varargin)
 %
 % - **db** : [ts]: a time series
 %
-% Description
+% More About
 % ------------
 %
 % - this is a static method and so it has to be called with the **ts.**

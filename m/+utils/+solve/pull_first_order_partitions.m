@@ -11,7 +11,7 @@ function [dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,de_0]=pull_first_order_partitio
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

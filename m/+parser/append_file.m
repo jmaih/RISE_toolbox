@@ -11,7 +11,7 @@ function output=append_file(output,rline,definitions)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

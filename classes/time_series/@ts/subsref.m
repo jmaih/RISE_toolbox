@@ -11,7 +11,7 @@ function this=subsref(obj,s)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

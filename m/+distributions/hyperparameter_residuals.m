@@ -11,7 +11,7 @@ function resid=hyperparameter_residuals(x,cdfn,plb,pub,prob,callingfun,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

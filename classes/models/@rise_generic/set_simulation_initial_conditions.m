@@ -11,7 +11,7 @@ function Initcond=set_simulation_initial_conditions(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

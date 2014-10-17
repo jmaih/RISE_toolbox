@@ -11,7 +11,7 @@ function list_ss=collect_symbolic_list(batch,items)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

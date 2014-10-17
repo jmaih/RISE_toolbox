@@ -11,7 +11,7 @@ function [LogLik,Incr,retcode,obj]=likelihood_dsge_var(params,obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

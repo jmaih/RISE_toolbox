@@ -11,7 +11,7 @@ function db=unary_operation(db,op_string)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

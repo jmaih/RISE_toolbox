@@ -11,7 +11,7 @@ function [A,retcode]=theoretical_autocorrelations(obj,varargin)%,resolve_flag
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

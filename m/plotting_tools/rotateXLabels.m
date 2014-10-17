@@ -11,7 +11,7 @@ function hh = rotateXLabels( ax, angle, varargin )
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

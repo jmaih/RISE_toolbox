@@ -11,7 +11,7 @@ function pp=dynamic_penalty(vector,k,alpha_)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

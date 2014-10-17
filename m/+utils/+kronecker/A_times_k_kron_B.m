@@ -11,7 +11,7 @@ function C=A_times_k_kron_B(A,B,k)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

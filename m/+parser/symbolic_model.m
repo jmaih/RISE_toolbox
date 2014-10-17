@@ -11,7 +11,7 @@ function m=symbolic_model(m,var_list)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

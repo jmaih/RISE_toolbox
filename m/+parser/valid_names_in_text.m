@@ -11,7 +11,7 @@ function vout=valid_names_in_text(vin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function out=lag_names(names,n)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

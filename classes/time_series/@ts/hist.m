@@ -11,7 +11,7 @@ function h=hist(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

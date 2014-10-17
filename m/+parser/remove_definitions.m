@@ -11,7 +11,7 @@ function tank=remove_definitions(tank,definitions)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

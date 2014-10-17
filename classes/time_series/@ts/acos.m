@@ -11,7 +11,7 @@ function this=acos(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

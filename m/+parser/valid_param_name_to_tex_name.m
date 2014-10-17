@@ -11,7 +11,7 @@ function pname=valid_param_name_to_tex_name(pname,chain_names)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

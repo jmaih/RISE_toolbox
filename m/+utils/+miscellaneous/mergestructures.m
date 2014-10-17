@@ -11,7 +11,7 @@ function A = mergestructures(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

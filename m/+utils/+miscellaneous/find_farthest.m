@@ -11,7 +11,7 @@ function [x,x_id]=find_farthest(xvec,x0)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

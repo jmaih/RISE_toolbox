@@ -11,7 +11,7 @@ function y=second_order_logistic(x,g,c1,c2)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

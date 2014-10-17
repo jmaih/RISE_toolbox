@@ -11,7 +11,7 @@ function dd=push_if_validated(val,testfunc,type,name_file_line)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

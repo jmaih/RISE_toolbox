@@ -11,7 +11,7 @@ function fit=compute_fitness(ff,flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

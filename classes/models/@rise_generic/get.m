@@ -11,7 +11,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

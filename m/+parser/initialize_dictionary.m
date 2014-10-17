@@ -11,7 +11,7 @@ function dictionary = initialize_dictionary()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

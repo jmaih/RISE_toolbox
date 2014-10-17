@@ -11,7 +11,7 @@ function a=smin(x,tol)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

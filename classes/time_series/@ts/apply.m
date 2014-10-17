@@ -11,7 +11,7 @@ function db=apply(db,fhandle)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

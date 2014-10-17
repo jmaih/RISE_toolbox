@@ -11,7 +11,7 @@ function varargout=wishart(S,v,~,~)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function y = nansum(x,dim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [A,B,steady_state]=set_solution_to_companion(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

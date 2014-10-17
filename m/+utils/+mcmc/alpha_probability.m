@@ -11,7 +11,7 @@ function a=alpha_probability(f_theta,f0)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

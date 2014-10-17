@@ -11,7 +11,7 @@ function new=endogenous()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

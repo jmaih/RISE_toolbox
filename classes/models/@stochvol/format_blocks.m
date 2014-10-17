@@ -11,7 +11,7 @@ function [endo_ids,exo_ids,params_ids,build_A,vectorize_A,build_OMG,vectorize_OM
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

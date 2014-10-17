@@ -11,7 +11,7 @@ function new_name=create_auxiliary_name(name,lead_or_lag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

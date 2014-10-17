@@ -11,7 +11,7 @@ function varargout=min(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

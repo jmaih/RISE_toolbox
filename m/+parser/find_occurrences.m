@@ -11,7 +11,7 @@ function [occur,objectives,aliens]=find_occurrences(objectives,vlist)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

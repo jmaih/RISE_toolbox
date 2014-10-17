@@ -11,7 +11,7 @@ function [x,f,retcode]=generate_starting_point(objective,max_trials)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

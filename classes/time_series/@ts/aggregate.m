@@ -11,7 +11,7 @@ function this=aggregate(this,newfreq,method)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

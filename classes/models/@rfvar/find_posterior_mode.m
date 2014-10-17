@@ -11,7 +11,7 @@ function [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,u
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

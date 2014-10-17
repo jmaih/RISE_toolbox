@@ -11,7 +11,7 @@ function [T,eigval,zmultcols,retcode]=optimal_policy_solver_h(obj,structural_mat
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

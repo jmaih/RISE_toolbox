@@ -11,7 +11,7 @@ function m=mean(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

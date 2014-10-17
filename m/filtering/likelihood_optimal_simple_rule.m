@@ -11,7 +11,7 @@ function [LogLik,Incr,retcode,obj]=likelihood_optimal_simple_rule(params,obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

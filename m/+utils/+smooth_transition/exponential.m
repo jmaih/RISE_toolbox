@@ -11,7 +11,7 @@ function y=exponential(x,g,c)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [sim_smooth,smooth,filt]=simulation_smoother(y,Z,T,R,H,Q,P1,a1,c,d)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

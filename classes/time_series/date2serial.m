@@ -11,7 +11,7 @@ function [s,frequency]=date2serial(dat,silent)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

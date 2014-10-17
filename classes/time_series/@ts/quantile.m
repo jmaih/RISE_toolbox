@@ -11,7 +11,7 @@ function varargout=quantile(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

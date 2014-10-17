@@ -11,7 +11,7 @@ function [hrs,mins,secs]=estimated_time_of_arrival(start_clock,percentage_comple
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

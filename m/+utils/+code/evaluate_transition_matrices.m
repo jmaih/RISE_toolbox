@@ -11,7 +11,7 @@ function [newstruct,retcode]=evaluate_transition_matrices(xstruct,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function X = X_times_kron_Q1_Qk(X,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

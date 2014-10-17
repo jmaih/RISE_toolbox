@@ -14,7 +14,7 @@ function [iterating_function,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

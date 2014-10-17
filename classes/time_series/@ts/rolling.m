@@ -11,7 +11,7 @@ function db=rolling(db,func,window,varargin)%,min_periods
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

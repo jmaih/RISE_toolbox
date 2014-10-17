@@ -11,7 +11,7 @@ function p=mypermutation(v,p)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

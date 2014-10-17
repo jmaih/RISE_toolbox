@@ -11,7 +11,7 @@ function allobj=solve_alternatives(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

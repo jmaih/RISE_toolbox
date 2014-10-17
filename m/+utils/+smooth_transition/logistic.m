@@ -11,7 +11,7 @@ function y=logistic(x,g,c)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

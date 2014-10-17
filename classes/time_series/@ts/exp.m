@@ -11,7 +11,7 @@ function this=exp(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

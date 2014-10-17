@@ -11,7 +11,7 @@ function [H,H2,grad]=outer_product(Objective,xparam,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

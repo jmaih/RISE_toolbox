@@ -11,7 +11,7 @@ function cond_fkst_db=forecast(obj,varargin)% historical_db
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples
@@ -341,7 +341,7 @@ end
 %     obj.R(:,:,:,regime_to_forecast),SS(:,regime_to_forecast));% compute the conditional forecasts
 
 %     function [CYf,CYfMean,Yf,Emean,E]=forecast_engine(Y0,H,G,SS)
-%         % Description:
+%         % More About:
 %         % Usage:
 %         % Arguments:
 %         % Value:

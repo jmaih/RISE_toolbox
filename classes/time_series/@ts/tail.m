@@ -11,7 +11,7 @@ function db=tail(db,n)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

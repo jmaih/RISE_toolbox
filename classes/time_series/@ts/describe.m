@@ -11,7 +11,7 @@ function info=describe(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

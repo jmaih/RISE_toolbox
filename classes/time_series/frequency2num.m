@@ -11,7 +11,7 @@ function fq=frequency2num(fq)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

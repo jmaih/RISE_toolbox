@@ -11,7 +11,7 @@ function [r,c]=one_figure_rows_columns(nitems)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

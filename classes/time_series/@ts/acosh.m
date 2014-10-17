@@ -11,7 +11,7 @@ function this=acosh(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

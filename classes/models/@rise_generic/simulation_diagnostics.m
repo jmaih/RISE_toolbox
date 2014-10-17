@@ -11,7 +11,7 @@ function simdiags=simulation_diagnostics(obj,simulation_folder)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

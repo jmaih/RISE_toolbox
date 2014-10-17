@@ -11,7 +11,7 @@ function x=quick_and_dirty(mu,CS,lb,ub,Nsim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

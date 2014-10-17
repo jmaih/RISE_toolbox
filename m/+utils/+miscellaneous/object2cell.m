@@ -11,7 +11,7 @@ function [C,hyper_class]=object2cell(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function y=re_order_output_rows(obj,y)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

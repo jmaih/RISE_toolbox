@@ -11,7 +11,7 @@ function preserve(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

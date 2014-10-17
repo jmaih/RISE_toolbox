@@ -11,7 +11,7 @@ function [LogLik,Incr,retcode,obj]=likelihood_markov_switching_dsge(params,obj)%
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

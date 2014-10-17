@@ -11,7 +11,7 @@ function this=horzcat(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

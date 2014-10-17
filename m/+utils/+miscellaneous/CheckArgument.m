@@ -11,7 +11,7 @@ function A=CheckArgument(A,expected_size,id)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

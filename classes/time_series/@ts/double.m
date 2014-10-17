@@ -11,7 +11,7 @@ function d=double(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

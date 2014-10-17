@@ -29,7 +29,7 @@ function mytable=report(obj,destination_root,rep_items,varargin)
 %
 % none
 %
-% Description
+% More About
 % ------------
 %
 % Examples

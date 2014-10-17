@@ -11,7 +11,7 @@ function [dictionary,PlannerObjective_block,is_model_with_planner_objective]=pla
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

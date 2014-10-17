@@ -11,7 +11,7 @@ function lhs=korder_matrix_vector(x,T_order_1,G,G0p)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

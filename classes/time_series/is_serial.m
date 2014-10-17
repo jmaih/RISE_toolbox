@@ -11,7 +11,7 @@ function [flag,year,period,freq,frequency]=is_serial(x)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

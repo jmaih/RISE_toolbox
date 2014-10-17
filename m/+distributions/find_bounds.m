@@ -11,7 +11,7 @@ function bounds=find_bounds(distr,mm,ss,prob,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

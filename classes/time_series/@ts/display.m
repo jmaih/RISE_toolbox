@@ -11,7 +11,7 @@ function display(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

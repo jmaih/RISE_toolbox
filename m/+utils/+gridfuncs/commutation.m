@@ -11,7 +11,7 @@ function K=commutation(m,n,fast)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [sw,jj,T]=spectrum(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

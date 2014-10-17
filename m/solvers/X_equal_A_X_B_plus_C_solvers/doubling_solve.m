@@ -19,7 +19,7 @@ function [P,retcode]=doubling_solve(A,B,C,options)
 % - P :
 % - retcode :
 %
-% Description
+% More About
 % ------------
 % 
 % Examples

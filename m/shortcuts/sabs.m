@@ -11,7 +11,7 @@ function a=sabs(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

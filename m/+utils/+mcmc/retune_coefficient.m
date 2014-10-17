@@ -11,7 +11,7 @@ function covariance_tune=retune_coefficient(covariance_tune,target_range,accepta
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

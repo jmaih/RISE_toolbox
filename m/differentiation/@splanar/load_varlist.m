@@ -11,7 +11,7 @@ function names=load_varlist(obj,names)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

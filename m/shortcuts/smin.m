@@ -11,7 +11,7 @@ function a=smin(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

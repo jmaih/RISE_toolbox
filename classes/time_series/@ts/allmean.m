@@ -11,7 +11,7 @@ function m=allmean(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [listing,nlist]=insert_definitions(listing,flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

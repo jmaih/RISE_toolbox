@@ -11,7 +11,7 @@ function [strout,varlist]=analytical_symbolic_form(str,validNames,flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

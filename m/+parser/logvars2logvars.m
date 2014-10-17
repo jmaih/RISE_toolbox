@@ -11,7 +11,7 @@ function [dictionary,blocks,old_endo_names]=logvars2logvars(dictionary,blocks)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

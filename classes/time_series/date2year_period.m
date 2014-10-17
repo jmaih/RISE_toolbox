@@ -11,7 +11,7 @@ function [year,period,freq,frequency]=date2year_period(date)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

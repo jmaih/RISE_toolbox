@@ -11,7 +11,7 @@ function varargout=evaluate_functions(xcell,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

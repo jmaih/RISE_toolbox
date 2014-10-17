@@ -11,7 +11,7 @@ function [block,dictionary,static]=capture_equations(dictionary,listing,block_na
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

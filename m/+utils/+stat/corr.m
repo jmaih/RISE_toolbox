@@ -11,7 +11,7 @@ function varargout=corr(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

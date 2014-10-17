@@ -11,7 +11,7 @@ function X=list_opened_files()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

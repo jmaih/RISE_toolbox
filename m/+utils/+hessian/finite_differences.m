@@ -11,7 +11,7 @@ function H = finite_differences(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function stopflag=check_convergence(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

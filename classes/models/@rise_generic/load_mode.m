@@ -11,7 +11,7 @@ function model=load_mode(model)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

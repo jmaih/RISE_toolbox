@@ -11,7 +11,7 @@ function obj=msvar_priors(obj,estim_names)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

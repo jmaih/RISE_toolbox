@@ -11,7 +11,7 @@ function lmdd=log_marginal_data_density(obj,type,simulation_folder)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

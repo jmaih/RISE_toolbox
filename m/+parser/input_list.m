@@ -11,7 +11,7 @@ function list=input_list()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

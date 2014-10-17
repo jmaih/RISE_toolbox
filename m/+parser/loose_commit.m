@@ -11,7 +11,7 @@ function list=loose_commit()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

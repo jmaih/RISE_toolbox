@@ -11,7 +11,7 @@ function obj=subsasgn(obj,s,b)% subsasgn
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

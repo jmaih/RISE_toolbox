@@ -11,7 +11,7 @@ function [Aplus,A0,Aminus,T0]=full_state_matrices(siz,dbf_plus,d0,dpb_minus,T0)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

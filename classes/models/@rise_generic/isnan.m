@@ -11,7 +11,7 @@ function params=isnan(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

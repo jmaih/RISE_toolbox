@@ -11,7 +11,7 @@ function [lik,v_iF_v]=conditional_likelihood(v,iF,dF,pp)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

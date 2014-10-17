@@ -32,7 +32,7 @@ function [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargi
 %   - 22 : nan or inf in F0 or T
 %   - 23 : divergence
 %
-% Description
+% More About
 % ------------
 %
 % Examples

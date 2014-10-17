@@ -11,7 +11,7 @@ function this=sinh(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

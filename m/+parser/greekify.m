@@ -11,7 +11,7 @@ function equation=greekify(equation)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

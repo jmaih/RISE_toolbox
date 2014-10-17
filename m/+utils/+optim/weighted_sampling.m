@@ -11,7 +11,7 @@ function r=weighted_sampling(pop_size,howmany,weights)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

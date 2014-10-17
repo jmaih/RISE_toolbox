@@ -11,7 +11,7 @@ function K=kurtosis(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

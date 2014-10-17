@@ -11,7 +11,7 @@ function [obj,retcode]=compute_definitions(obj,pp)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

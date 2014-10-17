@@ -11,7 +11,7 @@ function RawFile=read_file(FileName)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

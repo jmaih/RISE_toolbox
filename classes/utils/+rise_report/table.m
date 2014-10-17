@@ -76,7 +76,7 @@ classdef table < rise_report.generic_report
             %
             % - obj [table object]
             %
-            % Description
+            % More About
             % ------------
             %
             % Examples

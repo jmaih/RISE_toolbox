@@ -11,7 +11,7 @@ function [lnprior,retcode]=log_prior_density(obj,param)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

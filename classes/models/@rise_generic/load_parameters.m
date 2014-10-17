@@ -11,7 +11,7 @@ function model=load_parameters(model,the_mode_file)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

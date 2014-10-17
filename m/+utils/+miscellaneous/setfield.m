@@ -11,7 +11,7 @@ function [fresh_options,missing]=setfield(default_options,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

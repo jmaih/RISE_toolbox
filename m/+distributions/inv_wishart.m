@@ -11,7 +11,7 @@ function varargout=inv_wishart(S,v,~,~)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

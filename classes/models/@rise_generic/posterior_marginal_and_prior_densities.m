@@ -11,7 +11,7 @@ function ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function E=E_kron_X_Y(Mx,Ny,Oyx)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

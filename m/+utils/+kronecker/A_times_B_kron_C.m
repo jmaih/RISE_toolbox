@@ -11,7 +11,7 @@ function Z=A_times_B_kron_C(A,B,C)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

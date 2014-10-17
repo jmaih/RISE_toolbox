@@ -11,7 +11,7 @@ function [loglik,Incr,retcode,Filters]=msre_linear_filter(syst,data_info,data_tr
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

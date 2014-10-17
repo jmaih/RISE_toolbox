@@ -11,7 +11,7 @@ function this=acot(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

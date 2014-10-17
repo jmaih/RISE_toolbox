@@ -11,7 +11,7 @@ function []=dim_relevant(freq,nber_datesfunc)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

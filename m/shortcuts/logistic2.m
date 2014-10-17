@@ -11,7 +11,7 @@ function varargout=logistic2(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

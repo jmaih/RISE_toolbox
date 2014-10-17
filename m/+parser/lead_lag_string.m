@@ -11,7 +11,7 @@ function add_str=lead_lag_string(lead_or_lag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

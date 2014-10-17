@@ -11,7 +11,7 @@ function flag=isfinite(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

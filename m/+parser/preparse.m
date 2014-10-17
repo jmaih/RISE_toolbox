@@ -11,7 +11,7 @@ function [output,has_macro]=preparse(FileName,parsing_definitions)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

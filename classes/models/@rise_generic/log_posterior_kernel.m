@@ -11,7 +11,7 @@ function [log_post,log_lik,log_prior,Incr,retcode,obj]=log_posterior_kernel(obj,
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

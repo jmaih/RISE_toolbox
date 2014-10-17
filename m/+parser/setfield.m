@@ -11,7 +11,7 @@ function S = setfield(S,name,value)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function varargout=var(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -12,7 +12,7 @@ function [x1,f1,accepted,funevals,alpha_prob]=random_walk_mcmc(...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

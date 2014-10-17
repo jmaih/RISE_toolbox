@@ -11,7 +11,7 @@ function obj=feed_properties(classname,obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

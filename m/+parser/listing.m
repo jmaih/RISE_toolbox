@@ -11,7 +11,7 @@ function xout=listing(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

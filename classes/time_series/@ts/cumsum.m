@@ -11,7 +11,7 @@ function db=cumsum(db,dim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

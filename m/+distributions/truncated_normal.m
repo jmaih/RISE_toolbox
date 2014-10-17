@@ -11,7 +11,7 @@ function varargout=truncated_normal(lowerquantileORmean,upperquantileORstdev,pro
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

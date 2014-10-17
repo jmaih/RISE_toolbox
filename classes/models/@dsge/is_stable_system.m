@@ -11,7 +11,7 @@ function flag=is_stable_system(obj,fast)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

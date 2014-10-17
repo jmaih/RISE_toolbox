@@ -11,7 +11,7 @@ function db=ts_roll_or_expand(db,func,window,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

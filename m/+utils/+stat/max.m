@@ -11,7 +11,7 @@ function varargout=max(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

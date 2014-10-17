@@ -11,7 +11,7 @@ function [dn,dn_max,dn_min,nvar,npages,freq]=decompose_series(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function this=atanh(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

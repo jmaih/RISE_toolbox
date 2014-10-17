@@ -13,7 +13,7 @@ function [A,RHO_A,THETA_A,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

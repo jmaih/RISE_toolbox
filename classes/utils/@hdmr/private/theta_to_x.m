@@ -11,7 +11,7 @@ function [x,theta_low,theta_high]=theta_to_x(theta,theta_low,theta_high,xlow,xhi
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function plot_handle=bar(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

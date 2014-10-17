@@ -11,7 +11,7 @@ function irfs=dsge_var_irf(obj,params,steps,filter_flag,verbose,resolve_flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

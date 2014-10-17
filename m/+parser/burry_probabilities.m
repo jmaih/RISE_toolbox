@@ -11,7 +11,7 @@ function eqtns=burry_probabilities(eqtns,myifelseif,only_forward)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

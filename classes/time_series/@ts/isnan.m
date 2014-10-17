@@ -11,7 +11,7 @@ function flag=isnan(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

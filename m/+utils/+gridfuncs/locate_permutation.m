@@ -11,7 +11,7 @@ function ypred=locate_permutation(x,n,wrt_wise)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

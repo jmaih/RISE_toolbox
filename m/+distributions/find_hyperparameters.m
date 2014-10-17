@@ -11,7 +11,7 @@ function [ab,fval,retcode]=find_hyperparameters(space,cdfn,plb,pub,prob,varargin
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

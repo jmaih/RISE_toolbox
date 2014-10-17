@@ -11,7 +11,7 @@ function index(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

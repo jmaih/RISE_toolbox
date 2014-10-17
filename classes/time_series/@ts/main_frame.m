@@ -11,7 +11,7 @@ function tmp=main_frame(self,name_down)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

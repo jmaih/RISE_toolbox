@@ -11,7 +11,7 @@ function [x,f,exitflag,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

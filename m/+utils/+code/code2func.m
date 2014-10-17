@@ -11,7 +11,7 @@ function func=code2func(code,argins)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

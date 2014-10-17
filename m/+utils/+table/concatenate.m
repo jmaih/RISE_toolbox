@@ -11,7 +11,7 @@ function B=concatenate(data,precision)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

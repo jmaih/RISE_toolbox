@@ -11,7 +11,7 @@ function res=sum_products(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

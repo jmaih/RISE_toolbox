@@ -11,7 +11,7 @@ function obj=translate_restrictions(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

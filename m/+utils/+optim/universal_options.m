@@ -11,7 +11,7 @@ function universal_options = optimization_universal_options()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

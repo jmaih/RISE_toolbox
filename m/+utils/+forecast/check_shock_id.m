@@ -11,7 +11,7 @@ function check_shock_id(id,nx)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

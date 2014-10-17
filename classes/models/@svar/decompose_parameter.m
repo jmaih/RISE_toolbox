@@ -11,7 +11,7 @@ function [a_loc,eqtn_loc,var_loc]=decompose_parameter(x,headers)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

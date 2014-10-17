@@ -12,7 +12,7 @@ function [position,regime_states,pname,chain,state]=...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

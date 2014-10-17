@@ -11,7 +11,7 @@ function obj=setup_measurement_errors(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

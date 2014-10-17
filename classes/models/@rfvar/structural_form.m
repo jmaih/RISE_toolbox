@@ -47,7 +47,7 @@ function newobj=structural_form(obj,varargin)
 %
 % - newobj : [rfvar]: new rfvar object with the drawn structural form
 %
-% Description
+% More About
 % ------------
 %
 % - RISE automatically orders the endogenous variables alphabetically and

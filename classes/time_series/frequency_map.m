@@ -11,7 +11,7 @@ function fmap=frequency_map()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

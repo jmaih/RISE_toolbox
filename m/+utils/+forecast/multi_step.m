@@ -11,7 +11,7 @@ function [sims,states,retcode,Qt]=multi_step(y0,ss,T,state_vars_location,options
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

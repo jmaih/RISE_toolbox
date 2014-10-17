@@ -11,7 +11,7 @@ function [TM,markov_chain_info,myifelseif]=build_markov_regimes(transition_matri
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

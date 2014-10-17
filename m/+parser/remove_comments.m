@@ -11,7 +11,7 @@ function rawline_=remove_comments(rawline_)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

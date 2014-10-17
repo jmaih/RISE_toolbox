@@ -11,7 +11,7 @@ function this=reset_start_date(this,startdate)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

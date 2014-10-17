@@ -11,7 +11,7 @@ function db=binary_operation(db1,db2,op_string)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

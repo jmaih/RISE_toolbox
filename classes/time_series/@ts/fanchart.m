@@ -11,7 +11,7 @@ function out=fanchart(this,ci)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

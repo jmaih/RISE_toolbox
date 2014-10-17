@@ -11,7 +11,7 @@ function relinkings=parameters_links(obj,estim_names)%,y,s
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

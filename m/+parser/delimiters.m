@@ -11,7 +11,7 @@ function DEL = delimiters()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [smpl,fsmpl,accept_rate,start] = mh_sampler(start,nsamples,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

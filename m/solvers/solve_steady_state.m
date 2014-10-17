@@ -13,7 +13,7 @@ function [ys,retcode]=solve_steady_state(ys0,def,pp,resid_func,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

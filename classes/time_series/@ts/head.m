@@ -11,7 +11,7 @@ function db=head(db,n)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

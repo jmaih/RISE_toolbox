@@ -11,7 +11,7 @@ function this3=mrdivide(this1,this2)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

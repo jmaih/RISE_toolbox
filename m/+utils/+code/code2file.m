@@ -11,7 +11,7 @@ function retcode=code2file(xcell,fname)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

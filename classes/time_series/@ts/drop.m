@@ -11,7 +11,7 @@ function this=drop(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

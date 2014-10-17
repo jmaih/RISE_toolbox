@@ -11,7 +11,7 @@ function [r,Jac,retcode]=ss_residuals(ss_i,resid_func,func_jac,x_ss,pp_i,def_i)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

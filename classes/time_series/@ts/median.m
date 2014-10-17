@@ -11,7 +11,7 @@ function m=median(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

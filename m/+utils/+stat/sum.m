@@ -11,7 +11,7 @@ function varargout=sum(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

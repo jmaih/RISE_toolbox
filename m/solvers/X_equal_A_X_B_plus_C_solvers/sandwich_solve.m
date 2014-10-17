@@ -17,7 +17,7 @@ function [X,retcode]=sandwich_solve(A,B,C)
 % - X :
 % - retcode :
 % 
-% Description
+% More About
 % ------------
 %
 % Examples

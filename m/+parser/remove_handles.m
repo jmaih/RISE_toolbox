@@ -11,7 +11,7 @@ function myfunc=remove_handles(myfunc)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

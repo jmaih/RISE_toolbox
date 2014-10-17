@@ -11,7 +11,7 @@ function res=sum_kroneckers(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

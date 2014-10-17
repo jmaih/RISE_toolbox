@@ -11,7 +11,7 @@ function D=A_times_X(A,X,locs)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

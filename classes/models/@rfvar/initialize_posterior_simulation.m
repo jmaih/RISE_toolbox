@@ -11,7 +11,7 @@ function [init,sampler,total_draws]=initialize_posterior_simulation(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

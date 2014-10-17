@@ -11,7 +11,7 @@ function rise_startup(flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

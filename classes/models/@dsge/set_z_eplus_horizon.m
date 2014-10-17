@@ -11,7 +11,7 @@ function obj=set_z_eplus_horizon(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

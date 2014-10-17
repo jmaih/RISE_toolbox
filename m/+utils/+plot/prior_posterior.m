@@ -11,7 +11,7 @@ function [h,legend_]=prior_posterior(ss,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

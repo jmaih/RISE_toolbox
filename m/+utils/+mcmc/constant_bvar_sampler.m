@@ -11,7 +11,7 @@ function [smpl,fsmpl,accept_rate,start] = constant_bvar_sampler(start,nsamples,v
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

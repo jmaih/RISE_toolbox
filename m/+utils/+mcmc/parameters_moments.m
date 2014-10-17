@@ -11,7 +11,7 @@ function [theta_mean,theta_median,V0]=parameters_moments(simulation_folder)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

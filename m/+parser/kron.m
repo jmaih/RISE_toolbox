@@ -11,7 +11,7 @@ function xout=kron(a,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

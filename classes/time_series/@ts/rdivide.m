@@ -11,7 +11,7 @@ function db=rdivide(db1,db2)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

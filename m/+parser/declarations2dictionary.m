@@ -11,7 +11,7 @@ function [dictionary,blocks] = declarations2dictionary(dictionary,blocks)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

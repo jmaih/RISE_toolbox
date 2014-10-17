@@ -21,7 +21,7 @@ function db=cat(dim,varargin)
 %
 % - **db** [ts] : time series with concatenated series
 %
-% Description
+% More About
 % ------------
 %
 % - all times series must be of the same frequency

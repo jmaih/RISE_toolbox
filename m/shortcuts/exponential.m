@@ -11,7 +11,7 @@ function varargout=exponential(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

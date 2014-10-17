@@ -11,7 +11,7 @@ function ps=page_styles()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

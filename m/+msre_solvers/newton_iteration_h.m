@@ -13,7 +13,7 @@ function [T1,W1]=newton_iteration_h(T0,dbf_plus,d0,dpb_minus,bf_cols,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [start,finish]= nber_dates(freq)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

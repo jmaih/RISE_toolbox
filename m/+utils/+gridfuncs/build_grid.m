@@ -11,7 +11,7 @@ function R=build_grid(R,vp)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

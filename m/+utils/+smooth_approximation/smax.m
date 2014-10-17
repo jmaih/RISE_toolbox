@@ -11,7 +11,7 @@ function a=smax(x,tol)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function nmc=initialize_markov_chain(name,nstates,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

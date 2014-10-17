@@ -11,7 +11,7 @@ function db=zeros(start_date,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

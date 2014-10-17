@@ -11,7 +11,7 @@ function this=interpolate(this,method,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

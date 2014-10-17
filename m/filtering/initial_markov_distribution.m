@@ -11,7 +11,7 @@ function [PAI00,retcode]=initial_markov_distribution(q_now_lead,ergodic)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function new=exogenous()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

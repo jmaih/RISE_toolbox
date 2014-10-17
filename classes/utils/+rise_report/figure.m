@@ -97,7 +97,7 @@ classdef figure < rise_report.generic_report
             %
             % - obj [figure object]
             %
-            % Description
+            % More About
             % ------------
             %
             % Examples

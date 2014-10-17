@@ -11,7 +11,7 @@ function obj=setup_identification(obj,RestrictionsBlock)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

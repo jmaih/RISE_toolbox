@@ -11,7 +11,7 @@ function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_bloc
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function this=acoth(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

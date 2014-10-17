@@ -11,7 +11,7 @@ function m=min(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

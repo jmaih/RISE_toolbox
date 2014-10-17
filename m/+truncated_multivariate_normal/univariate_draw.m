@@ -11,7 +11,7 @@ function y=univariate_draw(lb,ub)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

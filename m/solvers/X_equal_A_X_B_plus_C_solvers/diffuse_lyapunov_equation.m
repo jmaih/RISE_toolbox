@@ -24,7 +24,7 @@ function [P0,retcode]=diffuse_lyapunov_equation(T,RQR,diffuse_factor,...
 % - P0 :
 % - Retcode :
 %
-% Description
+% More About
 % ------------
 %
 % Examples

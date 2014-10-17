@@ -11,7 +11,7 @@ function plot_handle=plot(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

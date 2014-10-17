@@ -11,7 +11,7 @@ function d=values(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

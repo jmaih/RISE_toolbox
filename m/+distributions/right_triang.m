@@ -11,7 +11,7 @@ function varargout=right_triang(lowerquantileORmean,upperquantileORstdev,prob,~,
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

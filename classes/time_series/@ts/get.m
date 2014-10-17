@@ -11,7 +11,7 @@ function Value= get(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function outcell=print_solution(obj,varlist,compact_form,precision,equation_form
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

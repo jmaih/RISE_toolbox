@@ -11,7 +11,7 @@ function locs=set_locations(dnx,dn)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

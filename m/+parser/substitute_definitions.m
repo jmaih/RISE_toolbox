@@ -11,7 +11,7 @@ function string=substitute_definitions(string,definitions)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

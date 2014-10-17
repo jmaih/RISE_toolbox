@@ -12,7 +12,7 @@ function [x1,f1,H,issue,viol,obj,funevals]=...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

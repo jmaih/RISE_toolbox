@@ -11,7 +11,7 @@ function flag=ge(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

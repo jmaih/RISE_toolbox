@@ -11,7 +11,7 @@ function block=capture_parameterization(dictionary,listing)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function data=transform(datam,type)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

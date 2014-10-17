@@ -11,7 +11,7 @@ function varargout=cov(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

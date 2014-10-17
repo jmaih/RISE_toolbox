@@ -11,7 +11,7 @@ function dictionary=parse(FileName,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

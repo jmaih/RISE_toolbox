@@ -11,7 +11,7 @@ function obj=save_filters(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

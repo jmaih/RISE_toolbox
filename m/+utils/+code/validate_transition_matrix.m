@@ -11,7 +11,7 @@ function [Qx,retcode]=validate_transition_matrix(Qx)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

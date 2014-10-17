@@ -11,7 +11,7 @@ function [pop,order]=sort_population(pop,iteration)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

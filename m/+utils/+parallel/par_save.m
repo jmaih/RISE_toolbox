@@ -11,7 +11,7 @@ function par_save(filename,variables,variables_names) %#ok<INUSL>
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

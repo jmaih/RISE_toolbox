@@ -11,7 +11,7 @@ function d=sort(db,dim,mode,vname)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

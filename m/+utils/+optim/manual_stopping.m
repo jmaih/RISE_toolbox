@@ -11,7 +11,7 @@ function flag=manual_stopping(action)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

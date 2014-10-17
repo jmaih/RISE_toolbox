@@ -11,7 +11,7 @@ function [islands,ids]=clear_duplicates(islands,lb,ub,newdeal)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

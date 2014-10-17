@@ -11,7 +11,7 @@ function [draw,obj]=draw_parameter(obj,simulation_folder)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

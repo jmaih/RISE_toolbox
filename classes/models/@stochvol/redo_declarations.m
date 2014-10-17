@@ -11,7 +11,7 @@ function obj=redo_declarations(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

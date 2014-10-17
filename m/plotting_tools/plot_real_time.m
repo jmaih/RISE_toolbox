@@ -11,7 +11,7 @@ function [h,pp]=plot_real_time(rts,pp,nticks)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [varargout] = nanmin(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

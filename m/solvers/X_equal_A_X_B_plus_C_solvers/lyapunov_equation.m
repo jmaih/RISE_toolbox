@@ -18,7 +18,7 @@ function [V,retcode]=lyapunov_equation(T,Q,options)
 % - V :
 % - retcode :
 % 
-% Description
+% More About
 % ------------
 %
 % Examples

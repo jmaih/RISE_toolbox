@@ -11,7 +11,7 @@ function xrotate(angle)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

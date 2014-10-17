@@ -11,7 +11,7 @@ function db=cumprod(db,dim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

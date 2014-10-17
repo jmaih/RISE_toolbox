@@ -11,7 +11,7 @@ function [db,fighandles]=check_optimum(obj,plotit,varlist)%,r0,c0,N
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

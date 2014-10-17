@@ -11,7 +11,7 @@ function x=geweke_hajivassiliou_keane(mu,CS,lb,ub,Nsim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

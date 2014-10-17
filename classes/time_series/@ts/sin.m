@@ -11,7 +11,7 @@ function this=sin(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

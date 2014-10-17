@@ -11,7 +11,7 @@ function x=create_state_list(name,number)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

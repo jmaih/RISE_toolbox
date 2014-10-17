@@ -11,7 +11,7 @@ function [hptrend,hpcycle] = hpfilter(db,lambda)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

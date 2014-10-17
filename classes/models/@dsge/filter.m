@@ -11,7 +11,7 @@ function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

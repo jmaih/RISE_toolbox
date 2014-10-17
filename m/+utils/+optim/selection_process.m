@@ -11,7 +11,7 @@ function c=selection_process(a,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

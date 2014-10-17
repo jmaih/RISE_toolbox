@@ -11,7 +11,7 @@ function theta_=latin_hypercube(lb,ub,K,center)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

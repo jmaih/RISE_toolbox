@@ -11,7 +11,7 @@ function [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,nvar,r0,c0)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

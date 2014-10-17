@@ -11,7 +11,7 @@ function out=translate_auxiliary_names(names)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

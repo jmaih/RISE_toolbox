@@ -11,7 +11,7 @@ function varargout=lognormal(lowerquantileORmean,upperquantileORstdev,prob,c,d)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function fname=remove_file_extension(fname)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

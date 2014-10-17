@@ -11,7 +11,7 @@ function dsge_irfs=irf(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

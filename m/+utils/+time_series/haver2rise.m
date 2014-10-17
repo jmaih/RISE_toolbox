@@ -11,7 +11,7 @@ function [data,varinfo] = haver2rise(tickers)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

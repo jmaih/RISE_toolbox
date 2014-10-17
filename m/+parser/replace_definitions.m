@@ -11,7 +11,7 @@ function batch=replace_definitions(batch,Definitions)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

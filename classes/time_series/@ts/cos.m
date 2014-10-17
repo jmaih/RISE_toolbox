@@ -11,7 +11,7 @@ function this=cos(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

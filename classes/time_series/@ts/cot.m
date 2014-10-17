@@ -11,7 +11,7 @@ function this=cot(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

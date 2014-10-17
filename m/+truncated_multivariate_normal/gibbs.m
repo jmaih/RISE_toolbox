@@ -11,7 +11,7 @@ function x=gibbs(mu,SIG,lb,ub,Nsim,burn)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

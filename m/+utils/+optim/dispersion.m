@@ -11,7 +11,7 @@ function d=dispersion(X,lb,ub)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

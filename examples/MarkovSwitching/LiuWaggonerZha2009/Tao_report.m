@@ -33,7 +33,7 @@ function xrep1=Tao_report(m,rep_data,my_varlist,unobsList)
 %   - xrep1 : handle to the report batch. 
 %           N.B: if requested, no report will be published
 %  
-%   Description
+%   More About
 %   ------------
 %  
 %   Examples

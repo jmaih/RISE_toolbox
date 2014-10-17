@@ -11,7 +11,7 @@ function FinalResults=automatic_model_selection(tsdata,endo_name,exo_names,optio
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

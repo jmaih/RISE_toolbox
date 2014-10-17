@@ -11,7 +11,7 @@ function this=mpower(this,const)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

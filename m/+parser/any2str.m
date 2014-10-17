@@ -11,7 +11,7 @@ function str=any2str(whatever)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

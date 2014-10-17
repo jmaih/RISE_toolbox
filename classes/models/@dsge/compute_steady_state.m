@@ -11,7 +11,7 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

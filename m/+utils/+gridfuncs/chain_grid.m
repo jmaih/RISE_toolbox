@@ -11,7 +11,7 @@ function [Regimes,journal]=chain_grid(v)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

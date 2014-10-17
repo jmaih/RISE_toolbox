@@ -11,7 +11,7 @@ function Island=recenter(Island,lb,ub,flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

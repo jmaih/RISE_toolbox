@@ -16,7 +16,7 @@ function [x1,x1_linear]=simulation_engine(obj,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

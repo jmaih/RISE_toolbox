@@ -11,7 +11,7 @@ function obj=do_not_anticipate_future_shocks(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

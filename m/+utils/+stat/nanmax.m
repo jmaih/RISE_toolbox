@@ -11,7 +11,7 @@ function [varargout] = nanmax(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

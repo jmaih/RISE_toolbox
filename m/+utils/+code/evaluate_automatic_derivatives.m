@@ -11,7 +11,7 @@ function C=evaluate_automatic_derivatives(funcs,order,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

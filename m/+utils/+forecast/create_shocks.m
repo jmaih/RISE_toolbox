@@ -11,7 +11,7 @@ function [shocks]=create_shocks(nx,shock_id,det_vars,options)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

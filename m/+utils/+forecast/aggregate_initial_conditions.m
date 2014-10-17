@@ -11,7 +11,7 @@ function [y0,T,steady_state]=aggregate_initial_conditions(PAI,y0,T,steady_state)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

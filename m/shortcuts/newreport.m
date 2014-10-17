@@ -11,7 +11,7 @@ function this=newreport(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

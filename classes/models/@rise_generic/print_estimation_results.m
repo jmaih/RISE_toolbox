@@ -11,7 +11,7 @@ function retcode=print_estimation_results(obj,file2save2)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

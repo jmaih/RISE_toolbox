@@ -11,7 +11,7 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

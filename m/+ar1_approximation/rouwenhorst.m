@@ -31,7 +31,7 @@ function [Thetai,y]=rouwenhorst(mu,rho,sigma,N,p,q)
 %
 % - y : [numeric] : vector of nodes or states
 %
-% Description
+% More About
 % ------------
 %
 % - The process is assumed to be of the form

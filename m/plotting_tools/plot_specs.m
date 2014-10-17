@@ -11,7 +11,7 @@ function pp=plot_specs(date_numbers,nticks,date_format)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

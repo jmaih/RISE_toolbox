@@ -11,7 +11,7 @@ function [R,B,W]=potential_scale_reduction(x)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

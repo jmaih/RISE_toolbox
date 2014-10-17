@@ -11,7 +11,7 @@ function d=ctranspose(db)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

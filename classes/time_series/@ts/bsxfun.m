@@ -11,7 +11,7 @@ function data=bsxfun(db,fun,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

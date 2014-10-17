@@ -11,7 +11,7 @@ function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,flag
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

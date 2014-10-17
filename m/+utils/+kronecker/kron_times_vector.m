@@ -11,7 +11,7 @@ function Y = kron_times_vector(T1,T2,X)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

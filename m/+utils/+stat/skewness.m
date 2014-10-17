@@ -11,7 +11,7 @@ function varargout=skewness(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

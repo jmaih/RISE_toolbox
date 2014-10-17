@@ -11,7 +11,7 @@ function display_progress(restart,iterations,fmin_global,fmin_iter,dispersion,fu
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function flag=eq(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

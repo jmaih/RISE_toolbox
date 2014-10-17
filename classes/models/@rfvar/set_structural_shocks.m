@@ -11,7 +11,7 @@ function obj=set_structural_shocks(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

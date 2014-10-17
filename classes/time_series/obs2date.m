@@ -11,7 +11,7 @@ function new_date=obs2date(start_date,obs)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

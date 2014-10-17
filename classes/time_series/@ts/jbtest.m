@@ -11,7 +11,7 @@ function [h,p,jbstat,critval]=jbtest(this,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [smpl,fsmpl,accept_rate,start] = mh_sampling_engine(start,nsamples,vara
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function z=A_kron_B_times_x(A,B,x,xr,xc)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

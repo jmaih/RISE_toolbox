@@ -11,7 +11,7 @@ function this=log(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

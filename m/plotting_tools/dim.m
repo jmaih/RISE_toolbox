@@ -11,7 +11,7 @@ function []=dim(start,finish,colorstr)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

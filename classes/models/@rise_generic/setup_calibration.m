@@ -11,7 +11,7 @@ function obj=setup_calibration(obj,Calibration)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

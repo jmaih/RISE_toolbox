@@ -14,7 +14,7 @@ function [Q,retcode]=compute_steady_state_transition_matrix(trans_mat_func,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

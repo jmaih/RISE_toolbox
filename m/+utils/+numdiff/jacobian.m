@@ -11,7 +11,7 @@ function J=jacobian(func,x,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function varargout=myplot(plotfunc,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [obj,postSims]=posterior_simulator(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

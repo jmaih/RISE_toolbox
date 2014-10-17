@@ -11,7 +11,7 @@ function ed=distance(a,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

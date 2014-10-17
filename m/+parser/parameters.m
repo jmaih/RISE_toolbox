@@ -11,7 +11,7 @@ function new=parameters()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function new=observable()
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

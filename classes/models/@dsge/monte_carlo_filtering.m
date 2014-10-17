@@ -13,7 +13,7 @@ function [xparam,retcode,could_solve,behave,logpost,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

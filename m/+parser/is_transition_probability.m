@@ -11,7 +11,7 @@ function [istp,diagonal,chain_name,max_state]=is_transition_probability(name)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

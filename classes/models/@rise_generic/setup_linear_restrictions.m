@@ -11,7 +11,7 @@ function obj=setup_linear_restrictions(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

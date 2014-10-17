@@ -11,7 +11,7 @@ function theta_ = sobol(lb,ub,K,scramble_flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

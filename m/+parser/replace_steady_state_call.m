@@ -11,7 +11,7 @@ function string=replace_steady_state_call(string,flag)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

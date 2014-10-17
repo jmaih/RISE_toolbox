@@ -11,7 +11,7 @@ function [x0,f0,exitflag,output]=blockwise_optimization(func,x0,lb,ub,options,va
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

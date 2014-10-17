@@ -11,7 +11,7 @@ function flag=isinf(self)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

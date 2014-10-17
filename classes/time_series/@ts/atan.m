@@ -11,7 +11,7 @@ function this=atan(this)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

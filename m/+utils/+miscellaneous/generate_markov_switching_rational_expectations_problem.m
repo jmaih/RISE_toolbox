@@ -11,7 +11,7 @@ function [Aplus,A0,Aminus,B,Q,T,R]=generate_markov_switching_rational_expectatio
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

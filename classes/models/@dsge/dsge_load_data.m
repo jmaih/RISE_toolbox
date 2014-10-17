@@ -11,7 +11,7 @@ function obj=dsge_load_data(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

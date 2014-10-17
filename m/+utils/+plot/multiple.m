@@ -11,7 +11,7 @@ function hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

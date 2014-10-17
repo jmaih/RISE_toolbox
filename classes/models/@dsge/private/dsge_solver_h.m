@@ -11,7 +11,7 @@ function [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

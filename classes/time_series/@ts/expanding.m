@@ -11,7 +11,7 @@ function db=expanding(db,func,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

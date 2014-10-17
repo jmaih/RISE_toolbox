@@ -11,7 +11,7 @@ function varargout=median(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

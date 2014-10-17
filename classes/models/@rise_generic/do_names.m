@@ -11,7 +11,7 @@ function obj=do_names(obj,val,type)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

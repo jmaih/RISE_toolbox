@@ -14,7 +14,7 @@ function [transition_matrix_symbolic,transition_matrix_shadow,markov_chain_info,
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

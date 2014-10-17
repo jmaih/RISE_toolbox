@@ -11,7 +11,7 @@ function [sims,retcode]=simulate_nonlinear(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function varargout=inv_gamma(lowerquantileORmean,upperquantileORstdev,prob,c,d)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

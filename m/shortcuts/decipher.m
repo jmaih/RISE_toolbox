@@ -11,7 +11,7 @@ function varargout=decipher(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

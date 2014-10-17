@@ -11,7 +11,7 @@ function [Q,the_ranks,tags]=sort_Q(Q)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

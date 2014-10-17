@@ -11,7 +11,7 @@ function flag=lt(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

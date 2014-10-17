@@ -11,7 +11,7 @@ function c=compare_individuals(a,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

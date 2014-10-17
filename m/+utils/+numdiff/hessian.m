@@ -11,7 +11,7 @@ function H = hessian(Objective,xparam,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

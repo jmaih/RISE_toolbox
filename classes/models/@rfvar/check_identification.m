@@ -11,7 +11,7 @@ function obj=check_identification(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

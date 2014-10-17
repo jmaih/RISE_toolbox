@@ -11,7 +11,7 @@ function b=title_item(type,title,numbering,tableOfContentsTitle)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

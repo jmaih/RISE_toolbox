@@ -11,7 +11,7 @@ function check_markov_chains_adequacy(dictionary)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

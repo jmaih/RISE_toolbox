@@ -11,7 +11,7 @@ function [obj,retcode]=solve(obj,varargin)%
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

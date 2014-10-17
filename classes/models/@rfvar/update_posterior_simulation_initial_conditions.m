@@ -11,7 +11,7 @@ function start=update_posterior_simulation_initial_conditions(obj,start,new_vcov
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

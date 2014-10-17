@@ -11,7 +11,7 @@ function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,restrictions,
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

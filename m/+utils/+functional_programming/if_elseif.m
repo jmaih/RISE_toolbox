@@ -11,7 +11,7 @@ function out = if_elseif(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [date_numbers,datta,rows_dates,varloc,pages]=process_subs(obj,subs,call
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function h=boxplot(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function x=reformat_restriction(x,convertfunc1,convertfunc2) %#ok<INUSD>
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

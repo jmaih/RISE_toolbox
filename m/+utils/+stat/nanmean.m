@@ -11,7 +11,7 @@ function m = nanmean(x,dim)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

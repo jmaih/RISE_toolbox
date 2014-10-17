@@ -11,7 +11,7 @@ function estim_names=create_estimated_parameters_list(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

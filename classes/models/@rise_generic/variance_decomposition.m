@@ -11,7 +11,7 @@ function [Vardec,obj]=variance_decomposition(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

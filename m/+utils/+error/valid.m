@@ -11,7 +11,7 @@ function flag=valid(x)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

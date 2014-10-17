@@ -11,7 +11,7 @@ function obj=assign_estimates(obj,params)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

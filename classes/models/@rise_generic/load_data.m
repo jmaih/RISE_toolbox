@@ -11,7 +11,7 @@ function [obj,issue,retcode]=load_data(obj,varargin)%,estimation_flag
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

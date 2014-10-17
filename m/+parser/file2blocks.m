@@ -11,7 +11,7 @@ function [blocks,markov_chains]=file2blocks(RawFile)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

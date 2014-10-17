@@ -11,7 +11,7 @@ function IDs=locate_variables(Variables,State,silent,NewAlgo)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

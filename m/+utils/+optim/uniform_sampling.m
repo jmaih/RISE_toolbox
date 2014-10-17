@@ -11,7 +11,7 @@ function r=uniform_sampling(pop_size,howmany)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function output=concatenate_series_from_different_models(dbcell)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

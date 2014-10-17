@@ -11,7 +11,7 @@ function parts=partition_variables(LLI)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

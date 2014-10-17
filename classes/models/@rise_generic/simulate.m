@@ -11,7 +11,7 @@ function [db,states,retcode] = simulate(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

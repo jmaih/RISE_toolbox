@@ -11,7 +11,7 @@ function estim_names=get_estimated_parameter_names(obj)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -259,7 +259,7 @@ end
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

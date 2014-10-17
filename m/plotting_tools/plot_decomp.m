@@ -11,7 +11,7 @@ function h=plot_decomp(obj,nticks)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

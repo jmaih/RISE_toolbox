@@ -11,7 +11,7 @@ function y1=one_step(T,y0,ss,xloc,sig,shocks,order)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

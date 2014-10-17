@@ -31,7 +31,7 @@ function [x0,retcode,tau]=transpose_free_quasi_minimum_residual(...
 % - retcode :
 % - tau :
 %
-% Description
+% More About
 % ------------
 %
 % Examples

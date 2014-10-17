@@ -11,7 +11,7 @@ function shocks=nullify_deterministic_shocks(shocks,det_vars)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

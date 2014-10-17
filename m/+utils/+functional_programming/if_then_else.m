@@ -11,7 +11,7 @@ function out = if_then_else(cond,opt1,opt2)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

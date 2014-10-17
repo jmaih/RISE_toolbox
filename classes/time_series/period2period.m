@@ -11,7 +11,7 @@ function p=period2period(p0,freq0,freq1,head)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

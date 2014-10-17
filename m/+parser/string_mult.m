@@ -11,7 +11,7 @@ function xout=string_mult(a,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

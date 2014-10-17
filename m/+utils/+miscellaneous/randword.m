@@ -11,7 +11,7 @@ function word=randword(length)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

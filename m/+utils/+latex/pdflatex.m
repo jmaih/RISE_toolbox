@@ -11,7 +11,7 @@ function status=pdflatex(filename)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

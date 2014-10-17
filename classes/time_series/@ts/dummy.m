@@ -11,7 +11,7 @@ function db=dummy(start_date,end_date,dummy_date)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

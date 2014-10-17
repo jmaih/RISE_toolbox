@@ -11,7 +11,7 @@ function vcov=nearest(vcov0)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

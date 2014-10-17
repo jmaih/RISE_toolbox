@@ -11,7 +11,7 @@ function [obs,flag_]=date2obs(start_date,new_date)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

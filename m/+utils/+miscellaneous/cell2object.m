@@ -11,7 +11,7 @@ function obj=cell2object(C,the_class)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function [V,retcode]=theoretical_autocovariances(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

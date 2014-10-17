@@ -11,7 +11,7 @@ function [V,retcode]=sandwich_a_la_tadonki(A,B,C,solve_options)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

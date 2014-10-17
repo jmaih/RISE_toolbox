@@ -11,7 +11,7 @@ function c=kron(a,b)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

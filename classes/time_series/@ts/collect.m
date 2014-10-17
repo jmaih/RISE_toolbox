@@ -11,7 +11,7 @@ function this=collect(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

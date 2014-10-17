@@ -11,7 +11,7 @@ function obj=setup_priors(obj,MyPriors,error_control)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

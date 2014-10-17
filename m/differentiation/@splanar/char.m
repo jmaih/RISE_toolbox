@@ -11,7 +11,7 @@ function c=char(x,long)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

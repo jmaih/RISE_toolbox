@@ -11,7 +11,7 @@ function obj=format_parameters(obj,ParameterizationArray,Param_rest_block)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function C=A_times_kron_I_B(A,B,q)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

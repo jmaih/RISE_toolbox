@@ -11,7 +11,7 @@ function [log_post,log_lik,log_prior,Incr,retcode,obj]=conclude_estimation(obj,x
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

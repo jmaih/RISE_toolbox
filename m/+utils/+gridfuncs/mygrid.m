@@ -11,7 +11,7 @@ function Regimes=mygrid(v)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

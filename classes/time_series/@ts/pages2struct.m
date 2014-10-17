@@ -11,7 +11,7 @@ function this=pages2struct(this0)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

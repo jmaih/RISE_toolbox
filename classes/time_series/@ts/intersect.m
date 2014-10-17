@@ -11,7 +11,7 @@ function [this1,this2]=intersect(this1,this2)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

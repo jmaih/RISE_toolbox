@@ -11,7 +11,7 @@ function obj=set(obj,prop,value)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

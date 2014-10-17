@@ -11,7 +11,7 @@ function hh=plot_fanchart(data,MainColor,nticks)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

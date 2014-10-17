@@ -11,7 +11,7 @@ function varargout=plotyy(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -16,7 +16,7 @@ function [siz,t,z,parts,order_var,inv_order_var]=solution_topology(...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples
