@@ -36,7 +36,7 @@ function newobj=structural_form(obj,varargin)
 %       are equivalent
 %   - **structural_shocks** \: [cell array|{''}] \: List of structural
 %       shocks. The shock names can be entered with or without their
-%       description. For instance : 
+%       description. For instance :
 %       - {'E_PAI','E_U','E_MP'}
 %       - {'E_PAI','"inflation shock"','E_U','"unempl shock"','E_MP'}
 %   - **irf_sample_max** : [numeric|{10000}] : maximum number of trials in
@@ -68,13 +68,13 @@ function newobj=structural_form(obj,varargin)
 %   - multiply the impulse responses for the wrongly-signed shock with
 %   minus.
 %
-% - Many periods can be entered simultaneously. For instance 
-%   'var_name{0,3,5,10:20,inf}@shock_name' 
+% - Many periods can be entered simultaneously. For instance
+%   'var_name{0,3,5,10:20,inf}@shock_name'
 %
-% - long-run restrictions are denoted by "inf". For instance 
-%   'var_name{inf}@shock_name' 
+% - long-run restrictions are denoted by "inf". For instance
+%   'var_name{inf}@shock_name'
 %
-% - Identification for Markov switching VARs is not implemented/supported. 
+% - Identification for Markov switching VARs is not implemented/supported.
 %
 % Examples
 % ---------
@@ -208,7 +208,9 @@ while ~success && rounds<irf_sample_max
     rounds=rounds+1;
 end
 if success
-    fprintf(1,'successful rotation found after %0.0f rounds\n',rounds);
+    if obj.options.debug
+        fprintf(1,'successful rotation found after %0.0f rounds\n',rounds);
+    end
 else
     error(['could not find suitable rotation after ',...
         sprintf('%0.0f',irf_sample_max),' iterations'])
