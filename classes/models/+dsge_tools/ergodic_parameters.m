@@ -11,7 +11,7 @@ function [pp_i,def_i,retcode]=ergodic_parameters(Q,def,pp)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

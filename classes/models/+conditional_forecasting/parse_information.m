@@ -12,7 +12,7 @@ function conditions=parse_information(conditional_info,endo_names,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

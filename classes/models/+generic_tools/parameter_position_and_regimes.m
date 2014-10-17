@@ -13,7 +13,7 @@ function [position,regime_states]=parameter_position_and_regimes(pnames,...
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

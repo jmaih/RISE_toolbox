@@ -126,6 +126,13 @@ dsge_irfs=format_irf_output(dsge_irfs);
         % load the order_var solution
         %-----------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+        if isa(obj,'rfvar')
+            % kill the steady state and the initial conditions
+            for ireg=1:h
+                steady_state{ireg}=0*steady_state{ireg};
+                Initcond.y(ireg).y=0*Initcond.y(ireg).y;
+            end
+        end
         y0=Initcond.y;
         % adjust the start values according to the order_var
         %---------------------------------------------------

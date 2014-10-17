@@ -11,7 +11,7 @@ function [markov_chains_]=reset_markov_chains(param_template,markov_chains_,endo
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

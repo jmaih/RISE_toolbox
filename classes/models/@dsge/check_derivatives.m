@@ -11,7 +11,7 @@ function retcode=check_derivatives(obj,varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

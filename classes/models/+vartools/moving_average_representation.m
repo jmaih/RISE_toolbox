@@ -11,7 +11,7 @@ function [MA,max_eigen]=moving_average_representation(B,L0,nlags,endo_nbr,nsteps
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

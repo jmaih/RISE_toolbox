@@ -11,7 +11,7 @@ function [LogLik,Incr,retcode,obj]=var_likelihood(params,obj)%
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

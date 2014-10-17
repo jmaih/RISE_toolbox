@@ -11,7 +11,7 @@ function [D,W]=covariance_decomposition(SIGu)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

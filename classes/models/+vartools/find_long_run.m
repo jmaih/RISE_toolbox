@@ -11,7 +11,7 @@ function Linf=find_long_run(B,L0,nlags,endo_nbr)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

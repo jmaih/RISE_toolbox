@@ -11,7 +11,7 @@ function markov_chains_=format_markov_chains(markov_chains_,plist,endo_names)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

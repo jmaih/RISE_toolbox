@@ -11,7 +11,7 @@ function v=vech(A)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

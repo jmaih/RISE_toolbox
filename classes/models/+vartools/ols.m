@@ -11,7 +11,7 @@ function [results,stats]=ols(y0,xdata,nlags,const,expand_results,order)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

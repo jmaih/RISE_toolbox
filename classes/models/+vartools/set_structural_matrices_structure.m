@@ -11,7 +11,7 @@ function param_template=set_structural_matrices_structure(model_class,n,nlags,nx
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

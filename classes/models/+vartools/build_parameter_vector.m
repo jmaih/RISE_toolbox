@@ -11,7 +11,7 @@ function x1=build_parameter_vector(vdata,a_post,vcov)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

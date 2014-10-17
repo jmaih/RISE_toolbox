@@ -11,7 +11,7 @@ function out=preliminaries(varargin)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

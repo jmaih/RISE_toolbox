@@ -11,7 +11,7 @@ function A=ivech(v)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

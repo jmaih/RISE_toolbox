@@ -11,7 +11,7 @@ function [B,SIG,SIG05]=resolve(solution,nlags,h)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

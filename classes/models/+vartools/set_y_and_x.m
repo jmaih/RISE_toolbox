@@ -11,7 +11,7 @@ function [y,x,n,T]=set_y_and_x(datay,datax,nlags,constant)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function x = vec(x)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

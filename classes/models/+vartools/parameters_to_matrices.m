@@ -12,7 +12,7 @@ function [links,parameter_values,all_param_names_vec]=parameters_to_matrices(par
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

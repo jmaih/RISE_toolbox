@@ -11,7 +11,7 @@ function [nan_list,fixed]=create_baseline_parameters(param_template,param_names)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

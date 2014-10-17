@@ -11,7 +11,7 @@ function [T,eigvals]=companion_form(B,nlags,endo_nbr,nz)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

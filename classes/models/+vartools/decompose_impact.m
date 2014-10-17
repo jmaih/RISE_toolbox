@@ -11,7 +11,7 @@ function [omg,sig]=decompose_impact(C)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

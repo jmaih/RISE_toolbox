@@ -11,7 +11,7 @@ function [st,Q0,PAI,retcode]=choose_state(st,Qfunc,PAI,y)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

@@ -11,7 +11,7 @@ function PHI=vma(THETA,order,debug)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples

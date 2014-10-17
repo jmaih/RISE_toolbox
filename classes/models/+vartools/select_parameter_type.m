@@ -11,7 +11,7 @@ function [names,locs]=select_parameter_type(estim_names,type)
 % Outputs
 % --------
 %
-% Description
+% More About
 % ------------
 %
 % Examples
