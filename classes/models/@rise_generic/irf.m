@@ -213,7 +213,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
         
         % distribution of irfs
         %---------------------
-        if nobj
+        if nobj>1
             obj.options.irf_to_time_series=true;
         end
         dsge_irfs=distribute_irfs();
