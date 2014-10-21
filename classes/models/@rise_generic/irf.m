@@ -245,7 +245,6 @@ dsge_irfs=format_irf_output(dsge_irfs);
                     '4= shock names',irf_shock_list
                     }
                     };
-                % zeros(endo_nbr,Initcond.nsteps+1,nshocks,number_of_threads)
             end
         end
     end
