@@ -166,8 +166,8 @@ end
                 else
                     results=vartools.ols(bigy,bigx,0,false);
                     iSIGU=results.SIGols\eye(obj.endogenous.number(end));%
-                    iSIGU=kron(iSIGU,eye(smpl));
                 end
+                iSIGU=kron(iSIGU,eye(smpl));
                 % N.B: for the indep_normal_wishart, This is not the exact
                 % formula but we still need to start somewhere for the
                 % initialization of the Gibbs sampler.
