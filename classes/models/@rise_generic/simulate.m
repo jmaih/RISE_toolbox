@@ -40,7 +40,8 @@ if isempty(obj)
         'simul_history_end_date','',...
         'simul_regime',[],...
         'simul_update_shocks_handle',[],...
-        'simul_do_update_shocks',false);
+        'simul_do_update_shocks',false,...
+        'simul_to_time_series',true);
     % we may want to update the shocks if some condition on the state of
     % the economy is satisfied. For instance, shock monetary policy to keep
     % the interest rate at the floor for an extented period of time if we
@@ -101,16 +102,24 @@ Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
 %------------------------------------------
 y=re_order_output_rows(obj,y);
 
-% store the simulations in a database: use the date for last observation in
-% history and not first date of forecast
-%--------------------------------------------------------------------------
 y0cols=size(y0(1).y,2);
 start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
-% store only the relevant rows in case we are dealing with a VAR with many
-% lags
-db=ts(start_date,y(1:obj.endogenous.number(end),:)',obj.endogenous.name);
-db=pages2struct(db);
-
+if obj.options.simul_to_time_series
+    % store the simulations in a database: use the date for last observation in
+    % history and not first date of forecast
+    %--------------------------------------------------------------------------
+    % store only the relevant rows in case we are dealing with a VAR with many
+    % lags
+    db=ts(start_date,y(1:obj.endogenous.number(end),:)',obj.endogenous.name);
+    db=pages2struct(db);
+else
+    db={y(1:obj.endogenous.number(end),:)',...
+        {
+        '1=time, start_date=',start_date
+        '2= endogenous names',obj.endogenous.name
+        }
+        };
+end
 end
 
 function sim_data=format_simulated_data_output(sim_data)
@@ -118,7 +127,7 @@ nobj=numel(sim_data);
 if nobj==1
     sim_data=sim_data{1};
 else
-    if isempty(sim_data{1})
+    if isempty(sim_data{1})||iscell(sim_data{1})
         return
     end
     sim_data=utils.time_series.concatenate_series_from_different_models(sim_data);
