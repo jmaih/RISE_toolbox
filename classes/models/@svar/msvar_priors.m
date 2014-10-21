@@ -29,12 +29,12 @@ if isempty(obj)
         'vp_mnst_stationary_var_mean',0.5,... % unit root = 1
         'vp_natconj_normwish_variance',10,...
         'vp_analytical_post_mode',true,... % compute the posterior mode analytically if possible
+        'vp_gls_ar1_processes',true,... % use the covariance formed by the ar1 processes when forming the posterior mode( else use the covariance of the OLS)
         'vp_prior_type','minnesota'); % {minnesota},none,normal_wishart,indep_normal_wishart,jeffrey(diffuse) 
     return
 end
 s=quick_ar1_processes();
-% % % Was be used in the estimation of the BVAR
-% % obj.constant_var_data=struct('sigma_',diag(s.^2));
+obj.constant_var_data=struct('sigma_',diag(s.^2));
 
 prior_type=obj.options.vp_prior_type;
 use_priors=~strcmp(prior_type,'none');
