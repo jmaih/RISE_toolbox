@@ -40,7 +40,7 @@ n=cdim;
 mn=m*n;
 
 PAI_bc=nan(mn);
-Imn=eye(mn);
+Imn=speye(mn);
 
 offset=0;
 for irow=1:m
