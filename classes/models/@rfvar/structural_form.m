@@ -68,6 +68,12 @@ function newobj=structural_form(obj,varargin)
 %   - multiply the impulse responses for the wrongly-signed shock with
 %   minus.
 %
+% - If the signs are not explicitly enforced under zeros restrictions,
+%   in an exercise in which one draws many rotations, some will have
+%   one sign and some others a diffferent sign. Here, perhaps more than
+%   elsewhere, it is important to add some sign restrictions to have
+%   consistent results throughout.
+%
 % - Many periods can be entered simultaneously. For instance
 %   'var_name{0,3,5,10:20,inf}@shock_name'
 %
