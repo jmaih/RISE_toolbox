@@ -19,7 +19,6 @@ function dsge_irfs=irf(obj,varargin)
 %
 % See also: 
 
-
 too_small=1e-9;
 
 if isempty(obj)
@@ -30,7 +29,8 @@ if isempty(obj)
         'irf_draws',50,...
         'irf_type','irf',...
         'irf_regime_specific',true,...
-        'irf_use_historical_data',false);
+        'irf_use_historical_data',false,...
+        'irf_to_time_series',false);
     return
 end
 
@@ -213,23 +213,41 @@ dsge_irfs=format_irf_output(dsge_irfs);
         
         % distribution of irfs
         %---------------------
-        startdate=0;
-        if number_of_threads>1
-            RegimeNames=strcat('regime_',num2str((1:h)'));
-        else
-            RegimeNames=irf_type;
+        if nobj
+            obj.options.irf_to_time_series=true;
         end
-        RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
-        dsge_irfs=struct();
-        vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
-        for ishock=1:nshocks
-            shock_name=irf_shock_list{ishock};
-            for vv=1:numel(irf_var_list)
-                dsge_irfs.(shock_name).(irf_var_list{vv})=...
-                    ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),RegimeNames);
+        dsge_irfs=distribute_irfs();
+        
+        function dsge_irfs=distribute_irfs()
+            startdate=0;
+            if number_of_threads>1
+                RegimeNames=strcat('regime_',num2str((1:h)'));
+            else
+                RegimeNames=irf_type;
+            end
+            RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
+            if obj.options.irf_to_time_series
+                dsge_irfs=struct();
+                vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
+                for ishock=1:nshocks
+                    shock_name=irf_shock_list{ishock};
+                    for vv=1:numel(irf_var_list)
+                        dsge_irfs.(shock_name).(irf_var_list{vv})=...
+                            ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),RegimeNames);
+                    end
+                end
+            else
+                dsge_irfs={Impulse_dsge,...
+                    {
+                    '1=time',Initcond.nsteps+1
+                    '2=regime names',RegimeNames
+                    '3= endogenous names',irf_var_list
+                    '4= shock names',irf_shock_list
+                    }
+                    };
+                % zeros(endo_nbr,Initcond.nsteps+1,nshocks,number_of_threads)
             end
         end
-        
     end
 end
 
