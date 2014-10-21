@@ -89,12 +89,14 @@ obj=setup_priors(obj,MyPriors);
         % lag matrices a0, a1,...,ap
         %---------------------------
         [lag_names]=vartools.select_parameter_type(estim_names,'lag_coef');
+        decomp=regexp(lag_names,'[a-zA-Z]+(?<lag>\d+)_(?<eqtn>\d+)_(?<vrbl>\d+)','names');
+        decomp=[decomp{:}];
         p=struct();
         for ip=1:numel(lag_names)
             pname=lag_names{ip};
-            lag=str2double(pname(2));
-            eqtn=str2double(pname(4));
-            vn=str2double(pname(6));
+            lag=str2double(decomp(ip).lag);
+            eqtn=str2double(decomp(ip).eqtn);
+            vn=str2double(decomp(ip).vrbl);
             
             [m,sd]=set_var_prior(eqtn,vn,lag);
             
@@ -112,9 +114,9 @@ obj=setup_priors(obj,MyPriors);
         [determ_names]=vartools.select_parameter_type(estim_names,'det_coef'); 
         for ip=1:numel(determ_names)
             pname=determ_names{ip};
-            eqtn=str2double(pname(3));
-             [m,sd]=set_var_prior(eqtn,nan,nan);
-           if use_priors
+            eqtn=str2double(regexprep(pname,'\w+_(\w+)_.+','$1')); % eqtn=str2double(pname(3));
+            [m,sd]=set_var_prior(eqtn,nan,nan);
+            if use_priors
                 p.(pname)={m,m,sd,'normal_pdf'};
             else
                 p.(pname)={m,m-3*sd,m+3*sd};
@@ -124,10 +126,12 @@ obj=setup_priors(obj,MyPriors);
         % standard deviations and correlations
         %-------------------------------------
         [std_names]=vartools.select_parameter_type(estim_names,'stdev_corr'); 
+        decomp=regexp(std_names,'[a-zA-Z]+_(?<eqtn>\d+)_(?<vrbl>\d+)','names');
+        decomp=[decomp{:}];
         for ip=1:numel(std_names)
             pname=std_names{ip};
-            eqtn=str2double(pname(5));
-            v=str2double(pname(7));
+            eqtn=str2double(decomp(ip).eqtn);
+            v=str2double(decomp(ip).vrbl);
             if v==eqtn
                 m=s(eqtn);
                 sd=5;
