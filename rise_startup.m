@@ -46,6 +46,14 @@ for iprog=1:numel(latex_progs)
     retcode=retcode||rcode;
 end
 
+if retcode
+    miktex_version='Not installed (no reporting possible)';
+else
+    miktex_version=regexp(latex_paths,['(?i)M(iK|ac)TeX(\s+|\',filesep,')(\d+\.\d+)'],'match');
+    miktex_version=[miktex_version{:}];
+    miktex_version=strrep(miktex_version,filesep,' ');
+    miktex_version=miktex_version{1};
+end
 % Decide if using or not the RISE print and plot settings
 %--------------------------------------------------------
 USE_RISE_PLOT = true;
@@ -60,7 +68,7 @@ if USE_RISE_PRINT
     
     NOT_INSTALLED = 'Not installed';
     matlab_version = NOT_INSTALLED;
-    optimization_version = NOT_INSTALLED;
+    optimization_version = [NOT_INSTALLED,'(Fatal error)'];
     statistics_version = NOT_INSTALLED;
     rise_version = NOT_INSTALLED;
     
@@ -173,22 +181,42 @@ end
         pdf_doc=[rise_root,filesep,'help',filesep,'build',filesep,'latex',filesep,'RISE.pdf'];
         html_doc=[rise_root,filesep,'help',filesep,'build',filesep,'html',filesep,'master_doc.html'];
         
+        MiKTeX='MiKTeX';
+        if ~ispc
+            MiKTeX='MacTeX';
+        end
+        your_system={
+            '* About your system'
+            [' - Matlab: ',matlab_version]
+            [' - Optimization toolbox: ',optimization_version]
+            [' - Statistics toolbox: ',statistics_version]
+            [' - ',MiKTeX,': ',miktex_version]
+            };
         l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
-        
-        tmp={
-            l1
+        logo={
             ' _____	  _  ____  _____'
-            ['|  _  |  (_)|  __||  ___|   |	Welcome to the ',vv.Name,'']
-            ['| (_) /  | || |__ | |___    |	Version: ',vv.Version,'']
-            ['|  __ \\  | ||__  ||  ___|   |	Tested with Matlab: ',vv.Release,'']
-            ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date,'']
-            '|_|   \\_\\|_||____||_____|   |'
+            '|  _  |  (_)|  __||  ___|   | Rationality In Switching Environments'
+            ['| (_) /  | || |__ | |___    |	Welcome to the ',vv.Name]
+            ['|  __ \\  | ||__  ||  ___|   |	Version: ',vv.Version]
+            ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date]
+            ['|_|   \\_\\|_||____||_____|   |	Tested with Matlab: ',vv.Release]
+            };
+        docs={
             ['* Please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
             'or the <a href="',strrep(pdf_doc,'\','\\'),'">pdf documentation</a> ']
+            };
+        concerns={
             '* For concerns, problems, suggestions and desideratas'
             'please send email to this <a href="mailto:junior.maih@gmail.com">address</a>'
             '* Thank you in advance for your feedback !!!'
             };
+        tmp=[
+            l1
+            logo
+            docs
+            your_system
+            concerns
+            ];
         if retcode
             tmp=[tmp
                 '* pdflatex/epstopdf (Miktex) could not be located!!!'
