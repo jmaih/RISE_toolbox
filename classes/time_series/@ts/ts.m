@@ -86,6 +86,7 @@ classdef ts
     % - [mtimes](ts/mtimes)
     % - [plus](ts/plus)
     % - [power](ts/power)
+    % - [prctile](ts/prctile) Percentiles of a time series
     % - [rdivide](ts/rdivide)
     % - [sin](ts/sin)
     % - [sinh](ts/sinh)
@@ -318,6 +319,7 @@ classdef ts
         varargout=mtimes(varargin)
         varargout=plus(varargin)
         varargout=power(varargin)
+        varargout=prctile(varargin)
         varargout=rdivide(varargin)
         varargout=regress(varargin)
         varargout=rolling(varargin)
