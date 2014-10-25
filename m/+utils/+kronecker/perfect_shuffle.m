@@ -1,4 +1,4 @@
-function [Spq] = perfect_shuffle(p,q)
+function [Spq] = perfect_shuffle(p,q,for_loop)
 % perfect_shuffle produces the a perfect shuffle matrix that turns kron(B,C) into kron(C,B)
 %
 % Syntax
@@ -6,6 +6,7 @@ function [Spq] = perfect_shuffle(p,q)
 % ::
 %
 %   [Spq] = perfect_shuffle(p,q)
+%   [Spq] = perfect_shuffle(p,q,for_loop)
 %
 % Inputs
 % -------
@@ -13,6 +14,9 @@ function [Spq] = perfect_shuffle(p,q)
 % - **p** [numeric]: number of rows of square matrix B
 %
 % - **q** [numeric]: number of rows of square matrix C
+%
+% - **for_loop** [true|{false}]: if true, a for loop is used. else the
+%   procedure is vectorized.
 %
 % Outputs
 % --------
@@ -37,20 +41,29 @@ function [Spq] = perfect_shuffle(p,q)
 % - Carla Dee Martin (2005): "Higher-order kronecker products and     
 %   Tensor decompositions" PhD dissertation, pp 13-14
 
+if nargin<3
+    for_loop=false;
+end
 r=p*q;
 
-Spq=nan(r);
 Ir=speye(r);
 
-offset=0;
-for irow=1:q
-    select_rows=irow:q:r;
-    nrows=numel(select_rows);
-    Spq(offset+(1:nrows),:)=Ir(select_rows,:);
-    offset=offset+nrows;
+if for_loop
+    offset=0;
+    Spq=nan(r);
+    for irow=1:q
+        select_rows=irow:q:r;
+        nrows=numel(select_rows);
+        Spq(offset+(1:nrows),:)=Ir(select_rows,:);
+        offset=offset+nrows;
+    end
+else
+    select_rows=(1:q:r)';
+    select_rows=select_rows(:,ones(1,q));
+    select_rows=bsxfun(@plus,select_rows,(0:q-1));
+    Spq=Ir(select_rows(:),:);
 end
 
-% Spq=sparse(Spq);
 
 end
 
