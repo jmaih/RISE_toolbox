@@ -8,6 +8,7 @@ classdef dsge < rise_generic
     % - [check_optimum](dsge/check_optimum)
     % - [compute_steady_state](dsge/compute_steady_state)
     % - [create_estimation_blocks](dsge/create_estimation_blocks)
+    % - [create_state_list](dsge/create_state_list)
     % - [draw_parameter](dsge/draw_parameter)
     % - [dsge](dsge/dsge)
     % - [estimate](dsge/estimate)
@@ -127,6 +128,7 @@ classdef dsge < rise_generic
     end
     methods
         varargout=check_derivatives(varargin)
+        varargout=create_state_list(varargin)
         varargout=filter(varargin)
         varargout=print_solution(varargin)
         varargout=solve(varargin)

@@ -176,45 +176,6 @@ end
     end
 end
 
-function final_list=create_state_list(m)
-order=m.options.solve_order;
-shock_horizon=max(m.exogenous.shock_horizon);
-exo_list=get(m,'exo_list');
-% "predetermined" and then "both" variables
-%-------------------------------------------
-state_list = [get(m,'endo_list(predetermined)'),get(m,'endo_list(pred_frwrd_looking)')];
-% lag those names
-%-----------------
-state_list = parser.lag_names(state_list); % strcat(state_list,'{-1}');
-% add the perturbation parameter then the exogenous
-%--------------------------------------------------
-state_list=[state_list,'@sig',exo_list];
-% state_list=[strcat([get(m,'endo_list(predetermined)'),...
-%     get(m,'endo_list(pred_frwrd_looking)')],...
-%     '{-1}'),...
-%     '@sig',exo_list];
-
-% finally the future shocks
-%--------------------------
-for ik=1:shock_horizon
-    state_list=[state_list,strcat(exo_list,'{+',int2str(ik),'}')];
-end
-final_list={};
-old_state={};
-for io=1:order
-    new_state={};
-    if isempty(old_state)
-        new_state=state_list;
-    else
-        for istate=1:numel(old_state)
-            new_state=[new_state,strcat(old_state{istate},',',state_list)];
-        end
-    end
-    old_state=new_state;
-    final_list=[final_list,new_state];
-end
-end
-
 function [C,M1]=mykron(A,B,M0,compact)
 if nargin<4
     compact=false;
