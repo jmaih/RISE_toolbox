@@ -1,8 +1,23 @@
 function x = vec(x)
-
-% low-level function
+% H1 line
 %
-% No help provided
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 x = vartools.vec(x);
 
