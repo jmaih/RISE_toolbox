@@ -1134,7 +1134,6 @@ for ifunc=1:numEqtns
 end
 
 verbose=false;
-compact_derivatives=true;
 tic
 derivs=splanar.differentiate(myfunc,numVars,order,Partitions,verbose);
 for oo=1:order
@@ -1146,7 +1145,7 @@ for oo=1:order
         fprintf(1,'printing of derivatives at order %0.0f done in %0.4f seconds\n',oo,toc);
         tic
     end
-    derivs(oo)=splanar.derivatives2functions(derivs(oo),input_list,compact_derivatives);
+    derivs(oo)=splanar.derivatives2functions(derivs(oo),input_list);
     if verbose
         fprintf(1,'derivatives to functions at order %0.0f done in %0.4f seconds\n',oo,toc);
     end

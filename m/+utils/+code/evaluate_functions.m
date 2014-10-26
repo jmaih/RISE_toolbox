@@ -49,9 +49,10 @@ end
             xout=zeros(tmp(iout).size);
             if ~isempty(xcell)
                 vals=main_engine();
+                rows_check=tmp(iout).rows_check;
                 for irows=1:size(xcell,1)
                     if ~isempty(vals{irows})
-                        xout(irows,tmp(iout).map{irows})=vals{irows};
+                        xout(rows_check(irows),tmp(iout).map{irows})=vals{irows};
                     end
                 end
             end

@@ -164,10 +164,13 @@ end
             xxx=[xxx,');'];
             [xout]=main_engine();
             if ~isempty(xcell)
+                rows_check=tmp(oo).rows_check;
                 for irows=1:size(xcell,1)
                     if ~isempty(xout{irows})
                         strcols=stringify_indexes(tmp(oo).map{irows});
-                        xout{irows}=sprintf('%s(%0.0f,%s)=%s;',default_output_name,irows,strcols,xout{irows});
+                        xout{irows}=sprintf('%s(%0.0f,%s)=%s;',...
+                            default_output_name,rows_check(irows),...
+                            strcols,xout{irows});
                     end
                 end
                 % expand output
