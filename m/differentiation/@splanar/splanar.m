@@ -65,7 +65,7 @@ classdef splanar
         func
         args
         incidence % tells which variable appears
-        is_vector=false
+        number_of_columns=1
         lineage={} % will serve to trace back all generations of derivatives
         prototype
         location % will hold position (column) where the derivative will be stored
@@ -85,309 +85,86 @@ classdef splanar
                         end
                         obj.args={a};
                     end
-                    obj.is_vector=isnumeric(f) && numel(f)>1;
+                    if isnumeric(f)
+                        obj.number_of_columns= numel(f);
+                    end
                 end
             end
         end
         % overloaded operators
         %---------------------
         function obj=abs(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=abs(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='abs';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'abs');
         end
         function obj=acos(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=acos(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='acos';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'acos');
         end
         function obj=acosh(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=acosh(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='acosh';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'acosh');
         end
         function obj=and(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=and(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='and';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'and');
         end
         function obj=asin(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=asin(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='asin';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'asin');
         end
         function obj=asinh(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=asinh(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='asinh';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'asinh');
         end
         function obj=atan(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=atan(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='atan';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'atan');
         end
         function obj=atanh(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=atanh(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='atanh';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'atanh');
         end
         function obj=cos(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=cos(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='cos';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'cos');
         end
         function obj=cosh(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=cosh(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='cosh';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'cosh');
         end
         function obj=cot(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=cot(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='cot';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'cot');
         end
         function obj=eq(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=eq(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='eq';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'eq');
         end
         function obj=erf(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=erf(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='erf';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'erf');
         end
         function obj=exp(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=exp(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='exp';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'exp');
         end
         function obj=ge(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=ge(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='ge';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'ge');
         end
         function obj=gt(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=gt(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='gt';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'gt');
         end
         function obj=if_elseif(varargin)
-            obj=[];
-            n=length(varargin);
-            constants=cell(1,n);
+            n=nargin;
+            [varargin{1:n}]=splanarize(varargin{:});
             nconst=0;
-            guy_is_planar=false(1,n);
+            constants=cell(1,n);
             for iarg=1:n
-                if strcmp(class(varargin{iarg}),'splanar')
-                    guy_is_planar(iarg)=true;
-                    if isempty(obj)
-                        obj=varargin{iarg}.prototype;obj.prototype=obj;
-                    end
-                    if isnumeric(varargin{iarg}.func)
-                        nconst=nconst+1;
-                        constants{iarg}=varargin{iarg}.func;
-                    end
-                else
+                if isnumeric(varargin{iarg});
+                    constants{iarg}=varargin{iarg}.func;
                     nconst=nconst+1;
-                    constants{iarg}=varargin{iarg};
+                else
+                    break
                 end
             end
-            for iarg=find(~guy_is_planar)
-                tmp=varargin{iarg};
-                varargin{iarg}=obj; varargin{iarg}.func=tmp;
-            end
+            % initialize the splanar
+            %------------------------
+            obj=varargin{1}.prototype;obj.prototype=obj;
             if nconst==n
                 obj.func=if_elseif(constants{:});
-                obj.is_vector=numel(obj.func)>1;
+                obj.number_of_columns=numel(obj.func);
             else
                 obj.func='if_elseif';
                 obj.args=varargin;
                 for iarg=1:n
-                    obj.is_vector=obj.is_vector||varargin{iarg}.is_vector;
+                    obj.number_of_columns=max(obj.number_of_columns,varargin{iarg}.number_of_columns);
                     if ~isempty(varargin{iarg}.incidence)
                         if isempty(obj.incidence)
                             obj.incidence=varargin{iarg}.incidence;
@@ -399,189 +176,29 @@ classdef splanar
             end
         end
         function obj=if_then_else(a,b,c)
-            obj=[];
-            if strcmp(class(a),'splanar'),obj=a.prototype;obj.prototype=obj; end
-            if strcmp(class(b),'splanar') && isempty(obj),obj=b.prototype;obj.prototype=obj; end
-            if strcmp(class(c),'splanar') && isempty(obj),obj=c.prototype;obj.prototype=obj; end
-            if ~strcmp(class(a),'splanar'),atmp=a; a=obj;a.func=atmp; end
-            if ~strcmp(class(b),'splanar'),btmp=b; b=obj;b.func=btmp; end
-            if ~strcmp(class(c),'splanar'),ctmp=c; c=obj;c.func=ctmp; end
-            if isnumeric(a.func) && isnumeric(b.func) && isnumeric(c.func)
-                obj.func=if_then_else(a.func,b.func,c.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='if_then_else';
-                obj.args={a,b,c};
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-                if ~isempty(c.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=c.incidence;
-                    else
-                        obj.incidence=obj.incidence|c.incidence;
-                    end
-                end
-                obj.is_vector=a.is_vector||b.is_vector||c.is_vector;
-            end
+            obj=if_elseif(a,b,~a,c);
         end
         function obj=le(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=le(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='le';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'le');
         end
         function obj=log(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=log(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='log';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'log');
         end
         function obj=log10(a)
             obj=log(a)/log(10);
         end
         function obj=lt(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=lt(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='lt';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'lt');
         end
         function obj=max(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=max(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='max';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'max');
         end
         function obj=min(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=min(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='min';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'min');
         end
         function obj=minus(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=minus(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            elseif is_zero(b)
+            [a,b]=splanarize(a,b);
+            if is_zero(b)
                 % x - 0 = x
                 obj=a;
             elseif is_zero(a)
@@ -591,83 +208,37 @@ classdef splanar
                 % x - (-y) = x + y
                 obj=a+b.args{1};
             else
-                obj.func='minus';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
+                obj=do_bivariate(a,b,'minus',false);
             end
         end
         function obj=mpower(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=power(a.func,b.func); % note the vectorized form
-                obj.is_vector=numel(obj.func)>1;
-            elseif is_zero(b)
+            [a,b]=splanarize(a,b);
+            obj=a.prototype;obj.prototype=obj;
+            if is_zero(b)
                 % x^0 = 1
                 obj.func=1;
-                %	obj.is_vector=numel(obj.func)>1;
+                %	obj.number_of_columns=numel(obj.func);
             elseif is_one(b)
                 % x^1 = x
                 obj=a;
             elseif is_one(a)
                 % 1^x = 1
                 obj.func=1;
-                %	obj.is_vector=numel(obj.func)>1;
+                %	obj.number_of_columns=numel(obj.func);
             else
-                obj.func='mpower';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
+                obj=do_bivariate(a,b,'mpower',false);
             end
         end
         function obj=mrdivide(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=rdivide(a.func,b.func); % note the vectorized form
-                obj.is_vector=numel(obj.func)>1;
-            elseif any(b.func==0)
+            [a,b]=splanarize(a,b);
+            if any(b.func==0)
                 % x/0 impossible
                 error('dividing by zero not allowed')
             elseif is_one(b)
                 % x/1 = x
                 obj=a;
             elseif is_zero(a)
+                obj=a.prototype;obj.prototype=obj;
                 obj.func=0;
             elseif strcmp(a.func,'uminus')
                 if strcmp(b.func,'uminus')
@@ -678,38 +249,15 @@ classdef splanar
                     obj=-mrdivide(a.args{1},b);
                 end
             else
-                obj.func='mrdivide';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
+                obj=do_bivariate(a,b,'mrdivide',false);
             end
         end
         function obj=mtimes(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
+            [a,b]=splanarize(a,b);
             isnum_a=isnumeric(a);
             isnum_b=isnumeric(b);
-            if isnum_a && isnum_b
-                obj.func=times(a.func,b.func); % note the vectorized form
-                obj.is_vector=numel(obj.func)>1;
-            elseif strcmp(a.func,'uminus')
+            %             maxcols=max([a.number_of_columns,b.number_of_columns]);
+            if strcmp(a.func,'uminus')
                 if strcmp(b.func,'uminus')
                     % (-x) * (-y) = x * y
                     obj=mtimes(a.args{1},b.args{1});
@@ -720,64 +268,24 @@ classdef splanar
             elseif strcmp(b.func,'uminus')
                 % x * (-y) = -(x*y)
                 obj=-mtimes(a,b.args{1});
-            elseif isnum_a && is_zero(a)
+            elseif (isnum_a && is_zero(a))||(isnum_b && is_zero(b))
                 % 0 * x = 0
+                % x * 0 = 0
                 obj=a.prototype;obj.prototype=obj;
-                obj.func=0;
-                %			obj.is_vector=numel(obj.func)>1;
-            elseif isnum_a && is_one(a)
+                obj.func=0;% obj.func=0*ones(1,maxcols);
+                obj.number_of_columns=1;%obj.number_of_columns=maxcols>1;
+            elseif isnum_a && is_one(a) % maxcols==1 &&
                 % 1 * x = x
                 obj=b;
-            elseif isnum_b && is_zero(b)
-                % x * 0 = 0
-                obj.func=0;
-                %		obj.is_vector=numel(obj.func)>1;
-            elseif isnum_b && is_one(b)
+            elseif isnum_b && is_one(b)% maxcols==1 &&
                 % x * 1 = x
                 obj=a;
             else
-                obj.func='mtimes';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
+                obj=do_bivariate(a,b,'mtimes',false);
             end
         end
         function obj=ne(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=ne(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='ne';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'ne');
         end
         function obj=normcdf(x,mu,sd)
             if nargin<3
@@ -786,36 +294,7 @@ classdef splanar
                     mu=0;
                 end
             end
-            obj=[];
-            if strcmp(class(x),'splanar'),obj=x.prototype;obj.prototype=obj; end
-            if strcmp(class(mu),'splanar') && isempty(obj),obj=mu.prototype;obj.prototype=obj; end
-            if strcmp(class(sd),'splanar') && isempty(obj),obj=sd.prototype;obj.prototype=obj; end
-            if ~strcmp(class(x),'splanar'),atmp=x; x=obj;x.func=atmp; end
-            if ~strcmp(class(mu),'splanar'),btmp=mu; mu=obj;mu.func=btmp; end
-            if ~strcmp(class(sd),'splanar'),ctmp=sd; sd=obj;sd.func=ctmp; end
-            if isnumeric(x.func) && isnumeric(mu.func) && isnumeric(sd.func)
-                obj.func=normcdf(x.func,mu.func,sd.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='normcdf';
-                obj.args={x,mu,sd};
-                obj.incidence=x.incidence;
-                if ~isempty(mu.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=mu.incidence;
-                    else
-                        obj.incidence=obj.incidence|mu.incidence;
-                    end
-                end
-                if ~isempty(sd.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=sd.incidence;
-                    else
-                        obj.incidence=obj.incidence|sd.incidence;
-                    end
-                end
-                obj.is_vector=x.is_vector||mu.is_vector||sd.is_vector;
-            end
+            obj=do_trivariate_normal(x,mu,sd,'normcdf');
         end
         function obj=normpdf(x,mu,sd)
             if nargin<3
@@ -824,84 +303,14 @@ classdef splanar
                     mu=0;
                 end
             end
-            obj=[];
-            if strcmp(class(x),'splanar'),obj=x.prototype;obj.prototype=obj; end
-            if strcmp(class(mu),'splanar') && isempty(obj),obj=mu.prototype;obj.prototype=obj; end
-            if strcmp(class(sd),'splanar') && isempty(obj),obj=sd.prototype;obj.prototype=obj; end
-            if ~strcmp(class(x),'splanar'),atmp=x; x=obj;x.func=atmp; end
-            if ~strcmp(class(mu),'splanar'),btmp=mu; mu=obj;mu.func=btmp; end
-            if ~strcmp(class(sd),'splanar'),ctmp=sd; sd=obj;sd.func=ctmp; end
-            if isnumeric(x.func) && isnumeric(mu.func) && isnumeric(sd.func)
-                obj.func=normpdf(x.func,mu.func,sd.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='normpdf';
-                obj.args={x,mu,sd};
-                obj.incidence=x.incidence;
-                if ~isempty(mu.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=mu.incidence;
-                    else
-                        obj.incidence=obj.incidence|mu.incidence;
-                    end
-                end
-                if ~isempty(sd.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=sd.incidence;
-                    else
-                        obj.incidence=obj.incidence|sd.incidence;
-                    end
-                end
-                obj.is_vector=x.is_vector||mu.is_vector||sd.is_vector;
-            end
+            obj=do_trivariate_normal(x,mu,sd,'normpdf');
         end
         function obj=or(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=or(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='or';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
-            end
+            obj=do_bivariate(a,b,'or');
         end
         function obj=plus(a,b)
-            obj=[];
-            if strcmp(class(a),'splanar')
-                obj=a.prototype;obj.prototype=obj;
-            end
-            if strcmp(class(b),'splanar')
-                if isempty(obj)
-                    obj=b.prototype;obj.prototype=obj;
-                    atmp=a;a=obj; a.func=atmp;
-                end
-            else
-                btmp=b;b=obj; b.func=btmp;
-            end
-            if isnumeric(a.func) && isnumeric(b.func)
-                obj.func=plus(a.func,b.func);
-                obj.is_vector=numel(obj.func)>1;
-            elseif ischar(b.func) && strcmp(b.func,'uminus')
+            [a,b]=splanarize(a,b);
+            if ischar(b.func) && strcmp(b.func,'uminus')
                 % x + (-y) = x - y
                 obj=minus(a,b.args{1});
             elseif is_zero(a)
@@ -914,108 +323,38 @@ classdef splanar
                 % x + x = 2x
                 obj=2*a;
             else
-                obj.func='plus';
-                obj.args={a,b};
-                obj.is_vector=a.is_vector||b.is_vector;
-                obj.incidence=a.incidence;
-                if ~isempty(b.incidence)
-                    if isempty(obj.incidence)
-                        obj.incidence=b.incidence;
-                    else
-                        obj.incidence=obj.incidence|b.incidence;
-                    end
-                end
+                obj=do_bivariate(a,b,'plus',false);
             end
         end
         function obj=sign(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=sign(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='sign';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'sign');
         end
         function obj=sin(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=sin(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='sin';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'sin');
         end
         function obj=sinh(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=sinh(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='sinh';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'sinh');
         end
         function obj=sqrt(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=sqrt(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='sqrt';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'sqrt');
         end
         function obj=tan(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=tan(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='tan';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'tan');
         end
         function obj=tanh(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=tanh(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            else
-                obj.func='tanh';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
-            end
+            obj=do_univariate(a,'tanh');
         end
         function obj=uminus(a)
-            obj=a.prototype;obj.prototype=obj;
-            if isnumeric(a.func)
-                obj.func=uminus(a.func);
-                obj.is_vector=numel(obj.func)>1;
-            elseif strcmp(a.func,'uminus')
+            if strcmp(a.func,'uminus')
                 % Simplify -(-x) in x
+                obj=a.prototype;obj.prototype=obj;
                 if strcmp(class(a.args{1}),'splanar')
                     obj=a.args{1};
                 else
                     obj.func=a.args{1};
                 end
             else
-                obj.func='uminus';
-                obj.args={a};
-                obj.incidence=a.incidence;
-                obj.is_vector=a.is_vector;
+                obj=do_univariate(a,'uminus');
             end
         end
         function obj=uplus(a)
@@ -1051,10 +390,10 @@ classdef splanar
             flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==1);
         end
         function obj=intercept_column(obj,pointer)
-            if obj.is_vector
+            if obj.number_of_columns>1
                 if isnumeric(obj) && numel(obj.func)>1
                     obj.func=obj.func(pointer);
-                    obj.is_vector=false;
+                    obj.number_of_columns=1; % or numel(obj.func)
                 elseif ~isempty(obj.args)
                     for iarg=1:numel(obj.args)
                         if ~isa(obj.args{iarg},'splanar')
@@ -1092,7 +431,7 @@ classdef splanar
                 % variables that are part of differentiation
                 d=x.prototype;d.prototype=d;
                 d.func=double(x.incidence(wrt));
-                d.is_vector=numel(d.func)>1;
+                d.number_of_columns=numel(d.func);
                 % why do we need to double it?
                 % we need to carry around vectors in order to be able to do
                 % higher-order derivatives
@@ -1105,7 +444,7 @@ classdef splanar
                 for iarg=1:nargs
                     if ~isempty(pointer) && isnumeric(x.args{iarg}) && numel(x.args{iarg}.func)>1
                         x.args{iarg}.func=x.args{iarg}.func(pointer);
-                        x.args{iarg}.is_vector=false;
+                        x.args{iarg}.number_of_columns=false;
                     end
                     if (if_elseif_flag && rem(iarg,2))||(iarg==1 && if_then_else_flag)
                         continue
@@ -1243,12 +582,9 @@ classdef splanar
         end
     end
     methods(Static)
-        function deriv=derivatives2functions(deriv,args,compact,optimize)
-            if nargin<4
+        function deriv=derivatives2functions(deriv,args,optimize)
+            if nargin<3
                 optimize=false;
-                if nargin<3
-                    compact=false;
-                end
             end
             if ischar(args)
                 args=cellstr(args);
@@ -1265,38 +601,16 @@ classdef splanar
                 deriv.derivatives=regexprep(deriv.derivatives,...
                     ['(?<!\w+)(\()(',word,'|',word_par,')(\))'],'$2');
             end
+            
+            
             % build the functions
             %--------------------
             args=cell2mat(strcat(args,','));
             main_string=['@(',args(1:end-1),')'];
-            nrows=deriv.size(1);
-            maxcols=deriv.maxcols;
+            nrows=numel(deriv.derivatives);
             for irow=1:nrows
-                if compact
-                    dd='';
-                    dindex=[];
-                end
-                for icol=1:maxcols
-                    if isempty(deriv.derivatives{irow,icol})
-                        break
-                    end
-                    icol_deriv=deriv.derivatives{irow,icol};
-                    if compact
-                        dd=[dd,icol_deriv,','];
-                        dindex=[dindex,deriv.map{irow,icol}];
-                    else
-                        deriv.derivatives{irow,icol}=str2func([main_string,icol_deriv]);
-                    end
-                end
-                if compact && ~isempty(dd)
-                    deriv.derivatives{irow,1}=str2func([main_string,'[',dd(1:end-1),']']);
-                    deriv.map{irow,1}=dindex;
-                end
-            end
-            if compact && ~isempty(deriv.derivatives)
-                deriv.derivatives=deriv.derivatives(:,1);
-                deriv.map=deriv.map(:,1);
-                deriv.maxcols=1;
+                irow_deriv=deriv.derivatives{irow};
+                deriv.derivatives{irow}=str2func([main_string,irow_deriv]);
             end
         end
         function c=print(deriv,long)
@@ -1320,6 +634,53 @@ classdef splanar
             deriv.derivatives=c;
             c=deriv;
             c.map=cmap;
+            % put in vectorize form to avoid squeaks stemming from
+            % concatening entries with the same value and entries with
+            % multiple values. e.g [a,b]=c_ cannot be concatenated with
+            % [x,y,z]=[x_,y_,z_] coz then the rhs will be unbalanced.
+            %--------------------------------------------------------------
+            vectorize_derivatives();
+                
+            function vectorize_derivatives()
+                % vectorize_derivatives vectorizes higher-order derivatives
+                %
+                % Syntax
+                % -------
+                % ::
+                %
+                % Inputs
+                % -------
+                %
+                % Outputs
+                % --------
+                %
+                % More About
+                % ------------
+                %
+                % Examples
+                % ---------
+                %
+                % See also:
+                
+                % stamp the cells with their respective row numbers
+                %---------------------------------------------------
+                rows_check=(1:c.size(1)).';
+                rows_check=rows_check(:,ones(1,c.maxcols));
+                
+                % transpose and vectorize everything
+                %------------------------------------
+                c.derivatives=vec(c.derivatives.');
+                c.map=vec(c.map.');
+                rows_check=vec(rows_check.');
+                
+                % get rid of empty cells
+                %------------------------
+                empty_cells=cellfun(@isempty,c.map,'UniformOutput',false);
+                empty_cells=[empty_cells{:}];
+                c.map=c.map(~empty_cells);
+                c.derivatives=c.derivatives(~empty_cells);
+                c.rows_check=rows_check(~empty_cells);
+            end
         end
         function var_list=initialize(var_list,wrt_list)
             if ischar(var_list)
@@ -1345,7 +706,6 @@ classdef splanar
                 if ~isempty(loc)
                     incid_=proto_incidence;
                     incid_(loc)=true;
-                    %         var_list{ivar}.incid_=sparse(incid_);
                     var_list{ivar}=set(var_list{ivar},'incidence',sparse(incid_));
                 end
                 var_list{ivar}=set(var_list{ivar},'prototype',proto_);
@@ -1369,7 +729,7 @@ classdef splanar
             
             init_vector=repmat({splanar.empty(0)},neqtns,1);
             derivs=struct('size',{},'derivatives',{},'maxcols',{},...
-                'nnz_derivs',{},'map',{},'partitions',{});
+                'nnz_derivs',{},'map',{},'partitions',{},'rows_check',{});
             combos=[];
             old_ncols=1;
             MainGrid=[];
@@ -1455,7 +815,7 @@ classdef splanar
                 end
                 derivs(oo)=struct('size',{[neqtns,ncols]},'derivatives',{d},...
                     'maxcols',maxcols,'nnz_derivs',nnz_derivs,'map',[],...
-                    'partitions',DerivPartitions);
+                    'partitions',DerivPartitions,'rows_check',[]);
                 
                 % spit out the time it took to compute
                 %-------------------------------------
@@ -1467,6 +827,7 @@ classdef splanar
                 %-----------
                 eqtns=d;
             end
+            
             function [newcombos,iG_DerivLocs,iter]=store_combinations(oldcombos)
                 iG_DerivLocs=nan(1,nwrt^oo);
                 iter=0;
@@ -1545,4 +906,98 @@ classdef splanar
             end
         end
     end
+end
+
+function varargout=splanarize(varargin)
+varargout=varargin;
+n=nargin;
+obj=[];
+guy_is_planar=false(1,n);
+for iarg=1:n
+    guy_is_planar(iarg)=strcmp(class(varargin{iarg}),'splanar');
+    if isempty(obj) && guy_is_planar(iarg)
+        obj=varargin{iarg}.prototype;obj.prototype=obj;
+    end
+end
+for iarg=find(~guy_is_planar)
+    tmp=varargout{iarg};
+    varargout{iarg}=obj; varargout{iarg}.func=tmp;
+end
+end
+
+function obj=do_trivariate_normal(x,mu,sd,func)
+[x,mu,sd]=splanarize(x,mu,sd);
+% initialize the splanar
+%------------------------
+obj=x.prototype; obj.prototype=obj;
+if isnumeric(x.func) && isnumeric(mu.func) && isnumeric(sd.func)
+    obj.func=feval(func,x.func,mu.func,sd.func);
+    obj.number_of_columns=numel(obj.func);
+else
+    obj.func=func;
+    obj.args={x,mu,sd};
+    obj.incidence=x.incidence;
+    if ~isempty(mu.incidence)
+        if isempty(obj.incidence)
+            obj.incidence=mu.incidence;
+        else
+            obj.incidence=obj.incidence|mu.incidence;
+        end
+    end
+    if ~isempty(sd.incidence)
+        if isempty(obj.incidence)
+            obj.incidence=sd.incidence;
+        else
+            obj.incidence=obj.incidence|sd.incidence;
+        end
+    end
+    obj.number_of_columns=max([x.number_of_columns,mu.number_of_columns,sd.number_of_columns]);
+end
+end
+
+function obj=do_bivariate(a,b,func,re_splanarize)
+if nargin<4
+    re_splanarize=true;
+end
+
+if re_splanarize
+    [a,b]=splanarize(a,b);
+end
+% initialize the splanar
+%------------------------
+obj=a.prototype; obj.prototype=obj;
+if isnumeric(a.func) && isnumeric(b.func)
+    if any(strcmp(func,{'mtimes','mrdivide','mpower'}))
+        func=func(2:end);
+    end
+    obj.func=feval(func,a.func,b.func);
+    obj.number_of_columns=numel(obj.func);
+else
+    obj.func=func;
+    obj.args={a,b};
+    obj.number_of_columns=max([a.number_of_columns,b.number_of_columns]);
+    obj.incidence=a.incidence;
+    if ~isempty(b.incidence)
+        if isempty(obj.incidence)
+            obj.incidence=b.incidence;
+        else
+            obj.incidence=obj.incidence|b.incidence;
+        end
+    end
+end
+end
+
+function obj=do_univariate(a,func)
+% initialize the splanar
+%------------------------
+obj=a.prototype;obj.prototype=obj;
+if isnumeric(a.func)
+    obj.func=feval(func,a.func);
+    obj.number_of_columns=numel(obj.func);
+else
+    obj.func=func;
+    obj.args={a};
+    obj.incidence=a.incidence;
+    obj.number_of_columns=a.number_of_columns;
+end
 end
