@@ -44,19 +44,30 @@ end
     function varargout=derivative_engine()
         tmp=xcell;
         varargout=cell(1,nout);
+        vector_it=@(x)cell2mat(x(:).');
         for iout=1:nout
             xcell=tmp(iout).functions;
-            xout=zeros(tmp(iout).size);
-            if ~isempty(xcell)
+            mm=tmp(iout).size(1);
+            nn=tmp(iout).size(2);
+            if isempty(xcell)
+                xout=sparse(mm,nn);
+            else
+                ii=num2cell(tmp(iout).rows_check);
+                jj=tmp(iout).map;
                 vals=main_engine();
-                rows_check=tmp(iout).rows_check;
                 for irows=1:size(xcell,1)
-                    if ~isempty(vals{irows})
-                        xout(rows_check(irows),tmp(iout).map{irows})=vals{irows};
+                    nguys=numel(jj{irows});
+                    if nguys>1
+                        ii{irows}=ii{irows}*ones(1,nguys);
+                        if numel(vals{irows})==1
+                            vals{irows}=vals{irows}*ones(1,nguys);
+                        end
                     end
                 end
+                nzmax=tmp(iout).nnz_derivs;
+                xout=sparse(vector_it(ii),vector_it(jj),vector_it(vals),mm,nn,nzmax);
             end
-            varargout{iout}=sparse(xout(:,tmp(iout).partitions));
+            varargout{iout}=xout(:,tmp(iout).partitions);
         end
     end
 
