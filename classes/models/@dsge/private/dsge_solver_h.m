@@ -181,31 +181,29 @@ end
             end
             
             function res=dvv_Evz_vzz()
-                % res=d.dvv{r0,r1}*Evz_vzz();
-                res=omega_1(structural_matrices.dvv{r0,r1},a0_z,a0_zz+a1_zz*Eu_u)+...
-                    0; % unfinished
+                Eu_u_hz=kron(Eu_u,hz);
+                Eu_hz_u=utils.kronecker.shuffle(Eu_u_hz,[siz.nz,siz.nz],[siz.nz,siz.nz].^2);
+                res=fvv_vx_vxx_omega_1(structural_matrices.dvv{r0,r1},a0_z,a0_zz+a1_zz*Eu_u)+...
+                    structural_matrices.dvv{r0,r1}*kron(a1_z,a1_zz)*(Eu_u_hz+Eu_hz_u);
             end
             
             function res=Tzz_hz_hzz()
-                res=omega_1(T.Tzz{r1}(pos.t.bf,:),hz,hzz);
+                res=fvv_vx_vxx_omega_1(T.Tzz{r1}(pos.t.bf,:),hz,hzz);
             end
             
             function res=dvvv_Evz_vz_vz()
-                res=structural_matrices.dvvv{r0,r1}*(kron(kron(a0_z,a0_z),a0_z)+...
-                    kron(a0_z,kron(a1_z,a1_z)*Eu_u)+...
-                    kron(kron(a1_z,a1_z)*Eu_u,a0_z)+...
-                    0); % unfinished
-            end
-            
-            function res=omega_1(dvv,vz,vzz)
-                res=utils.kronecker.A_times_B_kron_C(dvv,vz,vzz);
-                res=res+utils.kronecker.A_times_B_kron_C(dvv,vzz,vz);
-                nz=siz.nz;
-                for ipage=1:nz
-                    point=(ipage-1)*nz+1:ipage*nz;
-                    cols=(ipage-1)*nz^2+1:ipage*nz^2;
-                    res(:,cols)=res(:,cols)+utils.kronecker.A_times_B_kron_C(dvv,vzz(:,point),vz);
-                end
+                res=fvvv_vx_vx_vx(structural_matrices.dvvv{r0,r1},a0_z);
+                k011u=kron(a0_z,kron(a1_z,a1_z)*Eu_u);
+                siz_a0=size(a0_z);
+                siz_a1_u=siz_a0;
+                k11u0 = utils.kronecker.shuffle(k011u,siz_a0,siz_a1_u.^2);
+                k1u01 = utils.kronecker.shuffle(k011u,siz_a0.*siz_a1_u,siz_a1_u);
+                res=res+structural_matrices.dvvv{r0,r1}*(k011u+k11u0+k1u01);
+%                 res=structural_matrices.dvvv{r0,r1}*(...
+%                     kron(kron(a0_z,a0_z),a0_z)+...
+%                     k011u+...
+%                     k11u0+...
+%                     k1u01);
             end
         end
         
@@ -254,14 +252,47 @@ end
                     end
                     tmp_u=sparse(AT_0*tmp_u);
                     % use the fast kronecker only where it is really needed
+                    % In the statement below, false means the vector
+                    % appears on the right
                     %------------------------------------------------------
-                    AT_0=utils.kronecker.X_times_kron_Q1_Qk(AT_0(:),{transpose(hz),oo},{speye(siz.nd),1});
+                    AT_0=utils.kronecker.fernandez_plateau_stewart(false,...
+                        AT_0(:),{transpose(hz),oo},{speye(siz.nd),1});
                     AT(:,:,r00)=reshape(AT_0,[siz.nd,siz.nz^oo])+tmp_u+tau(:,:,r00);
                 end
                 AT=AT(:);
             end
         end
     end
+end
+
+function result=fvvv_vx_vx_vx(dvvv,vz)
+[nd,nv3]=size(dvvv);
+nv=round(nv3^(1/3));
+nz=size(vz,2);
+
+if max(abs(dvvv(:)))==0 || max(abs(vz(:)))==0
+    result=0;
+else
+    result=reshape((reshape(dvvv,nd*nv^2,nv)*vz)',nz*nd*nv,nv);
+    result=reshape((result*vz)',nz*nz*nd,nv);
+    result=permute(reshape(full(result*vz),nz,nz,nd,nz),[3,2,1,4]);
+    result=reshape(result,[nd,nz^3]);
+end
+
+end
+
+function [result]=fvv_vx_vxx_omega_1(dvv,vz,vzz)
+[nd,nv2]=size(dvv);
+nv=sqrt(nv2);
+nz=size(vz,2);
+
+result=reshape((reshape(dvv,nd*nv,nv)*vzz)',nz^2*nd,nv);
+% result=reshape((reshape(dvv,nd*nv,nv)*reshape(vzz,nv,nz^2))',nz^2*nd,nv);
+result=permute(reshape(full(result*vz),nz,nz,nd,nz),[3,1,2,4]);
+
+result=result+ipermute(result,[1,4,3,2])+ipermute(result,[1,4,2,3]);
+
+result=reshape(result,[nd,nz^3]);
 end
 
 function [Tz,others,eigval,retcode,options]=solve_first_order(structural_matrices,others,siz,pos,options,k_future)
