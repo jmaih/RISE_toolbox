@@ -113,7 +113,7 @@ end
                 ALPHA = start.a2Aprime(alpha2tilde); % Draw of ALPHA
                 
                 % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
-                a2tilde.post.scale_SIGMA = a2tilde.prior.scale_SIGMA + (Y-X*ALPHA)'*(Y-X*ALPHA);
+                a2tilde.post.scale_SIGMA = a2tilde.prior.scale_SIGMA + (Y-X*ALPHA.').'*(Y-X*ALPHA.');
                 start.SIGMA = inverse_wishart_draw(a2tilde.post.scale_SIGMA,a2tilde.post.dof_SIGMA);% Draw SIGMA
             otherwise
                 error('unknown prior type')
