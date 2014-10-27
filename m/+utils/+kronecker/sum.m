@@ -1,27 +1,34 @@
-function res=sum_kroneckers(varargin)
-% H1 line
+function res=sum(varargin)
+% sum sums products of all possible permutations of kronecker products
 %
 % Syntax
 % -------
 % ::
 %
+%   res=sum(A1,A2,...,Ak)
+%
 % Inputs
 % -------
+%
+% - **Ai** [matrix]: matrices for which we want to take the sum of the
+%   kronecker product
 %
 % Outputs
 % --------
 %
+% - **res** [matrix]: sum of the kronecker products
+%
 % More About
 % ------------
+%
+% sum(A,B,C)=kron(A,B,C) + kron(A,C,B) + kron(B,A,C) + kron(B,C,A) + 
+% kron(C,A,B) + kron(C,B,A)
 %
 % Examples
 % ---------
 %
 % See also: 
 
-% sum products of all possible permutations
-% example sum_kroneckers(A,B,C)=kron(A,B,C) + kron(A,C,B) + kron(B,A,C) +
-% kron(B,C,A) + kron(C,A,B) + kron(C,B,A)
 n=length(varargin);
 % find all permutations
 %----------------------

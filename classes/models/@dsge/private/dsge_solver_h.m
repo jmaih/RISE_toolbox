@@ -35,7 +35,7 @@ end
 % It is assumed the steady states have been solved and the derivatives
 % evaluated at different orders
 %%
-Pfunc=@utils.miscellaneous.sum_kroneckers;
+Pfunc=@utils.kronecker.sum;
 
 %% begin
 T=struct();
