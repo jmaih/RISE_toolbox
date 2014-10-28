@@ -252,12 +252,10 @@ end
                     end
                     tmp_u=sparse(AT_0*tmp_u);
                     % use the fast kronecker only where it is really needed
-                    % In the statement below, false means the vector
-                    % appears on the right
                     %------------------------------------------------------
-                    AT_0=utils.kronecker.fernandez_plateau_stewart(false,...
-                        AT_0(:),{transpose(hz),oo},{speye(siz.nd),1});
-                    AT(:,:,r00)=reshape(AT_0,[siz.nd,siz.nz^oo])+tmp_u+tau(:,:,r00);
+                    AT_0=utils.kronecker.A_times_k_kron_B(AT_0,hz,oo);
+                    % AT_0=utils.kronecker.fernandez_plateau_stewart(true,AT_0,{hz,oo});
+                    AT(:,:,r00)=AT_0+tmp_u+tau(:,:,r00);
                 end
                 AT=AT(:);
             end
@@ -265,34 +263,56 @@ end
     end
 end
 
-function result=fvvv_vx_vx_vx(dvvv,vz)
+function Y=fvvv_vx_vx_vx(dvvv,vz,tol,new_algo)
+if nargin<4
+    new_algo=true;
+    if nargin<3
+        tol=sqrt(eps);
+    end
+end
 [nd,nv3]=size(dvvv);
 nv=round(nv3^(1/3));
 nz=size(vz,2);
 
-if max(abs(dvvv(:)))==0 || max(abs(vz(:)))==0
-    result=0;
+if max(abs(dvvv(:)))<tol || max(abs(vz(:)))<tol
+    Y=0;
 else
-    result=reshape((reshape(dvvv,nd*nv^2,nv)*vz)',nz*nd*nv,nv);
-    result=reshape((result*vz)',nz*nz*nd,nv);
-    result=permute(reshape(full(result*vz),nz,nz,nd,nz),[3,2,1,4]);
-    result=reshape(result,[nd,nz^3]);
+    if new_algo
+        Y=utils.kronecker.A_times_k_kron_B(dvvv,vz,3);
+    else
+        Y=reshape((reshape(dvvv,nd*nv^2,nv)*vz)',nz*nd*nv,nv);
+        Y=reshape((Y*vz)',nz*nz*nd,nv);
+        Y=permute(reshape(full(Y*vz),nz,nz,nd,nz),[3,2,1,4]);
+        Y=reshape(Y,[nd,nz^3]);
+    end
 end
 
 end
 
-function [result]=fvv_vx_vxx_omega_1(dvv,vz,vzz)
-[nd,nv2]=size(dvv);
-nv=sqrt(nv2);
-nz=size(vz,2);
-
-result=reshape((reshape(dvv,nd*nv,nv)*vzz)',nz^2*nd,nv);
-% result=reshape((reshape(dvv,nd*nv,nv)*reshape(vzz,nv,nz^2))',nz^2*nd,nv);
-result=permute(reshape(full(result*vz),nz,nz,nd,nz),[3,1,2,4]);
-
-result=result+ipermute(result,[1,4,3,2])+ipermute(result,[1,4,2,3]);
-
-result=reshape(result,[nd,nz^3]);
+function [Y]=fvv_vx_vxx_omega_1(dvv,vz,vzz,tol,new_algo)
+if nargin<5
+    new_algo=true;
+    if nargin<4
+        tol=sqrt(eps);
+    end
+end
+[nd]=size(dvv,1);
+[~,nz]=size(vz);
+kk=2;ll=3;jj=4;
+if max(abs(dvv(:)))<tol || max(abs(vz(:)))<tol || max(abs(vzz(:)))<tol
+    Y=0;
+else
+    if new_algo
+        Y=utils.kronecker.A_times_B_kron_C(dvv,vz,vzz);
+        Y=reshape(Y,[nd,nz,nz,nz]);
+        Y=Y+ipermute(Y,[1,jj,ll,kk])+ipermute(Y,[1,jj,kk,ll]);
+    else
+        Y=reshape((reshape(dvv,nd*nv,nv)*vzz)',nz^2*nd,nv);
+        Y=permute(reshape(full(Y*vz),nz,nz,nd,nz),[ll,1,kk,jj]);
+        Y=Y+ipermute(Y,[1,jj,ll,kk])+ipermute(Y,[1,jj,kk,ll]);
+    end
+    Y=reshape(Y,[nd,nz^3]);
+end
 end
 
 function [Tz,others,eigval,retcode,options]=solve_first_order(structural_matrices,others,siz,pos,options,k_future)
