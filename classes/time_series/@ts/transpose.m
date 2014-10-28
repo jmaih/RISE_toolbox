@@ -1,5 +1,5 @@
 function d=transpose(db)
-d% H1 line
+% H1 line
 %
 % Syntax
 % -------
@@ -19,7 +19,7 @@ d% H1 line
 %
 % See also: 
 
-=main_frame(db,false);
+d=main_frame(db,false);
 
 d=permute(d,[2,1,3]);
 end
