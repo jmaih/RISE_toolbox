@@ -261,7 +261,7 @@ newobj=obj;
             end
             nrest=numel(blocks);
             if nrest
-                max_order=thisOrder(end);
+                max_order=blocks(end);
                 if blocks(1)==0
                     Fsign{istate}=[Fsign{istate};myperm_irfs(L0)];
                 end
@@ -293,7 +293,7 @@ newobj=obj;
             end
             nrest=numel(blocks);
             if nrest
-                max_order=thisOrder(end);
+                max_order=blocks(end);
                 if blocks(1)==0
                     Fzero{istate}=[Fzero{istate};myperm_irfs(L0)];
                 end
