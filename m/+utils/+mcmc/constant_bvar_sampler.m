@@ -39,7 +39,7 @@ K=start.K ;
 a_func=start.a_func ;
 a2tilde=start.a2tilde ;
 na2=start.na2;
-variancify=start.variancify; % computes posterior variance
+estimafy=start.estimafy; % computes posterior variance
 %---------------------------------------------
 
 [burnin,thin,waitbar_update]=...
@@ -85,6 +85,8 @@ end
         
         switch prior_type
             case {'diffuse','jeffrey'} % prior == 1
+                a2tilde.post=estimafy(inv(start.SIGMA),true);
+                
                 % Posterior of alpha|SIGMA,Data ~ Normal
                 alpha2tilde = a2tilde.ols.a + chol(a2tilde.post.V)'*randn(na2,1);% Draw alpha
                 
@@ -116,7 +118,7 @@ end
                 % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
                 a2tilde.post.scale_SIGMA = a2tilde.prior.scale_SIGMA + (Y-X*ALPHA.').'*(Y-X*ALPHA.');
                 start.SIGMA = inverse_wishart_draw(a2tilde.post.scale_SIGMA,a2tilde.post.dof_SIGMA);% Draw SIGMA
-                a2tilde.post.V=variancify(inv(start.SIGMA),true);
+                a2tilde.post=estimafy(inv(start.SIGMA),true);
             otherwise
                 error('unknown prior type')
         end

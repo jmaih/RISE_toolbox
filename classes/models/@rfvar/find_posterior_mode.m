@@ -47,7 +47,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     a2tilde_prior=struct('a',obj.linear_restrictions_data.a2tilde_func(a_prior),...
         'V',obj.linear_restrictions_data.a2tilde_func(va_prior,true));
     
-    [a2tilde_post,a2tilde_ols,variancify]=posterior_mode_engine(vdata.Xtilde,...
+    [a2tilde_post,a2tilde_ols,estimafy]=posterior_mode_engine(vdata.Xtilde,...
         vdata.ytilde,a2tilde_prior);
     
     resid_post=reshape(a2tilde_post.resid,obj.endogenous.number(end),[]);
@@ -115,15 +115,14 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
             % to do
             %------------------------------------------------------------------
 %             iVa=obj.linear_restrictions_data.a_func(inv(a2tilde.prior.V),true);
-            iVa2tilde=inv(a2tilde.prior.V);
+            iVa2tilde=(a2tilde.prior.V)\speye(size(a2tilde.prior.V,1));
             XpX=bigx*bigx';
             A_OLS=a2Aprime(a2tilde.ols.a);
             A_prior=a2Aprime(a2tilde.prior.a);
             A_post=a2Aprime(a2tilde.post.a);
-            % %             iVa=reshape(diag(iVa),size(A_post));
             a2tilde.post.scale_SIGMA = a2tilde.ols.SSE + a2tilde.prior.scale_SIGMA + ...
                 A_OLS*XpX*A_OLS' + ...
-                A_prior*iVa2tilde*A_prior' - ...
+                A_prior*t*A_prior' - ...
                 A_post*(iVa2tilde + XpX)*A_post';
         end
     end
@@ -143,7 +142,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
         'a2Aprime',a2Aprime,...
         'na2',numel(a2tilde.prior.a),...
         'vdata',vdata,...
-        'variancify',variancify);
+        'estimafy',estimafy);
 else
     [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode@rise_generic(obj,x0,lb,ub);
 end
@@ -153,7 +152,7 @@ end
         A=reshape(x(:),nvars,K);
     end
 
-    function [post,ols,variancify]=posterior_mode_engine(X,y,prior)
+    function [post,ols,estimafy]=posterior_mode_engine(X,y,prior)
         
         npar_short=obj.linear_restrictions_data.npar_short;
         iVa_prior=prior.V\eye(npar_short);
@@ -179,28 +178,14 @@ end
             case {'jeffrey','diffuse'}
             otherwise
         end
-        [post.V,iV_ols]=compute_posterior_variance(iSIGU);
-        ols.a=(X'*iSIGU*X)\(X'*iSIGU*y);
-        ols.resid=y-X*ols.a;
         
-        % posterior
-        %----------
-        post.V=(iV_ols+iVa_prior)\eye(npar_short);
-        post.a=post.V*(iV_ols*ols.a+iVa_prior*prior.a);
-        post.resid=y-X*post.a;
+        % posterior and ols
+        %-------------------
+        [post,ols]=compute_posterior_and_ols(iSIGU);
         
-        % fishy business : we use different variances for the computation
-        % of the mean and for posterior simulation
-        %------------------------------------------------------------------
-        if strcmp(obj.options.vp_prior_type,'jeffrey')
-            results=vartools.ols(bigy,bigx,0,false);
-            iSIGU_fishy=results.SIGols\eye(obj.endogenous.number(end));%
-            post.V=inv(X'*kron(eye(smpl),iSIGU_fishy)*X);
-        end
+        estimafy=@compute_posterior_and_ols;
         
-        variancify=@compute_posterior_variance;
-        
-        function [Vpost,iV_ols]=compute_posterior_variance(iSIGU,flag)
+        function [post,ols]=compute_posterior_and_ols(iSIGU,flag)
             if nargin<2
                 flag=false;
             end
@@ -208,7 +193,19 @@ end
                 iSIGU=kron(eye(smpl),iSIGU);
             end
             iV_ols=(X'*iSIGU*X);
-            Vpost=(iV_ols+iVa_prior)\eye(npar_short);
+            ols.a=(X'*iSIGU*X)\(X'*iSIGU*y);
+            ols.resid=y-X*ols.a;
+            post.Vpost=(iV_ols+iVa_prior)\eye(npar_short);
+            post.a=Vpost*(iV_ols*ols.a+iVa_prior*prior.a);
+            post.resid=y-X*post.a;
+% %             % fishy business : we use different variances for the computation
+% %             % of the mean and for posterior simulation
+% %             %------------------------------------------------------------------
+% %             if strcmp(obj.options.vp_prior_type,'jeffrey')
+% %                 results=vartools.ols(bigy,bigx,0,false);
+% %                 iSIGU_fishy=results.SIGols\eye(obj.endogenous.number(end));%
+% %                 post.V=inv(X'*kron(eye(smpl),iSIGU_fishy)*X);
+% %             end
         end
     end
 
