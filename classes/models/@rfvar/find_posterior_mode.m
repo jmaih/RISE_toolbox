@@ -195,8 +195,8 @@ end
             iV_ols=(X'*iSIGU*X);
             ols.a=(X'*iSIGU*X)\(X'*iSIGU*y);
             ols.resid=y-X*ols.a;
-            post.Vpost=(iV_ols+iVa_prior)\eye(npar_short);
-            post.a=Vpost*(iV_ols*ols.a+iVa_prior*prior.a);
+            post.V=(iV_ols+iVa_prior)\eye(npar_short);
+            post.a=post.V*(iV_ols*ols.a+iVa_prior*prior.a);
             post.resid=y-X*post.a;
 % %             % fishy business : we use different variances for the computation
 % %             % of the mean and for posterior simulation
