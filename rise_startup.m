@@ -51,6 +51,10 @@ if retcode
 else
     miktex_version=regexp(latex_paths,['(?i)M(iK|ac)TeX(\s+|\',filesep,')(\d+\.\d+)'],'match');
     miktex_version=[miktex_version{:}];
+    if isempty(miktex_version)
+        miktex_version=regexp(latex_paths,['(?i)M(iK|ac)TeX(\s+|\',filesep,')'],'match');
+        miktex_version=[miktex_version{:}];
+    end
     miktex_version=strrep(miktex_version,filesep,' ');
     miktex_version=miktex_version{1};
 end
