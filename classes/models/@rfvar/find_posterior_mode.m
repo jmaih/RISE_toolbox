@@ -37,17 +37,17 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     npar=size(x0,1);
     a2tilde=struct();
     
-    [vdata,bigx,bigy,orig_order,smpl]=restricted_var_data(obj);
+    [vdata,bigx,bigy,orig_order,inv_order,smpl]=restricted_var_data(obj);
     a_prior=[obj.estimation.priors.prior_mean];
     a_prior=a_prior(vdata.estim_locs);
     a_prior=a_prior(:);
     va_prior=[obj.estimation.priors.prior_stdev];
-    va_prior=diag(va_prior(vdata.estim_locs).^2);
+    va_prior=diag(va_prior(inv_order).^2);% <---va_prior=diag(va_prior(vdata.estim_locs).^2);
     
     a2tilde_prior=struct('a',obj.linear_restrictions_data.a2tilde_func(a_prior),...
         'V',obj.linear_restrictions_data.a2tilde_func(va_prior,true));
     
-    [a2tilde_post,a2tilde_ols]=posterior_mode_engine(vdata.Xtilde,...
+    [a2tilde_post,a2tilde_ols,variancify]=posterior_mode_engine(vdata.Xtilde,...
         vdata.ytilde,a2tilde_prior);
     
     resid_post=reshape(a2tilde_post.resid,obj.endogenous.number(end),[]);
@@ -114,16 +114,17 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
             % we invert and then apply the function:probably the simplest thing
             % to do
             %------------------------------------------------------------------
-            iVa=obj.linear_restrictions_data.a_func(inv(a2tilde.prior.V),true);
+%             iVa=obj.linear_restrictions_data.a_func(inv(a2tilde.prior.V),true);
+            iVa2tilde=inv(a2tilde.prior.V);
             XpX=bigx*bigx';
             A_OLS=a2Aprime(a2tilde.ols.a);
             A_prior=a2Aprime(a2tilde.prior.a);
             A_post=a2Aprime(a2tilde.post.a);
             % %             iVa=reshape(diag(iVa),size(A_post));
             a2tilde.post.scale_SIGMA = a2tilde.ols.SSE + a2tilde.prior.scale_SIGMA + ...
-                A_OLS'*XpX*A_OLS + ...
-                A_prior'*iVa*A_prior - ...
-                A_post'*(iVa + XpX)*A_post;
+                A_OLS*XpX*A_OLS' + ...
+                A_prior*iVa2tilde*A_prior' - ...
+                A_post*(iVa2tilde + XpX)*A_post';
         end
     end
     
@@ -141,7 +142,8 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
         'funevals',0,...
         'a2Aprime',a2Aprime,...
         'na2',numel(a2tilde.prior.a),...
-        'vdata',vdata);
+        'vdata',vdata,...
+        'variancify',variancify);
 else
     [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode@rise_generic(obj,x0,lb,ub);
 end
@@ -151,7 +153,7 @@ end
         A=reshape(x(:),nvars,K);
     end
 
-    function [post,ols]=posterior_mode_engine(X,y,prior)
+    function [post,ols,variancify]=posterior_mode_engine(X,y,prior)
         
         npar_short=obj.linear_restrictions_data.npar_short;
         iVa_prior=prior.V\eye(npar_short);
@@ -167,7 +169,7 @@ end
                     results=vartools.ols(bigy,bigx,0,false);
                     iSIGU=results.SIGols\eye(obj.endogenous.number(end));%
                 end
-                iSIGU=kron(iSIGU,eye(smpl));
+                iSIGU=kron(eye(smpl),iSIGU);%<---iSIGU=kron(iSIGU,eye(smpl));
                 % N.B: for the indep_normal_wishart, This is not the exact
                 % formula but we still need to start somewhere for the
                 % initialization of the Gibbs sampler.
@@ -177,7 +179,7 @@ end
             case {'jeffrey','diffuse'}
             otherwise
         end
-        iV_ols=(X'*iSIGU*X);
+        [post.V,iV_ols]=compute_posterior_variance(iSIGU);
         ols.a=(X'*iSIGU*X)\(X'*iSIGU*y);
         ols.resid=y-X*ols.a;
         
@@ -186,10 +188,33 @@ end
         post.V=(iV_ols+iVa_prior)\eye(npar_short);
         post.a=post.V*(iV_ols*ols.a+iVa_prior*prior.a);
         post.resid=y-X*post.a;
+        
+        % fishy business : we use different variances for the computation
+        % of the mean and for posterior simulation
+        %------------------------------------------------------------------
+        if strcmp(obj.options.vp_prior_type,'jeffrey')
+            results=vartools.ols(bigy,bigx,0,false);
+            iSIGU_fishy=results.SIGols\eye(obj.endogenous.number(end));%
+            post.V=inv(X'*kron(eye(smpl),iSIGU_fishy)*X);
+        end
+        
+        variancify=@compute_posterior_variance;
+        
+        function [Vpost,iV_ols]=compute_posterior_variance(iSIGU,flag)
+            if nargin<2
+                flag=false;
+            end
+            if flag
+                iSIGU=kron(eye(smpl),iSIGU);
+            end
+            iV_ols=(X'*iSIGU*X);
+            Vpost=(iV_ols+iVa_prior)\eye(npar_short);
+        end
     end
+
 end
 
-function [vd,bigx,bigy,orig_order,smpl]=restricted_var_data(obj)
+function [vd,bigx,bigy,orig_order,inv_order,smpl]=restricted_var_data(obj)
 [bigy,bigx,nv,smpl]=vartools.set_y_and_x(obj.data.y,obj.data.x,...
     obj.nlags,obj.constant);
 vd=struct();
