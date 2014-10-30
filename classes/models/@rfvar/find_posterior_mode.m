@@ -38,6 +38,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     a2tilde=struct();
     
     [vdata,bigx,bigy,orig_order,inv_order,smpl]=restricted_var_data(obj);
+    [nvars,nobs]=size(bigy);
     a_prior=[obj.estimation.priors.prior_mean];
     a_prior=a_prior(vdata.estim_locs);
     a_prior=a_prior(:);
@@ -45,13 +46,16 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     va_prior=diag(va_prior(inv_order).^2);% <---va_prior=diag(va_prior(vdata.estim_locs).^2);
     
     a2tilde_prior=struct('a',obj.linear_restrictions_data.a2tilde_func(a_prior),...
-        'V',obj.linear_restrictions_data.a2tilde_func(va_prior,true));
+        'V',obj.linear_restrictions_data.a2tilde_func(va_prior,true),...
+        'dof_SIGMA',nvars+1,...%<---- prior Degrees of Freedom (DoF) of SIGMA
+        'scale_SIGMA',eye(nvars)...%<---- prior scale of SIGMA
+        );
+        % Hyperparameters on inv(SIGMA) ~ W(prior.dof_SIGMA,inv(prior.scale_SIGMA))
     
     [a2tilde_post,a2tilde_ols,estimafy]=posterior_mode_engine(vdata.Xtilde,...
         vdata.ytilde,a2tilde_prior);
     
     resid_post=reshape(a2tilde_post.resid,obj.endogenous.number(end),[]);
-    [nvars,nobs]=size(resid_post);
     K=(npar-sum(1:nvars))/nvars;
     vcov=(resid_post*resid_post.')/(nobs-K);
     
@@ -105,11 +109,6 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     a2Aprime=@(x)transform_to_matrix_form(obj.linear_restrictions_data.a_func(x));
     
     if any(strcmp(obj.options.vp_prior_type,{'normal_wishart','indep_normal_wishart'}))
-        % Hyperparameters on inv(SIGMA) ~ W(prior.dof_SIGMA,inv(prior.scale_SIGMA))
-        a2tilde.prior.dof_SIGMA = nvars+1;         %<---- prior Degrees of Freedom (DoF) of SIGMA
-        a2tilde.prior.scale_SIGMA = eye(nvars);    %<---- prior scale of SIGMA
-        % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
-        a2tilde.post.dof_SIGMA = nobs + a2tilde.prior.dof_SIGMA;
         if strcmp(obj.options.vp_prior_type,'normal_wishart')
             % we invert and then apply the function:probably the simplest thing
             % to do
@@ -198,6 +197,8 @@ end
             post.V=(iV_ols+iVa_prior)\eye(npar_short);
             post.a=post.V*(iV_ols*ols.a+iVa_prior*prior.a);
             post.resid=y-X*post.a;
+            % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
+            post.dof_SIGMA = nobs + prior.dof_SIGMA;
 % %             % fishy business : we use different variances for the computation
 % %             % of the mean and for posterior simulation
 % %             %------------------------------------------------------------------
