@@ -218,13 +218,29 @@ end
             %     2 preconditioner M was ill-conditioned.
             %     3 tfqmr stagnated (two consecutive iterates were the same).
             %     4 one of the scalar quantities calculated during tfqmr became too
+            
+            % shrink D and so on
+            %--------------------
+            if accelerate
+            [keep,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
+            nkept=sum(keep);
+            D=D(:,keep,:);
+            end
+            
+            % expand final result: maybe, maybe not
+            %--------------------------------------
             [X,retcode]=transpose_free_quasi_minimum_residual(@afun,D(:),... % right hand side
                 [],... %x0 initial guess
                 obj.options.fix_point_TolFun,... % tolerance level
                 obj.options.fix_point_maxiter,... % maximum number of iterations
                 obj.options.fix_point_verbose);
             if ~retcode
-                X=reshape(X,[siz.nd,siz.nz^oo,siz.h]);
+                if accelerate
+                    X=reshape(X,[siz.nd,nkept,siz.h]);
+                    X=X(:,expand,:);
+                else
+                    X=reshape(X,[siz.nd,siz.nz^oo,siz.h]);
+                end
                 tmp=cell(1,siz.h);
                 for r0=1:siz.h
                     tmp{r0}=X(:,:,r0);
@@ -233,7 +249,12 @@ end
             end
             
             function AT=afun(tau)
-                tau=reshape(tau,[siz.nd,siz.nz^oo,siz.h]);
+                if accelerate
+                    tau=reshape(tau,[siz.nd,nkept,siz.h]);
+                    tau=tau(:,expand,:);
+                else
+                    tau=reshape(tau,[siz.nd,siz.nz^oo,siz.h]);
+                end
                 AT=zeros(size(tau));
                 for r00=1:siz.h
                     hz(pos.z.pb,:)=T.Tz{r00}(pos.t.pb,:);
@@ -256,6 +277,9 @@ end
                     AT_0=utils.kronecker.A_times_k_kron_B(AT_0,hz,oo);
                     % AT_0=utils.kronecker.fernandez_plateau_stewart(true,AT_0,{hz,oo});
                     AT(:,:,r00)=AT_0+tmp_u+tau(:,:,r00);
+                end
+                if accelerate
+                    AT=AT(:,keep,:);
                 end
                 AT=AT(:);
             end
