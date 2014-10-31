@@ -41,7 +41,7 @@ if nargin<6
     end
 end
 if isempty(equation_format),equation_format=false;end
-if isempty(compact_form),compact_form=false;end
+if isempty(compact_form),compact_form=true;end
 if isempty(varlist)
     varlist=obj(1).endogenous.name(obj(1).endogenous.is_original & ~obj(1).endogenous.is_auxiliary);
 end
@@ -51,6 +51,7 @@ mycell=cell(0,1);
 string='';
 for kk=1:numel(obj)
     state_names={};
+    kept_states=[];
     endo_names=obj(kk).endogenous.name;
     % get the location of the variables: can be model specific
     ids=locate_variables(varlist,obj(1).endogenous.name);
@@ -150,7 +151,8 @@ end
             ];
         if regime_index==1
             state_names=[state_names,'steady state','bal. growth']; %#ok<*AGROW>
-                state_list=create_state_list(obj(kk));
+                [state_list,kept_states]=create_state_list(obj(kk),[],compact_form);
+                kept_states=[true(2,1);kept_states(:)]; % add steady state and bal. growth
                 state_names=[state_names,state_list];
         end
         
@@ -162,6 +164,10 @@ end
             bigtime=[
                 bigtime
                 1/factorial(io)*Tz];
+        end
+        
+        if compact_form
+            bigtime=bigtime(kept_states,:);
         end
         
         bigtime=full(bigtime);

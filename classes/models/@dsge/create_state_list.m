@@ -1,4 +1,4 @@
-function final_list=create_state_list(m,orders)
+function [final_list,kept]=create_state_list(m,orders,compact_form)
 % create_state_list creates the list of the state variables in the solution
 %
 % Syntax
@@ -16,10 +16,16 @@ function final_list=create_state_list(m,orders)
 % - **orders** [integer array|{1:m.options.solve_order}] : approximation
 %   orders
 %
+% - **compact_form** [true|{false}] : if true, only unique combinations
+%   will be returned. Else, all combinations will be returned.
+%
 % Outputs
 % --------
 %
 % - **final_list** [cellstr] : list of the state variables
+%
+% - **kept** [vector] : location of kept state variables (computed only if
+%   compact_form is set to true)
 %
 % More About
 % ------------
@@ -35,6 +41,12 @@ if isempty(m)
 end
 
 if nargin<2
+    orders=[];
+    if nargin<3
+        compact_form=false;
+    end
+end
+if isempty(orders)
     orders=1:m.options.solve_order;
 end
 orders=sort(orders);
@@ -55,8 +67,11 @@ state_list=[state_list,'@sig',exo_list];
 for ik=1:shock_horizon
     state_list=[state_list,strcat(exo_list,'{+',int2str(ik),'}')];
 end
+n=numel(state_list);
 final_list={};
 old_state={};
+kept=cell(numel(orders),1);
+iter=0;
 for io=1:max(orders)
     new_state={};
     if isempty(old_state)
@@ -67,10 +82,16 @@ for io=1:max(orders)
         end
     end
     old_state=new_state;
-    if any(io-orders==0)
         % save only the requested orders
+    if any(io-orders==0)
+        if compact_form
+            iter=iter+1;
+            kept{iter}=utils.kronecker.shrink_expand(n,io);
+            new_state=new_state(kept{iter});
+        end
         final_list=[final_list,new_state];
     end
 end
+kept=cell2mat(kept(:));
 end
 
