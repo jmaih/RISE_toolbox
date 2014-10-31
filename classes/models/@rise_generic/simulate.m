@@ -98,6 +98,10 @@ Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
 [y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
 
+% add initial conditions
+%-----------------------
+y=[y0(1).y,y];
+
 % put y in the correct order before storing
 %------------------------------------------
 y=re_order_output_rows(obj,y);
