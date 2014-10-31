@@ -28,12 +28,12 @@ function [keep,expand,C,UC]=shrink_expand(n,k,strategy,debug)
 % - **keep** [logical] : n^k x 1 vector true for the columns to be kept
 % - **expand** [vector] : n^k x 1 vector replicating the compressed
 %   columns to form the grand tensor
-% - **C** [matrix] : sparse compression matrix of size n^k x g, where g is
-%   the number of unique elements in the tensor (matrix version of
-%   **keep**)
-% - **UC** [matrix] : sparse expansion matrix of size g x n^k g, where g is
-%   the number of unique elements in the tensor (matrix version of
-%   **expand**)
+% - **C** [matrix] : sparse compression matrix of size n^k x g, where
+%   g=nchoosek(n+k-1,k) is the number of unique elements in the tensor
+%   (matrix version of **keep**)
+% - **UC** [matrix] : sparse expansion matrix of size g x n^k, where
+%   g=nchoosek(n+k-1,k) is the number of unique elements in the tensor
+%   (matrix version of **expand**)
 %
 % More About
 % ------------
