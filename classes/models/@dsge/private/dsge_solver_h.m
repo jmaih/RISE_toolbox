@@ -359,9 +359,9 @@ if ~retcode
     db_Lb_Tzb_Lb=zeros(siz.nd,siz.nT);
     UUi=zeros(siz.nd,siz.nT,siz.h);
     others.dbf_plus=cell(siz.h);
+    Tz_e_rt=cell(1,siz.h);
     for rt=1:siz.h
         de_0_rt=0;
-        Sdbf_plus_rt=0;
         for rplus=1:siz.h
             ds_0=dv{rt,rplus}(:,pos.v.s_0);
             dp_0=dv{rt,rplus}(:,pos.v.p_0);
@@ -386,21 +386,26 @@ if ~retcode
             UUi(:,:,rt)=UUi(:,:,rt)+A0_0_1;
             UUi(:,pos.t.pb,rt)=UUi(:,pos.t.pb,rt)+others.dbf_plus{rt,rplus}*Tz_pb(pos.t.bf,:,rplus);
             de_0_rt=de_0_rt+de_0;
-            if k_future
-                Sdbf_plus_rt=Sdbf_plus_rt+others.dbf_plus{rt,rplus};
-            end
         end
         % shock impacts (current)
         %------------------------
         UUi(:,:,rt)=UUi(:,:,rt)\eye(siz.nT);
-        Tz_e_rt=-UUi(:,:,rt)*de_0_rt;
-        % shock impacts (future)
-        %-----------------------
-        for ik=1:k_future
-            Tz_e_rt(:,:,ik+1)=-UUi(:,:,rt)*Sdbf_plus_rt*Tz_e_rt(pos.t.bf,:,ik);
+        Tz_e_rt{rt}=-UUi(:,:,rt)*de_0_rt;
+        Tz{rt}=[Tz_pb(:,:,rt),Tz_sig(:,rt),Tz_e_rt{rt}];
+    end
+    
+    % shock impacts (future)
+    %-----------------------
+    for ik=1:k_future
+        Tz_e_r0=Tz_e_rt;
+        for rt=1:siz.h
+            Sdbf_plus_rt_Tz_e0=0;
+            for rplus=1:siz.h
+                Sdbf_plus_rt_Tz_e0=Sdbf_plus_rt_Tz_e0+others.dbf_plus{rt,rplus}*Tz_e_r0{rplus}(pos.t.bf,:);
+            end
+            Tz_e_rt{rt}=-UUi(:,:,rt)*Sdbf_plus_rt_Tz_e0;
+            Tz{rt}=[Tz{rt},Tz_e_rt{rt}];
         end
-        Tz_e_rt=reshape(Tz_e_rt,siz.nd,siz.ne*(k_future+1));
-        Tz{rt}=[Tz_pb(:,:,rt),Tz_sig(:,rt),Tz_e_rt];
     end
     
     % now solve sum(A+*Tz_sig(+)+A0_sig*Tz_sig+dt_t=0
