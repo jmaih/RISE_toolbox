@@ -14,12 +14,10 @@ function [keep,expand,C,UC]=shrink_expand(n,k,strategy,debug)
 %
 % - **n** [scalar] : number of variables in the tensor
 % - **k** [scalar] : order of the tensor
-% - **strategy** [1|2|3|4|{5}] : alternative computation strategies
-%   - 1: bsxfun
+% - **strategy** [1|2|{3}] : alternative computation strategies
+%   - 1: uses bsxfun
 %   - 2: splanar inspired
-%   - 3: cumul
-%   - 4: cumul
-%   - 5: ismember
+%   - 3: applies ismember
 % - **debug** [true|{false}] : checks the results
 %
 % Outputs
@@ -50,7 +48,7 @@ function [keep,expand,C,UC]=shrink_expand(n,k,strategy,debug)
 if nargin<4
     debug=false;
     if nargin<3
-        strategy=5;
+        strategy=3;
     end
 end
 
@@ -85,10 +83,6 @@ if nargout>1
         case 2
             splanar_strategy()
         case 3
-            cumul_strategy()
-        case 4
-            cumul_strategy2()
-        case 5
             ismember_strategy()
         otherwise
             error('strategy not implemented')
@@ -118,29 +112,22 @@ if nargout>1
 end
 
     function ismember_strategy()
-        A=sum(cumsum(test2,2),2);
-        B=A(keep);
-        [~,expand] = ismember(A,B);
-    end
-
-    function cumul_strategy2()
-        tmp=sum(cumsum(test2,2),2);
-        tmp_keep=tmp(keep);
-        Index=1:nbig;
-        Index(keep)=[];
-        expand(keep)=1:nkept;
-        for ikept=1:nkept
-            match=tmp(Index)==tmp_keep(ikept);
-            expand(Index(match))=ikept;
-            Index(match)=[];
-        end
-    end
-
-    function cumul_strategy()
-        tmp=sum(cumsum(test2,2),2);
-        tmp_keep=tmp(keep);
-        for ikept=1:nkept
-            expand(tmp==tmp_keep(ikept))=ikept;
+        [expand] = myismember(test2,test2(keep,:));
+%         [~,expand] = ismember(test2,test2(keep,:),'rows');
+        function [locb] = myismember(A,B)
+            % unique A first
+            [~,~,icA] = unique(A,'rows','sorted');
+            
+            % Sort the unique elements of B and B, duplicate entries are adjacent
+            [sort_B_B,tags_B_B] = sortrows([B;B]);
+            
+            % Find matching entries
+            d = sort_B_B(1:end-1,:)==sort_B_B(2:end,:);     % d indicates matching entries
+            d = all(d,2);                                   % Finds the index of matching entries
+            ndx1 = tags_B_B(d);                          % NDX1 are locations of repeats in C
+            
+            % Find locb by using given indices
+            locb = builtin('_ismemberfirst',icA,ndx1);
         end
     end
 
