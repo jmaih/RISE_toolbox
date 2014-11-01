@@ -17,7 +17,7 @@ function [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % the obj going out probably contains the changed options
 
@@ -145,11 +145,15 @@ end
                     a1_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:);
                     a0_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hz;
                     a0_z(pos.v.theta_plus,pos.z.sig)=others.theta_hat{r0,r1};
-                    Evz_vz=kron(a0_z,a0_z)+kron(a1_z,a1_z)*Eu_u;
-                    Dzz(:,:,r0)=Dzz(:,:,r0)+structural_matrices.dvv{r0,r1}*Evz_vz;
+                    Dzz(:,:,r0)=Dzz(:,:,r0)+dvv_Evz_vz();
                 end
                 % precondition
                 Dzz(:,:,r0)=-others.Ui(:,:,r0)*Dzz(:,:,r0);
+            end
+            
+            function res=dvv_Evz_vz()
+                res=fvv_vx_vx(structural_matrices.dvv{r0,r1},a0_z);
+                res=res+fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu_u;
             end
         end
         
@@ -199,11 +203,6 @@ end
                 k11u0 = utils.kronecker.shuffle(k011u,siz_a0,siz_a1_u.^2);
                 k1u01 = utils.kronecker.shuffle(k011u,siz_a0.*siz_a1_u,siz_a1_u);
                 res=res+structural_matrices.dvvv{r0,r1}*(k011u+k11u0+k1u01);
-%                 res=structural_matrices.dvvv{r0,r1}*(...
-%                     kron(kron(a0_z,a0_z),a0_z)+...
-%                     k011u+...
-%                     k11u0+...
-%                     k1u01);
             end
         end
         
@@ -222,10 +221,26 @@ end
             % shrink D and so on
             %--------------------
             if accelerate
-            [keep,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
-            nkept=sum(keep);
-            D=D(:,keep,:);
+                [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
+                nkept=sum(shrink);
+                if obj.options.debug
+                    Dtest=D;
+                end
+                D=D(:,shrink,:);
+                if obj.options.debug
+                    Dbig=D(:,expand,:);
+                    max(abs(Dtest(:)-Dbig(:)))
+                end
+            else
+                if obj.options.debug
+                    [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
+                    D=D(:,shrink,:);
+                    D=D(:,expand,:);
+                end
+                nkept=siz.nz^oo;
             end
+            % compute E(kron(u,...,u))
+            E_u_o=Ekron_u_oo();
             
             % expand final result: maybe, maybe not
             %--------------------------------------
@@ -248,43 +263,60 @@ end
                 X=tmp;
             end
             
-            function AT=afun(tau)
-                if accelerate
-                    tau=reshape(tau,[siz.nd,nkept,siz.h]);
-                    tau=tau(:,expand,:);
-                else
-                    tau=reshape(tau,[siz.nd,siz.nz^oo,siz.h]);
-                end
-                AT=zeros(size(tau));
+            function ATC_plus_T=afun(tau)
+                tau=reshape(tau,[siz.nd,nkept,siz.h]);
+                ATC_plus_T=zeros(size(tau));
                 for r00=1:siz.h
                     hz(pos.z.pb,:)=T.Tz{r00}(pos.t.pb,:);
-                    AT_0=0;
+                    AT=0;
                     for r1=1:siz.h
-                        AT_0=AT_0+dbf_plus{r00,r1}*tau(pos.t.bf,:,r1);
+                        AT=AT+dbf_plus{r00,r1}*tau(pos.t.bf,:,r1);
                     end
-                    switch oo
-                        case 2
-                            tmp_u=Eu_u;
-                        case 3
-                            no_skewed_shocks=0;
-                            tmp_u=no_skewed_shocks+Pfunc(hz,Eu_u);
-                        otherwise
-                            error(['approximation of order ',int2str(oo),' not yet implemented'])
+                    if accelerate
+                        AT=AT(:,expand);
                     end
-                    tmp_u=sparse(AT_0*tmp_u);
-                    % use the fast kronecker only where it is really needed
-                    %------------------------------------------------------
-                    AT_0=utils.kronecker.A_times_k_kron_B(AT_0,hz,oo);
-                    % AT_0=utils.kronecker.fernandez_plateau_stewart(true,AT_0,{hz,oo});
-                    AT(:,:,r00)=AT_0+tmp_u+tau(:,:,r00);
+                    ATCzzz=temporary_term();
+                    ATC_plus_T(:,:,r00)=ATCzzz+tau(:,:,r00);
                 end
-                if accelerate
-                    AT=AT(:,keep,:);
+                ATC_plus_T=ATC_plus_T(:);
+                function ATCzzz=temporary_term()
+                    % core terms
+                    %-----------
+                    ATCzzz=utils.kronecker.A_times_k_kron_B(AT,hz,oo);
+                    ATCzzz=ATCzzz+AT*E_u_o;
+                    if oo==3
+                        ATCzzz=ATCzzz+AT*Pfunc(hz,Eu_u);
+                    end
+                    if accelerate
+                        ATCzzz=ATCzzz(:,shrink);
+                    end
                 end
-                AT=AT(:);
+            end
+            function E_u_o=Ekron_u_oo()
+                switch oo
+                    case 2
+                        E_u_o=Eu_u;
+                    case 3
+                        % no skewed shocks?
+                        E_u_o=0;
+                    otherwise
+                        error(['approximation of order ',int2str(oo),' not yet implemented'])
+                end
             end
         end
     end
+end
+
+function Y=fvv_vx_vx(dvv,vz,tol)
+if nargin<3
+    tol=sqrt(eps);
+end
+if max(abs(dvv(:)))<tol || max(abs(vz(:)))<tol
+    Y=0;
+else
+    Y=utils.kronecker.A_times_k_kron_B(dvv,vz,2);
+end
+
 end
 
 function Y=fvvv_vx_vx_vx(dvvv,vz,tol,new_algo)
@@ -294,9 +326,8 @@ if nargin<4
         tol=sqrt(eps);
     end
 end
-[nd,nv3]=size(dvvv);
-nv=round(nv3^(1/3));
-nz=size(vz,2);
+[nd]=size(dvvv,1);
+[nv,nz]=size(vz);
 
 if max(abs(dvvv(:)))<tol || max(abs(vz(:)))<tol
     Y=0;
