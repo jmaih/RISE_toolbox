@@ -88,10 +88,10 @@ if data_provided
     % load exogenous and endogenous
     %------------------------------
     is_endogenous=obj.observables.is_endogenous;
-    obj.data.y=verdier(is_endogenous,:);
-    obj.data.x=verdier(~is_endogenous,:);
+    obj.data.y=verdier(is_endogenous,:,:);
+    obj.data.x=verdier(~is_endogenous,:,:);
     if obj.options.data_demean
-        obj.data.y=bsxfun(@minus,obj.data.y,utils.stat.nanmean(obj.data.y,2));
+        obj.data.y=bsxfun(@minus,obj.data.y,utils.stat.nanmean(obj.data.y(:,:,1),2));
     end
     obj.data.nobs=size(verdier,2);
     obj.data.start=1;
@@ -165,11 +165,11 @@ end
 
 function [data_structure,include_in_likelihood,no_more_missing]=data_description(data,start,last)
 
-[~,smpl]=size(data);
+[~,smpl,npages]=size(data);
 data_structure=~isnan(data);
 include_in_likelihood=false(1,smpl);
 include_in_likelihood(start:last)=true;
-tmp=find(any(data_structure(:,1:last)==false,1),1,'last');
+tmp=find(any(data_structure(:,1:last,1)==false,1),1,'last');
 if isempty(tmp)
     tmp=0;
 end
