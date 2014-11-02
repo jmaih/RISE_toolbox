@@ -1,13 +1,13 @@
-function [keep,expand,C,UC]=shrink_expand(n,k,strategy,debug)
+function [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
 % shrink_expand computes shrinking and expansion objects for the manipulation of symmetric tensors
 %
 % Syntax
 % -------
 % ::
 %
-%   [keep,expand,C,UC]=shrink_expand(n,k)
-%   [keep,expand,C,UC]=shrink_expand(n,k,strategy)
-%   [keep,expand,C,UC]=shrink_expand(n,k,strategy,debug)
+%   [keep,expand,C,UC,B]=shrink_expand(n,k)
+%   [keep,expand,C,UC,B]=shrink_expand(n,k,strategy)
+%   [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
 %
 % Inputs
 % -------
@@ -32,6 +32,8 @@ function [keep,expand,C,UC]=shrink_expand(n,k,strategy,debug)
 % - **UC** [matrix] : sparse expansion matrix of size g x n^k, where
 %   g=nchoosek(n+k-1,k) is the number of unique elements in the tensor
 %   (matrix version of **expand**)
+% - **B** [matrix] : g x k matrix of combinations without repetitions. Each
+%   row in increasing order.
 %
 % More About
 % ------------
@@ -54,13 +56,13 @@ end
 
 % differentiation order all derivatives
 %--------------------------------------
-test=utils.gridfuncs.mygrid(n*ones(1,k));
-nbig=size(test,1);
+A=utils.gridfuncs.mygrid(n*ones(1,k));
+nbig=size(A,1);
 
 % find the non-decreasing indices
 %--------------------------------
 % flip left right
-test2=test(:,end:-1:1);
+test2=A(:,end:-1:1);
 % stamp the decreasing rows
 drow=test2(:,1:end-1)-test2(:,2:end);
 keep=~any(drow<0,2);
@@ -94,8 +96,8 @@ if nargout>1
         C=speye(nbig);
         C=C(:,keep);
         if debug
-            test=(1:nbig)*C;
-            max(abs(test(:)-find(keep)))
+            A=(1:nbig)*C;
+            max(abs(A(:)-find(keep)))
         end
         
         if nargout>3
@@ -104,30 +106,43 @@ if nargout>1
             UC=speye(nkept);
             UC=UC(:,expand);
             if debug
-                test=(1:nkept)*UC;
-                max(abs(test(:)-expand(:)))
+                A=(1:nkept)*UC;
+                max(abs(A(:)-expand(:)))
+            end
+            if nargout>4
+                B=A(keep,:);
             end
         end
     end
 end
 
     function ismember_strategy()
-        [expand] = myismember(test2,test2(keep,:));
-%         [~,expand] = ismember(test2,test2(keep,:),'rows');
+        [expand] = myismember(test2,test2(keep,:)); %<---[~,expand] = ismember(test2,test2(keep,:),'rows');
         function [locb] = myismember(A,B)
             % unique A first
-            [~,~,icA] = unique(A,'rows','sorted');
+            [icA] = myunique(); %<---[~,~,icA] = unique(A,'rows','sorted');
             
             % Sort the unique elements of B and B, duplicate entries are adjacent
             [sort_B_B,tags_B_B] = sortrows([B;B]);
             
             % Find matching entries
-            d = sort_B_B(1:end-1,:)==sort_B_B(2:end,:);     % d indicates matching entries
-            d = all(d,2);                                   % Finds the index of matching entries
-            ndx1 = tags_B_B(d);                          % NDX1 are locations of repeats in C
+            d = sort_B_B(1:end-1,:)==sort_B_B(2:end,:);     
+            d = all(d,2);                                   
+            ndx1 = tags_B_B(d);                          
             
             % Find locb by using given indices
             locb = builtin('_ismemberfirst',icA,ndx1);
+            function [indC] = myunique
+                numRows = size(A,1);
+                [sortA,indSortA] = sortrows(A);
+                % groupsSortA indicates the location of non-matching entries.
+                groupsSortA = sortA(1:numRows-1,:) ~= sortA(2:numRows,:);
+                groupsSortA = any(groupsSortA,2);
+                groupsSortA = [true; groupsSortA];          
+                groupsSortA = full(groupsSortA);
+                indC = cumsum(groupsSortA); 
+                indC(indSortA) = indC; 
+            end
         end
     end
 
