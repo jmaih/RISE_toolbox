@@ -152,7 +152,8 @@ for oo=1:order
     end
     
     derivs(oo)=struct('size',{[neqtns0,ncols]},'derivatives',d,...
-        'nwrt',nwrt,'order',oo,'nnz_derivs',nnz_derivs,'partitions',expand);
+        'nwrt',nwrt,'order',oo,'nnz_derivs',nnz_derivs,'partitions',expand,...
+        'map',[]);
     
     % next round
     %-----------

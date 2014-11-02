@@ -59,22 +59,25 @@ if nderivs>1
     return
 end
 
-% char the derivatives
-%-----------------------
-c=char(deriv.derivatives,long);
-
-% transform to functions if arguments are provided
-%--------------------------------------------------
-do_functions()
-
-% map the derivatives to their location in the compact matrix
-%-------------------------------------------------------------
-cmap=[deriv.derivatives.location];
-cmapl=cmap(1:2:end);
-cmapr=cmap(2:2:end);
-cmap=[cmapl(:),cmapr(:)];
-% cmap=reshape([deriv.derivatives.location],2,[]);
-
+c=[];
+cmap=[];
+if ~isempty(deriv.derivatives)
+    % char the derivatives
+    %-----------------------
+    c=char(deriv.derivatives,long);
+    
+    % transform to functions if arguments are provided
+    %--------------------------------------------------
+    do_functions()
+    
+    % map the derivatives to their location in the compact matrix
+    %-------------------------------------------------------------
+    cmap=[deriv.derivatives.location];
+    cmapl=cmap(1:2:end);
+    cmapr=cmap(2:2:end);
+    cmap=[cmapl(:),cmapr(:)];
+    % cmap=reshape([deriv.derivatives.location],2,[]);
+end
 % format output
 %---------------
 deriv.derivatives=c;
@@ -86,7 +89,7 @@ c.map=cmap;
 c=update_fieldnames(c,args);
 
     function do_functions()
-        if ~isempty(args)
+        if ~isempty(args) && ~isempty(c)
             if ischar(args)
                 args=cellstr(args);
             end
@@ -134,7 +137,7 @@ oldField='derivatives';
 
 if ~isempty(args)
     try
-    [c.(newField)] = c.(oldField);
+        [c.(newField)] = c.(oldField);
     catch
         % the thing above does not work when c is empty
         try
