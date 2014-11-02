@@ -1,15 +1,23 @@
 function this=collect(varargin)
-% H1 line
+% collect - brings together several time series object into a one time series
 %
 % Syntax
 % -------
 % ::
 %
+%   - this=collect(v1,v2,...,vn)
+%   - this=collect(Vstruct)
+%
 % Inputs
 % -------
 %
+% - several time series or a structure of time series
+%
 % Outputs
 % --------
+%
+% - **this** [ts]: a time series with many columns and potentially many
+%   pages
 %
 % More About
 % ------------
@@ -98,6 +106,8 @@ frequencies_codes={'','H','Q','M'
 loc= strcmp(celldata{1}.frequency,frequencies_codes(1,:));
 frequency_code=frequencies_codes{2,loc};
 highest_frequency=celldata{1}.frequency;
+npages=nan(1,nn);
+npages(1)=celldata{1}.NumberOfPages;
 for ii=2:nn
     loc= strcmp(celldata{ii}.frequency,frequencies_codes(1,:));
     if frequencies_codes{2,loc}>frequency_code
@@ -113,10 +123,11 @@ for ii=2:nn
     if first_last(end)>last_date
         last_date=first_last(end);
     end
+    npages(ii)=celldata{ii}.NumberOfPages;
 end
 
 newdates=(first_date:last_date)';
-newdata=nan(numel(newdates),nn);
+newdata=nan(numel(newdates),nn,max(npages));
 for ii=1:nn
     % step 1, convert the dates to the new frequency
     dat_n_ii=convert_date(celldata{ii}.date_numbers,highest_frequency);
@@ -130,21 +141,22 @@ for ii=1:nn
         locations(jj)=loc;
     end
     % find the date locations
-    newdata(locations,ii)=oldata;
+    newdata(locations,ii,1:npages(ii))=oldata;
 end
 % trim the dates and data in case there are further trailing
-% nans
-first_good=find(any(~isnan(newdata),2),1,'first');
-last_good=find(any(~isnan(newdata),2),1,'last');
+% nans. Do this using the fake data in case there are many pages
+fakedata=newdata(:,:);
+first_good=find(any(~isnan(fakedata),2),1,'first');
+last_good=find(any(~isnan(fakedata),2),1,'last');
 newdates=newdates(first_good:last_good);
-newdata=newdata(first_good:last_good,:);
+newdata=newdata(first_good:last_good,:,:);
 % I could always build a special type of ts instead of
 % calling ts. But the reason I need ts is because I
 % started working with it earlier
 
 % now we can safely sort the bastard
 [~,tags]=sort(cellnames);
-this=ts(newdates,newdata(:,tags),cellnames(tags));
+this=ts(newdates,newdata(:,tags,:),cellnames(tags));
 end
 
 function this=convert_date(this0,newfreq)
