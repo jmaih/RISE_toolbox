@@ -1096,10 +1096,6 @@ end
 
 function [derivs,numEqtns,numVars,jac_toc,original_funcs]=differentiate_system(myfunc,input_list,wrt,order)
 
-Partitions={'v';
-    numel(wrt)
-    };
-
 numEqtns=numel(myfunc);
 
 myfunc=parser.remove_handles(myfunc);
@@ -1135,39 +1131,9 @@ end
 
 verbose=false;
 tic
-derivs=splanar.differentiate(myfunc,numVars,order,Partitions,verbose);
-for oo=1:order
-    if verbose
-        tic
-    end
-    derivs(oo)=splanar.print(derivs(oo),false);
-    if verbose
-        fprintf(1,'printing of derivatives at order %0.0f done in %0.4f seconds\n',oo,toc);
-        tic
-    end
-    derivs(oo)=splanar.derivatives2functions(derivs(oo),input_list);
-    if verbose
-        fprintf(1,'derivatives to functions at order %0.0f done in %0.4f seconds\n',oo,toc);
-    end
-end
+derivs=splanar.differentiate(myfunc,numVars,order,verbose);
+derivs=splanar.print(derivs,input_list);
 jac_toc=toc;
-
-myderivs=struct();
-ff=fieldnames(derivs);
-for oo=1:order
-    for ifield=1:numel(ff)
-        f1=ff{ifield};
-        if strcmp(f1,'derivatives')
-            f1='functions';
-        end
-        myderivs(oo).(f1)=derivs(oo).(ff{ifield});
-    end
-    vx=fieldnames(myderivs(oo).partitions);
-    if numel(vx)==1
-         myderivs(oo).partitions=myderivs(oo).partitions.(vx{1});
-    end
-end
-derivs=myderivs;
 
 end
 

@@ -1,15 +1,32 @@
 function varargout=evaluate_functions(xcell,varargin)
-% H1 line
+% evaluate_functions - evaluates functions in various formats
 %
 % Syntax
 % -------
 % ::
 %
+%   varargout=evaluate_functions(xcell,varargin)
+%
 % Inputs
 % -------
 %
+% - **xcell** [cell|struct|fhandle]: function of interest
+%   - input is a cell array: each element in a cell is assumed to be a
+%     function handle
+%   - input is a struct:
+%     - if the field names are among: 'size','functions','map','partitions'
+%       then we are dealing with derivatives
+%     - if the field names are among: 'code','argins','argouts' then the
+%       function could not be written as a function handle and has to be
+%       evaluated using eval
+%   - input is a function handle : direct evaluation
+%
+% - **varargin** : input arguments to the function
+%
 % Outputs
 % --------
+%
+% - **varargout** : ouput arguments to the function
 %
 % More About
 % ------------
@@ -26,7 +43,7 @@ if iscell(xcell)
     varargout{1}=main_engine();
     varargout{1}=sparse(cell2mat(varargout{1}));
 elseif isstruct(xcell)
-    derivative_fields={'size','functions','map','partitions'};%,'maxcols','nnz_derivs'
+    derivative_fields={'size','functions','map','partitions'};
     eval_fields={'code','argins','argouts'};
     if all(isfield(xcell,derivative_fields))
         [varargout{1:nout}]=derivative_engine();
@@ -52,8 +69,8 @@ end
             if isempty(xcell)
                 xout=sparse(mm,nn);
             else
-                ii=num2cell(tmp(iout).rows_check);
-                jj=tmp(iout).map;
+                ii=tmp(iout).map(:,1);
+                jj=tmp(iout).map(:,2);
                 vals=main_engine();
                 for irows=1:size(xcell,1)
                     nguys=numel(jj{irows});

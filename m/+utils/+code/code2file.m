@@ -33,7 +33,7 @@ if iscell(xcell)
     [xout]=main_engine();
     xout=[{[default_output_name,'=[']};xout;{'];'}];
 elseif isstruct(xcell)
-    derivative_fields={'size','functions','map','partitions'};%,'maxcols','nnz_derivs'
+    derivative_fields={'size','functions','map','partitions'};
     eval_fields={'code','argins','argouts'};
     if all(isfield(xcell,derivative_fields))
         [xout]=derivative_engine();
@@ -141,7 +141,6 @@ end
                 xout
                 {sprintf('function %s=%s',default_output_name,[subfunc_name,'()'])}
                 xout_io
-                {[default_output_name,'=sparse(',default_output_name,');']}
                 {'end'}
                 ];
         end
@@ -164,19 +163,20 @@ end
             xxx=[xxx,');'];
             [xout]=main_engine();
             if ~isempty(xcell)
-                rows_check=tmp(oo).rows_check;
                 for irows=1:size(xcell,1)
                     if ~isempty(xout{irows})
-                        strcols=stringify_indexes(tmp(oo).map{irows});
+                        strcols=stringify_indexes(tmp(oo).map{irows,2});
                         xout{irows}=sprintf('%s(%0.0f,%s)=%s;',...
-                            default_output_name,rows_check(irows),...
+                            default_output_name,tmp(oo).map{irows,1},...
                             strcols,xout{irows});
                     end
                 end
+                % sparse before expanding
+                 xout{irows+1}=[default_output_name,'=sparse(',default_output_name,');'];
                 % expand output
-                xout{irows+1}=sprintf('%s=%s(:,%s);',...
-                    default_output_name,default_output_name,...
-                    stringify_indexes(tmp(oo).partitions));
+                xout{irows+2}=sprintf('[~,expand]=utils.kronecker.shrink_expand(%0.0f,%0.0f);',tmp(oo).nwrt,tmp(oo).order);
+                xout{irows+3}=sprintf('%s=%s(:,expand);',...
+                    default_output_name,default_output_name);
                 % add initialization
                 xout=[{xxx};xout];
             else
