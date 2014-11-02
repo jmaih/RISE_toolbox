@@ -1,28 +1,51 @@
-function [data_values,start_date,end_date,missing]=data_request(data,varlist,start_date,end_date)
-% H1 line
+function [data_values,start_date,end_date,missing]=data_request(...
+    data,varlist,start_date,end_date,pages)
+% data_request - selects the data requested for estimation or for forecasting
 %
 % Syntax
 % -------
 % ::
 %
+%   - [data_values,start_date,end_date,missing]=data_request(data,varlist)
+%   - [data_values,start_date,end_date,missing]=data_request(data,varlist,start_date)
+%   - [data_values,start_date,end_date,missing]=data_request(data,varlist,start_date,end_date)
+%   - [data_values,start_date,end_date,missing]=data_request(data,varlist,start_date,end_date,pages)
+%
 % Inputs
 % -------
+%
+% - **data** [ts|structure]: database
+% - **varlist** [char|cellstr] : list of the variables of interest
+% - **start_date** [valid ts date|{''}]: start date of the sample requested
+% - **end_date** [valid ts date|{''}]: end date of the sample requested
+% - **pages** [integer|vector|{[]}]: pages requested
 %
 % Outputs
 % --------
 %
+% - **data_values** [matrix|3-dimensional array]: data requested
+% - **start_date** [ts date]: start date of the sample requested
+% - **end_date** [ts date]: end date of the sample requested
+% - **missing** [integer]: number of missing observations replaced with
+%    nans
+%
 % More About
 % ------------
+%
+% - If there are insufficient data, the data are augmented with nans
 %
 % Examples
 % ---------
 %
 % See also: 
 
-if nargin<4
-    end_date='';
-    if nargin<3
-        start_date='';
+if nargin<5
+    pages=[];
+    if nargin<4
+        end_date='';
+        if nargin<3
+            start_date='';
+        end
     end
 end
 
@@ -46,18 +69,25 @@ end
 nvarobs=numel(varlist);
 ids=locate_variables(varlist,The_data.varnames,true);
 DataValues=double(The_data);
-data_values=nan(nobs__,nvarobs);
+npages=The_data.NumberOfPages;
+if isempty(pages)
+    pages=1:npages;
+end
+if any(pages>npages)
+    error('pages requested exceed number of available')
+end
+data_values=nan(nobs__,nvarobs,numel(pages));
 for ivar=1:numel(ids)
     if isnan(ids(ivar))
         warning(['variable ',varlist{ivar},' not found in the database'])
         continue
     end
-    data_values(:,ivar)=DataValues(:,ids(ivar));
+    data_values(:,ivar,pages)=DataValues(:,ids(ivar),pages);
 end
 % extend as necessary
 %--------------------
 sizDV=size(data_values);
-data_values=[data_values;nan(missing,sizDV(2))];
-data_values=transpose(data_values);
+data_values=[data_values;nan(missing,sizDV(2),numel(pages))];
+data_values=permute(data_values,[2,1,3]);
 % send forward only the data that are needed.
-data_values=data_values(:,start:finish);
+data_values=data_values(:,start:finish,:);
