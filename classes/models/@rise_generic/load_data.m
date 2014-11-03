@@ -94,11 +94,13 @@ if data_provided
         obj.data.y=bsxfun(@minus,obj.data.y,utils.stat.nanmean(obj.data.y(:,:,1),2));
     end
     obj.data.nobs=size(verdier,2);
+    obj.data.npages=size(verdier,3);
     obj.data.start=1;
     obj.data.finish=obj.data.nobs;
     obj.data.varobs_id=real(obj.observables.state_id(is_endogenous));
-    [obj.data.data_structure,obj.data.include_in_likelihood,obj.data.no_more_missing]=...
-        data_description(obj.data.y,obj.data.start,obj.data.finish);
+    % add further description fields
+    %-------------------------------
+    obj.data=data_description(obj.data);
     obj.data_are_loaded=true;
 
 %     if ncv0
@@ -163,17 +165,25 @@ else
     disp([mfilename,'(GENTLE WARNING):: no actual or simulated data provided for filtering/estimation'])
 end
 
-function [data_structure,include_in_likelihood,no_more_missing]=data_description(data,start,last)
+function [d]=data_description(d)
 
-[~,smpl,npages]=size(data);
-data_structure=~isnan(data);
-include_in_likelihood=false(1,smpl);
-include_in_likelihood(start:last)=true;
-tmp=find(any(data_structure(:,1:last,1)==false,1),1,'last');
+smpl=size(d.y,2);
+% expand the pages into one page
+d.data_structure=permute(d.y,[2,1,3]);
+d.data_structure=permute(d.data_structure(:,:),[2,1]);
+d.data_structure=~isnan(d.data_structure);
+tmp=find(any(d.data_structure(:,1:d.finish,1)==false,1),1,'last');
 if isempty(tmp)
     tmp=0;
 end
-no_more_missing=min(last,tmp+1);
+d.no_more_missing=min(d.finish,tmp+1);
+% re-fold
+d.data_structure=~isnan(d.y);
+
+% points to include in the calculation of the likelihood
+%-------------------------------------------------------
+d.include_in_likelihood=false(1,smpl);
+d.include_in_likelihood(d.start:d.finish)=true;
 
 % function [cond_data,horiz,date_start]=dispatch_conditional_data(cond_data)
 % horiz=0;
@@ -183,7 +193,7 @@ no_more_missing=min(last,tmp+1);
 %     horiz=cond_data.NumberOfPages;
 %     date_start=cond_data.TimeInfo(1);
 % else
-%     cond_data=[];
+%     cond_data=[];  
 % end
 
 % function cond_data=format_conditional_data(cond_data_ts,The_data_TimeInfo,cond_names0,start,horiz0)

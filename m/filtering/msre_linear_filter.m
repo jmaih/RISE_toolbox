@@ -58,19 +58,15 @@ if retcode
     Incr=[];
     Filters=[];
 else
-    [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,data_trend,state_trend,init,options);
+    if data_info.npages>1
+        [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info,data_trend,state_trend,init,options);
+    else
+        [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,data_trend,state_trend,init,options);
+    end
 end
 if isempty(loglik)
     loglik=nan;
 end
-% agenda:
-% add back the Kim-Nelson filter
-% do the initialization for non-stationary variables
-% add the Kim-Nelson filter with k-states carried
-% The real-time filter will need to be added as well at a later stage.
-% Create the environment for the new deal
-% branch the derivatives
-% solve the second order
 
     function minimum_state_for_estimation()
         % this function reduces the state size to accelerate estimation

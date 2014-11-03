@@ -115,7 +115,8 @@ det_shocks=obj.exogenous.is_observed;
 
 % load deterministic shock data
 %------------------------------
-exo_data=[ones(1,size(obj.data.x,2));obj.data.x];
+sizx=size(obj.data.x);
+exo_data=cat(1,ones(1,sizx(2),sizx(3)),obj.data.x);
 
 % constant and deterministic terms
 %---------------------------------
@@ -128,7 +129,7 @@ for istate=1:h
     end
     const_st=const_st+risk{istate};
     Coef_det_st=[const_st,R{istate}(:,det_shocks,1)];
-    State_trend{istate}=Coef_det_st*exo_data;
+    State_trend{istate}=bsxfun(@times,Coef_det_st,exo_data);
     % Trim R for the stochastic exogenous variables
     %----------------------------------------------
     R{istate}(:,det_shocks,:)=[];
