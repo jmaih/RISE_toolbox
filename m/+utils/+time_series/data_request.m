@@ -74,7 +74,7 @@ if isempty(pages)
     pages=1:npages;
 end
 if any(pages>npages)
-    error('pages requested exceed number of available')
+    error('the anticipated horizon of shocks exceeds the number of "extra" pages in the dataset')
 end
 data_values=nan(nobs__,nvarobs,numel(pages));
 for ivar=1:numel(ids)
