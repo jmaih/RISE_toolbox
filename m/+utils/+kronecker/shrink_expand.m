@@ -117,7 +117,11 @@ if nargout>1
 end
 
     function ismember_strategy()
-        [expand] = myismember(test2,test2(keep,:)); %<---[~,expand] = ismember(test2,test2(keep,:),'rows');
+        try
+            [expand] = myismember(test2,test2(keep,:));
+        catch
+            [~,expand] = ismember(test2,test2(keep,:),'rows');
+        end
         function [locb] = myismember(A,B)
             % unique A first
             [icA] = myunique(); %<---[~,~,icA] = unique(A,'rows','sorted');
@@ -126,22 +130,26 @@ end
             [sort_B_B,tags_B_B] = sortrows([B;B]);
             
             % Find matching entries
-            d = sort_B_B(1:end-1,:)==sort_B_B(2:end,:);     
-            d = all(d,2);                                   
-            ndx1 = tags_B_B(d);                          
+            d = sort_B_B(1:end-1,:)==sort_B_B(2:end,:);
+            d = all(d,2);
+            ndx1 = tags_B_B(d);
             
             % Find locb by using given indices
-            locb = builtin('_ismemberfirst',icA,ndx1);
+            try
+                [~, locb] = builtin('_ismemberhelper',icA,ndx1);
+            catch
+                locb = builtin('_ismemberfirst',icA,ndx1);
+            end
             function [indC] = myunique
                 numRows = size(A,1);
                 [sortA,indSortA] = sortrows(A);
                 % groupsSortA indicates the location of non-matching entries.
                 groupsSortA = sortA(1:numRows-1,:) ~= sortA(2:numRows,:);
                 groupsSortA = any(groupsSortA,2);
-                groupsSortA = [true; groupsSortA];          
+                groupsSortA = [true; groupsSortA];
                 groupsSortA = full(groupsSortA);
-                indC = cumsum(groupsSortA); 
-                indC(indSortA) = indC; 
+                indC = cumsum(groupsSortA);
+                indC(indSortA) = indC;
             end
         end
     end
