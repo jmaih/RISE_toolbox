@@ -17,19 +17,22 @@ function obj=set(obj,varargin)
 % Examples
 % ---------
 %
+% obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
+% obj=set(obj,'solve_shock_horizon',5)
+%
 % See also: 
 
 if isempty(obj)
     obj=set@rise_generic(obj);
     % add other fields here if necessary
 else
-    % obj=set(obj,'shock_horizon',struct('shock1',2,'shock3',4))
-    % obj=set(obj,'shock_horizon',5)
+    % obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
+    % obj=set(obj,'solve_shock_horizon',5)
     shock_horizon_id=[];
     use_disc_id=[];
     nn=length(varargin);
     for ii=1:2:nn
-        if strcmp(varargin{ii},'shock_horizon')
+        if strcmp(varargin{ii},'solve_shock_horizon')
             if nn>ii
                 shock_horizon_id=[ii,ii+1];
             else
@@ -39,7 +42,7 @@ else
             use_disc_id=[ii,ii+1];
         end
     end
-    shock_horizon=varargin(shock_horizon_id);
+    solve_shock_horizon=varargin(shock_horizon_id);
     solve_use_disc=varargin(use_disc_id);
     varargin(shock_horizon_id)=[];
     % do not remove the disc property since that option has to be visible
@@ -94,7 +97,7 @@ end
     end
 
     function set_shock_horizon()
-        value=shock_horizon{2};
+        value=solve_shock_horizon{2};
         if isa(value,'double') && numel(value)==1
             value=round(abs(value));
             obj.exogenous.shock_horizon(~obj.exogenous.is_observed)=value;

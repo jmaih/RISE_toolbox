@@ -19,8 +19,11 @@ function obj=set_z_eplus_horizon(obj)
 %
 % See also: 
 
+% get the shock horizon for all the shocks
+%------------------------------------------
 shock_horizon=obj.exogenous.shock_horizon;
 kmax=max(obj.exogenous.shock_horizon);
+
 % deterministic variables can also be anticipated...
 if kmax>0
     solve_order=obj.options.solve_order;
@@ -31,7 +34,11 @@ if kmax>0
     nz=size(obj.solution.Tz{1},2);
     zproto=false(1,nz);
     exo_nbr=sum(obj.exogenous.number);
+    % the current shocks are unrestricted
+    %------------------------------------
     offset=e_0;
+    % future shocks are restricted to their respective horizons
+    %----------------------------------------------------------
     for iplus=1:kmax
         bad=shock_horizon<iplus;
         bad_locs=offset+find(bad);

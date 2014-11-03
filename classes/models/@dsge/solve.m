@@ -17,6 +17,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % Examples
 % ---------
 %
+% obj=solve(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
+% obj=solve(obj,'solve_shock_horizon',5)
+%
 % See also: 
 
 % structrual_matrices not stored into the object in case we need to "get"
@@ -53,6 +56,7 @@ if isempty(obj)
         'solve_derivatives_type','symbolic',...%['symbolic','numerical','automatic']
         'solve_accelerate',false,...
         'solve_use_disc',false,...
+        'solve_shock_horizon',[],...
         'vectorized_code_threshold',150));%
     return
 end
