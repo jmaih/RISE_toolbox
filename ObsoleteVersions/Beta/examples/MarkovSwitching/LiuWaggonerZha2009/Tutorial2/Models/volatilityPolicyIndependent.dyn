@@ -1,6 +1,0 @@
-//4) Markov-switching volatility and policy coefficients with independent processes.
-@#include "fwz_est.dyn"
-// volatility is controlled by markov chain vol.
-@#include "switching_volatility.dyn"
-// Now we also add the policy parameters letting them be controlled by ANOTHER process
-@#include "switching_policy_parameters_coefChain.dyn"

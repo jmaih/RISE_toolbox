@@ -1,5 +1,0 @@
-@#include "svar_core.dyn"
-
-@#include "switching_volatility.dyn"
-
-@#include "constant_policy.dyn"
