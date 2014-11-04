@@ -1,4 +1,4 @@
-function [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,data_trend,state_trend,init,options)
+function [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,state_trend,init,options)
 % H1 line
 %
 % Syntax
@@ -66,7 +66,6 @@ m=size(T{1},1);
 h=numel(T);
 nshocks=size(R{1},2);
 c_last=0;if ~isempty(state_trend),c_last=size(state_trend{1},2);end
-d_last=0;if ~isempty(data_trend),d_last=size(data_trend{1},2);end
 rqr_last=size(RR{1},3);
 h_last=0;
 if ~isempty(H{1})
@@ -136,13 +135,10 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     
     likt=0;
     for st=1:h
-        % forecast of observables
-        %------------------------
+        % forecast of observables: already include information about the
+        % trend and or the steady state from initialization
+        %------------------------------------------------------------------
         yf=a{st}(obsOccur); %<-- yf=Z*a{st};
-        
-        if d_last>0 % <-- ~isempty(data_trend)
-            yf=yf+data_trend{st}(occur,min(t,d_last));
-        end
         
         % forecast errors and variance
         %-----------------------------
@@ -361,8 +357,10 @@ end
             Filters.PAI=zeros(h,smpl+1);
             Filters.PAI(:,1)=PAI;
             for istep=2:nsteps
+                % in steady state, we remain at the steady state
+                %------------------------------------------------
                 for state=1:h
-                    Filters.a{state}(:,istep,1)=T{state}*Filters.a{state}(:,istep-1,1);
+                    Filters.a{state}(:,istep,1)=Filters.a{state}(:,istep-1,1);
                 end
             end
             Filters.Q=zeros(h,h,smpl+1);

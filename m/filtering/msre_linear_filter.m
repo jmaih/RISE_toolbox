@@ -1,4 +1,4 @@
-function [loglik,Incr,retcode,Filters]=msre_linear_filter(syst,data_info,data_trend,state_trend,SS,risk,options)
+function [loglik,Incr,retcode,Filters]=msre_linear_filter(syst,data_info,state_trend,SS,risk,options)
 % H1 line
 %
 % Syntax
@@ -59,9 +59,9 @@ if retcode
     Filters=[];
 else
     if data_info.npages>1
-        [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info,data_trend,state_trend,init,options);
+        [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info,state_trend,init,options);
     else
-        [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,data_trend,state_trend,init,options);
+        [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,state_trend,init,options);
     end
 end
 if isempty(loglik)
