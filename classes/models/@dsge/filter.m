@@ -65,11 +65,13 @@ h=obj.markov_chains.regimes_number;
 % extract the steady state
 SS=obj.solution.ss;
 
-ov=obj.order_var.after_solve;
 iov=obj.inv_order_var.after_solve;
 zpb=obj.locations.after_solve.z.pb;
 tpb=obj.locations.after_solve.t.pb;
 ze_0=obj.locations.after_solve.z.e_0;
+% columns of all shocks and not just the contemporaneous ones
+%-------------------------------------------------------------
+ze_0_plus=ze_0(1):size(obj.solution.Tz{1},2);
 zsig=obj.locations.after_solve.z.sig;
 endo_nbr=obj.endogenous.number(end);
 
@@ -79,32 +81,21 @@ R=T;
 % risk term
 %----------
 risk=T;
-reorder_rows=false;
 Tall=zeros(endo_nbr);
 for ireg=1:h
     tmp=obj.solution.Tz{ireg};
-    if reorder_rows
-        % re-order the steady state
-        SS{ireg}=SS{ireg}(ov);
-        % re-order the transition and shock matrices
-        tmp=tmp(ov,:);
-    end
     Tall(:,tpb)=tmp(:,zpb);
     T{ireg}=Tall;
-    if ~reorder_rows
-        % reorder the columns then
-        T{ireg}=T{ireg}(:,iov);
-    end
-    R{ireg}=tmp(:,ze_0);
+    % The rows are already ordered alphabetically. Now reorder the columns
+    %---------------------------------------------------------------------
+    T{ireg}=T{ireg}(:,iov);
+    R{ireg}=tmp(:,ze_0_plus);
     risk{ireg}=obj.options.simul_sig*tmp(:,zsig);
 end
 clear Tall
 % extract data and put them in the order_var order as well
 %---------------------------------------------------------
 data=obj.data;
-if reorder_rows
-    data.varobs_id=iov(data.varobs_id);
-end
 
 Qfunc=prepare_transition_routine(obj);
 
@@ -112,6 +103,8 @@ H=obj.solution.H;% measurement errors
 
 % deterministic shocks
 det_shocks=obj.exogenous.is_observed;
+kmax=max(obj.exogenous.shock_horizon);
+det_shocks=repmat(det_shocks,1,kmax+1);
 
 % load deterministic shock data
 %------------------------------
@@ -122,17 +115,24 @@ exo_data=cat(1,ones(1,sizx(2),sizx(3)),obj.data.x);
 %---------------------------------
 I=speye(endo_nbr);
 State_trend=cell(1,h);
+exo_nbr=obj.exogenous.number(1);
+endo_nbr=obj.endogenous.number(end);
 for istate=1:h
     const_st=SS{istate};
     if any(const_st)
         const_st=(I-T{istate})*const_st;
     end
     const_st=const_st+risk{istate};
-    Coef_det_st=[const_st,R{istate}(:,det_shocks,1)];
-    State_trend{istate}=bsxfun(@times,Coef_det_st,exo_data);
+    Coef_det_st=[const_st,R{istate}(:,det_shocks)];
+    % take only the first page of exogenous data
+    %--------------------------------------------
+    State_trend{istate}=bsxfun(@times,Coef_det_st,exo_data(:,:,1));
     % Trim R for the stochastic exogenous variables
     %----------------------------------------------
     R{istate}(:,det_shocks,:)=[];
+    % fold for the filter
+    %---------------------
+    R{istate}=reshape(R{istate},[endo_nbr,exo_nbr,kmax+1]);
 end
 
 % initialization
@@ -140,18 +140,13 @@ end
 
 syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc});
 
-data_trend=[];
-[LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,data_trend,State_trend,SS,risk,obj.options);
+[LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,State_trend,SS,risk,obj.options);
 if  obj.options.kf_filtering_level && ~retcode
     Fields={'a','att','atT','eta','epsilon','PAI','PAItt','PAItT';
         'filtered_variables','updated_variables','smoothed_variables','smoothed_shocks',...
         'smoothed_measurement_errors','filtered_regime_probabilities','updated_regime_probabilities',...
         'smoothed_regime_probabilities'};
     obj.filtering=struct();
-    if reorder_rows
-        % things need to be re-ordered here
-        keyboard
-    end
     for ifield=1:size(Fields,2)
         if isfield(Filters,Fields{1,ifield})
             obj.filtering.(Fields{2,ifield})=Filters.(Fields{1,ifield});
