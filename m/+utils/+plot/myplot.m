@@ -131,7 +131,12 @@ end
             add_vertical_lines();
             add_horizontal_lines();
             hold off
-            set(cell2mat(ax12),'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
+            try
+                set(cell2mat(ax12),'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
+            catch
+                % 2014B vagaries
+                set([ax12{:}],'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
+            end
             vout=[ax12,h1h2(1:nout-1)];
         end
         %,'XTickMode','auto'...
