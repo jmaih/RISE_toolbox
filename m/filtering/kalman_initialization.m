@@ -14,6 +14,10 @@ function [init,retcode]=kalman_initialization(T,R,steadystate,risk,transition_fu
 % More About
 % ------------
 %
+% The initial covariance is always computed using the current impact matrix
+% of the shocks even when the anticipation horizon of the agents is greater
+% than zero.
+%
 % Examples
 % ---------
 %
