@@ -48,9 +48,6 @@ for ii=1:nobj
             warning([mfilename,':: problem for model ''',obj(ii).filename,''': ',issue]) %#ok<WNTAG>
         end
         retcode=max(retcode,rcode);
-        if isa(obj(ii),'dsge')
-            obj(ii)=dsge_load_data(obj(ii));
-        end
     end
 end
 
@@ -102,32 +99,7 @@ if data_provided
     obj.data.start=1;
     obj.data.finish=obj.data.nobs;
     obj.data.varobs_id=real(obj.observables.state_id(is_endogenous));
-    % information on the conditional variables
-    %------------------------------------------
-    kmax=max(obj.exogenous.shock_horizon);
-    if kmax
-        if obj.data.npages<kmax+2
-            warning('the anticipation horizon of agents will be reduced since it exceeds the number of advance information')
-        end
-        % Is it restrictive to impose that the variables be observed?
-        forecast_cond_vars=obj.options.forecast_cond_vars;
-        if isempty(forecast_cond_vars)
-            error('Agents see kmax steps ahead into the future, the variables they see should be declared in forecast_cond_vars')
-        end
-        if ischar(forecast_cond_vars)
-            forecast_cond_vars=cellstr(forecast_cond_vars);
-        end
-        pos=locate_variables(forecast_cond_vars,obj.observables.name,true);
-        if any(isnan(pos))
-            disp(forecast_cond_vars(isnan(pos)))
-            error('the variables above are not declared as observables')
-        end
-        endo_pos=is_endogenous(pos);
-        % separate exogenous from exogenous
-        %-----------------------------------
-        obj.data.restr_y_id=obj.observables.state_id(pos(endo_pos));
-        obj.data.restr_x_id=obj.observables.state_id(pos(~endo_pos));
-    end
+    
     % add further description fields
     %-------------------------------
     obj.data=data_description(obj.data);
