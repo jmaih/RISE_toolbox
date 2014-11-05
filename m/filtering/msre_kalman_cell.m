@@ -89,10 +89,15 @@ end
 % definitions and options
 %------------------------
 twopi=2*pi;
-nsteps=options.kf_nsteps;
+store_filters=options.kf_filtering_level;
+if store_filters
+    nsteps=options.kf_nsteps;
+else
+    % do not do multi-step forecasting during estimation
+    nsteps=1;
+end
 riccati_tol=options.kf_riccati_tol;
 kalman_tol=options.kf_tol;
-store_filters=options.kf_filtering_level;
 
 % initialization of matrices
 %-----------------------------
