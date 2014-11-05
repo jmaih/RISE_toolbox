@@ -1,4 +1,4 @@
-function [h,pp]=plot_real_time(rts,pp,nticks)
+function [h,pp_]=plot_real_time(rts,pp,nticks)
 % H1 line
 %
 % Syntax
@@ -17,7 +17,7 @@ function [h,pp]=plot_real_time(rts,pp,nticks)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if nargin<3
     nticks=[];
@@ -51,6 +51,11 @@ set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
 hold off
 grid on
 
-h=gca;
+if nargout
+    h=gca;
+    if nargout>1
+        pp_=pp;
+    end
+end
 
 end
