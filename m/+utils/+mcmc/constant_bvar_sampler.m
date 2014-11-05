@@ -40,6 +40,7 @@ a_func=start.a_func ;
 a2tilde=start.a2tilde ;
 na2=start.na2;
 estimafy=start.estimafy; % computes posterior variance
+a2tilde_func=start.a2tilde_func ;
 %---------------------------------------------
 
 [burnin,thin,waitbar_update]=...
@@ -102,10 +103,11 @@ end
                 
             case {'normal_wishart'} % prior == 3
                 % This is the covariance for the posterior density of alpha
-                COV = kron(start.SIGMA,a2tilde.post.V);
+                tmp=kron(eye(K),start.SIGMA);                
+                postValpha2tilde = a2tilde.post.V*a2tilde_func(tmp,true);
                 
                 % Posterior of alpha|SIGMA,Data ~ Normal
-                alpha2tilde = a2tilde.post.a + chol(COV)'*randn(na2,1);  % Draw alpha
+                alpha2tilde = a2tilde.post.a + chol(postValpha2tilde)'*randn(na2,1);  % Draw alpha
                 
                 % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
                 start.SIGMA = inverse_wishart_draw(a2tilde.post.scale_SIGMA,a2tilde.post.dof_SIGMA);% Draw SIGMA
