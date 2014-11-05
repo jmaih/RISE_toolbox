@@ -100,6 +100,24 @@ if data_provided
     obj.data.finish=obj.data.nobs;
     obj.data.varobs_id=real(obj.observables.state_id(is_endogenous));
     
+    % conditional forecasting
+    %-------------------------
+    % Is it restrictive to impose that the variables be observed?
+    forecast_cond_vars=obj.options.forecast_cond_vars;
+    if ischar(forecast_cond_vars)
+        forecast_cond_vars=cellstr(forecast_cond_vars);
+    end
+    pos=locate_variables(forecast_cond_vars,obj.observables.name,true);
+    if any(isnan(pos))
+        disp(forecast_cond_vars(isnan(pos)))
+        error('the variables above are not declared as observables')
+    end
+    endo_pos=is_endogenous(pos);
+    % separate exogenous from exogenous
+    %-----------------------------------
+    obj.data.restr_y_id=obj.observables.state_id(pos(endo_pos));
+    obj.data.restr_x_id=obj.observables.state_id(pos(~endo_pos));
+        
     % add further description fields
     %-------------------------------
     obj.data=data_description(obj.data);
