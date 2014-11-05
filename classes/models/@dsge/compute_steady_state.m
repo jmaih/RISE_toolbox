@@ -80,7 +80,7 @@ end
 
 structural_matrices=struct();
 
-[obj,ss_and_bgp_start_vals,ssfuncs,retcode]=initial_steady_state(obj,varargin{:});
+[obj,ss_and_bgp_start_vals,retcode]=initial_steady_state(obj,varargin{:});
 
 if retcode
     return
@@ -104,8 +104,8 @@ number_of_regimes=size(ss_and_bgp_start_vals,2);
 
 % initial steady state functions in case of stationarity
 %-------------------------------------------------------
-func_ss=ssfuncs.static; % func_ss_static func_ss_bgp
-func_jac=ssfuncs.jac_static; % func_jac_static func_jac_bgp
+func_ss=obj.steady_state_funcs.static; % func_ss_static func_ss_bgp
+func_jac=obj.steady_state_funcs.jac_static; % func_jac_static func_jac_bgp
 
 endo_nbr=obj.endogenous.number(end);
 if isempty(obj.is_stationary_model)|| obj.is_stationary_model
@@ -233,8 +233,8 @@ end
         
         if retcode
             % try nonstationarity
-            func_ss=ssfuncs.static_bgp;
-            func_jac=ssfuncs.jac_bgp;
+            func_ss=obj.steady_state_funcs.static_bgp;
+            func_jac=obj.steady_state_funcs.jac_bgp;
             
             [ys,retcode]=solve_steady_state(ss_and_bgp,...
                 def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);

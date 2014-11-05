@@ -293,15 +293,24 @@ end
             strcmp(obj.options.solve_initialization,'random')||...
             ~isfield(obj.solution,'Tz');
         horizon=max(obj.exogenous.shock_horizon);
+        load_ssfuncs=isempty(obj.current_solution_state);
         if resolve_it
             obj.current_solution_state=fill_solve_state_info();
         else
             new_state=fill_solve_state_info();
+            load_ssfuncs=load_ssfuncs||~strcmp(new_state.derivatives_type,...
+                obj.current_solution_state.derivatives_type);
             resolve_it= ~isequal(new_state,obj.current_solution_state);
             if resolve_it
                 obj.current_solution_state=new_state;
             end
         end
+        % steady state functions (just for output)
+        %-----------------------------------------
+        if load_ssfuncs
+        obj.steady_state_funcs=recreate_steady_state_functions(obj);
+        end
+
         function new_state=fill_solve_state_info()
             new_state=struct('horizon',horizon,...
                 'solution_algo',obj.options.solver,...
@@ -369,4 +378,28 @@ end
         end
     end
 end
+
+function ssfuncs=recreate_steady_state_functions(obj)
+% initialize this here
+ssfuncs=struct();
+
+symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
+ssfuncs.static=obj.routines.static;
+ssfuncs.static_bgp=obj.routines.static_bgp;
+if symbolic_derivatives
+    ssfuncs.jac_static=@(varargin)utils.code.evaluate_functions(...
+        obj.routines.static_derivatives,varargin{:});
+    ssfuncs.jac_bgp=@(varargin)utils.code.evaluate_functions(...
+        obj.routines.static_bgp_derivatives,varargin{:});
+else
+    ssfuncs.jac_static=@(varargin)utils.code.compute_automatic_derivatives(...
+        obj.routines.symbolic.static,1,...
+        varargin{:});
+    ssfuncs.jac_bgp=@(varargin)utils.code.compute_automatic_derivatives(...
+        obj.routines.symbolic.static_bgp,1,...
+        varargin{:});
+end
+end
+
+
 

@@ -1,4 +1,4 @@
-function [obj,ss_and_bgp_start_vals,ssfuncs,retcode]=initial_steady_state(obj,varargin)
+function [obj,ss_and_bgp_start_vals,retcode]=initial_steady_state(obj,varargin)
 % H1 line
 %
 % Syntax
@@ -25,10 +25,6 @@ obj=set(obj,varargin{:});
 number_of_regimes=obj.markov_chains.small_markov_chain_info.regimes_number;
 endo_nbr=obj.endogenous.number(end);
 ss_and_bgp_start_vals=zeros(2*endo_nbr,number_of_regimes);
-
-% steady state functions (just for output)
-%-----------------------------------------
-ssfuncs=recreate_steady_state_functions();
 
 [obj,retcode]=compute_definitions(obj);
 if retcode
@@ -134,28 +130,6 @@ end
 if retcode && obj.options.debug
     utils.error.decipher(retcode)
 end
-
-    function ssfuncs=recreate_steady_state_functions()
-        % initialize this here
-        ssfuncs=struct();
-        
-        symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
-        ssfuncs.static=obj.routines.static;
-        ssfuncs.static_bgp=obj.routines.static_bgp;
-        if symbolic_derivatives
-            ssfuncs.jac_static=@(varargin)utils.code.evaluate_functions(...
-                obj.routines.static_derivatives,varargin{:});
-            ssfuncs.jac_bgp=@(varargin)utils.code.evaluate_functions(...
-                obj.routines.static_bgp_derivatives,varargin{:});
-        else
-            ssfuncs.jac_static=@(varargin)utils.code.compute_automatic_derivatives(...
-                obj.routines.symbolic.static,1,...
-                varargin{:});
-            ssfuncs.jac_bgp=@(varargin)utils.code.compute_automatic_derivatives(...
-                obj.routines.symbolic.static_bgp,1,...
-                varargin{:});
-        end
-    end
 
     function [ss,retcode]=steady_state_evaluation(ssfunc) 
         
