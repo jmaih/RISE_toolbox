@@ -327,7 +327,7 @@ if expanded_flag % store smoothed
             % smoothed state and shocks
             %--------------------------
             [Filters.atT{s0}(:,1,t),Filters.eta{s0}(:,1,t),r(:,s0)]=...
-                smoothing_step(Filters.a{s0}(:,1,t),r(:,s0),...
+                utils.filtering.smoothing_step(Filters.a{s0}(:,1,t),r(:,s0),...
                 K_store{s0}(:,occur,t),Filters.P{s0}(:,:,t),...
                 Tt_store{s0}(:,:,t),Rt_store{s0}(:,:,t),...% T{s0},R{s0},
                 Z,iF_store{s0}(occur,occur,t),v_store{s0}(occur,t));
@@ -479,7 +479,6 @@ reduced=nargin==4;
 bt=0;
 Tt=T;
 Rt=R;
-Record=[];
 if ~reduced
     reduced=reduced||(~ExpandedFlag && all(isnan(MUt(:))));
     if ~reduced
@@ -500,31 +499,5 @@ else
 end
 
 % Make sure we remain symmetric
-P=symmetrize(P);
-end
-
-% Symmetrizer
-%------------
-function A=symmetrize(A)
-    A=.5*(A+A.');
-end
-
-% Smoother
-%------------
-function [atT,etat,rlag]=smoothing_step(a,r,K,P,T,R,Z,iF,v)
-L=T-T*K*Z;
-% Note that Durbin and Koopman define K=T*P*Z'*iF, while here it is defined
-% as K=P*Z'*iF. Hence, in the definition of Lt, I have to premultiply K by
-% T
-rlag=Z'*iF*v+L'*r;
-atT=a+P*rlag;
-% Q=eye(exo_nbr) in this algorithm...
-etat=R'*rlag; % <--- etat=Rt'*rt;
-% The state equation in Durbin and Koopman is
-% a_{t+1}=T_{t}*a_{t}+R_{t}*eta_{t}, whereas the state equation in our
-% models is a_{t}=T_{t}*a_{t-1}+R_{t}*eta_{t}, and this explains the change
-% I made to the shock smoothing equation. With this change, if we define an
-% auxiliary variable to be equal to a shock, we should retrieve the same
-% values for both in the smoothing. Without the change, there will be a
-% "delay"
+P=utils.cov.symmetrize(P);
 end
