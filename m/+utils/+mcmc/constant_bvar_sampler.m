@@ -17,7 +17,7 @@ function [smpl,fsmpl,accept_rate,start] = constant_bvar_sampler(start,nsamples,v
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 pnames_defaults = {
@@ -85,7 +85,7 @@ end
     function x1=one_constant_var_posterior_draw()
         
         switch prior_type
-            case {'diffuse','jeffrey'} % prior == 1
+            case {'diffuse','jeffrey',1}
                 a2tilde.post=estimafy(inv(start.SIGMA),true);
                 
                 % Posterior of alpha|SIGMA,Data ~ Normal
@@ -94,25 +94,31 @@ end
                 % Posterior of SIGMA|Data ~ iW(ols.SSE,T-K)
                 start.SIGMA = inverse_wishart_draw(a2tilde.ols.SSE,nobs-K);% Draw SIGMA
                 
-            case 'minnesota' % prior == 2
+            case {'minnesota',2}
                 alpha2tilde = a2tilde.post.a + chol(a2tilde.post.V)'*randn(na2,1); % Draw alpha
                 
                 % SIGMA in this case is a known matrix, whose form is decided in
                 % the prior
                 % start.SIGMA=start.SIGMA; % start.SIGMA=a2tilde.prior.SIGMA;
                 
-            case {'normal_wishart'} % prior == 3
+            case {'normal_wishart',3}
                 % This is the covariance for the posterior density of alpha
-                tmp=kron(eye(K),start.SIGMA);                
-                postValpha2tilde = a2tilde.post.V*a2tilde_func(tmp,true);
+                tmp=kron(eye(K),start.SIGMA);
+                postValpha2tilde = a2tilde.post.V*a2tilde_func(tmp(start.inv_order,start.inv_order),true);
                 
                 % Posterior of alpha|SIGMA,Data ~ Normal
-                alpha2tilde = a2tilde.post.a + chol(postValpha2tilde)'*randn(na2,1);  % Draw alpha
+                %----------------------------------------
+                % in the presence of restrictions, the variance above may
+                % not be positive definite and so we replace the cholesky
+                % with something else
+                [vv,dd]=eig(postValpha2tilde);
+                % alpha2tilde = a2tilde.post.a + chol(postValpha2tilde)'*randn(na2,1);
+                alpha2tilde = a2tilde.post.a + real(vv*sqrt(dd))*randn(na2,1);
                 
                 % Posterior of SIGMA|ALPHA,Data ~ iW(inv(post.scale_SIGMA),post.dof_SIGMA)
                 start.SIGMA = inverse_wishart_draw(a2tilde.post.scale_SIGMA,a2tilde.post.dof_SIGMA);% Draw SIGMA
                 
-            case 'indep_normal_wishart' % prior == 4
+            case {'indep_normal_wishart',4}
                 alpha2tilde = a2tilde.post.a + chol(a2tilde.post.V)'*randn(na2,1); % Draw of alpha
                 
                 ALPHA = start.a2Aprime(alpha2tilde); % Draw of ALPHA
