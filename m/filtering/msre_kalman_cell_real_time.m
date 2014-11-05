@@ -56,7 +56,7 @@ PAItt=init.PAI00;
 m=size(T{1},1);
 h=numel(T);
 npages=data_info.npages;
-nshocks=size(R{1},2);
+% nshocks=size(R{1},2);
 kmax=size(R{1},3)-1;
 horizon=kmax+1;
 horizon=min(npages-1,horizon); % the first page is hard information
@@ -469,18 +469,20 @@ end
 end
 
 function [a,P,Tt,Rt,Record]=kalman_prediction(T,R,att,Ptt,MUt,OMGt,DPHI,DT,Record,ExpandedFlag)
-if nargin==4
-    bt=0;
-    Tt=T;
-    RR=R;
-    Record=[];
-    Rt=[];
-elseif nargin==10
-    [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
-    RR=Rt*Rt';
-else
-    error([mfilename,':: number of input arguments must be 4 or 10'])
+narginchk(4,10);
+reduced=nargin==4;
+bt=0;
+Tt=T;
+Rt=R;
+Record=[];
+if ~reduced
+    reduced=reduced||(~ExpandedFlag && all(isnan(MUt(:))));
+    if ~reduced
+        [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
+    end
 end
+
+RR=Rt*Rt';
 % only compute the places where there is some action
 test=true;
 if test
