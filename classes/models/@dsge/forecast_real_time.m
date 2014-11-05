@@ -1,15 +1,35 @@
 function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
-% H1 line
+% forecast_real_time - forecast from each point in time
 %
 % Syntax
 % -------
 % ::
 %
+% - [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj)
+% - [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
+%
 % Inputs
 % -------
 %
+% - **obj** [dsge|svar|rfvar] : model object
+%
+% - **varargin** : valid optional inputs coming in pairs. The main inputs
+%   of interest for changing the default behavior are:
+%   - **fkst_rt_nahead** [integer] : number of periods ahead
+%
 % Outputs
 % --------
+%
+% - **ts_fkst** [struct] : fields are forecasts in the form of ts objects
+%   for the different endogenous variables
+%
+% - **ts_rmse** [struct] : fields are RMSEs in the form of ts objects
+%   for the different endogenous variables
+%
+% - **rmse** [matrix] : RMSEs for the different endogenous variables
+%
+% - **Updates** [struct] : fields are the updated (in a filtering sense) in
+%   the form of ts objects for the different endogenous variables
 %
 % More About
 % ------------
@@ -17,10 +37,7 @@ function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
-
-
-% see also plot_real_time
+% See also: plot_real_time 
 
 if isempty(obj)
     ts_fkst=struct('fkst_rt_nahead',16);
@@ -62,6 +79,5 @@ ts_fkst= obj1.filtering.rolling_multistep.Expected_filtered_variables;
 ts_rmse= obj1.filtering.rolling_multistep.Expected_rmse;
 rmse=double(ts_rmse);
 Updates=obj1.filtering.Expected_updated_variables;
-
 
 end
