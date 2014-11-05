@@ -113,16 +113,16 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
             % we invert and then apply the function:probably the simplest thing
             % to do
             %------------------------------------------------------------------
-%             iVa=obj.linear_restrictions_data.a_func(inv(a2tilde.prior.V),true);
-            iVa2tilde=(a2tilde.prior.V)\speye(size(a2tilde.prior.V,1));
+            % unrestrict and then take the first K guys
+            iVa=diag(1./diag(va_prior(1:K,1:K)));
             XpX=bigx*bigx';
             A_OLS=a2Aprime(a2tilde.ols.a);
             A_prior=a2Aprime(a2tilde.prior.a);
             A_post=a2Aprime(a2tilde.post.a);
             a2tilde.post.scale_SIGMA = a2tilde.ols.SSE + a2tilde.prior.scale_SIGMA + ...
                 A_OLS*XpX*A_OLS' + ...
-                A_prior*iVa2tilde*A_prior' - ...
-                A_post*(iVa2tilde + XpX)*A_post';
+                A_prior*iVa*A_prior' - ...
+                A_post*(iVa + XpX)*A_post';
         end
     end
     
