@@ -378,7 +378,7 @@ end
         Rt=0;
         for snow=1:h
             pai_snow_Over_slead=Q(snow,splus)*PAItt(snow)/PAI(splus);
-            [a00_,P00_,Tt_snow,Rt_snow,Record]=kalman_prediction(...
+            [a00_,P00_,Tt_snow,Rt_snow,Record]=utils.filtering.prediction_step(...
                 T{splus},R{splus},att{snow},Ptt{snow},...
                 MUt_splus,OMGt,DPHI{splus},DT{splus},Record,ExpandedFlag);
             a=a+pai_snow_Over_slead*a00_;
@@ -471,33 +471,4 @@ end
             end
         end
     end
-end
-
-function [a,P,Tt,Rt,Record]=kalman_prediction(T,R,att,Ptt,MUt,OMGt,DPHI,DT,Record,ExpandedFlag)
-narginchk(4,10);
-reduced=nargin==4;
-bt=0;
-Tt=T;
-Rt=R;
-if ~reduced
-    reduced=reduced||(~ExpandedFlag && all(isnan(MUt(:))));
-    if ~reduced
-        [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
-    end
-end
-
-RR=Rt*Rt';
-% only compute the places where there is some action
-test=true;
-if test
-    a=bt+Tt*att;
-    P=Tt*Ptt*transpose(Tt)+RR;
-else
-    kk=any(Tt);
-    a=bt+Tt(:,kk)*att(kk,:);
-    P=Tt(:,kk)*Ptt(kk,kk)*transpose(Tt(:,kk))+RR;
-end
-
-% Make sure we remain symmetric
-P=utils.cov.symmetrize(P);
 end
