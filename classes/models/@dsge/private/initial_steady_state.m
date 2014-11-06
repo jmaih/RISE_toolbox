@@ -36,6 +36,7 @@ steady_state_file=obj.options.steady_state_file;
 if ~isempty(steady_state_file)
     if ischar(steady_state_file)
         steady_state_file=str2func(steady_state_file);
+        obj.options.steady_state_file=steady_state_file;
     end
     % this alternative is more general in the sense that it allows you to
     % modify the parameters, e.g. so that the model replicates the things
