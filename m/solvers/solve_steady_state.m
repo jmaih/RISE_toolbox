@@ -81,7 +81,13 @@ if ~retcode
                 % Here is why we need good initial values. You cannot, say start at
                 % zero for a variable in logs...
                 residuals=resid_func(ys0(:,ireg),pp_i,def_i);
-                if isnan(residuals)
+                nan_residuals=isnan(residuals);
+                if any(nan_residuals)
+                    if debug
+                        disp(find(nan_residuals))
+                        disp('the equations # above have nan residuals in the computation of the steady state')
+                        keyboard
+                    end
                     exitflag=-4;
                 elseif max(abs(residuals))<=optim_opt.TolFun
                     exitflag=1;
