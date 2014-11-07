@@ -20,7 +20,7 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % obj=solve(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
 % obj=solve(obj,'solve_shock_horizon',5)
 %
-% See also: 
+% See also:
 
 % structrual_matrices not stored into the object in case we need to "get"
 % it? in that case we enter the solving operations without solving and
@@ -150,14 +150,14 @@ if solve_order>0 && ~retcode && resolve_it
                 obj.solution.bgp=bgp_;
                 T.Tz=Tz;
             end
-			% set the name of the solver
-			%---------------------------
-			if isempty(obj.options.solver)
-				obj.options.solver='loose_commitment';
-			end
+            % set the name of the solver
+            %---------------------------
+            if isempty(obj.options.solver)
+                obj.options.solver='loose_commitment';
+            end
         else
             [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices);
-			% options may have changed and so we re-collect obj
+            % options may have changed and so we re-collect obj
         end
         inv_order_var=obj.inv_order_var.after_solve;
         if ~retcode
@@ -298,8 +298,9 @@ end
             obj.current_solution_state=fill_solve_state_info();
         else
             new_state=fill_solve_state_info();
-            load_ssfuncs=load_ssfuncs||~strcmp(new_state.derivatives_type,...
-                obj.current_solution_state.derivatives_type);
+            load_ssfuncs=load_ssfuncs||...
+                ~strcmp(new_state.derivatives_type,obj.current_solution_state.derivatives_type)||...
+                ~strcmp(new_state.solve_use_disc,obj.current_solution_state.solve_use_disc);
             resolve_it= ~isequal(new_state,obj.current_solution_state);
             if resolve_it
                 obj.current_solution_state=new_state;
@@ -308,15 +309,16 @@ end
         % steady state functions (just for output)
         %-----------------------------------------
         if load_ssfuncs
-        obj.steady_state_funcs=recreate_steady_state_functions(obj);
+            obj.steady_state_funcs=recreate_steady_state_functions(obj);
         end
-
+        
         function new_state=fill_solve_state_info()
             new_state=struct('horizon',horizon,...
                 'solution_algo',obj.options.solver,...
                 'solve_order',solve_order,...
                 'params',params,...
-                'derivatives_type',obj.options.solve_derivatives_type...
+                'derivatives_type',obj.options.solve_derivatives_type,...
+                'solve_use_disc',obj.options.solve_use_disc...
                 );
         end
     end
