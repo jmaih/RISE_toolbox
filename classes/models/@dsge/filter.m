@@ -109,9 +109,6 @@ det_shocks=repmat(det_shocks,1,kmax+1);
 % load deterministic shock data
 %------------------------------
 sizx=size(obj.data.x);
-if numel(sizx)==2
-    sizx=[sizx,1];
-end
 exo_data=cat(1,ones(1,sizx(2),sizx(3)),obj.data.x);
 
 % constant and deterministic terms
@@ -141,7 +138,7 @@ end
 % initialization
 %---------------
 
-syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc},'forced_state',obj.endogenous.is_affect_trans_probs);
+syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc});
 
 [LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,State_trend,SS,risk,obj.options);
 if  obj.options.kf_filtering_level && ~retcode
