@@ -72,50 +72,47 @@ end
         % this function reduces the state size to accelerate estimation
         % it returns the indices of the union of state variables and observable
         % ones
-    % N.B: the endogenous probability script is written as a function of
-    % the grand state (i.e. all the endogenous variables) and so, it is
-    % dangerous to reduce the state in that case. The drawback is that
-    % likelihood computation becomes slower. Amending this would amount to
-    % having a separate script for the transition matrix for the specific
-    % case where we don't need all the smoothed variables. This will have
-    % to be done from the parser, when reading the list of the observables.
-    % Or something along those lines...
     
-    % IF THE STATE IS SHRUNK, JUST WRITE A WRAPPER THAT WILL INFLATE IT
-    % BEFORE IT IS APPLIED TO SYST.QFUNC. IN BRIEF, SYST.QFUNC WILL BE
-    % MODIFIED TO SOMETHING LIKE syst.Qfunc=@(x)syst.Qfunc(inflator(x)).
-    % The problem is that the inflator should know how to reset the grand
-    % vector and the variables entering the transition matrix should be
-    % forced to be states...
-    return
         if options.kf_filtering_level==0 
             tmp=syst.T;
             h=numel(tmp);
             % The step below is critical for speed, though it may add some noise
             % when computing the filters for all the endogenous variables
-            state=any(abs(tmp{1})>1e-9,1);
+            state=syst.forced_state|any(abs(tmp{1})>1e-9,1);
             for ii=2:h
                 state=state | any(abs(tmp{ii})>1e-9,1);
             end
             n=numel(state);
-            newstate=state;
-            newstate(data_info.varobs_id)=true;
-            newobs=false(1,n);
-            newobs(data_info.varobs_id)=true;
-            newobs(~newstate)=[];
-            newobs=find(newobs);
-            [~,tags]=sort(data_info.varobs_id);
-            newobs(tags)=newobs;
-            data_info.varobs_id=newobs;
+            state(data_info.varobs_id)=true;
+            
+            % start compressing
+            %--------------------
+            data_info.varobs_id=game_old_positions(data_info.varobs_id);
+            if isfield(data_info,'restr_y_id')
+                data_info.restr_y_id=game_old_positions(data_info.restr_y_id);
+            end
             for istate=1:h
-                SS{istate}=SS{istate}(newstate);
-                risk{istate}=risk{istate}(newstate);
-                syst.T{istate}=syst.T{istate}(newstate,newstate);
-                syst.R{istate}=syst.R{istate}(newstate,:,:);
+                SS{istate}=SS{istate}(state);
+                risk{istate}=risk{istate}(state);
+                syst.T{istate}=syst.T{istate}(state,state);
+                syst.R{istate}=syst.R{istate}(state,:,:);
                 if ~isempty(state_trend{1})
-                    state_trend{istate}=state_trend{istate}(newstate,:);
+                    state_trend{istate}=state_trend{istate}(state,:,:);
                 end
             end
+            syst.Qfunc=@(x)syst.Qfunc(re_inflator(x,state));
+        end
+        function newpos=game_old_positions(oldpos)
+            newpos=false(1,n);
+            newpos(oldpos)=true;
+            newpos(~state)=[];
+            newpos=find(newpos);
+            [~,tags]=sort(oldpos);
+            newpos(tags)=newpos;
         end
     end
+end
+function y=re_inflator(x,state)
+y=zeros(length(state),1);
+y(state)=x;
 end
