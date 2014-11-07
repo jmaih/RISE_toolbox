@@ -79,7 +79,7 @@ end
         if PAI00_given
             PAI00=kf_user_init{3};
         else
-            Q=transition_function(steadystate(:,1));
+            Q=transition_function(steadystate{1});
             [PAI00,retcode]=initial_markov_distribution(Q,kf_ergodic);
         end
         P0=[];
