@@ -17,7 +17,7 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 % In this file, there are two ways the steady state can be computed:
@@ -160,7 +160,7 @@ else
         end
     else
         [ys,retcode]=solve_steady_state(ss_and_bgp_start_vals(1:last_item,:),...
-            def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
+            def_sstate,pp_sstate,@ss_residuals,optimopt);
     end
     ss_and_bgp_start_vals(1:last_item,:)=ys(1:last_item,:);
 end
@@ -172,7 +172,7 @@ if ~retcode
         user_resids=nan(endo_nbr,number_of_regimes);
         for ireg=1:number_of_regimes
             user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
-                func_ss,func_jac,x_ss,pp_sstate(:,ireg),def_sstate{ireg});
+                pp_sstate(:,ireg),def_sstate{ireg});
         end
         user_resids(abs(user_resids)<1e-9)=0;
         structural_matrices.user_resids=sparse(user_resids);
@@ -229,7 +229,7 @@ end
         
         ys=ss_and_bgp;
         [ys(1:endo_nbr,:),retcode]=solve_steady_state(ss_and_bgp(1:endo_nbr,:),...
-            def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
+            def_sstate,pp_sstate,@ss_residuals,optimopt);
         
         if retcode
             % try nonstationarity
@@ -237,8 +237,8 @@ end
             func_jac=obj.steady_state_funcs.jac_bgp;
             
             [ys,retcode]=solve_steady_state(ss_and_bgp,...
-                def_sstate,pp_sstate,@(yss,p,d)ss_residuals(yss,func_ss,func_jac,x_ss,p,d),optimopt);
-
+                def_sstate,pp_sstate,@ss_residuals,optimopt);
+            
             if ~retcode
                 is_stationary=false;
                 disp([mfilename,':: model is not mean-stationary but allows for a BALANCED GROWTH PATH'])
@@ -251,4 +251,40 @@ end
         end
     end
 
+    function [r,Jac,retcode]=ss_residuals(ss_i,pp_i,def_i)%func_ss,func_jac,x_ss,
+        % H1 line
+        %
+        % Syntax
+        % -------
+        % ::
+        %
+        % Inputs
+        % -------
+        %
+        % Outputs
+        % --------
+        %
+        % More About
+        % ------------
+        %
+        % Examples
+        % ---------
+        %
+        % See also:
+        
+        
+        retcode=0;
+        Jac=[];
+        
+        y_=ss_i;
+        % input list is always 'y'    'x'    'ss'    'param'    'sparam'    'def'    's0'    's1'
+        r=utils.code.evaluate_functions(func_ss,y_,x_ss,ss_i,pp_i,[],def_i,[],[]);
+        if nargout>1
+            Jac=func_jac(y_,x_ss,ss_i,pp_i,[],def_i,[],[]);
+        end
+        
+        if retcode && obj(1).options.debug
+            utils.error.decipher(retcode)
+        end
+    end
 end
