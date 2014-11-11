@@ -39,14 +39,7 @@ code=parser.vectorized_model(code,argins);
 argins=cell2mat(strcat(argins(:)',','));
 main_string=['@(',argins(1:end-1),')'];
 
-siz=size(code);
-
-func=cell(siz);
-for irow=1:siz(1)
-    for icol=1:siz(2)
-        func{irow,icol}=str2func([main_string,code{irow,icol}]);
-    end
-end
+func=cellfun(@(x)str2func([main_string,x]),code,'uniformOutput',false);
 
 end
 
