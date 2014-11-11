@@ -38,12 +38,12 @@ else
             else
                 shock_horizon_id=ii;
             end
-        elseif strcmp(varargin{ii},'solve_use_disc')
+        elseif strcmp(varargin{ii},'solve_function_mode')
             use_disc_id=[ii,ii+1];
         end
     end
     solve_shock_horizon=varargin(shock_horizon_id);
-    solve_use_disc=varargin(use_disc_id);
+    solve_function_mode=varargin(use_disc_id);
     varargin(shock_horizon_id)=[];
     % do not remove the disc property since that option has to be visible
     % unlike the shocks horizon. varargin(use_disc_id)=[]; 
@@ -56,43 +56,49 @@ else
             set_shock_horizon()
         end
     end
-    if ~isempty(solve_use_disc)
-        solve_use_disc=solve_use_disc{2};
+    if ~isempty(solve_function_mode)
+        solve_function_mode=solve_function_mode{2};
         swap_routines();
     end
 end
 
     function swap_routines()
-        if isempty(obj.online_routines)
-            obj.online_routines=obj.routines;
+        routines_names=fieldnames(obj.online_routines);
+        routines_names=setdiff(routines_names,{'symbolic','likelihood'});
+        switch solve_function_mode
+            case {'explicit','amateur'}
+                obj.routines=obj.online_routines;
+            case {'vectorized','professional'}
+                vectorize_routines()
+            case 'disc'
+                write_routines_to_disk();
+            otherwise
         end
-        if solve_use_disc
-            % do this systematically, irrespective of whether the routines
-            % are the ones already written to disk or not
-            write_routines_to_disk();
-            obj.routines=obj.disc_routines;
-        else
-            obj.routines=obj.online_routines;
+        function vectorize_routines()
+            for irout=1:numel(routines_names)
+                r_name=routines_names{irout};
+                obj.routines.(r_name)=utils.code.code2vector(obj.online_routines.(r_name));
+            end
         end
         function write_routines_to_disk()
             MainFolder=obj.options.results_folder;
-            obj.disc_routines=obj.routines;
-            routines_names=fieldnames(obj.disc_routines);
-            routines_names=setdiff(routines_names,{'symbolic','likelihood'});
             curr_dir=pwd();
-            cd([MainFolder,filesep,'routines']);
+            routines_dir=[MainFolder,filesep,'routines'];
+            cd(routines_dir);
             for irout=1:numel(routines_names)
                 r_name=routines_names{irout};
                 fname=r_name;
-                rcode=utils.code.code2file(obj.disc_routines.(r_name),fname);
+                rcode=utils.code.code2file(obj.online_routines.(r_name),fname);
                 if ~rcode
-                    obj.disc_routines.(r_name)=str2func(['@',fname]);
+                    obj.routines.(r_name)=str2func(['@',fname]);
                 end
             end
             cd(curr_dir)
-            % make the function readily available for use if necessary
+            % make the function readily available for use if necessary:
+            % rehash does not work well, we have to explicitly add the
+            % folder to the matlab search path
             %---------------------------------------------------------
-            rehash()
+            addpath(routines_dir)
         end
     end
 
