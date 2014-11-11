@@ -87,16 +87,19 @@ for ii=1:n_restr
         RestrictionsBlock{ii}=full_eqtn;
     end
 end
-obj.routines.derived_parameters=linear_restrictions(is_linear_restriction,:);
+derived_parameters=linear_restrictions(is_linear_restriction,:);
 
 RestrictionsBlock=RestrictionsBlock(~is_linear_restriction);
 %---------------------------------------------
 RestrictionsBlock=transpose(RestrictionsBlock(:));
 
-obj.routines.nonlinear_restrictions=reprocess_nonlinear_restrictions(RestrictionsBlock);
+nonlinear_restrictions=reprocess_nonlinear_restrictions(RestrictionsBlock);
 obj.number_of_restrictions=struct('auxiliary',sum(is_linear_restriction),...
     'linear',nan,...
     'nonlinear',sum(~is_linear_restriction));
+
+obj=add_to_routines(obj,'derived_parameters',derived_parameters,...
+    'nonlinear_restrictions',nonlinear_restrictions);
 
 end
 
