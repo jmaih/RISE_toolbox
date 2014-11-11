@@ -64,7 +64,6 @@ classdef dsge < rise_generic
     % - [filtering] -
     properties (Hidden = true)
         online_routines
-        disc_routines
     end
     properties (SetAccess = private, Hidden = true)
         current_solution_state
@@ -201,6 +200,9 @@ classdef dsge < rise_generic
             for ii=1:numel(quick_fill)
                 obj.(quick_fill{ii})=dictionary.(quick_fill{ii});
             end
+            % make a copy of the routines
+            %-----------------------------
+            obj.online_routines=obj.routines;
             
             % flags for the different types of models
             if obj.is_hybrid_expectations_model
@@ -216,12 +218,6 @@ classdef dsge < rise_generic
             % build the options.
             %--------------------------------------------------------------
             obj=set(obj,varargin{:});
-            % Then load the functions/routines: should consider doing this
-            % in the parser. The question is whether there is anything that
-            % might need re-updating in case options change, like for
-            % instance the main folder...
-            %--------------------------------------------------------------
-            create_folders_and_add_further_routines();
             
             if obj.options.debug
                 dicfields=fieldnames(dictionary);
@@ -239,6 +235,11 @@ classdef dsge < rise_generic
             % separate the reading of the model with everything else
             obj=format_parameters(obj,dictionary.Parameterization_block,...
                 dictionary.Param_rest_block);
+            
+            % Then load the functions/routines: some routines may be
+            % created inside format_parameters
+            %--------------------------------------------------------------
+            create_folders_and_add_further_routines();
             
             % conclude
             disp(' ')
@@ -285,15 +286,13 @@ classdef dsge < rise_generic
                 % likelihood functions
                 %---------------------
                 if obj.is_dsge_var_model
-                    obj.routines.likelihood=@likelihood_dsge_var;
+                    likelihood=@likelihood_dsge_var;
                 elseif obj.is_optimal_simple_rule_model
-                    obj.routines.likelihood=@likelihood_optimal_simple_rule;
+                    likelihood=@likelihood_optimal_simple_rule;
                 else
-                    obj.routines.likelihood=@likelihood_markov_switching_dsge;
+                    likelihood=@likelihood_markov_switching_dsge;
                 end
-                % initialize the holders for routines in case of swap between online and disc
-                obj.online_routines=[];
-                obj.disc_routines=[];
+                obj=add_to_routines(obj,'likelihood',likelihood);
             end
         end
     end
