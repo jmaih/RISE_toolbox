@@ -55,7 +55,7 @@ if nargin<5
     end
 end
 Defaults={
-    'deriv',[],@(x)ischar(x)||iscellstr(x)
+    'deriv',[],@(x)isstruct(x) && all(isfield(x,{'derivatives','nwrt','order','nnz_derivs','partitions'}))
     'args',[],@(x)ischar(x)||iscellstr(x)
     'asfunc', true,@(x)islogical(x)
     'long', false,@(x)islogical(x)
@@ -71,7 +71,7 @@ if nderivs>1
     c=deriv(1:0);
     c=update_fieldnames(c,args);
     for id=1:nderivs
-        c(id)=splanar.print(deriv(id),args,long,optimize);
+        c(id)=splanar.print(deriv(id),args,asfunc,long,optimize);
     end
     return
 end
@@ -101,7 +101,10 @@ if ~isempty(deriv.derivatives)
     cmapl=cmap(1:2:end);
     cmapr=cmap(2:2:end);
     cmap=[cmapl(:),cmapr(:)];
-    % cmap=reshape([deriv.derivatives.location],2,[]);
+    
+    % do expansion in case the derivatives are vectorized later on
+    %-------------------------------------------------------------
+    do_expansion()
 end
 % format output
 %---------------
@@ -112,6 +115,27 @@ c.map=cmap;
 % update field names
 %--------------------
 c=update_fieldnames(c,args);
+
+    function do_expansion()
+        nd=numel(deriv.derivatives);
+        expansions=cell(nd,2); % row, expansion
+        offset=0;
+        for ider=1:nd
+            d=deriv.derivatives(ider);
+            row=d.location{1};
+            nlocs=numel(d.location{end});
+            if d.number_of_columns==1 && nlocs>1
+                newguys=offset+ones(nlocs,1);
+            else
+                newguys=offset+(1:nlocs).';
+            end
+            expansions(ider,:)={row*ones(nlocs,1),newguys};
+            offset=newguys(end);
+        end
+        expansions=cell2mat(expansions);
+        cmapr=cell2mat(cmapr);
+        deriv.vectorizer=struct('rows',expansions(:,1),'cols',cmapr(:),'inflator',expansions(:,2));
+    end
 
     function do_analytic()
         if ~isempty(args) && ~isempty(c)
