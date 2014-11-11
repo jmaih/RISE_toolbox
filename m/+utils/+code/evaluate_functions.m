@@ -43,7 +43,7 @@ if iscell(xcell)
     varargout{1}=main_engine();
     varargout{1}=sparse(cell2mat(varargout{1}));
 elseif isstruct(xcell)
-    derivative_fields={'size','functions','map','partitions'};
+    derivative_fields={'size','functions','partitions'};% field 'map' removed to allow for vectorization
     eval_fields={'code','argins','argouts'};
     if all(isfield(xcell,derivative_fields))
         [varargout{1:nout}]=derivative_engine();
@@ -69,20 +69,27 @@ end
             if isempty(xcell)
                 xout=sparse(mm,nn);
             else
-                ii=tmp(iout).map(:,1);
-                jj=tmp(iout).map(:,2);
                 vals=main_engine();
-                for irows=1:size(xcell,1)
-                    nguys=numel(jj{irows});
-                    if nguys>1
-                        ii{irows}=ii{irows}*ones(1,nguys);
-                        if numel(vals{irows})==1
-                            vals{irows}=vals{irows}*ones(1,nguys);
+                nzmax=tmp(iout).nnz_derivs;
+                if isfield(tmp(iout),'map')
+                    ii=tmp(iout).map(:,1);
+                    jj=tmp(iout).map(:,2);
+                    for irows=1:size(xcell,1)
+                        nguys=numel(jj{irows});
+                        if nguys>1
+                            ii{irows}=ii{irows}*ones(1,nguys);
+                            if numel(vals{irows})==1
+                                vals{irows}=vals{irows}*ones(1,nguys);
+                            end
                         end
                     end
+                    xout=sparse(vector_it(ii),vector_it(jj),vector_it(vals),mm,nn,nzmax);
+                else
+                    ii=tmp(iout).vectorizer.rows;
+                    jj=tmp(iout).vectorizer.cols;
+                    vals=vals{1}(tmp(iout).vectorizer.inflator);
+                    xout=sparse(ii,jj,vals,mm,nn,nzmax);
                 end
-                nzmax=tmp(iout).nnz_derivs;
-                xout=sparse(vector_it(ii),vector_it(jj),vector_it(vals),mm,nn,nzmax);
             end
             varargout{iout}=xout(:,tmp(iout).partitions);
         end
