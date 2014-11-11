@@ -36,6 +36,8 @@ end
 %-----------------------------
 code=parser.vectorized_model(code,argins);
 
+% turn into functions
+%---------------------
 argins=cell2mat(strcat(argins(:)',','));
 main_string=['@(',argins(1:end-1),')'];
 
