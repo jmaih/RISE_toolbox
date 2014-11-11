@@ -1,4 +1,4 @@
-function c=print(deriv,args,long,optimize)
+function c=print(deriv,args,asfunc,long,optimize)
 % print - transforms the output of splanar.differentiate into char or functions
 %
 % Syntax
@@ -7,8 +7,9 @@ function c=print(deriv,args,long,optimize)
 %
 %   c=splanar.print(deriv)
 %   c=splanar.print(deriv,args)
-%   c=splanar.print(deriv,args,long)
-%   c=splanar.print(deriv,args,long,optimize)
+%   c=splanar.print(deriv,args,asfunc)
+%   c=splanar.print(deriv,args,asfunc,long)
+%   c=splanar.print(deriv,args,asfunc,long,optimize)
 %
 % Inputs
 % -------
@@ -21,6 +22,9 @@ function c=print(deriv,args,long,optimize)
 %
 % - **long** [true|{false}|[]]: if true, functions with shorthands are
 %   written with their file names e.g. a+b is written as plus(a,b)
+%
+% - **asfunc** [{true}|false|[]]: if true, the derivatives are put into
+%   anonymous functions. Else they are just returned as char or cellstr.
 %
 % - **optimize** [true|{false}]: optimizes expression by removing e.g.
 %   redundant parentheses, etc. This does not work very well so far.
@@ -38,15 +42,28 @@ function c=print(deriv,args,long,optimize)
 % ---------
 %
 % See also:
-if nargin<4
-    optimize=false;
-    if nargin<3
-        long=false;
-        if nargin<2
-            args=[];
+if nargin<5
+    optimize=[];
+    if nargin<4
+        long=[];
+        if nargin<3
+            asfunc=[];
+            if nargin<2
+                args=[];
+            end
         end
     end
 end
+Defaults={
+    'deriv',[],@(x)ischar(x)||iscellstr(x)
+    'args',[],@(x)ischar(x)||iscellstr(x)
+    'asfunc', true,@(x)islogical(x)
+    'long', false,@(x)islogical(x)
+    'optimize', false,@(x)islogical(x)
+    };
+
+[deriv,args,asfunc,long,optimize]=...
+    utils.miscellaneous.parse_arguments(Defaults,'deriv',deriv,'args',args,'asfunc',asfunc,'long',long,'optimize',optimize);
 
 nderivs=numel(deriv);
 
@@ -65,6 +82,14 @@ if ~isempty(deriv.derivatives)
     % char the derivatives
     %-----------------------
     c=char(deriv.derivatives,long);
+    
+    % remove unnecessary parentheses
+    %-------------------------------
+    do_optimize()
+    
+    % put into analytic form
+    %------------------------
+    do_analytic()
     
     % transform to functions if arguments are provided
     %--------------------------------------------------
@@ -88,7 +113,7 @@ c.map=cmap;
 %--------------------
 c=update_fieldnames(c,args);
 
-    function do_functions()
+    function do_analytic()
         if ~isempty(args) && ~isempty(c)
             if ischar(args)
                 args=cellstr(args);
@@ -98,14 +123,21 @@ c=update_fieldnames(c,args);
             % put into analytical form
             %--------------------------
             c=parser.analytical_symbolic_form(c,args,'analytic');
-            
-            % remove unnecessary parentheses
-            %-------------------------------
-            if optimize
-                word='\w+';
-                word_par='\w+\(\d+\)';
-                c=regexprep(c,['(?<!\w+)(\()(',word,'|',word_par,')(\))'],'$2');
-            end
+        end
+    end
+
+    function do_optimize()
+        if optimize
+            word='\w+';
+            word_par='\w+\(\d+\)';
+            c=regexprep(c,['(?<!\w+)(\()(',word,'|',word_par,')(\))'],'$2');
+        end
+    end
+
+    function do_functions()
+        if asfunc && ~isempty(args) && ~isempty(c)
+            % this assumes the args are already in correct order/format
+            % from the do_analytic part
             
             % build the @() part
             %--------------------
