@@ -1,15 +1,48 @@
 function outcell=print_solution(obj,varlist,orders,compact_form,precision,equation_format,file2save2)
-% H1 line
+% print_solution - print the solution of a model or vector of models
 %
 % Syntax
 % -------
 % ::
 %
+%   print_solution(obj)
+%   print_solution(obj,varlist)
+%   print_solution(obj,varlist,orders)
+%   print_solution(obj,varlist,orders,compact_form)
+%   print_solution(obj,varlist,orders,compact_form,precision)
+%   print_solution(obj,varlist,orders,compact_form,precision,equation_format)
+%   print_solution(obj,varlist,orders,compact_form,precision,equation_format,file2save2)
+%   outcell=print_solution(obj,...)
+%
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge] : model object or vector of model objects
+%
+% - **varlist** [char|cellstr|{[]}] : list of variables of interest
+%
+% - **orders** [numeric|{[1:solve_order]}] : orders for which we want to
+%   see the solution
+%
+% - **compact_form** [{true}|false] : if true, only the solution of unique
+%   tuples (i,j,k) such that i<=j<=k is presented. If false, the solution
+%   of all combinations is presented. i.e.
+%   (i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)  
+%
+% - **precision** [char|{'%8.6f'}] : precision of the numbers printed
+%
+% - **equation_format** [true|{false}] : if true, the solution is presented
+%   in the form of equations for each endogenous variable (not recommended)
+%
+% - **file2save2** [char|{''}] : if not empty, the solution is written to a
+%   file rather than printed on screen. For this to happen, print_solution
+%   has to be called without ouput arguments
+%
 % Outputs
 % --------
+%
+% - **outcell** [cellstr] : If an output is requested, the solution is not
+%   printed on screen or to a file.
 %
 % More About
 % ------------
