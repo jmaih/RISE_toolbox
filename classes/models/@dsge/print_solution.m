@@ -47,6 +47,10 @@ function outcell=print_solution(obj,varlist,orders,compact_form,precision,equati
 % More About
 % ------------
 %
+% If a model is solved, say, up to 3rd order, one may still want to see the
+% first-order solution or the solution up to second-order only or any
+% combination of orders.
+%
 % Examples
 % ---------
 %
@@ -193,6 +197,9 @@ end
             ];
         if regime_index==1
             orders=sort(orders);
+            if ~isequal(order,unique(orders))
+                error('the orders specified are duplicated')
+            end
             if orders(end)>obj.options.solve_order
                 error('highest order requested exceeds solve_order')
             end
