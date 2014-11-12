@@ -20,11 +20,14 @@ function Qfunc=prepare_transition_routine(obj)
 % See also: 
 
 
-Qfunc=@(x)load_transition_matrix;
+Qfunc=memoizer(obj.solution.transition_matrices.Q);
 
-    function [Q,retcode]=load_transition_matrix(~)
+end
+
+function Qfunc=memoizer(Q0)
+Qfunc=@engine;
+    function [Q,retcode]=engine(~)
         retcode=0;
-        Q=obj.solution.transition_matrices.Q;
+        Q=Q0;
     end
-
 end
