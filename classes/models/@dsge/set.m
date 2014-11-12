@@ -82,23 +82,16 @@ end
         end
         function write_routines_to_disk()
             MainFolder=obj.options.results_folder;
-            curr_dir=pwd();
             routines_dir=[MainFolder,filesep,'routines'];
-            cd(routines_dir);
             for irout=1:numel(routines_names)
                 r_name=routines_names{irout};
-                fname=r_name;
+                fname=[r_name,'_',solve_function_mode,'__'];
                 rcode=utils.code.code2file(obj.online_routines.(r_name),fname);
                 if ~rcode
-                    obj.routines.(r_name)=str2func(['@',fname]);
+                    movefile([fname,'.m'],routines_dir,'f')
+                    obj.routines.(r_name)=utils.code.func2fhandle([routines_dir,filesep,fname]);
                 end
             end
-            cd(curr_dir)
-            % make the function readily available for use if necessary:
-            % rehash does not work well, we have to explicitly add the
-            % folder to the matlab search path
-            %---------------------------------------------------------
-            addpath(routines_dir)
         end
     end
 
