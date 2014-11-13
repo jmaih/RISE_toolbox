@@ -1,11 +1,11 @@
 var V, C, L, VK, PI, Valphaexp, ZN, MC, Y, ZD, P0, W, Int, Delta, PIAVG, G, A, DZ, PISTAR, PB, PBB, YTM, YTMM, TT;
+
 varexo EPSInt, EPSA, EPSZ, EPSG, EPSPISTAR;
 
 parameters phi, chi, theta, eta, xi, alpha, LMax, DZBAR, YBAR, delta, KRAT, GRAT, KBAR, IBAR, GBAR, L_ss, 
     ABAR, PIBAR, rhoinflavg, taylrho, taylpi, tayly, rhoa, rhoz, rhog, rhopistar, GSSLOAD, Y_ss, MC_ss, DZ_ss,
     Beta_tilde, Beta, PI_ss, Int_ss, Delta_ss, PIAVG_ss, G_ss, A_ss, PISTAR_ss, C_ss, ZN_ss, ZD_ss, P0_ss, W_ss,
     DZZ_ss, chi0,  U_ss, V_ss, VAIMSS, VK_ss, Valphaexp_ss, PB_ss, PBB_ss, YTM_ss, YTMM_ss, TT_ss, cdelta;
-
 
 
 phi = 2;
@@ -67,11 +67,6 @@ YTMM_ss = log(cdelta*PBB_ss/(PBB_ss-1))*400;
 TT_ss = 0;
 
 model;
-
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%                         Behavioural Equations
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     V - C^(1-phi)/(1-phi) - chi0*(LMax - L)^(1-chi)/(1-chi) - Beta*VK;
     C^(-phi) - Beta*(exp(Int)/PI(1))*C(1)^(-phi)*DZ(1)^(-phi)*(V(1)*DZ(1)^(1-phi)/VK)^(-alpha);
     Valphaexp - ((V(1)/VAIMSS)*(DZ(1)/DZBAR)^(1-phi))^(1-alpha);
@@ -87,17 +82,14 @@ model;
     C - Y + G + IBAR;
     log(PIAVG) - rhoinflavg*log(PIAVG(-1)) - (1-rhoinflavg)*log(PI);
     4*Int - (1 - taylrho)*(4*log(1/Beta*DZBAR^phi) + 4*log(PIAVG) + taylpi*(4*log(PIAVG) - PISTAR) + tayly*(Y-YBAR)/YBAR ) - taylrho*4*Int(-1) - EPSInt;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    PB - 1 - PB(1)*cdelta*Beta*(C(1)/C)^(-phi)*DZ(1)^(-phi)*(V(1)*DZ(1)^(1-phi)/VK)^(-alpha)/PI(1);
+
+	PB - 1 - PB(1)*cdelta*Beta*(C(1)/C)^(-phi)*DZ(1)^(-phi)*(V(1)*DZ(1)^(1-phi)/VK)^(-alpha)/PI(1);
     PBB - 1 - PBB(1)*cdelta/exp(Int);
     YTM - log(cdelta*PB/(PB-1))*400;
     YTMM - log(cdelta*PBB/(PBB-1))*400;
     TT - 100*(YTM-YTMM);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%                         Shock Processes
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    log(A/ABAR) - rhoa*log(A(-1)/ABAR) - EPSA;
+
+	log(A/ABAR) - rhoa*log(A(-1)/ABAR) - EPSA;
     log(DZ/DZBAR) - rhoz*log(DZ(-1)/DZBAR) - EPSZ;
     log(G/GBAR) - rhog*log(G(-1)/GBAR) - EPSG;
     PISTAR - (1-rhopistar)*PIBAR + rhopistar*PISTAR(-1) - GSSLOAD*(4*log(PIAVG) - PISTAR) - EPSPISTAR;
@@ -135,19 +127,13 @@ TT = TT_ss;
 
 end;
 
-shocks;
 
-var EPSInt; 
-stderr 0.01;
-var EPSA;
-stderr 0.01;
-var EPSZ;
-stderr 0.01;
-var EPSG; 
-stderr 0.01;
-var EPSPISTAR;
-stderr 0.01;
+vcov=[
+         0.01            0            0            0            0
+            0         0.01            0            0            0
+            0            0         0.01            0            0
+            0            0            0         0.01            0
+            0            0            0            0         0.01
+			];
 
-end;
-
-stoch_simul(irf = 40, order = 3,k_order_solver); 
+order = 3;

@@ -5,15 +5,15 @@ endogenous V, C, L, VK, PI, Valphaexp, ZN, MC, Y, ZD, P0, W, Int, Delta, PIAVG, 
 
 exogenous EPSInt, EPSA, EPSZ, EPSG, EPSPISTAR
 
-parameters phi, chi, theta, eta, xi, alpha, LMax, DZBAR, YBAR, delta, KRAT, GRAT, , 
+parameters phi, chi, theta, eta, xi, alpha, LMax, DZBAR, YBAR, delta, KRAT, GRAT , 
     PIBAR, rhoinflavg, taylrho, taylpi, tayly, rhoa, rhoz, rhog, rhopistar, GSSLOAD,
-	cdelta Beta_tilde, Beta
+	cdelta Beta_tilde
 	% stand-ins for shocks' standard deviations
 	%-------------------------------------------
 	std_EPSInt, std_EPSA, std_EPSZ, std_EPSG, std_EPSPISTAR
 	% parameters determined in steady state
 	%---------------------------------------
-	KBAR, IBAR chi0
+	KBAR, IBAR chi0, Beta
 
 model
 
@@ -76,35 +76,60 @@ model
 
 steady_state_model
 	L = 1/3;
+	
 	Y = 1;
+	
 	MC = 1/(1+theta);
+	
 	DZ = DZBAR;
+	
 	Beta = Beta_tilde*DZ^phi;
+	
 	PI = exp(PIBAR);
+	
 	Int = log((PI/Beta)*DZ^phi);
+	
 	Delta = 1;
+	
 	PIAVG = PI;
+	
 	KBAR = 4*YBAR*KRAT;
+	
 	IBAR = delta*KBAR;
+	
 	G = YBAR*GRAT;
+	
 	A =  YBAR/(KBAR^(1-eta)*L^eta);
+	
 	PISTAR = PIBAR;
+	
 	C = Y - G - IBAR;
+	
 	ZN = (1+theta)*MC*Y/(1-xi*Beta*DZ^(-phi)*PI^(eta*(1+theta)/theta));
+	
 	ZD = Y/(1-xi*Beta*DZ^(-phi)*PI^(1/theta));
+	
 	P0 = (ZN/ZD)^(1/(1+(1+theta)/theta*(1-eta)/eta));
+	
 	W = MC*eta*Y/L;
-%	DZZ = DZ;
+	
 	chi0 = W/((LMax - L)^(-chi)/C^(-phi));
+	
 	xx_ssmdef_1 = C^(1-phi)/(1-phi) + chi0*(LMax - L)^(1-chi)/(1-chi);
+	
 	V = xx_ssmdef_1/(1 - (Beta*DZBAR^(1-phi)));
+	
 	VK = V*DZBAR^(1-phi);
+	
 	Valphaexp = (V/V)^(1-alpha);
+	
 	PB = 1/(1 - cdelta/exp(Int));
+	
 	PBB = 1/(1 - cdelta/exp(Int));
+	
 	YTM = log(cdelta*PB/(PB-1))*400;
+	
 	YTMM = log(cdelta*PBB/(PBB-1))*400;
-	TT = 0;
 
 
 parameterization
