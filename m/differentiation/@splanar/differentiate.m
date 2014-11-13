@@ -65,7 +65,7 @@ end
 neqtns=neqtns0;
 derivs=struct('size',{},'derivatives',{},...
     'nwrt',{},'order',{},'nnz_derivs',{},'partitions',{},...
-    'map',{});
+    'map',{},'vectorizer',{});
 for oo=1:order
     if verbose
         tic
@@ -153,7 +153,7 @@ for oo=1:order
     
     derivs(oo)=struct('size',{[neqtns0,ncols]},'derivatives',d,...
         'nwrt',nwrt,'order',oo,'nnz_derivs',nnz_derivs,'partitions',expand,...
-        'map',[]);
+        'map',[],'vectorizer',[]);
     
     % next round
     %-----------
