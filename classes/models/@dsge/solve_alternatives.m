@@ -57,9 +57,9 @@ for sim=iter+1:solve_alternatives_nsim
     if ~retcode
         sols=sols+1;
         do_not_discard=true;
-		newsol=cell2mat(objtmp.solution.m_x);
+		newsol=cell2mat(objtmp.solution.Tz);
         for jj=1:indep_sols
-            test=max(max(abs(newsol-cell2mat(allobj(jj).solution.m_x))));
+            test=max(max(abs(newsol-cell2mat(allobj(jj).solution.Tz))));
             if test<1e-5
                 do_not_discard=false;
                 break
