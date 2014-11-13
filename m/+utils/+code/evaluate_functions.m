@@ -64,6 +64,9 @@ end
         vector_it=@(x)cell2mat(x(:).');
         for iout=1:nout
             xcell=tmp(iout).functions;
+            if ~iscell(xcell)
+                xcell={xcell};
+            end
             mm=tmp(iout).size(1);
             nn=tmp(iout).size(2);
             if isempty(xcell)
