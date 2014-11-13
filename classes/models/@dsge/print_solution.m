@@ -197,7 +197,7 @@ end
             ];
         if regime_index==1
             orders=sort(orders);
-            if ~isequal(order,unique(orders))
+            if ~isequal(orders,unique(orders))
                 error('the orders specified are duplicated')
             end
             if orders(end)>obj.options.solve_order
