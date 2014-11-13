@@ -306,9 +306,11 @@ classdef aplanar
         function obj = mpower(g,h)
             bad_flag=false;
             g_dbl=isa(g,'double');
-            if ~g_dbl && g.x==0
-                g.x=eps*1i;
-                bad_flag=true;
+            if ~g_dbl
+                bad_flag=g.x<=0||~isreal(g.x);
+                if g.x==0
+                    g.x=eps*1i;
+                end
             elseif g_dbl && g==0
                 g=eps*1i;
                 bad_flag=true;
