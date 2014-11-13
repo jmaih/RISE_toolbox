@@ -328,7 +328,8 @@ end
         if resolve_it
             obj.solution=struct();%dsge.initialize_solution_or_structure('solution',h);
             obj.solution.H=cell(1,h);
-            [obj,structural_matrices,retcode]=compute_steady_state(obj);
+            [obj1,structural_matrices,retcode]=compute_steady_state(obj);
+            obj=obj1;
             if ~retcode
                 % measurement errors
                 %-------------------
@@ -389,16 +390,47 @@ symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
 ssfuncs.static=obj.routines.static;
 ssfuncs.static_bgp=obj.routines.static_bgp;
 if symbolic_derivatives
-    ssfuncs.jac_static=@(varargin)utils.code.evaluate_functions(...
-        obj.routines.static_derivatives,varargin{:});
-    ssfuncs.jac_bgp=@(varargin)utils.code.evaluate_functions(...
-        obj.routines.static_bgp_derivatives,varargin{:});
+    ssfuncs.jac_static=obj.routines.static_derivatives;
+    ssfuncs.jac_bgp=obj.routines.static_bgp_derivatives;
 else
-    ssfuncs.jac_static=@(varargin)utils.code.compute_automatic_derivatives(...
-        obj.routines.symbolic.static,1,...
-        varargin{:});
-    ssfuncs.jac_bgp=@(varargin)utils.code.compute_automatic_derivatives(...
-        obj.routines.symbolic.static_bgp,1,...
-        varargin{:});
+    solve_order=1;
+    ssfuncs.jac_static=compute_automatic_derivatives(obj.routines.symbolic.static,solve_order);
+    ssfuncs.jac_bgp=compute_automatic_derivatives(obj.routines.symbolic.static_bgp,solve_order);
 end
 end
+
+
+function func=compute_automatic_derivatives(derivatives,solve_order)
+
+func=@engine;
+
+    function [D01,retcode]=engine(varargin)
+        D01=utils.code.evaluate_automatic_derivatives(derivatives,solve_order,varargin{:});
+        good=all(cellfun(@(x)utils.error.valid(x),D01));
+        retcode=0;
+        D01=D01{1};
+        if ~good
+            retcode=2; % nans in jacobian
+        end
+    end
+end
+
+% function ssfuncs=recreate_steady_state_functions(obj)
+% % initialize this here
+% ssfuncs=struct();
+% 
+% symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
+% if symbolic_derivatives
+%     ssfuncs.static=obj.routines.static;
+%     ssfuncs.static_bgp=obj.routines.static_bgp;
+% else
+%     solve_order=1;
+%     func=compute_automatic_derivatives(obj.routines.symbolic.static,solve_order);
+%     ssfuncs.jac_static=@(varargin)compute_automatic_derivatives(...
+%         obj.routines.symbolic.static,1,...
+%         varargin{:});
+%     ssfuncs.jac_bgp=@(varargin)compute_automatic_derivatives(...
+%         obj.routines.symbolic.static_bgp,1,...
+%         varargin{:});
+% end
+% end
