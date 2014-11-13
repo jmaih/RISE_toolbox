@@ -68,13 +68,13 @@ end
     function sn=solvent_norm()
         n_a0=0;n_aplus=0;n_aminus=0;
         for ii_state=1:h
-            n_a0=max(n_a0,norm(A0{ii_state}));
+            n_a0=max(n_a0,norm(full(A0{ii_state})));
             aplus=0;
             for s1=1:h
                 aplus=aplus+dbf_plus{ii_state,s1};
             end
             n_aplus=max(n_aplus,norm(aplus));
-            n_aminus=max(n_aminus,norm(dpb_minus{ii_state}));
+            n_aminus=max(n_aminus,norm(full(dpb_minus{ii_state})));
         end
         sn=(n_a0+sqrt(n_a0^2+4*n_aplus*n_aminus))/(2*n_aplus);
     end
