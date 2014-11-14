@@ -84,8 +84,8 @@ end
                     
                     if obj(imod).is_optimal_policy_model && io==1
                         disp([main,DerivativesTypes{ider},' derivatives(order=',order_,'): discrep of policy weights relative to automatic'])
-                        test=do_test('W',1);
-                        disp(['W ::',test])
+                        test=do_test('weights',3);
+                        disp(['Weights ::',test])
                     end
                     
                     if io>1 && strcmp(DerivativesTypes{ider},'numerical')
@@ -103,6 +103,9 @@ end
                 case 1
                     discr=cell2mat(structural_matrices{ider}.(vx))-...
                         cell2mat(structural_matrices{nder}.(vx));
+                case 3
+                    discr=cell2mat(structural_matrices{ider}.planner.(vx))-...
+                        cell2mat(structural_matrices{nder}.planner.(vx));
                 case 2
                     discr=cell2mat(evaluated_objects{ider}.solution.(vx))-...
                         cell2mat(evaluated_objects{nder}.solution.(vx));
