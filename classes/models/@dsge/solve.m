@@ -275,6 +275,8 @@ end
                             weights=utils.code.evaluate_policy_objective_hessian_numerically(...
                                 obj.routines.planner_objective,...
                                 ss(:,s0),[],ss(:,s0),params(:,s0),[],def{s0},s0,s1);
+                            % here the weights have to be re-ordered
+                            weights=weights(obj.order_var.before_solve,obj.order_var.before_solve);
                         end
                         if ~utils.error.valid(weights)
                             retcode=6;
