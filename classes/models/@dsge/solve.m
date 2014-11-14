@@ -84,13 +84,9 @@ end
 def=[];
 ys=[];
 ss=[];
-xss=zeros(sum(obj.exogenous.number),1);
-lead_lag_incidence=obj.lead_lag_incidence.after_solve;
-endo_nbr=obj.endogenous.number(end);
-the_leads=find(lead_lag_incidence(:,1)>0);
-the_current=(1:endo_nbr)';
-the_lags=find(lead_lag_incidence(:,3)>0);
-indices=[the_leads;the_current;the_lags];
+nx=sum(obj.exogenous.number);
+xss=zeros(nx,1);
+[the_leads,the_current,the_lags,indices,nind,endo_nbr]=create_indices(obj.lead_lag_incidence.before_solve);
 structural_matrices=[];
 
 if obj.is_optimal_policy_model % || obj.estimation_under_way
@@ -187,6 +183,23 @@ end
         % evaluate first-order derivatives
         %---------------------------------
         symbolic_type=strcmp(obj.options.solve_derivatives_type,'symbolic');
+        if ~symbolic_type
+            automatic_type=strcmp(obj.options.solve_derivatives_type,'automatic');
+            if ~automatic_type
+                numeric_type=any(strcmp(obj.options.solve_derivatives_type,{'numeric','numerical'}));
+                if ~numeric_type
+                    error(['solve_derivatives_type can only assume values ',...
+                        '"symbolic", "automatic" or "numeric"'])
+                end
+                if solve_order>1
+                    error('numerical derivatives not implemented for orders greater than 1')
+                end
+                % prepare the re-ordering of the endogenous columns
+                reordering=obj.lead_lag_incidence.before_solve(obj.order_var.before_solve,:);
+                reordering=reordering(reordering>0);
+            end
+        end
+        
         xxx=repmat('v',1,solve_order);
         % evaluate higher-order derivatives
         %----------------------------------
@@ -200,10 +213,16 @@ end
                     if symbolic_type
                         [G01{1:solve_order}]=utils.code.evaluate_functions(obj.routines.probs_times_dynamic_derivatives,...
                             ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
-                    else
+                    elseif automatic_type
                         G01=utils.code.evaluate_automatic_derivatives(...
                             obj.routines.symbolic.probs_times_dynamic,solve_order,...
                             ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
+                    else
+                        [G01{1:1}]=utils.code.evaluate_jacobian_numerically(obj.routines.probs_times_dynamic,...
+                            ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1,...
+                            obj.switching_parameters_leads_index);
+                        % The columns are to be put in the order_var order
+                        G01{1}(:,1:nind)=G01{1}(:,reordering);
                     end
                     if utils.error.valid(G01)
                         % use the derivatives Gi to build dv, dvv, dvvv, ...
@@ -240,18 +259,22 @@ end
                         retcode=6;
                     end
                     if ~retcode
+                        s1=s0;
                         % pick the hessian directly
                         order__=2;
                         if symbolic_type
                             [~,weights]=utils.code.evaluate_functions(...
                                 obj.routines.planner_objective_derivatives,...
-                                ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
-                        else
-                            s1=s0;
+                                ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
+                        elseif automatic_type
                             D01=utils.code.evaluate_automatic_derivatives(...
                                 obj.routines.symbolic.planner_objective,order__,...
-                                ys(:,s0),xss,ss(:,s0),params(:,s0),[],def{s0},s0,s1);
+                                ss(:,s0),xss,ss(:,s0),params(:,s0),[],def{s0},s0,s1);
                             weights=D01{order__};
+                        else
+                            weights=utils.code.evaluate_policy_objective_hessian_numerically(...
+                                obj.routines.planner_objective,...
+                                ss(:,s0),[],ss(:,s0),params(:,s0),[],def{s0},s0,s1);
                         end
                         if ~utils.error.valid(weights)
                             retcode=6;
@@ -349,13 +372,16 @@ end
         % spit out the forms to be used for the computation of derivatives
         %-----------------------------------------------------------------
         if ~retcode
-            ys=zeros(numel(indices),h);
+            ys=zeros(nind,h);
             ss=zeros(endo_nbr,h);
             def=obj.solution.definitions;
+            % in case of optimal policy, we are not interested in the whole
+            % vector of sstates. We need to locate what we need
+            original=obj.endogenous.is_original;
             for s0=1:h
                 for s1=1:h
                     if s0==1
-                        ss(:,s1)=obj.solution.ss{s1};
+                        ss(:,s1)=obj.solution.ss{s1}(original);
                         ys(:,s1)=ss(indices,s1);
                         % y needs to be modified for the variables that have a
                         % nonzero balanced-growth path
@@ -382,6 +408,15 @@ end
     end
 end
 
+function [the_leads,the_current,the_lags,indices,nind,endo_nbr]=create_indices(lead_lag_incidence)
+endo_nbr=size(lead_lag_incidence,1);
+the_leads=find(lead_lag_incidence(:,1)>0);
+the_current=(1:endo_nbr)';
+the_lags=find(lead_lag_incidence(:,3)>0);
+indices=[the_leads;the_current;the_lags];
+nind=numel(indices);
+end
+
 function ssfuncs=recreate_steady_state_functions(obj)
 % initialize this here
 ssfuncs=struct();
@@ -399,7 +434,6 @@ else
 end
 end
 
-
 function func=compute_automatic_derivatives(derivatives,solve_order)
 
 func=@engine;
@@ -414,23 +448,3 @@ func=@engine;
         end
     end
 end
-
-% function ssfuncs=recreate_steady_state_functions(obj)
-% % initialize this here
-% ssfuncs=struct();
-% 
-% symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
-% if symbolic_derivatives
-%     ssfuncs.static=obj.routines.static;
-%     ssfuncs.static_bgp=obj.routines.static_bgp;
-% else
-%     solve_order=1;
-%     func=compute_automatic_derivatives(obj.routines.symbolic.static,solve_order);
-%     ssfuncs.jac_static=@(varargin)compute_automatic_derivatives(...
-%         obj.routines.symbolic.static,1,...
-%         varargin{:});
-%     ssfuncs.jac_bgp=@(varargin)compute_automatic_derivatives(...
-%         obj.routines.symbolic.static_bgp,1,...
-%         varargin{:});
-% end
-% end
