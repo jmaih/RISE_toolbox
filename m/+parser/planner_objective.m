@@ -57,13 +57,15 @@ if ~isempty(startc)
     equality=strfind(Commitment,'=');
     true_commitment=Commitment(equality+1:end-1);
     if ~ismember(true_commitment,{'0','1'})
-        dictionary.markov_chains(end+1)=struct('name',parser.loose_commit(),'number_of_states',2,'is_endogenous',false);
+        dictionary.markov_chains(end+1)=parser.initialize_markov_chain(...
+            parser.loose_commit(),2,'is_endogenous',false);
         % Adding a new markov chain through loose commitment. In
         % re-ordering the chains, we need to update the info in the
         % parameters
         [~,tmp]=sort({dictionary.markov_chains.name});
         for iparam=1:numel(dictionary.parameters)
-            dictionary.parameters(iparam).governing_chain=find(dictionary.parameters(iparam).governing_chain==tmp);
+            dictionary.parameters(iparam).governing_chain=...
+                find(dictionary.parameters(iparam).governing_chain==tmp);
         end
         dictionary.markov_chains=dictionary.markov_chains(tmp);
     end
