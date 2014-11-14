@@ -56,7 +56,7 @@ if license('checkout','Distrib_Computing_Toolbox') && some_workers
     H=diag(Hdiag);
     if ~diagonly
         parfor ii=1:npar
-            H(ii,:)=theLoopBody2(H(ii,:),f1,f0,ii);
+            H(ii,:)=theLoopBody2(H(ii,:),ii);
         end
     end
 else
@@ -66,7 +66,7 @@ else
     H=diag(Hdiag);
     if ~diagonly
         for ii=1:npar
-            H(ii,:)=theLoopBody2(H(ii,:),f1,f0,ii);
+            H(ii,:)=theLoopBody2(H(ii,:),ii);
         end
     end
 end
@@ -82,11 +82,11 @@ end
         f0i = Objective(x0,varargin{:});
         Hii = (f1i+f0i-2*fx)./hh(ii,ii);
     end
-    function H=loop_body_cross(H,f1,f0,ii)
+    function H=loop_body_cross(H,ii)
         for jj=ii+1:npar
             xcross =  xparam+ee(:,ii)-ee(:,jj);
             fxx=Objective(xcross,varargin{:});
-            H(jj) = (f1(ii)+f0(ii)-fx-fxx)./hh(ii,jj);
+            H(jj) = (f1(ii)+f0(jj)-fx-fxx)./hh(ii,jj);
         end
     end
 end
