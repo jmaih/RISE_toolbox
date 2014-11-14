@@ -1,4 +1,7 @@
 % Rudebusch-Swanson model by Andrew Binning
+% "The Bond Premium in a DSGE Model with Long-Run and Nominal Risks"
+% By Glenn D. Rudebusch and Eric T. Swanson. American Economic Journal:
+% Macroeconomics 2012, 4(1): 105-143.
 
 endogenous V, C, L, VK, PI, Valphaexp, ZN, MC, Y, ZD, P0, W, Int, Delta, PIAVG, G, A, DZ, PISTAR,
 	PB, PBB, YTM, YTMM, TT
@@ -50,8 +53,13 @@ model
 	
     4*Int - (1 - taylrho)*(4*log(1/Beta*DZBAR^phi) + 4*log(PIAVG) + taylpi*(4*log(PIAVG) - PISTAR) + tayly*(Y-YBAR)/YBAR ) - taylrho*4*Int(-1) - std_EPSInt*EPSInt;
 	
-    % Andrew to explain this
-    %-----------------------
+    % Explaining the term premia calculations (next 5 equations)
+    %------------------------------------------------------------
+	% Rudebusch and Swanson calculate the Term Premium on a 10 year bond with the 10 year Treasury note as the bench-mark bond. To simplify calculations, 
+	% they assume that households can buy and sell a long-term default free nominal consol which pays a geometrically declining coupon in every period in
+	% perpetuity. The price of the risky bond is PB in period t, the price of the Treasury bond is PBB in period t.  cdelta is the rate of decay of the 
+	% coupon on the consol. YTM and YTMM are the continuously compounded yields to maturity for the risky and the less risky bonds. The term premium, TT, 
+	% is calculated as the difference between the yields on the risky and the less risky bonds. 
 	
     PB - 1 - PB(1)*cdelta*Beta*(C(1)/C)^(-phi)*DZ(1)^(-phi)*(V(1)*DZ(1)^(1-phi)/VK)^(-alpha)/PI(1);
 	

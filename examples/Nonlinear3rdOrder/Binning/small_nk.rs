@@ -1,3 +1,7 @@
+% "The inflation bias under Calvo and Rotemberg pricing",
+% by Campbell Leith and Ding Liu. Working paper 2014 06,
+% University of Glasgow.
+
 endogenous R, DELTA, Z, C, W, N, K, J, PSTAR, PI, MC
 
 exogenous EZ, ER
