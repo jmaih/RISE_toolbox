@@ -45,6 +45,10 @@ function H=evaluate_policy_objective_hessian_numerically(funcs,y,x,ss,param,spar
 %
 % See also: 
 
+if iscell(funcs)
+    funcs=funcs{1};
+end
+
 if ~isa(funcs,'function_handle')
     error('objective should be a function handle')
 end
