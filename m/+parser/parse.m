@@ -862,6 +862,7 @@ if is_model_with_planner_objective
     optimal_policy_incidence=dictionary.order_var.before_solve;
     wrt=dynamic_differentiation_list(optimal_policy_incidence,0,[]);
     
+    routines.planner_objective=utils.code.code2func(dictionary.planner_system.shadow_model(1));
     [routines.planner_objective_derivatives,numEqtns,numVars,jac_toc,...
         original_funcs]=differentiate_system(...
         dictionary.planner_system.shadow_model(1),...
@@ -979,6 +980,7 @@ dictionary.lead_lag_incidence.after_solve(dictionary.lead_lag_incidence.after_so
     0,... number of shocks periods beyond the current
     numel(switching_parameters_leads_index)... future switching parameters
     );
+dictionary.switching_parameters_leads_index=switching_parameters_leads_index;
 
 % reorder the solution of loose commitment or sticky information so that it
 % conforms with order_var
