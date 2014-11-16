@@ -1,28 +1,68 @@
-function H = hessian(Objective,xparam,varargin)
-% H1 line
+function H = hessian(Objective,xparam,options,varargin)
+% hessian - computes the hessian of a scalar function
 %
 % Syntax
 % -------
 % ::
 %
+%   H = hessian(Objective,xparam)
+%   H = hessian(Objective,xparam,varargin)
+%
 % Inputs
 % -------
+%
+% - **Objective** [char|function handle]: function to differentiate
+%
+% - **xparam** [vector]: Point at which the derivatives are taken
+%
+% - **options** [struct]: structure containing the options for the
+%   computation. These are:
+%   - **tol** [numeric|{eps.^(1/4)}] : tolerance for the computation of the
+%       steps
+%   - **diagonly** [true|{false}] : if true, only the elements on the
+%       diagonal are computed
+%
+% - **varargin** []: further input arguments of **Objective**
 %
 % Outputs
 % --------
 %
+% - **H** [matrix]: hessian matrix
+%
 % More About
 % ------------
+%
+% - The tolerance level is hard-coded to be eps.^(1/4). This should
+%   probably be an input
 %
 % Examples
 % ---------
 %
 % See also: 
 
-tol      = eps.^(1/4);
-diagonly = false;
+if nargin<3
+    options=[];
+end
+if isempty(options)
+    options=struct();
+end
+if ~isfield(options,'tol')
+    options.tol=[];
+end
+if ~isfield(options,'diagonly')
+    options.diagonly=[];
+end
+defaults={
+    'tol',eps.^(1/4),@(x)isnumeric(x)
+    'diagonly',false,@(x)islogical(x)
+    };
 
-Objective=fcnchk(Objective,length(varargin));
+[tol,diagonly]=utils.miscellaneous.parse_arguments(defaults,...
+    'tol',options.tol,'diagonly',options.diagonly);
+
+if ischar(Objective)
+    Objective=str2func(Objective);
+end
 
 fx = Objective(xparam,varargin{:});
 
