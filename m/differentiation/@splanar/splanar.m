@@ -74,6 +74,36 @@ classdef splanar
         % constructor
         %------------
         function obj=splanar(f,a)
+            % splanar - constructor for splanar objects
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   obj=splanar(f)
+            %   obj=splanar(f,a)
+            %
+            % Inputs
+            % -------
+            %
+            % - **f** [splanar|char|numeric]: function (string) or variable name or
+            %   numerical value
+            %
+            % - **a** [cell|numeric|splanar]: argument(s) of function f. This is when f
+            %   is indeed a function
+            %
+            % Outputs
+            % --------
+            %
+            % - **obj** [splanar]: built object
+            %
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
             if nargin>0
                 if strcmp(class(f),'splanar') %#ok<*STISA>
                     obj=f;
@@ -94,54 +124,71 @@ classdef splanar
         % overloaded operators
         %---------------------
         function obj=abs(a)
+            % abs - overloads abs for splanar
             obj=do_univariate(a,'abs');
         end
         function obj=acos(a)
+            % acos - overloads acos for splanar
             obj=do_univariate(a,'acos');
         end
         function obj=acosh(a)
+            % acosh - overloads acosh for splanar
             obj=do_univariate(a,'acosh');
         end
         function obj=and(a,b)
+            % and - overloads and for splanar
             obj=do_bivariate(a,b,'and');
         end
         function obj=asin(a)
+            % asin - overloads asin for splanar
             obj=do_univariate(a,'asin');
         end
         function obj=asinh(a)
+            % asinh - overloads asinh for splanar
             obj=do_univariate(a,'asinh');
         end
         function obj=atan(a)
+            % atan - overloads atan for splanar
             obj=do_univariate(a,'atan');
         end
         function obj=atanh(a)
+            % atanh - overloads atanh for splanar
             obj=do_univariate(a,'atanh');
         end
         function obj=cos(a)
+            % cos - overloads cos for splanar
             obj=do_univariate(a,'cos');
         end
         function obj=cosh(a)
+            % cosh - overloads cosh for splanar
             obj=do_univariate(a,'cosh');
         end
         function obj=cot(a)
+            % cot - overloads cot for splanar
             obj=do_univariate(a,'cot');
         end
         function obj=eq(a,b)
+            % eq - overloads eq for splanar
             obj=do_bivariate(a,b,'eq');
         end
         function obj=erf(a)
+            % erf - overloads erf for splanar
             obj=do_univariate(a,'erf');
         end
         function obj=exp(a)
+            % exp - overloads exp for splanar
             obj=do_univariate(a,'exp');
         end
         function obj=ge(a,b)
+            %  - overloads  for splanar
             obj=do_bivariate(a,b,'ge');
         end
         function obj=gt(a,b)
+            % ge - overloads ge for splanar
             obj=do_bivariate(a,b,'gt');
         end
         function obj=if_elseif(varargin)
+            % if_elseif - overloads if_elseif for splanar
             n=nargin;
             [varargin{1:n}]=splanarize(varargin{:});
             nconst=0;
@@ -176,27 +223,35 @@ classdef splanar
             end
         end
         function obj=if_then_else(a,b,c)
+            % if_then_else - overloads if_then_else for splanar
             obj=if_elseif(a,b,~a,c);
         end
         function obj=le(a,b)
+            % le - overloads le for splanar
             obj=do_bivariate(a,b,'le');
         end
         function obj=log(a)
+            % log - overloads log for splanar
             obj=do_univariate(a,'log');
         end
         function obj=log10(a)
+            % log10 - overloads log10 for splanar
             obj=log(a)/log(10);
         end
         function obj=lt(a,b)
+            % lt - overloads lt for splanar
             obj=do_bivariate(a,b,'lt');
         end
         function obj=max(a,b)
+            % max - overloads max for splanar
             obj=do_bivariate(a,b,'max');
         end
         function obj=min(a,b)
+            % min - overloads min for splanar
             obj=do_bivariate(a,b,'min');
         end
         function obj=minus(a,b)
+            % minus - overloads minus for splanar
             [a,b]=splanarize(a,b);
             if is_zero(b)
                 % x - 0 = x
@@ -212,6 +267,7 @@ classdef splanar
             end
         end
         function obj=mpower(a,b)
+            % mpower - overloads mpower for splanar
             [a,b]=splanarize(a,b);
             obj=a.prototype;obj.prototype=obj;
             if is_zero(b)
@@ -230,6 +286,7 @@ classdef splanar
             end
         end
         function obj=mrdivide(a,b)
+            % mrdivide - overloads mrdivide for splanar
             [a,b]=splanarize(a,b);
             if any(b.func==0)
                 % x/0 impossible
@@ -253,6 +310,7 @@ classdef splanar
             end
         end
         function obj=mtimes(a,b)
+            % mtimes - overloads mtimes for splanar
             [a,b]=splanarize(a,b);
             isnum_a=isnumeric(a);
             isnum_b=isnumeric(b);
@@ -285,9 +343,11 @@ classdef splanar
             end
         end
         function obj=ne(a,b)
+            % ne - overloads ne for splanar
             obj=do_bivariate(a,b,'ne');
         end
         function obj=normcdf(x,mu,sd)
+            % normcdf - overloads normcdf for splanar
             if nargin<3
                 sd=1;
                 if nargin<2
@@ -297,6 +357,7 @@ classdef splanar
             obj=do_trivariate_normal(x,mu,sd,'normcdf');
         end
         function obj=normpdf(x,mu,sd)
+            % normpdf - overloads normpdf for splanar
             if nargin<3
                 sd=1;
                 if nargin<2
@@ -306,9 +367,11 @@ classdef splanar
             obj=do_trivariate_normal(x,mu,sd,'normpdf');
         end
         function obj=or(a,b)
+            % or - overloads or for splanar
             obj=do_bivariate(a,b,'or');
         end
         function obj=plus(a,b)
+            % plus - overloads plus for splanar
             [a,b]=splanarize(a,b);
             if ischar(b.func) && strcmp(b.func,'uminus')
                 % x + (-y) = x - y
@@ -327,24 +390,31 @@ classdef splanar
             end
         end
         function obj=sign(a)
+            % sign - overloads sign for splanar
             obj=do_univariate(a,'sign');
         end
         function obj=sin(a)
+            % sin - overloads sin for splanar
             obj=do_univariate(a,'sin');
         end
         function obj=sinh(a)
+            % sinh - overloads sinh for splanar
             obj=do_univariate(a,'sinh');
         end
         function obj=sqrt(a)
+            % sqrt - overloads sqrt for splanar
             obj=do_univariate(a,'sqrt');
         end
         function obj=tan(a)
+            % tan - overloads tan for splanar
             obj=do_univariate(a,'tan');
         end
         function obj=tanh(a)
+            % tanh - overloads tanh for splanar
             obj=do_univariate(a,'tanh');
         end
         function obj=uminus(a)
+            % uminus - overloads uminus for splanar
             if strcmp(a.func,'uminus')
                 % Simplify -(-x) in x
                 obj=a.prototype;obj.prototype=obj;
@@ -358,17 +428,21 @@ classdef splanar
             end
         end
         function obj=uplus(a)
+            % uplus - overloads uplus for splanar
             obj=a;
         end
         % bizarre functions
         %------------------
         function obj=power(varargin)
+            % power - overloads power for splanar
             obj=mpower(varargin{:});
         end
         function obj=rdivide(varargin)
+            % rdivide - overloads rdivide for splanar
             obj=mrdivide(varargin{:});
         end
         function obj=times(varargin)
+            % times - overloads times for splanar
             obj=mtimes(varargin{:});
         end
         % utility functions
@@ -379,17 +453,23 @@ classdef splanar
         varargout=set(varargin)
         varargout=get(varargin)
         function flag=isnumeric(a)
+            % isnumeric - checks whether a splanar object is numeric
             flag=isnumeric(a.func)||islogical(a.func);
         end
         function flag=is_zero(a)
+            % is_zero - checks whether a splanar object is zero
             afunc=a.func;
             flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==0);
         end
         function flag=is_one(a)
+            % is_one - checks whether a splanar object is 1
             afunc=a.func;
             flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==1);
         end
         function obj=intercept_column(obj,pointer)
+            % intercept_column - builds a scalar splanar object from a
+            % vectorized splanar object. The pointer argument points the
+            % element in the vector to be used.
             if obj.number_of_columns>1
                 if isnumeric(obj) && numel(obj.func)>1
                     obj.func=obj.func(pointer);
@@ -408,6 +488,7 @@ classdef splanar
             end
         end
         function d=diff(x,wrt,pointer)
+            % diff - overloads diff for splanar
             if nargin<3
                 pointer=[];
             end
@@ -444,7 +525,7 @@ classdef splanar
                 for iarg=1:nargs
                     if ~isempty(pointer) && isnumeric(x.args{iarg}) && numel(x.args{iarg}.func)>1
                         x.args{iarg}.func=x.args{iarg}.func(pointer);
-                        x.args{iarg}.number_of_columns=false;
+                        x.args{iarg}.number_of_columns=1;
                     end
                     if (if_elseif_flag && rem(iarg,2))||(iarg==1 && if_then_else_flag)
                         continue
@@ -583,6 +664,8 @@ classdef splanar
     end
     methods(Static)
         function deriv=derivatives2functions(deriv,args,optimize)
+            % derivatives2functions - turns splanar derivatives into
+            % functions
             if nargin<3
                 optimize=false;
             end
@@ -614,6 +697,7 @@ classdef splanar
             end
         end
         function var_list=initialize(var_list,wrt_list)
+            % initialize - initializes splanar objects for differentiation
             if ischar(var_list)
                 var_list=cellstr(var_list);
             end
