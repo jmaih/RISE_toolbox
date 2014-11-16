@@ -275,7 +275,9 @@ end
                             weights=utils.code.evaluate_policy_objective_hessian_numerically(...
                                 obj.routines.planner_objective,...
                                 ss(:,s0),[],ss(:,s0),params(:,s0),[],def{s0},s0,s1);
-                            % here the weights have to be re-ordered
+                            % here the weights have to be re-ordered,
+                            % unlike in the other cases, where it is done
+                            % by the order of differentiation
                             weights=weights(obj.order_var.before_solve,obj.order_var.before_solve);
                         end
                         if ~utils.error.valid(weights)
@@ -351,10 +353,11 @@ end
     function retcode=solve_zeroth_order()
         retcode=0;
         if resolve_it
-            obj.solution=struct();%dsge.initialize_solution_or_structure('solution',h);
-            obj.solution.H=cell(1,h);
-            [obj1,structural_matrices,retcode]=compute_steady_state(obj);
-            obj=obj1;
+            if isempty(obj.solution)||~obj.estimation_under_way
+                obj.solution=struct();%dsge.initialize_solution_or_structure('solution',h);
+                obj.solution.H=cell(1,h);
+            end
+            [obj,structural_matrices,retcode]=compute_steady_state(obj);
             if ~retcode
                 % measurement errors
                 %-------------------
