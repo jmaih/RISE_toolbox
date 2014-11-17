@@ -102,6 +102,7 @@ classdef coef
             [param_names,governing_chain,parameter_values,chain_names,...
                 grand_chains_to_small,regimes,endo_names]=...
                 main_object_environment();
+            est_list=parser.param_name_to_valid_param_name(est_list);
             nest=numel(est_list);
             nrest=numel(obj);
             if ~isequal(size(r),[nrest,1])
@@ -116,11 +117,11 @@ classdef coef
                 if isa(this,'double')
                     idval=this;
                 elseif isempty(this.args)
-                    [id_,parval]=column_location(this.par_name);
+                    [id_,parval,pname]=column_location(this.par_name);
                     if isempty(id_)
                         % elements to go to the rhs
                         if isnan(parval)
-                            error([this.par_name,' is not estimated but found to be nan... this is not allowed'])
+                            error([pname,' is not estimated but found to be nan... this is not allowed'])
                         end
                         idval=parval;
                     else
@@ -158,7 +159,7 @@ classdef coef
                     r(restr_id)=r(restr_id)-sum(idval_rhs);
                 end
             end
-            function [id,parval]=column_location(vv)
+            function [id,parval,vv]=column_location(vv)
                 reformat_parameter_name();
                 id=find(strcmp(vv,est_list));
                 parval=nan;
