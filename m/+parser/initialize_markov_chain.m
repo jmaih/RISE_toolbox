@@ -25,7 +25,7 @@ pnames_defaults = {
     'param_list',{},@(x)ischar(x)||iscellstr(x)
     'param_list_tex',{},@(x)ischar(x)||iscellstr(x)
     'is_switching',[],@(x)islogical(x)
-    'duration', [],@(x)isa(x,'double') && numel(x)==1 && x>0
+    'duration', [],@(x)isa(x,'double') && all(real(x)>0)
     };
 if nargin==0
     if nargout
