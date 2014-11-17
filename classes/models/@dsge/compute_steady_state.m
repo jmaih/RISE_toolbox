@@ -280,7 +280,7 @@ end
         % input list is always 'y'    'x'    'ss'    'param'    'sparam'    'def'    's0'    's1'
         r=utils.code.evaluate_functions(func_ss,y_,x_ss,ss_i,pp_i,[],def_i,[],[]);
         if nargout>1
-            Jac=func_jac(y_,x_ss,ss_i,pp_i,[],def_i,[],[]);
+            Jac=utils.code.evaluate_functions(func_jac,y_,x_ss,ss_i,pp_i,[],def_i,[],[]);
         end
         
         if retcode && obj(1).options.debug
