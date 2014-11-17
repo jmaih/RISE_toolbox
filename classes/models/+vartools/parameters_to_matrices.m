@@ -37,34 +37,31 @@ ncell=size(param_template,2);
 links=cell(1,ncell);
 
 bigimage=param_template(2,:);
-discard=false(1,ncell);
+
 for ii=1:ncell
     themat=param_template{2,ii};
     header=param_template{1,ii};
     [jj,kk]=find(isnan(themat));
     if isempty(jj)
-        % this matrix is to be discarded
-        discard(ii)=true;
-        continue
+        bigimage{ii}=num2cell(themat);
+    else
+        plist=cellstr(strcat(header,'_',int2str(jj),'_',int2str(kk)));
+        ploc=locate_variables(plist,param_names);
+        links{ii}=sub2ind(size(themat),jj,kk)+ploc*1i;
+        image_themat=num2cell(themat);
+        for jj=1:numel(links{ii})
+            ll=links{ii}(jj);
+            image_themat{real(ll)}=param_names{imag(ll)};
+        end
+        bigimage{ii}=image_themat;
     end
-    plist=cellstr(strcat(header,'_',int2str(jj),'_',int2str(kk)));
-    ploc=locate_variables(plist,param_names);
-    links{ii}=sub2ind(size(themat),jj,kk)+ploc*1i;
-    image_themat=num2cell(themat);
-    for jj=1:numel(links{ii})
-        ll=links{ii}(jj);
-        image_themat{real(ll)}=param_names{imag(ll)};
-    end
-    bigimage{ii}=image_themat;
     if debug
         disp(themat)
         disp(image_themat)
         keyboard
     end
 end
-for jmat=find(discard)
-    bigimage{jmat}=num2cell(bigimage{jmat});
-end
+
 bigimage=cellfun(@(x)replace_double(x),[bigimage{:}],'uniformOutput',false);
 all_param_names_vec=bigimage(:);
 
