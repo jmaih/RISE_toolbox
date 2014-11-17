@@ -37,11 +37,14 @@ ncell=size(param_template,2);
 links=cell(1,ncell);
 
 bigimage=param_template(2,:);
+discard=false(1,ncell);
 for ii=1:ncell
     themat=param_template{2,ii};
     header=param_template{1,ii};
     [jj,kk]=find(isnan(themat));
     if isempty(jj)
+        % this matrix is to be discarded
+        discard(ii)=true;
         continue
     end
     plist=cellstr(strcat(header,'_',int2str(jj),'_',int2str(kk)));
@@ -58,6 +61,9 @@ for ii=1:ncell
         disp(image_themat)
         keyboard
     end
+end
+for jmat=find(discard)
+    bigimage{jmat}=num2cell(bigimage{jmat});
 end
 bigimage=cellfun(@(x)replace_double(x),[bigimage{:}],'uniformOutput',false);
 all_param_names_vec=bigimage(:);
