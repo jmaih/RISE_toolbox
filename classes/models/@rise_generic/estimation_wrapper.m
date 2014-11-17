@@ -23,8 +23,12 @@ function [x1,f1,H,issue,viol,obj,funevals]=...
 if isempty(action)
     action='eval';
 end
-nonlcon=obj(1).routines.nonlinear_restrictions;
-nconst=obj(1).number_of_restrictions.nonlinear;
+nonlcon=[];
+nconst=0;
+if isfield(obj(1).routines,'nonlinear_restrictions')
+    nonlcon=obj(1).routines.nonlinear_restrictions;
+    nconst=obj(1).number_of_restrictions.nonlinear;
+end
 
 if isempty(obj(1).linear_restrictions_data)
     % the model has not been estimated for the posterior mode yet. In
