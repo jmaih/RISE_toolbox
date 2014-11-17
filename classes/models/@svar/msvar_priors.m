@@ -34,7 +34,7 @@ if isempty(obj)
     return
 end
 s=quick_ar1_processes();
-obj.constant_var_data=struct('sigma_',diag(s.^2));
+obj.miscellaneous.constant_var.sigma_=diag(s.^2);
 
 prior_type=obj.options.vp_prior_type;
 use_priors=~strcmp(prior_type,'none');
