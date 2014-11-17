@@ -65,13 +65,14 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         data
         data_are_loaded = false
         estimation_under_way=false;
-        estim_hyperparams=[];
-        estim_distributions={};
-        estim_distrib_locations={};
+        estim_hyperparams=[]
+        estim_distributions={}
+        estim_distrib_locations={}
         linear_restrictions_data
         general_restrictions_data
         list_of_issues
-        routines=struct();
+        routines=struct()
+        miscellaneous=struct() % will hold elements that are not classified
     end
     
     methods(Abstract)

@@ -164,7 +164,7 @@ end
         switch obj.options.vp_prior_type
             case {'minnesota','indep_normal_wishart'}
                 if obj.options.vp_gls_ar1_processes
-                    iSIGU=diag(1./diag(obj.constant_var_data.sigma_));
+                    iSIGU=diag(1./diag(obj.miscellaneous.constant_var.sigma_));
                 else
                     results=vartools.ols(bigy,bigx,0,false);
                     iSIGU=results.SIGols\eye(obj.endogenous.number(end));%
