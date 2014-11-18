@@ -126,7 +126,6 @@ end
         %--------------------------------------------------------------
         x1=fsolve(@model_distance,myshocks(estim_shocks),...
             optimset('display','iter','TolFun',sqrt(eps)));
-        keyboard
         myshocks(estim_shocks)=x1;
         
         % rebuild the final sims
