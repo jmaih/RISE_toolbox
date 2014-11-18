@@ -1,5 +1,24 @@
 function [PbParams,M1,M2,RM2i,OMG,DYbar,UU,SS,Yf,MU,LB,UB,R]=projection_sub_engine(Hypothesis,Nsteps,H,G,Y0,...
-    EndogenousConditions,ShocksConditions,verbose) % ,Yf,
+    EndogenousConditions,ShocksConditions,verbose) 
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 if nargin<8
     verbose=false;
