@@ -30,9 +30,10 @@ function [db,states,retcode] = simulate(obj,varargin)
 %       satisfied. For instance, shock monetary policy to keep the interest
 %       rate at the floor for an extented period of time if we already are
 %       at the ZLB/ZIF. simul_update_shocks_handle takes as inputs the
-%       current shocks and the state vector (all the endogenous variables).
-%       The user also has to turn on **simul_do_update_shocks** by setting
-%       it to true.
+%       current shocks and the state vector (all the endogenous variables)
+%       and returns the updated shocks. But for all this to be put into
+%       motion, the user also has to turn on **simul_do_update_shocks** by
+%       setting it to true.
 %   - **simul_do_update_shocks** [true|{false}]: update the shocks based on
 %       **simul_update_shocks_handle** or not. 
 %   - **simul_to_time_series** [{true}|false]: if true, the output is a
