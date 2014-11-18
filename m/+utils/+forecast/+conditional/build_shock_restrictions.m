@@ -28,9 +28,11 @@ function [R,HHRestr,ncsp]=build_shock_restrictions(H,G,yrest_id,xrest_id,ncp,nap
 % - **xrest_id** [vector|scalar]: location of the restricted shocks in
 %   the columns of G
 %
-% - **ncp** [integer]: number of conditioning periods
+% - **ncp** [integer]: number of periods over which we have conditioning
+%   information
 %
-% - **nap** [integer|size(G,3)]: number of anticipated periods
+% - **nap** [integer|{size(G,3)}]: number of anticipated periods i.e. how
+%   far agents see into the future + the current period
 %
 % - **hypo** [NCP|NAS|{JMA}]: forecasting hypothesis, determining the
 %   number of periods over which future shocks will be drawn or assumed
@@ -76,24 +78,14 @@ if nargin<7
     end
 end
 
-hypo=upper(hypo);
-switch hypo
-    case {'NCP'}
-        ncsp=ncp;
-    case {'NAS'}
-        ncsp=nap;
-        if ~isequal(ncp,nap)
-            error([mfilename,':: for the NAS assumption, you need # anticipated steps = # conditioning periods'])
-        end
-    case {0,'JMA'}
-        ncsp=nap+ncp;
-    otherwise
-        error([mfilename,':: Unknown option for the anticipation hypothesis'])
-end
+ncsp = utils.forecast.conditional.number_of_conditioning_shocks_periods(hypo,ncp,nap);
 
 sizg=size(G);
 endo_nbr=sizg(1);
 exo_nbr=sizg(2);
+if nap>sizg(3)
+    error('solution of the model not consistent with the number of anticipated periods')
+end
 RestEndo_nbr=numel(yrest_id);
 cutoff=RestEndo_nbr*ncp;
 R=zeros(cutoff,exo_nbr*ncsp);

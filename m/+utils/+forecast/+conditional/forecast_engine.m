@@ -1,12 +1,92 @@
 function [Yf,CYfMean,Emean,CYf,E]=forecast_engine(Y0,H,G,EndogenousConditions,...
     ShocksConditions,Nsteps,NumberOfSimulations,Hypothesis,method)
-% Description:
-% Usage:
-% Arguments:
-% Value:
-% Author(s): Junior Maih (junior.maih@norges-bank.no)
-% See Also:
-% Examples:
+% forecast_engine - computes conditional forecasts for linear models
+%
+% Syntax
+% -------
+% ::
+%
+%   - [Yf,CYfMean,Emean,CYf,E]=forecast_engine(Y0,H,G,EndogenousConditions,...
+%     ShocksConditions,Nsteps,NumberOfSimulations)
+%   - [Yf,CYfMean,Emean,CYf,E]=forecast_engine(Y0,H,G,EndogenousConditions,...
+%     ShocksConditions,Nsteps,NumberOfSimulations,Hypothesis)
+%   - [Yf,CYfMean,Emean,CYf,E]=forecast_engine(Y0,H,G,EndogenousConditions,...
+%     ShocksConditions,Nsteps,NumberOfSimulations,Hypothesis,method)
+%
+% Inputs
+% -------
+%
+% - **Y0** [vector]: Initial conditions for the forecasts
+%
+% - **H** [matrix]: square matrix of the autoregressive part of the system
+%
+% - **G** [matrix|array]: n x ns x npages array representing the impact of
+%   shocks at various horizons
+%
+% - **EndogenousConditions** [4-element cell array]: restrictions on
+%   endogenous variables:
+%   - the first entry represents the central tendency of the restrictions.
+%       they are organized such that the rows represents time and the
+%       columns represent variables.
+%   - the second entry represents the unconditional covariance matrix of
+%       the restrictions. It is usually just empty. 
+%   - the third entry is a structure with fields LB (lower bound) and UB
+%       (upper bound). Both fields should have the same size as the central
+%       tendency. Use -inf for lower bound and inf for upper bound if and
+%       entry is unconstrained.
+%   - the fourth entry is the location of the restricted variables in the
+%       state vector.
+%
+% - **ShocksConditions** [4-element cell array]: restrictions on
+%   exogenous variables. Otherwise, same as **EndogenousConditions**
+%
+% - **Nsteps** [integer]: Number of forecasting steps
+%
+% - **NumberOfSimulations** [integer]: Number of simulations. The core of
+%   the algorithm computes the mean of the HARD or the SOFT CONDITIONS.
+%   With simulations, one can also compute the distribution of the forecast
+%   of the variables.
+%
+% - **Hypothesis** [{jma}|ncp|nas]: in dsge models in
+%       which agents have information beyond the current period, this
+%       option determines the number of periods of shocks need to match the
+%       restrictions:
+%       - Hypothesis **jma** assumes that irrespective of how
+%           many periods of conditioning information are remaining, agents
+%           always receive information on the same number of shocks.
+%       - Hypothesis **ncp** assumes there are as many shocks periods as
+%           the number of the number of conditioning periods
+%       - Hypothesis **nas** assumes there are as many shocks periods as
+%           the number of anticipated steps
+%
+% - **method** [{ghk}|{fast}|gibbs]: method for drawing from the
+%   multivariate truncated normal distribution. ghk or fast uses the
+%   Geweke-Hajivassiliou-Kean approach
+%
+% Outputs
+% --------
+%
+% - **Yf** [matrix]: unconditional forecasts
+%
+% - **CYfMean** [matrix]: mean conditional forecasts of endogenous
+%   variables 
+%
+% - **Emean** [matrix]: shocks required for replicating the forecasts
+%   CYfMean implied by the restrictions.
+%
+% - **CYf** [3D-array]: simulated conditional forecasts 
+%
+% - **E** [3D-array]: shocks need to replicate the simulated conditional
+%   forecasts  
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
+
 
 if nargin<9
     method='ghk';
