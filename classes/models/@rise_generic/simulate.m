@@ -1,18 +1,64 @@
 function [db,states,retcode] = simulate(obj,varargin)
-% H1 line
+% simulate - simulates a RISE model
 %
 % Syntax
 % -------
 % ::
 %
+%   [db,states,retcode] = simulate(obj,varargin)
+%
 % Inputs
 % -------
+%
+% - **obj** [rfvar|dsge|rise|svar]: model object
+%
+% - **varargin** : additional arguments including but not restricted to
+%   - **simul_periods** [integer|{100}]: number of simulation periods
+%   - **simul_burn** [integer|{100}]: number of burn-in periods
+%   - **simul_algo** [[{mt19937ar}| mcg16807|mlfg6331_64|mrg32k3a|
+%       shr3cong|swb2712]]: matlab's seeding algorithms
+%   - **simul_seed** [numeric|{0}]: seed of the computations
+%   - **simul_historical_data** [ts|struct|{''}]: historical data from
+%       which the simulations are based. If empty, the simulations start at
+%       the steady state.
+%   - **simul_history_end_date** [char|integer|serial date]: last date of
+%       history
+%   - **simul_regime** [integer|vector|{[]}]: regimes for which the model
+%       is simulated
+%   - **simul_update_shocks_handle** [function handle]: we may want to
+%       update the shocks if some condition on the state of the economy is
+%       satisfied. For instance, shock monetary policy to keep the interest
+%       rate at the floor for an extented period of time if we already are
+%       at the ZLB/ZIF. simul_update_shocks_handle takes as inputs the
+%       current shocks and the state vector (all the endogenous variables).
+%       The user also has to turn on **simul_do_update_shocks** by setting
+%       it to true.
+%   - **simul_do_update_shocks** [true|{false}]: update the shocks based on
+%       **simul_update_shocks_handle** or not. 
+%   - **simul_to_time_series** [{true}|false]: if true, the output is a
+%       time series, else a cell array with a matrix and information on
+%       elements that help reconstruct the time series.
 %
 % Outputs
 % --------
 %
+% - **db** [struct|cell array]: if **simul_to_time_series** is true, the
+%   output is a time series, else a cell array with a matrix and
+%   information on elements that help reconstruct the time series.
+%
+% - **states** [vector]: history of the regimes over the forecast horizon
+%
+% - **retcode** [integer]: if 0, the simulation went fine. Else something
+%   got wrong. In that case one can understand the problem by running
+%   decipher(retcode)
+%
 % More About
 % ------------
+%
+% - **simul_historical_data** contains the historical data as well as
+%   conditional information over the forecast horizon. It may also include
+%   as an alternative to **simul_regime**, a time series with name
+%   **regime**, which indicates the regimes over the forecast horizon.
 %
 % Examples
 % ---------
@@ -20,21 +66,13 @@ function [db,states,retcode] = simulate(obj,varargin)
 % See also: 
 
 
-% simul_historical_data contains the historical data as well as information
-%              over the forecast horizon. This also includes the future
-%              path of the regimes, which is denoted by "regime" in the
-%              database.
-% simul_history_end_date controls the end of history
-
-% the random numbers specifications and algorithms are specified outside
-% this function. Need to check this again!!!
 if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
     db=struct('simul_periods',100,...
         'simul_burn',100,...
-        'simul_algo','mt19937ar',...  % [{mt19937ar}| mcg16807| mlfg6331_64|mrg32k3a|shr3cong|swb2712]
+        'simul_algo','mt19937ar',... 
         'simul_seed',0,...
         'simul_historical_data',ts.empty(0),...
         'simul_history_end_date','',...
@@ -42,13 +80,6 @@ if isempty(obj)
         'simul_update_shocks_handle',[],...
         'simul_do_update_shocks',false,...
         'simul_to_time_series',true);
-    % we may want to update the shocks if some condition on the state of
-    % the economy is satisfied. For instance, shock monetary policy to keep
-    % the interest rate at the floor for an extented period of time if we
-    % already are at the ZLB/ZIF. simul_update_shocks_handle is then a
-    % function handle that takes as inputs the current shocks and the state
-    % vector (all the endogenous variables). The user also has to turn on
-    % simul_do_update_shocks by setting it to true
 %         'simul_start_date','',... does not seem to be in use
     return
 end
@@ -82,25 +113,26 @@ Initcond=set_simulation_initial_conditions(obj);
 %-----------------------------
 [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
 y0=Initcond.y;
-for ireg=1:numel(y0)
-    y0(ireg).y=y0(ireg).y(new_order,:);
+if numel(y0)>1
+    error('more than one initial conditions')
 end
-% adjust the transition function according to the order_var
-%-----------------------------------------------------------
+y0.y=full(y0.y); % [variables,ncols,1+n_conditions]
+y0.y=y0.y(new_order,:,:); % [variables,ncols,1+n_conditions]
+% adjust the transition and complementarity functions according to the
+% order_var: they will be fed with order_var, but they expect the
+% alphabetical order and so the order_var they are fed with has to be
+% inverted prior to evaluation.
+%--------------------------------------------------------------------------
 iov(new_order)=1:numel(new_order);
 Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
 Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
 
-% here we need to start at one single point: and so we aggregate y0
-%------------------------------------------------------------------
-[y0]=utils.forecast.aggregate_initial_conditions(Initcond.PAI,y0);
-
 [y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
 
-% add initial conditions
-%-----------------------
-y=[y0(1).y,y];
+% add initial conditions: only the actual data on the first page
+%---------------------------------------------------------------
+y=[y0(1).y(:,:,1),y];
 
 % put y in the correct order before storing
 %------------------------------------------
