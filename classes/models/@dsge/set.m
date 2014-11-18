@@ -1,15 +1,43 @@
 function obj=set(obj,varargin)
-% H1 line
+% set - sets options for dsge|rise models
 %
 % Syntax
 % -------
 % ::
+%   
+%   obj=set(obj,varargin)
 %
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge]: model object
+%
+% - **varargin** : valid input arguments coming in pairs. Notable fields to
+%   that can be set include and are not restricted to:
+%   - **solve_shock_horizon** [integer|struct|cell]
+%       - for the integer case, all shocks are set to the same integer
+%       - for the struct case, the input must be a structure with shock
+%           names as fields. Only the shock names whose value is to change
+%           have to be listed. In this case, different shocks can have
+%           different horizons k. The default is k=0 i.e. agents don't
+%           see into the future
+%       - for the cell case, the cell should have two columns. The first
+%           column includes the names of the shocks whose horizon is to
+%           change. The second column includes the horizon for each shock
+%           name on the left.
+%   - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
+%       - in the **amateur** or **explicit** mode the functions are kept in
+%           cell arrays of anonymous functions and evaluated using for
+%           loops
+%       - in the **vectorized** or **professional** mode the functions are
+%           compacted into one long and unreadable function.
+%       - in the **disc** mode the functions are written to disc in a
+%           subdirectory called routines.
+%
 % Outputs
 % --------
+%
+% - **obj** [rise|dsge]: model object
 %
 % More About
 % ------------
@@ -20,14 +48,12 @@ function obj=set(obj,varargin)
 % obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
 % obj=set(obj,'solve_shock_horizon',5)
 %
-% See also: 
+% See also: rise_generic.set
 
 if isempty(obj)
     obj=set@rise_generic(obj);
     % add other fields here if necessary
 else
-    % obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
-    % obj=set(obj,'solve_shock_horizon',5)
     shock_horizon_id=[];
     use_disc_id=[];
     nn=length(varargin);
@@ -97,6 +123,9 @@ end
 
     function set_shock_horizon()
         value=solve_shock_horizon{2};
+        % turn into struct if cell
+        %---------------------------
+        process_cell()
         if isa(value,'double') && numel(value)==1
             value=round(abs(value));
             obj.exogenous.shock_horizon(~obj.exogenous.is_observed)=value;
@@ -115,6 +144,20 @@ end
             end
         else
             error('value must be a scalar or a structure')
+        end
+        function process_cell()
+            if iscell(value)
+                if size(value,2)~=2
+                    error('when setting the shock horizon as a cell, the cell must have two columns')
+                end
+                ff=value(:,1);
+                check=cellfun(@isvarname,ff,'uniformOutput',false);
+                check=all([check{:}]);
+                if ~check
+                    error('when setting the shock horizon as a cell, the first column should have valid variable names')
+                end
+                value=cell2struct(value(:,2),ff,1);
+            end
         end
     end
 end
