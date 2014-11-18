@@ -1,15 +1,21 @@
 function Initcond=set_simulation_initial_conditions(obj)
-% H1 line
+% set_simulation_initial_conditions - sets the initial conditions for forecasting, simulation and irfs
 %
 % Syntax
 % -------
 % ::
 %
+%   Initcond=set_simulation_initial_conditions(obj)
+%
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge|svar|rfvar]: model object
+%
 % Outputs
 % --------
+%
+% - **Initcond** [struct]: Initial conditions for simulation
 %
 % More About
 % ------------
@@ -27,24 +33,39 @@ if ~isfield(obj.routines,'complementarity')||... I do not expect VARs to have th
         isempty(obj.routines.complementarity)
     complementarity=@(varargin)true;
 else
-    complementarity=@build_complementarity;
+    complementarity=complementarity_memoizer(obj);
 end
 
-regimes_number=obj.markov_chains.regimes_number;
-PAI=1/regimes_number*ones(regimes_number,1); % ErgodicDistribution(Q)
-
-y0=struct('y',{},'y_lin',{});
+simul_pruned=false;
+simul_sig=0;
+simul_order=1;
 nlags=1;
+k_future=0;
 if isa(obj,'svar')
     nlags=obj.nlags;
 elseif isa(obj,'dsge')
+    k_future=max(obj.exogenous.shock_horizon);
+    simul_sig=obj.options.simul_sig;
+    simul_pruned=obj.options.simul_pruned;
+    if isempty(obj.options.simul_order);
+        simul_order=obj.options.solve_order;
+    else
+        simul_order=obj.options.simul_order;
+    end
 else
     error(['model of class ',class(obj),' not ready for simulation'])
 end
 
-for ireg=1:regimes_number
-    y0(ireg).y=vec(obj.solution.ss{ireg}(:,ones(1,nlags)));
+% one initial condition despite multiple regimes
+%------------------------------------------------
+ss=cell2mat(obj.solution.ss);
+[PAI,retcode]=initial_markov_distribution(obj.solution.transition_matrices.Q);
+if retcode
+    error(decipher(retcode))
 end
+ss=sum(bsxfun(@times,ss,PAI(:).'),2);
+y0=struct('y',[],'y_lin',[]);
+y0(1).y=vec(ss(:,ones(1,nlags)));
 
 simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
@@ -77,20 +98,6 @@ end
 
 Qfunc=prepare_transition_routine(obj);
 
-simul_pruned=false;
-simul_sig=0;
-simul_order=1;
-k_future=0;
-if isa(obj,'dsge')
-    simul_sig=obj.options.simul_sig;
-    simul_pruned=obj.options.simul_pruned;
-    if isempty(obj.options.simul_order);
-        simul_order=obj.options.solve_order;
-    else
-        simul_order=obj.options.simul_order;
-    end
-    k_future=max(obj.exogenous.shock_horizon);
-end
 if ~simul_pruned
     y0=rmfield(y0,'y_lin');
 end
@@ -112,7 +119,8 @@ Initcond=struct('y',{y0},...
     'nsteps',obj.options.simul_periods,...
     'k_future',k_future,...
     'simul_update_shocks_handle',obj.options.simul_update_shocks_handle,...
-    'simul_do_update_shocks',obj.options.simul_do_update_shocks);
+    'simul_do_update_shocks',obj.options.simul_do_update_shocks,...
+    'forecast_conditional_hypothesis',obj.options.forecast_conditional_hypothesis);
 %-----------------------------------------
 Initcond.burn=obj.options.simul_burn;
 if ~isempty(shocks)
@@ -128,105 +136,55 @@ end
 if isempty(states)
     states=nan(Initcond.nsteps+Initcond.burn,1);
 end
+simul_regime=obj.options.simul_regime;
+if all(isnan(states)) && ~isempty(simul_regime)
+    nregs=numel(simul_regime);
+    if nregs==1
+        states(:)=simul_regime;
+    else
+        nregs=min(nregs,numel(states));
+        states(1:nregs)=simul_regime(1:nregs);
+        % extend the last regime
+        %------------------------
+        states(nregs+1:end)=states(nregs);
+    end
+end
 
 %-----------------------------------------
 Initcond.states=states;
 Initcond.shocks=shocks;
 
-    function c=build_complementarity(y)
-        c=true;
-        param=obj.parameter_values(:,1);
-        x=[];
-        ss=obj.solution.ss{1};
-        sparam=[];
-        def=obj.solution.definitions{1};
-        s0=1;
-        s1=1;
-        for ii=1:numel(obj.routines.complementarity)
-            c= c && obj.routines.complementarity{ii}(y,x,ss,param,sparam,def,s0,s1); 
-            if ~c
-                break
-            end
-        end
-    end
-
     function set_shocks_and_states()
         % check there is no shock with name regime (this should be done right
         % from the parser)
         %--------------------------------------------------------------------
-        new_shock_names=[obj.exogenous.name,'regime'];
+        shock_names=obj.exogenous.name;
         
-        varnames=simul_historical_data.varnames;
-        if any(ismember(new_shock_names,varnames))
-            % locate the left_date and right_date in the historical database dates
-            %---------------------------------------------------------------------
-            [right,flag_r]=date2obs(simul_historical_data.start,...
-                date2serial(simul_history_end_date)+1);
-            if flag_r
-                warning(['too few observations to define initial conditions for shocks. ',...
-                    'Maybe you should adjust simul_history_end_date?'])
-            else
-                raw_data=double(simul_historical_data).';
-                % This exo_nbr includes the place holder for the regime
-                %------------------------------------------------------
-                exo_plus_regime_nbr=numel(new_shock_names);
-                k=0;
-                if isa(obj,'dsge')
-                    k=max(obj.exogenous.shock_horizon);
-                end
-                nperiods=size(raw_data(:,right:end),2);
-                % initialize shocks and nan the regime row
-                %-----------------------------------------
-                simul_periods=obj.options.simul_periods;
-                shocks=zeros(exo_plus_regime_nbr,max(simul_periods,nperiods)+k);
-                shocks(end,:)=nan;
-                exo_locs=locate_variables(new_shock_names,varnames,true);
-                good=~isnan(exo_locs);
-                shocks(good,1:nperiods)=raw_data(exo_locs(good),right:end);
-                
-                % make sure the regime row does not have nans
-                %--------------------------------------------
-                if any(isnan(shocks(end,:)))
-                    warning('the nan locations in the regimes will be chosen randomly according to the transition probabilities')
-                end
-%                 for icol=1:nperiods+k
-%                     if isnan(shocks(end,icol))
-%                         if icol==1
-%                             % set the first period to the first regime
-%                             shocks(end,icol)=1;
-%                             warning('the first regime was nan and has been set to 1 in the simulations')
-%                         else
-%                             shocks(end,icol)=shocks(end,icol-1);
-%                         end
-%                     end
-%                 end
-                % make sure there is no regime exceeding h and all are positive integers
-                %-----------------------------------------------------------------------
-                regimes_row=shocks(end,:);
-                shocks(end,:)=[];
-                h=obj.markov_chains.regimes_number;
-                good=~isnan(regimes_row);
-                if ~(all(ceil(regimes_row(good))==floor(regimes_row(good))) && ...
-                        all(regimes_row(good)>=1) &&...
-                        all(regimes_row(good)<=h))
-                    error(['regimes must be positive integers and cannot exceed ',int2str(h)])
-                end
-                % zero all nans in the shocks. In a conditional forecasting exercise,
-                % the nan locations have to be found, but this is not what we are doing
-                % here under simulation
-                shocks(isnan(shocks))=0;
-                
-                % Now load the states
-                %--------------------
-                if any(regimes_row)
-                    states=regimes_row(:);
-                end
-                
-                % Now load the regimes probabilities
-                %-----------------------------------
-                
-            end
-        end
+        % for the shocks, the first state is right after the end of history
+        %------------------------------------------------------------------
+        shocks_start=utils.forecast.load_start_values(shock_names,simul_historical_data,...
+            date2serial(simul_history_end_date)+1);
+        regime_start=utils.forecast.load_start_values('regime',simul_historical_data,...
+            date2serial(simul_history_end_date)+1);
+        
+        % put into a single page
+        %-----------------------
+        shocks_start=shocks_start(:,:);
+        regime_start=regime_start(:,:);
+        % extend the shocks with zeros
+        %-----------------------------
+        simul_periods=obj.options.simul_periods;
+        nshocks=numel(shock_names)+1;
+        shocks=zeros(nshocks,simul_periods+k_future);
+        ncols=min(size(shocks_start,2),simul_periods+k_future);
+        shocks(1:end-1,1:ncols)=shocks_start(:,1:ncols);
+        ncols=min(size(regime_start,2),simul_periods+k_future);
+        shocks(end,1:ncols)=regime_start(1,1:ncols);
+        clear regime_start shocks_start
+        states=shocks(end,:);
+        shocks=shocks(1:end-1,:);
+        % there is no such a thing as a zero state/regime
+        states(states==0)=nan;
     end
 
     function set_endogenous_variables()
@@ -237,13 +195,31 @@ Initcond.shocks=shocks;
         end
         endo_names=endo_names(:).';
 
-        y00=y0(1).y;
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
             simul_history_end_date,y0(1).y);
-        is_changed=abs(y00-y0(1).y)>sqrt(eps);
-        for istate=2:regimes_number
-            % replace only the changed locations
-            y0(istate).y(is_changed)=y0(1).y(is_changed);
+    end
+end
+
+function cf=complementarity_memoizer(obj)
+routines=obj.routines.complementarity;
+def=obj.solution.definitions{1};
+ss=obj.solution.ss{1};
+param=obj.parameter_values(:,1);
+clear obj
+
+cf=@build_complementarity;
+
+    function c=build_complementarity(y)
+        c=true;
+        x=[];
+        sparam=[];
+        s0=1;
+        s1=1;
+        for ii=1:numel(routines)
+            c= c && routines{ii}(y,x,ss,param,sparam,def,s0,s1); 
+            if ~c
+                break
+            end
         end
     end
 end
