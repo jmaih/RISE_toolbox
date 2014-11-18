@@ -19,6 +19,18 @@ function dsge_irfs=irf(obj,varargin)
 %
 % See also: 
 
+% TODO
+% 1- for linear and conditionally linear models
+%   * initialize history at zero
+%   * set the steady state to zero
+% 2- in nonlinear models or generalized irfs
+%   * initialize history at the ergodic mean
+%   * set the steady state to be the ergogic mean?
+%   * Let the steady state vary freely...
+% 3- in the documentation of this function, irf_shock_sign must be finite
+%   and different from zero
+
+
 too_small=1e-9;
 
 if isempty(obj)
@@ -136,9 +148,8 @@ dsge_irfs=format_irf_output(dsge_irfs);
         y0=Initcond.y;
         % adjust the start values according to the order_var
         %---------------------------------------------------
-        for ireg=1:h
-            y0(ireg).y=y0(ireg).y(new_order,:);
-        end
+        y0.y=y0.y(new_order,:);
+            
         % adjust the transition function according to the order_var
         %-----------------------------------------------------------
         iov(new_order)=1:numel(new_order);
@@ -188,7 +199,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
                 if h==1||number_of_threads==h
                     Initcond.states(:,1)=istate;
                 end
-                [xxxx,retcode]=utils.forecast.irf(y0(istate),T,steady_state,...
+                [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
                     state_vars_location,which_shocks,det_shocks,Initcond);
                 % select only the relevant rows in case we are dealing with
                 % a VAR with many lags
