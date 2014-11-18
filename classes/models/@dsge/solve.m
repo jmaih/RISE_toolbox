@@ -325,9 +325,13 @@ end
             obj.current_solution_state=fill_solve_state_info();
         else
             new_state=fill_solve_state_info();
-            load_ssfuncs=load_ssfuncs||...
-                ~strcmp(new_state.derivatives_type,obj.current_solution_state.derivatives_type)||...
-                ~strcmp(new_state.solve_function_mode,obj.current_solution_state.solve_function_mode);
+            try
+                load_ssfuncs=load_ssfuncs||...
+                    ~strcmp(new_state.derivatives_type,obj.current_solution_state.derivatives_type)||...
+                    ~strcmp(new_state.solve_function_mode,obj.current_solution_state.solve_function_mode);
+            catch
+                load_ssfuncs=true;
+            end
             resolve_it= ~isequal(new_state,obj.current_solution_state);
             if resolve_it
                 obj.current_solution_state=new_state;
@@ -357,6 +361,12 @@ end
                 obj.solution=struct();%dsge.initialize_solution_or_structure('solution',h);
                 obj.solution.H=cell(1,h);
             end
+            % check whether I am not changing some data types in here to
+            % explain why obj on the left-hand side is updated so slowly. I
+            % could try different things :
+            % 1- only output the solution and the updated parameters...
+            % 2- put most of those things are sub-functions or nested
+            % functions.
             [obj,structural_matrices,retcode]=compute_steady_state(obj);
             if ~retcode
                 % measurement errors

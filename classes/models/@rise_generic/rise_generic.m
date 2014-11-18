@@ -106,6 +106,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=theoretical_autocorrelations(varargin)
         varargout=theoretical_autocovariances(varargin)
         varargout=historical_decomposition(varargin)
+        varargout=refresh(varargin)
         varargout=report(varargin)
         varargout=simulation_diagnostics(varargin)
         varargout=posterior_marginal_and_prior_densities(varargin)

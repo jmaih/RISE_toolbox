@@ -1,18 +1,32 @@
 function obj=set(obj,varargin)
-% H1 line
+% set - sets options for RISE models
 %
 % Syntax
 % -------
 % ::
+%   
+%   obj=set(obj,varargin)
 %
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge|svar|rfvar]: model object
+%
+% - **varargin** : valid input arguments coming in pairs.
+%
 % Outputs
 % --------
 %
+% - **obj** [rise|dsge|svar|rfvar]: model object
+%
 % More About
 % ------------
+%
+% - one can force a new field into the options by prefixing it with a '+'
+%   sign. Let's say yourfield is not part of the options and you would like
+%   to force it to be in the options because it is going to be used in some
+%   function or algorithm down the road. Then you can run
+%   m=set(m,'+yourfield',value). then m will be part of the new options.
 %
 % Examples
 % ---------
@@ -92,6 +106,13 @@ else
     for ii=1:2:nn
         propname=varargin{ii};
         propval=varargin{ii+1};
+        forced=strcmp(propname(1),'+');
+        if forced
+            propname=propname(2:end);
+        end
+        if ~isvarname(propname)
+            error([propname,' is not a valid variable name'])
+        end
         set_one_at_a_time();
     end
 end
@@ -121,7 +142,7 @@ end
                 error('legend must be a string')
             end
             obj.legend=propval;
-        elseif any(strcmp(propname,options_fields))
+        elseif any(strcmp(propname,options_fields))||forced
             set_one_option()
         else
             error(['',propname,''' is not a settable option or property of class ',class(obj)])
