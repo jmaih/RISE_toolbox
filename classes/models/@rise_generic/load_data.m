@@ -22,10 +22,7 @@ function [obj,issue,retcode]=load_data(obj,varargin)%,estimation_flag
 
 if isempty(obj)
     obj=struct('data',ts,...
-        'data_demean',false,...
-        'data_cond_ct',ts,...
-        'data_cond_lb',ts,...
-        'data_cond_ub',ts);
+        'data_demean',false);
     % data for conditional forecast and real-time estimation
     return
 end
@@ -60,24 +57,6 @@ obj=set(obj,varargin{:});
 obj.options.data=ts.collect(obj.options.data);
 data_provided=obj.options.data.NumberOfVariables>0;
 
-% % now we can load the data
-% % check whether there are conditional data
-% % collect all the conditioning variables
-% cond_names0=cell(0);
-% if obj.options.data_cond_ct.NumberOfObservations
-%     cond_names0=union(cond_names0,cellstr(obj.options.data_cond_ct.varnames));
-% end
-% if obj.options.data_cond_lb.NumberOfObservations
-%     cond_names0=union(cond_names0,cellstr(obj.options.data_cond_lb.varnames));
-% end
-% if obj.options.data_cond_ub.NumberOfObservations
-%     cond_names0=union(cond_names0,cellstr(obj.options.data_cond_ub.varnames));
-% end
-% ncv0=numel(cond_names0);
-% %     options.data_cond_ct=ts;
-% %     options.data_cond_lb=ts;
-% %     options.data_cond_ub=ts;
-
 if data_provided
     % the length/number of pages of the dataset depends on the horizon of the
     % shocks
@@ -103,14 +82,14 @@ if data_provided
     % conditional forecasting
     %-------------------------
     % Is it restrictive to impose that the variables be observed?
-    forecast_cond_vars=obj.options.forecast_cond_vars;
-    if ~isempty(forecast_cond_vars)
-        if ischar(forecast_cond_vars)
-            forecast_cond_vars=cellstr(forecast_cond_vars);
+    estim_cond_vars=obj.options.estim_cond_vars;
+    if ~isempty(estim_cond_vars)
+        if ischar(estim_cond_vars)
+            estim_cond_vars=cellstr(estim_cond_vars);
         end
-        pos=locate_variables(forecast_cond_vars,obj.observables.name,true);
+        pos=locate_variables(estim_cond_vars,obj.observables.name,true);
         if any(isnan(pos))
-            disp(forecast_cond_vars(isnan(pos)))
+            disp(estim_cond_vars(isnan(pos)))
             error('the variables above are not declared as observables')
         end
         endo_pos=is_endogenous(pos);
@@ -124,63 +103,6 @@ if data_provided
     obj.data=data_description(obj.data);
     obj.data_are_loaded=true;
     
-    %     if ncv0
-    %         [data_cond_ct,horiz_ct,date_start_ct]=dispatch_conditional_data(obj.options.data_cond_ct);
-    %         [data_cond_lb,horiz_lb,date_start_lb]=dispatch_conditional_data(obj.options.data_cond_lb);
-    %         [data_cond_ub,horiz_ub,date_start_ub]=dispatch_conditional_data(obj.options.data_cond_ub);
-    %
-    %         horiz0=max([horiz_ct,horiz_lb,horiz_ub]);
-    %         % the expansion order should be less than or equal to the horizon of the conditional
-    %         % data
-    %         shock_horizon=max(obj.exogenous.shock_horizon);
-    %         if shock_horizon>horiz0
-    %             error([mfilename,':: expansion/expectation order cannot be greater than the horizon of the conditioning data'])
-    %         end
-    %
-    %         % now get the conditional data for the the central tendency
-    %         data_cond_ct=format_conditional_data(data_cond_ct,...
-    %             date_start_ct,cond_names0,start,horiz0);
-    %
-    %         % do the same with the lower bound and the upper bound
-    %         data_cond_lb=format_conditional_data(data_cond_lb,...
-    %             date_start_lb,cond_names0,start,horiz0);
-    %
-    %         data_cond_ub=format_conditional_data(data_cond_ub,...
-    %             date_start_ub,cond_names0,start,horiz0);
-    %
-    %         % Now that all these databases start at the same date, we can
-    %         % harmonize their span
-    %         span_ct=size(data_cond_ct,3);
-    %         span_lb=size(data_cond_lb,3);
-    %         span_ub=size(data_cond_ub,3);
-    %         span0=max(span_ct,max(span_lb,span_ub));
-    %         data_cond_ct=cat(3,data_cond_ct,nan(ncv0,horiz0,span0-span_ct));
-    %         data_cond_lb=cat(3,data_cond_lb,nan(ncv0,horiz0,span0-span_lb));
-    %         data_cond_ub=cat(3,data_cond_ub,nan(ncv0,horiz0,span0-span_ub));
-    %         % now check that the bounds are consistent
-    %         tmp=data_cond_ct-data_cond_lb;
-    %         good=~isnan(tmp);
-    %         if any(tmp(good)<0)
-    %             error([mfilename,':: some central-tendency elements lower than their lower-bound counterpart'])
-    %         end
-    %         tmp=data_cond_ub-data_cond_ct;
-    %         good=~isnan(tmp);
-    %         if any(tmp(good)<0)
-    %             error([mfilename,':: some central-tendency elements greater than their upper-bound counterpart'])
-    %         end
-    %
-    %         % now construct the cond_varobs object
-    %        obj.NumberOfConditionalObservables=ncv0;
-    %        locs=locate_variables(cond_names0,{obj.varendo.name});
-    %        for ii=1:ncv0
-    %            tex_name=obj.varendo(locs(ii)).tex_name;
-    %            obj.cond_varobs(ii,1)=rise_variable(cond_names0{ii},...
-    %                'tex_name',tex_name,'id',locs(ii),...
-    %                'value',data_cond_ct(ii,:,:),...
-    %                'lb',data_cond_lb(ii,:,:),'ub',data_cond_ub(ii,:,:));
-    %        end
-    %         % REMAINS: CONDITIONING ON SHOCKS
-    %     end
 else
     retcode=500;
     disp([mfilename,'(GENTLE WARNING):: no actual or simulated data provided for filtering/estimation'])
@@ -206,56 +128,4 @@ d.data_structure=~isnan(d.y);
 d.include_in_likelihood=false(1,smpl);
 d.include_in_likelihood(d.start:d.finish)=true;
 
-% function [cond_data,horiz,date_start]=dispatch_conditional_data(cond_data)
-% horiz=0;
-% date_start=[];
-% if ~isempty(cond_data)
-%     cond_data=ts.collect(cond_data);
-%     horiz=cond_data.NumberOfPages;
-%     date_start=cond_data.TimeInfo(1);
-% else
-%     cond_data=[];
-% end
 
-% function cond_data=format_conditional_data(cond_data_ts,The_data_TimeInfo,cond_names0,start,horiz0)
-% ncv0=numel(cond_names0);
-% if isempty(cond_data_ts)
-%     cond_data=nan(ncv0,horiz0,1);
-% else
-%     cond_names=cellstr(cond_data_ts.varnames);
-%     ncv=cond_data_ts.NumberOfVariables;
-%     locs=locate_variables(cond_names,cond_names0);
-%     horiz=cond_data_ts.NumberOfPages;
-%     % if ~all(ismember(cond_names,cond_names0))
-%     %     error([mfilename,':: all conditioning databases should have the same variables'])
-%     % end
-%     if cond_data_ts.TimeInfo(end)<The_data_TimeInfo(1)
-%         error([mfilename,':: conditional information cannot end before the start of the actual data'])
-%     end
-%     add_on_beg=0;add_on_end=0;discard_beg=0;
-%     if cond_data_ts.TimeInfo(1)<The_data_TimeInfo(1)
-%         % cut out the difference at the beginning
-%         discard_beg=numel(cond_data_ts.TimeInfo(1):The_data_TimeInfo(1)-1);
-%     elseif cond_data_ts.TimeInfo(1)>The_data_TimeInfo(1)
-%         % fill in the missing at the beginning
-%         add_on_beg=numel(The_data_TimeInfo(1):cond_data_ts.TimeInfo(1)-1);
-%     end
-%     cond_data=cell2mat(cond_data_ts.data(2:end,2:end,:));
-%     % permute to names x horizon x smpl
-%     cond_data=permute(cond_data,[2,3,1]);
-%     cond_data=cond_data(:,:,discard_beg+1:end);
-%
-%     cond_data=cat(3,nan(ncv,horiz,add_on_beg),cond_data,nan(ncv,horiz,add_on_end));
-%     % now we trim the beginning to match the estimation data
-%     if start<size(cond_data,3)
-%         cond_data=cond_data(:,:,start:end);
-%     else
-%         error([mfilename,':: conditional information cannot end before the start of the estimation sample'])
-%     end
-%     % We do not cut the end since the information is potentially useful
-%     % for forecasting
-%     % now put everything into the biggest format
-%     tmp=cond_data;
-%     cond_data=nan(ncv0,horiz0,size(tmp,3));
-%     cond_data(locs,1:horiz,:)=tmp;
-% end
