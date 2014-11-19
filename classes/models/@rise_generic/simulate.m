@@ -13,18 +13,26 @@ function [db,states,retcode] = simulate(obj,varargin)
 % - **obj** [rfvar|dsge|rise|svar]: model object
 %
 % - **varargin** : additional arguments including but not restricted to
+%
 %   - **simul_periods** [integer|{100}]: number of simulation periods
+%
 %   - **simul_burn** [integer|{100}]: number of burn-in periods
+%
 %   - **simul_algo** [[{mt19937ar}| mcg16807|mlfg6331_64|mrg32k3a|
 %       shr3cong|swb2712]]: matlab's seeding algorithms
+%
 %   - **simul_seed** [numeric|{0}]: seed of the computations
+%
 %   - **simul_historical_data** [ts|struct|{''}]: historical data from
 %       which the simulations are based. If empty, the simulations start at
 %       the steady state.
+%
 %   - **simul_history_end_date** [char|integer|serial date]: last date of
 %       history
+%
 %   - **simul_regime** [integer|vector|{[]}]: regimes for which the model
 %       is simulated
+%
 %   - **simul_update_shocks_handle** [function handle]: we may want to
 %       update the shocks if some condition on the state of the economy is
 %       satisfied. For instance, shock monetary policy to keep the interest
@@ -34,8 +42,10 @@ function [db,states,retcode] = simulate(obj,varargin)
 %       and returns the updated shocks. But for all this to be put into
 %       motion, the user also has to turn on **simul_do_update_shocks** by
 %       setting it to true.
+%
 %   - **simul_do_update_shocks** [true|{false}]: update the shocks based on
 %       **simul_update_shocks_handle** or not. 
+%
 %   - **simul_to_time_series** [{true}|false]: if true, the output is a
 %       time series, else a cell array with a matrix and information on
 %       elements that help reconstruct the time series.
