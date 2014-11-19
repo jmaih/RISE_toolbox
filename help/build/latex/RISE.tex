@@ -959,16 +959,20 @@ Commitment, discretion and loose commitment
 \end{itemize}
 
 
-\section{Synopsis and description on methods}
-\label{classes/models/@dsge/dsge:synopsis-and-description-on-methods}
+\bigskip\hrule{}\bigskip
+
+
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:check-derivatives}
+
+
+\section{check\_derivatives}
+\label{classes/models/@dsge/dsge:check-derivatives}\label{classes/models/@dsge/dsge:id1}
 \textbf{check\_derivatives} - compares the derivatives and the solutions from various differentiation techniques
 
 
-\section{Syntax}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:syntax}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{check\PYGZus{}derivatives}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
@@ -976,7 +980,7 @@ Commitment, discretion and loose commitment
 \end{Verbatim}
 
 
-\section{Inputs}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:inputs}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge{]}: model object or vectors of model objects
@@ -984,7 +988,7 @@ Commitment, discretion and loose commitment
 \end{itemize}
 
 
-\section{Outputs}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:outputs}\begin{itemize}
 \item {} 
 \textbf{retcode} {[}numeric{]}: 0 if no problem is encountered during the
@@ -994,7 +998,7 @@ decipher(retcode)
 \end{itemize}
 
 
-\section{More About}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:more-about}\begin{itemize}
 \item {} 
 The derivatives computed are `automatic', `symbolic' or `numerical'
@@ -1006,7 +1010,7 @@ assumed to be the most accurate.
 \end{itemize}
 
 
-\section{Examples}
+\subsection{Examples}
 \label{classes/models/@dsge/dsge:examples}
 See also:
 
@@ -1015,25 +1019,25 @@ See also:
 
 
 
-\subsection{check\_optimum}
-\label{classes/models/@dsge/dsge:check-optimum}\label{classes/models/@dsge/dsge:id1}
+\section{check\_optimum}
+\label{classes/models/@dsge/dsge:check-optimum}\label{classes/models/@dsge/dsge:id2}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id2}
-
-\subsubsection{Inputs}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id3}
 
-\subsubsection{Outputs}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id4}
 
-\subsubsection{More About}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:id5}
 
-\subsubsection{Examples}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:id6}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id7}
 See also:
 
 Help for dsge/check\_optimum is inherited from superclass RISE\_GENERIC
@@ -1043,25 +1047,25 @@ Help for dsge/check\_optimum is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{compute\_steady\_state}
-\label{classes/models/@dsge/dsge:id7}\label{classes/models/@dsge/dsge:compute-steady-state}
+\section{compute\_steady\_state}
+\label{classes/models/@dsge/dsge:id8}\label{classes/models/@dsge/dsge:compute-steady-state}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id8}
-
-\subsubsection{Inputs}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id9}
 
-\subsubsection{Outputs}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id10}
 
-\subsubsection{More About}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:id11}
 
-\subsubsection{Examples}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:id12}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id13}
 See also:
 
 
@@ -1069,44 +1073,47 @@ See also:
 
 
 
-\subsection{create\_estimation\_blocks}
-\label{classes/models/@dsge/dsge:id13}\label{classes/models/@dsge/dsge:create-estimation-blocks}
+\section{create\_estimation\_blocks}
+\label{classes/models/@dsge/dsge:create-estimation-blocks}\label{classes/models/@dsge/dsge:id14}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id14}
-
-\subsubsection{Inputs}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id15}
 
-\subsubsection{Outputs}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id16}
 
-\subsubsection{More About}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:id17}
 
-\subsubsection{Examples}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:id18}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id19}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:create-state-list}
+
+
+\section{create\_state\_list}
+\label{classes/models/@dsge/dsge:create-state-list}\label{classes/models/@dsge/dsge:id20}
 \textbf{create\_state\_list} creates the list of the state variables in the solution
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id19}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id21}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{final\PYGZus{}list}\PYG{o}{=}\PYG{n}{create\PYGZus{}state\PYGZus{}list}\PYG{p}{(}\PYG{n}{m}\PYG{p}{)}
 \PYG{n}{final\PYGZus{}list}\PYG{o}{=}\PYG{n}{create\PYGZus{}state\PYGZus{}list}\PYG{p}{(}\PYG{n}{m}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id20}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id22}\begin{itemize}
 \item {} 
 \textbf{m} {[}dsge\textbar{}rise{]} : model object
 
@@ -1121,8 +1128,8 @@ will be returned. Else, all combinations will be returned.
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id21}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id23}\begin{itemize}
 \item {} 
 \textbf{final\_list} {[}cellstr{]} : list of the state variables
 
@@ -1133,11 +1140,11 @@ compact\_form is set to true)
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@dsge/dsge:id22}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id24}
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id23}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id25}
 See also:
 
 
@@ -1145,25 +1152,25 @@ See also:
 
 
 
-\subsection{draw\_parameter}
-\label{classes/models/@dsge/dsge:id24}\label{classes/models/@dsge/dsge:draw-parameter}
+\section{draw\_parameter}
+\label{classes/models/@dsge/dsge:draw-parameter}\label{classes/models/@dsge/dsge:id26}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id25}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id26}
-
-\subsubsection{Outputs}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id27}
 
-\subsubsection{More About}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id28}
 
-\subsubsection{Examples}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:id29}
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id30}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id31}
 See also:
 
 Help for dsge/draw\_parameter is inherited from superclass RISE\_GENERIC
@@ -1171,11 +1178,12 @@ Help for dsge/draw\_parameter is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:dsge}
-\textbf{dsge}
-\begin{quote}
 
--- no help found
+
+\section{dsge}
+\label{classes/models/@dsge/dsge:id32}\label{classes/models/@dsge/dsge:dsge}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
@@ -1183,25 +1191,199 @@ Help for dsge/draw\_parameter is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{estimate}
-\label{classes/models/@dsge/dsge:estimate}\label{classes/models/@dsge/dsge:id30}
-H1 line
+\section{estimate}
+\label{classes/models/@dsge/dsge:estimate}\label{classes/models/@dsge/dsge:id33}
+\textbf{estimate} - estimates the parameters of a RISE model
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id31}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id32}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id33}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id34}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{obj}\PYG{o}{=}\PYG{n}{estimate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\PYG{n}{obj}\PYG{o}{=}\PYG{n}{estimate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id35}
+
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id35}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: model object
+
+\item {} 
+\textbf{varargin} additional optional inputs among which the most relevant
+for estimation are:
+
+\item {} 
+\textbf{estim\_parallel} {[}integer\textbar{}\{1\}{]}: Number of starting values
+
+\item {} 
+\textbf{estim\_start\_from\_mode} {[}true\textbar{}false\textbar{}\{{[}{]}\}{]}: when empty, the user is
+prompted to answer the question as to whether to start estimation from
+a previously found mode or not. If true or false, no question is asked.
+
+\item {} 
+\textbf{estim\_start\_date} {[}numeric\textbar{}char\textbar{}serial date{]}: date of the first
+observation to use in the dataset provided for estimation
+
+\item {} 
+\textbf{estim\_end\_date} {[}numeric\textbar{}char\textbar{}serial date{]}: date of the last
+observation to use in the dataset provided for estimation
+
+\item {} 
+\textbf{estim\_max\_trials} {[}integer\textbar{}\{500\}{]}: When the initial value of the
+log-likelihood is too low, RISE uniformly draws from the prior support
+in search for a better starting point. It will try this for a maximum
+number of \textbf{estim\_max\_trials} times before squeaking with an error.
+
+\item {} 
+\textbf{estim\_start\_vals} {[}\{{[}{]}\}\textbar{}struct{]}: when not empty, the parameters
+whose names are fields of the structure will see their start values
+updated or overriden by the information in \textbf{estim\_start\_vals}. There
+is no need to provide values to update the start values for the
+estimated parameters.
+
+\item {} 
+\textbf{estim\_general\_restrictions} {[}\{{[}{]}\}\textbar{}function handle{]}: when not empty,
+the argument should be a function handle that takes as input a
+parameterized RISE object and returns a scalar or vector of numbers
+representing the strength of the violation of the nonlinear
+constraints. Those constraints will be added to the constraints already
+included in a rise/dsge file before being presented to the optimization
+function.
+
+\item {} 
+\textbf{estim\_linear\_restrictions} {[}\{{[}{]}\}\textbar{}cell{]}: This is most often used in
+the estimation of rfvar or svar models either to impose block
+exogeneity or to impose other forms of linear restrictions. When not
+empty, \textbf{estim\_linear\_restrictions} must be a 2-column cell:
+- Each row of the first column represents a particular linear
+combination of the estimated parameters. Those linear combinations are
+constructed using the \textbf{coef} class. Check help for coef.coef for more
+details.
+- Each row of the second column holds the value of the linear
+combination.
+
+\item {} 
+\textbf{estim\_blocks} {[}\{{[}{]}\}\textbar{}cell{]}: When not empty, this triggers blockwise
+optimization. For further information on how to set blocks, see help
+for dsge.create\_estimation\_blocks
+
+\item {} 
+\textbf{estim\_priors} {[}\{{[}{]}\}\textbar{}struct{]}: This provides an alternative to
+setting priors inside the rise/dsge model file. Each field of the
+structure must be the name of an estimated parameter. Each field will
+hold a cell array whose structure is described in help
+rise\_generic.setup\_priors.
+
+\item {} 
+\textbf{estim\_penalty} {[}numeric\textbar{}\{1e+8\}{]}: value of the objective function
+when a problem occurs. Possible problems include:
+- no solution found
+- very low likelihood
+- stochastic singularity
+- problems computing the initial covariance matrix
+- non-positive definite covariance matrices
+- etc.
+
+\item {} 
+\textbf{estim\_cond\_vars} {[}char\textbar{}cellstr{]}: list of the variables to condition
+on during estimation of a dsge model. This then assumes that the data
+provided for estimation have several pages. The first page is the
+actual data, while the subsequent pages are the expectations data.
+
+\item {} 
+\textbf{optimset} {[}struct{]}: identical to matlab's optimset
+
+\item {} 
+\textbf{optimizer} {[}char\textbar{}function handle\textbar{}cell{]}: This can be the name of a
+standard matlab optimizer or RISE optimization routine or a
+user-defined optimization procedure available of the matlab search
+path. If the optimzer is provided as a cell, then the first element of
+the cell is the name of the optimizer or its handle and the remaining
+entries in the cell are additional input arguments to the user-defined
+optimization routine. A user-defined optimization function should have
+the following syntax
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{xfinal}\PYG{p}{,}\PYG{n}{ffinal}\PYG{p}{,}\PYG{n}{exitflag}\PYG{p}{]}\PYG{o}{=}\PYG{n}{optimizer}\PYG{p}{(}\PYG{n}{fh}\PYG{p}{,}\PYG{n}{x0}\PYG{p}{,}\PYG{n}{lb}\PYG{p}{,}\PYG{n}{ub}\PYG{p}{,}\PYG{n}{options}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}\PYG{p}{;}
+\end{Verbatim}
+\begin{description}
+\item[{That is, it accepts as inputs:}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{fh}: the function to optimize
+
+\item {} 
+\textbf{x0}: a vector column of initial values of the parameters
+
+\item {} 
+\textbf{lb}: a vector column of lower bounds
+
+\item {} 
+\textbf{ub}: a vector column of upper bounds
+
+\item {} \begin{description}
+\item[{\textbf{options}: a structure of options whose fields will be similar}] \leavevmode
+to matlab's optimset
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{varargin}: additional arguments to the user-defined}] \leavevmode
+optimization procedure
+
+\end{description}
+
+\end{itemize}
+
+\item[{That is, it provides as outputs:}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{xfinal}: the vector of final values
+
+\item {} 
+\textbf{ffinal}: the value of \textbf{fh} at \textbf{xfinal}
+
+\item {} 
+\textbf{exitflag}: a flag similar to the ones provided by matlab's
+
+\end{itemize}
+
+optimization functions.
+
+\end{description}
+
+\item {} 
+\textbf{hessian\_type} {[}\{`fd'\}\textbar{}'opg'{]}: The hessian is either computed by
+finite differences (fd) or by outer-product-gradient (opg)
+
+\item {} 
+\textbf{hessian\_repair} {[}\{false\}\textbar{}true{]}: If the Hessian is not positive
+definite, it nevertheless can be repaired and prepared for a potential
+mcmc simulation.
+
+\end{itemize}
+
+
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id36}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: model object parameterized with the
+mode found and holding additional estimation results and statistics
+that can be found under obj.estimation
+
+\end{itemize}
+
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id37}\begin{itemize}
+\item {} 
+recursive estimation may be done easily by passing a different
+estim\_end\_date at the beginning of each estimation run.
+
+\end{itemize}
+
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id38}
 See also:
 
 Help for dsge/estimate is inherited from superclass RISE\_GENERIC
@@ -1211,43 +1393,46 @@ Help for dsge/estimate is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{filter}
-\label{classes/models/@dsge/dsge:filter}\label{classes/models/@dsge/dsge:id36}
+\section{filter}
+\label{classes/models/@dsge/dsge:filter}\label{classes/models/@dsge/dsge:id39}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id37}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id38}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id39}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id40}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id41}
+
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id42}
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id43}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id44}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:forecast}
+
+
+\section{forecast}
+\label{classes/models/@dsge/dsge:id45}\label{classes/models/@dsge/dsge:forecast}
 \textbf{forecast} - computes forecasts for rise\textbar{}dsge\textbar{}svar\textbar{}rfvar models
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id42}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id46}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{cond\PYGZus{}fkst\PYGZus{}db}\PYG{o}{=}\PYG{n}{forecast}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id43}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id47}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
@@ -1302,8 +1487,8 @@ the number of anticipated steps
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id44}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id48}\begin{itemize}
 \item {} 
 \textbf{cond\_fkst\_db} {[}struct\textbar{}matrix{]}: depending on the value of
 \textbf{forecast\_to\_time\_series} the returned output is a structure with
@@ -1313,8 +1498,8 @@ reconstruct the time series.
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@dsge/dsge:id45}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id49}\begin{itemize}
 \item {} 
 the historical information as well as the conditioning information come
 from the same database. The time series must be organized such that for
@@ -1340,8 +1525,8 @@ where h is the maximum number of regimes.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id46}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id50}
 See also: simulate
 
 Help for dsge/forecast is inherited from superclass RISE\_GENERIC
@@ -1349,20 +1534,23 @@ Help for dsge/forecast is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:forecast-real-time}
+
+
+\section{forecast\_real\_time}
+\label{classes/models/@dsge/dsge:forecast-real-time}\label{classes/models/@dsge/dsge:id51}
 \textbf{forecast\_real\_time} - forecast from each point in time
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id47}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id52}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{o}{\PYGZhy{}} \PYG{p}{[}\PYG{n}{ts\PYGZus{}fkst}\PYG{p}{,}\PYG{n}{ts\PYGZus{}rmse}\PYG{p}{,}\PYG{n}{rmse}\PYG{p}{,}\PYG{n}{Updates}\PYG{p}{]}\PYG{o}{=}\PYG{n}{forecast\PYGZus{}real\PYGZus{}time}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{o}{\PYGZhy{}} \PYG{p}{[}\PYG{n}{ts\PYGZus{}fkst}\PYG{p}{,}\PYG{n}{ts\PYGZus{}rmse}\PYG{p}{,}\PYG{n}{rmse}\PYG{p}{,}\PYG{n}{Updates}\PYG{p}{]}\PYG{o}{=}\PYG{n}{forecast\PYGZus{}real\PYGZus{}time}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id48}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id53}\begin{itemize}
 \item {} 
 \textbf{obj} {[}dsge\textbar{}svar\textbar{}rfvar{]} : model object
 
@@ -1374,8 +1562,8 @@ of interest for changing the default behavior are:
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id49}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id54}\begin{itemize}
 \item {} 
 \textbf{ts\_fkst} {[}struct{]} : fields are forecasts in the form of ts objects
 for the different endogenous variables
@@ -1394,11 +1582,11 @@ the form of ts objects for the different endogenous variables
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@dsge/dsge:id50}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id55}
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id51}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id56}
 See also: plot\_real\_time
 
 
@@ -1406,25 +1594,25 @@ See also: plot\_real\_time
 
 
 
-\subsection{get}
-\label{classes/models/@dsge/dsge:id52}\label{classes/models/@dsge/dsge:get}
+\section{get}
+\label{classes/models/@dsge/dsge:id57}\label{classes/models/@dsge/dsge:get}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id53}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id58}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id54}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id59}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id55}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id60}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id56}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id61}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id57}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id62}
 See also:
 
 Help for dsge/get is inherited from superclass RISE\_GENERIC
@@ -1432,20 +1620,23 @@ Help for dsge/get is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:historical-decomposition}
+
+
+\section{historical\_decomposition}
+\label{classes/models/@dsge/dsge:id63}\label{classes/models/@dsge/dsge:historical-decomposition}
 \textbf{historical\_decomposition} Computes historical decompositions of a DSGE model
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id58}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id64}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id59}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id65}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]} model(s) for which to compute the
 decomposition. obj could be a vector of models
@@ -1462,8 +1653,8 @@ beginning of the history of the dataset
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id60}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id66}\begin{itemize}
 \item {} 
 Histdec : {[}struct\textbar{}cell array{]} structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -1477,7 +1668,7 @@ terms of:
 \end{itemize}
 
 
-\section{Remarks}
+\subsection{Remarks}
 \label{classes/models/@dsge/dsge:remarks}\begin{itemize}
 \item {} 
 the elements that do not contribute to any of the variables are
@@ -1493,8 +1684,8 @@ averaged. The averaging weights are the smoothed probabilities.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id61}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id67}
 See also:
 
 Help for dsge/historical\_decomposition is inherited from superclass RISE\_GENERIC
@@ -1504,50 +1695,24 @@ Help for dsge/historical\_decomposition is inherited from superclass RISE\_GENER
 
 
 
-\subsection{irf}
-\label{classes/models/@dsge/dsge:irf}\label{classes/models/@dsge/dsge:id62}
+\section{irf}
+\label{classes/models/@dsge/dsge:id68}\label{classes/models/@dsge/dsge:irf}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id63}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id64}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id65}
-
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id66}
-
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id67}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{is\_stable\_system}
-\label{classes/models/@dsge/dsge:is-stable-system}\label{classes/models/@dsge/dsge:id68}
-H1 line
-
-
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id69}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id70}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:id71}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:id72}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@dsge/dsge:id73}
 See also:
 
@@ -1556,25 +1721,51 @@ See also:
 
 
 
-\subsection{isnan}
-\label{classes/models/@dsge/dsge:isnan}\label{classes/models/@dsge/dsge:id74}
+\section{is\_stable\_system}
+\label{classes/models/@dsge/dsge:is-stable-system}\label{classes/models/@dsge/dsge:id74}
 H1 line
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id75}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id76}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@dsge/dsge:id77}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:id78}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@dsge/dsge:id79}
+See also:
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{isnan}
+\label{classes/models/@dsge/dsge:isnan}\label{classes/models/@dsge/dsge:id80}
+H1 line
+
+
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id81}
+
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id82}
+
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id83}
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id84}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id85}
 See also:
 
 Help for dsge/isnan is inherited from superclass RISE\_GENERIC
@@ -1584,25 +1775,25 @@ Help for dsge/isnan is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{load\_parameters}
-\label{classes/models/@dsge/dsge:id80}\label{classes/models/@dsge/dsge:load-parameters}
+\section{load\_parameters}
+\label{classes/models/@dsge/dsge:id86}\label{classes/models/@dsge/dsge:load-parameters}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id81}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id87}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id82}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id88}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id83}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id89}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id84}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id90}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id85}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id91}
 See also:
 
 Help for dsge/load\_parameters is inherited from superclass RISE\_GENERIC
@@ -1612,25 +1803,25 @@ Help for dsge/load\_parameters is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{log\_marginal\_data\_density}
-\label{classes/models/@dsge/dsge:log-marginal-data-density}\label{classes/models/@dsge/dsge:id86}
+\section{log\_marginal\_data\_density}
+\label{classes/models/@dsge/dsge:id92}\label{classes/models/@dsge/dsge:log-marginal-data-density}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id87}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id93}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id88}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id94}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id89}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id95}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id90}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id96}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id91}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id97}
 See also:
 
 Help for dsge/log\_marginal\_data\_density is inherited from superclass RISE\_GENERIC
@@ -1640,25 +1831,25 @@ Help for dsge/log\_marginal\_data\_density is inherited from superclass RISE\_GE
 
 
 
-\subsection{log\_posterior\_kernel}
-\label{classes/models/@dsge/dsge:log-posterior-kernel}\label{classes/models/@dsge/dsge:id92}
+\section{log\_posterior\_kernel}
+\label{classes/models/@dsge/dsge:log-posterior-kernel}\label{classes/models/@dsge/dsge:id98}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id93}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id99}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id94}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id100}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id95}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id101}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id96}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id102}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id97}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id103}
 See also:
 
 Help for dsge/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
@@ -1668,25 +1859,25 @@ Help for dsge/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{log\_prior\_density}
-\label{classes/models/@dsge/dsge:id98}\label{classes/models/@dsge/dsge:log-prior-density}
+\section{log\_prior\_density}
+\label{classes/models/@dsge/dsge:id104}\label{classes/models/@dsge/dsge:log-prior-density}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id99}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id105}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id100}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id106}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id101}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id107}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id102}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id108}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id103}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id109}
 See also:
 
 Help for dsge/log\_prior\_density is inherited from superclass RISE\_GENERIC
@@ -1696,25 +1887,25 @@ Help for dsge/log\_prior\_density is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{monte\_carlo\_filtering}
-\label{classes/models/@dsge/dsge:monte-carlo-filtering}\label{classes/models/@dsge/dsge:id104}
+\section{monte\_carlo\_filtering}
+\label{classes/models/@dsge/dsge:monte-carlo-filtering}\label{classes/models/@dsge/dsge:id110}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id105}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id111}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id106}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id112}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id107}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id113}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id108}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id114}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id109}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id115}
 See also:
 
 
@@ -1722,25 +1913,25 @@ See also:
 
 
 
-\subsection{posterior\_marginal\_and\_prior\_densities}
-\label{classes/models/@dsge/dsge:id110}\label{classes/models/@dsge/dsge:posterior-marginal-and-prior-densities}
+\section{posterior\_marginal\_and\_prior\_densities}
+\label{classes/models/@dsge/dsge:id116}\label{classes/models/@dsge/dsge:posterior-marginal-and-prior-densities}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id111}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id117}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id112}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id118}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id113}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id119}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id114}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id120}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id115}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id121}
 See also:
 
 Help for dsge/posterior\_marginal\_and\_prior\_densities is inherited from superclass RISE\_GENERIC
@@ -1750,25 +1941,25 @@ Help for dsge/posterior\_marginal\_and\_prior\_densities is inherited from super
 
 
 
-\subsection{posterior\_simulator}
-\label{classes/models/@dsge/dsge:posterior-simulator}\label{classes/models/@dsge/dsge:id116}
+\section{posterior\_simulator}
+\label{classes/models/@dsge/dsge:posterior-simulator}\label{classes/models/@dsge/dsge:id122}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id117}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id123}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id118}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id124}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id119}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id125}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id120}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id126}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id121}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id127}
 See also:
 
 Help for dsge/posterior\_simulator is inherited from superclass RISE\_GENERIC
@@ -1778,25 +1969,25 @@ Help for dsge/posterior\_simulator is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{print\_estimation\_results}
-\label{classes/models/@dsge/dsge:print-estimation-results}\label{classes/models/@dsge/dsge:id122}
+\section{print\_estimation\_results}
+\label{classes/models/@dsge/dsge:print-estimation-results}\label{classes/models/@dsge/dsge:id128}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id123}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id129}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id124}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id130}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id125}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id131}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id126}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id132}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id127}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id133}
 See also:
 
 Help for dsge/print\_estimation\_results is inherited from superclass RISE\_GENERIC
@@ -1804,12 +1995,15 @@ Help for dsge/print\_estimation\_results is inherited from superclass RISE\_GENE
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:print-solution}
+
+
+\section{print\_solution}
+\label{classes/models/@dsge/dsge:print-solution}\label{classes/models/@dsge/dsge:id134}
 \textbf{print\_solution} - print the solution of a model or vector of models
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id128}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id135}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{)}
@@ -1822,8 +2016,8 @@ Help for dsge/print\_estimation\_results is inherited from superclass RISE\_GENE
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id129}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id136}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge{]} : model object or vector of model objects
 
@@ -1855,8 +2049,8 @@ has to be called without ouput arguments
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id130}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id137}\begin{itemize}
 \item {} 
 \textbf{outcell} {[}cellstr{]} : If an output is requested, the solution is not
 printed on screen or to a file.
@@ -1864,15 +2058,15 @@ printed on screen or to a file.
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@dsge/dsge:id131}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id138}
 If a model is solved, say, up to 3rd order, one may still want to see the
 first-order solution or the solution up to second-order only or any
 combination of orders.
 
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id132}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id139}
 See also:
 
 
@@ -1880,25 +2074,25 @@ See also:
 
 
 
-\subsection{prior\_plots}
-\label{classes/models/@dsge/dsge:id133}\label{classes/models/@dsge/dsge:prior-plots}
+\section{prior\_plots}
+\label{classes/models/@dsge/dsge:prior-plots}\label{classes/models/@dsge/dsge:id140}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id134}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id141}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id135}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id142}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id136}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id143}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id137}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id144}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id138}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id145}
 See also:
 
 Help for dsge/prior\_plots is inherited from superclass RISE\_GENERIC
@@ -1906,12 +2100,15 @@ Help for dsge/prior\_plots is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:report}
+
+
+\section{report}
+\label{classes/models/@dsge/dsge:report}\label{classes/models/@dsge/dsge:id146}
 \textbf{REPORT} assigns the elements of interest to a rise\_report.report object
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id139}\begin{description}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id147}\begin{description}
 \item[{::}] \leavevmode\begin{itemize}
 \item {} 
 REPORT(rise.empty(0)) : displays the default inputs
@@ -1929,8 +2126,8 @@ obj before doing the rest
 \end{description}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id140}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id148}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge{]}
 
@@ -1946,16 +2143,16 @@ can only include : `endogenous', `exogenous', `observables',
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id141}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id149}
 none
 
 
-\section{More About}
-\label{classes/models/@dsge/dsge:id142}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id150}
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id143}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id151}
 See also:
 
 Help for dsge/report is inherited from superclass RISE\_GENERIC
@@ -1965,43 +2162,46 @@ Help for dsge/report is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{resid}
-\label{classes/models/@dsge/dsge:id144}\label{classes/models/@dsge/dsge:resid}
+\section{resid}
+\label{classes/models/@dsge/dsge:id152}\label{classes/models/@dsge/dsge:resid}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id145}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id153}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id146}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id154}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id147}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id155}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id148}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id156}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id149}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id157}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@dsge/dsge:set}
+
+
+\section{set}
+\label{classes/models/@dsge/dsge:set}\label{classes/models/@dsge/dsge:id158}
 \textbf{set} - sets options for dsge\textbar{}rise models
 
 
-\section{Syntax}
-\label{classes/models/@dsge/dsge:id150}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id159}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{obj}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@dsge/dsge:id151}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id160}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge{]}: model object
 
@@ -2062,19 +2262,19 @@ subdirectory called routines.
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@dsge/dsge:id152}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id161}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge{]}: model object
 
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@dsge/dsge:id153}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id162}
 
-\section{Examples}
-\label{classes/models/@dsge/dsge:id154}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id163}
 obj=set(obj,'solve\_shock\_horizon',struct(`shock1',2,'shock3',4))
 obj=set(obj,'solve\_shock\_horizon',5)
 
@@ -2085,77 +2285,25 @@ See also: rise\_generic.set
 
 
 
-\subsection{set\_solution\_to\_companion}
-\label{classes/models/@dsge/dsge:id155}\label{classes/models/@dsge/dsge:set-solution-to-companion}
+\section{set\_solution\_to\_companion}
+\label{classes/models/@dsge/dsge:set-solution-to-companion}\label{classes/models/@dsge/dsge:id164}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id156}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id157}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id158}
-
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id159}
-
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id160}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{simulate}
-\label{classes/models/@dsge/dsge:id161}\label{classes/models/@dsge/dsge:simulate}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id162}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id163}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id164}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id165}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id166}
-See also:
 
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id167}
 
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{simulate\_nonlinear}
-\label{classes/models/@dsge/dsge:id167}\label{classes/models/@dsge/dsge:simulate-nonlinear}
-H1 line
-
-
-\subsubsection{Syntax}
+\subsection{More About}
 \label{classes/models/@dsge/dsge:id168}
 
-\subsubsection{Inputs}
+\subsection{Examples}
 \label{classes/models/@dsge/dsge:id169}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id170}
-
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id171}
-
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id172}
 See also:
 
 
@@ -2163,25 +2311,176 @@ See also:
 
 
 
-\subsection{simulation\_diagnostics}
-\label{classes/models/@dsge/dsge:simulation-diagnostics}\label{classes/models/@dsge/dsge:id173}
+\section{simulate}
+\label{classes/models/@dsge/dsge:id170}\label{classes/models/@dsge/dsge:simulate}
+\textbf{simulate} - simulates a RISE model
+
+
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id171}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{db}\PYG{p}{,}\PYG{n}{states}\PYG{p}{,}\PYG{n}{retcode}\PYG{p}{]} \PYG{o}{=} \PYG{n}{simulate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
+
+
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id172}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rfvar\textbar{}dsge\textbar{}rise\textbar{}svar{]}: model object
+
+\item {} 
+\textbf{varargin} : additional arguments including but not restricted to
+\begin{itemize}
+\item {} 
+\textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
+
+\item {} 
+\textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
+
+\item {} \begin{description}
+\item[{\textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}}] \leavevmode
+shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
+
+\end{description}
+
+\item {} 
+\textbf{simul\_seed} {[}numeric\textbar{}\{0\}{]}: seed of the computations
+
+\item {} \begin{description}
+\item[{\textbf{simul\_historical\_data} {[}ts\textbar{}struct\textbar{}\{`'\}{]}: historical data from}] \leavevmode
+which the simulations are based. If empty, the simulations start at
+the steady state.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_history\_end\_date} {[}char\textbar{}integer\textbar{}serial date{]}: last date of}] \leavevmode
+history
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_regime} {[}integer\textbar{}vector\textbar{}\{{[}{]}\}{]}: regimes for which the model}] \leavevmode
+is simulated
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_update\_shocks\_handle} {[}function handle{]}: we may want to}] \leavevmode
+update the shocks if some condition on the state of the economy is
+satisfied. For instance, shock monetary policy to keep the interest
+rate at the floor for an extented period of time if we already are
+at the ZLB/ZIF. simul\_update\_shocks\_handle takes as inputs the
+current shocks and the state vector (all the endogenous variables)
+and returns the updated shocks. But for all this to be put into
+motion, the user also has to turn on \textbf{simul\_do\_update\_shocks} by
+setting it to true.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_do\_update\_shocks} {[}true\textbar{}\{false\}{]}: update the shocks based on}] \leavevmode
+\textbf{simul\_update\_shocks\_handle} or not.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_to\_time\_series} {[}\{true\}\textbar{}false{]}: if true, the output is a}] \leavevmode
+time series, else a cell array with a matrix and information on
+elements that help reconstruct the time series.
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id173}\begin{itemize}
+\item {} 
+\textbf{db} {[}struct\textbar{}cell array{]}: if \textbf{simul\_to\_time\_series} is true, the
+output is a time series, else a cell array with a matrix and
+information on elements that help reconstruct the time series.
+
+\item {} 
+\textbf{states} {[}vector{]}: history of the regimes over the forecast horizon
+
+\item {} 
+\textbf{retcode} {[}integer{]}: if 0, the simulation went fine. Else something
+got wrong. In that case one can understand the problem by running
+decipher(retcode)
+
+\end{itemize}
+
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id174}\begin{itemize}
+\item {} 
+\textbf{simul\_historical\_data} contains the historical data as well as
+conditional information over the forecast horizon. It may also include
+as an alternative to \textbf{simul\_regime}, a time series with name
+\textbf{regime}, which indicates the regimes over the forecast horizon.
+
+\end{itemize}
+
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id175}
+See also:
+
+Help for dsge/simulate is inherited from superclass RISE\_GENERIC
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{simulate\_nonlinear}
+\label{classes/models/@dsge/dsge:id176}\label{classes/models/@dsge/dsge:simulate-nonlinear}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id174}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id175}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id176}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@dsge/dsge:id177}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@dsge/dsge:id178}
+
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id179}
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id180}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id181}
+See also:
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{simulation\_diagnostics}
+\label{classes/models/@dsge/dsge:id182}\label{classes/models/@dsge/dsge:simulation-diagnostics}
+H1 line
+
+
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id183}
+
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id184}
+
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id185}
+
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id186}
+
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id187}
 See also:
 
 Help for dsge/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
@@ -2191,25 +2490,25 @@ Help for dsge/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{solve}
-\label{classes/models/@dsge/dsge:solve}\label{classes/models/@dsge/dsge:id179}
+\section{solve}
+\label{classes/models/@dsge/dsge:id188}\label{classes/models/@dsge/dsge:solve}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id180}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id189}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id181}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id190}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id182}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id191}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id183}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id192}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id184}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id193}
 obj=solve(obj,'solve\_shock\_horizon',struct(`shock1',2,'shock3',4))
 obj=solve(obj,'solve\_shock\_horizon',5)
 
@@ -2220,25 +2519,25 @@ See also:
 
 
 
-\subsection{solve\_alternatives}
-\label{classes/models/@dsge/dsge:id185}\label{classes/models/@dsge/dsge:solve-alternatives}
+\section{solve\_alternatives}
+\label{classes/models/@dsge/dsge:solve-alternatives}\label{classes/models/@dsge/dsge:id194}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id186}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id195}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id187}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id196}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id188}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id197}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id189}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id198}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id190}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id199}
 See also:
 
 
@@ -2246,25 +2545,25 @@ See also:
 
 
 
-\subsection{stoch\_simul}
-\label{classes/models/@dsge/dsge:stoch-simul}\label{classes/models/@dsge/dsge:id191}
+\section{stoch\_simul}
+\label{classes/models/@dsge/dsge:id200}\label{classes/models/@dsge/dsge:stoch-simul}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id192}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id201}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id193}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id202}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id194}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id203}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id195}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id204}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id196}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id205}
 See also:
 
 Help for dsge/stoch\_simul is inherited from superclass RISE\_GENERIC
@@ -2274,25 +2573,25 @@ Help for dsge/stoch\_simul is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{theoretical\_autocorrelations}
-\label{classes/models/@dsge/dsge:theoretical-autocorrelations}\label{classes/models/@dsge/dsge:id197}
+\section{theoretical\_autocorrelations}
+\label{classes/models/@dsge/dsge:theoretical-autocorrelations}\label{classes/models/@dsge/dsge:id206}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id198}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id207}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id199}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id208}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id200}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id209}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id201}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id210}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id202}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id211}
 See also:
 
 Help for dsge/theoretical\_autocorrelations is inherited from superclass RISE\_GENERIC
@@ -2302,25 +2601,25 @@ Help for dsge/theoretical\_autocorrelations is inherited from superclass RISE\_G
 
 
 
-\subsection{theoretical\_autocovariances}
-\label{classes/models/@dsge/dsge:id203}\label{classes/models/@dsge/dsge:theoretical-autocovariances}
+\section{theoretical\_autocovariances}
+\label{classes/models/@dsge/dsge:theoretical-autocovariances}\label{classes/models/@dsge/dsge:id212}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id204}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id213}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id205}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id214}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id206}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id215}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id207}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id216}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id208}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id217}
 See also:
 
 Help for dsge/theoretical\_autocovariances is inherited from superclass RISE\_GENERIC
@@ -2330,25 +2629,25 @@ Help for dsge/theoretical\_autocovariances is inherited from superclass RISE\_GE
 
 
 
-\subsection{variance\_decomposition}
-\label{classes/models/@dsge/dsge:id209}\label{classes/models/@dsge/dsge:variance-decomposition}
+\section{variance\_decomposition}
+\label{classes/models/@dsge/dsge:id218}\label{classes/models/@dsge/dsge:variance-decomposition}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id210}
+\subsection{Syntax}
+\label{classes/models/@dsge/dsge:id219}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id211}
+\subsection{Inputs}
+\label{classes/models/@dsge/dsge:id220}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id212}
+\subsection{Outputs}
+\label{classes/models/@dsge/dsge:id221}
 
-\subsubsection{More About}
-\label{classes/models/@dsge/dsge:id213}
+\subsection{More About}
+\label{classes/models/@dsge/dsge:id222}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id214}
+\subsection{Examples}
+\label{classes/models/@dsge/dsge:id223}
 See also:
 
 Help for dsge/variance\_decomposition is inherited from superclass RISE\_GENERIC
@@ -2505,31 +2804,32 @@ Help for dsge/variance\_decomposition is inherited from superclass RISE\_GENERIC
 \end{itemize}
 
 
-\section{Synopsis and description on methods}
-\label{classes/models/@rfvar/rfvar:synopsis-and-description-on-methods}
+\bigskip\hrule{}\bigskip
+
+
 
 \bigskip\hrule{}\bigskip
 
 
 
-\subsection{check\_identification}
+\section{check\_identification}
 \label{classes/models/@rfvar/rfvar:id1}\label{classes/models/@rfvar/rfvar:check-identification}
 H1 line
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:syntax}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:inputs}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@rfvar/rfvar:outputs}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@rfvar/rfvar:more-about}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@rfvar/rfvar:examples}
 See also:
 
@@ -2538,24 +2838,24 @@ See also:
 
 
 
-\subsection{check\_optimum}
+\section{check\_optimum}
 \label{classes/models/@rfvar/rfvar:check-optimum}\label{classes/models/@rfvar/rfvar:id2}
 H1 line
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id3}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id4}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@rfvar/rfvar:id5}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@rfvar/rfvar:id6}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@rfvar/rfvar:id7}
 See also:
 
@@ -2566,24 +2866,24 @@ Help for rfvar/check\_optimum is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{draw\_parameter}
+\section{draw\_parameter}
 \label{classes/models/@rfvar/rfvar:id8}\label{classes/models/@rfvar/rfvar:draw-parameter}
 H1 line
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id9}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id10}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@rfvar/rfvar:id11}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@rfvar/rfvar:id12}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@rfvar/rfvar:id13}
 See also:
 
@@ -2594,24 +2894,198 @@ Help for rfvar/draw\_parameter is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{estimate}
+\section{estimate}
 \label{classes/models/@rfvar/rfvar:estimate}\label{classes/models/@rfvar/rfvar:id14}
-H1 line
+\textbf{estimate} - estimates the parameters of a RISE model
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id15}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{obj}\PYG{o}{=}\PYG{n}{estimate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\PYG{n}{obj}\PYG{o}{=}\PYG{n}{estimate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id16}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id17}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id16}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: model object
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id18}
+\item {} 
+\textbf{varargin} additional optional inputs among which the most relevant
+for estimation are:
 
-\subsubsection{Examples}
+\item {} 
+\textbf{estim\_parallel} {[}integer\textbar{}\{1\}{]}: Number of starting values
+
+\item {} 
+\textbf{estim\_start\_from\_mode} {[}true\textbar{}false\textbar{}\{{[}{]}\}{]}: when empty, the user is
+prompted to answer the question as to whether to start estimation from
+a previously found mode or not. If true or false, no question is asked.
+
+\item {} 
+\textbf{estim\_start\_date} {[}numeric\textbar{}char\textbar{}serial date{]}: date of the first
+observation to use in the dataset provided for estimation
+
+\item {} 
+\textbf{estim\_end\_date} {[}numeric\textbar{}char\textbar{}serial date{]}: date of the last
+observation to use in the dataset provided for estimation
+
+\item {} 
+\textbf{estim\_max\_trials} {[}integer\textbar{}\{500\}{]}: When the initial value of the
+log-likelihood is too low, RISE uniformly draws from the prior support
+in search for a better starting point. It will try this for a maximum
+number of \textbf{estim\_max\_trials} times before squeaking with an error.
+
+\item {} 
+\textbf{estim\_start\_vals} {[}\{{[}{]}\}\textbar{}struct{]}: when not empty, the parameters
+whose names are fields of the structure will see their start values
+updated or overriden by the information in \textbf{estim\_start\_vals}. There
+is no need to provide values to update the start values for the
+estimated parameters.
+
+\item {} 
+\textbf{estim\_general\_restrictions} {[}\{{[}{]}\}\textbar{}function handle{]}: when not empty,
+the argument should be a function handle that takes as input a
+parameterized RISE object and returns a scalar or vector of numbers
+representing the strength of the violation of the nonlinear
+constraints. Those constraints will be added to the constraints already
+included in a rise/dsge file before being presented to the optimization
+function.
+
+\item {} 
+\textbf{estim\_linear\_restrictions} {[}\{{[}{]}\}\textbar{}cell{]}: This is most often used in
+the estimation of rfvar or svar models either to impose block
+exogeneity or to impose other forms of linear restrictions. When not
+empty, \textbf{estim\_linear\_restrictions} must be a 2-column cell:
+- Each row of the first column represents a particular linear
+combination of the estimated parameters. Those linear combinations are
+constructed using the \textbf{coef} class. Check help for coef.coef for more
+details.
+- Each row of the second column holds the value of the linear
+combination.
+
+\item {} 
+\textbf{estim\_blocks} {[}\{{[}{]}\}\textbar{}cell{]}: When not empty, this triggers blockwise
+optimization. For further information on how to set blocks, see help
+for dsge.create\_estimation\_blocks
+
+\item {} 
+\textbf{estim\_priors} {[}\{{[}{]}\}\textbar{}struct{]}: This provides an alternative to
+setting priors inside the rise/dsge model file. Each field of the
+structure must be the name of an estimated parameter. Each field will
+hold a cell array whose structure is described in help
+rise\_generic.setup\_priors.
+
+\item {} 
+\textbf{estim\_penalty} {[}numeric\textbar{}\{1e+8\}{]}: value of the objective function
+when a problem occurs. Possible problems include:
+- no solution found
+- very low likelihood
+- stochastic singularity
+- problems computing the initial covariance matrix
+- non-positive definite covariance matrices
+- etc.
+
+\item {} 
+\textbf{estim\_cond\_vars} {[}char\textbar{}cellstr{]}: list of the variables to condition
+on during estimation of a dsge model. This then assumes that the data
+provided for estimation have several pages. The first page is the
+actual data, while the subsequent pages are the expectations data.
+
+\item {} 
+\textbf{optimset} {[}struct{]}: identical to matlab's optimset
+
+\item {} 
+\textbf{optimizer} {[}char\textbar{}function handle\textbar{}cell{]}: This can be the name of a
+standard matlab optimizer or RISE optimization routine or a
+user-defined optimization procedure available of the matlab search
+path. If the optimzer is provided as a cell, then the first element of
+the cell is the name of the optimizer or its handle and the remaining
+entries in the cell are additional input arguments to the user-defined
+optimization routine. A user-defined optimization function should have
+the following syntax
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{xfinal}\PYG{p}{,}\PYG{n}{ffinal}\PYG{p}{,}\PYG{n}{exitflag}\PYG{p}{]}\PYG{o}{=}\PYG{n}{optimizer}\PYG{p}{(}\PYG{n}{fh}\PYG{p}{,}\PYG{n}{x0}\PYG{p}{,}\PYG{n}{lb}\PYG{p}{,}\PYG{n}{ub}\PYG{p}{,}\PYG{n}{options}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}\PYG{p}{;}
+\end{Verbatim}
+\begin{description}
+\item[{That is, it accepts as inputs:}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{fh}: the function to optimize
+
+\item {} 
+\textbf{x0}: a vector column of initial values of the parameters
+
+\item {} 
+\textbf{lb}: a vector column of lower bounds
+
+\item {} 
+\textbf{ub}: a vector column of upper bounds
+
+\item {} \begin{description}
+\item[{\textbf{options}: a structure of options whose fields will be similar}] \leavevmode
+to matlab's optimset
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{varargin}: additional arguments to the user-defined}] \leavevmode
+optimization procedure
+
+\end{description}
+
+\end{itemize}
+
+\item[{That is, it provides as outputs:}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{xfinal}: the vector of final values
+
+\item {} 
+\textbf{ffinal}: the value of \textbf{fh} at \textbf{xfinal}
+
+\item {} 
+\textbf{exitflag}: a flag similar to the ones provided by matlab's
+
+\end{itemize}
+
+optimization functions.
+
+\end{description}
+
+\item {} 
+\textbf{hessian\_type} {[}\{`fd'\}\textbar{}'opg'{]}: The hessian is either computed by
+finite differences (fd) or by outer-product-gradient (opg)
+
+\item {} 
+\textbf{hessian\_repair} {[}\{false\}\textbar{}true{]}: If the Hessian is not positive
+definite, it nevertheless can be repaired and prepared for a potential
+mcmc simulation.
+
+\end{itemize}
+
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id17}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: model object parameterized with the
+mode found and holding additional estimation results and statistics
+that can be found under obj.estimation
+
+\end{itemize}
+
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id18}\begin{itemize}
+\item {} 
+recursive estimation may be done easily by passing a different
+estim\_end\_date at the beginning of each estimation run.
+
+\end{itemize}
+
+
+\subsection{Examples}
 \label{classes/models/@rfvar/rfvar:id19}
 See also:
 
@@ -2620,19 +3094,22 @@ Help for rfvar/estimate is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:forecast}
+
+
+\section{forecast}
+\label{classes/models/@rfvar/rfvar:id20}\label{classes/models/@rfvar/rfvar:forecast}
 \textbf{forecast} - computes forecasts for rise\textbar{}dsge\textbar{}svar\textbar{}rfvar models
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id20}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id21}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{cond\PYGZus{}fkst\PYGZus{}db}\PYG{o}{=}\PYG{n}{forecast}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id21}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id22}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
@@ -2687,8 +3164,8 @@ the number of anticipated steps
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id22}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id23}\begin{itemize}
 \item {} 
 \textbf{cond\_fkst\_db} {[}struct\textbar{}matrix{]}: depending on the value of
 \textbf{forecast\_to\_time\_series} the returned output is a structure with
@@ -2698,8 +3175,8 @@ reconstruct the time series.
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@rfvar/rfvar:id23}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id24}\begin{itemize}
 \item {} 
 the historical information as well as the conditioning information come
 from the same database. The time series must be organized such that for
@@ -2725,8 +3202,8 @@ where h is the maximum number of regimes.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id24}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id25}
 See also: simulate
 
 Help for rfvar/forecast is inherited from superclass RISE\_GENERIC
@@ -2736,25 +3213,25 @@ Help for rfvar/forecast is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{get}
-\label{classes/models/@rfvar/rfvar:id25}\label{classes/models/@rfvar/rfvar:get}
+\section{get}
+\label{classes/models/@rfvar/rfvar:id26}\label{classes/models/@rfvar/rfvar:get}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id26}
-
-\subsubsection{Inputs}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id27}
 
-\subsubsection{Outputs}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id28}
 
-\subsubsection{More About}
+\subsection{Outputs}
 \label{classes/models/@rfvar/rfvar:id29}
 
-\subsubsection{Examples}
+\subsection{More About}
 \label{classes/models/@rfvar/rfvar:id30}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id31}
 See also:
 
 Help for rfvar/get is inherited from superclass RISE\_GENERIC
@@ -2762,20 +3239,23 @@ Help for rfvar/get is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:historical-decomposition}
+
+
+\section{historical\_decomposition}
+\label{classes/models/@rfvar/rfvar:id32}\label{classes/models/@rfvar/rfvar:historical-decomposition}
 \textbf{historical\_decomposition} Computes historical decompositions of a DSGE model
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id31}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id33}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id32}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id34}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]} model(s) for which to compute the
 decomposition. obj could be a vector of models
@@ -2792,8 +3272,8 @@ beginning of the history of the dataset
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id33}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id35}\begin{itemize}
 \item {} 
 Histdec : {[}struct\textbar{}cell array{]} structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -2807,7 +3287,7 @@ terms of:
 \end{itemize}
 
 
-\section{Remarks}
+\subsection{Remarks}
 \label{classes/models/@rfvar/rfvar:remarks}\begin{itemize}
 \item {} 
 the elements that do not contribute to any of the variables are
@@ -2823,8 +3303,8 @@ averaged. The averaging weights are the smoothed probabilities.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id34}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id36}
 See also:
 
 Help for rfvar/historical\_decomposition is inherited from superclass RISE\_GENERIC
@@ -2832,12 +3312,15 @@ Help for rfvar/historical\_decomposition is inherited from superclass RISE\_GENE
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:irf}
+
+
+\section{irf}
+\label{classes/models/@rfvar/rfvar:id37}\label{classes/models/@rfvar/rfvar:irf}
 \textbf{irf} - computes impulse responses for a RISE model
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id35}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id38}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{myirfs}\PYG{o}{=}\PYG{n}{irf}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 
@@ -2845,8 +3328,8 @@ Help for rfvar/historical\_decomposition is inherited from superclass RISE\_GENE
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id36}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id39}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: single or vector of RISE models
 
@@ -2911,16 +3394,16 @@ information needed to reconstruct the time series.
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id37}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id40}\begin{itemize}
 \item {} 
 \textbf{myirfs} {[}\{struct\}\textbar{}cell{]}: Impulse response data
 
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@rfvar/rfvar:id38}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id41}\begin{itemize}
 \item {} 
 for linear models or models solved up to first order, the initial
 conditions as well as the steady states are set to 0 in the computation
@@ -2932,8 +3415,8 @@ for nonlinear models, the initial conditions is the ergodic mean
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id39}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id42}
 See also:
 
 Help for rfvar/irf is inherited from superclass RISE\_GENERIC
@@ -2943,25 +3426,25 @@ Help for rfvar/irf is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{isnan}
-\label{classes/models/@rfvar/rfvar:isnan}\label{classes/models/@rfvar/rfvar:id40}
+\section{isnan}
+\label{classes/models/@rfvar/rfvar:isnan}\label{classes/models/@rfvar/rfvar:id43}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id41}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id42}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id43}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id44}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id45}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id46}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id47}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id48}
 See also:
 
 Help for rfvar/isnan is inherited from superclass RISE\_GENERIC
@@ -2971,25 +3454,25 @@ Help for rfvar/isnan is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{load\_parameters}
-\label{classes/models/@rfvar/rfvar:id46}\label{classes/models/@rfvar/rfvar:load-parameters}
+\section{load\_parameters}
+\label{classes/models/@rfvar/rfvar:id49}\label{classes/models/@rfvar/rfvar:load-parameters}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id47}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id48}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id49}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id50}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id51}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id52}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id53}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id54}
 See also:
 
 Help for rfvar/load\_parameters is inherited from superclass RISE\_GENERIC
@@ -2999,25 +3482,25 @@ Help for rfvar/load\_parameters is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{log\_marginal\_data\_density}
-\label{classes/models/@rfvar/rfvar:log-marginal-data-density}\label{classes/models/@rfvar/rfvar:id52}
+\section{log\_marginal\_data\_density}
+\label{classes/models/@rfvar/rfvar:id55}\label{classes/models/@rfvar/rfvar:log-marginal-data-density}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id53}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id54}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id55}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id56}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id57}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id58}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id59}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id60}
 See also:
 
 Help for rfvar/log\_marginal\_data\_density is inherited from superclass RISE\_GENERIC
@@ -3027,25 +3510,25 @@ Help for rfvar/log\_marginal\_data\_density is inherited from superclass RISE\_G
 
 
 
-\subsection{log\_posterior\_kernel}
-\label{classes/models/@rfvar/rfvar:log-posterior-kernel}\label{classes/models/@rfvar/rfvar:id58}
+\section{log\_posterior\_kernel}
+\label{classes/models/@rfvar/rfvar:log-posterior-kernel}\label{classes/models/@rfvar/rfvar:id61}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id59}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id60}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id61}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id62}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id63}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id64}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id65}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id66}
 See also:
 
 Help for rfvar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
@@ -3055,25 +3538,25 @@ Help for rfvar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{log\_prior\_density}
-\label{classes/models/@rfvar/rfvar:id64}\label{classes/models/@rfvar/rfvar:log-prior-density}
+\section{log\_prior\_density}
+\label{classes/models/@rfvar/rfvar:id67}\label{classes/models/@rfvar/rfvar:log-prior-density}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id65}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id66}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id67}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id68}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id69}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id70}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id71}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id72}
 See also:
 
 Help for rfvar/log\_prior\_density is inherited from superclass RISE\_GENERIC
@@ -3083,25 +3566,25 @@ Help for rfvar/log\_prior\_density is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{msvar\_priors}
-\label{classes/models/@rfvar/rfvar:id70}\label{classes/models/@rfvar/rfvar:msvar-priors}
+\section{msvar\_priors}
+\label{classes/models/@rfvar/rfvar:id73}\label{classes/models/@rfvar/rfvar:msvar-priors}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id71}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id72}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id73}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id74}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id75}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id76}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id77}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id78}
 See also:
 
 Help for rfvar/msvar\_priors is inherited from superclass SVAR
@@ -3111,25 +3594,25 @@ Help for rfvar/msvar\_priors is inherited from superclass SVAR
 
 
 
-\subsection{posterior\_marginal\_and\_prior\_densities}
-\label{classes/models/@rfvar/rfvar:id76}\label{classes/models/@rfvar/rfvar:posterior-marginal-and-prior-densities}
+\section{posterior\_marginal\_and\_prior\_densities}
+\label{classes/models/@rfvar/rfvar:id79}\label{classes/models/@rfvar/rfvar:posterior-marginal-and-prior-densities}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id77}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id78}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id79}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id80}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id81}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id82}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id83}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id84}
 See also:
 
 Help for rfvar/posterior\_marginal\_and\_prior\_densities is inherited from superclass RISE\_GENERIC
@@ -3139,25 +3622,25 @@ Help for rfvar/posterior\_marginal\_and\_prior\_densities is inherited from supe
 
 
 
-\subsection{posterior\_simulator}
-\label{classes/models/@rfvar/rfvar:posterior-simulator}\label{classes/models/@rfvar/rfvar:id82}
+\section{posterior\_simulator}
+\label{classes/models/@rfvar/rfvar:posterior-simulator}\label{classes/models/@rfvar/rfvar:id85}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id83}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id84}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id85}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id86}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id87}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id88}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id89}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id90}
 See also:
 
 Help for rfvar/posterior\_simulator is inherited from superclass RISE\_GENERIC
@@ -3167,25 +3650,25 @@ Help for rfvar/posterior\_simulator is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{print\_estimation\_results}
-\label{classes/models/@rfvar/rfvar:print-estimation-results}\label{classes/models/@rfvar/rfvar:id88}
+\section{print\_estimation\_results}
+\label{classes/models/@rfvar/rfvar:id91}\label{classes/models/@rfvar/rfvar:print-estimation-results}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id89}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id90}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id91}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id92}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id93}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id94}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id95}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id96}
 See also:
 
 Help for rfvar/print\_estimation\_results is inherited from superclass RISE\_GENERIC
@@ -3195,25 +3678,25 @@ Help for rfvar/print\_estimation\_results is inherited from superclass RISE\_GEN
 
 
 
-\subsection{prior\_plots}
-\label{classes/models/@rfvar/rfvar:id94}\label{classes/models/@rfvar/rfvar:prior-plots}
+\section{prior\_plots}
+\label{classes/models/@rfvar/rfvar:prior-plots}\label{classes/models/@rfvar/rfvar:id97}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id95}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id96}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id97}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@rfvar/rfvar:id98}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@rfvar/rfvar:id99}
+
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id100}
+
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id101}
+
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id102}
 See also:
 
 Help for rfvar/prior\_plots is inherited from superclass RISE\_GENERIC
@@ -3221,12 +3704,15 @@ Help for rfvar/prior\_plots is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:report}
+
+
+\section{report}
+\label{classes/models/@rfvar/rfvar:report}\label{classes/models/@rfvar/rfvar:id103}
 \textbf{REPORT} assigns the elements of interest to a rise\_report.report object
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id100}\begin{description}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id104}\begin{description}
 \item[{::}] \leavevmode\begin{itemize}
 \item {} 
 REPORT(rise.empty(0)) : displays the default inputs
@@ -3244,8 +3730,8 @@ obj before doing the rest
 \end{description}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id101}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id105}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge{]}
 
@@ -3261,16 +3747,16 @@ can only include : `endogenous', `exogenous', `observables',
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id102}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id106}
 none
 
 
-\section{More About}
-\label{classes/models/@rfvar/rfvar:id103}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id107}
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id104}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id108}
 See also:
 
 Help for rfvar/report is inherited from superclass RISE\_GENERIC
@@ -3278,29 +3764,33 @@ Help for rfvar/report is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:rfvar}
-\textbf{rfvar}
-\begin{quote}
 
--- no help found
+
+\section{rfvar}
+\label{classes/models/@rfvar/rfvar:id109}\label{classes/models/@rfvar/rfvar:rfvar}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:set}
+
+
+\section{set}
+\label{classes/models/@rfvar/rfvar:id110}\label{classes/models/@rfvar/rfvar:set}
 \textbf{set} - sets options for RISE models
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id105}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id111}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{obj}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id106}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id112}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
@@ -3310,16 +3800,16 @@ Help for rfvar/report is inherited from superclass RISE\_GENERIC
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id107}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id113}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@rfvar/rfvar:id108}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id114}\begin{itemize}
 \item {} 
 one can force a new field into the options by prefixing it with a `+'
 sign. Let's say yourfield is not part of the options and you would like
@@ -3330,8 +3820,8 @@ m=set(m,'+yourfield',value). then m will be part of the new options.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id109}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id115}
 See also:
 
 Help for rfvar/set is inherited from superclass RISE\_GENERIC
@@ -3341,25 +3831,25 @@ Help for rfvar/set is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{set\_solution\_to\_companion}
-\label{classes/models/@rfvar/rfvar:id110}\label{classes/models/@rfvar/rfvar:set-solution-to-companion}
+\section{set\_solution\_to\_companion}
+\label{classes/models/@rfvar/rfvar:id116}\label{classes/models/@rfvar/rfvar:set-solution-to-companion}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id111}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id117}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id112}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id118}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id113}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id119}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id114}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id120}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id115}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id121}
 See also:
 
 Help for rfvar/set\_solution\_to\_companion is inherited from superclass SVAR
@@ -3367,32 +3857,40 @@ Help for rfvar/set\_solution\_to\_companion is inherited from superclass SVAR
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:simulate}
+
+
+\section{simulate}
+\label{classes/models/@rfvar/rfvar:id122}\label{classes/models/@rfvar/rfvar:simulate}
 \textbf{simulate} - simulates a RISE model
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id116}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id123}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{db}\PYG{p}{,}\PYG{n}{states}\PYG{p}{,}\PYG{n}{retcode}\PYG{p}{]} \PYG{o}{=} \PYG{n}{simulate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id117}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id124}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rfvar\textbar{}dsge\textbar{}rise\textbar{}svar{]}: model object
 
 \item {} 
 \textbf{varargin} : additional arguments including but not restricted to
-- \textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
-- \textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
-- \textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}
-\begin{quote}
-
-shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
-\end{quote}
 \begin{itemize}
+\item {} 
+\textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
+
+\item {} 
+\textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
+
+\item {} \begin{description}
+\item[{\textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}}] \leavevmode
+shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
+
+\end{description}
+
 \item {} 
 \textbf{simul\_seed} {[}numeric\textbar{}\{0\}{]}: seed of the computations
 
@@ -3446,8 +3944,8 @@ elements that help reconstruct the time series.
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id118}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id125}\begin{itemize}
 \item {} 
 \textbf{db} {[}struct\textbar{}cell array{]}: if \textbf{simul\_to\_time\_series} is true, the
 output is a time series, else a cell array with a matrix and
@@ -3464,8 +3962,8 @@ decipher(retcode)
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@rfvar/rfvar:id119}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id126}\begin{itemize}
 \item {} 
 \textbf{simul\_historical\_data} contains the historical data as well as
 conditional information over the forecast horizon. It may also include
@@ -3475,8 +3973,8 @@ as an alternative to \textbf{simul\_regime}, a time series with name
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id120}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id127}
 See also:
 
 Help for rfvar/simulate is inherited from superclass RISE\_GENERIC
@@ -3486,25 +3984,25 @@ Help for rfvar/simulate is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{simulation\_diagnostics}
-\label{classes/models/@rfvar/rfvar:simulation-diagnostics}\label{classes/models/@rfvar/rfvar:id121}
+\section{simulation\_diagnostics}
+\label{classes/models/@rfvar/rfvar:simulation-diagnostics}\label{classes/models/@rfvar/rfvar:id128}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id122}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id129}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id123}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id130}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id124}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id131}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id125}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id132}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id126}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id133}
 See also:
 
 Help for rfvar/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
@@ -3514,25 +4012,25 @@ Help for rfvar/simulation\_diagnostics is inherited from superclass RISE\_GENERI
 
 
 
-\subsection{solve}
-\label{classes/models/@rfvar/rfvar:id127}\label{classes/models/@rfvar/rfvar:solve}
+\section{solve}
+\label{classes/models/@rfvar/rfvar:id134}\label{classes/models/@rfvar/rfvar:solve}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id128}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id135}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id129}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id136}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id130}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id137}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id131}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id138}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id132}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id139}
 See also:
 
 
@@ -3540,25 +4038,25 @@ See also:
 
 
 
-\subsection{stoch\_simul}
-\label{classes/models/@rfvar/rfvar:id133}\label{classes/models/@rfvar/rfvar:stoch-simul}
+\section{stoch\_simul}
+\label{classes/models/@rfvar/rfvar:stoch-simul}\label{classes/models/@rfvar/rfvar:id140}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id134}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id141}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id135}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id142}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id136}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id143}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id137}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id144}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id138}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id145}
 See also:
 
 Help for rfvar/stoch\_simul is inherited from superclass RISE\_GENERIC
@@ -3566,20 +4064,23 @@ Help for rfvar/stoch\_simul is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:structural-form}
+
+
+\section{structural\_form}
+\label{classes/models/@rfvar/rfvar:id146}\label{classes/models/@rfvar/rfvar:structural-form}
 \textbf{structural\_form} finds A structural form given the imposed restrictions
 
 
-\section{Syntax}
-\label{classes/models/@rfvar/rfvar:id139}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id147}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{newobj}\PYG{o}{=}\PYG{n}{structural\PYGZus{}form}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{n}{newobj}\PYG{o}{=}\PYG{n}{structural\PYGZus{}form}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@rfvar/rfvar:id140}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id148}\begin{itemize}
 \item {} 
 \textbf{obj} : {[}rfvar{]} : reduced form VAR object
 
@@ -3642,16 +4143,16 @@ the drawing of rotation matrices
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@rfvar/rfvar:id141}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id149}\begin{itemize}
 \item {} 
 newobj : {[}rfvar{]}: new rfvar object with the drawn structural form
 
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@rfvar/rfvar:id142}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id150}\begin{itemize}
 \item {} 
 RISE automatically orders the endogenous variables alphabetically and
 tags each equation with one of the endogenous variables. This may be
@@ -3694,18 +4195,19 @@ Identification for Markov switching VARs is not implemented/supported.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@rfvar/rfvar:id143}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id151}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@rfvar/rfvar:template}
-\textbf{template}
-\begin{quote}
 
--- no help found
+
+\section{template}
+\label{classes/models/@rfvar/rfvar:id152}\label{classes/models/@rfvar/rfvar:template}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
@@ -3713,25 +4215,25 @@ See also:
 
 
 
-\subsection{theoretical\_autocorrelations}
-\label{classes/models/@rfvar/rfvar:theoretical-autocorrelations}\label{classes/models/@rfvar/rfvar:id144}
+\section{theoretical\_autocorrelations}
+\label{classes/models/@rfvar/rfvar:theoretical-autocorrelations}\label{classes/models/@rfvar/rfvar:id153}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id145}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id154}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id146}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id155}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id147}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id156}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id148}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id157}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id149}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id158}
 See also:
 
 Help for rfvar/theoretical\_autocorrelations is inherited from superclass RISE\_GENERIC
@@ -3741,25 +4243,25 @@ Help for rfvar/theoretical\_autocorrelations is inherited from superclass RISE\_
 
 
 
-\subsection{theoretical\_autocovariances}
-\label{classes/models/@rfvar/rfvar:theoretical-autocovariances}\label{classes/models/@rfvar/rfvar:id150}
+\section{theoretical\_autocovariances}
+\label{classes/models/@rfvar/rfvar:theoretical-autocovariances}\label{classes/models/@rfvar/rfvar:id159}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id151}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id160}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id152}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id161}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id153}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id162}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id154}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id163}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id155}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id164}
 See also:
 
 Help for rfvar/theoretical\_autocovariances is inherited from superclass RISE\_GENERIC
@@ -3769,25 +4271,25 @@ Help for rfvar/theoretical\_autocovariances is inherited from superclass RISE\_G
 
 
 
-\subsection{variance\_decomposition}
-\label{classes/models/@rfvar/rfvar:id156}\label{classes/models/@rfvar/rfvar:variance-decomposition}
+\section{variance\_decomposition}
+\label{classes/models/@rfvar/rfvar:variance-decomposition}\label{classes/models/@rfvar/rfvar:id165}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id157}
+\subsection{Syntax}
+\label{classes/models/@rfvar/rfvar:id166}
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id158}
+\subsection{Inputs}
+\label{classes/models/@rfvar/rfvar:id167}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id159}
+\subsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id168}
 
-\subsubsection{More About}
-\label{classes/models/@rfvar/rfvar:id160}
+\subsection{More About}
+\label{classes/models/@rfvar/rfvar:id169}
 
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id161}
+\subsection{Examples}
+\label{classes/models/@rfvar/rfvar:id170}
 See also:
 
 Help for rfvar/variance\_decomposition is inherited from superclass RISE\_GENERIC
@@ -3929,31 +4431,32 @@ Help for rfvar/variance\_decomposition is inherited from superclass RISE\_GENERI
 \end{itemize}
 
 
-\section{Synopsis and description on methods}
-\label{classes/models/@svar/svar:synopsis-and-description-on-methods}
+\bigskip\hrule{}\bigskip
+
+
 
 \bigskip\hrule{}\bigskip
 
 
 
-\subsection{check\_optimum}
+\section{check\_optimum}
 \label{classes/models/@svar/svar:check-optimum}\label{classes/models/@svar/svar:id1}
 H1 line
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:syntax}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:inputs}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@svar/svar:outputs}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@svar/svar:more-about}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@svar/svar:examples}
 See also:
 
@@ -3964,24 +4467,24 @@ Help for svar/check\_optimum is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{draw\_parameter}
+\section{draw\_parameter}
 \label{classes/models/@svar/svar:id2}\label{classes/models/@svar/svar:draw-parameter}
 H1 line
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id3}
 
-\subsubsection{Inputs}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id4}
 
-\subsubsection{Outputs}
+\subsection{Outputs}
 \label{classes/models/@svar/svar:id5}
 
-\subsubsection{More About}
+\subsection{More About}
 \label{classes/models/@svar/svar:id6}
 
-\subsubsection{Examples}
+\subsection{Examples}
 \label{classes/models/@svar/svar:id7}
 See also:
 
@@ -3992,24 +4495,198 @@ Help for svar/draw\_parameter is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{estimate}
+\section{estimate}
 \label{classes/models/@svar/svar:estimate}\label{classes/models/@svar/svar:id8}
-H1 line
+\textbf{estimate} - estimates the parameters of a RISE model
 
 
-\subsubsection{Syntax}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id9}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{obj}\PYG{o}{=}\PYG{n}{estimate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\PYG{n}{obj}\PYG{o}{=}\PYG{n}{estimate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id10}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id11}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id10}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: model object
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id12}
+\item {} 
+\textbf{varargin} additional optional inputs among which the most relevant
+for estimation are:
 
-\subsubsection{Examples}
+\item {} 
+\textbf{estim\_parallel} {[}integer\textbar{}\{1\}{]}: Number of starting values
+
+\item {} 
+\textbf{estim\_start\_from\_mode} {[}true\textbar{}false\textbar{}\{{[}{]}\}{]}: when empty, the user is
+prompted to answer the question as to whether to start estimation from
+a previously found mode or not. If true or false, no question is asked.
+
+\item {} 
+\textbf{estim\_start\_date} {[}numeric\textbar{}char\textbar{}serial date{]}: date of the first
+observation to use in the dataset provided for estimation
+
+\item {} 
+\textbf{estim\_end\_date} {[}numeric\textbar{}char\textbar{}serial date{]}: date of the last
+observation to use in the dataset provided for estimation
+
+\item {} 
+\textbf{estim\_max\_trials} {[}integer\textbar{}\{500\}{]}: When the initial value of the
+log-likelihood is too low, RISE uniformly draws from the prior support
+in search for a better starting point. It will try this for a maximum
+number of \textbf{estim\_max\_trials} times before squeaking with an error.
+
+\item {} 
+\textbf{estim\_start\_vals} {[}\{{[}{]}\}\textbar{}struct{]}: when not empty, the parameters
+whose names are fields of the structure will see their start values
+updated or overriden by the information in \textbf{estim\_start\_vals}. There
+is no need to provide values to update the start values for the
+estimated parameters.
+
+\item {} 
+\textbf{estim\_general\_restrictions} {[}\{{[}{]}\}\textbar{}function handle{]}: when not empty,
+the argument should be a function handle that takes as input a
+parameterized RISE object and returns a scalar or vector of numbers
+representing the strength of the violation of the nonlinear
+constraints. Those constraints will be added to the constraints already
+included in a rise/dsge file before being presented to the optimization
+function.
+
+\item {} 
+\textbf{estim\_linear\_restrictions} {[}\{{[}{]}\}\textbar{}cell{]}: This is most often used in
+the estimation of rfvar or svar models either to impose block
+exogeneity or to impose other forms of linear restrictions. When not
+empty, \textbf{estim\_linear\_restrictions} must be a 2-column cell:
+- Each row of the first column represents a particular linear
+combination of the estimated parameters. Those linear combinations are
+constructed using the \textbf{coef} class. Check help for coef.coef for more
+details.
+- Each row of the second column holds the value of the linear
+combination.
+
+\item {} 
+\textbf{estim\_blocks} {[}\{{[}{]}\}\textbar{}cell{]}: When not empty, this triggers blockwise
+optimization. For further information on how to set blocks, see help
+for dsge.create\_estimation\_blocks
+
+\item {} 
+\textbf{estim\_priors} {[}\{{[}{]}\}\textbar{}struct{]}: This provides an alternative to
+setting priors inside the rise/dsge model file. Each field of the
+structure must be the name of an estimated parameter. Each field will
+hold a cell array whose structure is described in help
+rise\_generic.setup\_priors.
+
+\item {} 
+\textbf{estim\_penalty} {[}numeric\textbar{}\{1e+8\}{]}: value of the objective function
+when a problem occurs. Possible problems include:
+- no solution found
+- very low likelihood
+- stochastic singularity
+- problems computing the initial covariance matrix
+- non-positive definite covariance matrices
+- etc.
+
+\item {} 
+\textbf{estim\_cond\_vars} {[}char\textbar{}cellstr{]}: list of the variables to condition
+on during estimation of a dsge model. This then assumes that the data
+provided for estimation have several pages. The first page is the
+actual data, while the subsequent pages are the expectations data.
+
+\item {} 
+\textbf{optimset} {[}struct{]}: identical to matlab's optimset
+
+\item {} 
+\textbf{optimizer} {[}char\textbar{}function handle\textbar{}cell{]}: This can be the name of a
+standard matlab optimizer or RISE optimization routine or a
+user-defined optimization procedure available of the matlab search
+path. If the optimzer is provided as a cell, then the first element of
+the cell is the name of the optimizer or its handle and the remaining
+entries in the cell are additional input arguments to the user-defined
+optimization routine. A user-defined optimization function should have
+the following syntax
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{xfinal}\PYG{p}{,}\PYG{n}{ffinal}\PYG{p}{,}\PYG{n}{exitflag}\PYG{p}{]}\PYG{o}{=}\PYG{n}{optimizer}\PYG{p}{(}\PYG{n}{fh}\PYG{p}{,}\PYG{n}{x0}\PYG{p}{,}\PYG{n}{lb}\PYG{p}{,}\PYG{n}{ub}\PYG{p}{,}\PYG{n}{options}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}\PYG{p}{;}
+\end{Verbatim}
+\begin{description}
+\item[{That is, it accepts as inputs:}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{fh}: the function to optimize
+
+\item {} 
+\textbf{x0}: a vector column of initial values of the parameters
+
+\item {} 
+\textbf{lb}: a vector column of lower bounds
+
+\item {} 
+\textbf{ub}: a vector column of upper bounds
+
+\item {} \begin{description}
+\item[{\textbf{options}: a structure of options whose fields will be similar}] \leavevmode
+to matlab's optimset
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{varargin}: additional arguments to the user-defined}] \leavevmode
+optimization procedure
+
+\end{description}
+
+\end{itemize}
+
+\item[{That is, it provides as outputs:}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{xfinal}: the vector of final values
+
+\item {} 
+\textbf{ffinal}: the value of \textbf{fh} at \textbf{xfinal}
+
+\item {} 
+\textbf{exitflag}: a flag similar to the ones provided by matlab's
+
+\end{itemize}
+
+optimization functions.
+
+\end{description}
+
+\item {} 
+\textbf{hessian\_type} {[}\{`fd'\}\textbar{}'opg'{]}: The hessian is either computed by
+finite differences (fd) or by outer-product-gradient (opg)
+
+\item {} 
+\textbf{hessian\_repair} {[}\{false\}\textbar{}true{]}: If the Hessian is not positive
+definite, it nevertheless can be repaired and prepared for a potential
+mcmc simulation.
+
+\end{itemize}
+
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id11}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: model object parameterized with the
+mode found and holding additional estimation results and statistics
+that can be found under obj.estimation
+
+\end{itemize}
+
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id12}\begin{itemize}
+\item {} 
+recursive estimation may be done easily by passing a different
+estim\_end\_date at the beginning of each estimation run.
+
+\end{itemize}
+
+
+\subsection{Examples}
 \label{classes/models/@svar/svar:id13}
 See also:
 
@@ -4018,19 +4695,22 @@ Help for svar/estimate is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:forecast}
+
+
+\section{forecast}
+\label{classes/models/@svar/svar:id14}\label{classes/models/@svar/svar:forecast}
 \textbf{forecast} - computes forecasts for rise\textbar{}dsge\textbar{}svar\textbar{}rfvar models
 
 
-\section{Syntax}
-\label{classes/models/@svar/svar:id14}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id15}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{cond\PYGZus{}fkst\PYGZus{}db}\PYG{o}{=}\PYG{n}{forecast}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@svar/svar:id15}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id16}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
@@ -4085,8 +4765,8 @@ the number of anticipated steps
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@svar/svar:id16}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id17}\begin{itemize}
 \item {} 
 \textbf{cond\_fkst\_db} {[}struct\textbar{}matrix{]}: depending on the value of
 \textbf{forecast\_to\_time\_series} the returned output is a structure with
@@ -4096,8 +4776,8 @@ reconstruct the time series.
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@svar/svar:id17}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@svar/svar:id18}\begin{itemize}
 \item {} 
 the historical information as well as the conditioning information come
 from the same database. The time series must be organized such that for
@@ -4123,8 +4803,8 @@ where h is the maximum number of regimes.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@svar/svar:id18}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id19}
 See also: simulate
 
 Help for svar/forecast is inherited from superclass RISE\_GENERIC
@@ -4134,25 +4814,25 @@ Help for svar/forecast is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{get}
-\label{classes/models/@svar/svar:id19}\label{classes/models/@svar/svar:get}
+\section{get}
+\label{classes/models/@svar/svar:id20}\label{classes/models/@svar/svar:get}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id20}
-
-\subsubsection{Inputs}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id21}
 
-\subsubsection{Outputs}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id22}
 
-\subsubsection{More About}
+\subsection{Outputs}
 \label{classes/models/@svar/svar:id23}
 
-\subsubsection{Examples}
+\subsection{More About}
 \label{classes/models/@svar/svar:id24}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id25}
 See also:
 
 Help for svar/get is inherited from superclass RISE\_GENERIC
@@ -4160,20 +4840,23 @@ Help for svar/get is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:historical-decomposition}
+
+
+\section{historical\_decomposition}
+\label{classes/models/@svar/svar:historical-decomposition}\label{classes/models/@svar/svar:id26}
 \textbf{historical\_decomposition} Computes historical decompositions of a DSGE model
 
 
-\section{Syntax}
-\label{classes/models/@svar/svar:id25}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id27}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@svar/svar:id26}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id28}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]} model(s) for which to compute the
 decomposition. obj could be a vector of models
@@ -4190,8 +4873,8 @@ beginning of the history of the dataset
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@svar/svar:id27}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id29}\begin{itemize}
 \item {} 
 Histdec : {[}struct\textbar{}cell array{]} structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -4205,7 +4888,7 @@ terms of:
 \end{itemize}
 
 
-\section{Remarks}
+\subsection{Remarks}
 \label{classes/models/@svar/svar:remarks}\begin{itemize}
 \item {} 
 the elements that do not contribute to any of the variables are
@@ -4221,8 +4904,8 @@ averaged. The averaging weights are the smoothed probabilities.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@svar/svar:id28}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id30}
 See also:
 
 Help for svar/historical\_decomposition is inherited from superclass RISE\_GENERIC
@@ -4230,12 +4913,15 @@ Help for svar/historical\_decomposition is inherited from superclass RISE\_GENER
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:irf}
+
+
+\section{irf}
+\label{classes/models/@svar/svar:irf}\label{classes/models/@svar/svar:id31}
 \textbf{irf} - computes impulse responses for a RISE model
 
 
-\section{Syntax}
-\label{classes/models/@svar/svar:id29}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id32}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{myirfs}\PYG{o}{=}\PYG{n}{irf}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 
@@ -4243,8 +4929,8 @@ Help for svar/historical\_decomposition is inherited from superclass RISE\_GENER
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@svar/svar:id30}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id33}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: single or vector of RISE models
 
@@ -4309,16 +4995,16 @@ information needed to reconstruct the time series.
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@svar/svar:id31}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id34}\begin{itemize}
 \item {} 
 \textbf{myirfs} {[}\{struct\}\textbar{}cell{]}: Impulse response data
 
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@svar/svar:id32}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@svar/svar:id35}\begin{itemize}
 \item {} 
 for linear models or models solved up to first order, the initial
 conditions as well as the steady states are set to 0 in the computation
@@ -4330,8 +5016,8 @@ for nonlinear models, the initial conditions is the ergodic mean
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@svar/svar:id33}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id36}
 See also:
 
 Help for svar/irf is inherited from superclass RISE\_GENERIC
@@ -4341,25 +5027,25 @@ Help for svar/irf is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{isnan}
-\label{classes/models/@svar/svar:isnan}\label{classes/models/@svar/svar:id34}
+\section{isnan}
+\label{classes/models/@svar/svar:id37}\label{classes/models/@svar/svar:isnan}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id35}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id36}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id37}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id38}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id39}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id40}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id41}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id42}
 See also:
 
 Help for svar/isnan is inherited from superclass RISE\_GENERIC
@@ -4369,25 +5055,25 @@ Help for svar/isnan is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{load\_parameters}
-\label{classes/models/@svar/svar:load-parameters}\label{classes/models/@svar/svar:id40}
+\section{load\_parameters}
+\label{classes/models/@svar/svar:id43}\label{classes/models/@svar/svar:load-parameters}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id41}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id42}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id43}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id44}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id45}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id46}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id47}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id48}
 See also:
 
 Help for svar/load\_parameters is inherited from superclass RISE\_GENERIC
@@ -4397,25 +5083,25 @@ Help for svar/load\_parameters is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{log\_marginal\_data\_density}
-\label{classes/models/@svar/svar:id46}\label{classes/models/@svar/svar:log-marginal-data-density}
+\section{log\_marginal\_data\_density}
+\label{classes/models/@svar/svar:log-marginal-data-density}\label{classes/models/@svar/svar:id49}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id47}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id48}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id49}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id50}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id51}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id52}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id53}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id54}
 See also:
 
 Help for svar/log\_marginal\_data\_density is inherited from superclass RISE\_GENERIC
@@ -4425,25 +5111,25 @@ Help for svar/log\_marginal\_data\_density is inherited from superclass RISE\_GE
 
 
 
-\subsection{log\_posterior\_kernel}
-\label{classes/models/@svar/svar:log-posterior-kernel}\label{classes/models/@svar/svar:id52}
+\section{log\_posterior\_kernel}
+\label{classes/models/@svar/svar:log-posterior-kernel}\label{classes/models/@svar/svar:id55}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id53}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id54}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id55}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id56}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id57}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id58}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id59}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id60}
 See also:
 
 Help for svar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
@@ -4453,25 +5139,25 @@ Help for svar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{log\_prior\_density}
-\label{classes/models/@svar/svar:id58}\label{classes/models/@svar/svar:log-prior-density}
+\section{log\_prior\_density}
+\label{classes/models/@svar/svar:id61}\label{classes/models/@svar/svar:log-prior-density}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id59}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id60}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id61}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id62}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id63}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id64}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id65}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id66}
 See also:
 
 Help for svar/log\_prior\_density is inherited from superclass RISE\_GENERIC
@@ -4481,25 +5167,25 @@ Help for svar/log\_prior\_density is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{msvar\_priors}
-\label{classes/models/@svar/svar:id64}\label{classes/models/@svar/svar:msvar-priors}
+\section{msvar\_priors}
+\label{classes/models/@svar/svar:id67}\label{classes/models/@svar/svar:msvar-priors}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id65}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id66}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id67}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id68}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id69}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id70}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id71}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id72}
 See also:
 
 
@@ -4507,25 +5193,25 @@ See also:
 
 
 
-\subsection{posterior\_marginal\_and\_prior\_densities}
-\label{classes/models/@svar/svar:id70}\label{classes/models/@svar/svar:posterior-marginal-and-prior-densities}
+\section{posterior\_marginal\_and\_prior\_densities}
+\label{classes/models/@svar/svar:id73}\label{classes/models/@svar/svar:posterior-marginal-and-prior-densities}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id71}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id72}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id73}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id74}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id75}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id76}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id77}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id78}
 See also:
 
 Help for svar/posterior\_marginal\_and\_prior\_densities is inherited from superclass RISE\_GENERIC
@@ -4535,25 +5221,25 @@ Help for svar/posterior\_marginal\_and\_prior\_densities is inherited from super
 
 
 
-\subsection{posterior\_simulator}
-\label{classes/models/@svar/svar:posterior-simulator}\label{classes/models/@svar/svar:id76}
+\section{posterior\_simulator}
+\label{classes/models/@svar/svar:posterior-simulator}\label{classes/models/@svar/svar:id79}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id77}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id78}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id79}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id80}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id81}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id82}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id83}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id84}
 See also:
 
 Help for svar/posterior\_simulator is inherited from superclass RISE\_GENERIC
@@ -4563,25 +5249,25 @@ Help for svar/posterior\_simulator is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{print\_estimation\_results}
-\label{classes/models/@svar/svar:id82}\label{classes/models/@svar/svar:print-estimation-results}
+\section{print\_estimation\_results}
+\label{classes/models/@svar/svar:print-estimation-results}\label{classes/models/@svar/svar:id85}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id83}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id84}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id85}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id86}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id87}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id88}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id89}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id90}
 See also:
 
 Help for svar/print\_estimation\_results is inherited from superclass RISE\_GENERIC
@@ -4591,25 +5277,25 @@ Help for svar/print\_estimation\_results is inherited from superclass RISE\_GENE
 
 
 
-\subsection{prior\_plots}
-\label{classes/models/@svar/svar:id88}\label{classes/models/@svar/svar:prior-plots}
+\section{prior\_plots}
+\label{classes/models/@svar/svar:id91}\label{classes/models/@svar/svar:prior-plots}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id89}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id90}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id91}
-
-\subsubsection{More About}
+\subsection{Syntax}
 \label{classes/models/@svar/svar:id92}
 
-\subsubsection{Examples}
+\subsection{Inputs}
 \label{classes/models/@svar/svar:id93}
+
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id94}
+
+\subsection{More About}
+\label{classes/models/@svar/svar:id95}
+
+\subsection{Examples}
+\label{classes/models/@svar/svar:id96}
 See also:
 
 Help for svar/prior\_plots is inherited from superclass RISE\_GENERIC
@@ -4617,12 +5303,15 @@ Help for svar/prior\_plots is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:report}
+
+
+\section{report}
+\label{classes/models/@svar/svar:report}\label{classes/models/@svar/svar:id97}
 \textbf{REPORT} assigns the elements of interest to a rise\_report.report object
 
 
-\section{Syntax}
-\label{classes/models/@svar/svar:id94}\begin{description}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id98}\begin{description}
 \item[{::}] \leavevmode\begin{itemize}
 \item {} 
 REPORT(rise.empty(0)) : displays the default inputs
@@ -4640,8 +5329,8 @@ obj before doing the rest
 \end{description}
 
 
-\section{Inputs}
-\label{classes/models/@svar/svar:id95}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id99}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge{]}
 
@@ -4657,16 +5346,16 @@ can only include : `endogenous', `exogenous', `observables',
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@svar/svar:id96}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id100}
 none
 
 
-\section{More About}
-\label{classes/models/@svar/svar:id97}
+\subsection{More About}
+\label{classes/models/@svar/svar:id101}
 
-\section{Examples}
-\label{classes/models/@svar/svar:id98}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id102}
 See also:
 
 Help for svar/report is inherited from superclass RISE\_GENERIC
@@ -4674,19 +5363,22 @@ Help for svar/report is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:set}
+
+
+\section{set}
+\label{classes/models/@svar/svar:id103}\label{classes/models/@svar/svar:set}
 \textbf{set} - sets options for RISE models
 
 
-\section{Syntax}
-\label{classes/models/@svar/svar:id99}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id104}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{obj}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@svar/svar:id100}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id105}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
@@ -4696,16 +5388,16 @@ Help for svar/report is inherited from superclass RISE\_GENERIC
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@svar/svar:id101}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id106}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@svar/svar:id102}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@svar/svar:id107}\begin{itemize}
 \item {} 
 one can force a new field into the options by prefixing it with a `+'
 sign. Let's say yourfield is not part of the options and you would like
@@ -4716,8 +5408,8 @@ m=set(m,'+yourfield',value). then m will be part of the new options.
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@svar/svar:id103}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id108}
 See also:
 
 Help for svar/set is inherited from superclass RISE\_GENERIC
@@ -4727,56 +5419,64 @@ Help for svar/set is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{set\_solution\_to\_companion}
-\label{classes/models/@svar/svar:id104}\label{classes/models/@svar/svar:set-solution-to-companion}
+\section{set\_solution\_to\_companion}
+\label{classes/models/@svar/svar:id109}\label{classes/models/@svar/svar:set-solution-to-companion}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id105}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id110}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id106}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id111}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id107}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id112}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id108}
+\subsection{More About}
+\label{classes/models/@svar/svar:id113}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id109}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id114}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:simulate}
+
+
+\section{simulate}
+\label{classes/models/@svar/svar:simulate}\label{classes/models/@svar/svar:id115}
 \textbf{simulate} - simulates a RISE model
 
 
-\section{Syntax}
-\label{classes/models/@svar/svar:id110}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id116}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{db}\PYG{p}{,}\PYG{n}{states}\PYG{p}{,}\PYG{n}{retcode}\PYG{p}{]} \PYG{o}{=} \PYG{n}{simulate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
-\section{Inputs}
-\label{classes/models/@svar/svar:id111}\begin{itemize}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id117}\begin{itemize}
 \item {} 
 \textbf{obj} {[}rfvar\textbar{}dsge\textbar{}rise\textbar{}svar{]}: model object
 
 \item {} 
 \textbf{varargin} : additional arguments including but not restricted to
-- \textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
-- \textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
-- \textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}
-\begin{quote}
-
-shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
-\end{quote}
 \begin{itemize}
+\item {} 
+\textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
+
+\item {} 
+\textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
+
+\item {} \begin{description}
+\item[{\textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}}] \leavevmode
+shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
+
+\end{description}
+
 \item {} 
 \textbf{simul\_seed} {[}numeric\textbar{}\{0\}{]}: seed of the computations
 
@@ -4830,8 +5530,8 @@ elements that help reconstruct the time series.
 \end{itemize}
 
 
-\section{Outputs}
-\label{classes/models/@svar/svar:id112}\begin{itemize}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id118}\begin{itemize}
 \item {} 
 \textbf{db} {[}struct\textbar{}cell array{]}: if \textbf{simul\_to\_time\_series} is true, the
 output is a time series, else a cell array with a matrix and
@@ -4848,8 +5548,8 @@ decipher(retcode)
 \end{itemize}
 
 
-\section{More About}
-\label{classes/models/@svar/svar:id113}\begin{itemize}
+\subsection{More About}
+\label{classes/models/@svar/svar:id119}\begin{itemize}
 \item {} 
 \textbf{simul\_historical\_data} contains the historical data as well as
 conditional information over the forecast horizon. It may also include
@@ -4859,8 +5559,8 @@ as an alternative to \textbf{simul\_regime}, a time series with name
 \end{itemize}
 
 
-\section{Examples}
-\label{classes/models/@svar/svar:id114}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id120}
 See also:
 
 Help for svar/simulate is inherited from superclass RISE\_GENERIC
@@ -4870,25 +5570,25 @@ Help for svar/simulate is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{simulation\_diagnostics}
-\label{classes/models/@svar/svar:simulation-diagnostics}\label{classes/models/@svar/svar:id115}
+\section{simulation\_diagnostics}
+\label{classes/models/@svar/svar:simulation-diagnostics}\label{classes/models/@svar/svar:id121}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id116}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id122}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id117}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id123}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id118}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id124}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id119}
+\subsection{More About}
+\label{classes/models/@svar/svar:id125}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id120}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id126}
 See also:
 
 Help for svar/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
@@ -4898,25 +5598,25 @@ Help for svar/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{solve}
-\label{classes/models/@svar/svar:solve}\label{classes/models/@svar/svar:id121}
+\section{solve}
+\label{classes/models/@svar/svar:id127}\label{classes/models/@svar/svar:solve}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id122}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id128}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id123}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id129}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id124}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id130}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id125}
+\subsection{More About}
+\label{classes/models/@svar/svar:id131}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id126}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id132}
 See also:
 
 
@@ -4924,25 +5624,25 @@ See also:
 
 
 
-\subsection{stoch\_simul}
-\label{classes/models/@svar/svar:id127}\label{classes/models/@svar/svar:stoch-simul}
+\section{stoch\_simul}
+\label{classes/models/@svar/svar:id133}\label{classes/models/@svar/svar:stoch-simul}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id128}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id134}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id129}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id135}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id130}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id136}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id131}
+\subsection{More About}
+\label{classes/models/@svar/svar:id137}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id132}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id138}
 See also:
 
 Help for svar/stoch\_simul is inherited from superclass RISE\_GENERIC
@@ -4950,21 +5650,12 @@ Help for svar/stoch\_simul is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/models/@svar/svar:svar}
-\textbf{svar}
-\begin{quote}
-
--- no help found
-\end{quote}
 
 
-\bigskip\hrule{}\bigskip
+\section{svar}
+\label{classes/models/@svar/svar:id139}\label{classes/models/@svar/svar:svar}\begin{quote}
 
-\phantomsection\label{classes/models/@svar/svar:template}
-\textbf{template}
-\begin{quote}
-
--- no help found
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
@@ -4972,25 +5663,36 @@ Help for svar/stoch\_simul is inherited from superclass RISE\_GENERIC
 
 
 
-\subsection{theoretical\_autocorrelations}
-\label{classes/models/@svar/svar:theoretical-autocorrelations}\label{classes/models/@svar/svar:id133}
+\section{template}
+\label{classes/models/@svar/svar:id140}\label{classes/models/@svar/svar:template}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
+\end{quote}
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{theoretical\_autocorrelations}
+\label{classes/models/@svar/svar:theoretical-autocorrelations}\label{classes/models/@svar/svar:id141}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id134}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id142}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id135}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id143}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id136}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id144}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id137}
+\subsection{More About}
+\label{classes/models/@svar/svar:id145}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id138}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id146}
 See also:
 
 Help for svar/theoretical\_autocorrelations is inherited from superclass RISE\_GENERIC
@@ -5000,25 +5702,25 @@ Help for svar/theoretical\_autocorrelations is inherited from superclass RISE\_G
 
 
 
-\subsection{theoretical\_autocovariances}
-\label{classes/models/@svar/svar:id139}\label{classes/models/@svar/svar:theoretical-autocovariances}
+\section{theoretical\_autocovariances}
+\label{classes/models/@svar/svar:id147}\label{classes/models/@svar/svar:theoretical-autocovariances}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id140}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id148}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id141}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id149}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id142}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id150}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id143}
+\subsection{More About}
+\label{classes/models/@svar/svar:id151}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id144}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id152}
 See also:
 
 Help for svar/theoretical\_autocovariances is inherited from superclass RISE\_GENERIC
@@ -5028,25 +5730,25 @@ Help for svar/theoretical\_autocovariances is inherited from superclass RISE\_GE
 
 
 
-\subsection{variance\_decomposition}
-\label{classes/models/@svar/svar:id145}\label{classes/models/@svar/svar:variance-decomposition}
+\section{variance\_decomposition}
+\label{classes/models/@svar/svar:variance-decomposition}\label{classes/models/@svar/svar:id153}
 H1 line
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id146}
+\subsection{Syntax}
+\label{classes/models/@svar/svar:id154}
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id147}
+\subsection{Inputs}
+\label{classes/models/@svar/svar:id155}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id148}
+\subsection{Outputs}
+\label{classes/models/@svar/svar:id156}
 
-\subsubsection{More About}
-\label{classes/models/@svar/svar:id149}
+\subsection{More About}
+\label{classes/models/@svar/svar:id157}
 
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id150}
+\subsection{Examples}
+\label{classes/models/@svar/svar:id158}
 See also:
 
 Help for svar/variance\_decomposition is inherited from superclass RISE\_GENERIC
@@ -5324,12 +6026,16 @@ ants
 \end{itemize}
 
 
-\section{Synopsis and description on methods}
-\label{classes/utils/@mcf/mcf:synopsis-and-description-on-methods}
+\bigskip\hrule{}\bigskip
+
+
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:addlistener}\begin{quote}
+
+
+\section{addlistener}
+\label{classes/utils/@mcf/mcf:addlistener}\label{classes/utils/@mcf/mcf:id1}\begin{quote}
 \begin{description}
 \item[{\textbf{ADDLISTENER}   Add listener for event.}] \leavevmode
 el = ADDLISTENER(hSource, `Eventname', Callback) creates a listener
@@ -5368,37 +6074,43 @@ doc mcf/addlistener
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:cdf}
-\textbf{cdf}
-\begin{quote}
 
--- no help found
+
+\section{cdf}
+\label{classes/utils/@mcf/mcf:cdf}\label{classes/utils/@mcf/mcf:id2}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:cdf-plot}
-\textbf{cdf\_plot}
-\begin{quote}
 
--- no help found
+
+\section{cdf\_plot}
+\label{classes/utils/@mcf/mcf:id3}\label{classes/utils/@mcf/mcf:cdf-plot}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:correlation-patterns-plot}
-\textbf{correlation\_patterns\_plot}
-\begin{quote}
 
--- no help found
+
+\section{correlation\_patterns\_plot}
+\label{classes/utils/@mcf/mcf:correlation-patterns-plot}\label{classes/utils/@mcf/mcf:id4}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:delete}\begin{quote}
+
+
+\section{delete}
+\label{classes/utils/@mcf/mcf:id5}\label{classes/utils/@mcf/mcf:delete}\begin{quote}
 \begin{description}
 \item[{\textbf{DELETE}   Delete a handle object.}] \leavevmode
 The DELETE method deletes a handle object but does not clear the handle
@@ -5424,8 +6136,8 @@ doc mcf/delete
 
 
 
-\subsection{eq}
-\label{classes/utils/@mcf/mcf:eq}\label{classes/utils/@mcf/mcf:id1}\begin{description}
+\section{eq}
+\label{classes/utils/@mcf/mcf:id6}\label{classes/utils/@mcf/mcf:eq}\begin{description}
 \item[{== (EQ)   Test handle equality.}] \leavevmode
 Handles are equal if they are handles for the same object.
 
@@ -5449,7 +6161,10 @@ Help for mcf/eq is inherited from superclass HANDLE
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:findobj}\begin{quote}
+
+
+\section{findobj}
+\label{classes/utils/@mcf/mcf:id7}\label{classes/utils/@mcf/mcf:findobj}\begin{quote}
 \begin{description}
 \item[{\textbf{FINDOBJ}   Find objects matching specified conditions.}] \leavevmode
 The FINDOBJ method of the HANDLE class follows the same syntax as the
@@ -5477,7 +6192,10 @@ doc mcf/findobj
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:findprop}\begin{quote}
+
+
+\section{findprop}
+\label{classes/utils/@mcf/mcf:findprop}\label{classes/utils/@mcf/mcf:id8}\begin{quote}
 \begin{description}
 \item[{\textbf{FINDPROP}   Find property of MATLAB handle object.}] \leavevmode
 p = FINDPROP(H,'PROPNAME') finds and returns the META.PROPERTY object
@@ -5506,8 +6224,8 @@ doc mcf/findprop
 
 
 
-\subsection{ge}
-\label{classes/utils/@mcf/mcf:ge}\label{classes/utils/@mcf/mcf:id2}\begin{description}
+\section{ge}
+\label{classes/utils/@mcf/mcf:ge}\label{classes/utils/@mcf/mcf:id9}\begin{description}
 \item[{\textgreater{}= (GE)   Greater than or equal relation for handles.}] \leavevmode
 H1 \textgreater{}= H2 performs element-wise comparisons between handle arrays H1 and
 H2.  H1 and H2 must be of the same dimensions unless one is a scalar.
@@ -5531,8 +6249,8 @@ Help for mcf/ge is inherited from superclass HANDLE
 
 
 
-\subsection{gt}
-\label{classes/utils/@mcf/mcf:gt}\label{classes/utils/@mcf/mcf:id3}\begin{description}
+\section{gt}
+\label{classes/utils/@mcf/mcf:id10}\label{classes/utils/@mcf/mcf:gt}\begin{description}
 \item[{\textgreater{} (GT)   Greater than relation for handles.}] \leavevmode
 H1 \textgreater{} H2 performs element-wise comparisons between handle arrays H1 and
 H2.  H1 and H2 must be of the same dimensions unless one is a scalar.
@@ -5554,7 +6272,10 @@ Help for mcf/gt is inherited from superclass HANDLE
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:isvalid}\begin{quote}
+
+
+\section{isvalid}
+\label{classes/utils/@mcf/mcf:isvalid}\label{classes/utils/@mcf/mcf:id11}\begin{quote}
 \begin{description}
 \item[{\textbf{ISVALID}   Test handle validity.}] \leavevmode
 TF = ISVALID(H) performs an element-wise check for validity on the
@@ -5583,8 +6304,8 @@ doc mcf/isvalid
 
 
 
-\subsection{kolmogorov\_smirnov\_test}
-\label{classes/utils/@mcf/mcf:id4}\label{classes/utils/@mcf/mcf:kolmogorov-smirnov-test}
+\section{kolmogorov\_smirnov\_test}
+\label{classes/utils/@mcf/mcf:id12}\label{classes/utils/@mcf/mcf:kolmogorov-smirnov-test}
 tests the equality of two distributions using their CDFs
 
 
@@ -5592,8 +6313,8 @@ tests the equality of two distributions using their CDFs
 
 
 
-\subsection{le}
-\label{classes/utils/@mcf/mcf:le}\label{classes/utils/@mcf/mcf:id5}\begin{description}
+\section{le}
+\label{classes/utils/@mcf/mcf:id13}\label{classes/utils/@mcf/mcf:le}\begin{description}
 \item[{\textless{}= (LE)   Less than or equal relation for handles.}] \leavevmode
 Handles are equal if they are handles for the same object.  All
 comparisons use a number associated with each handle object.  Nothing
@@ -5625,8 +6346,8 @@ Help for mcf/le is inherited from superclass HANDLE
 
 
 
-\subsection{lt}
-\label{classes/utils/@mcf/mcf:id6}\label{classes/utils/@mcf/mcf:lt}\begin{description}
+\section{lt}
+\label{classes/utils/@mcf/mcf:lt}\label{classes/utils/@mcf/mcf:id14}\begin{description}
 \item[{\textless{} (LT)   Less than relation for handles.}] \leavevmode
 H1 \textless{} H2 performs element-wise comparisons between handle arrays H1 and
 H2.  H1 and H2 must be of the same dimensions unless one is a scalar.
@@ -5648,11 +6369,12 @@ Help for mcf/lt is inherited from superclass HANDLE
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:mcf}
-\textbf{mcf}
-\begin{quote}
 
--- no help found
+
+\section{mcf}
+\label{classes/utils/@mcf/mcf:mcf}\label{classes/utils/@mcf/mcf:id15}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
@@ -5660,8 +6382,8 @@ Help for mcf/lt is inherited from superclass HANDLE
 
 
 
-\subsection{ne}
-\label{classes/utils/@mcf/mcf:id7}\label{classes/utils/@mcf/mcf:ne}\begin{description}
+\section{ne}
+\label{classes/utils/@mcf/mcf:ne}\label{classes/utils/@mcf/mcf:id16}\begin{description}
 \item[{\textasciitilde{}= (NE)   Not equal relation for handles.}] \leavevmode
 Handles are equal if they are handles for the same object and are
 unequal otherwise.
@@ -5686,7 +6408,10 @@ Help for mcf/ne is inherited from superclass HANDLE
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:notify}\begin{quote}
+
+
+\section{notify}
+\label{classes/utils/@mcf/mcf:notify}\label{classes/utils/@mcf/mcf:id17}\begin{quote}
 \begin{description}
 \item[{\textbf{NOTIFY}   Notify listeners of event.}] \leavevmode
 NOTIFY(H,'EVENTNAME') notifies listeners added to the event named
@@ -5714,11 +6439,12 @@ doc mcf/notify
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@mcf/mcf:scatter}
-\textbf{scatter}
-\begin{quote}
 
--- no help found
+
+\section{scatter}
+\label{classes/utils/@mcf/mcf:id18}\label{classes/utils/@mcf/mcf:scatter}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
@@ -5819,56 +6545,18 @@ doc mcf/notify
 \end{itemize}
 
 
-\section{Synopsis and description on methods}
-\label{classes/utils/@hdmr/hdmr:synopsis-and-description-on-methods}
-
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@hdmr/hdmr:estimate}
-\textbf{estimate}
-\begin{quote}
-
--- no help found
-\end{quote}
 
 
 \bigskip\hrule{}\bigskip
 
-\phantomsection\label{classes/utils/@hdmr/hdmr:first-order-effect}
-\textbf{first\_order\_effect}
-\begin{quote}
-
--- no help found
-\end{quote}
 
 
-\bigskip\hrule{}\bigskip
+\section{estimate}
+\label{classes/utils/@hdmr/hdmr:estimate}\label{classes/utils/@hdmr/hdmr:id1}\begin{quote}
 
-\phantomsection\label{classes/utils/@hdmr/hdmr:hdmr}
-\textbf{hdmr}
-\begin{quote}
-
--- no help found
-\end{quote}
-
-
-\bigskip\hrule{}\bigskip
-
-\phantomsection\label{classes/utils/@hdmr/hdmr:metamodel}
-\textbf{metamodel}
-\begin{quote}
-
--- no help found
-\end{quote}
-
-
-\bigskip\hrule{}\bigskip
-
-\phantomsection\label{classes/utils/@hdmr/hdmr:plot-fit}
-\textbf{plot\_fit}
-\begin{quote}
-
--- no help found
+\textasciitilde{}\textasciitilde{} no help found
 \end{quote}
 
 
@@ -5876,8 +6564,52 @@ doc mcf/notify
 
 
 
-\subsection{polynomial\_evaluation}
-\label{classes/utils/@hdmr/hdmr:polynomial-evaluation}\label{classes/utils/@hdmr/hdmr:id1}
+\section{first\_order\_effect}
+\label{classes/utils/@hdmr/hdmr:id2}\label{classes/utils/@hdmr/hdmr:first-order-effect}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
+\end{quote}
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{hdmr}
+\label{classes/utils/@hdmr/hdmr:hdmr}\label{classes/utils/@hdmr/hdmr:id3}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
+\end{quote}
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{metamodel}
+\label{classes/utils/@hdmr/hdmr:id4}\label{classes/utils/@hdmr/hdmr:metamodel}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
+\end{quote}
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{plot\_fit}
+\label{classes/utils/@hdmr/hdmr:id5}\label{classes/utils/@hdmr/hdmr:plot-fit}\begin{quote}
+
+\textasciitilde{}\textasciitilde{} no help found
+\end{quote}
+
+
+\bigskip\hrule{}\bigskip
+
+
+
+\section{polynomial\_evaluation}
+\label{classes/utils/@hdmr/hdmr:id6}\label{classes/utils/@hdmr/hdmr:polynomial-evaluation}
 later on, the function that normalizes could come in here so that the
 normalization is done according to the hdmr\_type of polynomial chosen.
 
@@ -5886,8 +6618,8 @@ normalization is done according to the hdmr\_type of polynomial chosen.
 
 
 
-\subsection{polynomial\_integration}
-\label{classes/utils/@hdmr/hdmr:id2}\label{classes/utils/@hdmr/hdmr:polynomial-integration}
+\section{polynomial\_integration}
+\label{classes/utils/@hdmr/hdmr:id7}\label{classes/utils/@hdmr/hdmr:polynomial-integration}
 polynomial is of the form a0+a1*x+...+ar*x\textasciicircum{}r
 the integral is then a0*x+a1/2*x\textasciicircum{}2+...+ar/(r+1)*x\textasciicircum{}(r+1)
 
@@ -5896,8 +6628,8 @@ the integral is then a0*x+a1/2*x\textasciicircum{}2+...+ar/(r+1)*x\textasciicirc
 
 
 
-\subsection{polynomial\_multiplication}
-\label{classes/utils/@hdmr/hdmr:polynomial-multiplication}\label{classes/utils/@hdmr/hdmr:id3}
+\section{polynomial\_multiplication}
+\label{classes/utils/@hdmr/hdmr:polynomial-multiplication}\label{classes/utils/@hdmr/hdmr:id8}
 each polynomial is of the form a0+a1*x+...+ar*x\textasciicircum{}r
 
 

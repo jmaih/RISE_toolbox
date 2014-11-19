@@ -93,7 +93,7 @@
 %   <a href="matlab:help classes\models\dsge\set">classes\models\dsge\set</a>                                                                        -  - sets options for dsge|rise models
 %   <a href="matlab:help classes\models\dsge\set_solution_to_companion">classes\models\dsge\set_solution_to_companion</a>                                                  - H1 line
 %   classes\models\dsge\set_z_eplus_horizon                                                        - (No help available)
-%   <a href="matlab:help classes\models\dsge\simulate">classes\models\dsge\simulate</a>                                                                   - H1 line
+%   classes\models\dsge\simulate                                                                   - (No help available)
 %   <a href="matlab:help classes\models\dsge\simulate_nonlinear">classes\models\dsge\simulate_nonlinear</a>                                                         - H1 line
 %   <a href="matlab:help classes\models\dsge\solve">classes\models\dsge\solve</a>                                                                      - H1 line
 %   <a href="matlab:help classes\models\dsge\solve_alternatives">classes\models\dsge\solve_alternatives</a>                                                         - H1 line
@@ -133,7 +133,7 @@
 %   <a href="matlab:help classes\models\rise_generic\decompose_parameter_name">classes\models\rise_generic\decompose_parameter_name</a>                                                                  - H1 line
 %   classes\models\rise_generic\do_names                                                                                  - (No help available)
 %   <a href="matlab:help classes\models\rise_generic\draw_parameter">classes\models\rise_generic\draw_parameter</a>                                                                            - H1 line
-%   <a href="matlab:help classes\models\rise_generic\estimate">classes\models\rise_generic\estimate</a>                                                                                  - H1 line
+%   <a href="matlab:help classes\models\rise_generic\estimate">classes\models\rise_generic\estimate</a>                                                                                  -  - estimates the parameters of a RISE model
 %   classes\models\rise_generic\estimation_wrapper                                                                        - (No help available)
 %   classes\models\rise_generic\find_posterior_mode                                                                       - (No help available)
 %   <a href="matlab:help classes\models\rise_generic\forecast">classes\models\rise_generic\forecast</a>                                                                                  -  - computes forecasts for rise|dsge|svar|rfvar models

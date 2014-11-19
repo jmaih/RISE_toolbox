@@ -22,7 +22,7 @@
 %   <a href="matlab:help classes\models\dsge\set">classes\models\dsge\set</a>                                                                        -  - sets options for dsge|rise models
 %   <a href="matlab:help classes\models\dsge\set_solution_to_companion">classes\models\dsge\set_solution_to_companion</a>                                                  - H1 line
 %   classes\models\dsge\set_z_eplus_horizon                                                        - (No help available)
-%   <a href="matlab:help classes\models\dsge\simulate">classes\models\dsge\simulate</a>                                                                   - H1 line
+%   classes\models\dsge\simulate                                                                   - (No help available)
 %   <a href="matlab:help classes\models\dsge\simulate_nonlinear">classes\models\dsge\simulate_nonlinear</a>                                                         - H1 line
 %   <a href="matlab:help classes\models\dsge\solve">classes\models\dsge\solve</a>                                                                      - H1 line
 %   <a href="matlab:help classes\models\dsge\solve_alternatives">classes\models\dsge\solve_alternatives</a>                                                         - H1 line

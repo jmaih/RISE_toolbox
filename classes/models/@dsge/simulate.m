@@ -1,23 +1,4 @@
 function varargout=simulate(obj,varargin)
-% H1 line
-%
-% Syntax
-% -------
-% ::
-%
-% Inputs
-% -------
-%
-% Outputs
-% --------
-%
-% More About
-% ------------
-%
-% Examples
-% ---------
-%
-% See also: 
 
 if isempty(obj)
     out=simulate@rise_generic(obj);
