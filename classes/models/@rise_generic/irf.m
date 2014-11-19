@@ -1,79 +1,138 @@
-function dsge_irfs=irf(obj,varargin)
-% H1 line
+function myirfs=irf(obj,varargin)
+% irf - computes impulse responses for a RISE model
 %
 % Syntax
 % -------
 % ::
 %
+%   myirfs=irf(obj)
+%
+%   myirfs=irf(obj,varargin)
+%
 % Inputs
 % -------
+%
+% - **obj** [rise|dsge|rfvar|svar]: single or vector of RISE models
+%
+% - **varargin** : optional options coming in pairs. The notable ones that
+%   will influence the behavior of the impulse responses are:
+%
+% - **irf_shock_list** [char|cellstr|{''}]: list of shocks for which we
+%   want to compute impulse responses
+%
+% - **irf_var_list** [char|cellstr|{''}]: list of the endogenous variables
+%   we want to report
+%
+% - **irf_periods** [integer|{40}]: length of the irfs
+%
+% - **irf_shock_sign** [numeric|-1|{1}]: sign or scale of the original
+%   impulse. If **irf_shock_sign** >0, we get impulse responses to a
+%   positive shock. If **irf_shock_sign** <0, the responses are negative.
+%   If If **irf_shock_sign** =0, all the responses are 0.
+%
+% - **irf_draws** [integer|{50}]: number of draws used in the simulation
+%   impulse responses in a nonlinear model. A nonlinear model is defined as
+%   a model that satisfies at least one of the following criteria
+%   - solved at an order >1
+%   - has more than one regime and option **irf_regime_specific** below is
+%       set to false
+%
+% - **irf_type** [{irf}|girf]: type of irfs. If the type is irf, the
+%   impulse responses are computed directly exploiting the fact that the
+%   model is linear. If the type is girf, the formula for the generalized
+%   impulse responses is used: the irf is defined as the expectation of the
+%   difference of two simulation paths. In the first path the initial
+%   impulse for the shock of interest is nonzero while it is zero for the
+%   second path. All other shocks are the same for both paths in a given
+%   simulation.
+%
+% - **irf_regime_specific** [{true}|false]: In a switching model, we may or
+%   may not want to compute impulse responses specific to each regime.
+%
+% - **irf_use_historical_data** [{false}|true]: if true, the data stored in
+%   option **simul_historical_data** are used as initial conditions. But
+%   the model has to be nonlinear otherwise the initial conditions are set
+%   to zero. This option gives the flexibility to set the initial
+%   conditions for the impulse responses.
+%
+% - **irf_to_time_series** [{true}|false]: If true, the output is in the
+%   form of time series. Else it is in the form of a cell containing the
+%   information needed to reconstruct the time series.
 %
 % Outputs
 % --------
 %
+% - **myirfs** [{struct}|cell]: Impulse response data
+%
 % More About
 % ------------
+%
+% - for linear models or models solved up to first order, the initial
+%   conditions as well as the steady states are set to 0 in the computation
+%   of the impulse responses.
+%
+% - for nonlinear models, the initial conditions is the ergodic mean
 %
 % Examples
 % ---------
 %
 % See also: 
 
-% TODO
-% 1- for linear and conditionally linear models
-%   * initialize history at zero
-%   * set the steady state to zero
-% 2- in nonlinear models or generalized irfs
-%   * initialize history at the ergodic mean
-%   * set the steady state to be the ergogic mean?
-%   * Let the steady state vary freely...
-% 3- in the documentation of this function, irf_shock_sign must be finite
-%   and different from zero
-
-
 too_small=1e-9;
 
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+mydefaults={'irf_shock_list','',@(x)ischar(x)||iscellstr(x),'irf_shock_list must be char or cellstr'
+        'irf_var_list','',@(x)ischar(x)||iscellstr(x),'irf_var_list must be char or cellstr'
+        'irf_periods',40,@(x)num_fin_int(x),'irf_periods must be a finite and positive integer'
+        'irf_shock_sign',1,@(x)num_fin(x) && x~=0,'irf_shock_sign must be a numeric scalar different from 0'
+        'irf_draws',50,@(x)num_fin_int(x),'irf_draws must be a finite and positive integer'
+        'irf_type','irf',@(x)any(strcmp(x,{'irf','girf'})),'irf_type must be irf or girf'
+        'irf_regime_specific',true,@(x)islogical(x),'irf_regime_specific must be a logical'
+        'irf_use_historical_data',false,@(x)islogical(x),'irf_use_historical_data must be a logical'
+        'irf_to_time_series',true,@(x)islogical(x),'irf_to_time_series must be a logical'
+        };
 if isempty(obj)
-    dsge_irfs=struct('irf_shock_list','',...
-        'irf_var_list','',...
-        'irf_periods',40,...
-        'irf_shock_sign',1,...
-        'irf_draws',50,...
-        'irf_type','irf',...
-        'irf_regime_specific',true,...
-        'irf_use_historical_data',false,...
-        'irf_to_time_series',true);
+    myirfs=cell2struct(mydefaults(:,2),mydefaults(:,1),1);
     return
 end
 
 nobj=numel(obj);
+obj=set(obj,varargin{:});
 
-dsge_irfs=cell(1,nobj);
+myirfs=cell(1,nobj);
 % check that the models are consistent
 check_irf_consistency(obj)
 for ii=1:nobj
-    dsge_irfs{ii}=irf_intern(obj(ii));
+    myirfs{ii}=irf_intern(obj(ii));
 end
 
-dsge_irfs=format_irf_output(dsge_irfs);
+myirfs=format_irf_output(myirfs);
 
     function dsge_irfs=irf_intern(obj)
-        
-        obj=set(obj,varargin{:});
+        if nobj>1
+            obj.options.irf_to_time_series=true;
+        end
+        [irf_shock_list,irf_var_list,irf_periods,irf_shock_sign,irf_draws,...
+            irf_type,irf_regime_specific,irf_use_historical_data,...
+            irf_to_time_series]=utils.miscellaneous.parse_arguments(mydefaults,...
+            'irf_shock_list',obj.options.irf_shock_list,...
+            'irf_var_list',obj.options.irf_var_list,...
+            'irf_periods',obj.options.irf_periods,...
+            'irf_shock_sign',obj.options.irf_shock_sign,...
+            'irf_draws',obj.options.irf_draws,...
+            'irf_type',obj.options.irf_type,...
+            'irf_regime_specific',obj.options.irf_regime_specific,...
+            'irf_use_historical_data',obj.options.irf_use_historical_data,...
+            'irf_to_time_series',obj.options.irf_to_time_series);
         is_dsge=isa(obj,'dsge');
         
-        obj.options.simul_periods=obj.options.irf_periods	  ;
+        obj.options.simul_periods=irf_periods;
         obj.options.simul_burn=0;
-        if ~obj.options.irf_use_historical_data
+        if ~irf_use_historical_data
             obj.options.simul_historical_data=ts.empty(0);
             obj.options.simul_history_end_date='';
         end
-        irf_shock_list        =obj.options.irf_shock_list;
-        irf_var_list          =obj.options.irf_var_list  ;
-        irf_shock_sign        =obj.options.irf_shock_sign;
-        irf_type	          =obj.options.irf_type	  ;
-        irf_draws	          =obj.options.irf_draws	  ;
-        irf_regime_specific   =obj.options.irf_regime_specific;
         exo_nbr=sum(obj.exogenous.number);
         
         if isempty(irf_var_list)
@@ -138,12 +197,12 @@ dsge_irfs=format_irf_output(dsge_irfs);
         % load the order_var solution
         %-----------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
-        if isa(obj,'rfvar')
+        if solve_order==1 % first-order solution ||isa(obj,'rfvar')
             % kill the steady state and the initial conditions
             for ireg=1:h
                 steady_state{ireg}=0*steady_state{ireg};
-                Initcond.y(ireg).y=0*Initcond.y(ireg).y;
             end
+            Initcond.y.y=0*Initcond.y.y;
         end
         y0=Initcond.y;
         % adjust the start values according to the order_var
@@ -157,8 +216,6 @@ dsge_irfs=format_irf_output(dsge_irfs);
         Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
         
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
-        %         quash_regimes=(h>1 && ~irf_regime_specific);
-        %||(solve_order==1 && girf)
         if ~girf
             irf_draws=1;
         end
@@ -169,9 +226,6 @@ dsge_irfs=format_irf_output(dsge_irfs);
         number_of_threads=h;
         if ~irf_regime_specific
             number_of_threads=1;
-        end
-        if number_of_threads==1
-            y0=utils.forecast.aggregate_initial_conditions(Initcond.PAI,y0);
         end
         
         % further options
@@ -224,9 +278,6 @@ dsge_irfs=format_irf_output(dsge_irfs);
         
         % distribution of irfs
         %---------------------
-        if nobj>1
-            obj.options.irf_to_time_series=true;
-        end
         dsge_irfs=distribute_irfs();
         
         function dsge_irfs=distribute_irfs()
@@ -237,7 +288,7 @@ dsge_irfs=format_irf_output(dsge_irfs);
                 RegimeNames=irf_type;
             end
             RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
-            if obj.options.irf_to_time_series
+            if irf_to_time_series
                 dsge_irfs=struct();
                 vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
                 for ishock=1:nshocks
