@@ -13,8 +13,8 @@
 
 
 \title{RISE Documentation}
-\date{October 16, 2014}
-\release{1.0.0}
+\date{November 19, 2014}
+\release{1.0.1}
 \author{Junior Maih}
 \newcommand{\sphinxlogo}{}
 \renewcommand{\releasename}{Release}
@@ -802,6 +802,9 @@ Commitment, discretion and loose commitment
 {[} {\hyperref[classes/models/@dsge/dsge:create-estimation-blocks]{create\_estimation\_blocks}} {]}(dsge/create\_estimation\_blocks)
 
 \item {} 
+{[} {\hyperref[classes/models/@dsge/dsge:create-state-list]{create\_state\_list}} {]}(dsge/create\_state\_list)
+
+\item {} 
 {[} {\hyperref[classes/models/@dsge/dsge:draw-parameter]{draw\_parameter}} {]}(dsge/draw\_parameter)
 
 \item {} 
@@ -961,26 +964,49 @@ Commitment, discretion and loose commitment
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@dsge/dsge:check-derivatives}
+\textbf{check\_derivatives} - compares the derivatives and the solutions from various differentiation techniques
 
 
-\subsection{check\_derivatives}
-\label{classes/models/@dsge/dsge:check-derivatives}\label{classes/models/@dsge/dsge:id1}
-H1 line
-
-
-\subsubsection{Syntax}
+\section{Syntax}
 \label{classes/models/@dsge/dsge:syntax}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{check\PYGZus{}derivatives}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\PYG{n}{retcode}\PYG{o}{=}\PYG{n}{check\PYGZus{}derivatives}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:inputs}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:outputs}
+\section{Inputs}
+\label{classes/models/@dsge/dsge:inputs}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge{]}: model object or vectors of model objects
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:description}
+\end{itemize}
 
-\subsubsection{Examples}
+
+\section{Outputs}
+\label{classes/models/@dsge/dsge:outputs}\begin{itemize}
+\item {} 
+\textbf{retcode} {[}numeric{]}: 0 if no problem is encountered during the
+comparisons. Else the meaning of recode can be found by running
+decipher(retcode)
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@dsge/dsge:more-about}\begin{itemize}
+\item {} 
+The derivatives computed are `automatic', `symbolic' or `numerical'
+
+\item {} 
+The comparisons are done relative to automatic derivatives, which are
+assumed to be the most accurate.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@dsge/dsge:examples}
 See also:
 
@@ -990,24 +1016,24 @@ See also:
 
 
 \subsection{check\_optimum}
-\label{classes/models/@dsge/dsge:check-optimum}\label{classes/models/@dsge/dsge:id2}
+\label{classes/models/@dsge/dsge:check-optimum}\label{classes/models/@dsge/dsge:id1}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id3}
+\label{classes/models/@dsge/dsge:id2}
 
 \subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id4}
+\label{classes/models/@dsge/dsge:id3}
 
 \subsubsection{Outputs}
+\label{classes/models/@dsge/dsge:id4}
+
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id5}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id6}
-
 \subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id7}
+\label{classes/models/@dsge/dsge:id6}
 See also:
 
 Help for dsge/check\_optimum is inherited from superclass RISE\_GENERIC
@@ -1018,24 +1044,24 @@ Help for dsge/check\_optimum is inherited from superclass RISE\_GENERIC
 
 
 \subsection{compute\_steady\_state}
-\label{classes/models/@dsge/dsge:id8}\label{classes/models/@dsge/dsge:compute-steady-state}
+\label{classes/models/@dsge/dsge:id7}\label{classes/models/@dsge/dsge:compute-steady-state}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id9}
+\label{classes/models/@dsge/dsge:id8}
 
 \subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id10}
+\label{classes/models/@dsge/dsge:id9}
 
 \subsubsection{Outputs}
+\label{classes/models/@dsge/dsge:id10}
+
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id11}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id12}
-
 \subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id13}
+\label{classes/models/@dsge/dsge:id12}
 See also:
 
 
@@ -1044,24 +1070,74 @@ See also:
 
 
 \subsection{create\_estimation\_blocks}
-\label{classes/models/@dsge/dsge:create-estimation-blocks}\label{classes/models/@dsge/dsge:id14}
+\label{classes/models/@dsge/dsge:id13}\label{classes/models/@dsge/dsge:create-estimation-blocks}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id15}
+\label{classes/models/@dsge/dsge:id14}
 
 \subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id16}
+\label{classes/models/@dsge/dsge:id15}
 
 \subsubsection{Outputs}
+\label{classes/models/@dsge/dsge:id16}
+
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id17}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id18}
-
 \subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id18}
+See also:
+
+
+\bigskip\hrule{}\bigskip
+
+\phantomsection\label{classes/models/@dsge/dsge:create-state-list}
+\textbf{create\_state\_list} creates the list of the state variables in the solution
+
+
+\section{Syntax}
 \label{classes/models/@dsge/dsge:id19}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{final\PYGZus{}list}\PYG{o}{=}\PYG{n}{create\PYGZus{}state\PYGZus{}list}\PYG{p}{(}\PYG{n}{m}\PYG{p}{)}
+\PYG{n}{final\PYGZus{}list}\PYG{o}{=}\PYG{n}{create\PYGZus{}state\PYGZus{}list}\PYG{p}{(}\PYG{n}{m}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{)}
+\end{Verbatim}
+
+
+\section{Inputs}
+\label{classes/models/@dsge/dsge:id20}\begin{itemize}
+\item {} 
+\textbf{m} {[}dsge\textbar{}rise{]} : model object
+
+\item {} 
+\textbf{orders} {[}integer array\textbar{}\{1:m.options.solve\_order\}{]} : approximation
+orders
+
+\item {} 
+\textbf{compact\_form} {[}true\textbar{}\{false\}{]} : if true, only unique combinations
+will be returned. Else, all combinations will be returned.
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@dsge/dsge:id21}\begin{itemize}
+\item {} 
+\textbf{final\_list} {[}cellstr{]} : list of the state variables
+
+\item {} 
+\textbf{kept} {[}vector{]} : location of kept state variables (computed only if
+compact\_form is set to true)
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@dsge/dsge:id22}
+
+\section{Examples}
+\label{classes/models/@dsge/dsge:id23}
 See also:
 
 
@@ -1070,24 +1146,24 @@ See also:
 
 
 \subsection{draw\_parameter}
-\label{classes/models/@dsge/dsge:id20}\label{classes/models/@dsge/dsge:draw-parameter}
+\label{classes/models/@dsge/dsge:id24}\label{classes/models/@dsge/dsge:draw-parameter}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id21}
+\label{classes/models/@dsge/dsge:id25}
 
 \subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id22}
+\label{classes/models/@dsge/dsge:id26}
 
 \subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id23}
+\label{classes/models/@dsge/dsge:id27}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id24}
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id28}
 
 \subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id25}
+\label{classes/models/@dsge/dsge:id29}
 See also:
 
 Help for dsge/draw\_parameter is inherited from superclass RISE\_GENERIC
@@ -1108,24 +1184,24 @@ Help for dsge/draw\_parameter is inherited from superclass RISE\_GENERIC
 
 
 \subsection{estimate}
-\label{classes/models/@dsge/dsge:estimate}\label{classes/models/@dsge/dsge:id26}
+\label{classes/models/@dsge/dsge:estimate}\label{classes/models/@dsge/dsge:id30}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id27}
+\label{classes/models/@dsge/dsge:id31}
 
 \subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id28}
+\label{classes/models/@dsge/dsge:id32}
 
 \subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id29}
+\label{classes/models/@dsge/dsge:id33}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id30}
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id34}
 
 \subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id31}
+\label{classes/models/@dsge/dsge:id35}
 See also:
 
 Help for dsge/estimate is inherited from superclass RISE\_GENERIC
@@ -1136,79 +1212,194 @@ Help for dsge/estimate is inherited from superclass RISE\_GENERIC
 
 
 \subsection{filter}
-\label{classes/models/@dsge/dsge:filter}\label{classes/models/@dsge/dsge:id32}
+\label{classes/models/@dsge/dsge:filter}\label{classes/models/@dsge/dsge:id36}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id33}
+\label{classes/models/@dsge/dsge:id37}
 
 \subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id34}
+\label{classes/models/@dsge/dsge:id38}
 
 \subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id35}
+\label{classes/models/@dsge/dsge:id39}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id36}
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id40}
 
 \subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id37}
+\label{classes/models/@dsge/dsge:id41}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@dsge/dsge:forecast}
+\textbf{forecast} - computes forecasts for rise\textbar{}dsge\textbar{}svar\textbar{}rfvar models
 
 
-\subsection{forecast}
-\label{classes/models/@dsge/dsge:id38}\label{classes/models/@dsge/dsge:forecast}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id39}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id40}
-
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id41}
-
-\subsubsection{Description}
+\section{Syntax}
 \label{classes/models/@dsge/dsge:id42}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{cond\PYGZus{}fkst\PYGZus{}db}\PYG{o}{=}\PYG{n}{forecast}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id43}
-See also:
+
+\section{Inputs}
+\label{classes/models/@dsge/dsge:id43}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
+
+\item {} 
+\textbf{varargin} : additional inputs coming in pairs. These include but are
+not restricted to:
+- \textbf{forecast\_to\_time\_series} {[}\{true\}\textbar{}false{]}: sets the output to time
+\begin{quote}
+
+series format or not
+\end{quote}
+\begin{itemize}
+\item {} 
+\textbf{forecast\_nsteps} {[}integer\textbar{}\{12\}{]}: number of forecasting steps
+
+\item {} \begin{description}
+\item[{\textbf{forecast\_start\_date} {[}char\textbar{}numeric\textbar{}serial date{]}: date when the}] \leavevmode
+forecasts start (end of history + 1)
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{forecast\_conditional\_hypothesis} {[}\{jma\}\textbar{}ncp\textbar{}nas{]}: in dsge models in}] \leavevmode
+which agents have information beyond the current period, this
+option determines the number of periods of shocks need to match the
+restrictions:
+- Hypothesis \textbf{jma} assumes that irrespective of how
+\begin{quote}
+
+many periods of conditioning information are remaining, agents
+always receive information on the same number of shocks.
+\end{quote}
+\begin{itemize}
+\item {} \begin{description}
+\item[{Hypothesis \textbf{ncp} assumes there are as many shocks periods as}] \leavevmode
+the number of the number of conditioning periods
+
+\end{description}
+
+\item {} \begin{description}
+\item[{Hypothesis \textbf{nas} assumes there are as many shocks periods as}] \leavevmode
+the number of anticipated steps
+
+\end{description}
+
+\end{itemize}
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@dsge/dsge:id44}\begin{itemize}
+\item {} 
+\textbf{cond\_fkst\_db} {[}struct\textbar{}matrix{]}: depending on the value of
+\textbf{forecast\_to\_time\_series} the returned output is a structure with
+time series or a cell containing a matrix and the information to
+reconstruct the time series.
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@dsge/dsge:id45}\begin{itemize}
+\item {} 
+the historical information as well as the conditioning information come
+from the same database. The time series must be organized such that for
+each series, the first page represents the actual data and all
+subsequent pages represent conditional information. If a particular
+condition is ``nan'', that location is not constrained
+
+\item {} 
+Conditional forecasting for nonlinear models is also supported.
+However, the solving of the implied nonlinear problem may fail if the
+model displays instability
+
+\item {} 
+Both HARD CONDITIONS and SOFT CONDITIONS are implemented but the latter
+are currently disabled in expectation of a better user interface.
+
+\item {} 
+The data may also contain time series for a variable with name
+\textbf{regime} in that case, the forecast/simulation paths are computed
+following the information therein. \textbf{regime} must be a member of 1:h,
+where h is the maximum number of regimes.
+
+\end{itemize}
+
+
+\section{Examples}
+\label{classes/models/@dsge/dsge:id46}
+See also: simulate
 
 Help for dsge/forecast is inherited from superclass RISE\_GENERIC
 
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@dsge/dsge:forecast-real-time}
+\textbf{forecast\_real\_time} - forecast from each point in time
 
 
-\subsection{forecast\_real\_time}
-\label{classes/models/@dsge/dsge:id44}\label{classes/models/@dsge/dsge:forecast-real-time}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id45}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id46}
-
-\subsubsection{Outputs}
+\section{Syntax}
 \label{classes/models/@dsge/dsge:id47}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{o}{\PYGZhy{}} \PYG{p}{[}\PYG{n}{ts\PYGZus{}fkst}\PYG{p}{,}\PYG{n}{ts\PYGZus{}rmse}\PYG{p}{,}\PYG{n}{rmse}\PYG{p}{,}\PYG{n}{Updates}\PYG{p}{]}\PYG{o}{=}\PYG{n}{forecast\PYGZus{}real\PYGZus{}time}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\PYG{o}{\PYGZhy{}} \PYG{p}{[}\PYG{n}{ts\PYGZus{}fkst}\PYG{p}{,}\PYG{n}{ts\PYGZus{}rmse}\PYG{p}{,}\PYG{n}{rmse}\PYG{p}{,}\PYG{n}{Updates}\PYG{p}{]}\PYG{o}{=}\PYG{n}{forecast\PYGZus{}real\PYGZus{}time}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id48}
 
-\subsubsection{Examples}
-\label{classes/models/@dsge/dsge:id49}
-See also:
+\section{Inputs}
+\label{classes/models/@dsge/dsge:id48}\begin{itemize}
+\item {} 
+\textbf{obj} {[}dsge\textbar{}svar\textbar{}rfvar{]} : model object
+
+\item {} 
+\textbf{varargin} : valid optional inputs coming in pairs. The main inputs
+of interest for changing the default behavior are:
+- \textbf{fkst\_rt\_nahead} {[}integer{]} : number of periods ahead
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@dsge/dsge:id49}\begin{itemize}
+\item {} 
+\textbf{ts\_fkst} {[}struct{]} : fields are forecasts in the form of ts objects
+for the different endogenous variables
+
+\item {} 
+\textbf{ts\_rmse} {[}struct{]} : fields are RMSEs in the form of ts objects
+for the different endogenous variables
+
+\item {} 
+\textbf{rmse} {[}matrix{]} : RMSEs for the different endogenous variables
+
+\item {} 
+\textbf{Updates} {[}struct{]} : fields are the updated (in a filtering sense) in
+the form of ts objects for the different endogenous variables
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@dsge/dsge:id50}
+
+\section{Examples}
+\label{classes/models/@dsge/dsge:id51}
+See also: plot\_real\_time
 
 
 \bigskip\hrule{}\bigskip
@@ -1216,24 +1407,24 @@ See also:
 
 
 \subsection{get}
-\label{classes/models/@dsge/dsge:id50}\label{classes/models/@dsge/dsge:get}
+\label{classes/models/@dsge/dsge:id52}\label{classes/models/@dsge/dsge:get}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id51}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id52}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id53}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id54}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id55}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id56}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id57}
 See also:
 
 Help for dsge/get is inherited from superclass RISE\_GENERIC
@@ -1246,7 +1437,7 @@ Help for dsge/get is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@dsge/dsge:id56}
+\label{classes/models/@dsge/dsge:id58}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
@@ -1254,7 +1445,7 @@ Help for dsge/get is inherited from superclass RISE\_GENERIC
 
 
 \section{Inputs}
-\label{classes/models/@dsge/dsge:id57}\begin{itemize}
+\label{classes/models/@dsge/dsge:id59}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]} model(s) for which to compute the
 decomposition. obj could be a vector of models
@@ -1272,7 +1463,7 @@ beginning of the history of the dataset
 
 
 \section{Outputs}
-\label{classes/models/@dsge/dsge:id58}\begin{itemize}
+\label{classes/models/@dsge/dsge:id60}\begin{itemize}
 \item {} 
 Histdec : {[}struct\textbar{}cell array{]} structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -1303,7 +1494,7 @@ averaged. The averaging weights are the smoothed probabilities.
 
 
 \section{Examples}
-\label{classes/models/@dsge/dsge:id59}
+\label{classes/models/@dsge/dsge:id61}
 See also:
 
 Help for dsge/historical\_decomposition is inherited from superclass RISE\_GENERIC
@@ -1314,24 +1505,24 @@ Help for dsge/historical\_decomposition is inherited from superclass RISE\_GENER
 
 
 \subsection{irf}
-\label{classes/models/@dsge/dsge:id60}\label{classes/models/@dsge/dsge:irf}
+\label{classes/models/@dsge/dsge:irf}\label{classes/models/@dsge/dsge:id62}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id61}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id62}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id63}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id64}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id65}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id66}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id67}
 See also:
 
 
@@ -1340,24 +1531,24 @@ See also:
 
 
 \subsection{is\_stable\_system}
-\label{classes/models/@dsge/dsge:is-stable-system}\label{classes/models/@dsge/dsge:id66}
+\label{classes/models/@dsge/dsge:is-stable-system}\label{classes/models/@dsge/dsge:id68}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id67}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id68}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id69}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id70}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id71}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id72}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id73}
 See also:
 
 
@@ -1366,24 +1557,24 @@ See also:
 
 
 \subsection{isnan}
-\label{classes/models/@dsge/dsge:id72}\label{classes/models/@dsge/dsge:isnan}
+\label{classes/models/@dsge/dsge:isnan}\label{classes/models/@dsge/dsge:id74}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id73}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id74}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id75}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id76}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id77}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id78}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id79}
 See also:
 
 Help for dsge/isnan is inherited from superclass RISE\_GENERIC
@@ -1394,24 +1585,24 @@ Help for dsge/isnan is inherited from superclass RISE\_GENERIC
 
 
 \subsection{load\_parameters}
-\label{classes/models/@dsge/dsge:id78}\label{classes/models/@dsge/dsge:load-parameters}
+\label{classes/models/@dsge/dsge:id80}\label{classes/models/@dsge/dsge:load-parameters}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id79}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id80}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id81}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id82}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id83}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id84}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id85}
 See also:
 
 Help for dsge/load\_parameters is inherited from superclass RISE\_GENERIC
@@ -1422,24 +1613,24 @@ Help for dsge/load\_parameters is inherited from superclass RISE\_GENERIC
 
 
 \subsection{log\_marginal\_data\_density}
-\label{classes/models/@dsge/dsge:log-marginal-data-density}\label{classes/models/@dsge/dsge:id84}
+\label{classes/models/@dsge/dsge:log-marginal-data-density}\label{classes/models/@dsge/dsge:id86}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id85}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id86}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id87}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id88}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id89}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id90}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id91}
 See also:
 
 Help for dsge/log\_marginal\_data\_density is inherited from superclass RISE\_GENERIC
@@ -1450,24 +1641,24 @@ Help for dsge/log\_marginal\_data\_density is inherited from superclass RISE\_GE
 
 
 \subsection{log\_posterior\_kernel}
-\label{classes/models/@dsge/dsge:log-posterior-kernel}\label{classes/models/@dsge/dsge:id90}
+\label{classes/models/@dsge/dsge:log-posterior-kernel}\label{classes/models/@dsge/dsge:id92}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id91}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id92}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id93}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id94}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id95}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id96}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id97}
 See also:
 
 Help for dsge/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
@@ -1478,24 +1669,24 @@ Help for dsge/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
 
 
 \subsection{log\_prior\_density}
-\label{classes/models/@dsge/dsge:id96}\label{classes/models/@dsge/dsge:log-prior-density}
+\label{classes/models/@dsge/dsge:id98}\label{classes/models/@dsge/dsge:log-prior-density}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id97}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id98}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id99}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id100}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id101}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id102}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id103}
 See also:
 
 Help for dsge/log\_prior\_density is inherited from superclass RISE\_GENERIC
@@ -1506,24 +1697,24 @@ Help for dsge/log\_prior\_density is inherited from superclass RISE\_GENERIC
 
 
 \subsection{monte\_carlo\_filtering}
-\label{classes/models/@dsge/dsge:monte-carlo-filtering}\label{classes/models/@dsge/dsge:id102}
+\label{classes/models/@dsge/dsge:monte-carlo-filtering}\label{classes/models/@dsge/dsge:id104}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id103}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id104}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id105}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id106}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id107}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id108}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id109}
 See also:
 
 
@@ -1532,24 +1723,24 @@ See also:
 
 
 \subsection{posterior\_marginal\_and\_prior\_densities}
-\label{classes/models/@dsge/dsge:id108}\label{classes/models/@dsge/dsge:posterior-marginal-and-prior-densities}
+\label{classes/models/@dsge/dsge:id110}\label{classes/models/@dsge/dsge:posterior-marginal-and-prior-densities}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id109}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id110}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id111}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id112}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id113}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id114}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id115}
 See also:
 
 Help for dsge/posterior\_marginal\_and\_prior\_densities is inherited from superclass RISE\_GENERIC
@@ -1560,24 +1751,24 @@ Help for dsge/posterior\_marginal\_and\_prior\_densities is inherited from super
 
 
 \subsection{posterior\_simulator}
-\label{classes/models/@dsge/dsge:posterior-simulator}\label{classes/models/@dsge/dsge:id114}
+\label{classes/models/@dsge/dsge:posterior-simulator}\label{classes/models/@dsge/dsge:id116}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id115}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id116}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id117}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id118}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id119}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id120}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id121}
 See also:
 
 Help for dsge/posterior\_simulator is inherited from superclass RISE\_GENERIC
@@ -1588,24 +1779,24 @@ Help for dsge/posterior\_simulator is inherited from superclass RISE\_GENERIC
 
 
 \subsection{print\_estimation\_results}
-\label{classes/models/@dsge/dsge:print-estimation-results}\label{classes/models/@dsge/dsge:id120}
+\label{classes/models/@dsge/dsge:print-estimation-results}\label{classes/models/@dsge/dsge:id122}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id121}
-
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id122}
-
-\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id123}
 
-\subsubsection{Description}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id124}
 
-\subsubsection{Examples}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id125}
+
+\subsubsection{More About}
+\label{classes/models/@dsge/dsge:id126}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id127}
 See also:
 
 Help for dsge/print\_estimation\_results is inherited from superclass RISE\_GENERIC
@@ -1613,27 +1804,75 @@ Help for dsge/print\_estimation\_results is inherited from superclass RISE\_GENE
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@dsge/dsge:print-solution}
+\textbf{print\_solution} - print the solution of a model or vector of models
 
 
-\subsection{print\_solution}
-\label{classes/models/@dsge/dsge:print-solution}\label{classes/models/@dsge/dsge:id126}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id127}
-
-\subsubsection{Inputs}
+\section{Syntax}
 \label{classes/models/@dsge/dsge:id128}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{)}
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{)}
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{,}\PYG{n}{compact\PYGZus{}form}\PYG{p}{)}
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{,}\PYG{n}{compact\PYGZus{}form}\PYG{p}{,}\PYG{n}{precision}\PYG{p}{)}
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{,}\PYG{n}{compact\PYGZus{}form}\PYG{p}{,}\PYG{n}{precision}\PYG{p}{,}\PYG{n}{equation\PYGZus{}format}\PYG{p}{)}
+\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varlist}\PYG{p}{,}\PYG{n}{orders}\PYG{p}{,}\PYG{n}{compact\PYGZus{}form}\PYG{p}{,}\PYG{n}{precision}\PYG{p}{,}\PYG{n}{equation\PYGZus{}format}\PYG{p}{,}\PYG{n}{file2save2}\PYG{p}{)}
+\PYG{n}{outcell}\PYG{o}{=}\PYG{n}{print\PYGZus{}solution}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{o}{.}\PYG{o}{.}\PYG{o}{.}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id129}
 
-\subsubsection{Description}
-\label{classes/models/@dsge/dsge:id130}
+\section{Inputs}
+\label{classes/models/@dsge/dsge:id129}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge{]} : model object or vector of model objects
 
-\subsubsection{Examples}
+\item {} 
+\textbf{varlist} {[}char\textbar{}cellstr\textbar{}\{{[}{]}\}{]} : list of variables of interest
+
+\item {} 
+\textbf{orders} {[}numeric\textbar{}\{{[}1:solve\_order{]}\}{]} : orders for which we want to
+see the solution
+
+\item {} 
+\textbf{compact\_form} {[}\{true\}\textbar{}false{]} : if true, only the solution of unique
+tuples (i,j,k) such that i\textless{}=j\textless{}=k is presented. If false, the solution
+of all combinations is presented. i.e.
+(i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)
+
+\item {} 
+\textbf{precision} {[}char\textbar{}\{`\%8.6f'\}{]} : precision of the numbers printed
+
+\item {} 
+\textbf{equation\_format} {[}true\textbar{}\{false\}{]} : if true, the solution is presented
+in the form of equations for each endogenous variable (not recommended)
+
+\item {} 
+\textbf{file2save2} {[}char\textbar{}\{`'\}{]} : if not empty, the solution is written to a
+file rather than printed on screen. For this to happen, print\_solution
+has to be called without ouput arguments
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@dsge/dsge:id130}\begin{itemize}
+\item {} 
+\textbf{outcell} {[}cellstr{]} : If an output is requested, the solution is not
+printed on screen or to a file.
+
+\end{itemize}
+
+
+\section{More About}
 \label{classes/models/@dsge/dsge:id131}
+If a model is solved, say, up to 3rd order, one may still want to see the
+first-order solution or the solution up to second-order only or any
+combination of orders.
+
+
+\section{Examples}
+\label{classes/models/@dsge/dsge:id132}
 See also:
 
 
@@ -1642,24 +1881,24 @@ See also:
 
 
 \subsection{prior\_plots}
-\label{classes/models/@dsge/dsge:id132}\label{classes/models/@dsge/dsge:prior-plots}
+\label{classes/models/@dsge/dsge:id133}\label{classes/models/@dsge/dsge:prior-plots}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id133}
-
-\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id134}
 
-\subsubsection{Outputs}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id135}
 
-\subsubsection{Description}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id136}
 
-\subsubsection{Examples}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id137}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id138}
 See also:
 
 Help for dsge/prior\_plots is inherited from superclass RISE\_GENERIC
@@ -1672,7 +1911,7 @@ Help for dsge/prior\_plots is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@dsge/dsge:id138}\begin{description}
+\label{classes/models/@dsge/dsge:id139}\begin{description}
 \item[{::}] \leavevmode\begin{itemize}
 \item {} 
 REPORT(rise.empty(0)) : displays the default inputs
@@ -1691,7 +1930,7 @@ obj before doing the rest
 
 
 \section{Inputs}
-\label{classes/models/@dsge/dsge:id139}\begin{itemize}
+\label{classes/models/@dsge/dsge:id140}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge{]}
 
@@ -1708,15 +1947,15 @@ can only include : `endogenous', `exogenous', `observables',
 
 
 \section{Outputs}
-\label{classes/models/@dsge/dsge:id140}
+\label{classes/models/@dsge/dsge:id141}
 none
 
 
-\section{Description}
-\label{classes/models/@dsge/dsge:id141}
+\section{More About}
+\label{classes/models/@dsge/dsge:id142}
 
 \section{Examples}
-\label{classes/models/@dsge/dsge:id142}
+\label{classes/models/@dsge/dsge:id143}
 See also:
 
 Help for dsge/report is inherited from superclass RISE\_GENERIC
@@ -1727,51 +1966,119 @@ Help for dsge/report is inherited from superclass RISE\_GENERIC
 
 
 \subsection{resid}
-\label{classes/models/@dsge/dsge:resid}\label{classes/models/@dsge/dsge:id143}
+\label{classes/models/@dsge/dsge:id144}\label{classes/models/@dsge/dsge:resid}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@dsge/dsge:id144}
-
-\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id145}
 
-\subsubsection{Outputs}
+\subsubsection{Inputs}
 \label{classes/models/@dsge/dsge:id146}
 
-\subsubsection{Description}
+\subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id147}
 
-\subsubsection{Examples}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id148}
+
+\subsubsection{Examples}
+\label{classes/models/@dsge/dsge:id149}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@dsge/dsge:set}
+\textbf{set} - sets options for dsge\textbar{}rise models
 
 
-\subsection{set}
-\label{classes/models/@dsge/dsge:set}\label{classes/models/@dsge/dsge:id149}
-H1 line
-
-
-\subsubsection{Syntax}
+\section{Syntax}
 \label{classes/models/@dsge/dsge:id150}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{obj}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
-\subsubsection{Inputs}
-\label{classes/models/@dsge/dsge:id151}
 
-\subsubsection{Outputs}
-\label{classes/models/@dsge/dsge:id152}
+\section{Inputs}
+\label{classes/models/@dsge/dsge:id151}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge{]}: model object
 
-\subsubsection{Description}
+\item {} 
+\textbf{varargin} : valid input arguments coming in pairs. Notable fields to
+that can be set include and are not restricted to:
+- \textbf{solve\_shock\_horizon} {[}integer\textbar{}struct\textbar{}cell{]}
+\begin{itemize}
+\item {} 
+for the integer case, all shocks are set to the same integer
+
+\item {} \begin{description}
+\item[{for the struct case, the input must be a structure with shock}] \leavevmode
+names as fields. Only the shock names whose value is to change
+have to be listed. In this case, different shocks can have
+different horizons k. The default is k=0 i.e. agents don't
+see into the future
+
+\end{description}
+
+\item {} \begin{description}
+\item[{for the cell case, the cell should have two columns. The first}] \leavevmode
+column includes the names of the shocks whose horizon is to
+change. The second column includes the horizon for each shock
+name on the left.
+
+\end{description}
+
+\end{itemize}
+\begin{itemize}
+\item {} \begin{description}
+\item[{\textbf{solve\_function\_mode} {[}\{explicit/amateur\}\textbar{}vectorized/professional\textbar{}disc{]}}] \leavevmode\begin{itemize}
+\item {} \begin{description}
+\item[{in the \textbf{amateur} or \textbf{explicit} mode the functions are kept in}] \leavevmode
+cell arrays of anonymous functions and evaluated using for
+loops
+
+\end{description}
+
+\item {} \begin{description}
+\item[{in the \textbf{vectorized} or \textbf{professional} mode the functions are}] \leavevmode
+compacted into one long and unreadable function.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{in the \textbf{disc} mode the functions are written to disc in a}] \leavevmode
+subdirectory called routines.
+
+\end{description}
+
+\end{itemize}
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@dsge/dsge:id152}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge{]}: model object
+
+\end{itemize}
+
+
+\section{More About}
 \label{classes/models/@dsge/dsge:id153}
 
-\subsubsection{Examples}
+\section{Examples}
 \label{classes/models/@dsge/dsge:id154}
-See also:
+obj=set(obj,'solve\_shock\_horizon',struct(`shock1',2,'shock3',4))
+obj=set(obj,'solve\_shock\_horizon',5)
+
+See also: rise\_generic.set
 
 
 \bigskip\hrule{}\bigskip
@@ -1792,7 +2099,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id158}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id159}
 
 \subsubsection{Examples}
@@ -1818,7 +2125,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id164}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id165}
 
 \subsubsection{Examples}
@@ -1844,7 +2151,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id170}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id171}
 
 \subsubsection{Examples}
@@ -1870,7 +2177,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id176}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id177}
 
 \subsubsection{Examples}
@@ -1898,11 +2205,14 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id182}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id183}
 
 \subsubsection{Examples}
 \label{classes/models/@dsge/dsge:id184}
+obj=solve(obj,'solve\_shock\_horizon',struct(`shock1',2,'shock3',4))
+obj=solve(obj,'solve\_shock\_horizon',5)
+
 See also:
 
 
@@ -1924,7 +2234,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id188}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id189}
 
 \subsubsection{Examples}
@@ -1950,7 +2260,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id194}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id195}
 
 \subsubsection{Examples}
@@ -1978,7 +2288,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id200}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id201}
 
 \subsubsection{Examples}
@@ -2006,7 +2316,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id206}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id207}
 
 \subsubsection{Examples}
@@ -2034,7 +2344,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@dsge/dsge:id212}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@dsge/dsge:id213}
 
 \subsubsection{Examples}
@@ -2216,8 +2526,8 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@rfvar/rfvar:outputs}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:description}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:more-about}
 
 \subsubsection{Examples}
 \label{classes/models/@rfvar/rfvar:examples}
@@ -2242,7 +2552,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@rfvar/rfvar:id5}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@rfvar/rfvar:id6}
 
 \subsubsection{Examples}
@@ -2270,7 +2580,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@rfvar/rfvar:id11}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@rfvar/rfvar:id12}
 
 \subsubsection{Examples}
@@ -2298,7 +2608,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@rfvar/rfvar:id17}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@rfvar/rfvar:id18}
 
 \subsubsection{Examples}
@@ -2310,28 +2620,114 @@ Help for rfvar/estimate is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@rfvar/rfvar:forecast}
+\textbf{forecast} - computes forecasts for rise\textbar{}dsge\textbar{}svar\textbar{}rfvar models
 
 
-\subsection{forecast}
-\label{classes/models/@rfvar/rfvar:id20}\label{classes/models/@rfvar/rfvar:forecast}
-H1 line
+\section{Syntax}
+\label{classes/models/@rfvar/rfvar:id20}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{cond\PYGZus{}fkst\PYGZus{}db}\PYG{o}{=}\PYG{n}{forecast}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id21}
+\section{Inputs}
+\label{classes/models/@rfvar/rfvar:id21}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id22}
+\item {} 
+\textbf{varargin} : additional inputs coming in pairs. These include but are
+not restricted to:
+- \textbf{forecast\_to\_time\_series} {[}\{true\}\textbar{}false{]}: sets the output to time
+\begin{quote}
 
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id23}
+series format or not
+\end{quote}
+\begin{itemize}
+\item {} 
+\textbf{forecast\_nsteps} {[}integer\textbar{}\{12\}{]}: number of forecasting steps
 
-\subsubsection{Description}
+\item {} \begin{description}
+\item[{\textbf{forecast\_start\_date} {[}char\textbar{}numeric\textbar{}serial date{]}: date when the}] \leavevmode
+forecasts start (end of history + 1)
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{forecast\_conditional\_hypothesis} {[}\{jma\}\textbar{}ncp\textbar{}nas{]}: in dsge models in}] \leavevmode
+which agents have information beyond the current period, this
+option determines the number of periods of shocks need to match the
+restrictions:
+- Hypothesis \textbf{jma} assumes that irrespective of how
+\begin{quote}
+
+many periods of conditioning information are remaining, agents
+always receive information on the same number of shocks.
+\end{quote}
+\begin{itemize}
+\item {} \begin{description}
+\item[{Hypothesis \textbf{ncp} assumes there are as many shocks periods as}] \leavevmode
+the number of the number of conditioning periods
+
+\end{description}
+
+\item {} \begin{description}
+\item[{Hypothesis \textbf{nas} assumes there are as many shocks periods as}] \leavevmode
+the number of anticipated steps
+
+\end{description}
+
+\end{itemize}
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@rfvar/rfvar:id22}\begin{itemize}
+\item {} 
+\textbf{cond\_fkst\_db} {[}struct\textbar{}matrix{]}: depending on the value of
+\textbf{forecast\_to\_time\_series} the returned output is a structure with
+time series or a cell containing a matrix and the information to
+reconstruct the time series.
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@rfvar/rfvar:id23}\begin{itemize}
+\item {} 
+the historical information as well as the conditioning information come
+from the same database. The time series must be organized such that for
+each series, the first page represents the actual data and all
+subsequent pages represent conditional information. If a particular
+condition is ``nan'', that location is not constrained
+
+\item {} 
+Conditional forecasting for nonlinear models is also supported.
+However, the solving of the implied nonlinear problem may fail if the
+model displays instability
+
+\item {} 
+Both HARD CONDITIONS and SOFT CONDITIONS are implemented but the latter
+are currently disabled in expectation of a better user interface.
+
+\item {} 
+The data may also contain time series for a variable with name
+\textbf{regime} in that case, the forecast/simulation paths are computed
+following the information therein. \textbf{regime} must be a member of 1:h,
+where h is the maximum number of regimes.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@rfvar/rfvar:id24}
-
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id25}
-See also:
+See also: simulate
 
 Help for rfvar/forecast is inherited from superclass RISE\_GENERIC
 
@@ -2341,24 +2737,24 @@ Help for rfvar/forecast is inherited from superclass RISE\_GENERIC
 
 
 \subsection{get}
-\label{classes/models/@rfvar/rfvar:id26}\label{classes/models/@rfvar/rfvar:get}
+\label{classes/models/@rfvar/rfvar:id25}\label{classes/models/@rfvar/rfvar:get}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id27}
+\label{classes/models/@rfvar/rfvar:id26}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id28}
+\label{classes/models/@rfvar/rfvar:id27}
 
 \subsubsection{Outputs}
+\label{classes/models/@rfvar/rfvar:id28}
+
+\subsubsection{More About}
 \label{classes/models/@rfvar/rfvar:id29}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id30}
-
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id31}
+\label{classes/models/@rfvar/rfvar:id30}
 See also:
 
 Help for rfvar/get is inherited from superclass RISE\_GENERIC
@@ -2371,7 +2767,7 @@ Help for rfvar/get is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@rfvar/rfvar:id32}
+\label{classes/models/@rfvar/rfvar:id31}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
@@ -2379,7 +2775,7 @@ Help for rfvar/get is inherited from superclass RISE\_GENERIC
 
 
 \section{Inputs}
-\label{classes/models/@rfvar/rfvar:id33}\begin{itemize}
+\label{classes/models/@rfvar/rfvar:id32}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]} model(s) for which to compute the
 decomposition. obj could be a vector of models
@@ -2397,7 +2793,7 @@ beginning of the history of the dataset
 
 
 \section{Outputs}
-\label{classes/models/@rfvar/rfvar:id34}\begin{itemize}
+\label{classes/models/@rfvar/rfvar:id33}\begin{itemize}
 \item {} 
 Histdec : {[}struct\textbar{}cell array{]} structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -2428,7 +2824,7 @@ averaged. The averaging weights are the smoothed probabilities.
 
 
 \section{Examples}
-\label{classes/models/@rfvar/rfvar:id35}
+\label{classes/models/@rfvar/rfvar:id34}
 See also:
 
 Help for rfvar/historical\_decomposition is inherited from superclass RISE\_GENERIC
@@ -2436,27 +2832,108 @@ Help for rfvar/historical\_decomposition is inherited from superclass RISE\_GENE
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@rfvar/rfvar:irf}
+\textbf{irf} - computes impulse responses for a RISE model
 
 
-\subsection{irf}
-\label{classes/models/@rfvar/rfvar:id36}\label{classes/models/@rfvar/rfvar:irf}
-H1 line
+\section{Syntax}
+\label{classes/models/@rfvar/rfvar:id35}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{myirfs}\PYG{o}{=}\PYG{n}{irf}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+
+\PYG{n}{myirfs}\PYG{o}{=}\PYG{n}{irf}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id37}
+\section{Inputs}
+\label{classes/models/@rfvar/rfvar:id36}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: single or vector of RISE models
 
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id38}
+\item {} 
+\textbf{varargin} : optional options coming in pairs. The notable ones that
+will influence the behavior of the impulse responses are:
 
-\subsubsection{Outputs}
+\item {} 
+\textbf{irf\_shock\_list} {[}char\textbar{}cellstr\textbar{}\{`'\}{]}: list of shocks for which we
+want to compute impulse responses
+
+\item {} 
+\textbf{irf\_var\_list} {[}char\textbar{}cellstr\textbar{}\{`'\}{]}: list of the endogenous variables
+we want to report
+
+\item {} 
+\textbf{irf\_periods} {[}integer\textbar{}\{40\}{]}: length of the irfs
+
+\item {} 
+\textbf{irf\_shock\_sign} {[}numeric\textbar{}-1\textbar{}\{1\}{]}: sign or scale of the original
+impulse. If \textbf{irf\_shock\_sign} \textgreater{}0, we get impulse responses to a
+positive shock. If \textbf{irf\_shock\_sign} \textless{}0, the responses are negative.
+If If \textbf{irf\_shock\_sign} =0, all the responses are 0.
+
+\item {} 
+\textbf{irf\_draws} {[}integer\textbar{}\{50\}{]}: number of draws used in the simulation
+impulse responses in a nonlinear model. A nonlinear model is defined as
+a model that satisfies at least one of the following criteria
+- solved at an order \textgreater{}1
+- has more than one regime and option \textbf{irf\_regime\_specific} below is
+\begin{quote}
+
+set to false
+\end{quote}
+
+\item {} 
+\textbf{irf\_type} {[}\{irf\}\textbar{}girf{]}: type of irfs. If the type is irf, the
+impulse responses are computed directly exploiting the fact that the
+model is linear. If the type is girf, the formula for the generalized
+impulse responses is used: the irf is defined as the expectation of the
+difference of two simulation paths. In the first path the initial
+impulse for the shock of interest is nonzero while it is zero for the
+second path. All other shocks are the same for both paths in a given
+simulation.
+
+\item {} 
+\textbf{irf\_regime\_specific} {[}\{true\}\textbar{}false{]}: In a switching model, we may or
+may not want to compute impulse responses specific to each regime.
+
+\item {} 
+\textbf{irf\_use\_historical\_data} {[}\{false\}\textbar{}true{]}: if true, the data stored in
+option \textbf{simul\_historical\_data} are used as initial conditions. But
+the model has to be nonlinear otherwise the initial conditions are set
+to zero. This option gives the flexibility to set the initial
+conditions for the impulse responses.
+
+\item {} 
+\textbf{irf\_to\_time\_series} {[}\{true\}\textbar{}false{]}: If true, the output is in the
+form of time series. Else it is in the form of a cell containing the
+information needed to reconstruct the time series.
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@rfvar/rfvar:id37}\begin{itemize}
+\item {} 
+\textbf{myirfs} {[}\{struct\}\textbar{}cell{]}: Impulse response data
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@rfvar/rfvar:id38}\begin{itemize}
+\item {} 
+for linear models or models solved up to first order, the initial
+conditions as well as the steady states are set to 0 in the computation
+of the impulse responses.
+
+\item {} 
+for nonlinear models, the initial conditions is the ergodic mean
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@rfvar/rfvar:id39}
-
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id40}
-
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id41}
 See also:
 
 Help for rfvar/irf is inherited from superclass RISE\_GENERIC
@@ -2467,24 +2944,24 @@ Help for rfvar/irf is inherited from superclass RISE\_GENERIC
 
 
 \subsection{isnan}
-\label{classes/models/@rfvar/rfvar:isnan}\label{classes/models/@rfvar/rfvar:id42}
+\label{classes/models/@rfvar/rfvar:isnan}\label{classes/models/@rfvar/rfvar:id40}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id43}
+\label{classes/models/@rfvar/rfvar:id41}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id44}
+\label{classes/models/@rfvar/rfvar:id42}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id45}
+\label{classes/models/@rfvar/rfvar:id43}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id46}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id44}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id47}
+\label{classes/models/@rfvar/rfvar:id45}
 See also:
 
 Help for rfvar/isnan is inherited from superclass RISE\_GENERIC
@@ -2495,24 +2972,24 @@ Help for rfvar/isnan is inherited from superclass RISE\_GENERIC
 
 
 \subsection{load\_parameters}
-\label{classes/models/@rfvar/rfvar:load-parameters}\label{classes/models/@rfvar/rfvar:id48}
+\label{classes/models/@rfvar/rfvar:id46}\label{classes/models/@rfvar/rfvar:load-parameters}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id49}
+\label{classes/models/@rfvar/rfvar:id47}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id50}
+\label{classes/models/@rfvar/rfvar:id48}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id51}
+\label{classes/models/@rfvar/rfvar:id49}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id52}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id50}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id53}
+\label{classes/models/@rfvar/rfvar:id51}
 See also:
 
 Help for rfvar/load\_parameters is inherited from superclass RISE\_GENERIC
@@ -2523,24 +3000,24 @@ Help for rfvar/load\_parameters is inherited from superclass RISE\_GENERIC
 
 
 \subsection{log\_marginal\_data\_density}
-\label{classes/models/@rfvar/rfvar:id54}\label{classes/models/@rfvar/rfvar:log-marginal-data-density}
+\label{classes/models/@rfvar/rfvar:log-marginal-data-density}\label{classes/models/@rfvar/rfvar:id52}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id55}
+\label{classes/models/@rfvar/rfvar:id53}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id56}
+\label{classes/models/@rfvar/rfvar:id54}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id57}
+\label{classes/models/@rfvar/rfvar:id55}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id58}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id56}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id59}
+\label{classes/models/@rfvar/rfvar:id57}
 See also:
 
 Help for rfvar/log\_marginal\_data\_density is inherited from superclass RISE\_GENERIC
@@ -2551,24 +3028,24 @@ Help for rfvar/log\_marginal\_data\_density is inherited from superclass RISE\_G
 
 
 \subsection{log\_posterior\_kernel}
-\label{classes/models/@rfvar/rfvar:log-posterior-kernel}\label{classes/models/@rfvar/rfvar:id60}
+\label{classes/models/@rfvar/rfvar:log-posterior-kernel}\label{classes/models/@rfvar/rfvar:id58}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id61}
+\label{classes/models/@rfvar/rfvar:id59}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id62}
+\label{classes/models/@rfvar/rfvar:id60}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id63}
+\label{classes/models/@rfvar/rfvar:id61}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id64}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id62}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id65}
+\label{classes/models/@rfvar/rfvar:id63}
 See also:
 
 Help for rfvar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
@@ -2579,24 +3056,24 @@ Help for rfvar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
 
 
 \subsection{log\_prior\_density}
-\label{classes/models/@rfvar/rfvar:id66}\label{classes/models/@rfvar/rfvar:log-prior-density}
+\label{classes/models/@rfvar/rfvar:id64}\label{classes/models/@rfvar/rfvar:log-prior-density}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id67}
+\label{classes/models/@rfvar/rfvar:id65}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id68}
+\label{classes/models/@rfvar/rfvar:id66}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id69}
+\label{classes/models/@rfvar/rfvar:id67}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id70}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id68}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id71}
+\label{classes/models/@rfvar/rfvar:id69}
 See also:
 
 Help for rfvar/log\_prior\_density is inherited from superclass RISE\_GENERIC
@@ -2607,24 +3084,24 @@ Help for rfvar/log\_prior\_density is inherited from superclass RISE\_GENERIC
 
 
 \subsection{msvar\_priors}
-\label{classes/models/@rfvar/rfvar:id72}\label{classes/models/@rfvar/rfvar:msvar-priors}
+\label{classes/models/@rfvar/rfvar:id70}\label{classes/models/@rfvar/rfvar:msvar-priors}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id73}
+\label{classes/models/@rfvar/rfvar:id71}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id74}
+\label{classes/models/@rfvar/rfvar:id72}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id75}
+\label{classes/models/@rfvar/rfvar:id73}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id76}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id74}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id77}
+\label{classes/models/@rfvar/rfvar:id75}
 See also:
 
 Help for rfvar/msvar\_priors is inherited from superclass SVAR
@@ -2635,24 +3112,24 @@ Help for rfvar/msvar\_priors is inherited from superclass SVAR
 
 
 \subsection{posterior\_marginal\_and\_prior\_densities}
-\label{classes/models/@rfvar/rfvar:id78}\label{classes/models/@rfvar/rfvar:posterior-marginal-and-prior-densities}
+\label{classes/models/@rfvar/rfvar:id76}\label{classes/models/@rfvar/rfvar:posterior-marginal-and-prior-densities}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id79}
+\label{classes/models/@rfvar/rfvar:id77}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id80}
+\label{classes/models/@rfvar/rfvar:id78}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id81}
+\label{classes/models/@rfvar/rfvar:id79}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id82}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id80}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id83}
+\label{classes/models/@rfvar/rfvar:id81}
 See also:
 
 Help for rfvar/posterior\_marginal\_and\_prior\_densities is inherited from superclass RISE\_GENERIC
@@ -2663,24 +3140,24 @@ Help for rfvar/posterior\_marginal\_and\_prior\_densities is inherited from supe
 
 
 \subsection{posterior\_simulator}
-\label{classes/models/@rfvar/rfvar:posterior-simulator}\label{classes/models/@rfvar/rfvar:id84}
+\label{classes/models/@rfvar/rfvar:posterior-simulator}\label{classes/models/@rfvar/rfvar:id82}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id85}
+\label{classes/models/@rfvar/rfvar:id83}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id86}
+\label{classes/models/@rfvar/rfvar:id84}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id87}
+\label{classes/models/@rfvar/rfvar:id85}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id88}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id86}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id89}
+\label{classes/models/@rfvar/rfvar:id87}
 See also:
 
 Help for rfvar/posterior\_simulator is inherited from superclass RISE\_GENERIC
@@ -2691,24 +3168,24 @@ Help for rfvar/posterior\_simulator is inherited from superclass RISE\_GENERIC
 
 
 \subsection{print\_estimation\_results}
-\label{classes/models/@rfvar/rfvar:id90}\label{classes/models/@rfvar/rfvar:print-estimation-results}
+\label{classes/models/@rfvar/rfvar:print-estimation-results}\label{classes/models/@rfvar/rfvar:id88}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id91}
+\label{classes/models/@rfvar/rfvar:id89}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id92}
+\label{classes/models/@rfvar/rfvar:id90}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id93}
+\label{classes/models/@rfvar/rfvar:id91}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id94}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id92}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id95}
+\label{classes/models/@rfvar/rfvar:id93}
 See also:
 
 Help for rfvar/print\_estimation\_results is inherited from superclass RISE\_GENERIC
@@ -2719,24 +3196,24 @@ Help for rfvar/print\_estimation\_results is inherited from superclass RISE\_GEN
 
 
 \subsection{prior\_plots}
-\label{classes/models/@rfvar/rfvar:prior-plots}\label{classes/models/@rfvar/rfvar:id96}
+\label{classes/models/@rfvar/rfvar:id94}\label{classes/models/@rfvar/rfvar:prior-plots}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id97}
+\label{classes/models/@rfvar/rfvar:id95}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id98}
+\label{classes/models/@rfvar/rfvar:id96}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id99}
+\label{classes/models/@rfvar/rfvar:id97}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id100}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id98}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id101}
+\label{classes/models/@rfvar/rfvar:id99}
 See also:
 
 Help for rfvar/prior\_plots is inherited from superclass RISE\_GENERIC
@@ -2749,7 +3226,7 @@ Help for rfvar/prior\_plots is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@rfvar/rfvar:id102}\begin{description}
+\label{classes/models/@rfvar/rfvar:id100}\begin{description}
 \item[{::}] \leavevmode\begin{itemize}
 \item {} 
 REPORT(rise.empty(0)) : displays the default inputs
@@ -2768,7 +3245,7 @@ obj before doing the rest
 
 
 \section{Inputs}
-\label{classes/models/@rfvar/rfvar:id103}\begin{itemize}
+\label{classes/models/@rfvar/rfvar:id101}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge{]}
 
@@ -2785,15 +3262,15 @@ can only include : `endogenous', `exogenous', `observables',
 
 
 \section{Outputs}
-\label{classes/models/@rfvar/rfvar:id104}
+\label{classes/models/@rfvar/rfvar:id102}
 none
 
 
-\section{Description}
-\label{classes/models/@rfvar/rfvar:id105}
+\section{More About}
+\label{classes/models/@rfvar/rfvar:id103}
 
 \section{Examples}
-\label{classes/models/@rfvar/rfvar:id106}
+\label{classes/models/@rfvar/rfvar:id104}
 See also:
 
 Help for rfvar/report is inherited from superclass RISE\_GENERIC
@@ -2811,27 +3288,50 @@ Help for rfvar/report is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@rfvar/rfvar:set}
+\textbf{set} - sets options for RISE models
 
 
-\subsection{set}
-\label{classes/models/@rfvar/rfvar:set}\label{classes/models/@rfvar/rfvar:id107}
-H1 line
+\section{Syntax}
+\label{classes/models/@rfvar/rfvar:id105}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{obj}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id108}
+\section{Inputs}
+\label{classes/models/@rfvar/rfvar:id106}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
-\subsubsection{Inputs}
+\item {} 
+\textbf{varargin} : valid input arguments coming in pairs.
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@rfvar/rfvar:id107}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@rfvar/rfvar:id108}\begin{itemize}
+\item {} 
+one can force a new field into the options by prefixing it with a `+'
+sign. Let's say yourfield is not part of the options and you would like
+to force it to be in the options because it is going to be used in some
+function or algorithm down the road. Then you can run
+m=set(m,'+yourfield',value). then m will be part of the new options.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@rfvar/rfvar:id109}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id110}
-
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id111}
-
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id112}
 See also:
 
 Help for rfvar/set is inherited from superclass RISE\_GENERIC
@@ -2842,24 +3342,24 @@ Help for rfvar/set is inherited from superclass RISE\_GENERIC
 
 
 \subsection{set\_solution\_to\_companion}
-\label{classes/models/@rfvar/rfvar:id113}\label{classes/models/@rfvar/rfvar:set-solution-to-companion}
+\label{classes/models/@rfvar/rfvar:id110}\label{classes/models/@rfvar/rfvar:set-solution-to-companion}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id114}
+\label{classes/models/@rfvar/rfvar:id111}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id115}
+\label{classes/models/@rfvar/rfvar:id112}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id116}
+\label{classes/models/@rfvar/rfvar:id113}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id117}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id114}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id118}
+\label{classes/models/@rfvar/rfvar:id115}
 See also:
 
 Help for rfvar/set\_solution\_to\_companion is inherited from superclass SVAR
@@ -2867,27 +3367,116 @@ Help for rfvar/set\_solution\_to\_companion is inherited from superclass SVAR
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@rfvar/rfvar:simulate}
+\textbf{simulate} - simulates a RISE model
 
 
-\subsection{simulate}
-\label{classes/models/@rfvar/rfvar:id119}\label{classes/models/@rfvar/rfvar:simulate}
-H1 line
+\section{Syntax}
+\label{classes/models/@rfvar/rfvar:id116}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{db}\PYG{p}{,}\PYG{n}{states}\PYG{p}{,}\PYG{n}{retcode}\PYG{p}{]} \PYG{o}{=} \PYG{n}{simulate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
+\section{Inputs}
+\label{classes/models/@rfvar/rfvar:id117}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rfvar\textbar{}dsge\textbar{}rise\textbar{}svar{]}: model object
+
+\item {} 
+\textbf{varargin} : additional arguments including but not restricted to
+- \textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
+- \textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
+- \textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}
+\begin{quote}
+
+shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
+\end{quote}
+\begin{itemize}
+\item {} 
+\textbf{simul\_seed} {[}numeric\textbar{}\{0\}{]}: seed of the computations
+
+\item {} \begin{description}
+\item[{\textbf{simul\_historical\_data} {[}ts\textbar{}struct\textbar{}\{`'\}{]}: historical data from}] \leavevmode
+which the simulations are based. If empty, the simulations start at
+the steady state.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_history\_end\_date} {[}char\textbar{}integer\textbar{}serial date{]}: last date of}] \leavevmode
+history
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_regime} {[}integer\textbar{}vector\textbar{}\{{[}{]}\}{]}: regimes for which the model}] \leavevmode
+is simulated
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_update\_shocks\_handle} {[}function handle{]}: we may want to}] \leavevmode
+update the shocks if some condition on the state of the economy is
+satisfied. For instance, shock monetary policy to keep the interest
+rate at the floor for an extented period of time if we already are
+at the ZLB/ZIF. simul\_update\_shocks\_handle takes as inputs the
+current shocks and the state vector (all the endogenous variables)
+and returns the updated shocks. But for all this to be put into
+motion, the user also has to turn on \textbf{simul\_do\_update\_shocks} by
+setting it to true.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_do\_update\_shocks} {[}true\textbar{}\{false\}{]}: update the shocks based on}] \leavevmode
+\textbf{simul\_update\_shocks\_handle} or not.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_to\_time\_series} {[}\{true\}\textbar{}false{]}: if true, the output is a}] \leavevmode
+time series, else a cell array with a matrix and information on
+elements that help reconstruct the time series.
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@rfvar/rfvar:id118}\begin{itemize}
+\item {} 
+\textbf{db} {[}struct\textbar{}cell array{]}: if \textbf{simul\_to\_time\_series} is true, the
+output is a time series, else a cell array with a matrix and
+information on elements that help reconstruct the time series.
+
+\item {} 
+\textbf{states} {[}vector{]}: history of the regimes over the forecast horizon
+
+\item {} 
+\textbf{retcode} {[}integer{]}: if 0, the simulation went fine. Else something
+got wrong. In that case one can understand the problem by running
+decipher(retcode)
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@rfvar/rfvar:id119}\begin{itemize}
+\item {} 
+\textbf{simul\_historical\_data} contains the historical data as well as
+conditional information over the forecast horizon. It may also include
+as an alternative to \textbf{simul\_regime}, a time series with name
+\textbf{regime}, which indicates the regimes over the forecast horizon.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@rfvar/rfvar:id120}
-
-\subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id121}
-
-\subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id122}
-
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id123}
-
-\subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id124}
 See also:
 
 Help for rfvar/simulate is inherited from superclass RISE\_GENERIC
@@ -2898,24 +3487,24 @@ Help for rfvar/simulate is inherited from superclass RISE\_GENERIC
 
 
 \subsection{simulation\_diagnostics}
-\label{classes/models/@rfvar/rfvar:id125}\label{classes/models/@rfvar/rfvar:simulation-diagnostics}
+\label{classes/models/@rfvar/rfvar:simulation-diagnostics}\label{classes/models/@rfvar/rfvar:id121}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id126}
+\label{classes/models/@rfvar/rfvar:id122}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id127}
+\label{classes/models/@rfvar/rfvar:id123}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id128}
+\label{classes/models/@rfvar/rfvar:id124}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id129}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id125}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id130}
+\label{classes/models/@rfvar/rfvar:id126}
 See also:
 
 Help for rfvar/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
@@ -2926,24 +3515,24 @@ Help for rfvar/simulation\_diagnostics is inherited from superclass RISE\_GENERI
 
 
 \subsection{solve}
-\label{classes/models/@rfvar/rfvar:id131}\label{classes/models/@rfvar/rfvar:solve}
+\label{classes/models/@rfvar/rfvar:id127}\label{classes/models/@rfvar/rfvar:solve}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id132}
+\label{classes/models/@rfvar/rfvar:id128}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id133}
+\label{classes/models/@rfvar/rfvar:id129}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id134}
+\label{classes/models/@rfvar/rfvar:id130}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id135}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id131}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id136}
+\label{classes/models/@rfvar/rfvar:id132}
 See also:
 
 
@@ -2952,24 +3541,24 @@ See also:
 
 
 \subsection{stoch\_simul}
-\label{classes/models/@rfvar/rfvar:stoch-simul}\label{classes/models/@rfvar/rfvar:id137}
+\label{classes/models/@rfvar/rfvar:id133}\label{classes/models/@rfvar/rfvar:stoch-simul}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id138}
+\label{classes/models/@rfvar/rfvar:id134}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id139}
+\label{classes/models/@rfvar/rfvar:id135}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id140}
+\label{classes/models/@rfvar/rfvar:id136}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id141}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id137}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id142}
+\label{classes/models/@rfvar/rfvar:id138}
 See also:
 
 Help for rfvar/stoch\_simul is inherited from superclass RISE\_GENERIC
@@ -2982,15 +3571,15 @@ Help for rfvar/stoch\_simul is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@rfvar/rfvar:id143}
+\label{classes/models/@rfvar/rfvar:id139}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{newobj}\PYG{o}{=}\PYG{n}{structural\PYGZus{}form}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
-\PYG{n}{newobj}\PYG{o}{=}\PYG{n}{structural\PYGZus{}form}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{initcall}\PYG{p}{)}
+\PYG{n}{newobj}\PYG{o}{=}\PYG{n}{structural\PYGZus{}form}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
 \end{Verbatim}
 
 
 \section{Inputs}
-\label{classes/models/@rfvar/rfvar:id144}\begin{itemize}
+\label{classes/models/@rfvar/rfvar:id140}\begin{itemize}
 \item {} 
 \textbf{obj} : {[}rfvar{]} : reduced form VAR object
 
@@ -3054,15 +3643,15 @@ the drawing of rotation matrices
 
 
 \section{Outputs}
-\label{classes/models/@rfvar/rfvar:id145}\begin{itemize}
+\label{classes/models/@rfvar/rfvar:id141}\begin{itemize}
 \item {} 
 newobj : {[}rfvar{]}: new rfvar object with the drawn structural form
 
 \end{itemize}
 
 
-\section{Description}
-\label{classes/models/@rfvar/rfvar:id146}\begin{itemize}
+\section{More About}
+\label{classes/models/@rfvar/rfvar:id142}\begin{itemize}
 \item {} 
 RISE automatically orders the endogenous variables alphabetically and
 tags each equation with one of the endogenous variables. This may be
@@ -3085,6 +3674,13 @@ correctly-signed impulse responses there are two choices:
 minus.
 
 \item {} 
+If the signs are not explicitly enforced under zeros restrictions,
+in an exercise in which one draws many rotations, some will have
+one sign and some others a diffferent sign. Here, perhaps more than
+elsewhere, it is important to add some sign restrictions to have
+consistent results throughout.
+
+\item {} 
 Many periods can be entered simultaneously. For instance
 `var\_name\{0,3,5,10:20,inf\}@shock\_name'
 
@@ -3099,7 +3695,7 @@ Identification for Markov switching VARs is not implemented/supported.
 
 
 \section{Examples}
-\label{classes/models/@rfvar/rfvar:id147}
+\label{classes/models/@rfvar/rfvar:id143}
 See also:
 
 
@@ -3118,24 +3714,24 @@ See also:
 
 
 \subsection{theoretical\_autocorrelations}
-\label{classes/models/@rfvar/rfvar:theoretical-autocorrelations}\label{classes/models/@rfvar/rfvar:id148}
+\label{classes/models/@rfvar/rfvar:theoretical-autocorrelations}\label{classes/models/@rfvar/rfvar:id144}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id149}
+\label{classes/models/@rfvar/rfvar:id145}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id150}
+\label{classes/models/@rfvar/rfvar:id146}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id151}
+\label{classes/models/@rfvar/rfvar:id147}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id152}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id148}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id153}
+\label{classes/models/@rfvar/rfvar:id149}
 See also:
 
 Help for rfvar/theoretical\_autocorrelations is inherited from superclass RISE\_GENERIC
@@ -3146,24 +3742,24 @@ Help for rfvar/theoretical\_autocorrelations is inherited from superclass RISE\_
 
 
 \subsection{theoretical\_autocovariances}
-\label{classes/models/@rfvar/rfvar:id154}\label{classes/models/@rfvar/rfvar:theoretical-autocovariances}
+\label{classes/models/@rfvar/rfvar:theoretical-autocovariances}\label{classes/models/@rfvar/rfvar:id150}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id155}
+\label{classes/models/@rfvar/rfvar:id151}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id156}
+\label{classes/models/@rfvar/rfvar:id152}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id157}
+\label{classes/models/@rfvar/rfvar:id153}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id158}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id154}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id159}
+\label{classes/models/@rfvar/rfvar:id155}
 See also:
 
 Help for rfvar/theoretical\_autocovariances is inherited from superclass RISE\_GENERIC
@@ -3174,24 +3770,24 @@ Help for rfvar/theoretical\_autocovariances is inherited from superclass RISE\_G
 
 
 \subsection{variance\_decomposition}
-\label{classes/models/@rfvar/rfvar:id160}\label{classes/models/@rfvar/rfvar:variance-decomposition}
+\label{classes/models/@rfvar/rfvar:id156}\label{classes/models/@rfvar/rfvar:variance-decomposition}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@rfvar/rfvar:id161}
+\label{classes/models/@rfvar/rfvar:id157}
 
 \subsubsection{Inputs}
-\label{classes/models/@rfvar/rfvar:id162}
+\label{classes/models/@rfvar/rfvar:id158}
 
 \subsubsection{Outputs}
-\label{classes/models/@rfvar/rfvar:id163}
+\label{classes/models/@rfvar/rfvar:id159}
 
-\subsubsection{Description}
-\label{classes/models/@rfvar/rfvar:id164}
+\subsubsection{More About}
+\label{classes/models/@rfvar/rfvar:id160}
 
 \subsubsection{Examples}
-\label{classes/models/@rfvar/rfvar:id165}
+\label{classes/models/@rfvar/rfvar:id161}
 See also:
 
 Help for rfvar/variance\_decomposition is inherited from superclass RISE\_GENERIC
@@ -3354,8 +3950,8 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@svar/svar:outputs}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:description}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:more-about}
 
 \subsubsection{Examples}
 \label{classes/models/@svar/svar:examples}
@@ -3382,7 +3978,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@svar/svar:id5}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@svar/svar:id6}
 
 \subsubsection{Examples}
@@ -3410,7 +4006,7 @@ H1 line
 \subsubsection{Outputs}
 \label{classes/models/@svar/svar:id11}
 
-\subsubsection{Description}
+\subsubsection{More About}
 \label{classes/models/@svar/svar:id12}
 
 \subsubsection{Examples}
@@ -3422,28 +4018,114 @@ Help for svar/estimate is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@svar/svar:forecast}
+\textbf{forecast} - computes forecasts for rise\textbar{}dsge\textbar{}svar\textbar{}rfvar models
 
 
-\subsection{forecast}
-\label{classes/models/@svar/svar:id14}\label{classes/models/@svar/svar:forecast}
-H1 line
+\section{Syntax}
+\label{classes/models/@svar/svar:id14}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{cond\PYGZus{}fkst\PYGZus{}db}\PYG{o}{=}\PYG{n}{forecast}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id15}
+\section{Inputs}
+\label{classes/models/@svar/svar:id15}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id16}
+\item {} 
+\textbf{varargin} : additional inputs coming in pairs. These include but are
+not restricted to:
+- \textbf{forecast\_to\_time\_series} {[}\{true\}\textbar{}false{]}: sets the output to time
+\begin{quote}
 
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id17}
+series format or not
+\end{quote}
+\begin{itemize}
+\item {} 
+\textbf{forecast\_nsteps} {[}integer\textbar{}\{12\}{]}: number of forecasting steps
 
-\subsubsection{Description}
+\item {} \begin{description}
+\item[{\textbf{forecast\_start\_date} {[}char\textbar{}numeric\textbar{}serial date{]}: date when the}] \leavevmode
+forecasts start (end of history + 1)
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{forecast\_conditional\_hypothesis} {[}\{jma\}\textbar{}ncp\textbar{}nas{]}: in dsge models in}] \leavevmode
+which agents have information beyond the current period, this
+option determines the number of periods of shocks need to match the
+restrictions:
+- Hypothesis \textbf{jma} assumes that irrespective of how
+\begin{quote}
+
+many periods of conditioning information are remaining, agents
+always receive information on the same number of shocks.
+\end{quote}
+\begin{itemize}
+\item {} \begin{description}
+\item[{Hypothesis \textbf{ncp} assumes there are as many shocks periods as}] \leavevmode
+the number of the number of conditioning periods
+
+\end{description}
+
+\item {} \begin{description}
+\item[{Hypothesis \textbf{nas} assumes there are as many shocks periods as}] \leavevmode
+the number of anticipated steps
+
+\end{description}
+
+\end{itemize}
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@svar/svar:id16}\begin{itemize}
+\item {} 
+\textbf{cond\_fkst\_db} {[}struct\textbar{}matrix{]}: depending on the value of
+\textbf{forecast\_to\_time\_series} the returned output is a structure with
+time series or a cell containing a matrix and the information to
+reconstruct the time series.
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@svar/svar:id17}\begin{itemize}
+\item {} 
+the historical information as well as the conditioning information come
+from the same database. The time series must be organized such that for
+each series, the first page represents the actual data and all
+subsequent pages represent conditional information. If a particular
+condition is ``nan'', that location is not constrained
+
+\item {} 
+Conditional forecasting for nonlinear models is also supported.
+However, the solving of the implied nonlinear problem may fail if the
+model displays instability
+
+\item {} 
+Both HARD CONDITIONS and SOFT CONDITIONS are implemented but the latter
+are currently disabled in expectation of a better user interface.
+
+\item {} 
+The data may also contain time series for a variable with name
+\textbf{regime} in that case, the forecast/simulation paths are computed
+following the information therein. \textbf{regime} must be a member of 1:h,
+where h is the maximum number of regimes.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@svar/svar:id18}
-
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id19}
-See also:
+See also: simulate
 
 Help for svar/forecast is inherited from superclass RISE\_GENERIC
 
@@ -3453,24 +4135,24 @@ Help for svar/forecast is inherited from superclass RISE\_GENERIC
 
 
 \subsection{get}
-\label{classes/models/@svar/svar:id20}\label{classes/models/@svar/svar:get}
+\label{classes/models/@svar/svar:id19}\label{classes/models/@svar/svar:get}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id21}
+\label{classes/models/@svar/svar:id20}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id22}
+\label{classes/models/@svar/svar:id21}
 
 \subsubsection{Outputs}
+\label{classes/models/@svar/svar:id22}
+
+\subsubsection{More About}
 \label{classes/models/@svar/svar:id23}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id24}
-
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id25}
+\label{classes/models/@svar/svar:id24}
 See also:
 
 Help for svar/get is inherited from superclass RISE\_GENERIC
@@ -3483,7 +4165,7 @@ Help for svar/get is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@svar/svar:id26}
+\label{classes/models/@svar/svar:id25}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
 \PYG{p}{[}\PYG{n}{Histdec}\PYG{p}{,}\PYG{n}{obj}\PYG{p}{]}\PYG{o}{=}\PYG{n}{history\PYGZus{}dec}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
@@ -3491,7 +4173,7 @@ Help for svar/get is inherited from superclass RISE\_GENERIC
 
 
 \section{Inputs}
-\label{classes/models/@svar/svar:id27}\begin{itemize}
+\label{classes/models/@svar/svar:id26}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]} model(s) for which to compute the
 decomposition. obj could be a vector of models
@@ -3509,7 +4191,7 @@ beginning of the history of the dataset
 
 
 \section{Outputs}
-\label{classes/models/@svar/svar:id28}\begin{itemize}
+\label{classes/models/@svar/svar:id27}\begin{itemize}
 \item {} 
 Histdec : {[}struct\textbar{}cell array{]} structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -3540,7 +4222,7 @@ averaged. The averaging weights are the smoothed probabilities.
 
 
 \section{Examples}
-\label{classes/models/@svar/svar:id29}
+\label{classes/models/@svar/svar:id28}
 See also:
 
 Help for svar/historical\_decomposition is inherited from superclass RISE\_GENERIC
@@ -3548,27 +4230,108 @@ Help for svar/historical\_decomposition is inherited from superclass RISE\_GENER
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@svar/svar:irf}
+\textbf{irf} - computes impulse responses for a RISE model
 
 
-\subsection{irf}
-\label{classes/models/@svar/svar:id30}\label{classes/models/@svar/svar:irf}
-H1 line
+\section{Syntax}
+\label{classes/models/@svar/svar:id29}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{myirfs}\PYG{o}{=}\PYG{n}{irf}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{)}
+
+\PYG{n}{myirfs}\PYG{o}{=}\PYG{n}{irf}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id31}
+\section{Inputs}
+\label{classes/models/@svar/svar:id30}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}rfvar\textbar{}svar{]}: single or vector of RISE models
 
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id32}
+\item {} 
+\textbf{varargin} : optional options coming in pairs. The notable ones that
+will influence the behavior of the impulse responses are:
 
-\subsubsection{Outputs}
+\item {} 
+\textbf{irf\_shock\_list} {[}char\textbar{}cellstr\textbar{}\{`'\}{]}: list of shocks for which we
+want to compute impulse responses
+
+\item {} 
+\textbf{irf\_var\_list} {[}char\textbar{}cellstr\textbar{}\{`'\}{]}: list of the endogenous variables
+we want to report
+
+\item {} 
+\textbf{irf\_periods} {[}integer\textbar{}\{40\}{]}: length of the irfs
+
+\item {} 
+\textbf{irf\_shock\_sign} {[}numeric\textbar{}-1\textbar{}\{1\}{]}: sign or scale of the original
+impulse. If \textbf{irf\_shock\_sign} \textgreater{}0, we get impulse responses to a
+positive shock. If \textbf{irf\_shock\_sign} \textless{}0, the responses are negative.
+If If \textbf{irf\_shock\_sign} =0, all the responses are 0.
+
+\item {} 
+\textbf{irf\_draws} {[}integer\textbar{}\{50\}{]}: number of draws used in the simulation
+impulse responses in a nonlinear model. A nonlinear model is defined as
+a model that satisfies at least one of the following criteria
+- solved at an order \textgreater{}1
+- has more than one regime and option \textbf{irf\_regime\_specific} below is
+\begin{quote}
+
+set to false
+\end{quote}
+
+\item {} 
+\textbf{irf\_type} {[}\{irf\}\textbar{}girf{]}: type of irfs. If the type is irf, the
+impulse responses are computed directly exploiting the fact that the
+model is linear. If the type is girf, the formula for the generalized
+impulse responses is used: the irf is defined as the expectation of the
+difference of two simulation paths. In the first path the initial
+impulse for the shock of interest is nonzero while it is zero for the
+second path. All other shocks are the same for both paths in a given
+simulation.
+
+\item {} 
+\textbf{irf\_regime\_specific} {[}\{true\}\textbar{}false{]}: In a switching model, we may or
+may not want to compute impulse responses specific to each regime.
+
+\item {} 
+\textbf{irf\_use\_historical\_data} {[}\{false\}\textbar{}true{]}: if true, the data stored in
+option \textbf{simul\_historical\_data} are used as initial conditions. But
+the model has to be nonlinear otherwise the initial conditions are set
+to zero. This option gives the flexibility to set the initial
+conditions for the impulse responses.
+
+\item {} 
+\textbf{irf\_to\_time\_series} {[}\{true\}\textbar{}false{]}: If true, the output is in the
+form of time series. Else it is in the form of a cell containing the
+information needed to reconstruct the time series.
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@svar/svar:id31}\begin{itemize}
+\item {} 
+\textbf{myirfs} {[}\{struct\}\textbar{}cell{]}: Impulse response data
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@svar/svar:id32}\begin{itemize}
+\item {} 
+for linear models or models solved up to first order, the initial
+conditions as well as the steady states are set to 0 in the computation
+of the impulse responses.
+
+\item {} 
+for nonlinear models, the initial conditions is the ergodic mean
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@svar/svar:id33}
-
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id34}
-
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id35}
 See also:
 
 Help for svar/irf is inherited from superclass RISE\_GENERIC
@@ -3579,24 +4342,24 @@ Help for svar/irf is inherited from superclass RISE\_GENERIC
 
 
 \subsection{isnan}
-\label{classes/models/@svar/svar:id36}\label{classes/models/@svar/svar:isnan}
+\label{classes/models/@svar/svar:isnan}\label{classes/models/@svar/svar:id34}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id37}
+\label{classes/models/@svar/svar:id35}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id38}
+\label{classes/models/@svar/svar:id36}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id39}
+\label{classes/models/@svar/svar:id37}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id40}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id38}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id41}
+\label{classes/models/@svar/svar:id39}
 See also:
 
 Help for svar/isnan is inherited from superclass RISE\_GENERIC
@@ -3607,24 +4370,24 @@ Help for svar/isnan is inherited from superclass RISE\_GENERIC
 
 
 \subsection{load\_parameters}
-\label{classes/models/@svar/svar:id42}\label{classes/models/@svar/svar:load-parameters}
+\label{classes/models/@svar/svar:load-parameters}\label{classes/models/@svar/svar:id40}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id43}
+\label{classes/models/@svar/svar:id41}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id44}
+\label{classes/models/@svar/svar:id42}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id45}
+\label{classes/models/@svar/svar:id43}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id46}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id44}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id47}
+\label{classes/models/@svar/svar:id45}
 See also:
 
 Help for svar/load\_parameters is inherited from superclass RISE\_GENERIC
@@ -3635,24 +4398,24 @@ Help for svar/load\_parameters is inherited from superclass RISE\_GENERIC
 
 
 \subsection{log\_marginal\_data\_density}
-\label{classes/models/@svar/svar:log-marginal-data-density}\label{classes/models/@svar/svar:id48}
+\label{classes/models/@svar/svar:id46}\label{classes/models/@svar/svar:log-marginal-data-density}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id49}
+\label{classes/models/@svar/svar:id47}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id50}
+\label{classes/models/@svar/svar:id48}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id51}
+\label{classes/models/@svar/svar:id49}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id52}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id50}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id53}
+\label{classes/models/@svar/svar:id51}
 See also:
 
 Help for svar/log\_marginal\_data\_density is inherited from superclass RISE\_GENERIC
@@ -3663,24 +4426,24 @@ Help for svar/log\_marginal\_data\_density is inherited from superclass RISE\_GE
 
 
 \subsection{log\_posterior\_kernel}
-\label{classes/models/@svar/svar:log-posterior-kernel}\label{classes/models/@svar/svar:id54}
+\label{classes/models/@svar/svar:log-posterior-kernel}\label{classes/models/@svar/svar:id52}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id55}
+\label{classes/models/@svar/svar:id53}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id56}
+\label{classes/models/@svar/svar:id54}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id57}
+\label{classes/models/@svar/svar:id55}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id58}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id56}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id59}
+\label{classes/models/@svar/svar:id57}
 See also:
 
 Help for svar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
@@ -3691,24 +4454,24 @@ Help for svar/log\_posterior\_kernel is inherited from superclass RISE\_GENERIC
 
 
 \subsection{log\_prior\_density}
-\label{classes/models/@svar/svar:id60}\label{classes/models/@svar/svar:log-prior-density}
+\label{classes/models/@svar/svar:id58}\label{classes/models/@svar/svar:log-prior-density}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id61}
+\label{classes/models/@svar/svar:id59}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id62}
+\label{classes/models/@svar/svar:id60}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id63}
+\label{classes/models/@svar/svar:id61}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id64}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id62}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id65}
+\label{classes/models/@svar/svar:id63}
 See also:
 
 Help for svar/log\_prior\_density is inherited from superclass RISE\_GENERIC
@@ -3719,24 +4482,24 @@ Help for svar/log\_prior\_density is inherited from superclass RISE\_GENERIC
 
 
 \subsection{msvar\_priors}
-\label{classes/models/@svar/svar:msvar-priors}\label{classes/models/@svar/svar:id66}
+\label{classes/models/@svar/svar:id64}\label{classes/models/@svar/svar:msvar-priors}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id67}
+\label{classes/models/@svar/svar:id65}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id68}
+\label{classes/models/@svar/svar:id66}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id69}
+\label{classes/models/@svar/svar:id67}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id70}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id68}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id71}
+\label{classes/models/@svar/svar:id69}
 See also:
 
 
@@ -3745,24 +4508,24 @@ See also:
 
 
 \subsection{posterior\_marginal\_and\_prior\_densities}
-\label{classes/models/@svar/svar:id72}\label{classes/models/@svar/svar:posterior-marginal-and-prior-densities}
+\label{classes/models/@svar/svar:id70}\label{classes/models/@svar/svar:posterior-marginal-and-prior-densities}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id73}
+\label{classes/models/@svar/svar:id71}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id74}
+\label{classes/models/@svar/svar:id72}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id75}
+\label{classes/models/@svar/svar:id73}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id76}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id74}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id77}
+\label{classes/models/@svar/svar:id75}
 See also:
 
 Help for svar/posterior\_marginal\_and\_prior\_densities is inherited from superclass RISE\_GENERIC
@@ -3773,24 +4536,24 @@ Help for svar/posterior\_marginal\_and\_prior\_densities is inherited from super
 
 
 \subsection{posterior\_simulator}
-\label{classes/models/@svar/svar:posterior-simulator}\label{classes/models/@svar/svar:id78}
+\label{classes/models/@svar/svar:posterior-simulator}\label{classes/models/@svar/svar:id76}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id79}
+\label{classes/models/@svar/svar:id77}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id80}
+\label{classes/models/@svar/svar:id78}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id81}
+\label{classes/models/@svar/svar:id79}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id82}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id80}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id83}
+\label{classes/models/@svar/svar:id81}
 See also:
 
 Help for svar/posterior\_simulator is inherited from superclass RISE\_GENERIC
@@ -3801,24 +4564,24 @@ Help for svar/posterior\_simulator is inherited from superclass RISE\_GENERIC
 
 
 \subsection{print\_estimation\_results}
-\label{classes/models/@svar/svar:print-estimation-results}\label{classes/models/@svar/svar:id84}
+\label{classes/models/@svar/svar:id82}\label{classes/models/@svar/svar:print-estimation-results}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id85}
+\label{classes/models/@svar/svar:id83}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id86}
+\label{classes/models/@svar/svar:id84}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id87}
+\label{classes/models/@svar/svar:id85}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id88}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id86}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id89}
+\label{classes/models/@svar/svar:id87}
 See also:
 
 Help for svar/print\_estimation\_results is inherited from superclass RISE\_GENERIC
@@ -3829,24 +4592,24 @@ Help for svar/print\_estimation\_results is inherited from superclass RISE\_GENE
 
 
 \subsection{prior\_plots}
-\label{classes/models/@svar/svar:id90}\label{classes/models/@svar/svar:prior-plots}
+\label{classes/models/@svar/svar:id88}\label{classes/models/@svar/svar:prior-plots}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id91}
+\label{classes/models/@svar/svar:id89}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id92}
+\label{classes/models/@svar/svar:id90}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id93}
+\label{classes/models/@svar/svar:id91}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id94}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id92}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id95}
+\label{classes/models/@svar/svar:id93}
 See also:
 
 Help for svar/prior\_plots is inherited from superclass RISE\_GENERIC
@@ -3859,7 +4622,7 @@ Help for svar/prior\_plots is inherited from superclass RISE\_GENERIC
 
 
 \section{Syntax}
-\label{classes/models/@svar/svar:id96}\begin{description}
+\label{classes/models/@svar/svar:id94}\begin{description}
 \item[{::}] \leavevmode\begin{itemize}
 \item {} 
 REPORT(rise.empty(0)) : displays the default inputs
@@ -3878,7 +4641,7 @@ obj before doing the rest
 
 
 \section{Inputs}
-\label{classes/models/@svar/svar:id97}\begin{itemize}
+\label{classes/models/@svar/svar:id95}\begin{itemize}
 \item {} 
 obj : {[}rise\textbar{}dsge{]}
 
@@ -3895,15 +4658,15 @@ can only include : `endogenous', `exogenous', `observables',
 
 
 \section{Outputs}
-\label{classes/models/@svar/svar:id98}
+\label{classes/models/@svar/svar:id96}
 none
 
 
-\section{Description}
-\label{classes/models/@svar/svar:id99}
+\section{More About}
+\label{classes/models/@svar/svar:id97}
 
 \section{Examples}
-\label{classes/models/@svar/svar:id100}
+\label{classes/models/@svar/svar:id98}
 See also:
 
 Help for svar/report is inherited from superclass RISE\_GENERIC
@@ -3911,27 +4674,50 @@ Help for svar/report is inherited from superclass RISE\_GENERIC
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@svar/svar:set}
+\textbf{set} - sets options for RISE models
 
 
-\subsection{set}
-\label{classes/models/@svar/svar:id101}\label{classes/models/@svar/svar:set}
-H1 line
+\section{Syntax}
+\label{classes/models/@svar/svar:id99}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{obj}\PYG{o}{=}\PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
-\label{classes/models/@svar/svar:id102}
+\section{Inputs}
+\label{classes/models/@svar/svar:id100}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
 
-\subsubsection{Inputs}
+\item {} 
+\textbf{varargin} : valid input arguments coming in pairs.
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@svar/svar:id101}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rise\textbar{}dsge\textbar{}svar\textbar{}rfvar{]}: model object
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@svar/svar:id102}\begin{itemize}
+\item {} 
+one can force a new field into the options by prefixing it with a `+'
+sign. Let's say yourfield is not part of the options and you would like
+to force it to be in the options because it is going to be used in some
+function or algorithm down the road. Then you can run
+m=set(m,'+yourfield',value). then m will be part of the new options.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@svar/svar:id103}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id104}
-
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id105}
-
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id106}
 See also:
 
 Help for svar/set is inherited from superclass RISE\_GENERIC
@@ -3942,50 +4728,139 @@ Help for svar/set is inherited from superclass RISE\_GENERIC
 
 
 \subsection{set\_solution\_to\_companion}
-\label{classes/models/@svar/svar:id107}\label{classes/models/@svar/svar:set-solution-to-companion}
+\label{classes/models/@svar/svar:id104}\label{classes/models/@svar/svar:set-solution-to-companion}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id108}
+\label{classes/models/@svar/svar:id105}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id109}
+\label{classes/models/@svar/svar:id106}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id110}
+\label{classes/models/@svar/svar:id107}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id111}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id108}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id112}
+\label{classes/models/@svar/svar:id109}
 See also:
 
 
 \bigskip\hrule{}\bigskip
 
+\phantomsection\label{classes/models/@svar/svar:simulate}
+\textbf{simulate} - simulates a RISE model
 
 
-\subsection{simulate}
-\label{classes/models/@svar/svar:id113}\label{classes/models/@svar/svar:simulate}
-H1 line
+\section{Syntax}
+\label{classes/models/@svar/svar:id110}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{[}\PYG{n}{db}\PYG{p}{,}\PYG{n}{states}\PYG{p}{,}\PYG{n}{retcode}\PYG{p}{]} \PYG{o}{=} \PYG{n}{simulate}\PYG{p}{(}\PYG{n}{obj}\PYG{p}{,}\PYG{n}{varargin}\PYG{p}{)}
+\end{Verbatim}
 
 
-\subsubsection{Syntax}
+\section{Inputs}
+\label{classes/models/@svar/svar:id111}\begin{itemize}
+\item {} 
+\textbf{obj} {[}rfvar\textbar{}dsge\textbar{}rise\textbar{}svar{]}: model object
+
+\item {} 
+\textbf{varargin} : additional arguments including but not restricted to
+- \textbf{simul\_periods} {[}integer\textbar{}\{100\}{]}: number of simulation periods
+- \textbf{simul\_burn} {[}integer\textbar{}\{100\}{]}: number of burn-in periods
+- \textbf{simul\_algo} {[}{[}\{mt19937ar\}\textbar{} mcg16807\textbar{}mlfg6331\_64\textbar{}mrg32k3a\textbar{}
+\begin{quote}
+
+shr3cong\textbar{}swb2712{]}{]}: matlab's seeding algorithms
+\end{quote}
+\begin{itemize}
+\item {} 
+\textbf{simul\_seed} {[}numeric\textbar{}\{0\}{]}: seed of the computations
+
+\item {} \begin{description}
+\item[{\textbf{simul\_historical\_data} {[}ts\textbar{}struct\textbar{}\{`'\}{]}: historical data from}] \leavevmode
+which the simulations are based. If empty, the simulations start at
+the steady state.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_history\_end\_date} {[}char\textbar{}integer\textbar{}serial date{]}: last date of}] \leavevmode
+history
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_regime} {[}integer\textbar{}vector\textbar{}\{{[}{]}\}{]}: regimes for which the model}] \leavevmode
+is simulated
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_update\_shocks\_handle} {[}function handle{]}: we may want to}] \leavevmode
+update the shocks if some condition on the state of the economy is
+satisfied. For instance, shock monetary policy to keep the interest
+rate at the floor for an extented period of time if we already are
+at the ZLB/ZIF. simul\_update\_shocks\_handle takes as inputs the
+current shocks and the state vector (all the endogenous variables)
+and returns the updated shocks. But for all this to be put into
+motion, the user also has to turn on \textbf{simul\_do\_update\_shocks} by
+setting it to true.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_do\_update\_shocks} {[}true\textbar{}\{false\}{]}: update the shocks based on}] \leavevmode
+\textbf{simul\_update\_shocks\_handle} or not.
+
+\end{description}
+
+\item {} \begin{description}
+\item[{\textbf{simul\_to\_time\_series} {[}\{true\}\textbar{}false{]}: if true, the output is a}] \leavevmode
+time series, else a cell array with a matrix and information on
+elements that help reconstruct the time series.
+
+\end{description}
+
+\end{itemize}
+
+\end{itemize}
+
+
+\section{Outputs}
+\label{classes/models/@svar/svar:id112}\begin{itemize}
+\item {} 
+\textbf{db} {[}struct\textbar{}cell array{]}: if \textbf{simul\_to\_time\_series} is true, the
+output is a time series, else a cell array with a matrix and
+information on elements that help reconstruct the time series.
+
+\item {} 
+\textbf{states} {[}vector{]}: history of the regimes over the forecast horizon
+
+\item {} 
+\textbf{retcode} {[}integer{]}: if 0, the simulation went fine. Else something
+got wrong. In that case one can understand the problem by running
+decipher(retcode)
+
+\end{itemize}
+
+
+\section{More About}
+\label{classes/models/@svar/svar:id113}\begin{itemize}
+\item {} 
+\textbf{simul\_historical\_data} contains the historical data as well as
+conditional information over the forecast horizon. It may also include
+as an alternative to \textbf{simul\_regime}, a time series with name
+\textbf{regime}, which indicates the regimes over the forecast horizon.
+
+\end{itemize}
+
+
+\section{Examples}
 \label{classes/models/@svar/svar:id114}
-
-\subsubsection{Inputs}
-\label{classes/models/@svar/svar:id115}
-
-\subsubsection{Outputs}
-\label{classes/models/@svar/svar:id116}
-
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id117}
-
-\subsubsection{Examples}
-\label{classes/models/@svar/svar:id118}
 See also:
 
 Help for svar/simulate is inherited from superclass RISE\_GENERIC
@@ -3996,24 +4871,24 @@ Help for svar/simulate is inherited from superclass RISE\_GENERIC
 
 
 \subsection{simulation\_diagnostics}
-\label{classes/models/@svar/svar:id119}\label{classes/models/@svar/svar:simulation-diagnostics}
+\label{classes/models/@svar/svar:simulation-diagnostics}\label{classes/models/@svar/svar:id115}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id120}
+\label{classes/models/@svar/svar:id116}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id121}
+\label{classes/models/@svar/svar:id117}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id122}
+\label{classes/models/@svar/svar:id118}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id123}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id119}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id124}
+\label{classes/models/@svar/svar:id120}
 See also:
 
 Help for svar/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
@@ -4024,24 +4899,24 @@ Help for svar/simulation\_diagnostics is inherited from superclass RISE\_GENERIC
 
 
 \subsection{solve}
-\label{classes/models/@svar/svar:id125}\label{classes/models/@svar/svar:solve}
+\label{classes/models/@svar/svar:solve}\label{classes/models/@svar/svar:id121}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id126}
+\label{classes/models/@svar/svar:id122}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id127}
+\label{classes/models/@svar/svar:id123}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id128}
+\label{classes/models/@svar/svar:id124}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id129}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id125}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id130}
+\label{classes/models/@svar/svar:id126}
 See also:
 
 
@@ -4050,24 +4925,24 @@ See also:
 
 
 \subsection{stoch\_simul}
-\label{classes/models/@svar/svar:id131}\label{classes/models/@svar/svar:stoch-simul}
+\label{classes/models/@svar/svar:id127}\label{classes/models/@svar/svar:stoch-simul}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id132}
+\label{classes/models/@svar/svar:id128}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id133}
+\label{classes/models/@svar/svar:id129}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id134}
+\label{classes/models/@svar/svar:id130}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id135}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id131}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id136}
+\label{classes/models/@svar/svar:id132}
 See also:
 
 Help for svar/stoch\_simul is inherited from superclass RISE\_GENERIC
@@ -4098,24 +4973,24 @@ Help for svar/stoch\_simul is inherited from superclass RISE\_GENERIC
 
 
 \subsection{theoretical\_autocorrelations}
-\label{classes/models/@svar/svar:theoretical-autocorrelations}\label{classes/models/@svar/svar:id137}
+\label{classes/models/@svar/svar:theoretical-autocorrelations}\label{classes/models/@svar/svar:id133}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id138}
+\label{classes/models/@svar/svar:id134}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id139}
+\label{classes/models/@svar/svar:id135}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id140}
+\label{classes/models/@svar/svar:id136}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id141}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id137}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id142}
+\label{classes/models/@svar/svar:id138}
 See also:
 
 Help for svar/theoretical\_autocorrelations is inherited from superclass RISE\_GENERIC
@@ -4126,24 +5001,24 @@ Help for svar/theoretical\_autocorrelations is inherited from superclass RISE\_G
 
 
 \subsection{theoretical\_autocovariances}
-\label{classes/models/@svar/svar:theoretical-autocovariances}\label{classes/models/@svar/svar:id143}
+\label{classes/models/@svar/svar:id139}\label{classes/models/@svar/svar:theoretical-autocovariances}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id144}
+\label{classes/models/@svar/svar:id140}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id145}
+\label{classes/models/@svar/svar:id141}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id146}
+\label{classes/models/@svar/svar:id142}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id147}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id143}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id148}
+\label{classes/models/@svar/svar:id144}
 See also:
 
 Help for svar/theoretical\_autocovariances is inherited from superclass RISE\_GENERIC
@@ -4154,24 +5029,24 @@ Help for svar/theoretical\_autocovariances is inherited from superclass RISE\_GE
 
 
 \subsection{variance\_decomposition}
-\label{classes/models/@svar/svar:id149}\label{classes/models/@svar/svar:variance-decomposition}
+\label{classes/models/@svar/svar:id145}\label{classes/models/@svar/svar:variance-decomposition}
 H1 line
 
 
 \subsubsection{Syntax}
-\label{classes/models/@svar/svar:id150}
+\label{classes/models/@svar/svar:id146}
 
 \subsubsection{Inputs}
-\label{classes/models/@svar/svar:id151}
+\label{classes/models/@svar/svar:id147}
 
 \subsubsection{Outputs}
-\label{classes/models/@svar/svar:id152}
+\label{classes/models/@svar/svar:id148}
 
-\subsubsection{Description}
-\label{classes/models/@svar/svar:id153}
+\subsubsection{More About}
+\label{classes/models/@svar/svar:id149}
 
 \subsubsection{Examples}
-\label{classes/models/@svar/svar:id154}
+\label{classes/models/@svar/svar:id150}
 See also:
 
 Help for svar/variance\_decomposition is inherited from superclass RISE\_GENERIC
@@ -4179,3054 +5054,121 @@ Help for svar/variance\_decomposition is inherited from superclass RISE\_GENERIC
 
 \chapter{Time series}
 \label{classes/time_series/@ts/ts:time-series}\label{classes/time_series/@ts/ts::doc}
-
-\section{Constructor}
-\label{classes/time_series/@ts/ts:constructor}\begin{itemize}
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:ts]{ts}} {]}(ts/ts)
-
-\end{itemize}
-
-
-\section{Visualization}
-\label{classes/time_series/@ts/ts:visualization}\begin{itemize}
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:head]{head}} {]}(ts/head)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:index]{index}} {]}(ts/index)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:describe]{describe}} {]}(ts/describe)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:display]{display}} {]}(ts/display)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:jbtest]{jbtest}} {]}(ts/jbtest)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:kurtosis]{kurtosis}} {]}(ts/kurtosis)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:isfinite]{isfinite}} {]}(ts/isfinite)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:isinf]{isinf}} {]}(ts/isinf)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:isnan]{isnan}} {]}(ts/isnan)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:ge]{ge}} {]}(ts/ge)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:get]{get}} {]}(ts/get)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:gt]{gt}} {]}(ts/gt)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:le]{le}} {]}(ts/le)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:lt]{lt}} {]}(ts/lt)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:max]{max}} {]}(ts/max)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:mean]{mean}} {]}(ts/mean)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:median]{median}} {]}(ts/median)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:min]{min}} {]}(ts/min)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:mode]{mode}} {]}(ts/mode)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:ne]{ne}} {]}(ts/ne)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:quantile]{quantile}} {]}(ts/quantile)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:range]{range}} {]}(ts/range)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:skewness]{skewness}} {]}(ts/skewness)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:sum]{sum}} {]}(ts/sum)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:tail]{tail}} {]}(ts/tail)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:var]{var}} {]}(ts/var)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:std]{std}} {]}(ts/std)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:spectrum]{spectrum}} {]}(ts/spectrum)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:sort]{sort}} {]}(ts/sort)
-
-\end{itemize}
-
-
-\section{Graphing}
-\label{classes/time_series/@ts/ts:graphing}\begin{itemize}
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:bar]{bar}} {]}(ts/bar)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:barh]{barh}} {]}(ts/barh)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:boxplot]{boxplot}} {]}(ts/boxplot)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:hist]{hist}} {]}(ts/hist)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:plot]{plot}} {]}(ts/plot)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:plotyy]{plotyy}} {]}(ts/plotyy)
-
-\end{itemize}
-
-
-\section{Calculus}
-\label{classes/time_series/@ts/ts:calculus}\begin{itemize}
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:acos]{acos}} {]}(ts/acos)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:acosh]{acosh}} {]}(ts/acosh)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:acot]{acot}} {]}(ts/acot)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:acoth]{acoth}} {]}(ts/acoth)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:aggregate]{aggregate}} {]}(ts/aggregate)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:allmean]{allmean}} {]}(ts/allmean)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:apply]{apply}} {]}(ts/apply)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:asin]{asin}} {]}(ts/asin)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:asinh]{asinh}} {]}(ts/asinh)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:atan]{atan}} {]}(ts/atan)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:atanh]{atanh}} {]}(ts/atanh)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:bsxfun]{bsxfun}} {]}(ts/bsxfun)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:corr]{corr}} {]}(ts/corr)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:corrcoef]{corrcoef}} {]}(ts/corrcoef)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cos]{cos}} {]}(ts/cos)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cosh]{cosh}} {]}(ts/cosh)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cot]{cot}} {]}(ts/cot)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:coth]{coth}} {]}(ts/coth)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cov]{cov}} {]}(ts/cov)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cumprod]{cumprod}} {]}(ts/cumprod)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cumsum]{cumsum}} {]}(ts/cumsum)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:decompose-series]{decompose\_series}} {]}(ts/decompose\_series)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:eq]{eq}} {]}(ts/eq)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:exp]{exp}} {]}(ts/exp)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:hpfilter]{hpfilter}} {]}(ts/hpfilter)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:interpolate]{interpolate}} {]}(ts/interpolate)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:intersect]{intersect}} {]}(ts/intersect)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:log]{log}} {]}(ts/log)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:minus]{minus}} {]}(ts/minus)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:mpower]{mpower}} {]}(ts/mpower)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:mrdivide]{mrdivide}} {]}(ts/mrdivide)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:mtimes]{mtimes}} {]}(ts/mtimes)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:plus]{plus}} {]}(ts/plus)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:power]{power}} {]}(ts/power)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:rdivide]{rdivide}} {]}(ts/rdivide)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:sin]{sin}} {]}(ts/sin)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:sinh]{sinh}} {]}(ts/sinh)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:transform]{transform}} {]}(ts/transform)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:times]{times}} {]}(ts/times)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:uminus]{uminus}} {]}(ts/uminus)
-
-\end{itemize}
-
-
-\section{Lookarounds}
-\label{classes/time_series/@ts/ts:lookarounds}\begin{itemize}
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:pages2struct]{pages2struct}} {]}(ts/pages2struct)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:subsasgn]{subsasgn}} {]}(ts/subsasgn)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:subsref]{subsref}} {]}(ts/subsref)
-
-\end{itemize}
-
-
-\section{Utilities}
-\label{classes/time_series/@ts/ts:utilities}\begin{itemize}
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:and]{and}} {]}(ts/and)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:cat]{cat}} {]}(ts/cat)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:collect]{collect}} {]}(ts/collect)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:ctranspose]{ctranspose}} {]}(ts/ctranspose)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:double]{double}} {]}(ts/double)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:drop]{drop}} {]}(ts/drop)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:dummy]{dummy}} {]}(ts/dummy)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:expanding]{expanding}} {]}(ts/expanding)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:fanchart]{fanchart}} {]}(ts/fanchart)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:horzcat]{horzcat}} {]}(ts/horzcat)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:nan]{nan}} {]}(ts/nan)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:numel]{numel}} {]}(ts/numel)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:ones]{ones}} {]}(ts/ones)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:rand]{rand}} {]}(ts/rand)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:randn]{randn}} {]}(ts/randn)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:regress]{regress}} {]}(ts/regress)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:reset-start-date]{reset\_start\_date}} {]}(ts/reset\_start\_date)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:rolling]{rolling}} {]}(ts/rolling)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:automatic-model-selection]{automatic\_model\_selection}} {]}(ts/automatic\_model\_selection)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:transpose]{transpose}} {]}(ts/transpose)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:zeros]{zeros}} {]}(ts/zeros)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:values]{values}} {]}(ts/values)
-
-\item {} 
-{[} {\hyperref[classes/time_series/@ts/ts:step-dummy]{step\_dummy}} {]}(ts/step\_dummy)
-
-\end{itemize}
-
-
-\section{properties}
-\label{classes/time_series/@ts/ts:properties}\begin{itemize}
-\item {} 
-{[}varnames{]} -
-
-\item {} 
-{[}start{]} -
-
-\item {} 
-{[}finish{]} -
-
-\item {} 
-{[}frequency{]} -
-
-\item {} 
-{[}NumberOfObservations{]} -
-
-\item {} 
-{[}NumberOfPages{]} -
-
-\item {} 
-{[}NumberOfVariables{]} -
-
-\end{itemize}
-
-
-\section{Synopsis and description on methods}
-\label{classes/time_series/@ts/ts:synopsis-and-description-on-methods}
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{acos}
-\label{classes/time_series/@ts/ts:acos}\label{classes/time_series/@ts/ts:id1}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:syntax}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:inputs}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:outputs}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:description}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:examples}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{acosh}
-\label{classes/time_series/@ts/ts:id2}\label{classes/time_series/@ts/ts:acosh}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id3}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id4}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id5}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id6}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id7}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{acot}
-\label{classes/time_series/@ts/ts:acot}\label{classes/time_series/@ts/ts:id8}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id9}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id10}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id11}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id12}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id13}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{acoth}
-\label{classes/time_series/@ts/ts:id14}\label{classes/time_series/@ts/ts:acoth}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id15}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id16}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id17}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id18}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id19}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{aggregate}
-\label{classes/time_series/@ts/ts:aggregate}\label{classes/time_series/@ts/ts:id20}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id21}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id22}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id23}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id24}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id25}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{allmean}
-\label{classes/time_series/@ts/ts:allmean}\label{classes/time_series/@ts/ts:id26}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id27}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id28}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id29}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id30}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id31}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{and}
-\label{classes/time_series/@ts/ts:and}\label{classes/time_series/@ts/ts:id32}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id33}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id34}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id35}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id36}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id37}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{apply}
-\label{classes/time_series/@ts/ts:apply}\label{classes/time_series/@ts/ts:id38}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id39}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id40}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id41}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id42}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id43}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{asin}
-\label{classes/time_series/@ts/ts:asin}\label{classes/time_series/@ts/ts:id44}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id45}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id46}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id47}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id48}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id49}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{asinh}
-\label{classes/time_series/@ts/ts:asinh}\label{classes/time_series/@ts/ts:id50}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id51}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id52}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id53}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id54}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id55}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{atan}
-\label{classes/time_series/@ts/ts:id56}\label{classes/time_series/@ts/ts:atan}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id57}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id58}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id59}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id60}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id61}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{atanh}
-\label{classes/time_series/@ts/ts:atanh}\label{classes/time_series/@ts/ts:id62}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id63}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id64}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id65}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id66}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id67}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{automatic\_model\_selection}
-\label{classes/time_series/@ts/ts:automatic-model-selection}\label{classes/time_series/@ts/ts:id68}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id69}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id70}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id71}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id72}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id73}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{bar}
-\label{classes/time_series/@ts/ts:bar}\label{classes/time_series/@ts/ts:id74}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id75}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id76}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id77}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id78}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id79}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{barh}
-\label{classes/time_series/@ts/ts:barh}\label{classes/time_series/@ts/ts:id80}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id81}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id82}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id83}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id84}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id85}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{boxplot}
-\label{classes/time_series/@ts/ts:boxplot}\label{classes/time_series/@ts/ts:id86}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id87}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id88}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id89}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id90}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id91}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{bsxfun}
-\label{classes/time_series/@ts/ts:id92}\label{classes/time_series/@ts/ts:bsxfun}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id93}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id94}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id95}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id96}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id97}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-\phantomsection\label{classes/time_series/@ts/ts:cat}
-\textbf{cat} concatenates time series along the specified dimension
-
-
-\section{Syntax}
-\label{classes/time_series/@ts/ts:id98}\begin{description}
-\item[{::}] \leavevmode
-db=cat(1,db1,db2,...,dbn)
-db=cat(2,db1,db2,...,dbn)
-db=cat(3,db1,db2,...,dbn)
-
-\end{description}
-
-
-\section{Inputs}
-\label{classes/time_series/@ts/ts:id99}\begin{itemize}
-\item {} 
-\textbf{dim} {[}1\textbar{}2\textbar{}3{]} : dimension along which concatenation is done
-
-\item {} 
-\textbf{db1, db2,...,dbn} {[}ts{]} : time series
-
-\end{itemize}
-
-
-\section{Outputs}
-\label{classes/time_series/@ts/ts:id100}\begin{itemize}
-\item {} 
-\textbf{db} {[}ts{]} : time series with concatenated series
-
-\end{itemize}
-
-
-\section{Description}
-\label{classes/time_series/@ts/ts:id101}\begin{itemize}
-\item {} 
-all times series must be of the same frequency
-
-\item {} 
-Concatenation along the second dimension requires that variables have
-the same number of columns if no names are specified
-
-\item {} 
-if names are specified in the first time series, then names should be
-specified in all of the others as well.
-
-\item {} 
-empty time series are discarded but there should be at least one
-non-empty time series
-
-\end{itemize}
-
-
-\section{Examples}
-\label{classes/time_series/@ts/ts:id102}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{collect}
-\label{classes/time_series/@ts/ts:collect}\label{classes/time_series/@ts/ts:id103}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id104}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id105}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id106}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id107}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id108}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{corr}
-\label{classes/time_series/@ts/ts:id109}\label{classes/time_series/@ts/ts:corr}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id110}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id111}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id112}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id113}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id114}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{corrcoef}
-\label{classes/time_series/@ts/ts:corrcoef}\label{classes/time_series/@ts/ts:id115}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id116}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id117}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id118}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id119}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id120}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{cos}
-\label{classes/time_series/@ts/ts:cos}\label{classes/time_series/@ts/ts:id121}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id122}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id123}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id124}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id125}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id126}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{cosh}
-\label{classes/time_series/@ts/ts:id127}\label{classes/time_series/@ts/ts:cosh}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id128}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id129}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id130}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id131}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id132}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{cot}
-\label{classes/time_series/@ts/ts:id133}\label{classes/time_series/@ts/ts:cot}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id134}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id135}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id136}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id137}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id138}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{coth}
-\label{classes/time_series/@ts/ts:id139}\label{classes/time_series/@ts/ts:coth}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id140}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id141}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id142}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id143}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id144}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{cov}
-\label{classes/time_series/@ts/ts:id145}\label{classes/time_series/@ts/ts:cov}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id146}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id147}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id148}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id149}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id150}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{ctranspose}
-\label{classes/time_series/@ts/ts:ctranspose}\label{classes/time_series/@ts/ts:id151}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id152}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id153}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id154}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id155}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id156}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{cumprod}
-\label{classes/time_series/@ts/ts:cumprod}\label{classes/time_series/@ts/ts:id157}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id158}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id159}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id160}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id161}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id162}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{cumsum}
-\label{classes/time_series/@ts/ts:id163}\label{classes/time_series/@ts/ts:cumsum}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id164}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id165}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id166}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id167}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id168}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{decompose\_series}
-\label{classes/time_series/@ts/ts:id169}\label{classes/time_series/@ts/ts:decompose-series}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id170}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id171}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id172}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id173}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id174}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{describe}
-\label{classes/time_series/@ts/ts:id175}\label{classes/time_series/@ts/ts:describe}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id176}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id177}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id178}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id179}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id180}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{display}
-\label{classes/time_series/@ts/ts:id181}\label{classes/time_series/@ts/ts:display}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id182}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id183}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id184}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id185}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id186}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{double}
-\label{classes/time_series/@ts/ts:double}\label{classes/time_series/@ts/ts:id187}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id188}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id189}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id190}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id191}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id192}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{drop}
-\label{classes/time_series/@ts/ts:id193}\label{classes/time_series/@ts/ts:drop}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id194}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id195}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id196}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id197}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id198}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{dummy}
-\label{classes/time_series/@ts/ts:dummy}\label{classes/time_series/@ts/ts:id199}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id200}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id201}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id202}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id203}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id204}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{eq}
-\label{classes/time_series/@ts/ts:eq}\label{classes/time_series/@ts/ts:id205}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id206}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id207}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id208}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id209}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id210}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{exp}
-\label{classes/time_series/@ts/ts:id211}\label{classes/time_series/@ts/ts:exp}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id212}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id213}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id214}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id215}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id216}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{expanding}
-\label{classes/time_series/@ts/ts:expanding}\label{classes/time_series/@ts/ts:id217}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id218}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id219}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id220}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id221}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id222}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{fanchart}
-\label{classes/time_series/@ts/ts:fanchart}\label{classes/time_series/@ts/ts:id223}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id224}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id225}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id226}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id227}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id228}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{ge}
-\label{classes/time_series/@ts/ts:id229}\label{classes/time_series/@ts/ts:ge}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id230}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id231}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id232}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id233}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id234}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{get}
-\label{classes/time_series/@ts/ts:id235}\label{classes/time_series/@ts/ts:get}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id236}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id237}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id238}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id239}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id240}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{gt}
-\label{classes/time_series/@ts/ts:gt}\label{classes/time_series/@ts/ts:id241}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id242}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id243}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id244}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id245}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id246}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{head}
-\label{classes/time_series/@ts/ts:id247}\label{classes/time_series/@ts/ts:head}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id248}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id249}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id250}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id251}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id252}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{hist}
-\label{classes/time_series/@ts/ts:hist}\label{classes/time_series/@ts/ts:id253}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id254}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id255}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id256}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id257}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id258}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{horzcat}
-\label{classes/time_series/@ts/ts:horzcat}\label{classes/time_series/@ts/ts:id259}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id260}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id261}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id262}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id263}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id264}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{hpfilter}
-\label{classes/time_series/@ts/ts:id265}\label{classes/time_series/@ts/ts:hpfilter}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id266}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id267}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id268}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id269}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id270}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{index}
-\label{classes/time_series/@ts/ts:index}\label{classes/time_series/@ts/ts:id271}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id272}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id273}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id274}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id275}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id276}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{interpolate}
-\label{classes/time_series/@ts/ts:id277}\label{classes/time_series/@ts/ts:interpolate}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id278}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id279}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id280}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id281}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id282}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{intersect}
-\label{classes/time_series/@ts/ts:id283}\label{classes/time_series/@ts/ts:intersect}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id284}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id285}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id286}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id287}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id288}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{isfinite}
-\label{classes/time_series/@ts/ts:id289}\label{classes/time_series/@ts/ts:isfinite}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id290}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id291}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id292}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id293}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id294}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{isinf}
-\label{classes/time_series/@ts/ts:id295}\label{classes/time_series/@ts/ts:isinf}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id296}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id297}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id298}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id299}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id300}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{isnan}
-\label{classes/time_series/@ts/ts:isnan}\label{classes/time_series/@ts/ts:id301}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id302}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id303}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id304}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id305}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id306}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{jbtest}
-\label{classes/time_series/@ts/ts:id307}\label{classes/time_series/@ts/ts:jbtest}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id308}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id309}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id310}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id311}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id312}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{kurtosis}
-\label{classes/time_series/@ts/ts:kurtosis}\label{classes/time_series/@ts/ts:id313}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id314}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id315}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id316}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id317}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id318}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{le}
-\label{classes/time_series/@ts/ts:le}\label{classes/time_series/@ts/ts:id319}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id320}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id321}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id322}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id323}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id324}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{log}
-\label{classes/time_series/@ts/ts:id325}\label{classes/time_series/@ts/ts:log}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id326}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id327}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id328}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id329}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id330}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{lt}
-\label{classes/time_series/@ts/ts:lt}\label{classes/time_series/@ts/ts:id331}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id332}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id333}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id334}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id335}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id336}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{max}
-\label{classes/time_series/@ts/ts:max}\label{classes/time_series/@ts/ts:id337}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id338}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id339}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id340}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id341}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id342}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{mean}
-\label{classes/time_series/@ts/ts:id343}\label{classes/time_series/@ts/ts:mean}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id344}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id345}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id346}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id347}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id348}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{median}
-\label{classes/time_series/@ts/ts:median}\label{classes/time_series/@ts/ts:id349}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id350}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id351}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id352}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id353}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id354}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{min}
-\label{classes/time_series/@ts/ts:id355}\label{classes/time_series/@ts/ts:min}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id356}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id357}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id358}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id359}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id360}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{minus}
-\label{classes/time_series/@ts/ts:id361}\label{classes/time_series/@ts/ts:minus}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id362}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id363}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id364}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id365}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id366}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{mode}
-\label{classes/time_series/@ts/ts:mode}\label{classes/time_series/@ts/ts:id367}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id368}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id369}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id370}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id371}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id372}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{mpower}
-\label{classes/time_series/@ts/ts:id373}\label{classes/time_series/@ts/ts:mpower}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id374}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id375}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id376}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id377}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id378}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{mrdivide}
-\label{classes/time_series/@ts/ts:mrdivide}\label{classes/time_series/@ts/ts:id379}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id380}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id381}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id382}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id383}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id384}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{mtimes}
-\label{classes/time_series/@ts/ts:mtimes}\label{classes/time_series/@ts/ts:id385}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id386}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id387}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id388}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id389}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id390}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{nan}
-\label{classes/time_series/@ts/ts:nan}\label{classes/time_series/@ts/ts:id391}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id392}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id393}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id394}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id395}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id396}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{ne}
-\label{classes/time_series/@ts/ts:id397}\label{classes/time_series/@ts/ts:ne}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id398}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id399}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id400}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id401}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id402}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{numel}
-\label{classes/time_series/@ts/ts:numel}\label{classes/time_series/@ts/ts:id403}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id404}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id405}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id406}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id407}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id408}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-\phantomsection\label{classes/time_series/@ts/ts:ones}
-\textbf{ones} overloads ones for ts objects
-
-
-\section{Syntax}
-\label{classes/time_series/@ts/ts:id409}\begin{description}
-\item[{::}] \leavevmode
-db=ts.ones(start\_date,varargin)
-
-\end{description}
-
-
-\section{Inputs}
-\label{classes/time_series/@ts/ts:id410}\begin{itemize}
-\item {} 
-\textbf{start\_date} : {[}numeric\textbar{}char{]}: a valid time series (ts) date
-
-\item {} 
-varargin : {[}numeric{]}: arguments to matlab's \textbf{ones} function.
-
-\end{itemize}
-
-
-\section{Outputs}
-\label{classes/time_series/@ts/ts:id411}\begin{itemize}
-\item {} 
-\textbf{db} : {[}ts{]}: a time series
-
-\end{itemize}
-
-
-\section{Description}
-\label{classes/time_series/@ts/ts:id412}\begin{itemize}
-\item {} 
-this is a static method and so it has to be called with the \textbf{ts.}
-prefix
-
-\item {} 
-ts.ones does not allow more than 3 dimensions
-
-\end{itemize}
-
-
-\section{Examples}
-\label{classes/time_series/@ts/ts:id413}\begin{quote}
-
-db=ts.ones(1990,10,1)
-db=ts.ones(`1990',10,3)
-db=ts.ones(`1990Q3',10,5,100)
-\end{quote}
-
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{pages2struct}
-\label{classes/time_series/@ts/ts:pages2struct}\label{classes/time_series/@ts/ts:id414}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id415}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id416}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id417}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id418}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id419}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{plot}
-\label{classes/time_series/@ts/ts:plot}\label{classes/time_series/@ts/ts:id420}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id421}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id422}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id423}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id424}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id425}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{plotyy}
-\label{classes/time_series/@ts/ts:id426}\label{classes/time_series/@ts/ts:plotyy}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id427}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id428}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id429}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id430}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id431}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{plus}
-\label{classes/time_series/@ts/ts:plus}\label{classes/time_series/@ts/ts:id432}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id433}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id434}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id435}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id436}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id437}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{power}
-\label{classes/time_series/@ts/ts:id438}\label{classes/time_series/@ts/ts:power}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id439}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id440}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id441}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id442}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id443}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{quantile}
-\label{classes/time_series/@ts/ts:quantile}\label{classes/time_series/@ts/ts:id444}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id445}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id446}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id447}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id448}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id449}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{rand}
-\label{classes/time_series/@ts/ts:rand}\label{classes/time_series/@ts/ts:id450}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id451}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id452}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id453}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id454}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id455}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{randn}
-\label{classes/time_series/@ts/ts:id456}\label{classes/time_series/@ts/ts:randn}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id457}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id458}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id459}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id460}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id461}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{range}
-\label{classes/time_series/@ts/ts:id462}\label{classes/time_series/@ts/ts:range}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id463}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id464}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id465}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id466}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id467}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{rdivide}
-\label{classes/time_series/@ts/ts:id468}\label{classes/time_series/@ts/ts:rdivide}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id469}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id470}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id471}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id472}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id473}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{regress}
-\label{classes/time_series/@ts/ts:regress}\label{classes/time_series/@ts/ts:id474}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id475}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id476}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id477}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id478}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id479}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{reset\_start\_date}
-\label{classes/time_series/@ts/ts:id480}\label{classes/time_series/@ts/ts:reset-start-date}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id481}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id482}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id483}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id484}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id485}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{rolling}
-\label{classes/time_series/@ts/ts:rolling}\label{classes/time_series/@ts/ts:id486}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id487}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id488}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id489}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id490}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id491}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{sin}
-\label{classes/time_series/@ts/ts:id492}\label{classes/time_series/@ts/ts:sin}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id493}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id494}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id495}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id496}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id497}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{sinh}
-\label{classes/time_series/@ts/ts:id498}\label{classes/time_series/@ts/ts:sinh}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id499}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id500}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id501}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id502}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id503}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{skewness}
-\label{classes/time_series/@ts/ts:id504}\label{classes/time_series/@ts/ts:skewness}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id505}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id506}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id507}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id508}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id509}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{sort}
-\label{classes/time_series/@ts/ts:sort}\label{classes/time_series/@ts/ts:id510}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id511}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id512}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id513}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id514}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id515}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{spectrum}
-\label{classes/time_series/@ts/ts:id516}\label{classes/time_series/@ts/ts:spectrum}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id517}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id518}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id519}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id520}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id521}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{std}
-\label{classes/time_series/@ts/ts:std}\label{classes/time_series/@ts/ts:id522}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id523}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id524}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id525}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id526}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id527}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{step\_dummy}
-\label{classes/time_series/@ts/ts:step-dummy}\label{classes/time_series/@ts/ts:id528}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id529}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id530}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id531}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id532}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id533}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{subsasgn}
-\label{classes/time_series/@ts/ts:id534}\label{classes/time_series/@ts/ts:subsasgn}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id535}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id536}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id537}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id538}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id539}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{subsref}
-\label{classes/time_series/@ts/ts:id540}\label{classes/time_series/@ts/ts:subsref}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id541}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id542}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id543}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id544}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id545}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{sum}
-\label{classes/time_series/@ts/ts:sum}\label{classes/time_series/@ts/ts:id546}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id547}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id548}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id549}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id550}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id551}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{tail}
-\label{classes/time_series/@ts/ts:id552}\label{classes/time_series/@ts/ts:tail}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id553}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id554}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id555}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id556}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id557}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{times}
-\label{classes/time_series/@ts/ts:id558}\label{classes/time_series/@ts/ts:times}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id559}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id560}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id561}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id562}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id563}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{transform}
-\label{classes/time_series/@ts/ts:id564}\label{classes/time_series/@ts/ts:transform}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id565}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id566}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id567}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id568}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id569}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-\phantomsection\label{classes/time_series/@ts/ts:transpose}
-\textbf{transpose}
-\begin{quote}
-
--- no help found
-\end{quote}
-
-
-\bigskip\hrule{}\bigskip
-
-\phantomsection\label{classes/time_series/@ts/ts:ts}
-\textbf{ts}
-\begin{quote}
-
--- no help found
-\end{quote}
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{uminus}
-\label{classes/time_series/@ts/ts:id570}\label{classes/time_series/@ts/ts:uminus}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id571}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id572}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id573}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id574}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id575}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{values}
-\label{classes/time_series/@ts/ts:values}\label{classes/time_series/@ts/ts:id576}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id577}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id578}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id579}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id580}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id581}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{var}
-\label{classes/time_series/@ts/ts:var}\label{classes/time_series/@ts/ts:id582}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id583}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id584}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id585}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id586}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id587}
-See also:
-
-
-\bigskip\hrule{}\bigskip
-
-
-
-\subsection{zeros}
-\label{classes/time_series/@ts/ts:zeros}\label{classes/time_series/@ts/ts:id588}
-H1 line
-
-
-\subsubsection{Syntax}
-\label{classes/time_series/@ts/ts:id589}
-
-\subsubsection{Inputs}
-\label{classes/time_series/@ts/ts:id590}
-
-\subsubsection{Outputs}
-\label{classes/time_series/@ts/ts:id591}
-
-\subsubsection{Description}
-\label{classes/time_series/@ts/ts:id592}
-
-\subsubsection{Examples}
-\label{classes/time_series/@ts/ts:id593}
-See also:
+ts Methods:
+
+acos -   H1 line
+acosh -   H1 line
+acot -   H1 line
+acoth -   H1 line
+aggregate -   H1 line
+allmean -   H1 line
+and -   H1 line
+apply -   H1 line
+asin -   H1 line
+asinh -   H1 line
+atan -   H1 line
+atanh -   H1 line
+automatic\_model\_selection -   H1 line
+bar -   H1 line
+barh -   H1 line
+boxplot -   H1 line
+bsxfun -   H1 line
+cat - concatenates time series along the specified dimension
+collect -   H1 line
+corr -   H1 line
+corrcoef -   H1 line
+cos -   H1 line
+cosh -   H1 line
+cot -   H1 line
+coth -   H1 line
+cov -   H1 line
+ctranspose -   H1 line
+cumprod -   H1 line
+cumsum -   H1 line
+decompose\_series -   H1 line
+describe -   H1 line
+display -   H1 line
+double -   H1 line
+drop -   H1 line
+dummy -   H1 line
+eq -   H1 line
+exp -   H1 line
+expanding -   H1 line
+fanchart -   H1 line
+ge -   H1 line
+get -   H1 line
+gt -   H1 line
+head -   H1 line
+hist -   H1 line
+horzcat -   H1 line
+hpfilter -   H1 line
+index -   H1 line
+interpolate -   H1 line
+intersect -   H1 line
+isfinite -   H1 line
+isinf -   H1 line
+isnan -   H1 line
+jbtest -   H1 line
+kurtosis -   H1 line
+le -   H1 line
+log -   H1 line
+lt -   H1 line
+max -   H1 line
+mean -   H1 line
+median -   H1 line
+min -   H1 line
+minus -   H1 line
+mode -   H1 line
+mpower -   H1 line
+mrdivide -   H1 line
+mtimes -   H1 line
+nan -   H1 line
+ne -   H1 line
+numel -   H1 line
+ones - overloads ones for ts objects
+pages2struct -   H1 line
+plot -   H1 line
+plotyy -   H1 line
+plus -   H1 line
+power -   H1 line
+prctile - Percentiles of a time series (ts)
+quantile -   H1 line
+rand -   H1 line
+randn -   H1 line
+range -   H1 line
+rdivide -   H1 line
+regress -   H1 line
+reset\_start\_date -   H1 line
+rolling -   H1 line
+sin -   H1 line
+sinh -   H1 line
+skewness -   H1 line
+sort -   H1 line
+spectrum -   H1 line
+std -   H1 line
+step\_dummy -   H1 line
+subsasgn -   H1 line
+subsref -   H1 line
+sum -   H1 line
+tail -   H1 line
+times -   H1 line
+transform -   H1 line
+transpose -   H1 line
+ts - Methods:
+uminus -   H1 line
+values -   H1 line
+var -   H1 line
+zeros -   H1 line
+
+ts  Properties:
+
+varnames -   names of the variables in the database
+start - time of the time series
+finish -   end time of the time series
+frequency - of the time series
+NumberOfObservations -   number of observations in the time series
+NumberOfPages -   number of pages (third dimension) of the time series
+NumberOfVariables -   number of variables in the time series
 
 
 \chapter{Markov Chain Monte Carlo for Bayesian Estimation}

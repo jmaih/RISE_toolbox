@@ -9,4 +9,4 @@
 %   <a href="matlab:help classes\models\svar\set_solution_to_companion">classes\models\svar\set_solution_to_companion</a>                                                   - H1 line
 %   classes\models\svar\simulation_engine                                                           - (No help available)
 %   <a href="matlab:help classes\models\svar\solve">classes\models\svar\solve</a>                                                                       - H1 line
-%   <a href="matlab:help classes\models\svar\svar">classes\models\svar\svar</a>                                                                        -  Structural VAR modeling
+%   classes\models\svar\svar                                                                        - (No help available)

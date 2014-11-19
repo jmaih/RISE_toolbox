@@ -5,4 +5,4 @@
 %   classes\models\stochvol\redo_declarations                                                    - (No help available)
 %   <a href="matlab:help classes\models\stochvol\setup_linear_restrictions">classes\models\stochvol\setup_linear_restrictions</a>                                            - H1 line
 %   classes\models\stochvol\simulation_engine                                                    - (No help available)
-%   <a href="matlab:help classes\models\stochvol\stochvol">classes\models\stochvol\stochvol</a>                                                             -  class for time-varying parameter models
+%   classes\models\stochvol\stochvol                                                             - (No help available)

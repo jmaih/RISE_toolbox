@@ -19,7 +19,7 @@
 %   <a href="matlab:help classes\time_series\ts\boxplot">classes\time_series\ts\boxplot</a>                                                              - H1 line
 %   <a href="matlab:help classes\time_series\ts\bsxfun">classes\time_series\ts\bsxfun</a>                                                               - H1 line
 %   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  -  concatenates time series along the specified dimension
-%   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              -  - brings together several time series object into a one time series
 %   classes\time_series\ts\comparison                                                           - (No help available)
 %   <a href="matlab:help classes\time_series\ts\corr">classes\time_series\ts\corr</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\corrcoef">classes\time_series\ts\corrcoef</a>                                                             - H1 line
@@ -78,6 +78,7 @@
 %   <a href="matlab:help classes\time_series\ts\plotyy">classes\time_series\ts\plotyy</a>                                                               - H1 line
 %   <a href="matlab:help classes\time_series\ts\plus">classes\time_series\ts\plus</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\power">classes\time_series\ts\power</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\prctile">classes\time_series\ts\prctile</a>                                                              -  Percentiles of a time series (ts)
 %   classes\time_series\ts\process_subs                                                         - (No help available)
 %   <a href="matlab:help classes\time_series\ts\quantile">classes\time_series\ts\quantile</a>                                                             - H1 line
 %   <a href="matlab:help classes\time_series\ts\rand">classes\time_series\ts\rand</a>                                                                 - H1 line
@@ -101,8 +102,8 @@
 %   <a href="matlab:help classes\time_series\ts\tail">classes\time_series\ts\tail</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\times">classes\time_series\ts\times</a>                                                                - H1 line
 %   <a href="matlab:help classes\time_series\ts\transform">classes\time_series\ts\transform</a>                                                            - H1 line
-%   classes\time_series\ts\transpose                                                            - (No help available)
-%   <a href="matlab:help classes\time_series\ts\ts">classes\time_series\ts\ts</a>                                                                   -  Time series
+%   <a href="matlab:help classes\time_series\ts\transpose">classes\time_series\ts\transpose</a>                                                            - H1 line
+%   classes\time_series\ts\ts                                                                   - (No help available)
 %   classes\time_series\ts\ts_roll_or_expand                                                    - (No help available)
 %   <a href="matlab:help classes\time_series\ts\uminus">classes\time_series\ts\uminus</a>                                                               - H1 line
 %   classes\time_series\ts\unary_operation                                                      - (No help available)

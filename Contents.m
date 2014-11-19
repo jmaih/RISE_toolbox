@@ -1,16 +1,17 @@
 % RISE Toolbox
-% Version 1.0.0 (R2014a) 16-Oct-2014
+% Version 1.0.1 (R2014b) 19-Nov-2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Toolbox        RISE
 %
-% Version        1.0.0 16-Oct-2014
+% Version        1.0.1 19-Nov-2014
 %
 % Contents path  C:\Users\jma\Documents\GitHub\RISE_toolbox\help
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox   -------------------%
 %
+%   <a href="matlab:help rise_exit">rise_exit</a>                                              -  exit from RISE
 %   <a href="matlab:help rise_startup">rise_startup</a>                                           - H1 line
 %
 %
@@ -70,25 +71,26 @@
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\models\dsge   -------------------%
 %
-%   <a href="matlab:help classes\models\dsge\check_derivatives">classes\models\dsge\check_derivatives</a>                                                          - H1 line
+%   <a href="matlab:help classes\models\dsge\check_derivatives">classes\models\dsge\check_derivatives</a>                                                          -  - compares the derivatives and the solutions from various differentiation techniques
 %   <a href="matlab:help classes\models\dsge\compute_steady_state">classes\models\dsge\compute_steady_state</a>                                                       - H1 line
 %   classes\models\dsge\conclude_estimation                                                        - (No help available)
 %   <a href="matlab:help classes\models\dsge\create_estimation_blocks">classes\models\dsge\create_estimation_blocks</a>                                                   - H1 line
+%   <a href="matlab:help classes\models\dsge\create_state_list">classes\models\dsge\create_state_list</a>                                                          -  creates the list of the state variables in the solution
 %   classes\models\dsge\do_not_anticipate_future_shocks                                            - (No help available)
-%   <a href="matlab:help classes\models\dsge\dsge">classes\models\dsge\dsge</a>                                                                       -  Markov Switching Dynamic Stochastic General Equilibrium Modeling
-%   classes\models\dsge\dsge_load_data                                                             - (No help available)
+%   classes\models\dsge\dsge                                                                       - (No help available)
 %   <a href="matlab:help classes\models\dsge\filter">classes\models\dsge\filter</a>                                                                     - H1 line
-%   <a href="matlab:help classes\models\dsge\forecast_real_time">classes\models\dsge\forecast_real_time</a>                                                         - H1 line
+%   <a href="matlab:help classes\models\dsge\forecast_real_time">classes\models\dsge\forecast_real_time</a>                                                         -  - forecast from each point in time
 %   <a href="matlab:help classes\models\dsge\irf">classes\models\dsge\irf</a>                                                                        - H1 line
 %   <a href="matlab:help classes\models\dsge\is_stable_system">classes\models\dsge\is_stable_system</a>                                                           - H1 line
 %   classes\models\dsge\latex_model_file                                                           - (No help available)
+%   classes\models\dsge\load_data                                                                  - (No help available)
 %   classes\models\dsge\load_solution                                                              - (No help available)
 %   <a href="matlab:help classes\models\dsge\monte_carlo_filtering">classes\models\dsge\monte_carlo_filtering</a>                                                      - H1 line
 %   classes\models\dsge\prepare_transition_routine                                                 - (No help available)
-%   <a href="matlab:help classes\models\dsge\print_solution">classes\models\dsge\print_solution</a>                                                             - H1 line
+%   <a href="matlab:help classes\models\dsge\print_solution">classes\models\dsge\print_solution</a>                                                             -  - print the solution of a model or vector of models
 %   classes\models\dsge\re_order_output_rows                                                       - (No help available)
 %   <a href="matlab:help classes\models\dsge\resid">classes\models\dsge\resid</a>                                                                      - H1 line
-%   <a href="matlab:help classes\models\dsge\set">classes\models\dsge\set</a>                                                                        - H1 line
+%   <a href="matlab:help classes\models\dsge\set">classes\models\dsge\set</a>                                                                        -  - sets options for dsge|rise models
 %   <a href="matlab:help classes\models\dsge\set_solution_to_companion">classes\models\dsge\set_solution_to_companion</a>                                                  - H1 line
 %   classes\models\dsge\set_z_eplus_horizon                                                        - (No help available)
 %   <a href="matlab:help classes\models\dsge\simulate">classes\models\dsge\simulate</a>                                                                   - H1 line
@@ -107,7 +109,7 @@
 %   <a href="matlab:help classes\models\rfvar\check_identification">classes\models\rfvar\check_identification</a>                                                                      - H1 line
 %   classes\models\rfvar\find_posterior_mode                                                                       - (No help available)
 %   classes\models\rfvar\initialize_posterior_simulation                                                           - (No help available)
-%   <a href="matlab:help classes\models\rfvar\rfvar">classes\models\rfvar\rfvar</a>                                                                                     -  Reduced-form VAR modeling
+%   classes\models\rfvar\rfvar                                                                                     - (No help available)
 %   classes\models\rfvar\set_structural_shocks                                                                     - (No help available)
 %   <a href="matlab:help classes\models\rfvar\solve">classes\models\rfvar\solve</a>                                                                                     - H1 line
 %   classes\models\rfvar\sort_Q                                                                                    - (No help available)
@@ -120,7 +122,7 @@
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\models\rise   -------------------%
 %
-%   <a href="matlab:help classes\models\rise\rise">classes\models\rise\rise</a>                                            -  alias class for dsge
+%   classes\models\rise\rise                                            - (No help available)
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\models\rise_generic   -------------------%
@@ -134,12 +136,12 @@
 %   <a href="matlab:help classes\models\rise_generic\estimate">classes\models\rise_generic\estimate</a>                                                                                  - H1 line
 %   classes\models\rise_generic\estimation_wrapper                                                                        - (No help available)
 %   classes\models\rise_generic\find_posterior_mode                                                                       - (No help available)
-%   <a href="matlab:help classes\models\rise_generic\forecast">classes\models\rise_generic\forecast</a>                                                                                  - H1 line
+%   <a href="matlab:help classes\models\rise_generic\forecast">classes\models\rise_generic\forecast</a>                                                                                  -  - computes forecasts for rise|dsge|svar|rfvar models
 %   <a href="matlab:help classes\models\rise_generic\get">classes\models\rise_generic\get</a>                                                                                       - H1 line
 %   classes\models\rise_generic\get_estimated_parameter_names                                                             - (No help available)
 %   <a href="matlab:help classes\models\rise_generic\historical_decomposition">classes\models\rise_generic\historical_decomposition</a>                                                                  -  Computes historical decompositions of a DSGE model
 %   classes\models\rise_generic\initialize_posterior_simulation                                                           - (No help available)
-%   <a href="matlab:help classes\models\rise_generic\irf">classes\models\rise_generic\irf</a>                                                                                       - H1 line
+%   <a href="matlab:help classes\models\rise_generic\irf">classes\models\rise_generic\irf</a>                                                                                       -  - computes impulse responses for a RISE model
 %   <a href="matlab:help classes\models\rise_generic\isnan">classes\models\rise_generic\isnan</a>                                                                                     - H1 line
 %   classes\models\rise_generic\load_data                                                                                 - (No help available)
 %   classes\models\rise_generic\load_mode                                                                                 - (No help available)
@@ -154,15 +156,16 @@
 %   <a href="matlab:help classes\models\rise_generic\print_estimation_results">classes\models\rise_generic\print_estimation_results</a>                                                                  - H1 line
 %   <a href="matlab:help classes\models\rise_generic\prior_plots">classes\models\rise_generic\prior_plots</a>                                                                               - H1 line
 %   classes\models\rise_generic\re_order_output_rows                                                                      - (No help available)
+%   <a href="matlab:help classes\models\rise_generic\refresh">classes\models\rise_generic\refresh</a>                                                                                   -  - refresh the options of an old object with a newer version of
 %   <a href="matlab:help classes\models\rise_generic\report">classes\models\rise_generic\report</a>                                                                                    -  assigns the elements of interest to a rise_report.report object
-%   <a href="matlab:help classes\models\rise_generic\rise_generic">classes\models\rise_generic\rise_generic</a>                                                                              -  generic class for various types of models
-%   <a href="matlab:help classes\models\rise_generic\set">classes\models\rise_generic\set</a>                                                                                       - H1 line
+%   classes\models\rise_generic\rise_generic                                                                              - (No help available)
+%   <a href="matlab:help classes\models\rise_generic\set">classes\models\rise_generic\set</a>                                                                                       -  - sets options for RISE models
 %   classes\models\rise_generic\set_simulation_initial_conditions                                                         - (No help available)
 %   <a href="matlab:help classes\models\rise_generic\setup_calibration">classes\models\rise_generic\setup_calibration</a>                                                                         - H1 line
 %   <a href="matlab:help classes\models\rise_generic\setup_general_restrictions">classes\models\rise_generic\setup_general_restrictions</a>                                                                - H1 line
 %   <a href="matlab:help classes\models\rise_generic\setup_linear_restrictions">classes\models\rise_generic\setup_linear_restrictions</a>                                                                 - H1 line
 %   <a href="matlab:help classes\models\rise_generic\setup_priors">classes\models\rise_generic\setup_priors</a>                                                                              - H1 line
-%   <a href="matlab:help classes\models\rise_generic\simulate">classes\models\rise_generic\simulate</a>                                                                                  - H1 line
+%   <a href="matlab:help classes\models\rise_generic\simulate">classes\models\rise_generic\simulate</a>                                                                                  -  - simulates a RISE model
 %   <a href="matlab:help classes\models\rise_generic\simulation_diagnostics">classes\models\rise_generic\simulation_diagnostics</a>                                                                    - H1 line
 %   <a href="matlab:help classes\models\rise_generic\stoch_simul">classes\models\rise_generic\stoch_simul</a>                                                                               - H1 line
 %   <a href="matlab:help classes\models\rise_generic\theoretical_autocorrelations">classes\models\rise_generic\theoretical_autocorrelations</a>                                                              - H1 line
@@ -179,7 +182,7 @@
 %   classes\models\stochvol\redo_declarations                                                    - (No help available)
 %   <a href="matlab:help classes\models\stochvol\setup_linear_restrictions">classes\models\stochvol\setup_linear_restrictions</a>                                            - H1 line
 %   classes\models\stochvol\simulation_engine                                                    - (No help available)
-%   <a href="matlab:help classes\models\stochvol\stochvol">classes\models\stochvol\stochvol</a>                                                             -  class for time-varying parameter models
+%   classes\models\stochvol\stochvol                                                             - (No help available)
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\models\svar   -------------------%
@@ -193,7 +196,7 @@
 %   <a href="matlab:help classes\models\svar\set_solution_to_companion">classes\models\svar\set_solution_to_companion</a>                                                   - H1 line
 %   classes\models\svar\simulation_engine                                                           - (No help available)
 %   <a href="matlab:help classes\models\svar\solve">classes\models\svar\solve</a>                                                                       - H1 line
-%   <a href="matlab:help classes\models\svar\svar">classes\models\svar\svar</a>                                                                        -  Structural VAR modeling
+%   classes\models\svar\svar                                                                        - (No help available)
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\time_series   -------------------%
@@ -216,7 +219,7 @@
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\time_series\rseries   -------------------%
 %
-%   <a href="matlab:help classes\time_series\rseries\rseries">classes\time_series\rseries\rseries</a>                                            -  time series (alias for ts)
+%   classes\time_series\rseries\rseries                                            - (No help available)
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\time_series\ts   -------------------%
@@ -240,7 +243,7 @@
 %   <a href="matlab:help classes\time_series\ts\boxplot">classes\time_series\ts\boxplot</a>                                                              - H1 line
 %   <a href="matlab:help classes\time_series\ts\bsxfun">classes\time_series\ts\bsxfun</a>                                                               - H1 line
 %   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  -  concatenates time series along the specified dimension
-%   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              -  - brings together several time series object into a one time series
 %   classes\time_series\ts\comparison                                                           - (No help available)
 %   <a href="matlab:help classes\time_series\ts\corr">classes\time_series\ts\corr</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\corrcoef">classes\time_series\ts\corrcoef</a>                                                             - H1 line
@@ -299,6 +302,7 @@
 %   <a href="matlab:help classes\time_series\ts\plotyy">classes\time_series\ts\plotyy</a>                                                               - H1 line
 %   <a href="matlab:help classes\time_series\ts\plus">classes\time_series\ts\plus</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\power">classes\time_series\ts\power</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\prctile">classes\time_series\ts\prctile</a>                                                              -  Percentiles of a time series (ts)
 %   classes\time_series\ts\process_subs                                                         - (No help available)
 %   <a href="matlab:help classes\time_series\ts\quantile">classes\time_series\ts\quantile</a>                                                             - H1 line
 %   <a href="matlab:help classes\time_series\ts\rand">classes\time_series\ts\rand</a>                                                                 - H1 line
@@ -322,8 +326,8 @@
 %   <a href="matlab:help classes\time_series\ts\tail">classes\time_series\ts\tail</a>                                                                 - H1 line
 %   <a href="matlab:help classes\time_series\ts\times">classes\time_series\ts\times</a>                                                                - H1 line
 %   <a href="matlab:help classes\time_series\ts\transform">classes\time_series\ts\transform</a>                                                            - H1 line
-%   classes\time_series\ts\transpose                                                            - (No help available)
-%   <a href="matlab:help classes\time_series\ts\ts">classes\time_series\ts\ts</a>                                                                   -  Time series
+%   <a href="matlab:help classes\time_series\ts\transpose">classes\time_series\ts\transpose</a>                                                            - H1 line
+%   classes\time_series\ts\ts                                                                   - (No help available)
 %   classes\time_series\ts\ts_roll_or_expand                                                    - (No help available)
 %   <a href="matlab:help classes\time_series\ts\uminus">classes\time_series\ts\uminus</a>                                                               - H1 line
 %   classes\time_series\ts\unary_operation                                                      - (No help available)
@@ -370,17 +374,17 @@
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\utils\coef   -------------------%
 %
-%   <a href="matlab:help classes\utils\coef\coef">classes\utils\coef\coef</a>                                            -  utility class for coef class for setting linear restrictions on
+%   classes\utils\coef\coef                                            - (No help available)
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\utils\hdmr   -------------------%
 %
-%   <a href="matlab:help classes\utils\hdmr\hdmr">classes\utils\hdmr\hdmr</a>                                            -  High dimensional model representation
+%   classes\utils\hdmr\hdmr                                            - (No help available)
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\utils\mcf   -------------------%
 %
-%   <a href="matlab:help classes\utils\mcf\mcf">classes\utils\mcf\mcf</a>                                            -  Monte Carlo Filtering
+%   classes\utils\mcf\mcf                                            - (No help available)
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+ar1_approximation   -------------------%
@@ -449,17 +453,22 @@
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+code   -------------------%
 %
-%   <a href="matlab:help m\+utils\+code\code2file">m\+utils\+code\code2file</a>                                                                - H1 line
-%   <a href="matlab:help m\+utils\+code\code2func">m\+utils\+code\code2func</a>                                                                - H1 line
-%   <a href="matlab:help m\+utils\+code\evaluate_automatic_derivatives">m\+utils\+code\evaluate_automatic_derivatives</a>                                           - H1 line
-%   <a href="matlab:help m\+utils\+code\evaluate_functions">m\+utils\+code\evaluate_functions</a>                                                       - H1 line
-%   <a href="matlab:help m\+utils\+code\evaluate_transition_matrices">m\+utils\+code\evaluate_transition_matrices</a>                                             - H1 line
-%   <a href="matlab:help m\+utils\+code\validate_transition_matrix">m\+utils\+code\validate_transition_matrix</a>                                               - H1 line
+%   <a href="matlab:help m\+utils\+code\code2file">m\+utils\+code\code2file</a>                                                                               - H1 line
+%   <a href="matlab:help m\+utils\+code\code2func">m\+utils\+code\code2func</a>                                                                               - H1 line
+%   <a href="matlab:help m\+utils\+code\code2vector">m\+utils\+code\code2vector</a>                                                                             -  - transforms a set of function handles into a single function
+%   <a href="matlab:help m\+utils\+code\evaluate_automatic_derivatives">m\+utils\+code\evaluate_automatic_derivatives</a>                                                          - H1 line
+%   <a href="matlab:help m\+utils\+code\evaluate_functions">m\+utils\+code\evaluate_functions</a>                                                                      -  - evaluates functions in various formats
+%   <a href="matlab:help m\+utils\+code\evaluate_jacobian_numerically">m\+utils\+code\evaluate_jacobian_numerically</a>                                                           -  - numerical evaluation of the jacobian of the objective function
+%   <a href="matlab:help m\+utils\+code\evaluate_policy_objective_hessian_numerically">m\+utils\+code\evaluate_policy_objective_hessian_numerically</a>                                           -  - numerical evaluation of the hessian of the policy objective
+%   <a href="matlab:help m\+utils\+code\evaluate_transition_matrices">m\+utils\+code\evaluate_transition_matrices</a>                                                            - H1 line
+%   <a href="matlab:help m\+utils\+code\func2fhandle">m\+utils\+code\func2fhandle</a>                                                                            -  - creates a handle to an m-file not on the matlab search path
+%   <a href="matlab:help m\+utils\+code\validate_transition_matrix">m\+utils\+code\validate_transition_matrix</a>                                                              - H1 line
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+cov   -------------------%
 %
-%   <a href="matlab:help m\+utils\+cov\nearest">m\+utils\+cov\nearest</a>                                           - H1 line
+%   <a href="matlab:help m\+utils\+cov\nearest">m\+utils\+cov\nearest</a>                                              - H1 line
+%   <a href="matlab:help m\+utils\+cov\symmetrize">m\+utils\+cov\symmetrize</a>                                           -  - makes a square matrix symmetric
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+error   -------------------%
@@ -473,17 +482,60 @@
 %   <a href="matlab:help m\+utils\+estim\generate_starting_point">m\+utils\+estim\generate_starting_point</a>                                           - H1 line
 %
 %
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+filtering   -------------------%
+%
+%   <a href="matlab:help m\+utils\+filtering\check_steady_state_kalman">m\+utils\+filtering\check_steady_state_kalman</a>                                           -  - checks whether the covariance matrix has converged
+%   <a href="matlab:help m\+utils\+filtering\prediction_step">m\+utils\+filtering\prediction_step</a>                                                     -  - prediction step for Kalman filter
+%   <a href="matlab:help m\+utils\+filtering\smoothing_step">m\+utils\+filtering\smoothing_step</a>                                                      -  - smoothing step
+%
+%
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+forecast   -------------------%
 %
 %   <a href="matlab:help m\+utils\+forecast\aggregate_initial_conditions">m\+utils\+forecast\aggregate_initial_conditions</a>                                           - H1 line
 %   <a href="matlab:help m\+utils\+forecast\check_shock_id">m\+utils\+forecast\check_shock_id</a>                                                         - H1 line
 %   <a href="matlab:help m\+utils\+forecast\create_shocks">m\+utils\+forecast\create_shocks</a>                                                          - H1 line
 %   <a href="matlab:help m\+utils\+forecast\irf">m\+utils\+forecast\irf</a>                                                                    - H1 line
-%   <a href="matlab:help m\+utils\+forecast\load_start_values">m\+utils\+forecast\load_start_values</a>                                                      - H1 line
+%   <a href="matlab:help m\+utils\+forecast\load_start_values">m\+utils\+forecast\load_start_values</a>                                                      -  - load the start values for forecasting
 %   <a href="matlab:help m\+utils\+forecast\multi_step">m\+utils\+forecast\multi_step</a>                                                             - H1 line
 %   <a href="matlab:help m\+utils\+forecast\nullify_deterministic_shocks">m\+utils\+forecast\nullify_deterministic_shocks</a>                                           - H1 line
 %   <a href="matlab:help m\+utils\+forecast\one_step">m\+utils\+forecast\one_step</a>                                                               - H1 line
 %   <a href="matlab:help m\+utils\+forecast\replace_impulse">m\+utils\+forecast\replace_impulse</a>                                                        - H1 line
+%
+%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+forecast\+conditional   -------------------%
+%
+%   <a href="matlab:help m\+utils\+forecast\+conditional\build_shock_restrictions">m\+utils\+forecast\+conditional\build_shock_restrictions</a>                                                                      -  - build restriction conditions on the shocks
+%   m\+utils\+forecast\+conditional\compute_forecasts                                                                             - (No help available)
+%   <a href="matlab:help m\+utils\+forecast\+conditional\conditional_distribution_of_endogenous_and_shocks">m\+utils\+forecast\+conditional\conditional_distribution_of_endogenous_and_shocks</a>                                             - =============================
+%   <a href="matlab:help m\+utils\+forecast\+conditional\forecast_engine">m\+utils\+forecast\+conditional\forecast_engine</a>                                                                               -  - computes conditional forecasts for linear models
+%   m\+utils\+forecast\+conditional\initialize_array                                                                              - (No help available)
+%   <a href="matlab:help m\+utils\+forecast\+conditional\null_and_column_spaces">m\+utils\+forecast\+conditional\null_and_column_spaces</a>                                                                        - H1 line
+%   <a href="matlab:help m\+utils\+forecast\+conditional\number_of_conditioning_shocks_periods">m\+utils\+forecast\+conditional\number_of_conditioning_shocks_periods</a>                                                         -  - length of shocks over the forecast horizon
+%   <a href="matlab:help m\+utils\+forecast\+conditional\projection_sub_engine">m\+utils\+forecast\+conditional\projection_sub_engine</a>                                                                         - H1 line
+%   <a href="matlab:help m\+utils\+forecast\+conditional\remove_holes">m\+utils\+forecast\+conditional\remove_holes</a>                                                                                  - H1 line
+%   <a href="matlab:help m\+utils\+forecast\+conditional\state_matrices">m\+utils\+forecast\+conditional\state_matrices</a>                                                                                - H1 line
+%   <a href="matlab:help m\+utils\+forecast\+conditional\truncated_mv_normal_rnd">m\+utils\+forecast\+conditional\truncated_mv_normal_rnd</a>                                                                       - x=truncated_mv_normal_rnd(mu,SIG,lb,ub)
+%   m\+utils\+forecast\+conditional\unconditional_distribution_of_endogenous_and_shocks                                           - (No help available)
+%
+%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+forecast\oldtools   -------------------%
+%
+%   m\+utils\+forecast\oldtools\forecast_engine                                                        - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_engine                                                     - (No help available)
+%   m\+utils\+forecast\oldtools\three_pass_regression_filter                                           - (No help available)
+%
+%
+%-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+forecast\oldtools\forecasting_tools   -------------------%
+%
+%   m\+utils\+forecast\oldtools\forecasting_tools\ComputeForecasts                                                                         - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\ConditionalDistributionOfEndogenousAndShocks                                             - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\ConditionalProjectionSubEngine                                                           - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\ConditionalStateMatrices                                                                 - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\InitializeArray                                                                          - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\NullAndColumnSpaces                                                                      - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\RemoveHoles                                                                              - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\TruncatedMultivariateNormalRnd                                                           - (No help available)
+%   m\+utils\+forecast\oldtools\forecasting_tools\UnconditionalDistributionOfEndogenousAndShocks                                           - (No help available)
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+functional_programming   -------------------%
@@ -497,15 +549,15 @@
 %   <a href="matlab:help m\+utils\+gridfuncs\build_grid">m\+utils\+gridfuncs\build_grid</a>                                                   - H1 line
 %   <a href="matlab:help m\+utils\+gridfuncs\chain_grid">m\+utils\+gridfuncs\chain_grid</a>                                                   - H1 line
 %   <a href="matlab:help m\+utils\+gridfuncs\commutation">m\+utils\+gridfuncs\commutation</a>                                                  - H1 line
-%   <a href="matlab:help m\+utils\+gridfuncs\locate_permutation">m\+utils\+gridfuncs\locate_permutation</a>                                           - H1 line
-%   <a href="matlab:help m\+utils\+gridfuncs\mygrid">m\+utils\+gridfuncs\mygrid</a>                                                       - H1 line
+%   <a href="matlab:help m\+utils\+gridfuncs\locate_permutation">m\+utils\+gridfuncs\locate_permutation</a>                                           -  locates a permutation deriving from differentiation
+%   <a href="matlab:help m\+utils\+gridfuncs\mygrid">m\+utils\+gridfuncs\mygrid</a>                                                       -  creates a grid of points
 %   <a href="matlab:help m\+utils\+gridfuncs\mypermutation">m\+utils\+gridfuncs\mypermutation</a>                                                - H1 line
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+hessian   -------------------%
 %
 %   <a href="matlab:help m\+utils\+hessian\conditioner">m\+utils\+hessian\conditioner</a>                                                  - H1 line
-%   <a href="matlab:help m\+utils\+hessian\finite_differences">m\+utils\+hessian\finite_differences</a>                                           - H1 line
+%   <a href="matlab:help m\+utils\+hessian\finite_differences">m\+utils\+hessian\finite_differences</a>                                           -  - computes the hessian by finite differences
 %   <a href="matlab:help m\+utils\+hessian\outer_product">m\+utils\+hessian\outer_product</a>                                                - H1 line
 %
 %
@@ -517,10 +569,15 @@
 %   <a href="matlab:help m\+utils\+kronecker\A_times_kron_B_I">m\+utils\+kronecker\A_times_kron_B_I</a>                                                       - H1 line
 %   <a href="matlab:help m\+utils\+kronecker\A_times_kron_I_B">m\+utils\+kronecker\A_times_kron_I_B</a>                                                       - H1 line
 %   <a href="matlab:help m\+utils\+kronecker\A_times_kron_I_B_I">m\+utils\+kronecker\A_times_kron_I_B_I</a>                                                     - H1 line
-%   <a href="matlab:help m\+utils\+kronecker\X_times_kron_Q1_Qk">m\+utils\+kronecker\X_times_kron_Q1_Qk</a>                                                     - H1 line
+%   <a href="matlab:help m\+utils\+kronecker\fernandez_plateau_stewart">m\+utils\+kronecker\fernandez_plateau_stewart</a>                                              -  computes kron(Q1,Q2,...,Qk)*x or x*kron(Q1,...,Qk)
 %   <a href="matlab:help m\+utils\+kronecker\korder_matrix_vector">m\+utils\+kronecker\korder_matrix_vector</a>                                                   - H1 line
+%   <a href="matlab:help m\+utils\+kronecker\kron_Q1_Qk_times_X">m\+utils\+kronecker\kron_Q1_Qk_times_X</a>                                                     - X_times_kron_Q1_Qk Efficient Kronecker Multiplication of kron(Q1,Q2,...,Qk)*X
 %   <a href="matlab:help m\+utils\+kronecker\kron_times_vector">m\+utils\+kronecker\kron_times_vector</a>                                                      - H1 line
 %   m\+utils\+kronecker\kronecker_times_vector_tests                                           - (No help available)
+%   <a href="matlab:help m\+utils\+kronecker\perfect_shuffle">m\+utils\+kronecker\perfect_shuffle</a>                                                        -  produces the a perfect shuffle matrix that turns kron(B,C) into kron(C,B)
+%   <a href="matlab:help m\+utils\+kronecker\shrink_expand">m\+utils\+kronecker\shrink_expand</a>                                                          -  computes shrinking and expansion objects for the manipulation of symmetric tensors
+%   <a href="matlab:help m\+utils\+kronecker\shuffle">m\+utils\+kronecker\shuffle</a>                                                                - perfect_shuffle produces the a perfect shuffle matrix that turns kron(B,C) into kron(C,B)
+%   <a href="matlab:help m\+utils\+kronecker\sum">m\+utils\+kronecker\sum</a>                                                                    -  sums products of all possible permutations of kronecker products
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+latex   -------------------%
@@ -557,7 +614,6 @@
 %   <a href="matlab:help m\+utils\+miscellaneous\preserve">m\+utils\+miscellaneous\preserve</a>                                                                                          - H1 line
 %   <a href="matlab:help m\+utils\+miscellaneous\randword">m\+utils\+miscellaneous\randword</a>                                                                                          - H1 line
 %   <a href="matlab:help m\+utils\+miscellaneous\setfield">m\+utils\+miscellaneous\setfield</a>                                                                                          - H1 line
-%   <a href="matlab:help m\+utils\+miscellaneous\sum_kroneckers">m\+utils\+miscellaneous\sum_kroneckers</a>                                                                                    - H1 line
 %   <a href="matlab:help m\+utils\+miscellaneous\sum_products">m\+utils\+miscellaneous\sum_products</a>                                                                                      - H1 line
 %
 %
@@ -568,8 +624,8 @@
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+numdiff   -------------------%
 %
-%   <a href="matlab:help m\+utils\+numdiff\hessian">m\+utils\+numdiff\hessian</a>                                            - H1 line
-%   <a href="matlab:help m\+utils\+numdiff\jacobian">m\+utils\+numdiff\jacobian</a>                                           - H1 line
+%   <a href="matlab:help m\+utils\+numdiff\hessian">m\+utils\+numdiff\hessian</a>                                            -  - computes the hessian of a scalar function
+%   <a href="matlab:help m\+utils\+numdiff\jacobian">m\+utils\+numdiff\jacobian</a>                                           -  - computes the jacobian of a function or a vector of functions
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+optim   -------------------%
@@ -667,23 +723,25 @@
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\+utils\+time_series   -------------------%
 %
 %   <a href="matlab:help m\+utils\+time_series\concatenate_series_from_different_models">m\+utils\+time_series\concatenate_series_from_different_models</a>                                           - H1 line
-%   <a href="matlab:help m\+utils\+time_series\data_request">m\+utils\+time_series\data_request</a>                                                                       - H1 line
+%   <a href="matlab:help m\+utils\+time_series\data_request">m\+utils\+time_series\data_request</a>                                                                       -  - selects the data requested for estimation or for forecasting
 %   <a href="matlab:help m\+utils\+time_series\haver2rise">m\+utils\+time_series\haver2rise</a>                                                                         - H1 line
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\differentiation\aplanar   -------------------%
 %
-%   <a href="matlab:help m\differentiation\aplanar\aplanar">m\differentiation\aplanar\aplanar</a>                                            -  automatic "planar" differentiation
+%   m\differentiation\aplanar\aplanar                                            - (No help available)
 %
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\differentiation\splanar   -------------------%
 %
-%   <a href="matlab:help m\differentiation\splanar\char">m\differentiation\splanar\char</a>                                                    - H1 line
-%   <a href="matlab:help m\differentiation\splanar\get">m\differentiation\splanar\get</a>                                                     - H1 line
-%   <a href="matlab:help m\differentiation\splanar\kron">m\differentiation\splanar\kron</a>                                                    - H1 line
-%   <a href="matlab:help m\differentiation\splanar\load_varlist">m\differentiation\splanar\load_varlist</a>                                            - H1 line
-%   <a href="matlab:help m\differentiation\splanar\set">m\differentiation\splanar\set</a>                                                     - H1 line
-%   <a href="matlab:help m\differentiation\splanar\splanar">m\differentiation\splanar\splanar</a>                                                 -  symbolic "planar" differentiation
+%   <a href="matlab:help m\differentiation\splanar\char">m\differentiation\splanar\char</a>                                                     -  - transforms splanar derivatives to strings
+%   <a href="matlab:help m\differentiation\splanar\differentiate">m\differentiation\splanar\differentiate</a>                                            -  - differentiates vectors of splanar objects
+%   <a href="matlab:help m\differentiation\splanar\get">m\differentiation\splanar\get</a>                                                      - H1 line
+%   <a href="matlab:help m\differentiation\splanar\kron">m\differentiation\splanar\kron</a>                                                     - H1 line
+%   <a href="matlab:help m\differentiation\splanar\load_varlist">m\differentiation\splanar\load_varlist</a>                                             - H1 line
+%   <a href="matlab:help m\differentiation\splanar\print">m\differentiation\splanar\print</a>                                                    -  - transforms the output of splanar.differentiate into char or functions
+%   <a href="matlab:help m\differentiation\splanar\set">m\differentiation\splanar\set</a>                                                      - H1 line
+%   m\differentiation\splanar\splanar                                                  - (No help available)
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\filtering   -------------------%
@@ -694,7 +752,9 @@
 %   <a href="matlab:help m\filtering\likelihood_dsge_var">m\filtering\likelihood_dsge_var</a>                                                        - H1 line
 %   <a href="matlab:help m\filtering\likelihood_markov_switching_dsge">m\filtering\likelihood_markov_switching_dsge</a>                                           - H1 line
 %   <a href="matlab:help m\filtering\likelihood_optimal_simple_rule">m\filtering\likelihood_optimal_simple_rule</a>                                             - H1 line
+%   <a href="matlab:help m\filtering\msre_kalman">m\filtering\msre_kalman</a>                                                                - H1 line
 %   <a href="matlab:help m\filtering\msre_kalman_cell">m\filtering\msre_kalman_cell</a>                                                           - H1 line
+%   <a href="matlab:help m\filtering\msre_kalman_cell_real_time">m\filtering\msre_kalman_cell_real_time</a>                                                 - H1 line
 %   <a href="matlab:help m\filtering\msre_linear_filter">m\filtering\msre_linear_filter</a>                                                         - H1 line
 %   <a href="matlab:help m\filtering\simulation_smoother">m\filtering\simulation_smoother</a>                                                        - H1 line
 %
@@ -707,7 +767,7 @@
 %
 %-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\optimizers\bee   -------------------%
 %
-%   <a href="matlab:help m\optimizers\bee\bee">m\optimizers\bee\bee</a>                                            -  global optimization of constrained functions using bees
+%   m\optimizers\bee\bee                                            - (No help available)
 %
 %
 %-------------------   path: C:\Users\jma\Documents\GitHub\RISE_toolbox\m\plotting_tools   -------------------%
@@ -742,7 +802,7 @@
 %   <a href="matlab:help m\shortcuts\second_order_logistic">m\shortcuts\second_order_logistic</a>                                           - H1 line
 %   <a href="matlab:help m\shortcuts\smax">m\shortcuts\smax</a>                                                            -  smooth approximation of max(x,0)
 %   <a href="matlab:help m\shortcuts\smin">m\shortcuts\smin</a>                                                            -  smooth approximation of min(x,0)
-%   <a href="matlab:help m\shortcuts\vec">m\shortcuts\vec</a>                                                             - low-level function
+%   <a href="matlab:help m\shortcuts\vec">m\shortcuts\vec</a>                                                             - H1 line
 %   <a href="matlab:help m\shortcuts\vech">m\shortcuts\vech</a>                                                            - low-level function
 %
 %

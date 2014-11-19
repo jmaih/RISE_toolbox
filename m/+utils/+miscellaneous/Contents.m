@@ -16,5 +16,4 @@
 %   <a href="matlab:help m\+utils\+miscellaneous\preserve">m\+utils\+miscellaneous\preserve</a>                                                                                          - H1 line
 %   <a href="matlab:help m\+utils\+miscellaneous\randword">m\+utils\+miscellaneous\randword</a>                                                                                          - H1 line
 %   <a href="matlab:help m\+utils\+miscellaneous\setfield">m\+utils\+miscellaneous\setfield</a>                                                                                          - H1 line
-%   <a href="matlab:help m\+utils\+miscellaneous\sum_kroneckers">m\+utils\+miscellaneous\sum_kroneckers</a>                                                                                    - H1 line
 %   <a href="matlab:help m\+utils\+miscellaneous\sum_products">m\+utils\+miscellaneous\sum_products</a>                                                                                      - H1 line
