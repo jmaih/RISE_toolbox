@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>utility class for coef class for setting linear restrictions on &mdash; RISE 1.0.1 documentation</title>
+    <title>class for setting linear restrictions on model parameters &mdash; RISE 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -43,19 +43,18 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="utility-class-for-coef-class-for-setting-linear-restrictions-on">
-<h1>utility class for coef class for setting linear restrictions on<a class="headerlink" href="#utility-class-for-coef-class-for-setting-linear-restrictions-on" title="Permalink to this headline">¶</a></h1>
-<p>models</p>
+  <div class="section" id="class-for-setting-linear-restrictions-on-model-parameters">
+<h1>class for setting linear restrictions on model parameters<a class="headerlink" href="#class-for-setting-linear-restrictions-on-model-parameters" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="methods">
 <h2>methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[ <a class="reference internal" href="#block-exogenous">block_exogenous</a> ](coef/block_exogenous)</li>
-<li>[ <a class="reference internal" href="#coef">coef</a> ](coef/coef)</li>
-<li>[ <a class="reference internal" href="#linear-restrictions">linear_restrictions</a> ](coef/linear_restrictions)</li>
-<li>[ <a class="reference internal" href="#minus">minus</a> ](coef/minus)</li>
-<li>[ <a class="reference internal" href="#mrdivide">mrdivide</a> ](coef/mrdivide)</li>
-<li>[ <a class="reference internal" href="#mtimes">mtimes</a> ](coef/mtimes)</li>
-<li>[ <a class="reference internal" href="#plus">plus</a> ](coef/plus)</li>
+<li>[block_exogenous](coef/block_exogenous)</li>
+<li>[coef](coef/coef)</li>
+<li>[linear_restrictions](coef/linear_restrictions)</li>
+<li>[minus](coef/minus)</li>
+<li>[mrdivide](coef/mrdivide)</li>
+<li>[mtimes](coef/mtimes)</li>
+<li>[plus](coef/plus)</li>
 </ul>
 </div>
 <div class="section" id="properties">
@@ -63,53 +62,6 @@
 <ul class="simple">
 <li>[par_name] -</li>
 </ul>
-<hr class="docutils" />
-<hr class="docutils" />
-</div>
-<div class="section" id="block-exogenous">
-<span id="id1"></span><h2>block_exogenous<a class="headerlink" href="#block-exogenous" title="Permalink to this headline">¶</a></h2>
-<p>list of endogenous
-list of block exogenous
-number of lags
-this cannot be applied to markov switching. In that case, one
-has to explicitly list the coefficients that are zero. This
-so because different coefficients may be controled by
-different markov chains.</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="coef">
-<span id="id2"></span><h2>coef<a class="headerlink" href="#coef" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="linear-restrictions">
-<span id="id3"></span><h2>linear_restrictions<a class="headerlink" href="#linear-restrictions" title="Permalink to this headline">¶</a></h2>
-<p>This function construct the linear restrictions system R*a=r
-given the coef vector &#8220;obj&#8221;, the &#8220;r&#8221; vector which may be
-modified, &#8220;self&#8221;, which is a rise object (dsge, rfvar, svar,
-etc.) and &#8220;est_list&#8221;, which is the list of the parameters to
-estimate.</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="minus">
-<span id="id4"></span><h2>minus<a class="headerlink" href="#minus" title="Permalink to this headline">¶</a></h2>
-<p>overloading of minus for coef objects</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="mrdivide">
-<span id="id5"></span><h2>mrdivide<a class="headerlink" href="#mrdivide" title="Permalink to this headline">¶</a></h2>
-<p>overloading of mrdivide for coef objects</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="mtimes">
-<span id="id6"></span><h2>mtimes<a class="headerlink" href="#mtimes" title="Permalink to this headline">¶</a></h2>
-<p>overloading of mtimes for coef objects</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="plus">
-<span id="id7"></span><h2>plus<a class="headerlink" href="#plus" title="Permalink to this headline">¶</a></h2>
-<p>overloading of plus for coef objects</p>
 </div>
 </div>
 
@@ -121,16 +73,9 @@ estimate.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">utility class for coef class for setting linear restrictions on</a><ul>
+<li><a class="reference internal" href="#">class for setting linear restrictions on model parameters</a><ul>
 <li><a class="reference internal" href="#methods">methods</a></li>
 <li><a class="reference internal" href="#properties">properties</a></li>
-<li><a class="reference internal" href="#block-exogenous">block_exogenous</a></li>
-<li><a class="reference internal" href="#coef">coef</a></li>
-<li><a class="reference internal" href="#linear-restrictions">linear_restrictions</a></li>
-<li><a class="reference internal" href="#minus">minus</a></li>
-<li><a class="reference internal" href="#mrdivide">mrdivide</a></li>
-<li><a class="reference internal" href="#mtimes">mtimes</a></li>
-<li><a class="reference internal" href="#plus">plus</a></li>
 </ul>
 </li>
 </ul>

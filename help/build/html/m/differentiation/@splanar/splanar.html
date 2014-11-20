@@ -46,548 +46,66 @@
   <div class="section" id="symbolic-planar-differentiation">
 <h1>symbolic &#8220;planar&#8221; differentiation<a class="headerlink" href="#symbolic-planar-differentiation" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li>[ <a class="reference internal" href="#abs">abs</a> ](splanar/abs)</li>
-<li>[ <a class="reference internal" href="#acos">acos</a> ](splanar/acos)</li>
-<li>[ <a class="reference internal" href="#acosh">acosh</a> ](splanar/acosh)</li>
-<li>[ <a class="reference internal" href="#and">and</a> ](splanar/and)</li>
-<li>[ <a class="reference internal" href="#asin">asin</a> ](splanar/asin)</li>
-<li>[ <a class="reference internal" href="#asinh">asinh</a> ](splanar/asinh)</li>
-<li>[ <a class="reference internal" href="#atan">atan</a> ](splanar/atan)</li>
-<li>[ <a class="reference internal" href="#atanh">atanh</a> ](splanar/atanh)</li>
-<li>[ <a class="reference internal" href="#char">char</a> ](splanar/char)</li>
-<li>[ <a class="reference internal" href="#cos">cos</a> ](splanar/cos)</li>
-<li>[ <a class="reference internal" href="#cosh">cosh</a> ](splanar/cosh)</li>
-<li>[ <a class="reference internal" href="#cot">cot</a> ](splanar/cot)</li>
-<li>[ <a class="reference internal" href="#derivatives2functions">derivatives2functions</a> ](splanar/derivatives2functions)</li>
-<li>[ <a class="reference internal" href="#diff">diff</a> ](splanar/diff)</li>
-<li>[ <a class="reference internal" href="#differentiate">differentiate</a> ](splanar/differentiate)</li>
-<li>[ <a class="reference internal" href="#eq">eq</a> ](splanar/eq)</li>
-<li>[ <a class="reference internal" href="#erf">erf</a> ](splanar/erf)</li>
-<li>[ <a class="reference internal" href="#exp">exp</a> ](splanar/exp)</li>
-<li>[ <a class="reference internal" href="#ge">ge</a> ](splanar/ge)</li>
-<li>[ <a class="reference internal" href="#get">get</a> ](splanar/get)</li>
-<li>[ <a class="reference internal" href="#gt">gt</a> ](splanar/gt)</li>
-<li>[ <a class="reference internal" href="#if-elseif">if_elseif</a> ](splanar/if_elseif)</li>
-<li>[ <a class="reference internal" href="#if-then-else">if_then_else</a> ](splanar/if_then_else)</li>
-<li>[ <a class="reference internal" href="#initialize">initialize</a> ](splanar/initialize)</li>
-<li>[ <a class="reference internal" href="#intercept-column">intercept_column</a> ](splanar/intercept_column)</li>
-<li>[ <a class="reference internal" href="#is-one">is_one</a> ](splanar/is_one)</li>
-<li>[ <a class="reference internal" href="#is-zero">is_zero</a> ](splanar/is_zero)</li>
-<li>[ <a class="reference internal" href="#isnumeric">isnumeric</a> ](splanar/isnumeric)</li>
-<li>[ <a class="reference internal" href="#kron">kron</a> ](splanar/kron)</li>
-<li>[ <a class="reference internal" href="#le">le</a> ](splanar/le)</li>
-<li>[ <a class="reference internal" href="#load-varlist">load_varlist</a> ](splanar/load_varlist)</li>
-<li>[ <a class="reference internal" href="#log">log</a> ](splanar/log)</li>
-<li>[ <a class="reference internal" href="#log10">log10</a> ](splanar/log10)</li>
-<li>[ <a class="reference internal" href="#lt">lt</a> ](splanar/lt)</li>
-<li>[ <a class="reference internal" href="#max">max</a> ](splanar/max)</li>
-<li>[ <a class="reference internal" href="#min">min</a> ](splanar/min)</li>
-<li>[ <a class="reference internal" href="#minus">minus</a> ](splanar/minus)</li>
-<li>[ <a class="reference internal" href="#mpower">mpower</a> ](splanar/mpower)</li>
-<li>[ <a class="reference internal" href="#mrdivide">mrdivide</a> ](splanar/mrdivide)</li>
-<li>[ <a class="reference internal" href="#mtimes">mtimes</a> ](splanar/mtimes)</li>
-<li>[ <a class="reference internal" href="#ne">ne</a> ](splanar/ne)</li>
-<li>[ <a class="reference internal" href="#normcdf">normcdf</a> ](splanar/normcdf)</li>
-<li>[ <a class="reference internal" href="#normpdf">normpdf</a> ](splanar/normpdf)</li>
-<li>[ <a class="reference internal" href="#or">or</a> ](splanar/or)</li>
-<li>[ <a class="reference internal" href="#plus">plus</a> ](splanar/plus)</li>
-<li>[ <a class="reference internal" href="#power">power</a> ](splanar/power)</li>
-<li>[ <a class="reference internal" href="#print">print</a> ](splanar/print)</li>
-<li>[ <a class="reference internal" href="#rdivide">rdivide</a> ](splanar/rdivide)</li>
-<li>[ <a class="reference internal" href="#set">set</a> ](splanar/set)</li>
-<li>[ <a class="reference internal" href="#sign">sign</a> ](splanar/sign)</li>
-<li>[ <a class="reference internal" href="#sin">sin</a> ](splanar/sin)</li>
-<li>[ <a class="reference internal" href="#sinh">sinh</a> ](splanar/sinh)</li>
-<li>[ <a class="reference internal" href="#splanar">splanar</a> ](splanar/splanar)</li>
-<li>[ <a class="reference internal" href="#sqrt">sqrt</a> ](splanar/sqrt)</li>
-<li>[ <a class="reference internal" href="#tan">tan</a> ](splanar/tan)</li>
-<li>[ <a class="reference internal" href="#tanh">tanh</a> ](splanar/tanh)</li>
-<li>[ <a class="reference internal" href="#times">times</a> ](splanar/times)</li>
-<li>[ <a class="reference internal" href="#uminus">uminus</a> ](splanar/uminus)</li>
-<li>[ <a class="reference internal" href="#uplus">uplus</a> ](splanar/uplus)</li>
+<li>[abs](splanar/abs)</li>
+<li>[acos](splanar/acos)</li>
+<li>[acosh](splanar/acosh)</li>
+<li>[and](splanar/and)</li>
+<li>[asin](splanar/asin)</li>
+<li>[asinh](splanar/asinh)</li>
+<li>[atan](splanar/atan)</li>
+<li>[atanh](splanar/atanh)</li>
+<li>[char](splanar/char)</li>
+<li>[cos](splanar/cos)</li>
+<li>[cosh](splanar/cosh)</li>
+<li>[cot](splanar/cot)</li>
+<li>[derivatives2functions](splanar/derivatives2functions)</li>
+<li>[diff](splanar/diff)</li>
+<li>[differentiate](splanar/differentiate)</li>
+<li>[eq](splanar/eq)</li>
+<li>[erf](splanar/erf)</li>
+<li>[exp](splanar/exp)</li>
+<li>[ge](splanar/ge)</li>
+<li>[get](splanar/get)</li>
+<li>[gt](splanar/gt)</li>
+<li>[if_elseif](splanar/if_elseif)</li>
+<li>[if_then_else](splanar/if_then_else)</li>
+<li>[initialize](splanar/initialize)</li>
+<li>[intercept_column](splanar/intercept_column)</li>
+<li>[is_one](splanar/is_one)</li>
+<li>[is_zero](splanar/is_zero)</li>
+<li>[isnumeric](splanar/isnumeric)</li>
+<li>[kron](splanar/kron)</li>
+<li>[le](splanar/le)</li>
+<li>[load_varlist](splanar/load_varlist)</li>
+<li>[log](splanar/log)</li>
+<li>[log10](splanar/log10)</li>
+<li>[lt](splanar/lt)</li>
+<li>[max](splanar/max)</li>
+<li>[min](splanar/min)</li>
+<li>[minus](splanar/minus)</li>
+<li>[mpower](splanar/mpower)</li>
+<li>[mrdivide](splanar/mrdivide)</li>
+<li>[mtimes](splanar/mtimes)</li>
+<li>[ne](splanar/ne)</li>
+<li>[normcdf](splanar/normcdf)</li>
+<li>[normpdf](splanar/normpdf)</li>
+<li>[or](splanar/or)</li>
+<li>[plus](splanar/plus)</li>
+<li>[power](splanar/power)</li>
+<li>[print](splanar/print)</li>
+<li>[rdivide](splanar/rdivide)</li>
+<li>[set](splanar/set)</li>
+<li>[sign](splanar/sign)</li>
+<li>[sin](splanar/sin)</li>
+<li>[sinh](splanar/sinh)</li>
+<li>[splanar](splanar/splanar)</li>
+<li>[sqrt](splanar/sqrt)</li>
+<li>[tan](splanar/tan)</li>
+<li>[tanh](splanar/tanh)</li>
+<li>[times](splanar/times)</li>
+<li>[uminus](splanar/uminus)</li>
+<li>[uplus](splanar/uplus)</li>
 </ul>
-<hr class="docutils" />
-<hr class="docutils" />
-<div class="section" id="abs">
-<span id="id1"></span><h2>abs<a class="headerlink" href="#abs" title="Permalink to this headline">¶</a></h2>
-<p><strong>abs</strong> - overloads abs for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="acos">
-<span id="id2"></span><h2>acos<a class="headerlink" href="#acos" title="Permalink to this headline">¶</a></h2>
-<p><strong>acos</strong> - overloads acos for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="acosh">
-<span id="id3"></span><h2>acosh<a class="headerlink" href="#acosh" title="Permalink to this headline">¶</a></h2>
-<p><strong>acosh</strong> - overloads acosh for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="and">
-<span id="id4"></span><h2>and<a class="headerlink" href="#and" title="Permalink to this headline">¶</a></h2>
-<p><strong>and</strong> - overloads and for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="asin">
-<span id="id5"></span><h2>asin<a class="headerlink" href="#asin" title="Permalink to this headline">¶</a></h2>
-<p><strong>asin</strong> - overloads asin for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="asinh">
-<span id="id6"></span><h2>asinh<a class="headerlink" href="#asinh" title="Permalink to this headline">¶</a></h2>
-<p><strong>asinh</strong> - overloads asinh for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="atan">
-<span id="id7"></span><h2>atan<a class="headerlink" href="#atan" title="Permalink to this headline">¶</a></h2>
-<p><strong>atan</strong> - overloads atan for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="atanh">
-<span id="id8"></span><h2>atanh<a class="headerlink" href="#atanh" title="Permalink to this headline">¶</a></h2>
-<p><strong>atanh</strong> - overloads atanh for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="char">
-<span id="id9"></span><h2>char<a class="headerlink" href="#char" title="Permalink to this headline">¶</a></h2>
-<p><strong>char</strong> - transforms splanar derivatives to strings</p>
-<div class="section" id="syntax">
-<h3>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">c</span><span class="o">=</span><span class="n">char</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">c</span><span class="o">=</span><span class="n">char</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="nb">long</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="inputs">
-<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><strong>x</strong> [splanar|cell array of splanar] : scalar or vector of splanar
-objects or cell array of splanar objects</li>
-<li><strong>long</strong> [true|{false}] : if true, all functions are written with their
-function names and not with their shorthand. e.g. a+b will be written
-plus(a,b)</li>
-</ul>
-</div>
-<div class="section" id="outputs">
-<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><strong>c</strong> [char|cellstr]: derivatives</li>
-</ul>
-</div>
-<div class="section" id="more-about">
-<h3>More About<a class="headerlink" href="#more-about" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="examples">
-<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="cos">
-<span id="id10"></span><h2>cos<a class="headerlink" href="#cos" title="Permalink to this headline">¶</a></h2>
-<p><strong>cos</strong> - overloads cos for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="cosh">
-<span id="id11"></span><h2>cosh<a class="headerlink" href="#cosh" title="Permalink to this headline">¶</a></h2>
-<p><strong>cosh</strong> - overloads cosh for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="cot">
-<span id="id12"></span><h2>cot<a class="headerlink" href="#cot" title="Permalink to this headline">¶</a></h2>
-<p><strong>cot</strong> - overloads cot for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="derivatives2functions">
-<span id="id13"></span><h2>derivatives2functions<a class="headerlink" href="#derivatives2functions" title="Permalink to this headline">¶</a></h2>
-<p><strong>derivatives2functions</strong> - turns splanar derivatives into
-functions</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="diff">
-<span id="id14"></span><h2>diff<a class="headerlink" href="#diff" title="Permalink to this headline">¶</a></h2>
-<p><strong>diff</strong> - overloads diff for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="differentiate">
-<span id="id15"></span><h2>differentiate<a class="headerlink" href="#differentiate" title="Permalink to this headline">¶</a></h2>
-<p><strong>differentiate</strong> - differentiates vectors of splanar objects</p>
-<div class="section" id="id16">
-<h3>Syntax<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">derivs</span><span class="o">=</span><span class="n">splanar</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="n">eqtns</span><span class="p">,</span><span class="n">nwrt</span><span class="p">)</span>
-<span class="n">derivs</span><span class="o">=</span><span class="n">splanar</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="n">eqtns</span><span class="p">,</span><span class="n">nwrt</span><span class="p">,</span><span class="n">order</span><span class="p">)</span>
-<span class="n">derivs</span><span class="o">=</span><span class="n">splanar</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="n">eqtns</span><span class="p">,</span><span class="n">nwrt</span><span class="p">,</span><span class="n">order</span><span class="p">,</span><span class="n">verbose</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id17">
-<h3>Inputs<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><strong>eqtns</strong> [splanar|cell array]: vector or cell array of splanar objects</li>
-<li><strong>nwrt</strong> [integer]: number of variables for which differentiation is
-taken</li>
-<li><strong>order</strong> [integer|{1}]: order of differentiation</li>
-<li><strong>verbose</strong> [true|{false}]: displays information about the process e.g.
-the amount of time it takes to differentiate each order</li>
-</ul>
-</div>
-<div class="section" id="id18">
-<h3>Outputs<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
-<ul>
-<li><p class="first"><strong>derivs</strong> [structure]: each element in the structure contains:
-- <strong>size</strong> [2-colum vector]: number of rows and number of columns of</p>
-<blockquote>
-<div><p>the compacted derivatives i.e. unique columns</p>
-</div></blockquote>
-<ul class="simple">
-<li><strong>derivatives</strong> [vector of splanar]: derivatives</li>
-<li><strong>nwrt</strong> [integer]: number of variables for which differentiation is
-taken</li>
-<li><strong>order</strong> [integer]: order of differentiation of the current
-structure</li>
-<li><strong>nnz_derivs</strong> [integer]: number of non-zero derivatives</li>
-<li><strong>partitions</strong> [vector]: vector that help reconstruct the
-expanded/grand derivative matrix.</li>
-<li><strong>map</strong> []: empty field that will be used in a later stage</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="id19">
-<h3>More About<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id20">
-<h3>Examples<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="eq">
-<span id="id21"></span><h2>eq<a class="headerlink" href="#eq" title="Permalink to this headline">¶</a></h2>
-<p><strong>eq</strong> - overloads eq for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="erf">
-<span id="id22"></span><h2>erf<a class="headerlink" href="#erf" title="Permalink to this headline">¶</a></h2>
-<p><strong>erf</strong> - overloads erf for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="exp">
-<span id="id23"></span><h2>exp<a class="headerlink" href="#exp" title="Permalink to this headline">¶</a></h2>
-<p><strong>exp</strong> - overloads exp for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="ge">
-<span id="id24"></span><h2>ge<a class="headerlink" href="#ge" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>overloads  for splanar</li>
-</ul>
-<hr class="docutils" />
-</div>
-<div class="section" id="get">
-<span id="id25"></span><h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id26">
-<h3>Syntax<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id27">
-<h3>Inputs<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id28">
-<h3>Outputs<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id29">
-<h3>More About<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id30">
-<h3>Examples<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="gt">
-<span id="id31"></span><h2>gt<a class="headerlink" href="#gt" title="Permalink to this headline">¶</a></h2>
-<p>ge - overloads ge for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="if-elseif">
-<span id="id32"></span><h2>if_elseif<a class="headerlink" href="#if-elseif" title="Permalink to this headline">¶</a></h2>
-<p><strong>if_elseif</strong> - overloads if_elseif for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="if-then-else">
-<span id="id33"></span><h2>if_then_else<a class="headerlink" href="#if-then-else" title="Permalink to this headline">¶</a></h2>
-<p><strong>if_then_else</strong> - overloads if_then_else for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="initialize">
-<span id="id34"></span><h2>initialize<a class="headerlink" href="#initialize" title="Permalink to this headline">¶</a></h2>
-<p><strong>initialize</strong> - initializes splanar objects for differentiation</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="intercept-column">
-<span id="id35"></span><h2>intercept_column<a class="headerlink" href="#intercept-column" title="Permalink to this headline">¶</a></h2>
-<p><strong>intercept_column</strong> - builds a scalar splanar object from a
-vectorized splanar object. The pointer argument points the
-element in the vector to be used.</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="is-one">
-<span id="id36"></span><h2>is_one<a class="headerlink" href="#is-one" title="Permalink to this headline">¶</a></h2>
-<p><strong>is_one</strong> - checks whether a splanar object is 1</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="is-zero">
-<span id="id37"></span><h2>is_zero<a class="headerlink" href="#is-zero" title="Permalink to this headline">¶</a></h2>
-<p><strong>is_zero</strong> - checks whether a splanar object is zero</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="isnumeric">
-<span id="id38"></span><h2>isnumeric<a class="headerlink" href="#isnumeric" title="Permalink to this headline">¶</a></h2>
-<p><strong>isnumeric</strong> - checks whether a splanar object is numeric</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="kron">
-<span id="id39"></span><h2>kron<a class="headerlink" href="#kron" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id40">
-<h3>Syntax<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id41">
-<h3>Inputs<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id42">
-<h3>Outputs<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id43">
-<h3>More About<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id44">
-<h3>Examples<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="le">
-<span id="id45"></span><h2>le<a class="headerlink" href="#le" title="Permalink to this headline">¶</a></h2>
-<p><strong>le</strong> - overloads le for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="load-varlist">
-<span id="id46"></span><h2>load_varlist<a class="headerlink" href="#load-varlist" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id47">
-<h3>Syntax<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id48">
-<h3>Inputs<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id49">
-<h3>Outputs<a class="headerlink" href="#id49" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id50">
-<h3>More About<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id51">
-<h3>Examples<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="log">
-<span id="id52"></span><h2>log<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h2>
-<p><strong>log</strong> - overloads log for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="log10">
-<span id="id53"></span><h2>log10<a class="headerlink" href="#log10" title="Permalink to this headline">¶</a></h2>
-<p><strong>log10</strong> - overloads log10 for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="lt">
-<span id="id54"></span><h2>lt<a class="headerlink" href="#lt" title="Permalink to this headline">¶</a></h2>
-<p><strong>lt</strong> - overloads lt for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="max">
-<span id="id55"></span><h2>max<a class="headerlink" href="#max" title="Permalink to this headline">¶</a></h2>
-<p><strong>max</strong> - overloads max for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="min">
-<span id="id56"></span><h2>min<a class="headerlink" href="#min" title="Permalink to this headline">¶</a></h2>
-<p><strong>min</strong> - overloads min for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="minus">
-<span id="id57"></span><h2>minus<a class="headerlink" href="#minus" title="Permalink to this headline">¶</a></h2>
-<p><strong>minus</strong> - overloads minus for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="mpower">
-<span id="id58"></span><h2>mpower<a class="headerlink" href="#mpower" title="Permalink to this headline">¶</a></h2>
-<p><strong>mpower</strong> - overloads mpower for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="mrdivide">
-<span id="id59"></span><h2>mrdivide<a class="headerlink" href="#mrdivide" title="Permalink to this headline">¶</a></h2>
-<p><strong>mrdivide</strong> - overloads mrdivide for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="mtimes">
-<span id="id60"></span><h2>mtimes<a class="headerlink" href="#mtimes" title="Permalink to this headline">¶</a></h2>
-<p><strong>mtimes</strong> - overloads mtimes for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="ne">
-<span id="id61"></span><h2>ne<a class="headerlink" href="#ne" title="Permalink to this headline">¶</a></h2>
-<p><strong>ne</strong> - overloads ne for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="normcdf">
-<span id="id62"></span><h2>normcdf<a class="headerlink" href="#normcdf" title="Permalink to this headline">¶</a></h2>
-<p><strong>normcdf</strong> - overloads normcdf for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="normpdf">
-<span id="id63"></span><h2>normpdf<a class="headerlink" href="#normpdf" title="Permalink to this headline">¶</a></h2>
-<p><strong>normpdf</strong> - overloads normpdf for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="or">
-<span id="id64"></span><h2>or<a class="headerlink" href="#or" title="Permalink to this headline">¶</a></h2>
-<p><strong>or</strong> - overloads or for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="plus">
-<span id="id65"></span><h2>plus<a class="headerlink" href="#plus" title="Permalink to this headline">¶</a></h2>
-<p><strong>plus</strong> - overloads plus for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="power">
-<span id="id66"></span><h2>power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h2>
-<p><strong>power</strong> - overloads power for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="print">
-<span id="id67"></span><h2>print<a class="headerlink" href="#print" title="Permalink to this headline">¶</a></h2>
-<p><strong>print</strong> - transforms the output of splanar.differentiate into char or functions</p>
-<div class="section" id="id68">
-<h3>Syntax<a class="headerlink" href="#id68" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><pre>c=splanar.print(deriv)
-c=splanar.print(deriv,args)
-c=splanar.print(deriv,args,asfunc)
-c=splanar.print(deriv,args,asfunc,long)
-c=splanar.print(deriv,args,asfunc,long,optimize)</pre>
-</div>
-</div>
-<div class="section" id="id69">
-<h3>Inputs<a class="headerlink" href="#id69" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><strong>deriv</strong> [output of differentiate]:</li>
-<li><strong>args</strong> [cellstr|{[]}]: argument list to functions. If empty, print
-does not create functions. When creating functions, the field
-&#8216;derivatives&#8217; is renamed to functions.</li>
-<li><strong>long</strong> [true|{false}|[]]: if true, functions with shorthands are
-written with their file names e.g. a+b is written as plus(a,b)</li>
-<li><strong>asfunc</strong> [{true}|false|[]]: if true, the derivatives are put into
-anonymous functions. Else they are just returned as char or cellstr.</li>
-<li><strong>optimize</strong> [true|{false}]: optimizes expression by removing e.g.
-redundant parentheses, etc. This does not work very well so far.</li>
-</ul>
-</div>
-<div class="section" id="id70">
-<h3>Outputs<a class="headerlink" href="#id70" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><strong>c</strong> [structure with same format as deriv]: except that the
-derivatives field is transformed and the map is populated</li>
-</ul>
-</div>
-<div class="section" id="id71">
-<h3>More About<a class="headerlink" href="#id71" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id72">
-<h3>Examples<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="rdivide">
-<span id="id73"></span><h2>rdivide<a class="headerlink" href="#rdivide" title="Permalink to this headline">¶</a></h2>
-<p><strong>rdivide</strong> - overloads rdivide for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="set">
-<span id="id74"></span><h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id75">
-<h3>Syntax<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id76">
-<h3>Inputs<a class="headerlink" href="#id76" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id77">
-<h3>Outputs<a class="headerlink" href="#id77" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id78">
-<h3>More About<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id79">
-<h3>Examples<a class="headerlink" href="#id79" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<hr class="docutils" />
-</div>
-</div>
-<div class="section" id="sign">
-<span id="id80"></span><h2>sign<a class="headerlink" href="#sign" title="Permalink to this headline">¶</a></h2>
-<p><strong>sign</strong> - overloads sign for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="sin">
-<span id="id81"></span><h2>sin<a class="headerlink" href="#sin" title="Permalink to this headline">¶</a></h2>
-<p><strong>sin</strong> - overloads sin for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="sinh">
-<span id="id82"></span><h2>sinh<a class="headerlink" href="#sinh" title="Permalink to this headline">¶</a></h2>
-<p><strong>sinh</strong> - overloads sinh for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="splanar">
-<span id="id83"></span><h2>splanar<a class="headerlink" href="#splanar" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="sqrt">
-<span id="id84"></span><h2>sqrt<a class="headerlink" href="#sqrt" title="Permalink to this headline">¶</a></h2>
-<p><strong>sqrt</strong> - overloads sqrt for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="tan">
-<span id="id85"></span><h2>tan<a class="headerlink" href="#tan" title="Permalink to this headline">¶</a></h2>
-<p><strong>tan</strong> - overloads tan for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="tanh">
-<span id="id86"></span><h2>tanh<a class="headerlink" href="#tanh" title="Permalink to this headline">¶</a></h2>
-<p><strong>tanh</strong> - overloads tanh for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="times">
-<span id="id87"></span><h2>times<a class="headerlink" href="#times" title="Permalink to this headline">¶</a></h2>
-<p><strong>times</strong> - overloads times for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="uminus">
-<span id="id88"></span><h2>uminus<a class="headerlink" href="#uminus" title="Permalink to this headline">¶</a></h2>
-<p><strong>uminus</strong> - overloads uminus for splanar</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="uplus">
-<span id="id89"></span><h2>uplus<a class="headerlink" href="#uplus" title="Permalink to this headline">¶</a></h2>
-<p><strong>uplus</strong> - overloads uplus for splanar</p>
-</div>
 </div>
 
 
@@ -596,121 +114,6 @@ derivatives field is transformed and the map is populated</li>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">symbolic &#8220;planar&#8221; differentiation</a><ul>
-<li><a class="reference internal" href="#abs">abs</a></li>
-<li><a class="reference internal" href="#acos">acos</a></li>
-<li><a class="reference internal" href="#acosh">acosh</a></li>
-<li><a class="reference internal" href="#and">and</a></li>
-<li><a class="reference internal" href="#asin">asin</a></li>
-<li><a class="reference internal" href="#asinh">asinh</a></li>
-<li><a class="reference internal" href="#atan">atan</a></li>
-<li><a class="reference internal" href="#atanh">atanh</a></li>
-<li><a class="reference internal" href="#char">char</a><ul>
-<li><a class="reference internal" href="#syntax">Syntax</a></li>
-<li><a class="reference internal" href="#inputs">Inputs</a></li>
-<li><a class="reference internal" href="#outputs">Outputs</a></li>
-<li><a class="reference internal" href="#more-about">More About</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#cos">cos</a></li>
-<li><a class="reference internal" href="#cosh">cosh</a></li>
-<li><a class="reference internal" href="#cot">cot</a></li>
-<li><a class="reference internal" href="#derivatives2functions">derivatives2functions</a></li>
-<li><a class="reference internal" href="#diff">diff</a></li>
-<li><a class="reference internal" href="#differentiate">differentiate</a><ul>
-<li><a class="reference internal" href="#id16">Syntax</a></li>
-<li><a class="reference internal" href="#id17">Inputs</a></li>
-<li><a class="reference internal" href="#id18">Outputs</a></li>
-<li><a class="reference internal" href="#id19">More About</a></li>
-<li><a class="reference internal" href="#id20">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#eq">eq</a></li>
-<li><a class="reference internal" href="#erf">erf</a></li>
-<li><a class="reference internal" href="#exp">exp</a></li>
-<li><a class="reference internal" href="#ge">ge</a></li>
-<li><a class="reference internal" href="#get">get</a><ul>
-<li><a class="reference internal" href="#id26">Syntax</a></li>
-<li><a class="reference internal" href="#id27">Inputs</a></li>
-<li><a class="reference internal" href="#id28">Outputs</a></li>
-<li><a class="reference internal" href="#id29">More About</a></li>
-<li><a class="reference internal" href="#id30">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#gt">gt</a></li>
-<li><a class="reference internal" href="#if-elseif">if_elseif</a></li>
-<li><a class="reference internal" href="#if-then-else">if_then_else</a></li>
-<li><a class="reference internal" href="#initialize">initialize</a></li>
-<li><a class="reference internal" href="#intercept-column">intercept_column</a></li>
-<li><a class="reference internal" href="#is-one">is_one</a></li>
-<li><a class="reference internal" href="#is-zero">is_zero</a></li>
-<li><a class="reference internal" href="#isnumeric">isnumeric</a></li>
-<li><a class="reference internal" href="#kron">kron</a><ul>
-<li><a class="reference internal" href="#id40">Syntax</a></li>
-<li><a class="reference internal" href="#id41">Inputs</a></li>
-<li><a class="reference internal" href="#id42">Outputs</a></li>
-<li><a class="reference internal" href="#id43">More About</a></li>
-<li><a class="reference internal" href="#id44">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#le">le</a></li>
-<li><a class="reference internal" href="#load-varlist">load_varlist</a><ul>
-<li><a class="reference internal" href="#id47">Syntax</a></li>
-<li><a class="reference internal" href="#id48">Inputs</a></li>
-<li><a class="reference internal" href="#id49">Outputs</a></li>
-<li><a class="reference internal" href="#id50">More About</a></li>
-<li><a class="reference internal" href="#id51">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#log">log</a></li>
-<li><a class="reference internal" href="#log10">log10</a></li>
-<li><a class="reference internal" href="#lt">lt</a></li>
-<li><a class="reference internal" href="#max">max</a></li>
-<li><a class="reference internal" href="#min">min</a></li>
-<li><a class="reference internal" href="#minus">minus</a></li>
-<li><a class="reference internal" href="#mpower">mpower</a></li>
-<li><a class="reference internal" href="#mrdivide">mrdivide</a></li>
-<li><a class="reference internal" href="#mtimes">mtimes</a></li>
-<li><a class="reference internal" href="#ne">ne</a></li>
-<li><a class="reference internal" href="#normcdf">normcdf</a></li>
-<li><a class="reference internal" href="#normpdf">normpdf</a></li>
-<li><a class="reference internal" href="#or">or</a></li>
-<li><a class="reference internal" href="#plus">plus</a></li>
-<li><a class="reference internal" href="#power">power</a></li>
-<li><a class="reference internal" href="#print">print</a><ul>
-<li><a class="reference internal" href="#id68">Syntax</a></li>
-<li><a class="reference internal" href="#id69">Inputs</a></li>
-<li><a class="reference internal" href="#id70">Outputs</a></li>
-<li><a class="reference internal" href="#id71">More About</a></li>
-<li><a class="reference internal" href="#id72">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#rdivide">rdivide</a></li>
-<li><a class="reference internal" href="#set">set</a><ul>
-<li><a class="reference internal" href="#id75">Syntax</a></li>
-<li><a class="reference internal" href="#id76">Inputs</a></li>
-<li><a class="reference internal" href="#id77">Outputs</a></li>
-<li><a class="reference internal" href="#id78">More About</a></li>
-<li><a class="reference internal" href="#id79">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#sign">sign</a></li>
-<li><a class="reference internal" href="#sin">sin</a></li>
-<li><a class="reference internal" href="#sinh">sinh</a></li>
-<li><a class="reference internal" href="#splanar">splanar</a></li>
-<li><a class="reference internal" href="#sqrt">sqrt</a></li>
-<li><a class="reference internal" href="#tan">tan</a></li>
-<li><a class="reference internal" href="#tanh">tanh</a></li>
-<li><a class="reference internal" href="#times">times</a></li>
-<li><a class="reference internal" href="#uminus">uminus</a></li>
-<li><a class="reference internal" href="#uplus">uplus</a></li>
-</ul>
-</li>
-</ul>
-
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/m/differentiation/@splanar/splanar.txt"

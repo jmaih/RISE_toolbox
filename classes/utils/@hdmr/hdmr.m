@@ -1,41 +1,41 @@
 classdef hdmr
     % hdmr High dimensional model representation
     %
-    % methods
-    % --------
+    % hdmr Methods:
+    % ----------------
     %
-    % - [estimate](hdmr/estimate)
-    % - [first_order_effect](hdmr/first_order_effect)
-    % - [hdmr](hdmr/hdmr)
-    % - [metamodel](hdmr/metamodel)
-    % - [plot_fit](hdmr/plot_fit)
-    % - [polynomial_evaluation](hdmr/polynomial_evaluation)
-    % - [polynomial_integration](hdmr/polynomial_integration)
-    % - [polynomial_multiplication](hdmr/polynomial_multiplication)
+    % estimate -
+    % first_order_effect -
+    % hdmr -   objective is either : f and theta or a function that will
+    % metamodel -
+    % plot_fit -
+    % polynomial_evaluation -   later on, the function that normalizes could come in here so that the
+    % polynomial_integration -   polynomial is of the form a0+a1*x+...+ar*x^r
+    % polynomial_multiplication -   each polynomial is of the form a0+a1*x+...+ar*x^r
     %
-    % properties
-    % -----------
+    % hdmr Properties:
+    % -------------------
     %
-    % - [N] -
-    % - [Nobs] -
-    % - [n] -
-    % - [output_nbr] -
-    % - [theta] -
-    % - [theta_low] -
-    % - [theta_high] -
-    % - [g] -
-    % - [x] -
-    % - [expansion_order] -
-    % - [pol_max_order] -
-    % - [poly_coefs] -
-    % - [Indices] -
-    % - [coefficients] -
-    % - [aggregate] -
-    % - [f0] -
-    % - [D] -
-    % - [sample_percentage] -
-    % - [optimal] -
-    % - [param_names] -
+    % N -
+    % Nobs -
+    % n -
+    % output_nbr -
+    % theta -
+    % theta_low -
+    % theta_high -
+    % g -
+    % x -
+    % expansion_order -
+    % pol_max_order -
+    % poly_coefs -
+    % Indices -
+    % coefficients -
+    % aggregate -
+    % f0 -
+    % D -
+    % sample_percentage -
+    % optimal -
+    % param_names -
     properties
         N
         Nobs
@@ -66,7 +66,10 @@ classdef hdmr
         function obj=hdmr(objective,param_names,bounds,expansion_order,pol_max_order,...
                 pol_optimal,sample_percentage)
             % objective is either : f and theta or a function that will
-            % help calculate f and theta 
+            % help calculate f and theta
+            if nargin<1
+                return
+            end
             if nargin<7
                 sample_percentage=[];
                 if nargin<6
@@ -79,9 +82,6 @@ classdef hdmr
                                 bounds=[];
                                 if nargin<2
                                     param_names=[];
-                                    if nargin<1
-                                        return
-                                    end
                                 end
                             end
                         end

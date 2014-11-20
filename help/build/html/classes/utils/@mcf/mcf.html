@@ -53,51 +53,51 @@
             
   <div class="section" id="monte-carlo-filtering">
 <h1>Monte Carlo Filtering<a class="headerlink" href="#monte-carlo-filtering" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="methods">
-<h2>methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mcf-methods">
+<h2>mcf Methods:<a class="headerlink" href="#mcf-methods" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[ <a class="reference internal" href="#addlistener">addlistener</a> ](mcf/addlistener)</li>
-<li>[ <a class="reference internal" href="#cdf">cdf</a> ](mcf/cdf)</li>
-<li>[ <a class="reference internal" href="#cdf-plot">cdf_plot</a> ](mcf/cdf_plot)</li>
-<li>[ <a class="reference internal" href="#correlation-patterns-plot">correlation_patterns_plot</a> ](mcf/correlation_patterns_plot)</li>
-<li>[ <a class="reference internal" href="#delete">delete</a> ](mcf/delete)</li>
-<li>[ <a class="reference internal" href="#eq">eq</a> ](mcf/eq)</li>
-<li>[ <a class="reference internal" href="#findobj">findobj</a> ](mcf/findobj)</li>
-<li>[ <a class="reference internal" href="#findprop">findprop</a> ](mcf/findprop)</li>
-<li>[ <a class="reference internal" href="#ge">ge</a> ](mcf/ge)</li>
-<li>[ <a class="reference internal" href="#gt">gt</a> ](mcf/gt)</li>
-<li>[ <a class="reference internal" href="#isvalid">isvalid</a> ](mcf/isvalid)</li>
-<li>[ <a class="reference internal" href="#kolmogorov-smirnov-test">kolmogorov_smirnov_test</a> ](mcf/kolmogorov_smirnov_test)</li>
-<li>[ <a class="reference internal" href="#le">le</a> ](mcf/le)</li>
-<li>[ <a class="reference internal" href="#lt">lt</a> ](mcf/lt)</li>
-<li>[ <a class="reference internal" href="#mcf">mcf</a> ](mcf/mcf)</li>
-<li>[ <a class="reference internal" href="#ne">ne</a> ](mcf/ne)</li>
-<li>[ <a class="reference internal" href="#notify">notify</a> ](mcf/notify)</li>
-<li>[ <a class="reference internal" href="#scatter">scatter</a> ](mcf/scatter)</li>
+<li>[ <a class="reference internal" href="#addlistener">addlistener</a> ] Add listener for event.</li>
+<li>[ <a class="reference internal" href="#cdf">cdf</a> ]</li>
+<li>[ <a class="reference internal" href="#cdf-plot">cdf_plot</a> ]</li>
+<li>[ <a class="reference internal" href="#correlation-patterns-plot">correlation_patterns_plot</a> ]</li>
+<li>[ <a class="reference internal" href="#delete">delete</a> ] Delete a handle object.</li>
+<li>[ <a class="reference internal" href="#eq">eq</a> ]  == (EQ)   Test handle equality.</li>
+<li>[ <a class="reference internal" href="#findobj">findobj</a> ] Find objects matching specified conditions.</li>
+<li>[ <a class="reference internal" href="#findprop">findprop</a> ] Find property of MATLAB handle object.</li>
+<li>[ <a class="reference internal" href="#ge">ge</a> ]  &gt;= (GE)   Greater than or equal relation for handles.</li>
+<li>[ <a class="reference internal" href="#gt">gt</a> ]  &gt; (GT)   Greater than relation for handles.</li>
+<li>[ <a class="reference internal" href="#isvalid">isvalid</a> ] Test handle validity.</li>
+<li>[ <a class="reference internal" href="#kolmogorov-smirnov-test">kolmogorov_smirnov_test</a> ]   tests the equality of two distributions using their CDFs</li>
+<li>[ <a class="reference internal" href="#le">le</a> ]  &lt;= (LE)   Less than or equal relation for handles.</li>
+<li>[ <a class="reference internal" href="#lt">lt</a> ]  &lt; (LT)   Less than relation for handles.</li>
+<li>[ <a class="reference internal" href="#mcf">mcf</a> ]   Example:</li>
+<li>[ <a class="reference internal" href="#ne">ne</a> ]  ~= (NE)   Not equal relation for handles.</li>
+<li>[ <a class="reference internal" href="#notify">notify</a> ] Notify listeners of event.</li>
+<li>[ <a class="reference internal" href="#scatter">scatter</a> ]</li>
 </ul>
 </div>
-<div class="section" id="properties">
-<h2>properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mcf-properties">
+<h2>mcf Properties:<a class="headerlink" href="#mcf-properties" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[lb] -</li>
-<li>[ub] -</li>
-<li>[nsim] -</li>
-<li>[procedure] -</li>
-<li>[parameter_names] -</li>
-<li>[samples] -</li>
-<li>[is_behaved] -</li>
-<li>[nparam] -</li>
-<li>[is_sampled] -</li>
-<li>[check_behavior] -</li>
-<li>[number_of_outputs] -</li>
-<li>[user_outputs] -</li>
-<li>[known_procedures] -</li>
+<li>[ <a class="reference internal" href="#lb">lb</a> ]   lower bounds for the parameters</li>
+<li>[ <a class="reference internal" href="#ub">ub</a> ]   upper bounds for the parameters</li>
+<li>[ <a class="reference internal" href="#nsim">nsim</a> ]   number of simulations</li>
+<li>[ <a class="reference internal" href="#procedure">procedure</a> ]   sampling procedure [{&#8216;uniform&#8217;}|&#8217;latin_hypercube&#8217;|&#8217;sobol&#8217;|&#8217;halton&#8217;<a href="#id1"><span class="problematic" id="id2">|</span></a>user-defined]</li>
+<li>[ <a class="reference internal" href="#parameter-names">parameter_names</a> ]   names of the parameters</li>
+<li>[ <a class="reference internal" href="#samples">samples</a> ]</li>
+<li>[ <a class="reference internal" href="#is-behaved">is_behaved</a> ]</li>
+<li>[ <a class="reference internal" href="#nparam">nparam</a> ]</li>
+<li>[ <a class="reference internal" href="#is-sampled">is_sampled</a> ]</li>
+<li>[ <a class="reference internal" href="#check-behavior">check_behavior</a> ]</li>
+<li>[ <a class="reference internal" href="#number-of-outputs">number_of_outputs</a> ]</li>
+<li>[ <a class="reference internal" href="#user-outputs">user_outputs</a> ]</li>
+<li>[ <a class="reference internal" href="#known-procedures">known_procedures</a> ]</li>
 </ul>
 <hr class="docutils" />
 <hr class="docutils" />
 </div>
 <div class="section" id="addlistener">
-<span id="id1"></span><h2>addlistener<a class="headerlink" href="#addlistener" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2>addlistener<a class="headerlink" href="#addlistener" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt><strong>ADDLISTENER</strong>   Add listener for event.</dt>
@@ -133,25 +133,31 @@ DYNAMICPROPS</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="cdf">
-<span id="id2"></span><h2>cdf<a class="headerlink" href="#cdf" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2>cdf<a class="headerlink" href="#cdf" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 <hr class="docutils" />
 </div>
 <div class="section" id="cdf-plot">
-<span id="id3"></span><h2>cdf_plot<a class="headerlink" href="#cdf-plot" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2>cdf_plot<a class="headerlink" href="#cdf-plot" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="check-behavior">
+<span id="id6"></span><h2>check_behavior<a class="headerlink" href="#check-behavior" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 <hr class="docutils" />
 </div>
 <div class="section" id="correlation-patterns-plot">
-<span id="id4"></span><h2>correlation_patterns_plot<a class="headerlink" href="#correlation-patterns-plot" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2>correlation_patterns_plot<a class="headerlink" href="#correlation-patterns-plot" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 <hr class="docutils" />
 </div>
 <div class="section" id="delete">
-<span id="id5"></span><h2>delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h2>
+<span id="id8"></span><h2>delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt><strong>DELETE</strong>   Delete a handle object.</dt>
@@ -173,7 +179,7 @@ from the workspace.  A deleted handle is no longer valid.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="eq">
-<span id="id6"></span><h2>eq<a class="headerlink" href="#eq" title="Permalink to this headline">¶</a></h2>
+<span id="id9"></span><h2>eq<a class="headerlink" href="#eq" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>== (EQ)   Test handle equality.</dt>
 <dd><p class="first">Handles are equal if they are handles for the same object.</p>
@@ -192,7 +198,7 @@ dimensions.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="findobj">
-<span id="id7"></span><h2>findobj<a class="headerlink" href="#findobj" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2>findobj<a class="headerlink" href="#findobj" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt><strong>FINDOBJ</strong>   Find objects matching specified conditions.</dt>
@@ -218,7 +224,7 @@ evaluating the conditions.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="findprop">
-<span id="id8"></span><h2>findprop<a class="headerlink" href="#findprop" title="Permalink to this headline">¶</a></h2>
+<span id="id11"></span><h2>findprop<a class="headerlink" href="#findprop" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt><strong>FINDPROP</strong>   Find property of MATLAB handle object.</dt>
@@ -243,7 +249,7 @@ META.PROPERTY array is returned.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="ge">
-<span id="id9"></span><h2>ge<a class="headerlink" href="#ge" title="Permalink to this headline">¶</a></h2>
+<span id="id12"></span><h2>ge<a class="headerlink" href="#ge" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>&gt;= (GE)   Greater than or equal relation for handles.</dt>
 <dd><p class="first">H1 &gt;= H2 performs element-wise comparisons between handle arrays H1 and
@@ -261,7 +267,7 @@ dimensions.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="gt">
-<span id="id10"></span><h2>gt<a class="headerlink" href="#gt" title="Permalink to this headline">¶</a></h2>
+<span id="id13"></span><h2>gt<a class="headerlink" href="#gt" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>&gt; (GT)   Greater than relation for handles.</dt>
 <dd><p class="first">H1 &gt; H2 performs element-wise comparisons between handle arrays H1 and
@@ -278,8 +284,20 @@ dimensions.</p>
 <p>Help for mcf/gt is inherited from superclass HANDLE</p>
 <hr class="docutils" />
 </div>
+<div class="section" id="is-behaved">
+<span id="id14"></span><h2>is_behaved<a class="headerlink" href="#is-behaved" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="is-sampled">
+<span id="id15"></span><h2>is_sampled<a class="headerlink" href="#is-sampled" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
 <div class="section" id="isvalid">
-<span id="id11"></span><h2>isvalid<a class="headerlink" href="#isvalid" title="Permalink to this headline">¶</a></h2>
+<span id="id16"></span><h2>isvalid<a class="headerlink" href="#isvalid" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt><strong>ISVALID</strong>   Test handle validity.</dt>
@@ -303,13 +321,24 @@ of a handle array and has not yet been initialized.</p>
 </dl>
 <hr class="docutils" />
 </div>
+<div class="section" id="known-procedures">
+<span id="id17"></span><h2>known_procedures<a class="headerlink" href="#known-procedures" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
 <div class="section" id="kolmogorov-smirnov-test">
-<span id="id12"></span><h2>kolmogorov_smirnov_test<a class="headerlink" href="#kolmogorov-smirnov-test" title="Permalink to this headline">¶</a></h2>
+<span id="id18"></span><h2>kolmogorov_smirnov_test<a class="headerlink" href="#kolmogorov-smirnov-test" title="Permalink to this headline">¶</a></h2>
 <p>tests the equality of two distributions using their CDFs</p>
 <hr class="docutils" />
 </div>
+<div class="section" id="lb">
+<span id="id19"></span><h2>lb<a class="headerlink" href="#lb" title="Permalink to this headline">¶</a></h2>
+<p>lower bounds for the parameters</p>
+<hr class="docutils" />
+</div>
 <div class="section" id="le">
-<span id="id13"></span><h2>le<a class="headerlink" href="#le" title="Permalink to this headline">¶</a></h2>
+<span id="id20"></span><h2>le<a class="headerlink" href="#le" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>&lt;= (LE)   Less than or equal relation for handles.</dt>
 <dd><p class="first">Handles are equal if they are handles for the same object.  All
@@ -334,7 +363,7 @@ dimensions.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="lt">
-<span id="id14"></span><h2>lt<a class="headerlink" href="#lt" title="Permalink to this headline">¶</a></h2>
+<span id="id21"></span><h2>lt<a class="headerlink" href="#lt" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>&lt; (LT)   Less than relation for handles.</dt>
 <dd><p class="first">H1 &lt; H2 performs element-wise comparisons between handle arrays H1 and
@@ -352,13 +381,13 @@ dimensions.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="mcf">
-<span id="id15"></span><h2>mcf<a class="headerlink" href="#mcf" title="Permalink to this headline">¶</a></h2>
+<span id="id22"></span><h2>mcf<a class="headerlink" href="#mcf" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 <hr class="docutils" />
 </div>
 <div class="section" id="ne">
-<span id="id16"></span><h2>ne<a class="headerlink" href="#ne" title="Permalink to this headline">¶</a></h2>
+<span id="id23"></span><h2>ne<a class="headerlink" href="#ne" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>~= (NE)   Not equal relation for handles.</dt>
 <dd><p class="first">Handles are equal if they are handles for the same object and are
@@ -378,7 +407,7 @@ dimensions.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="notify">
-<span id="id17"></span><h2>notify<a class="headerlink" href="#notify" title="Permalink to this headline">¶</a></h2>
+<span id="id24"></span><h2>notify<a class="headerlink" href="#notify" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt><strong>NOTIFY</strong>   Notify listeners of event.</dt>
@@ -403,8 +432,52 @@ DATA must belong to the EVENT.EVENTDATA class.</p>
 </dl>
 <hr class="docutils" />
 </div>
+<div class="section" id="nparam">
+<span id="id25"></span><h2>nparam<a class="headerlink" href="#nparam" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="nsim">
+<span id="id26"></span><h2>nsim<a class="headerlink" href="#nsim" title="Permalink to this headline">¶</a></h2>
+<p>number of simulations</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="number-of-outputs">
+<span id="id27"></span><h2>number_of_outputs<a class="headerlink" href="#number-of-outputs" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="parameter-names">
+<span id="id28"></span><h2>parameter_names<a class="headerlink" href="#parameter-names" title="Permalink to this headline">¶</a></h2>
+<p>names of the parameters</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="procedure">
+<span id="id29"></span><h2>procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<p>sampling procedure [{&#8216;uniform&#8217;}|&#8217;latin_hypercube&#8217;|&#8217;sobol&#8217;|&#8217;halton&#8217;<a href="#id30"><span class="problematic" id="id31">|</span></a>user-defined]</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="samples">
+<span id="id32"></span><h2>samples<a class="headerlink" href="#samples" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
 <div class="section" id="scatter">
-<span id="id18"></span><h2>scatter<a class="headerlink" href="#scatter" title="Permalink to this headline">¶</a></h2>
+<span id="id33"></span><h2>scatter<a class="headerlink" href="#scatter" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="ub">
+<span id="id34"></span><h2>ub<a class="headerlink" href="#ub" title="Permalink to this headline">¶</a></h2>
+<p>upper bounds for the parameters</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="user-outputs">
+<span id="id35"></span><h2>user_outputs<a class="headerlink" href="#user-outputs" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 </div>
@@ -419,11 +492,12 @@ DATA must belong to the EVENT.EVENTDATA class.</p>
   <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Monte Carlo Filtering</a><ul>
-<li><a class="reference internal" href="#methods">methods</a></li>
-<li><a class="reference internal" href="#properties">properties</a></li>
+<li><a class="reference internal" href="#mcf-methods">mcf Methods:</a></li>
+<li><a class="reference internal" href="#mcf-properties">mcf Properties:</a></li>
 <li><a class="reference internal" href="#addlistener">addlistener</a></li>
 <li><a class="reference internal" href="#cdf">cdf</a></li>
 <li><a class="reference internal" href="#cdf-plot">cdf_plot</a></li>
+<li><a class="reference internal" href="#check-behavior">check_behavior</a></li>
 <li><a class="reference internal" href="#correlation-patterns-plot">correlation_patterns_plot</a></li>
 <li><a class="reference internal" href="#delete">delete</a></li>
 <li><a class="reference internal" href="#eq">eq</a></li>
@@ -431,14 +505,26 @@ DATA must belong to the EVENT.EVENTDATA class.</p>
 <li><a class="reference internal" href="#findprop">findprop</a></li>
 <li><a class="reference internal" href="#ge">ge</a></li>
 <li><a class="reference internal" href="#gt">gt</a></li>
+<li><a class="reference internal" href="#is-behaved">is_behaved</a></li>
+<li><a class="reference internal" href="#is-sampled">is_sampled</a></li>
 <li><a class="reference internal" href="#isvalid">isvalid</a></li>
+<li><a class="reference internal" href="#known-procedures">known_procedures</a></li>
 <li><a class="reference internal" href="#kolmogorov-smirnov-test">kolmogorov_smirnov_test</a></li>
+<li><a class="reference internal" href="#lb">lb</a></li>
 <li><a class="reference internal" href="#le">le</a></li>
 <li><a class="reference internal" href="#lt">lt</a></li>
 <li><a class="reference internal" href="#mcf">mcf</a></li>
 <li><a class="reference internal" href="#ne">ne</a></li>
 <li><a class="reference internal" href="#notify">notify</a></li>
+<li><a class="reference internal" href="#nparam">nparam</a></li>
+<li><a class="reference internal" href="#nsim">nsim</a></li>
+<li><a class="reference internal" href="#number-of-outputs">number_of_outputs</a></li>
+<li><a class="reference internal" href="#parameter-names">parameter_names</a></li>
+<li><a class="reference internal" href="#procedure">procedure</a></li>
+<li><a class="reference internal" href="#samples">samples</a></li>
 <li><a class="reference internal" href="#scatter">scatter</a></li>
+<li><a class="reference internal" href="#ub">ub</a></li>
+<li><a class="reference internal" href="#user-outputs">user_outputs</a></li>
 </ul>
 </li>
 </ul>

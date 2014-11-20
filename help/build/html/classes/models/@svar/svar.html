@@ -53,55 +53,56 @@
             
   <div class="section" id="structural-var-modeling">
 <h1>Structural VAR modeling<a class="headerlink" href="#structural-var-modeling" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="methods">
-<h2>methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="svar-methods">
+<h2>svar Methods:<a class="headerlink" href="#svar-methods" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[ <a class="reference internal" href="#check-optimum">check_optimum</a> ](svar/check_optimum)</li>
-<li>[ <a class="reference internal" href="#draw-parameter">draw_parameter</a> ](svar/draw_parameter)</li>
-<li>[ <a class="reference internal" href="#estimate">estimate</a> ](svar/estimate)</li>
-<li>[ <a class="reference internal" href="#forecast">forecast</a> ](svar/forecast)</li>
-<li>[ <a class="reference internal" href="#get">get</a> ](svar/get)</li>
-<li>[ <a class="reference internal" href="#historical-decomposition">historical_decomposition</a> ](svar/historical_decomposition)</li>
-<li>[ <a class="reference internal" href="#irf">irf</a> ](svar/irf)</li>
-<li>[ <a class="reference internal" href="#isnan">isnan</a> ](svar/isnan)</li>
-<li>[ <a class="reference internal" href="#load-parameters">load_parameters</a> ](svar/load_parameters)</li>
-<li>[ <a class="reference internal" href="#log-marginal-data-density">log_marginal_data_density</a> ](svar/log_marginal_data_density)</li>
-<li>[ <a class="reference internal" href="#log-posterior-kernel">log_posterior_kernel</a> ](svar/log_posterior_kernel)</li>
-<li>[ <a class="reference internal" href="#log-prior-density">log_prior_density</a> ](svar/log_prior_density)</li>
-<li>[ <a class="reference internal" href="#msvar-priors">msvar_priors</a> ](svar/msvar_priors)</li>
-<li>[ <a class="reference internal" href="#posterior-marginal-and-prior-densities">posterior_marginal_and_prior_densities</a> ](svar/posterior_marginal_and_prior_densities)</li>
-<li>[ <a class="reference internal" href="#posterior-simulator">posterior_simulator</a> ](svar/posterior_simulator)</li>
-<li>[ <a class="reference internal" href="#print-estimation-results">print_estimation_results</a> ](svar/print_estimation_results)</li>
-<li>[ <a class="reference internal" href="#prior-plots">prior_plots</a> ](svar/prior_plots)</li>
-<li>[ <a class="reference internal" href="#report">report</a> ](svar/report)</li>
-<li>[ <a class="reference internal" href="#set">set</a> ](svar/set)</li>
-<li>[ <a class="reference internal" href="#set-solution-to-companion">set_solution_to_companion</a> ](svar/set_solution_to_companion)</li>
-<li>[ <a class="reference internal" href="#simulate">simulate</a> ](svar/simulate)</li>
-<li>[ <a class="reference internal" href="#simulation-diagnostics">simulation_diagnostics</a> ](svar/simulation_diagnostics)</li>
-<li>[ <a class="reference internal" href="#solve">solve</a> ](svar/solve)</li>
-<li>[ <a class="reference internal" href="#stoch-simul">stoch_simul</a> ](svar/stoch_simul)</li>
-<li>[ <a class="reference internal" href="#svar">svar</a> ](svar/svar)</li>
-<li>[ <a class="reference internal" href="#template">template</a> ](svar/template)</li>
-<li>[ <a class="reference internal" href="#theoretical-autocorrelations">theoretical_autocorrelations</a> ](svar/theoretical_autocorrelations)</li>
-<li>[ <a class="reference internal" href="#theoretical-autocovariances">theoretical_autocovariances</a> ](svar/theoretical_autocovariances)</li>
-<li>[ <a class="reference internal" href="#variance-decomposition">variance_decomposition</a> ](svar/variance_decomposition)</li>
+<li>[ <a class="reference internal" href="#check-optimum">check_optimum</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#draw-parameter">draw_parameter</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#estimate">estimate</a> ]  estimates the parameters of a RISE model</li>
+<li>[ <a class="reference internal" href="#forecast">forecast</a> ]  computes forecasts for rise|dsge|svar|rfvar models</li>
+<li>[ <a class="reference internal" href="#get">get</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#historical-decomposition">historical_decomposition</a> ] Computes historical decompositions of a DSGE model</li>
+<li>[ <a class="reference internal" href="#irf">irf</a> ]  computes impulse responses for a RISE model</li>
+<li>[ <a class="reference internal" href="#isnan">isnan</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#load-parameters">load_parameters</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log-marginal-data-density">log_marginal_data_density</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log-posterior-kernel">log_posterior_kernel</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log-prior-density">log_prior_density</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#msvar-priors">msvar_priors</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#posterior-marginal-and-prior-densities">posterior_marginal_and_prior_densities</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#posterior-simulator">posterior_simulator</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#print-estimation-results">print_estimation_results</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#prior-plots">prior_plots</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#refresh">refresh</a> ]  refresh the options of an old object with a newer version of</li>
+<li>[ <a class="reference internal" href="#report">report</a> ] assigns the elements of interest to a rise_report.report object</li>
+<li>[ <a class="reference internal" href="#set">set</a> ]  sets options for RISE models</li>
+<li>[ <a class="reference internal" href="#set-solution-to-companion">set_solution_to_companion</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#simulate">simulate</a> ]  simulates a RISE model</li>
+<li>[ <a class="reference internal" href="#simulation-diagnostics">simulation_diagnostics</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#solve">solve</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#stoch-simul">stoch_simul</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#svar">svar</a> ] Structural VAR modeling</li>
+<li>[ <a class="reference internal" href="#template">template</a> ]</li>
+<li>[ <a class="reference internal" href="#theoretical-autocorrelations">theoretical_autocorrelations</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#theoretical-autocovariances">theoretical_autocovariances</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#variance-decomposition">variance_decomposition</a> ]   H1 line</li>
 </ul>
 </div>
-<div class="section" id="properties">
-<h2>properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="svar-properties">
+<h2>svar Properties:<a class="headerlink" href="#svar-properties" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[constant] -</li>
-<li>[nlags] -</li>
-<li>[legend] -</li>
-<li>[endogenous] -</li>
-<li>[exogenous] -</li>
-<li>[parameters] -</li>
-<li>[observables] -</li>
-<li>[markov_chains] -</li>
-<li>[options] -</li>
-<li>[estimation] -</li>
-<li>[solution] -</li>
-<li>[filtering] -</li>
+<li>[ <a class="reference internal" href="#constant">constant</a> ]   true if VAR has a constant</li>
+<li>[ <a class="reference internal" href="#nlags">nlags</a> ]   number of lags in the VAR</li>
+<li>[ <a class="reference internal" href="#legend">legend</a> ]   attribute for giving a tag to a specific version of a model</li>
+<li>[ <a class="reference internal" href="#endogenous">endogenous</a> ]   information on endogenous variables (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#exogenous">exogenous</a> ]   information on exogenous variables (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#parameters">parameters</a> ]   information on parameters (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#observables">observables</a> ]   information on observable variables (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#markov-chains">markov_chains</a> ]   information on markov chains, regimes and related items</li>
+<li>[ <a class="reference internal" href="#options">options</a> ]   structure holding information on modifiable settings</li>
+<li>[ <a class="reference internal" href="#estimation">estimation</a> ]   information on estimation: posterior maximization and simulation</li>
+<li>[ <a class="reference internal" href="#solution">solution</a> ]   model solution including steady state, definitions, etc.</li>
+<li>[ <a class="reference internal" href="#filtering">filtering</a> ]   structure holding predicted, updated and smoothed series</li>
 </ul>
 <hr class="docutils" />
 <hr class="docutils" />
@@ -128,40 +129,51 @@
 <hr class="docutils" />
 </div>
 </div>
-<div class="section" id="draw-parameter">
-<span id="id2"></span><h2>draw_parameter<a class="headerlink" href="#draw-parameter" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id3">
-<h3>Syntax<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="constant">
+<span id="id2"></span><h2>constant<a class="headerlink" href="#constant" title="Permalink to this headline">¶</a></h2>
+<p>true if VAR has a constant</p>
+<hr class="docutils" />
 </div>
+<div class="section" id="draw-parameter">
+<span id="id3"></span><h2>draw_parameter<a class="headerlink" href="#draw-parameter" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
 <div class="section" id="id4">
-<h3>Inputs<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h3>Syntax<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id5">
-<h3>Outputs<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id6">
-<h3>More About<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id7">
-<h3>Examples<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<h3>More About<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id8">
+<h3>Examples<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/draw_parameter is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
+<div class="section" id="endogenous">
+<span id="id9"></span><h2>endogenous<a class="headerlink" href="#endogenous" title="Permalink to this headline">¶</a></h2>
+<p>information on endogenous variables (names, number, types, etc.)</p>
+<p>Help for svar/endogenous is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
 <div class="section" id="estimate">
-<span id="id8"></span><h2>estimate<a class="headerlink" href="#estimate" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2>estimate<a class="headerlink" href="#estimate" title="Permalink to this headline">¶</a></h2>
 <p><strong>estimate</strong> - estimates the parameters of a RISE model</p>
-<div class="section" id="id9">
-<h3>Syntax<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Syntax<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">obj</span><span class="o">=</span><span class="n">estimate</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">=</span><span class="n">estimate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id10">
-<h3>Inputs<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Inputs<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first"><strong>obj</strong> [rise|dsge|rfvar|svar]: model object</p>
 </li>
@@ -291,39 +303,57 @@ mcmc simulation.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id11">
-<h3>Outputs<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Outputs<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>obj</strong> [rise|dsge|rfvar|svar]: model object parameterized with the
 mode found and holding additional estimation results and statistics
 that can be found under obj.estimation</li>
 </ul>
 </div>
-<div class="section" id="id12">
-<h3>More About<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>More About<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>recursive estimation may be done easily by passing a different
 estim_end_date at the beginning of each estimation run.</li>
 </ul>
 </div>
-<div class="section" id="id13">
-<h3>Examples<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id15">
+<h3>Examples<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/estimate is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
+<div class="section" id="estimation">
+<span id="id16"></span><h2>estimation<a class="headerlink" href="#estimation" title="Permalink to this headline">¶</a></h2>
+<p>information on estimation: posterior maximization and simulation</p>
+<p>Help for svar/estimation is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="exogenous">
+<span id="id17"></span><h2>exogenous<a class="headerlink" href="#exogenous" title="Permalink to this headline">¶</a></h2>
+<p>information on exogenous variables (names, number, types, etc.)</p>
+<p>Help for svar/exogenous is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="filtering">
+<span id="id18"></span><h2>filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<p>structure holding predicted, updated and smoothed series</p>
+<p>Help for svar/filtering is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
 <div class="section" id="forecast">
-<span id="id14"></span><h2>forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h2>
+<span id="id19"></span><h2>forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h2>
 <p><strong>forecast</strong> - computes forecasts for rise|dsge|svar|rfvar models</p>
-<div class="section" id="id15">
-<h3>Syntax<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id20">
+<h3>Syntax<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">cond_fkst_db</span><span class="o">=</span><span class="n">forecast</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id16">
-<h3>Inputs<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id21">
+<h3>Inputs<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first"><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</p>
 </li>
@@ -373,8 +403,8 @@ always receive information on the same number of shocks.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id17">
-<h3>Outputs<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id22">
+<h3>Outputs<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>cond_fkst_db</strong> [struct|matrix]: depending on the value of
 <strong>forecast_to_time_series</strong> the returned output is a structure with
@@ -382,8 +412,8 @@ time series or a cell containing a matrix and the information to
 reconstruct the time series.</li>
 </ul>
 </div>
-<div class="section" id="id18">
-<h3>More About<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id23">
+<h3>More About<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>the historical information as well as the conditioning information come
 from the same database. The time series must be organized such that for
@@ -401,47 +431,47 @@ following the information therein. <strong>regime</strong> must be a member of 1
 where h is the maximum number of regimes.</li>
 </ul>
 </div>
-<div class="section" id="id19">
-<h3>Examples<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id24">
+<h3>Examples<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
 <p>See also: simulate</p>
 <p>Help for svar/forecast is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="get">
-<span id="id20"></span><h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<span id="id25"></span><h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id21">
-<h3>Syntax<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id26">
+<h3>Syntax<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id22">
-<h3>Inputs<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id27">
+<h3>Inputs<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id23">
-<h3>Outputs<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id28">
+<h3>Outputs<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id24">
-<h3>More About<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id29">
+<h3>More About<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id25">
-<h3>Examples<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id30">
+<h3>Examples<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/get is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="historical-decomposition">
-<span id="id26"></span><h2>historical_decomposition<a class="headerlink" href="#historical-decomposition" title="Permalink to this headline">¶</a></h2>
+<span id="id31"></span><h2>historical_decomposition<a class="headerlink" href="#historical-decomposition" title="Permalink to this headline">¶</a></h2>
 <p><strong>historical_decomposition</strong> Computes historical decompositions of a DSGE model</p>
-<div class="section" id="id27">
-<h3>Syntax<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id32">
+<h3>Syntax<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">Histdec</span><span class="p">,</span><span class="n">obj</span><span class="p">]</span><span class="o">=</span><span class="n">history_dec</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 <span class="p">[</span><span class="n">Histdec</span><span class="p">,</span><span class="n">obj</span><span class="p">]</span><span class="o">=</span><span class="n">history_dec</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id28">
-<h3>Inputs<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id33">
+<h3>Inputs<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first">obj : [rise|dsge|rfvar|svar] model(s) for which to compute the
 decomposition. obj could be a vector of models</p>
@@ -455,8 +485,8 @@ beginning of the history of the dataset</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id29">
-<h3>Outputs<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id34">
+<h3>Outputs<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Histdec : [struct|cell array] structure or cell array of structures
 with the decompositions in each model. The decompositions are given in
@@ -480,26 +510,26 @@ in which the variables, shocks and states matrices across states are
 averaged. The averaging weights are the smoothed probabilities.</li>
 </ul>
 </div>
-<div class="section" id="id30">
-<h3>Examples<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id35">
+<h3>Examples<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/historical_decomposition is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="irf">
-<span id="id31"></span><h2>irf<a class="headerlink" href="#irf" title="Permalink to this headline">¶</a></h2>
+<span id="id36"></span><h2>irf<a class="headerlink" href="#irf" title="Permalink to this headline">¶</a></h2>
 <p><strong>irf</strong> - computes impulse responses for a RISE model</p>
-<div class="section" id="id32">
-<h3>Syntax<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id37">
+<h3>Syntax<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">myirfs</span><span class="o">=</span><span class="n">irf</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
 <span class="n">myirfs</span><span class="o">=</span><span class="n">irf</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id33">
-<h3>Inputs<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id38">
+<h3>Inputs<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first"><strong>obj</strong> [rise|dsge|rfvar|svar]: single or vector of RISE models</p>
 </li>
@@ -552,14 +582,14 @@ information needed to reconstruct the time series.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id34">
-<h3>Outputs<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id39">
+<h3>Outputs<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>myirfs</strong> [{struct}|cell]: Impulse response data</li>
 </ul>
 </div>
-<div class="section" id="id35">
-<h3>More About<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id40">
+<h3>More About<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>for linear models or models solved up to first order, the initial
 conditions as well as the steady states are set to 0 in the computation
@@ -567,59 +597,43 @@ of the impulse responses.</li>
 <li>for nonlinear models, the initial conditions is the ergodic mean</li>
 </ul>
 </div>
-<div class="section" id="id36">
-<h3>Examples<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id41">
+<h3>Examples<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/irf is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="isnan">
-<span id="id37"></span><h2>isnan<a class="headerlink" href="#isnan" title="Permalink to this headline">¶</a></h2>
+<span id="id42"></span><h2>isnan<a class="headerlink" href="#isnan" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id38">
-<h3>Syntax<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id43">
+<h3>Syntax<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id39">
-<h3>Inputs<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id44">
+<h3>Inputs<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id40">
-<h3>Outputs<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id45">
+<h3>Outputs<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id41">
-<h3>More About<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id46">
+<h3>More About<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id42">
-<h3>Examples<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id47">
+<h3>Examples<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/isnan is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
-<div class="section" id="load-parameters">
-<span id="id43"></span><h2>load_parameters<a class="headerlink" href="#load-parameters" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id44">
-<h3>Syntax<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id45">
-<h3>Inputs<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id46">
-<h3>Outputs<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id47">
-<h3>More About<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id48">
-<h3>Examples<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h3>
-<p>See also:</p>
-<p>Help for svar/load_parameters is inherited from superclass RISE_GENERIC</p>
+<div class="section" id="legend">
+<span id="id48"></span><h2>legend<a class="headerlink" href="#legend" title="Permalink to this headline">¶</a></h2>
+<p>attribute for giving a tag to a specific version of a model</p>
+<p>Help for svar/legend is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
-</div>
-<div class="section" id="log-marginal-data-density">
-<span id="id49"></span><h2>log_marginal_data_density<a class="headerlink" href="#log-marginal-data-density" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="load-parameters">
+<span id="id49"></span><h2>load_parameters<a class="headerlink" href="#load-parameters" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
 <div class="section" id="id50">
 <h3>Syntax<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h3>
@@ -636,12 +650,12 @@ of the impulse responses.</li>
 <div class="section" id="id54">
 <h3>Examples<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
-<p>Help for svar/log_marginal_data_density is inherited from superclass RISE_GENERIC</p>
+<p>Help for svar/load_parameters is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
-<div class="section" id="log-posterior-kernel">
-<span id="id55"></span><h2>log_posterior_kernel<a class="headerlink" href="#log-posterior-kernel" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="log-marginal-data-density">
+<span id="id55"></span><h2>log_marginal_data_density<a class="headerlink" href="#log-marginal-data-density" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
 <div class="section" id="id56">
 <h3>Syntax<a class="headerlink" href="#id56" title="Permalink to this headline">¶</a></h3>
@@ -658,12 +672,12 @@ of the impulse responses.</li>
 <div class="section" id="id60">
 <h3>Examples<a class="headerlink" href="#id60" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
-<p>Help for svar/log_posterior_kernel is inherited from superclass RISE_GENERIC</p>
+<p>Help for svar/log_marginal_data_density is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
-<div class="section" id="log-prior-density">
-<span id="id61"></span><h2>log_prior_density<a class="headerlink" href="#log-prior-density" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="log-posterior-kernel">
+<span id="id61"></span><h2>log_posterior_kernel<a class="headerlink" href="#log-posterior-kernel" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
 <div class="section" id="id62">
 <h3>Syntax<a class="headerlink" href="#id62" title="Permalink to this headline">¶</a></h3>
@@ -680,12 +694,12 @@ of the impulse responses.</li>
 <div class="section" id="id66">
 <h3>Examples<a class="headerlink" href="#id66" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
-<p>Help for svar/log_prior_density is inherited from superclass RISE_GENERIC</p>
+<p>Help for svar/log_posterior_kernel is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
-<div class="section" id="msvar-priors">
-<span id="id67"></span><h2>msvar_priors<a class="headerlink" href="#msvar-priors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="log-prior-density">
+<span id="id67"></span><h2>log_prior_density<a class="headerlink" href="#log-prior-density" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
 <div class="section" id="id68">
 <h3>Syntax<a class="headerlink" href="#id68" title="Permalink to this headline">¶</a></h3>
@@ -702,102 +716,187 @@ of the impulse responses.</li>
 <div class="section" id="id72">
 <h3>Examples<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
+<p>Help for svar/log_prior_density is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
-<div class="section" id="posterior-marginal-and-prior-densities">
-<span id="id73"></span><h2>posterior_marginal_and_prior_densities<a class="headerlink" href="#posterior-marginal-and-prior-densities" title="Permalink to this headline">¶</a></h2>
-<p>H1 line</p>
-<div class="section" id="id74">
-<h3>Syntax<a class="headerlink" href="#id74" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="markov-chains">
+<span id="id73"></span><h2>markov_chains<a class="headerlink" href="#markov-chains" title="Permalink to this headline">¶</a></h2>
+<p>information on markov chains, regimes and related items</p>
+<p>Help for svar/markov_chains is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
 </div>
+<div class="section" id="msvar-priors">
+<span id="id74"></span><h2>msvar_priors<a class="headerlink" href="#msvar-priors" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
 <div class="section" id="id75">
-<h3>Inputs<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h3>
+<h3>Syntax<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id76">
-<h3>Outputs<a class="headerlink" href="#id76" title="Permalink to this headline">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#id76" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id77">
-<h3>More About<a class="headerlink" href="#id77" title="Permalink to this headline">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#id77" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id78">
-<h3>Examples<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h3>
+<h3>More About<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id79">
+<h3>Examples<a class="headerlink" href="#id79" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="nlags">
+<span id="id80"></span><h2>nlags<a class="headerlink" href="#nlags" title="Permalink to this headline">¶</a></h2>
+<p>number of lags in the VAR</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="observables">
+<span id="id81"></span><h2>observables<a class="headerlink" href="#observables" title="Permalink to this headline">¶</a></h2>
+<p>information on observable variables (names, number, types, etc.)</p>
+<p>Help for svar/observables is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="options">
+<span id="id82"></span><h2>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<p>structure holding information on modifiable settings</p>
+<p>Help for svar/options is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="parameters">
+<span id="id83"></span><h2>parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>information on parameters (names, number, types, etc.)</p>
+<p>Help for svar/parameters is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="posterior-marginal-and-prior-densities">
+<span id="id84"></span><h2>posterior_marginal_and_prior_densities<a class="headerlink" href="#posterior-marginal-and-prior-densities" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id85">
+<h3>Syntax<a class="headerlink" href="#id85" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id86">
+<h3>Inputs<a class="headerlink" href="#id86" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id87">
+<h3>Outputs<a class="headerlink" href="#id87" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id88">
+<h3>More About<a class="headerlink" href="#id88" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id89">
+<h3>Examples<a class="headerlink" href="#id89" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/posterior_marginal_and_prior_densities is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="posterior-simulator">
-<span id="id79"></span><h2>posterior_simulator<a class="headerlink" href="#posterior-simulator" title="Permalink to this headline">¶</a></h2>
+<span id="id90"></span><h2>posterior_simulator<a class="headerlink" href="#posterior-simulator" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id80">
-<h3>Syntax<a class="headerlink" href="#id80" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id91">
+<h3>Syntax<a class="headerlink" href="#id91" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id81">
-<h3>Inputs<a class="headerlink" href="#id81" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id92">
+<h3>Inputs<a class="headerlink" href="#id92" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id82">
-<h3>Outputs<a class="headerlink" href="#id82" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id93">
+<h3>Outputs<a class="headerlink" href="#id93" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id83">
-<h3>More About<a class="headerlink" href="#id83" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id94">
+<h3>More About<a class="headerlink" href="#id94" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id84">
-<h3>Examples<a class="headerlink" href="#id84" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id95">
+<h3>Examples<a class="headerlink" href="#id95" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/posterior_simulator is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="print-estimation-results">
-<span id="id85"></span><h2>print_estimation_results<a class="headerlink" href="#print-estimation-results" title="Permalink to this headline">¶</a></h2>
+<span id="id96"></span><h2>print_estimation_results<a class="headerlink" href="#print-estimation-results" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id86">
-<h3>Syntax<a class="headerlink" href="#id86" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id97">
+<h3>Syntax<a class="headerlink" href="#id97" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id87">
-<h3>Inputs<a class="headerlink" href="#id87" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id98">
+<h3>Inputs<a class="headerlink" href="#id98" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id88">
-<h3>Outputs<a class="headerlink" href="#id88" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id99">
+<h3>Outputs<a class="headerlink" href="#id99" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id89">
-<h3>More About<a class="headerlink" href="#id89" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id100">
+<h3>More About<a class="headerlink" href="#id100" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id90">
-<h3>Examples<a class="headerlink" href="#id90" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id101">
+<h3>Examples<a class="headerlink" href="#id101" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/print_estimation_results is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="prior-plots">
-<span id="id91"></span><h2>prior_plots<a class="headerlink" href="#prior-plots" title="Permalink to this headline">¶</a></h2>
+<span id="id102"></span><h2>prior_plots<a class="headerlink" href="#prior-plots" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id92">
-<h3>Syntax<a class="headerlink" href="#id92" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id103">
+<h3>Syntax<a class="headerlink" href="#id103" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id93">
-<h3>Inputs<a class="headerlink" href="#id93" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id104">
+<h3>Inputs<a class="headerlink" href="#id104" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id94">
-<h3>Outputs<a class="headerlink" href="#id94" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id105">
+<h3>Outputs<a class="headerlink" href="#id105" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id95">
-<h3>More About<a class="headerlink" href="#id95" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id106">
+<h3>More About<a class="headerlink" href="#id106" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id96">
-<h3>Examples<a class="headerlink" href="#id96" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id107">
+<h3>Examples<a class="headerlink" href="#id107" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/prior_plots is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
+<div class="section" id="refresh">
+<span id="id108"></span><h2>refresh<a class="headerlink" href="#refresh" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>refresh</strong> - refresh the options of an old object with a newer version of</dt>
+<dd>the software</dd>
+</dl>
+<div class="section" id="id109">
+<h3>Syntax<a class="headerlink" href="#id109" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">newobj</span><span class="o">=</span><span class="n">refresh</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id110">
+<h3>Inputs<a class="headerlink" href="#id110" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</li>
+</ul>
+</div>
+<div class="section" id="id111">
+<h3>Outputs<a class="headerlink" href="#id111" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|svar|rfvar]: refreshed model object</li>
+</ul>
+</div>
+<div class="section" id="id112">
+<h3>More About<a class="headerlink" href="#id112" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id113">
+<h3>Examples<a class="headerlink" href="#id113" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for svar/refresh is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
 <div class="section" id="report">
-<span id="id97"></span><h2>report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h2>
+<span id="id114"></span><h2>report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h2>
 <p><strong>REPORT</strong> assigns the elements of interest to a rise_report.report object</p>
-<div class="section" id="id98">
-<h3>Syntax<a class="headerlink" href="#id98" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id115">
+<h3>Syntax<a class="headerlink" href="#id115" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>::</dt>
 <dd><ul class="first last simple">
@@ -810,8 +909,8 @@ obj before doing the rest</li>
 </dd>
 </dl>
 </div>
-<div class="section" id="id99">
-<h3>Inputs<a class="headerlink" href="#id99" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id116">
+<h3>Inputs<a class="headerlink" href="#id116" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>obj : [rise|dsge]</li>
 <li>destination_root : [rise_report.report] : handle for the actual report</li>
@@ -821,44 +920,44 @@ can only include : &#8216;endogenous&#8217;, &#8216;exogenous&#8217;, &#8216;obs
 &#8216;equations&#8217;, &#8216;code&#8217;</li>
 </ul>
 </div>
-<div class="section" id="id100">
-<h3>Outputs<a class="headerlink" href="#id100" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id117">
+<h3>Outputs<a class="headerlink" href="#id117" title="Permalink to this headline">¶</a></h3>
 <p>none</p>
 </div>
-<div class="section" id="id101">
-<h3>More About<a class="headerlink" href="#id101" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id118">
+<h3>More About<a class="headerlink" href="#id118" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id102">
-<h3>Examples<a class="headerlink" href="#id102" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id119">
+<h3>Examples<a class="headerlink" href="#id119" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/report is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="set">
-<span id="id103"></span><h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
+<span id="id120"></span><h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
 <p><strong>set</strong> - sets options for RISE models</p>
-<div class="section" id="id104">
-<h3>Syntax<a class="headerlink" href="#id104" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id121">
+<h3>Syntax<a class="headerlink" href="#id121" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">obj</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id105">
-<h3>Inputs<a class="headerlink" href="#id105" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id122">
+<h3>Inputs<a class="headerlink" href="#id122" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</li>
 <li><strong>varargin</strong> : valid input arguments coming in pairs.</li>
 </ul>
 </div>
-<div class="section" id="id106">
-<h3>Outputs<a class="headerlink" href="#id106" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id123">
+<h3>Outputs<a class="headerlink" href="#id123" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</li>
 </ul>
 </div>
-<div class="section" id="id107">
-<h3>More About<a class="headerlink" href="#id107" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id124">
+<h3>More About<a class="headerlink" href="#id124" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>one can force a new field into the options by prefixing it with a &#8216;+&#8217;
 sign. Let&#8217;s say yourfield is not part of the options and you would like
@@ -867,45 +966,45 @@ function or algorithm down the road. Then you can run
 m=set(m,&#8217;+yourfield&#8217;,value). then m will be part of the new options.</li>
 </ul>
 </div>
-<div class="section" id="id108">
-<h3>Examples<a class="headerlink" href="#id108" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id125">
+<h3>Examples<a class="headerlink" href="#id125" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/set is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="set-solution-to-companion">
-<span id="id109"></span><h2>set_solution_to_companion<a class="headerlink" href="#set-solution-to-companion" title="Permalink to this headline">¶</a></h2>
+<span id="id126"></span><h2>set_solution_to_companion<a class="headerlink" href="#set-solution-to-companion" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id110">
-<h3>Syntax<a class="headerlink" href="#id110" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id127">
+<h3>Syntax<a class="headerlink" href="#id127" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id111">
-<h3>Inputs<a class="headerlink" href="#id111" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id128">
+<h3>Inputs<a class="headerlink" href="#id128" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id112">
-<h3>Outputs<a class="headerlink" href="#id112" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id129">
+<h3>Outputs<a class="headerlink" href="#id129" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id113">
-<h3>More About<a class="headerlink" href="#id113" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id130">
+<h3>More About<a class="headerlink" href="#id130" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id114">
-<h3>Examples<a class="headerlink" href="#id114" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id131">
+<h3>Examples<a class="headerlink" href="#id131" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="simulate">
-<span id="id115"></span><h2>simulate<a class="headerlink" href="#simulate" title="Permalink to this headline">¶</a></h2>
+<span id="id132"></span><h2>simulate<a class="headerlink" href="#simulate" title="Permalink to this headline">¶</a></h2>
 <p><strong>simulate</strong> - simulates a RISE model</p>
-<div class="section" id="id116">
-<h3>Syntax<a class="headerlink" href="#id116" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id133">
+<h3>Syntax<a class="headerlink" href="#id133" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">db</span><span class="p">,</span><span class="n">states</span><span class="p">,</span><span class="n">retcode</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id117">
-<h3>Inputs<a class="headerlink" href="#id117" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id134">
+<h3>Inputs<a class="headerlink" href="#id134" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first"><strong>obj</strong> [rfvar|dsge|rise|svar]: model object</p>
 </li>
@@ -972,8 +1071,8 @@ elements that help reconstruct the time series.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id118">
-<h3>Outputs<a class="headerlink" href="#id118" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id135">
+<h3>Outputs<a class="headerlink" href="#id135" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>db</strong> [struct|cell array]: if <strong>simul_to_time_series</strong> is true, the
 output is a time series, else a cell array with a matrix and
@@ -984,8 +1083,8 @@ got wrong. In that case one can understand the problem by running
 decipher(retcode)</li>
 </ul>
 </div>
-<div class="section" id="id119">
-<h3>More About<a class="headerlink" href="#id119" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id136">
+<h3>More About<a class="headerlink" href="#id136" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><strong>simul_historical_data</strong> contains the historical data as well as
 conditional information over the forecast horizon. It may also include
@@ -993,151 +1092,157 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
 <strong>regime</strong>, which indicates the regimes over the forecast horizon.</li>
 </ul>
 </div>
-<div class="section" id="id120">
-<h3>Examples<a class="headerlink" href="#id120" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id137">
+<h3>Examples<a class="headerlink" href="#id137" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/simulate is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="simulation-diagnostics">
-<span id="id121"></span><h2>simulation_diagnostics<a class="headerlink" href="#simulation-diagnostics" title="Permalink to this headline">¶</a></h2>
+<span id="id138"></span><h2>simulation_diagnostics<a class="headerlink" href="#simulation-diagnostics" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id122">
-<h3>Syntax<a class="headerlink" href="#id122" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id139">
+<h3>Syntax<a class="headerlink" href="#id139" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id123">
-<h3>Inputs<a class="headerlink" href="#id123" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id140">
+<h3>Inputs<a class="headerlink" href="#id140" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id124">
-<h3>Outputs<a class="headerlink" href="#id124" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id141">
+<h3>Outputs<a class="headerlink" href="#id141" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id125">
-<h3>More About<a class="headerlink" href="#id125" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id142">
+<h3>More About<a class="headerlink" href="#id142" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id126">
-<h3>Examples<a class="headerlink" href="#id126" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id143">
+<h3>Examples<a class="headerlink" href="#id143" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/simulation_diagnostics is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
+<div class="section" id="solution">
+<span id="id144"></span><h2>solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>model solution including steady state, definitions, etc.</p>
+<p>Help for svar/solution is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
 <div class="section" id="solve">
-<span id="id127"></span><h2>solve<a class="headerlink" href="#solve" title="Permalink to this headline">¶</a></h2>
+<span id="id145"></span><h2>solve<a class="headerlink" href="#solve" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id128">
-<h3>Syntax<a class="headerlink" href="#id128" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id146">
+<h3>Syntax<a class="headerlink" href="#id146" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id129">
-<h3>Inputs<a class="headerlink" href="#id129" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id147">
+<h3>Inputs<a class="headerlink" href="#id147" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id130">
-<h3>Outputs<a class="headerlink" href="#id130" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id148">
+<h3>Outputs<a class="headerlink" href="#id148" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id131">
-<h3>More About<a class="headerlink" href="#id131" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id149">
+<h3>More About<a class="headerlink" href="#id149" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id132">
-<h3>Examples<a class="headerlink" href="#id132" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id150">
+<h3>Examples<a class="headerlink" href="#id150" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="stoch-simul">
-<span id="id133"></span><h2>stoch_simul<a class="headerlink" href="#stoch-simul" title="Permalink to this headline">¶</a></h2>
+<span id="id151"></span><h2>stoch_simul<a class="headerlink" href="#stoch-simul" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id134">
-<h3>Syntax<a class="headerlink" href="#id134" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id152">
+<h3>Syntax<a class="headerlink" href="#id152" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id135">
-<h3>Inputs<a class="headerlink" href="#id135" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id153">
+<h3>Inputs<a class="headerlink" href="#id153" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id136">
-<h3>Outputs<a class="headerlink" href="#id136" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id154">
+<h3>Outputs<a class="headerlink" href="#id154" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id137">
-<h3>More About<a class="headerlink" href="#id137" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id155">
+<h3>More About<a class="headerlink" href="#id155" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id138">
-<h3>Examples<a class="headerlink" href="#id138" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id156">
+<h3>Examples<a class="headerlink" href="#id156" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/stoch_simul is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="svar">
-<span id="id139"></span><h2>svar<a class="headerlink" href="#svar" title="Permalink to this headline">¶</a></h2>
+<span id="id157"></span><h2>svar<a class="headerlink" href="#svar" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 <hr class="docutils" />
 </div>
 <div class="section" id="template">
-<span id="id140"></span><h2>template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
+<span id="id158"></span><h2>template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div>~~ no help found</div></blockquote>
 <hr class="docutils" />
 </div>
 <div class="section" id="theoretical-autocorrelations">
-<span id="id141"></span><h2>theoretical_autocorrelations<a class="headerlink" href="#theoretical-autocorrelations" title="Permalink to this headline">¶</a></h2>
+<span id="id159"></span><h2>theoretical_autocorrelations<a class="headerlink" href="#theoretical-autocorrelations" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id142">
-<h3>Syntax<a class="headerlink" href="#id142" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id160">
+<h3>Syntax<a class="headerlink" href="#id160" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id143">
-<h3>Inputs<a class="headerlink" href="#id143" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id161">
+<h3>Inputs<a class="headerlink" href="#id161" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id144">
-<h3>Outputs<a class="headerlink" href="#id144" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id162">
+<h3>Outputs<a class="headerlink" href="#id162" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id145">
-<h3>More About<a class="headerlink" href="#id145" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id163">
+<h3>More About<a class="headerlink" href="#id163" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id146">
-<h3>Examples<a class="headerlink" href="#id146" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id164">
+<h3>Examples<a class="headerlink" href="#id164" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/theoretical_autocorrelations is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="theoretical-autocovariances">
-<span id="id147"></span><h2>theoretical_autocovariances<a class="headerlink" href="#theoretical-autocovariances" title="Permalink to this headline">¶</a></h2>
+<span id="id165"></span><h2>theoretical_autocovariances<a class="headerlink" href="#theoretical-autocovariances" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id148">
-<h3>Syntax<a class="headerlink" href="#id148" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id166">
+<h3>Syntax<a class="headerlink" href="#id166" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id149">
-<h3>Inputs<a class="headerlink" href="#id149" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id167">
+<h3>Inputs<a class="headerlink" href="#id167" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id150">
-<h3>Outputs<a class="headerlink" href="#id150" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id168">
+<h3>Outputs<a class="headerlink" href="#id168" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id151">
-<h3>More About<a class="headerlink" href="#id151" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id169">
+<h3>More About<a class="headerlink" href="#id169" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id152">
-<h3>Examples<a class="headerlink" href="#id152" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id170">
+<h3>Examples<a class="headerlink" href="#id170" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/theoretical_autocovariances is inherited from superclass RISE_GENERIC</p>
 <hr class="docutils" />
 </div>
 </div>
 <div class="section" id="variance-decomposition">
-<span id="id153"></span><h2>variance_decomposition<a class="headerlink" href="#variance-decomposition" title="Permalink to this headline">¶</a></h2>
+<span id="id171"></span><h2>variance_decomposition<a class="headerlink" href="#variance-decomposition" title="Permalink to this headline">¶</a></h2>
 <p>H1 line</p>
-<div class="section" id="id154">
-<h3>Syntax<a class="headerlink" href="#id154" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id172">
+<h3>Syntax<a class="headerlink" href="#id172" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id155">
-<h3>Inputs<a class="headerlink" href="#id155" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id173">
+<h3>Inputs<a class="headerlink" href="#id173" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id156">
-<h3>Outputs<a class="headerlink" href="#id156" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id174">
+<h3>Outputs<a class="headerlink" href="#id174" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id157">
-<h3>More About<a class="headerlink" href="#id157" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id175">
+<h3>More About<a class="headerlink" href="#id175" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id158">
-<h3>Examples<a class="headerlink" href="#id158" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id176">
+<h3>Examples<a class="headerlink" href="#id176" title="Permalink to this headline">¶</a></h3>
 <p>See also:</p>
 <p>Help for svar/variance_decomposition is inherited from superclass RISE_GENERIC</p>
 </div>
@@ -1153,8 +1258,8 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
   <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Structural VAR modeling</a><ul>
-<li><a class="reference internal" href="#methods">methods</a></li>
-<li><a class="reference internal" href="#properties">properties</a></li>
+<li><a class="reference internal" href="#svar-methods">svar Methods:</a></li>
+<li><a class="reference internal" href="#svar-properties">svar Properties:</a></li>
 <li><a class="reference internal" href="#check-optimum">check_optimum</a><ul>
 <li><a class="reference internal" href="#syntax">Syntax</a></li>
 <li><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -1163,71 +1268,69 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
 <li><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#constant">constant</a></li>
 <li><a class="reference internal" href="#draw-parameter">draw_parameter</a><ul>
-<li><a class="reference internal" href="#id3">Syntax</a></li>
-<li><a class="reference internal" href="#id4">Inputs</a></li>
-<li><a class="reference internal" href="#id5">Outputs</a></li>
-<li><a class="reference internal" href="#id6">More About</a></li>
-<li><a class="reference internal" href="#id7">Examples</a></li>
+<li><a class="reference internal" href="#id4">Syntax</a></li>
+<li><a class="reference internal" href="#id5">Inputs</a></li>
+<li><a class="reference internal" href="#id6">Outputs</a></li>
+<li><a class="reference internal" href="#id7">More About</a></li>
+<li><a class="reference internal" href="#id8">Examples</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#endogenous">endogenous</a></li>
 <li><a class="reference internal" href="#estimate">estimate</a><ul>
-<li><a class="reference internal" href="#id9">Syntax</a></li>
-<li><a class="reference internal" href="#id10">Inputs</a></li>
-<li><a class="reference internal" href="#id11">Outputs</a></li>
-<li><a class="reference internal" href="#id12">More About</a></li>
-<li><a class="reference internal" href="#id13">Examples</a></li>
+<li><a class="reference internal" href="#id11">Syntax</a></li>
+<li><a class="reference internal" href="#id12">Inputs</a></li>
+<li><a class="reference internal" href="#id13">Outputs</a></li>
+<li><a class="reference internal" href="#id14">More About</a></li>
+<li><a class="reference internal" href="#id15">Examples</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#estimation">estimation</a></li>
+<li><a class="reference internal" href="#exogenous">exogenous</a></li>
+<li><a class="reference internal" href="#filtering">filtering</a></li>
 <li><a class="reference internal" href="#forecast">forecast</a><ul>
-<li><a class="reference internal" href="#id15">Syntax</a></li>
-<li><a class="reference internal" href="#id16">Inputs</a></li>
-<li><a class="reference internal" href="#id17">Outputs</a></li>
-<li><a class="reference internal" href="#id18">More About</a></li>
-<li><a class="reference internal" href="#id19">Examples</a></li>
+<li><a class="reference internal" href="#id20">Syntax</a></li>
+<li><a class="reference internal" href="#id21">Inputs</a></li>
+<li><a class="reference internal" href="#id22">Outputs</a></li>
+<li><a class="reference internal" href="#id23">More About</a></li>
+<li><a class="reference internal" href="#id24">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#get">get</a><ul>
-<li><a class="reference internal" href="#id21">Syntax</a></li>
-<li><a class="reference internal" href="#id22">Inputs</a></li>
-<li><a class="reference internal" href="#id23">Outputs</a></li>
-<li><a class="reference internal" href="#id24">More About</a></li>
-<li><a class="reference internal" href="#id25">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#historical-decomposition">historical_decomposition</a><ul>
-<li><a class="reference internal" href="#id27">Syntax</a></li>
-<li><a class="reference internal" href="#id28">Inputs</a></li>
-<li><a class="reference internal" href="#id29">Outputs</a></li>
-<li><a class="reference internal" href="#remarks">Remarks</a></li>
+<li><a class="reference internal" href="#id26">Syntax</a></li>
+<li><a class="reference internal" href="#id27">Inputs</a></li>
+<li><a class="reference internal" href="#id28">Outputs</a></li>
+<li><a class="reference internal" href="#id29">More About</a></li>
 <li><a class="reference internal" href="#id30">Examples</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#irf">irf</a><ul>
+<li><a class="reference internal" href="#historical-decomposition">historical_decomposition</a><ul>
 <li><a class="reference internal" href="#id32">Syntax</a></li>
 <li><a class="reference internal" href="#id33">Inputs</a></li>
 <li><a class="reference internal" href="#id34">Outputs</a></li>
-<li><a class="reference internal" href="#id35">More About</a></li>
-<li><a class="reference internal" href="#id36">Examples</a></li>
+<li><a class="reference internal" href="#remarks">Remarks</a></li>
+<li><a class="reference internal" href="#id35">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#irf">irf</a><ul>
+<li><a class="reference internal" href="#id37">Syntax</a></li>
+<li><a class="reference internal" href="#id38">Inputs</a></li>
+<li><a class="reference internal" href="#id39">Outputs</a></li>
+<li><a class="reference internal" href="#id40">More About</a></li>
+<li><a class="reference internal" href="#id41">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#isnan">isnan</a><ul>
-<li><a class="reference internal" href="#id38">Syntax</a></li>
-<li><a class="reference internal" href="#id39">Inputs</a></li>
-<li><a class="reference internal" href="#id40">Outputs</a></li>
-<li><a class="reference internal" href="#id41">More About</a></li>
-<li><a class="reference internal" href="#id42">Examples</a></li>
+<li><a class="reference internal" href="#id43">Syntax</a></li>
+<li><a class="reference internal" href="#id44">Inputs</a></li>
+<li><a class="reference internal" href="#id45">Outputs</a></li>
+<li><a class="reference internal" href="#id46">More About</a></li>
+<li><a class="reference internal" href="#id47">Examples</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#legend">legend</a></li>
 <li><a class="reference internal" href="#load-parameters">load_parameters</a><ul>
-<li><a class="reference internal" href="#id44">Syntax</a></li>
-<li><a class="reference internal" href="#id45">Inputs</a></li>
-<li><a class="reference internal" href="#id46">Outputs</a></li>
-<li><a class="reference internal" href="#id47">More About</a></li>
-<li><a class="reference internal" href="#id48">Examples</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#log-marginal-data-density">log_marginal_data_density</a><ul>
 <li><a class="reference internal" href="#id50">Syntax</a></li>
 <li><a class="reference internal" href="#id51">Inputs</a></li>
 <li><a class="reference internal" href="#id52">Outputs</a></li>
@@ -1235,7 +1338,7 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
 <li><a class="reference internal" href="#id54">Examples</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#log-posterior-kernel">log_posterior_kernel</a><ul>
+<li><a class="reference internal" href="#log-marginal-data-density">log_marginal_data_density</a><ul>
 <li><a class="reference internal" href="#id56">Syntax</a></li>
 <li><a class="reference internal" href="#id57">Inputs</a></li>
 <li><a class="reference internal" href="#id58">Outputs</a></li>
@@ -1243,7 +1346,7 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
 <li><a class="reference internal" href="#id60">Examples</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#log-prior-density">log_prior_density</a><ul>
+<li><a class="reference internal" href="#log-posterior-kernel">log_posterior_kernel</a><ul>
 <li><a class="reference internal" href="#id62">Syntax</a></li>
 <li><a class="reference internal" href="#id63">Inputs</a></li>
 <li><a class="reference internal" href="#id64">Outputs</a></li>
@@ -1251,7 +1354,7 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
 <li><a class="reference internal" href="#id66">Examples</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#msvar-priors">msvar_priors</a><ul>
+<li><a class="reference internal" href="#log-prior-density">log_prior_density</a><ul>
 <li><a class="reference internal" href="#id68">Syntax</a></li>
 <li><a class="reference internal" href="#id69">Inputs</a></li>
 <li><a class="reference internal" href="#id70">Outputs</a></li>
@@ -1259,118 +1362,140 @@ as an alternative to <strong>simul_regime</strong>, a time series with name
 <li><a class="reference internal" href="#id72">Examples</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#markov-chains">markov_chains</a></li>
+<li><a class="reference internal" href="#msvar-priors">msvar_priors</a><ul>
+<li><a class="reference internal" href="#id75">Syntax</a></li>
+<li><a class="reference internal" href="#id76">Inputs</a></li>
+<li><a class="reference internal" href="#id77">Outputs</a></li>
+<li><a class="reference internal" href="#id78">More About</a></li>
+<li><a class="reference internal" href="#id79">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nlags">nlags</a></li>
+<li><a class="reference internal" href="#observables">observables</a></li>
+<li><a class="reference internal" href="#options">options</a></li>
+<li><a class="reference internal" href="#parameters">parameters</a></li>
 <li><a class="reference internal" href="#posterior-marginal-and-prior-densities">posterior_marginal_and_prior_densities</a><ul>
-<li><a class="reference internal" href="#id74">Syntax</a></li>
-<li><a class="reference internal" href="#id75">Inputs</a></li>
-<li><a class="reference internal" href="#id76">Outputs</a></li>
-<li><a class="reference internal" href="#id77">More About</a></li>
-<li><a class="reference internal" href="#id78">Examples</a></li>
+<li><a class="reference internal" href="#id85">Syntax</a></li>
+<li><a class="reference internal" href="#id86">Inputs</a></li>
+<li><a class="reference internal" href="#id87">Outputs</a></li>
+<li><a class="reference internal" href="#id88">More About</a></li>
+<li><a class="reference internal" href="#id89">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#posterior-simulator">posterior_simulator</a><ul>
-<li><a class="reference internal" href="#id80">Syntax</a></li>
-<li><a class="reference internal" href="#id81">Inputs</a></li>
-<li><a class="reference internal" href="#id82">Outputs</a></li>
-<li><a class="reference internal" href="#id83">More About</a></li>
-<li><a class="reference internal" href="#id84">Examples</a></li>
+<li><a class="reference internal" href="#id91">Syntax</a></li>
+<li><a class="reference internal" href="#id92">Inputs</a></li>
+<li><a class="reference internal" href="#id93">Outputs</a></li>
+<li><a class="reference internal" href="#id94">More About</a></li>
+<li><a class="reference internal" href="#id95">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#print-estimation-results">print_estimation_results</a><ul>
-<li><a class="reference internal" href="#id86">Syntax</a></li>
-<li><a class="reference internal" href="#id87">Inputs</a></li>
-<li><a class="reference internal" href="#id88">Outputs</a></li>
-<li><a class="reference internal" href="#id89">More About</a></li>
-<li><a class="reference internal" href="#id90">Examples</a></li>
+<li><a class="reference internal" href="#id97">Syntax</a></li>
+<li><a class="reference internal" href="#id98">Inputs</a></li>
+<li><a class="reference internal" href="#id99">Outputs</a></li>
+<li><a class="reference internal" href="#id100">More About</a></li>
+<li><a class="reference internal" href="#id101">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#prior-plots">prior_plots</a><ul>
-<li><a class="reference internal" href="#id92">Syntax</a></li>
-<li><a class="reference internal" href="#id93">Inputs</a></li>
-<li><a class="reference internal" href="#id94">Outputs</a></li>
-<li><a class="reference internal" href="#id95">More About</a></li>
-<li><a class="reference internal" href="#id96">Examples</a></li>
+<li><a class="reference internal" href="#id103">Syntax</a></li>
+<li><a class="reference internal" href="#id104">Inputs</a></li>
+<li><a class="reference internal" href="#id105">Outputs</a></li>
+<li><a class="reference internal" href="#id106">More About</a></li>
+<li><a class="reference internal" href="#id107">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#refresh">refresh</a><ul>
+<li><a class="reference internal" href="#id109">Syntax</a></li>
+<li><a class="reference internal" href="#id110">Inputs</a></li>
+<li><a class="reference internal" href="#id111">Outputs</a></li>
+<li><a class="reference internal" href="#id112">More About</a></li>
+<li><a class="reference internal" href="#id113">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#report">report</a><ul>
-<li><a class="reference internal" href="#id98">Syntax</a></li>
-<li><a class="reference internal" href="#id99">Inputs</a></li>
-<li><a class="reference internal" href="#id100">Outputs</a></li>
-<li><a class="reference internal" href="#id101">More About</a></li>
-<li><a class="reference internal" href="#id102">Examples</a></li>
+<li><a class="reference internal" href="#id115">Syntax</a></li>
+<li><a class="reference internal" href="#id116">Inputs</a></li>
+<li><a class="reference internal" href="#id117">Outputs</a></li>
+<li><a class="reference internal" href="#id118">More About</a></li>
+<li><a class="reference internal" href="#id119">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#set">set</a><ul>
-<li><a class="reference internal" href="#id104">Syntax</a></li>
-<li><a class="reference internal" href="#id105">Inputs</a></li>
-<li><a class="reference internal" href="#id106">Outputs</a></li>
-<li><a class="reference internal" href="#id107">More About</a></li>
-<li><a class="reference internal" href="#id108">Examples</a></li>
+<li><a class="reference internal" href="#id121">Syntax</a></li>
+<li><a class="reference internal" href="#id122">Inputs</a></li>
+<li><a class="reference internal" href="#id123">Outputs</a></li>
+<li><a class="reference internal" href="#id124">More About</a></li>
+<li><a class="reference internal" href="#id125">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#set-solution-to-companion">set_solution_to_companion</a><ul>
-<li><a class="reference internal" href="#id110">Syntax</a></li>
-<li><a class="reference internal" href="#id111">Inputs</a></li>
-<li><a class="reference internal" href="#id112">Outputs</a></li>
-<li><a class="reference internal" href="#id113">More About</a></li>
-<li><a class="reference internal" href="#id114">Examples</a></li>
+<li><a class="reference internal" href="#id127">Syntax</a></li>
+<li><a class="reference internal" href="#id128">Inputs</a></li>
+<li><a class="reference internal" href="#id129">Outputs</a></li>
+<li><a class="reference internal" href="#id130">More About</a></li>
+<li><a class="reference internal" href="#id131">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simulate">simulate</a><ul>
-<li><a class="reference internal" href="#id116">Syntax</a></li>
-<li><a class="reference internal" href="#id117">Inputs</a></li>
-<li><a class="reference internal" href="#id118">Outputs</a></li>
-<li><a class="reference internal" href="#id119">More About</a></li>
-<li><a class="reference internal" href="#id120">Examples</a></li>
+<li><a class="reference internal" href="#id133">Syntax</a></li>
+<li><a class="reference internal" href="#id134">Inputs</a></li>
+<li><a class="reference internal" href="#id135">Outputs</a></li>
+<li><a class="reference internal" href="#id136">More About</a></li>
+<li><a class="reference internal" href="#id137">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simulation-diagnostics">simulation_diagnostics</a><ul>
-<li><a class="reference internal" href="#id122">Syntax</a></li>
-<li><a class="reference internal" href="#id123">Inputs</a></li>
-<li><a class="reference internal" href="#id124">Outputs</a></li>
-<li><a class="reference internal" href="#id125">More About</a></li>
-<li><a class="reference internal" href="#id126">Examples</a></li>
+<li><a class="reference internal" href="#id139">Syntax</a></li>
+<li><a class="reference internal" href="#id140">Inputs</a></li>
+<li><a class="reference internal" href="#id141">Outputs</a></li>
+<li><a class="reference internal" href="#id142">More About</a></li>
+<li><a class="reference internal" href="#id143">Examples</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#solution">solution</a></li>
 <li><a class="reference internal" href="#solve">solve</a><ul>
-<li><a class="reference internal" href="#id128">Syntax</a></li>
-<li><a class="reference internal" href="#id129">Inputs</a></li>
-<li><a class="reference internal" href="#id130">Outputs</a></li>
-<li><a class="reference internal" href="#id131">More About</a></li>
-<li><a class="reference internal" href="#id132">Examples</a></li>
+<li><a class="reference internal" href="#id146">Syntax</a></li>
+<li><a class="reference internal" href="#id147">Inputs</a></li>
+<li><a class="reference internal" href="#id148">Outputs</a></li>
+<li><a class="reference internal" href="#id149">More About</a></li>
+<li><a class="reference internal" href="#id150">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stoch-simul">stoch_simul</a><ul>
-<li><a class="reference internal" href="#id134">Syntax</a></li>
-<li><a class="reference internal" href="#id135">Inputs</a></li>
-<li><a class="reference internal" href="#id136">Outputs</a></li>
-<li><a class="reference internal" href="#id137">More About</a></li>
-<li><a class="reference internal" href="#id138">Examples</a></li>
+<li><a class="reference internal" href="#id152">Syntax</a></li>
+<li><a class="reference internal" href="#id153">Inputs</a></li>
+<li><a class="reference internal" href="#id154">Outputs</a></li>
+<li><a class="reference internal" href="#id155">More About</a></li>
+<li><a class="reference internal" href="#id156">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#svar">svar</a></li>
 <li><a class="reference internal" href="#template">template</a></li>
 <li><a class="reference internal" href="#theoretical-autocorrelations">theoretical_autocorrelations</a><ul>
-<li><a class="reference internal" href="#id142">Syntax</a></li>
-<li><a class="reference internal" href="#id143">Inputs</a></li>
-<li><a class="reference internal" href="#id144">Outputs</a></li>
-<li><a class="reference internal" href="#id145">More About</a></li>
-<li><a class="reference internal" href="#id146">Examples</a></li>
+<li><a class="reference internal" href="#id160">Syntax</a></li>
+<li><a class="reference internal" href="#id161">Inputs</a></li>
+<li><a class="reference internal" href="#id162">Outputs</a></li>
+<li><a class="reference internal" href="#id163">More About</a></li>
+<li><a class="reference internal" href="#id164">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#theoretical-autocovariances">theoretical_autocovariances</a><ul>
-<li><a class="reference internal" href="#id148">Syntax</a></li>
-<li><a class="reference internal" href="#id149">Inputs</a></li>
-<li><a class="reference internal" href="#id150">Outputs</a></li>
-<li><a class="reference internal" href="#id151">More About</a></li>
-<li><a class="reference internal" href="#id152">Examples</a></li>
+<li><a class="reference internal" href="#id166">Syntax</a></li>
+<li><a class="reference internal" href="#id167">Inputs</a></li>
+<li><a class="reference internal" href="#id168">Outputs</a></li>
+<li><a class="reference internal" href="#id169">More About</a></li>
+<li><a class="reference internal" href="#id170">Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#variance-decomposition">variance_decomposition</a><ul>
-<li><a class="reference internal" href="#id154">Syntax</a></li>
-<li><a class="reference internal" href="#id155">Inputs</a></li>
-<li><a class="reference internal" href="#id156">Outputs</a></li>
-<li><a class="reference internal" href="#id157">More About</a></li>
-<li><a class="reference internal" href="#id158">Examples</a></li>
+<li><a class="reference internal" href="#id172">Syntax</a></li>
+<li><a class="reference internal" href="#id173">Inputs</a></li>
+<li><a class="reference internal" href="#id174">Outputs</a></li>
+<li><a class="reference internal" href="#id175">More About</a></li>
+<li><a class="reference internal" href="#id176">Examples</a></li>
 </ul>
 </li>
 </ul>

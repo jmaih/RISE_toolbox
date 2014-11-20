@@ -46,337 +46,54 @@
   <div class="section" id="automatic-planar-differentiation">
 <h1>automatic &#8220;planar&#8221; differentiation<a class="headerlink" href="#automatic-planar-differentiation" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li>[ <a class="reference internal" href="#abs">abs</a> ](aplanar/abs)</li>
-<li>[ <a class="reference internal" href="#acos">acos</a> ](aplanar/acos)</li>
-<li>[ <a class="reference internal" href="#acosh">acosh</a> ](aplanar/acosh)</li>
-<li>[ <a class="reference internal" href="#and">and</a> ](aplanar/and)</li>
-<li>[ <a class="reference internal" href="#aplanar">aplanar</a> ](aplanar/aplanar)</li>
-<li>[ <a class="reference internal" href="#asin">asin</a> ](aplanar/asin)</li>
-<li>[ <a class="reference internal" href="#asinh">asinh</a> ](aplanar/asinh)</li>
-<li>[ <a class="reference internal" href="#atan">atan</a> ](aplanar/atan)</li>
-<li>[ <a class="reference internal" href="#atanh">atanh</a> ](aplanar/atanh)</li>
-<li>[ <a class="reference internal" href="#cos">cos</a> ](aplanar/cos)</li>
-<li>[ <a class="reference internal" href="#cosh">cosh</a> ](aplanar/cosh)</li>
-<li>[ <a class="reference internal" href="#cot">cot</a> ](aplanar/cot)</li>
-<li>[ <a class="reference internal" href="#coth">coth</a> ](aplanar/coth)</li>
-<li>[ <a class="reference internal" href="#diff">diff</a> ](aplanar/diff)</li>
-<li>[ <a class="reference internal" href="#eq">eq</a> ](aplanar/eq)</li>
-<li>[ <a class="reference internal" href="#erf">erf</a> ](aplanar/erf)</li>
-<li>[ <a class="reference internal" href="#exp">exp</a> ](aplanar/exp)</li>
-<li>[ <a class="reference internal" href="#ge">ge</a> ](aplanar/ge)</li>
-<li>[ <a class="reference internal" href="#gt">gt</a> ](aplanar/gt)</li>
-<li>[ <a class="reference internal" href="#if-elseif">if_elseif</a> ](aplanar/if_elseif)</li>
-<li>[ <a class="reference internal" href="#if-then-else">if_then_else</a> ](aplanar/if_then_else)</li>
-<li>[ <a class="reference internal" href="#le">le</a> ](aplanar/le)</li>
-<li>[ <a class="reference internal" href="#log">log</a> ](aplanar/log)</li>
-<li>[ <a class="reference internal" href="#log10">log10</a> ](aplanar/log10)</li>
-<li>[ <a class="reference internal" href="#lt">lt</a> ](aplanar/lt)</li>
-<li>[ <a class="reference internal" href="#max">max</a> ](aplanar/max)</li>
-<li>[ <a class="reference internal" href="#min">min</a> ](aplanar/min)</li>
-<li>[ <a class="reference internal" href="#minus">minus</a> ](aplanar/minus)</li>
-<li>[ <a class="reference internal" href="#mpower">mpower</a> ](aplanar/mpower)</li>
-<li>[ <a class="reference internal" href="#mrdivide">mrdivide</a> ](aplanar/mrdivide)</li>
-<li>[ <a class="reference internal" href="#mtimes">mtimes</a> ](aplanar/mtimes)</li>
-<li>[ <a class="reference internal" href="#ne">ne</a> ](aplanar/ne)</li>
-<li>[ <a class="reference internal" href="#normcdf">normcdf</a> ](aplanar/normcdf)</li>
-<li>[ <a class="reference internal" href="#normpdf">normpdf</a> ](aplanar/normpdf)</li>
-<li>[ <a class="reference internal" href="#or">or</a> ](aplanar/or)</li>
-<li>[ <a class="reference internal" href="#plus">plus</a> ](aplanar/plus)</li>
-<li>[ <a class="reference internal" href="#power">power</a> ](aplanar/power)</li>
-<li>[ <a class="reference internal" href="#rdivide">rdivide</a> ](aplanar/rdivide)</li>
-<li>[ <a class="reference internal" href="#sign">sign</a> ](aplanar/sign)</li>
-<li>[ <a class="reference internal" href="#sin">sin</a> ](aplanar/sin)</li>
-<li>[ <a class="reference internal" href="#sinh">sinh</a> ](aplanar/sinh)</li>
-<li>[ <a class="reference internal" href="#sqrt">sqrt</a> ](aplanar/sqrt)</li>
-<li>[ <a class="reference internal" href="#tan">tan</a> ](aplanar/tan)</li>
-<li>[ <a class="reference internal" href="#tanh">tanh</a> ](aplanar/tanh)</li>
-<li>[ <a class="reference internal" href="#times">times</a> ](aplanar/times)</li>
-<li>[ <a class="reference internal" href="#uminus">uminus</a> ](aplanar/uminus)</li>
-<li>[ <a class="reference internal" href="#uplus">uplus</a> ](aplanar/uplus)</li>
+<li>[abs](aplanar/abs)</li>
+<li>[acos](aplanar/acos)</li>
+<li>[acosh](aplanar/acosh)</li>
+<li>[and](aplanar/and)</li>
+<li>[aplanar](aplanar/aplanar)</li>
+<li>[asin](aplanar/asin)</li>
+<li>[asinh](aplanar/asinh)</li>
+<li>[atan](aplanar/atan)</li>
+<li>[atanh](aplanar/atanh)</li>
+<li>[cos](aplanar/cos)</li>
+<li>[cosh](aplanar/cosh)</li>
+<li>[cot](aplanar/cot)</li>
+<li>[coth](aplanar/coth)</li>
+<li>[diff](aplanar/diff)</li>
+<li>[eq](aplanar/eq)</li>
+<li>[erf](aplanar/erf)</li>
+<li>[exp](aplanar/exp)</li>
+<li>[ge](aplanar/ge)</li>
+<li>[gt](aplanar/gt)</li>
+<li>[if_elseif](aplanar/if_elseif)</li>
+<li>[if_then_else](aplanar/if_then_else)</li>
+<li>[le](aplanar/le)</li>
+<li>[log](aplanar/log)</li>
+<li>[log10](aplanar/log10)</li>
+<li>[lt](aplanar/lt)</li>
+<li>[max](aplanar/max)</li>
+<li>[min](aplanar/min)</li>
+<li>[minus](aplanar/minus)</li>
+<li>[mpower](aplanar/mpower)</li>
+<li>[mrdivide](aplanar/mrdivide)</li>
+<li>[mtimes](aplanar/mtimes)</li>
+<li>[ne](aplanar/ne)</li>
+<li>[normcdf](aplanar/normcdf)</li>
+<li>[normpdf](aplanar/normpdf)</li>
+<li>[or](aplanar/or)</li>
+<li>[plus](aplanar/plus)</li>
+<li>[power](aplanar/power)</li>
+<li>[rdivide](aplanar/rdivide)</li>
+<li>[sign](aplanar/sign)</li>
+<li>[sin](aplanar/sin)</li>
+<li>[sinh](aplanar/sinh)</li>
+<li>[sqrt](aplanar/sqrt)</li>
+<li>[tan](aplanar/tan)</li>
+<li>[tanh](aplanar/tanh)</li>
+<li>[times](aplanar/times)</li>
+<li>[uminus](aplanar/uminus)</li>
+<li>[uplus](aplanar/uplus)</li>
 </ul>
-<hr class="docutils" />
-<hr class="docutils" />
-<div class="section" id="abs">
-<span id="id1"></span><h2>abs<a class="headerlink" href="#abs" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="acos">
-<span id="id2"></span><h2>acos<a class="headerlink" href="#acos" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="acosh">
-<span id="id3"></span><h2>acosh<a class="headerlink" href="#acosh" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="and">
-<span id="id4"></span><h2>and<a class="headerlink" href="#and" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="aplanar">
-<span id="id5"></span><h2>aplanar<a class="headerlink" href="#aplanar" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="asin">
-<span id="id6"></span><h2>asin<a class="headerlink" href="#asin" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="asinh">
-<span id="id7"></span><h2>asinh<a class="headerlink" href="#asinh" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="atan">
-<span id="id8"></span><h2>atan<a class="headerlink" href="#atan" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="atanh">
-<span id="id9"></span><h2>atanh<a class="headerlink" href="#atanh" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="cos">
-<span id="id10"></span><h2>cos<a class="headerlink" href="#cos" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="cosh">
-<span id="id11"></span><h2>cosh<a class="headerlink" href="#cosh" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="cot">
-<span id="id12"></span><h2>cot<a class="headerlink" href="#cot" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="coth">
-<span id="id13"></span><h2>coth<a class="headerlink" href="#coth" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="diff">
-<span id="id14"></span><h2>diff<a class="headerlink" href="#diff" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="eq">
-<span id="id15"></span><h2>eq<a class="headerlink" href="#eq" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="erf">
-<span id="id16"></span><h2>erf<a class="headerlink" href="#erf" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="exp">
-<span id="id17"></span><h2>exp<a class="headerlink" href="#exp" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="ge">
-<span id="id18"></span><h2>ge<a class="headerlink" href="#ge" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="gt">
-<span id="id19"></span><h2>gt<a class="headerlink" href="#gt" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="if-elseif">
-<span id="id20"></span><h2>if_elseif<a class="headerlink" href="#if-elseif" title="Permalink to this headline">¶</a></h2>
-<p>just pick the first element corresponding to the location
-that evaluates to true</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="if-then-else">
-<span id="id21"></span><h2>if_then_else<a class="headerlink" href="#if-then-else" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="le">
-<span id="id22"></span><h2>le<a class="headerlink" href="#le" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="log">
-<span id="id23"></span><h2>log<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="log10">
-<span id="id24"></span><h2>log10<a class="headerlink" href="#log10" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="lt">
-<span id="id25"></span><h2>lt<a class="headerlink" href="#lt" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="max">
-<span id="id26"></span><h2>max<a class="headerlink" href="#max" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="min">
-<span id="id27"></span><h2>min<a class="headerlink" href="#min" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="minus">
-<span id="id28"></span><h2>minus<a class="headerlink" href="#minus" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="mpower">
-<span id="id29"></span><h2>mpower<a class="headerlink" href="#mpower" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="mrdivide">
-<span id="id30"></span><h2>mrdivide<a class="headerlink" href="#mrdivide" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="mtimes">
-<span id="id31"></span><h2>mtimes<a class="headerlink" href="#mtimes" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="ne">
-<span id="id32"></span><h2>ne<a class="headerlink" href="#ne" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="normcdf">
-<span id="id33"></span><h2>normcdf<a class="headerlink" href="#normcdf" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="normpdf">
-<span id="id34"></span><h2>normpdf<a class="headerlink" href="#normpdf" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="or">
-<span id="id35"></span><h2>or<a class="headerlink" href="#or" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="plus">
-<span id="id36"></span><h2>plus<a class="headerlink" href="#plus" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="power">
-<span id="id37"></span><h2>power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="rdivide">
-<span id="id38"></span><h2>rdivide<a class="headerlink" href="#rdivide" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="sign">
-<span id="id39"></span><h2>sign<a class="headerlink" href="#sign" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="sin">
-<span id="id40"></span><h2>sin<a class="headerlink" href="#sin" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="sinh">
-<span id="id41"></span><h2>sinh<a class="headerlink" href="#sinh" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="sqrt">
-<span id="id42"></span><h2>sqrt<a class="headerlink" href="#sqrt" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="tan">
-<span id="id43"></span><h2>tan<a class="headerlink" href="#tan" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="tanh">
-<span id="id44"></span><h2>tanh<a class="headerlink" href="#tanh" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="times">
-<span id="id45"></span><h2>times<a class="headerlink" href="#times" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="uminus">
-<span id="id46"></span><h2>uminus<a class="headerlink" href="#uminus" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-<hr class="docutils" />
-</div>
-<div class="section" id="uplus">
-<span id="id47"></span><h2>uplus<a class="headerlink" href="#uplus" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>~~ no help found</div></blockquote>
-</div>
 </div>
 
 
@@ -385,60 +102,6 @@ that evaluates to true</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">automatic &#8220;planar&#8221; differentiation</a><ul>
-<li><a class="reference internal" href="#abs">abs</a></li>
-<li><a class="reference internal" href="#acos">acos</a></li>
-<li><a class="reference internal" href="#acosh">acosh</a></li>
-<li><a class="reference internal" href="#and">and</a></li>
-<li><a class="reference internal" href="#aplanar">aplanar</a></li>
-<li><a class="reference internal" href="#asin">asin</a></li>
-<li><a class="reference internal" href="#asinh">asinh</a></li>
-<li><a class="reference internal" href="#atan">atan</a></li>
-<li><a class="reference internal" href="#atanh">atanh</a></li>
-<li><a class="reference internal" href="#cos">cos</a></li>
-<li><a class="reference internal" href="#cosh">cosh</a></li>
-<li><a class="reference internal" href="#cot">cot</a></li>
-<li><a class="reference internal" href="#coth">coth</a></li>
-<li><a class="reference internal" href="#diff">diff</a></li>
-<li><a class="reference internal" href="#eq">eq</a></li>
-<li><a class="reference internal" href="#erf">erf</a></li>
-<li><a class="reference internal" href="#exp">exp</a></li>
-<li><a class="reference internal" href="#ge">ge</a></li>
-<li><a class="reference internal" href="#gt">gt</a></li>
-<li><a class="reference internal" href="#if-elseif">if_elseif</a></li>
-<li><a class="reference internal" href="#if-then-else">if_then_else</a></li>
-<li><a class="reference internal" href="#le">le</a></li>
-<li><a class="reference internal" href="#log">log</a></li>
-<li><a class="reference internal" href="#log10">log10</a></li>
-<li><a class="reference internal" href="#lt">lt</a></li>
-<li><a class="reference internal" href="#max">max</a></li>
-<li><a class="reference internal" href="#min">min</a></li>
-<li><a class="reference internal" href="#minus">minus</a></li>
-<li><a class="reference internal" href="#mpower">mpower</a></li>
-<li><a class="reference internal" href="#mrdivide">mrdivide</a></li>
-<li><a class="reference internal" href="#mtimes">mtimes</a></li>
-<li><a class="reference internal" href="#ne">ne</a></li>
-<li><a class="reference internal" href="#normcdf">normcdf</a></li>
-<li><a class="reference internal" href="#normpdf">normpdf</a></li>
-<li><a class="reference internal" href="#or">or</a></li>
-<li><a class="reference internal" href="#plus">plus</a></li>
-<li><a class="reference internal" href="#power">power</a></li>
-<li><a class="reference internal" href="#rdivide">rdivide</a></li>
-<li><a class="reference internal" href="#sign">sign</a></li>
-<li><a class="reference internal" href="#sin">sin</a></li>
-<li><a class="reference internal" href="#sinh">sinh</a></li>
-<li><a class="reference internal" href="#sqrt">sqrt</a></li>
-<li><a class="reference internal" href="#tan">tan</a></li>
-<li><a class="reference internal" href="#tanh">tanh</a></li>
-<li><a class="reference internal" href="#times">times</a></li>
-<li><a class="reference internal" href="#uminus">uminus</a></li>
-<li><a class="reference internal" href="#uplus">uplus</a></li>
-</ul>
-</li>
-</ul>
-
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/m/differentiation/@aplanar/aplanar.txt"

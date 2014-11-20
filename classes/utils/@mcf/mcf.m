@@ -1,44 +1,44 @@
 classdef mcf < handle
     % mcf Monte Carlo Filtering
     %
-    % methods
-    % --------
+    % mcf Methods:
+    % ---------------
     %
-    % - [addlistener](mcf/addlistener)
-    % - [cdf](mcf/cdf)
-    % - [cdf_plot](mcf/cdf_plot)
-    % - [correlation_patterns_plot](mcf/correlation_patterns_plot)
-    % - [delete](mcf/delete)
-    % - [eq](mcf/eq)
-    % - [findobj](mcf/findobj)
-    % - [findprop](mcf/findprop)
-    % - [ge](mcf/ge)
-    % - [gt](mcf/gt)
-    % - [isvalid](mcf/isvalid)
-    % - [kolmogorov_smirnov_test](mcf/kolmogorov_smirnov_test)
-    % - [le](mcf/le)
-    % - [lt](mcf/lt)
-    % - [mcf](mcf/mcf)
-    % - [ne](mcf/ne)
-    % - [notify](mcf/notify)
-    % - [scatter](mcf/scatter)
+    % addlistener - Add listener for event.
+    % cdf -
+    % cdf_plot -
+    % correlation_patterns_plot -
+    % delete - Delete a handle object.
+    % eq -  == (EQ)   Test handle equality.
+    % findobj - Find objects matching specified conditions.
+    % findprop - Find property of MATLAB handle object.
+    % ge -  >= (GE)   Greater than or equal relation for handles.
+    % gt -  > (GT)   Greater than relation for handles.
+    % isvalid - Test handle validity.
+    % kolmogorov_smirnov_test -   tests the equality of two distributions using their CDFs
+    % le -  <= (LE)   Less than or equal relation for handles.
+    % lt -  < (LT)   Less than relation for handles.
+    % mcf -   Example:
+    % ne -  ~= (NE)   Not equal relation for handles.
+    % notify - Notify listeners of event.
+    % scatter -
     %
-    % properties
-    % -----------
+    % mcf Properties:
+    % ------------------
     %
-    % - [lb] -
-    % - [ub] -
-    % - [nsim] -
-    % - [procedure] -
-    % - [parameter_names] -
-    % - [samples] -
-    % - [is_behaved] -
-    % - [nparam] -
-    % - [is_sampled] -
-    % - [check_behavior] -
-    % - [number_of_outputs] -
-    % - [user_outputs] -
-    % - [known_procedures] -
+    % lb -   lower bounds for the parameters
+    % ub -   upper bounds for the parameters
+    % nsim -   number of simulations
+    % procedure -   sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
+    % parameter_names -   names of the parameters
+    % samples -
+    % is_behaved -
+    % nparam -
+    % is_sampled -
+    % check_behavior -
+    % number_of_outputs -
+    % user_outputs -
+    % known_procedures -
     properties
         % lower bounds for the parameters
         lb
