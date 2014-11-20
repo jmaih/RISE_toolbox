@@ -129,6 +129,6 @@ print_solution(frwz)
 Documentation
 ---------------------
 * This publicly available version of RISE is largely work in progress and there
-is no documentation so far.
+is a documentation (PDF, HTML, etc) but that too is work in progress.
 * RISE is very intuitive as you will quickly realize when you run the examples in RISE_toolbox\examples\
 * Should you want to report a bug, make a suggestion or need help, please send an email to [junior.maih AT gmail.com](junior.maih@gmail.com) 
