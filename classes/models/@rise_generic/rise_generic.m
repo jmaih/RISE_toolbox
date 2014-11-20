@@ -46,17 +46,27 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     % - [solution] -
     % - [filtering] -
     properties
+        % attribute for giving a tag to a specific version of a model
         legend='';
     end
     properties(SetAccess=protected)
+        % information on endogenous variables (names, number, types, etc.)
         endogenous
+        % information on exogenous variables (names, number, types, etc.)
         exogenous
+        % information on parameters (names, number, types, etc.)
         parameters
+        % information on observable variables (names, number, types, etc.)
         observables
+        % information on markov chains, regimes and related items
         markov_chains
+        % structure holding information on modifiable settings
         options
+        % information on estimation: posterior maximization and simulation
         estimation
+        % model solution including steady state, definitions, etc.
         solution
+        % structure holding predicted, updated and smoothed series
         filtering
     end
     properties(SetAccess = protected, Hidden = true)%(SetAccess=protected)

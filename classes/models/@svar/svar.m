@@ -1,58 +1,61 @@
 classdef svar < rise_generic
     % svar Structural VAR modeling
     %
-    % methods
-    % --------
+    % svar Methods:
+    % ----------------
     %
-    % - [check_optimum](svar/check_optimum)
-    % - [draw_parameter](svar/draw_parameter)
-    % - [estimate](svar/estimate)
-    % - [forecast](svar/forecast)
-    % - [get](svar/get)
-    % - [historical_decomposition](svar/historical_decomposition)
-    % - [irf](svar/irf)
-    % - [isnan](svar/isnan)
-    % - [load_parameters](svar/load_parameters)
-    % - [log_marginal_data_density](svar/log_marginal_data_density)
-    % - [log_posterior_kernel](svar/log_posterior_kernel)
-    % - [log_prior_density](svar/log_prior_density)
-    % - [msvar_priors](svar/msvar_priors)
-    % - [posterior_marginal_and_prior_densities](svar/posterior_marginal_and_prior_densities)
-    % - [posterior_simulator](svar/posterior_simulator)
-    % - [print_estimation_results](svar/print_estimation_results)
-    % - [prior_plots](svar/prior_plots)
-    % - [report](svar/report)
-    % - [set](svar/set)
-    % - [set_solution_to_companion](svar/set_solution_to_companion)
-    % - [simulate](svar/simulate)
-    % - [simulation_diagnostics](svar/simulation_diagnostics)
-    % - [solve](svar/solve)
-    % - [stoch_simul](svar/stoch_simul)
-    % - [svar](svar/svar)
-    % - [template](svar/template)
-    % - [theoretical_autocorrelations](svar/theoretical_autocorrelations)
-    % - [theoretical_autocovariances](svar/theoretical_autocovariances)
-    % - [variance_decomposition](svar/variance_decomposition)
+    % check_optimum -   H1 line
+    % draw_parameter -   H1 line
+    % estimate -  estimates the parameters of a RISE model
+    % forecast -  computes forecasts for rise|dsge|svar|rfvar models
+    % get -   H1 line
+    % historical_decomposition - Computes historical decompositions of a DSGE model
+    % irf -  computes impulse responses for a RISE model
+    % isnan -   H1 line
+    % load_parameters -   H1 line
+    % log_marginal_data_density -   H1 line
+    % log_posterior_kernel -   H1 line
+    % log_prior_density -   H1 line
+    % msvar_priors -   H1 line
+    % posterior_marginal_and_prior_densities -   H1 line
+    % posterior_simulator -   H1 line
+    % print_estimation_results -   H1 line
+    % prior_plots -   H1 line
+    % refresh -  refresh the options of an old object with a newer version of
+    % report - assigns the elements of interest to a rise_report.report object
+    % set -  sets options for RISE models
+    % set_solution_to_companion -   H1 line
+    % simulate -  simulates a RISE model
+    % simulation_diagnostics -   H1 line
+    % solve -   H1 line
+    % stoch_simul -   H1 line
+    % svar - Structural VAR modeling
+    % template -
+    % theoretical_autocorrelations -   H1 line
+    % theoretical_autocovariances -   H1 line
+    % variance_decomposition -   H1 line
     %
-    % properties
-    % -----------
+    % svar Properties:
+    % -------------------
     %
-    % - [constant] -
-    % - [nlags] -
-    % - [legend] -
-    % - [endogenous] -
-    % - [exogenous] -
-    % - [parameters] -
-    % - [observables] -
-    % - [markov_chains] -
-    % - [options] -
-    % - [estimation] -
-    % - [solution] -
-    % - [filtering] -
+    % constant -   true if VAR has a constant
+    % nlags -   number of lags in the VAR
+    % legend -   attribute for giving a tag to a specific version of a model
+    % endogenous -   information on endogenous variables (names, number, types, etc.)
+    % exogenous -   information on exogenous variables (names, number, types, etc.)
+    % parameters -   information on parameters (names, number, types, etc.)
+    % observables -   information on observable variables (names, number, types, etc.)
+    % markov_chains -   information on markov chains, regimes and related items
+    % options -   structure holding information on modifiable settings
+    % estimation -   information on estimation: posterior maximization and simulation
+    % solution -   model solution including steady state, definitions, etc.
+    % filtering -   structure holding predicted, updated and smoothed series
     properties
     end
     properties(SetAccess=protected)
+        % true if VAR has a constant
         constant
+        % number of lags in the VAR
         nlags
     end
     properties(SetAccess = private, Hidden = true)%Access=private

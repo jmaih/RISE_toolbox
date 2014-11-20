@@ -56,8 +56,7 @@ if isempty(obj)
         'solve_derivatives_type','symbolic',...%['symbolic','numerical','automatic']
         'solve_accelerate',false,...
         'solve_function_mode','explicit',... %['explicit','disc','vectorized'] see dsge.set
-        'solve_shock_horizon',[],...
-        'vectorized_code_threshold',150));%
+        'solve_shock_horizon',[]));%
     return
 end
 

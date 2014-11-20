@@ -1,6 +1,5 @@
 classdef coef
-    % coef utility class for coef class for setting linear restrictions on
-    % models
+    % coef class for setting linear restrictions on model parameters
     %
     % methods
     % --------

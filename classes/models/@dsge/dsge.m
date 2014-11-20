@@ -1,67 +1,68 @@
 classdef dsge < rise_generic
     % dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
     %
-    % methods
-    % --------
+    % dsge Methods:
+    % ----------------
     %
-    % - [check_derivatives](dsge/check_derivatives)
-    % - [check_optimum](dsge/check_optimum)
-    % - [compute_steady_state](dsge/compute_steady_state)
-    % - [create_estimation_blocks](dsge/create_estimation_blocks)
-    % - [create_state_list](dsge/create_state_list)
-    % - [draw_parameter](dsge/draw_parameter)
-    % - [dsge](dsge/dsge)
-    % - [estimate](dsge/estimate)
-    % - [filter](dsge/filter)
-    % - [forecast](dsge/forecast)
-    % - [forecast_real_time](dsge/forecast_real_time)
-    % - [get](dsge/get)
-    % - [historical_decomposition](dsge/historical_decomposition)
-    % - [irf](dsge/irf)
-    % - [is_stable_system](dsge/is_stable_system)
-    % - [isnan](dsge/isnan)
-    % - [load_parameters](dsge/load_parameters)
-    % - [log_marginal_data_density](dsge/log_marginal_data_density)
-    % - [log_posterior_kernel](dsge/log_posterior_kernel)
-    % - [log_prior_density](dsge/log_prior_density)
-    % - [monte_carlo_filtering](dsge/monte_carlo_filtering)
-    % - [posterior_marginal_and_prior_densities](dsge/posterior_marginal_and_prior_densities)
-    % - [posterior_simulator](dsge/posterior_simulator)
-    % - [print_estimation_results](dsge/print_estimation_results)
-    % - [print_solution](dsge/print_solution)
-    % - [prior_plots](dsge/prior_plots)
-    % - [report](dsge/report)
-    % - [resid](dsge/resid)
-    % - [set](dsge/set)
-    % - [set_solution_to_companion](dsge/set_solution_to_companion)
-    % - [simulate](dsge/simulate)
-    % - [simulate_nonlinear](dsge/simulate_nonlinear)
-    % - [simulation_diagnostics](dsge/simulation_diagnostics)
-    % - [solve](dsge/solve)
-    % - [solve_alternatives](dsge/solve_alternatives)
-    % - [stoch_simul](dsge/stoch_simul)
-    % - [theoretical_autocorrelations](dsge/theoretical_autocorrelations)
-    % - [theoretical_autocovariances](dsge/theoretical_autocovariances)
-    % - [variance_decomposition](dsge/variance_decomposition)
+    % check_derivatives -  compares the derivatives and the solutions from various differentiation techniques
+    % check_optimum -   H1 line
+    % compute_steady_state -   H1 line
+    % create_estimation_blocks -   H1 line
+    % create_state_list - creates the list of the state variables in the solution
+    % draw_parameter -   H1 line
+    % dsge -   default options
+    % estimate -  estimates the parameters of a RISE model
+    % filter -   H1 line
+    % forecast -  computes forecasts for rise|dsge|svar|rfvar models
+    % forecast_real_time -  forecast from each point in time
+    % get -   H1 line
+    % historical_decomposition - Computes historical decompositions of a DSGE model
+    % irf -   H1 line
+    % is_stable_system -   H1 line
+    % isnan -   H1 line
+    % load_parameters -   H1 line
+    % log_marginal_data_density -   H1 line
+    % log_posterior_kernel -   H1 line
+    % log_prior_density -   H1 line
+    % monte_carlo_filtering -   H1 line
+    % posterior_marginal_and_prior_densities -   H1 line
+    % posterior_simulator -   H1 line
+    % print_estimation_results -   H1 line
+    % print_solution -  print the solution of a model or vector of models
+    % prior_plots -   H1 line
+    % refresh -  refresh the options of an old object with a newer version of
+    % report - assigns the elements of interest to a rise_report.report object
+    % resid -   H1 line
+    % set -  sets options for dsge|rise models
+    % set_solution_to_companion -   H1 line
+    % simulate -  simulates a RISE model
+    % simulate_nonlinear -   H1 line
+    % simulation_diagnostics -   H1 line
+    % solve -   H1 line
+    % solve_alternatives -   H1 line
+    % stoch_simul -   H1 line
+    % theoretical_autocorrelations -   H1 line
+    % theoretical_autocovariances -   H1 line
+    % variance_decomposition -   H1 line
     %
-    % properties
-    % -----------
+    % dsge Properties:
+    % -------------------
     %
-    % - [definitions] -
-    % - [equations] -
-    % - [folders_paths] -
-    % - [dsge_var] -
-    % - [filename] -
-    % - [legend] -
-    % - [endogenous] -
-    % - [exogenous] -
-    % - [parameters] -
-    % - [observables] -
-    % - [markov_chains] -
-    % - [options] -
-    % - [estimation] -
-    % - [solution] -
-    % - [filtering] -
+    % definitions -   values of auxiliary parameters defined in the model file with a #
+    % equations - of the system
+    % folders_paths -   paths for the different folders in which RISE stores information
+    % dsge_var -
+    % filename -   name of the rs/rz/dsge file read
+    % legend -   attribute for giving a tag to a specific version of a model
+    % endogenous -   information on endogenous variables (names, number, types, etc.)
+    % exogenous -   information on exogenous variables (names, number, types, etc.)
+    % parameters -   information on parameters (names, number, types, etc.)
+    % observables -   information on observable variables (names, number, types, etc.)
+    % markov_chains -   information on markov chains, regimes and related items
+    % options -   structure holding information on modifiable settings
+    % estimation -   information on estimation: posterior maximization and simulation
+    % solution -   model solution including steady state, definitions, etc.
+    % filtering -   structure holding predicted, updated and smoothed series
     properties (Hidden = true)
         online_routines
     end
@@ -115,13 +116,14 @@ classdef dsge < rise_generic
         equations_reordering_for_multipliers
     end
     properties(SetAccess=protected)
-        % those can be seen but not changed from outside at least not directly
-        % initialize this in the proper way in order to avoid problems of
-        % concatenation.
+        % values of auxiliary parameters defined in the model file with a #
         definitions
+        % equations of the system
         equations
+        % paths for the different folders in which RISE stores information
         folders_paths
         dsge_var
+        % name of the rs/rz/dsge file read
         filename='';
     end
     methods(Hidden)

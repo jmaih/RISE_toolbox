@@ -1,10 +1,10 @@
 % RISE Toolbox
-% Version 1.0.1 (R2014b) 19-Nov-2014
+% Version 1.0.1 (R2014b) 20-Nov-2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Toolbox        RISE
 %
-% Version        1.0.1 19-Nov-2014
+% Version        1.0.1 20-Nov-2014
 %
 % Contents path  C:\Users\jma\Documents\GitHub\RISE_toolbox\help
 %
