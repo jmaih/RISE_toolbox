@@ -82,7 +82,7 @@ disp(['  Number of static variables:  ' int2str(static)])
 end
 disp(' ')
 if isa(obj,'dsge') && obj.options.solve_order <= 2
-    print_solution(obj,var_list,true);
+    print_solution(obj,var_list,[],true);
 end
 % end
 
