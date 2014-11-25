@@ -17,11 +17,7 @@ function [blocks,markov_chains]=file2blocks(RawFile)
 % Examples
 % ---------
 %
-% See also: 
-
-
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+% See also:
 
 tex_name='';
 quote_active=false;
@@ -30,7 +26,6 @@ last_block_id=[];
 block_col_names={'name','trigger','listing'};
 listing=parser.listing();
 
-current_list={};
 current_markov_chain_name='';
 current_number_of_states=[];
 new_markov_chain_tex_names={};
@@ -246,6 +241,7 @@ end
 %--------------------------------------------------------------------------
 
     function block=construct_list(block,rawline_,tokk)
+        current_list={block.listing.name};
         end_game=~isempty(strfind(rawline_,';'));
         if end_game
             warning(['ending declaration listings with a'';'' is no longer required. In ',...
@@ -448,7 +444,6 @@ end
                             end
                             block.listing(nvars).is_measurement_error=false;
                         end
-                        current_list={block.listing.name};
                     end
                 end
             end
