@@ -105,8 +105,10 @@ end
 
 % restore all other axes
 for k=1:length(currax)
-    axes(currax(k)); %#ok<LAXES> 
-end 
+    try
+        axes(currax(k)); %#ok<LAXES>
+    end
+end
 
 if (nargout < 2)
     return
