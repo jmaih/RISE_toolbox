@@ -456,7 +456,7 @@ end
 dictionary.lead_lag_incidence.before_solve=transpose(flipud(dictionary.lead_lag_incidence.before_solve));
 dictionary.lead_lag_incidence.before_solve(dictionary.lead_lag_incidence.before_solve>0)=1:nnz(dictionary.lead_lag_incidence.before_solve);
 
-appear_as_current=find(dictionary.lead_lag_incidence.before_solve(:,2));
+appear_as_current=dictionary.lead_lag_incidence.before_solve(:,2)>0;
 if any(~appear_as_current)
     disp('The following variables::')
     disp(old_endo_names(~appear_as_current))
