@@ -100,6 +100,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
                 obj=rise_generic.reset(obj,varargin{:});
             end
         end
+        varargout=evaluate_nonlinear_restrictions(varargin)
         varargout=estimate(varargin)
         varargout=irf(varargin)
         varargout=simulate(varargin)
