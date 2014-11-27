@@ -1,18 +1,27 @@
 function obj=setup_general_restrictions(obj)
-% H1 line
+% setup_general_restrictions - sets up the general nonlinear restrictions
 %
 % Syntax
 % -------
 % ::
 %
+%	obj=setup_general_restrictions(obj)
+%
 % Inputs
 % -------
+%
+% - **obj** [rise|dsge|rfvar|svar]: RISE object
 %
 % Outputs
 % --------
 %
+% - **obj** [rise|dsge|rfvar|svar]: RISE object
+%
 % More About
 % ------------
+%
+% - If present, the general restrictions should have been passed at an earlier stage
+%	See help for rise_generic/estimate for further information
 %
 % Examples
 % ---------
