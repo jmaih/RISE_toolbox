@@ -40,10 +40,19 @@ end
 
 linear_restricts=obj(1).linear_restrictions_data;
 nobj=numel(obj);
-general_restrictions=cell(1,nobj);
+ngenrest=0;
+c=cell(1,nobj);
 for iii=1:nobj
-    general_restrictions{iii}=obj(iii).general_restrictions_data;
+    % check the filtering level required under estimation
+    %-----------------------------------------------------
+    if ~isempty(obj(iii).general_restrictions_data)
+        ngenrest=ngenrest+1;
+        req=obj(iii).general_restrictions_data();
+        obj.options.kf_filtering_level=req.kf_filtering_level;
+        c{iii}=obj(iii).options.estim_penalty_factor;
+    end
 end
+
 estim_blocks=obj(1).options.estim_blocks;
 if ~isempty(estim_blocks)
     estim_blocks=create_estimation_blocks(obj(1),estim_blocks);
@@ -61,7 +70,6 @@ end
 violLast=[];
 xLast=[];
 viol=[];
-ngen_restr=[];
 if isempty(x0)
     x0=lb_short+(ub_short-lb_short).*rand(npar_short,1);
 else
@@ -110,10 +118,25 @@ end
         x=linear_restricts.a_func(xtilde);
         
         fval=obj(1).options.estim_penalty*ones(1,nobj);
+        
+        % general restrictions are sometimes infeasible. Rather than
+        % imposing a barrier that will be difficult to cross if the initial
+        % constraints are not satified, we use a penalty function approach.
         for mo=1:nobj
             [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
             if retcode
                 break
+            end
+        end
+        
+        if ~retcode && ngenrest
+            % add a penalty for the restrictions violation
+            %----------------------------------------------
+            g=evaluate_nonlinear_restrictions(obj);
+            for mo=1:nobj
+                if ~isempty(g{mo})
+                    fval(mo)=fval(mo)+utils.estim.penalize_violations(g{mo},c{mo});
+                end
             end
         end
         funevals=funevals+1;
@@ -125,13 +148,7 @@ end
         % the results to pass on to the optimizer when it calls the
         % nonlinear constraints.
         if retcode
-            if isempty(ngen_restr)
-                % then we still have not found a good starting point
-                % and therefore, there is no point in looking at the
-                % constraints.
-            else
-                violLast=ones(nconst+ngen_restr,1)*realmax/(nconst+ngen_restr);
-            end
+            violLast=ones(nconst,1)*realmax/(nconst);
             % update this element right here, so that it is ready when
             % calling nonlcon_with_gradient.
             xLast=x;
@@ -153,22 +170,14 @@ end
             if ~params_pushed
                 obj=assign_estimates(obj,x);
             end
-            viol_general=[];
             viol_simple=[];
             for iobj=1:nobj
                 if ~isempty(nonlcon)
                     vv=nonlcon(obj(iobj).parameter_values);
                     viol_simple=[viol_simple,vv(:)]; %#ok<AGROW>
                 end
-                if ~isempty(general_restrictions{iobj})
-                    vv=general_restrictions{iobj}(obj(iobj));
-                    viol_general=[viol_general,vv(:)]; %#ok<AGROW>
-                end
             end
-            if isempty(ngen_restr)
-                ngen_restr=numel(viol_general);
-            end
-            viol=[viol_simple(:);viol_general(:)];
+            viol=viol_simple(:);
             xLast=x;
             violLast=viol;
         end
