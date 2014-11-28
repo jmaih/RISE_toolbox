@@ -1,17 +1,22 @@
 function this=collect(varargin)
-% collect - brings together several time series object into a one time series
+% collect - brings together several time series objects into a one time series
 %
 % Syntax
 % -------
 % ::
 %
 %   - this=collect(v1,v2,...,vn)
-%   - this=collect(Vstruct)
 %
 % Inputs
 % -------
 %
-% - several time series or a structure of time series
+% - **Vi** [cell|ts|struct]: time series in ts format:
+%   - cell: When Vi is a cell, then its format should be {vname,ts} i.e.
+%   the first element is the name of the variable and the second is the
+%   data for the variable. In this case, the data must be a single time
+%   series
+%   - ts: 
+%   - struct: the fields of the structure should be of the ts format.
 %
 % Outputs
 % --------
@@ -39,63 +44,62 @@ if exitflag
     return
 end
 
-cellnames=cell(1,nn);
-celldata=cell(1,nn);
+cellnames=cell(1,0);
+celldata=cell(1,0);
 ii=0;
+offset=0;
 while ~isempty(varargin)
     ii=ii+1;
     db_i=varargin{1};
     if isa(db_i,'cell')
-        cellnames{ii}=db_i{1};
-        celldata{ii}=db_i{2};
+        if ~isa(db_i{2},'ts')
+            error('element in the second cell must be an input')
+        end
+        if db_i{2}.NumberOfVariables>1
+            error('when input is a cell, the number of variables should be 1')
+        end
+        cellnames=[cellnames,db_i(1)];
+        celldata=[celldata,db_i(2)];
+        offset=offset+1;
     elseif isa(db_i,'ts')
         % if there are many names then check that nargin==1
-        if db_i.NumberOfVariables>1
-            if nn>1
-                error([mfilename,':: in order to collect, individual databases must all have one variable'])
-            end
-            cellnames=db_i.varnames;
-            if isempty(cellnames{1})
-                error([mfilename,':: database ',int2str(ii),' must have an internal name'])
-            end
-            this=db_i;
-            return
-        else
-            cellnames(ii)=db_i.varnames;
-            celldata{ii}=db_i;
-            if isempty(cellnames{ii})
-                error([mfilename,':: database ',int2str(ii),' must have an internal name'])
-            end
+        if isempty(db_i.varnames{1})
+            error([mfilename,':: database ',int2str(ii),' must have an internal name'])
+        end
+        cellnames=[cellnames,db_i.varnames(:).'];
+        celldata=[celldata,cell(1,db_i.NumberOfVariables)];
+        for ivar=1:db_i.NumberOfVariables
+            offset=offset+1;
+            celldata{offset}=db_i(db_i.varnames{ivar});
         end
     elseif isa(db_i,'struct')
         fields=fieldnames(db_i);
         n0=numel(fields);
-        cellnames=transpose(fields);
-        celldata=cell(1,n0);
+        cellnames=[cellnames,fields(:).']; %#ok<*AGROW>
+        celldata=[celldata,cell(1,n0)];
         for jj=1:n0
-            celldata{jj}=db_i.(cellnames{jj});
+            offset=offset+1;
+            celldata{offset}=db_i.(fields{jj});
         end
-        varargin=varargin(nn+1:end);
-        nn=n0;
     else
         error([mfilename,':: input ',int2str(ii),' must be either instance of class ''ts'' or a cell as {''varname'',ts object} or a struct of ts objects'])
     end
-    if celldata{ii}.NumberOfVariables~=1
-        error([mfilename,':: database ',int2str(ii),' must have exactly one variable'])
-    end
     varargin=varargin(2:end);
 end
+
 unique_names=unique(cellnames);
-duplicates=false(1,numel(unique_names));
+n_unic=numel(unique_names);
+duplicates=false(1,n_unic);
+locs_unic=cell(1,n_unic);
 for ii=1:numel(unique_names)
-    loc=find(strcmp(unique_names{ii},cellnames));
-    if numel(loc)>1
-        duplicates(loc)=true;
+    locs_unic{ii}=find(strcmp(unique_names{ii},cellnames));
+    if numel(locs_unic{ii})>1
+        duplicates(ii)=true;
     end
 end
 if any(duplicates)
-    disp(cellnames(duplicates))
-    error([mfilename,':: the variables above are duplicated'])
+    disp(unique_names(duplicates))
+    warning([mfilename,':: the variables above are duplicated'])
 end
 
 % find the first date, the last date, the highest frequency
@@ -106,9 +110,9 @@ frequencies_codes={'','H','Q','M'
 loc= strcmp(celldata{1}.frequency,frequencies_codes(1,:));
 frequency_code=frequencies_codes{2,loc};
 highest_frequency=celldata{1}.frequency;
-npages=nan(1,nn);
+npages=nan(1,offset);
 npages(1)=celldata{1}.NumberOfPages;
-for ii=2:nn
+for ii=2:offset
     loc= strcmp(celldata{ii}.frequency,frequencies_codes(1,:));
     if frequencies_codes{2,loc}>frequency_code
         highest_frequency=celldata{ii}.frequency;
@@ -127,21 +131,32 @@ for ii=2:nn
 end
 
 newdates=(first_date:last_date)';
-newdata=nan(numel(newdates),nn,max(npages));
-for ii=1:nn
-    % step 1, convert the dates to the new frequency
-    dat_n_ii=convert_date(celldata{ii}.date_numbers,highest_frequency);
-    oldata=celldata{ii}.data;
-    locations=nan(size(dat_n_ii));
-    for jj=1:numel(locations)
-        loc=find(newdates==dat_n_ii(jj));
-        if isempty(loc)
-            error([mfilename,':: date not found in new vector'])
+newdata=nan(numel(newdates),n_unic,max(npages));
+for kk=1:n_unic
+    locs=locs_unic{kk};
+    for iloc=1:numel(locs)
+        ii=locs(iloc);
+        % step 1, convert the dates to the new frequency
+        dat_n_ii=convert_date(celldata{ii}.date_numbers,highest_frequency);
+        oldata=celldata{ii}.data;
+        locations=nan(size(dat_n_ii));
+        for jj=1:numel(locations)
+            loc=find(newdates==dat_n_ii(jj));
+            if isempty(loc)
+                error([mfilename,':: date not found in new vector'])
+            end
+            locations(jj)=loc;
         end
-        locations(jj)=loc;
+        template=newdata(locations,kk,1:npages(ii));
+        % override the template only in places that are nan
+        free=isnan(template);
+        template(free)=oldata(free);
+        if any(template(~free)) && any(oldata(~free))
+            warning('due to duplications, some data were not copied...')
+        end
+        % find the date locations
+        newdata(locations,kk,1:npages(ii))=template;
     end
-    % find the date locations
-    newdata(locations,ii,1:npages(ii))=oldata;
 end
 % trim the dates and data in case there are further trailing
 % nans. Do this using the fake data in case there are many pages
@@ -154,9 +169,8 @@ newdata=newdata(first_good:last_good,:,:);
 % calling ts. But the reason I need ts is because I
 % started working with it earlier
 
-% now we can safely sort the bastard
-[~,tags]=sort(cellnames);
-this=ts(newdates,newdata(:,tags,:),cellnames(tags));
+this=ts(newdates,newdata,unique_names);
+
 end
 
 function this=convert_date(this0,newfreq)
