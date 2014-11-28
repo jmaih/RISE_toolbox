@@ -116,16 +116,20 @@ switch nsubs
 end
 
     function varloc=process_variables(vnames)
+        done=false;
         if ischar(vnames)
             vnames(isspace(vnames))=[];
             all_vars=strcmp(vnames,':');
             if all_vars
-                vnames=obj.varnames;
+                varloc=1:obj.NumberOfVariables;
+                done=true;
             else
                 vnames=regexp(vnames,',','split');
             end
         end
-        varloc=locate_variables(vnames,obj.varnames);
+        if ~done
+            varloc=locate_variables(vnames,obj.varnames);
+        end
     end
 
     function [rows_dates]=select_from_serial(x,freq)
