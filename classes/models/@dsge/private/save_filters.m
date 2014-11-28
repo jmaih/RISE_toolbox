@@ -135,14 +135,17 @@ end
             iobs=ismember(vnames,obj.observables.name(~obj.observables.is_endogenous));
             xxx=obj.data.x;
             if ~isempty(xxx)
-                tmp(:,iobs,:)=repmat(transpose(xxx),[1,1,current_reg_nbr]);
+                tmp(:,iobs,1)=transpose(xxx);
+                % the other pages are nan...
             end
-            not_iobs=setdiff(1:nvars,find(iobs));
-            index=not_iobs;
-            for iloop=2:nloops
-                index=[index,not_iobs+nvars]; %#ok<AGROW>
+            not_iobs=1:nvars*nloops;
+            if any(iobs)
+                proto=(1:nvars:nvars*nloops)-1;
+                for jj=find(iobs)
+                    not_iobs=setdiff(not_iobs,proto+jj);
+                end
             end
-            tmp(:,index,:)=filtdata;
+            tmp(:,not_iobs,:)=filtdata;
             filtdata=tmp;
         elseif measerrs_flag
             vnames=obj.observables.name;
