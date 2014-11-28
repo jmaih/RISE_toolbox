@@ -34,12 +34,12 @@ if nobj==0
     g=struct();
 else
     g=cell(1,nobj);
-    for iii=1:nobj
-        if ~isempty(obj(ii).options.estim_general_restrictions)
-            if isempty(obj(iii).general_restrictions_data)
-                obj(iii)=setup_general_restrictions(obj(iii));
+    for iobj=1:nobj
+        if ~isempty(obj(iobj).options.estim_general_restrictions)
+            if isempty(obj(iobj).general_restrictions_data)
+                obj(iobj)=setup_general_restrictions(obj(iobj));
             end
-            g{iii}=obj(iii).general_restrictions_data(obj(iii));
+            g{iobj}=obj(iobj).general_restrictions_data(obj(iobj));
         end
     end
 end
