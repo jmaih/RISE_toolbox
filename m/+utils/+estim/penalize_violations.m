@@ -41,10 +41,13 @@ if c<=0
     error('penalty factor must be strictly positive')
 end
 
-if isempty(viol)
-    p=0;
-else
-    p=c*sum(max(0,viol(:)).^2);
+p=0;
+if ~isempty(viol)
+    viol=max(0,viol(:));
+    viol=viol(viol>0);
+    if ~isempty(viol)
+        p=c*sum((viol/min(viol)).^2);
+    end
 end
 
 end
