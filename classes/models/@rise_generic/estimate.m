@@ -39,14 +39,24 @@ function obj=estimate(obj,varargin)
 %   is no need to provide values to update the start values for the
 %   estimated parameters.
 %
-% - **estim_general_restrictions** [{[]}|function handle]: when not empty,
-%   the argument should be a function handle that takes as input a
-%   parameterized RISE object and returns a scalar or vector of numbers
-%   representing the strength of the violation of the nonlinear
-%   constraints. Those constraints will be added to the constraints already
-%   included in a rise/dsge file before being presented to the optimization
-%   function.
-%
+% - **estim_general_restrictions** [{[]}|function handle|cell array]: when
+%   not empty, the argument can be a function handle or a cell array
+%   containing the function handle and additional input arguments. The
+%   general syntax for the calling the function handle is
+%   viol=myfunc(obj,varargin), with **obj** the parameterized RISE object
+%   which will be used in the computation of the restrictions violations.
+%   Hence the restrictions are entered either as  @myfunc or as
+%   {@myfunc,arg3,arg2,...}. Originally, RISE will call the function
+%   without any inputs. In that case, RISE expects the output to be a
+%   structure with fields : 
+%       - **number_of_restrictions** : number of restrictions
+%       - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
+%       for the computation of the restrictions. If 1, only the filtered
+%       variables are required. If 2, the updated variables are required.
+%       If 3, the smoothed variables are required. 
+%   When the function is called with inputs, RISE expects as output the
+%   values of the restrictions. The user should define those as g(x)<=0.
+%   
 % - **estim_linear_restrictions** [{[]}|cell]: This is most often used in
 %   the estimation of rfvar or svar models either to impose block
 %   exogeneity or to impose other forms of linear restrictions. When not
@@ -77,10 +87,12 @@ function obj=estimate(obj,varargin)
 %   - non-positive definite covariance matrices
 %   - etc.
 %
-% - **estim_cond_vars** [char|cellstr]: list of the variables to condition
-%   on during estimation of a dsge model. This then assumes that the data
-%   provided for estimation have several pages. The first page is the
-%   actual data, while the subsequent pages are the expectations data.
+% - **estim_penalty_factor** [numeric|{10}]: when general nonlinear
+% restrictions are present, RISE uses an estimation strategy in which the
+% objective function is penalized as
+% f_final=fval+estim_penalty_factor*sum(max(0,g)^2) where g is a vector of
+% the values of the restrictions, which are expected to be of the form
+% g(x)<=0. See **estim_general_restrictions** above.
 %
 % - **optimset** [struct]: identical to matlab's optimset
 %
@@ -128,6 +140,13 @@ function obj=estimate(obj,varargin)
 % - recursive estimation may be done easily by passing a different
 %   estim_end_date at the beginning of each estimation run.
 %
+% - It is also possible to estimate a dsge model using conditional  
+%   future information on endogenous (**forecast_cond_endo_vars**) as well.
+%   as on exogenous (**forecast_cond_exo_vars**). The dataset provided in 
+%   this case must have several pages. The first page is the actual data, 
+%   while the subsequent pages are the expectations data.
+%   See help dsge.forecast for more information
+%
 % Examples
 % ---------
 %
@@ -150,7 +169,7 @@ if nobj==0
         'estim_blocks',[],...
         'estim_priors',[],...
         'estim_penalty',1e+8,...
-        'estim_cond_vars','');
+        'estim_penalty_factor',10);
     % violations of the restrictions in a vector for instance in order to impose the max operator ZLB, Linde and Maih
     obj=utils.miscellaneous.mergestructures(optimization.estimation_engine(),...
         main_defaults);
@@ -291,6 +310,10 @@ for ii=1:nobj
     % outputs with the smoothed and filtered variables (if feasible)
     
     [log_post,log_lik,log_prior,~,~,obj(ii)]=conclude_estimation(obj(ii),x1);
+    % compute the penalties for the restrictions violations
+    %-------------------------------------------------------
+    g=evaluate_nonlinear_restrictions(obj(ii));
+    nonlin_penalty=utils.estim.penalize_violations(g{1},obj(ii).options.estim_penalty_factor);
     
     % capture the final parameters and their standard deviations
     obj(ii).estimation.posterior_maximization.mode=x1;
@@ -303,6 +326,7 @@ for ii=1:nobj
     
     obj(ii).estimation.posterior_maximization.log_prior=log_prior(1);
     obj(ii).estimation.posterior_maximization.log_endog_prior=log_prior(2);
+    obj(ii).estimation.posterior_maximization.nonlinear_restrictions_penalty=nonlin_penalty;
     obj(ii).estimation.posterior_maximization.log_post=log_post;
     obj(ii).estimation.posterior_maximization.log_lik=log_lik;
     obj(ii).estimation.posterior_maximization.log_marginal_data_density_laplace=log_mdd;
