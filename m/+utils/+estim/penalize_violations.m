@@ -6,6 +6,7 @@ function p=penalize_violations(viol,c)
 % ::
 %
 %   p=penalize_violations(viol)
+%
 %   p=penalize_violations(viol,c)
 %
 % Inputs
