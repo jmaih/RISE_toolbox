@@ -48,6 +48,8 @@ for ii=1:nobj
     end
 end
 
+end
+
 
 function [obj,issue,retcode]=load_data_intern(obj,varargin)
 issue='';
@@ -58,18 +60,33 @@ obj.options.data=ts.collect(obj.options.data);
 data_provided=obj.options.data.NumberOfVariables>0;
 
 if data_provided
+    is_endogenous_obs=obj.observables.is_endogenous;
+    xvars=obj.observables.name(~is_endogenous_obs);
+    
+    % list of all the variables: union(observables,cond_endo,cond_exo)
+    %------------------------------------------------------------------
+    [pos_endo_fkst_in_obs,forecast_cond_endo_vars]=find_positions(obj.options.forecast_cond_endo_vars,'observables');
+    % exclude the deterministic exogenous from the list and thereby ensure
+    % there is no collision between the deterministic exogenous and the
+    % stochastic exogenous 
+    [pos_exo_fkst_in_exo,forecast_cond_exo_vars]=find_positions(obj.options.forecast_cond_exo_vars,'exogenous',xvars);
+
+    allvars=union(obj.observables.name,...
+        union(forecast_cond_endo_vars,forecast_cond_exo_vars));
+    
     % the length/number of pages of the dataset depends on the horizon of the
-    % shocks
-    pages=[]; % get all the pages
+    % shocks but for the moment, we consider all pages
+    pages=[];
     [verdier,obj.options.estim_start_date,obj.options.estim_end_date]=...
-        utils.time_series.data_request(obj.options.data,obj.observables.name,...
+        utils.time_series.data_request(obj.options.data,allvars,...
         obj.options.estim_start_date,obj.options.estim_end_date,pages);
     
-    % load exogenous and endogenous
-    %------------------------------
-    is_endogenous=obj.observables.is_endogenous;
-    obj.data.y=verdier(is_endogenous,:,:);
-    obj.data.x=verdier(~is_endogenous,:,:);
+    obs_id=locate_variables(obj.observables.name,allvars);
+    
+    % load endogenous and deterministic exogenous
+    %----------------------------------------------
+    obj.data.y=verdier(obs_id(is_endogenous_obs),:,:);
+    obj.data.x=verdier(obs_id(~is_endogenous_obs),:,:);
     if obj.options.data_demean
         obj.data.y=bsxfun(@minus,obj.data.y,utils.stat.nanmean(obj.data.y(:,:,1),2));
     end
@@ -77,35 +94,59 @@ if data_provided
     obj.data.npages=size(verdier,3);
     obj.data.start=1;
     obj.data.finish=obj.data.nobs;
-    obj.data.varobs_id=real(obj.observables.state_id(is_endogenous));
+    obj.data.varobs_id=real(obj.observables.state_id(is_endogenous_obs));
     
-    % conditional forecasting
-    %-------------------------
-    % Is it restrictive to impose that the variables be observed?
-    estim_cond_vars=obj.options.estim_cond_vars;
-    if ~isempty(estim_cond_vars)
-        if ischar(estim_cond_vars)
-            estim_cond_vars=cellstr(estim_cond_vars);
-        end
-        pos=locate_variables(estim_cond_vars,obj.observables.name,true);
-        if any(isnan(pos))
-            disp(estim_cond_vars(isnan(pos)))
-            error('the variables above are not declared as observables')
-        end
-        endo_pos=is_endogenous(pos);
-        % separate exogenous from exogenous
-        %-----------------------------------
-        obj.data.restr_y_id=obj.observables.state_id(pos(endo_pos));
-        obj.data.restr_x_id=obj.observables.state_id(pos(~endo_pos));
+    % conditional forecasting data
+    %------------------------------
+    Locb = locate_variables(forecast_cond_exo_vars,allvars,true);
+    obj.data.z=verdier(Locb,:,:);
+    
+    if isempty(pos_endo_fkst_in_obs)
+        obj.data.restr_y_id=[];
+    else
+        % id in state vector + (id in the observables)*1i 
+        %--------------------------------------------------
+        obj.data.restr_y_id=obj.observables.state_id(pos_endo_fkst_in_obs)+...
+            pos_endo_fkst_in_obs*1i;
     end
+    
+    if isempty(pos_exo_fkst_in_exo)
+        obj.data.restr_z_id=[];
+    else
+        obj.data.restr_z_id=pos_exo_fkst_in_exo+pos_exo_fkst_in_exo*1i;
+    end
+    
     % add further description fields
     %-------------------------------
     obj.data=data_description(obj.data);
     obj.data_are_loaded=true;
-    
 else
     retcode=500;
     disp([mfilename,'(GENTLE WARNING):: no actual or simulated data provided for filtering/estimation'])
+end
+
+
+    function [pos,condvars]=find_positions(condvars,type,exclude)
+        if nargin<3
+            exclude={};
+        end
+        pos=[];
+        if ~isempty(condvars)
+            if ischar(condvars)
+                condvars=cellstr(condvars);
+            end
+            main_names=setdiff(obj.(type).name,exclude);
+            pos=locate_variables(condvars,main_names,true);
+            if any(isnan(pos))
+                disp(condvars(isnan(pos)))
+                if strcmp(type,'exogenous')
+                    disp(['Note that deterministic exogenous variables',...
+                        ' cannot be declared in the forecast_cond_exo_vars group'])
+                end
+                error(['the conditional variables above are not declared as ',type])
+            end
+        end
+    end
 end
 
 function [d]=data_description(d)
@@ -127,5 +168,6 @@ d.data_structure=~isnan(d.y);
 %-------------------------------------------------------
 d.include_in_likelihood=false(1,smpl);
 d.include_in_likelihood(d.start:d.finish)=true;
+end
 
 
