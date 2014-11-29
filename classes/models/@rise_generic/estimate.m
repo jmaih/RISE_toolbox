@@ -55,7 +55,9 @@ function obj=estimate(obj,varargin)
 %       variables are required. If 2, the updated variables are required.
 %       If 3, the smoothed variables are required. 
 %   When the function is called with inputs, RISE expects as output the
-%   values of the restrictions. The user should define those as g(x)<=0.
+%   values of the restrictions. The sign of the violations does not matter.
+%   All the user has to do is to put a zero where the restrictions are not
+%   violated.
 %   
 % - **estim_linear_restrictions** [{[]}|cell]: This is most often used in
 %   the estimation of rfvar or svar models either to impose block

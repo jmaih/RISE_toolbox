@@ -15,14 +15,13 @@ function g=evaluate_nonlinear_restrictions(obj)
 % Outputs
 % --------
 %
-% - **g** [cell array] : value of restrictions for each object
+% - **g** [cell array] : value of restrictions for each object.
 %
 % More About
 % ------------
 %
-% - The restrictions are expected to be of the form g(x)<=0. This must be
-% ensured by the user who writes the restriction function to be passed to
-% RISE.
+% - The restrictions will be processed as g(x)<=0. But all the user has to
+% do is to put zero where the restrictions are not violated!!!
 %
 % Examples
 % ---------
@@ -39,7 +38,10 @@ else
             if isempty(obj(iobj).general_restrictions_data)
                 obj(iobj)=setup_general_restrictions(obj(iobj));
             end
-            g{iobj}=obj(iobj).general_restrictions_data(obj(iobj));
+            % take the absolute value: the violations are the non-zero
+            % elements
+            %-------------------------------------------------------------
+            g{iobj}=abs(obj(iobj).general_restrictions_data(obj(iobj)));
         end
     end
 end
