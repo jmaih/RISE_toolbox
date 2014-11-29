@@ -52,8 +52,8 @@ function [R,HHRestr,ncsp]=build_shock_restrictions(H,G,yrest_id,xrest_id,ncp,nap
 % Outputs
 % --------
 %
-% - **R** [matrix]: Convolutions of H and G for the restricte endogenous
-%   and convolution of future shocks
+% - **R** [matrix]: Convolutions of H and G for the restricted endogenous
+%   and convolutions of future shocks
 %
 % - **HHRestr** [matrix]: convolutions of powers of H for the restricted
 %   endogenous  
