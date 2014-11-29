@@ -140,7 +140,7 @@ end
             vout=[ax12,h1h2(1:nout-1)];
         end
         %,'XTickMode','auto'...
-        %     'ylim',[ymin,ymax])
+        %     'ylim',[min(d{:}(:))-sqrt(eps),max(d{:}(:))+sqrt(eps)])
         grid on
         varargout=vout(1:nout);
         
