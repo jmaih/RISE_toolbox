@@ -15,7 +15,7 @@ function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 %
 % - **varargin** : valid optional inputs coming in pairs. The main inputs
 %   of interest for changing the default behavior are:
-%   - **fkst_rt_nahead** [integer] : number of periods ahead
+%   - **forecast_rt_nsteps** [integer] : number of periods ahead
 %
 % Outputs
 % --------
@@ -40,7 +40,7 @@ function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % See also: plot_real_time 
 
 if isempty(obj)
-    ts_fkst=struct('fkst_rt_nahead',16);
+    ts_fkst=struct('forecast_rt_nsteps',16);
     return
 end
 
@@ -67,7 +67,7 @@ end
 
 obj=set(obj,varargin{:});
 
-nahead=obj.options.fkst_rt_nahead;
+nahead=obj.options.forecast_rt_nsteps;
 
 [obj1,~,~,retcode]=filter(obj,'kf_nsteps',nahead);
 
