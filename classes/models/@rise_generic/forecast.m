@@ -30,6 +30,10 @@ function cond_fkst_db=forecast(obj,varargin)
 %           the number of the number of conditioning periods
 %       - Hypothesis **nas** assumes there are as many shocks periods as
 %           the number of anticipated steps
+%   - **forecast_cond_endo_vars** [{''},char|cellstr]: names of conditional
+%   endogenous variables to be used either in forecasting or in estimation
+%   - **forecast_cond_exo_vars** [{''},char|cellstr]: names of conditional
+%   exogenous variables to be used either in forecasting or in estimation
 %
 % Outputs
 % --------
@@ -69,6 +73,8 @@ if isempty(obj)
     cond_fkst_db=struct('forecast_conditional_hypothesis',0,...
         'forecast_start_date','',...
         'forecast_nsteps',12,...
+        'forecast_cond_endo_vars','',...
+        'forecast_cond_exo_vars','',...
         'forecast_to_time_series',true);
     return
 end
