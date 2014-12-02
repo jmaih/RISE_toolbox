@@ -53,6 +53,8 @@ for iii=1:nobj
     end
 end
 
+estim_penalty=obj(1).options.estim_penalty;
+
 estim_blocks=obj(1).options.estim_blocks;
 if ~isempty(estim_blocks)
     estim_blocks=create_estimation_blocks(obj(1),estim_blocks);
@@ -117,7 +119,7 @@ end
         %-------------------------------
         x=linear_restricts.a_func(xtilde);
         
-        fval=obj(1).options.estim_penalty*ones(1,nobj);
+        fval=estim_penalty*ones(1,nobj);
         
         % general restrictions are sometimes infeasible. Rather than
         % imposing a barrier that will be difficult to cross if the initial
@@ -129,19 +131,6 @@ end
             end
         end
         
-        if ~retcode && ngenrest
-            % add a penalty for the restrictions violation
-            %----------------------------------------------
-            g=evaluate_nonlinear_restrictions(obj);
-            for mo=1:nobj
-                if ~isempty(g{mo})
-                    fval(mo)=fval(mo)+utils.estim.penalize_violations(g{mo},c{mo});
-                end
-            end
-        end
-        funevals=funevals+1;
-        % Now take the negative for minimization
-        minus_log_post=-min(fval);
         % nonlinear constraints might be incompatible with blockwise
         % optimization. In that case, it is better to compute the
         % restriction violation while evaluating the objective and save
@@ -149,12 +138,31 @@ end
         % nonlinear constraints.
         if retcode
             violLast=ones(nconst,1)*realmax/(nconst);
-            % update this element right here, so that it is ready when
-            % calling nonlcon_with_gradient.
-            xLast=x;
         else
+            if ngenrest
+                % add a penalty for the restrictions violation
+                %----------------------------------------------
+                g=evaluate_nonlinear_restrictions(obj);
+                for mo=1:nobj
+                    if ~isempty(g{mo})
+                        this_pen=utils.estim.penalize_violations(g{mo},max(abs(fval(mo)),c{mo}));
+                        % violations of the restrictions decrease the value
+                        % of the objective function
+                        fval(mo)=fval(mo)-this_pen;
+                    end
+                end
+            end
             violLast=mynonlinear_constraints(x,obj,true);
         end
+        % make xLast ready for nonlcon_with_gradient.
+        %----------------------------------------------
+        xLast=x;
+        % Now take the negative for minimization
+        %----------------------------------------
+        minus_log_post=-min(fval);
+        % update the number of function evaluations
+        %-------------------------------------------
+        funevals=funevals+1;
     end
 
     function viol=mynonlinear_constraints(x,obj,params_pushed)
