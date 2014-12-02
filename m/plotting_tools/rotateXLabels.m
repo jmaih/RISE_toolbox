@@ -19,6 +19,8 @@ function hh = rotateXLabels( ax, angle, varargin )
 %
 % See also: 
 
+% original code by Ben Tordoff at the Mathworks
+%
 %rotateXLabels: rotate any xticklabels
 %
 %   hh = rotateXLabels(ax,angle) rotates all XLabels on axes AX by an angle
@@ -39,7 +41,16 @@ function hh = rotateXLabels( ax, angle, varargin )
 
 %   Copyright 2006-2013 The MathWorks Ltd.
 
-error( nargchk( 2, inf, nargin ) );
+narginchk( 2, inf ) ;
+% From R2014b, rotating labels is built-in using 'XTickLabelRotation'
+if ~verLessThan('matlab','8.4.0')
+    set(ax, 'XTickLabelRotation', angle)
+    if nargout
+        hh = [];
+    end
+    return
+end
+
 if ~isnumeric( angle ) || ~isscalar( angle )
     error( 'RotateXLabels:BadAngle', 'Parameter ANGLE must be a scalar angle in degrees' )
 end
