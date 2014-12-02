@@ -73,7 +73,16 @@ if ~isempty(xrange)
     reset_data(xrange)
 end
 
-pp=plot_specs(date_numbers{1},nticks,rise_items.date_format);
+if strcmp(funct_type,{'plot_real_time'})
+    if ndatasets~=1
+        error('number of datasets cannot exceed 1 in real-time plots')
+    end
+    [nr,nc]=size(datta{1});
+    xtime=date_numbers{1}(1)-1:date_numbers{1}(end)+nc;
+    pp=plot_specs(xtime,nticks,rise_items.date_format);
+else
+    pp=plot_specs(date_numbers{1},nticks,rise_items.date_format);
+end
 
 if rise_items.subplots
     [varargout{1:nargout}]=do_multiple_plots();
@@ -110,6 +119,28 @@ end
             vout={gca()};
         elseif strcmp(funct_type,{'hist'})
             plotfunc(d{:},matlab_args{:});
+            vout={gca()};
+        elseif strcmp(funct_type,{'plot_real_time'})
+            ymax=max(d{:}(:));
+            ymin=min(d{:}(:));
+            map=getappdata(0,'rise_default_plot_colors');
+            plot(pp.xdatenums(1:nr)',d{:}(:,1),matlab_args{:})%,'color',[0,0,0]
+            if nc>1
+                % add some hair
+                %---------------
+                hold on
+                iter=0;
+                for tt=1:size(d{:},1)
+                    iter=iter+1;
+                    plot(pp.xdatenums(tt+(0:nc-1))',d{:}(tt,:)','color',map{iter})%,'linestyle','--'
+                    if iter==numel(map)
+                        iter=0;
+                    end
+                end
+                set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
+                    'ylim',[ymin,ymax])
+                hold off
+            end
             vout={gca()};
         else
             h1h2={};
