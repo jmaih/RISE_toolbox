@@ -111,21 +111,35 @@ loc= strcmp(celldata{1}.frequency,frequencies_codes(1,:));
 frequency_code=frequencies_codes{2,loc};
 highest_frequency=celldata{1}.frequency;
 npages=nan(1,offset);
-npages(1)=celldata{1}.NumberOfPages;
-for ii=2:offset
-    loc= strcmp(celldata{ii}.frequency,frequencies_codes(1,:));
-    if frequencies_codes{2,loc}>frequency_code
-        highest_frequency=celldata{ii}.frequency;
-        frequency_code=frequencies_codes{2,loc};
-        first_date=convert_date(first_date,highest_frequency);
-        last_date=convert_date(last_date,highest_frequency);
+% also check the number of variables
+for ii=1:offset
+    % redo the time series if the cell contains variable "with many variables"
+    if celldata{ii}.NumberOfVariables>1
+        vnames=celldata{ii}.varnames;
+        mtee=cellfun(@isempty,vnames,'uniformoutput',false);
+        mtee=[mtee{:}];
+        if ~all(mtee)
+            error('sub-variables are not expected to have names when using collect')
+        end
+        data_=double(celldata{ii});
+        celldata{ii}=ts(celldata{ii}.start,permute(data_,[1,3,2]));
     end
-    first_last=convert_date(celldata{ii}.date_numbers([1,end]),highest_frequency);
-    if first_last(1)<first_date
-        first_date=first_last(1);
-    end
-    if first_last(end)>last_date
-        last_date=first_last(end);
+    
+    if ii>1
+        loc= strcmp(celldata{ii}.frequency,frequencies_codes(1,:));
+        if frequencies_codes{2,loc}>frequency_code
+            highest_frequency=celldata{ii}.frequency;
+            frequency_code=frequencies_codes{2,loc};
+            first_date=convert_date(first_date,highest_frequency);
+            last_date=convert_date(last_date,highest_frequency);
+        end
+        first_last=convert_date(celldata{ii}.date_numbers([1,end]),highest_frequency);
+        if first_last(1)<first_date
+            first_date=first_last(1);
+        end
+        if first_last(end)>last_date
+            last_date=first_last(end);
+        end
     end
     npages(ii)=celldata{ii}.NumberOfPages;
 end
