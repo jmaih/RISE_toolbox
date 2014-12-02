@@ -122,15 +122,31 @@ smoothed_probabilities=permute(double(smoothed_probabilities),[2,1]);
 % apply the smoothed probabilities to SS
 Probs=smoothed_probabilities;
 
-smoothed_shocks=smoothed_shocks(hist_start_date:hist_end_date,:,:);
-smoothed_shocks=permute(double(smoothed_shocks),[2,1,3]);
+% smoothed shocks
+%-----------------
+smoothed_shocks=double(smoothed_shocks(hist_start_date:hist_end_date,:,:));
+smoothed_shocks=smoothed_shocks(:,:);% expand the pages immediately
+% do not transpose shocks!!!
 
 % re-order the smoothed variables
 %---------------------------------
 varlocs=locate_variables(varList,endo_names);
 smoothed_variables=smoothed_variables(varlocs,:);
-varlocs=locate_variables(shockList,exo_names);
-smoothed_shocks=smoothed_shocks(varlocs,:);
+shocklocs=locate_variables(shockList,exo_names);
+nshocks=numel(shockList);
+horizon=max(obj.exogenous.shock_horizon)+1;
+shocklocs=repmat({shocklocs(:).'},1,horizon);
+offset=0;
+for ih=2:horizon
+    offset=offset+exo_nbr;
+    shocklocs{ih}=shocklocs{ih}+offset;
+end
+shocklocs=cell2mat(shocklocs);
+smoothed_shocks=smoothed_shocks(:,shocklocs);
+
+% initialize shocks partitions
+%------------------------------
+proto=(1:nshocks:size(smoothed_shocks,2))-1;
 
 % exogenous--initial condition--perturbation--switch--steady state
 %------------------------------------------------------------------
@@ -144,7 +160,7 @@ exo_plus_risk_plus_steady=[(1:exo_nbr),risk_id,ss_id];
 exo_plus_init_plus_risk_plus_steady=[(1:exo_nbr),init_id,risk_id,ss_id];
 ContributingNames=[exo_names,'InitialConditions','risk','switch','steady_state'];
 
-z=HistoricalDecompositionEngine(z,smoothed_shocks);
+z=HistoricalDecompositionEngine(z);
 
 if max(max(abs(squeeze(sum(z,2))-smoothed_variables)))>1e-9
     error([mfilename,':: Decomposition failed'])
@@ -172,10 +188,9 @@ for ii=1:endo_nbr
         theData(:,1:ncontribs),ContributingNames(1:ncontribs));
 end
 
-    function [z,SS]=HistoricalDecompositionEngine(z,epsilon)
+    function [z,SS]=HistoricalDecompositionEngine(z)
         [SS,Tsig_t]=smooth_vector(obj.solution.ss,Tsig);
         z(:,ss_id,:)=SS;
-        NumberOfAnticipatedSteps=size(R{1},3);
         
         for t=1:NumberOfObservations
             [A,B]=expected_state_matrices(t);
@@ -187,17 +202,15 @@ end
                 %-------------
                 z(:,risk_id,t) = A*z(:,risk_id,t-1);
             end
-            for j=1:NumberOfAnticipatedSteps
-                % add new shocks
-                %---------------
-                z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + ...
-                    B(:,:,j).*repmat(epsilon(:,t,j)',endo_nbr,1);
-                if j==1
-                    % add new risk
-                    %---------------
-                    z(:,risk_id,t) = z(:,risk_id,t)+Tsig_t(:,t);
-                end
-            end
+            
+            % add new shocks
+            %---------------
+            z(:,1:exo_nbr,t) = z(:,1:exo_nbr,t) + bsxfun_shocks();
+            
+            % add new risk
+            %---------------
+            z(:,risk_id,t) = z(:,risk_id,t)+Tsig_t(:,t);
+            
             % initial conditions
             %--------------------
             if t==1
@@ -218,6 +231,17 @@ end
         end
         if obj.options.debug
             keyboard
+        end
+        
+        function B_S=bsxfun_shocks()
+            tmp_=bsxfun(@times,B,smoothed_shocks(t,:));
+            B_S=cell(1,nshocks);
+            % partition shocks: each shock will have many columns in case
+            % of anticipation
+            for ishock=1:nshocks
+                B_S{ishock}=sum(tmp_(:,proto+ishock),2);
+            end
+            B_S=cell2mat(B_S);
         end
         
         function [A,B]=expected_state_matrices(t)
