@@ -23,8 +23,9 @@ function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % - **ts_fkst** [struct] : fields are forecasts in the form of ts objects
 %   for the different endogenous variables
 %
-% - **ts_rmse** [struct] : fields are RMSEs in the form of ts objects
-%   for the different endogenous variables
+% - **ts_rmse** [ts|struct] : if only one object is processed, the output
+% is a ts. If instead several objects are processed, fields are RMSEs in
+% the form of ts objects for the different endogenous variables
 %
 % - **rmse** [matrix] : RMSEs for the different endogenous variables
 %
