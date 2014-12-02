@@ -48,7 +48,7 @@ if NumberOfAnticipatedPeriods>ncp+1
 end
 
 if ncv==0
-    NumberOfAnticipatedPeriods=1;
+    NumberOfAnticipatedPeriods=0;
     ncp=0;
 end
 
@@ -87,7 +87,6 @@ PbParams.kk=size(R,2);
 
 end
 
-
 %====================================BEGINNING OF NEW SUB=ROUTINE ===============================================%
 
 function [MU,OMG,LB,UB,rest_id,ncv,ncp]=ExtractConditions(Conditions)
@@ -102,10 +101,10 @@ if isempty(Conditions)
     return
 end
 
-MU		=transpose(Conditions{1});
+MU		=Conditions{1};
 OMG		=Conditions{2};
-LB    	=transpose(Conditions{3}.LB);
-UB    	=transpose(Conditions{3}.UB);
+LB    	=Conditions{3}.LB;
+UB    	=Conditions{3}.UB;
 rest_id	=Conditions{4};
 [ncv,ncp]=size(MU);
 if ~isequal(size(LB),[ncv,ncp])||~isequal(size(UB),[ncv,ncp])

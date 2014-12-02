@@ -162,7 +162,7 @@ end
         Y0=bsxfun(@minus,y0.y,ss_);
         NumberOfSimulations=0;
         EndogenousConditions=recreate_conditions(bsxfun(@minus,y_conditions,ss_));
-        if any(any(shocks))
+        if ~isempty(shocks)
             ShocksConditions=recreate_conditions(shocks);
         else
             ShocksConditions=[];
@@ -268,7 +268,7 @@ c=c(:,:);
 % keep only the good rows
 good=any(~isnan(c),2);
 rest_id=find(good);
-c=permute(c(good,:),[2,1]);
+c=c(good,:);% <---c=permute(c(good,:),[2,1]);
 lb=-inf(size(c));
 ub=inf(size(c));
 lbub=struct('LB',lb,'UB',ub);
