@@ -28,10 +28,12 @@ if ischar(angle)
     angle=str2double(angle);
 end
 for ii=1:numel(kids)
-    tmp=get(kids(ii),'xtick');
-    if ~is_serial(tmp(1));
-        continue
+    if isprop(kids(ii),'xtick')
+        tmp=get(kids(ii),'xtick');
+        if ~is_serial(tmp(1));
+            continue
+        end
+        rotateXLabels(kids(ii),angle)
     end
-    rotateXLabels(kids(ii),angle)
 end
 
