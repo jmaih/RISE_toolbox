@@ -86,9 +86,12 @@ if data_provided %simulation_available ||
         if obj.data.npages<kmax+2
             warning('the anticipation horizon of agents will be reduced since it exceeds the number of advance information')
         end
-        if isempty(obj.options.forecast_cond_vars)
-            error('Agents see kmax steps ahead into the future, the variables they see should be declared in forecast_cond_vars')
+        for ii=1:10
+        warning('this warning should be removed')
         end
+%         if isempty(obj.options.forecast_cond_vars)
+%             error('Agents see kmax steps ahead into the future, the variables they see should be declared in forecast_cond_vars')
+%         end
     end
 end
 
