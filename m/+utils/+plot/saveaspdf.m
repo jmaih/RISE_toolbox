@@ -28,22 +28,22 @@ success=false;
 switch computer
     case 'MAC'
         remove_figure_margins()
-    case {'PCWIN','PCWIN64'}
-        % this thing lets me down at times
-        for itry=1:10
-            try %#ok<TRYNC>
-                print(fig,'-depsc',filename)
-                success=true;
-                break
-            end
-        end
-        if success
-            rise_epstopdf=getappdata(0,'rise_epstopdf');
-            % mask the filename, with "" in case it contains spaces.
-            system([rise_epstopdf,' "',filename,'.eps"']);
-            correction=-90;
-            delete([filename,'.eps'])
-        end
+%    case {'PCWIN','PCWIN64'}
+%        % this thing lets me down at times
+%        for itry=1:10
+%            try %#ok<TRYNC>
+%                print(fig,'-depsc',filename)
+%                success=true;
+%                break
+%            end
+%        end
+%        if success
+%            rise_epstopdf=getappdata(0,'rise_epstopdf');
+%            % mask the filename, with "" in case it contains spaces.
+%            system([rise_epstopdf,' "',filename,'.eps"']);
+%            correction=-90;
+%            delete([filename,'.eps'])
+%        end
     otherwise
         remove_figure_margins()
 end
