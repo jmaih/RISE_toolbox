@@ -208,6 +208,8 @@ end
             if regular
                 state_names=[state_names,'steady state','bal. growth']; %#ok<*AGROW>
                 kept_states=[true(2,1);kept_states(:)]; % add steady state and bal. growth
+            else
+                kept_states=[false(2,1);kept_states(:)];
             end
             state_names=[state_names,state_list];
         end
