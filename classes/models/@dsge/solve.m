@@ -110,11 +110,21 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % More About
 % ------------
 %
+% - constant-parameter models can also be solved using the procedures for
+% switching parameter models. There is no guarantee, however, any obtained
+% solution will be determinate (unique and stable)
+%
+% - determinacy is only checked for constant-parameter models. For
+% determinacy computations for switching dsge models with constant
+% transition matrices, see Cho(2014).
+%
+% - In RISE we consider that it is in the nature of nonlinear models to
+% have many solutions. Obtaining even one of those solution is usually
+% difficult and a concept such as determinacy is NEVER used in the solving
+% of models with, say, global methods.
+%
 % Examples
 % ---------
-%
-% obj=solve(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
-% obj=solve(obj,'solve_shock_horizon',5)
 %
 % See also:
 
