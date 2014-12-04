@@ -160,6 +160,12 @@ end
             function res=dvv_Evz_vz()
                 res=fvv_vx_vx(structural_matrices.dvv{r0,r1},a0_z);
                 res=res+fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu_u;
+                if obj.options.debug
+                    tmp1=fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu_u;
+                    tmp2=structural_matrices.dvv{r0,r1}*kron(a1_z,a1_z)*Eu_u;
+                    max(max(abs(tmp1-tmp2)))
+                    keyboard
+                end
             end
         end
         
