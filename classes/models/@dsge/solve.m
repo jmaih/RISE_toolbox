@@ -1,15 +1,111 @@
 function [obj,retcode,structural_matrices]=solve(obj,varargin)
-% H1 line
+% solve - solves dsge model
 %
 % Syntax
 % -------
 % ::
 %
+%   [obj,retcode,structural_matrices]=solve(obj)
+%
+%   [obj,retcode,structural_matrices]=solve(obj,varargin)
+%
 % Inputs
 % -------
+% 
+% - **obj** [rise|dsge]: scalar or vector of model objects. The optional
+% options below come in pairs.
+% 
+% - **solve_accelerate** [{false}|true]: Accelerate or do not accelerate
+% the solving
+% 
+% - **solve_check_stability** [{true}|false]: check stability of Markov
+% switching models while solving. The stability of constant-parameter
+% models is always checked whether that of markov-switching models is
+% optional. This is because (1) the procedure is computationally intensive
+% and (2) there is no define stability criterion under endogenous switching
+% 
+% - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
+% derivatives
+% 
+% - **solve_disable_theta** [true|{false}]: option for nullifying the
+% effect of future switching parameters on the solution
+% 
+% - **solve_order** [integer|{1}]: order of approximation
+% 
+% - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
+% of shocks beyond the current period. When the input is :
+%   - an integer : all the shocks receive the same anticipation horizon
+%   - a struct : the fields are the names of the shocks whose horizon is to
+%   be modified. e.g. struct('ea',4,'eb',3) means shock ea has horizon 4
+%   while shock eb has horizon 3
+%   - a cell : the cell must have two colums. Each row in the first column
+%   holds the name of a particular shock and each row in the second column
+%   holds the horizon of the shock. e.g. {'ea',4;'eb',3}
+% 
+% - **solve_alternatives_file2save2** [{[]}|char]: name of the file to
+% write the results of the alternative solutions
+% 
+% - **solve_alternatives_nsim** [integer|{100}]: Number of initial guesses
+% for the solution sampled randomly, when attempting to find all possible
+% solutions.
+% 
+%  - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
+%   - in the **amateur** or **explicit** mode the functions are kept in
+%   cell arrays of anonymous functions and evaluated using for loops 
+%   - in the **vectorized** or **professional** mode the functions are
+%   compacted into one long and unreadable function.
+%   - in the **disc** mode the functions are written to disc in a
+%   subdirectory called routines. 
+% 
+% - **solve_initialization** [{'backward'}|'zeros'|'random']: Type of
+% initialization of the solution of switching models:
+%   - **backward** : the initial guess is the solution of the model without
+%   forward-looking terms
+%   - **zeros** : the initial guess is zero
+%   - **random** : the initial guess is random
+% 
+% - **solver** [{[]}|char|user_defined]: solver for the dsge model. The
+% following are possible:
+%   - **loose_commitment** : RISE automatically uses this when it detects
+%   an optimal policy model to be solved under commitment, discretion or
+%   loose commitment
+%   - **rise_1** : default solver for constant-parameter dsge models.
+%   Similar to the dynare solver.
+%   - **mfi** : functional interation solver: default for switching dsge
+%   models
+%   - **mnk** : newton solver with kronecker products
+%   - **mn** : newton solver without kronecker products
+%   - **mfi_full** : full version of mfi, that does not exploit sparsity
+%   - **mnk_full** : full version of mnk, that does not exploit sparsity
+%   - **mn_full** : full version of mn, that does not exploit sparsity
+%   - **fwz** : Farmer, Waggoner and Zha (2011) solver
+%   - **user_defined** : In this case the function must take as inputs:
+%       - **Gplus01** [h x h cell]: each cell contains the matrices of
+%       forward-looking terms associated with moving from one regime to
+%       another.
+%       - **A0** [square matrix]: matrix of contemporaneous variables
+%       - **Aminus** [square matrix]: matrix of backward-looking terms
+%       - **Q** [square matrix]: transition matrix, in which the rows are
+%       the current period and the columns the next period
+%       - **T0** [square matrix]: initial guess of the solution
+%     The function should return as outputs
+%       - **Tz_pb** [square matrix]: solution of the problem given the
+%       inputs
+%       - **eigenvalues** [empty|vector]: optional vector of eigenvalues of
+%       the problem
+%       - **retcode** : 0 if no problem found when solving the problem
 %
 % Outputs
 % --------
+%
+% - **obj** [rise|dsge]: scalar or vector of model objects
+%
+% - **retcode** [integer]: if 0, no problem was found when solving the
+% model. If positive, the reason for the problem can be obtained by running
+% decipher(retcode)
+%
+% - **structural_matrices** [struct]: Structure holding various types of
+% derivatives that are used in the computation of the solution
 %
 % More About
 % ------------
@@ -21,10 +117,6 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % obj=solve(obj,'solve_shock_horizon',5)
 %
 % See also:
-
-% structrual_matrices not stored into the object in case we need to "get"
-% it? in that case we enter the solving operations without solving and
-% there is a flag to solve or not.
 
 % I should formally check that all the variables that enter the calculation
 % of endogenous probabilities have a unique steady state. I can add a flag
@@ -41,8 +133,6 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - anticipation_order, if a higher order has previously been solved, no need to >
 % - solution algorithm,
 % - etc...
-
-% Please always respect the order of the inputs: y, x, ss, param, def
 
 if isempty(obj)
     if nargout>1
