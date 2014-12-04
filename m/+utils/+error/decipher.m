@@ -19,6 +19,15 @@ function msgout=decipher(code)
 %
 % See also: 
 
+n=numel(code);
+if n>1
+    msgout=cell(n,1);
+    for ii=1:n
+        msgout=decipher(code(ii));
+    end
+    return
+end
+
 msg='';
 switch code
     % ====== evaluating the system ====== %
