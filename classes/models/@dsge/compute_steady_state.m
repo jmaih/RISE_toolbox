@@ -172,7 +172,7 @@ if ~retcode
         user_resids=nan(endo_nbr,number_of_regimes);
         for ireg=1:number_of_regimes
             user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
-                pp_sstate(:,ireg),def_sstate{ireg});
+                pp(:,ireg),def{ireg});
         end
         user_resids(abs(user_resids)<1e-9)=0;
         structural_matrices.user_resids=sparse(user_resids);
@@ -191,15 +191,7 @@ if ~retcode
     theta_hat=cell(number_of_regimes);
     for s1=1:number_of_regimes
         for s0=1:number_of_regimes
-            if obj.is_unique_steady_state
-                if s1==1 && s0==1
-                    [pp_i,~,retcode]=dsge_tools.ergodic_parameters(obj.solution.transition_matrices.Qinit,...
-                        def,pp);
-                end
-            else
-                pp_i=pp(:,s0);
-            end
-            tmp=pp(:,s1)-pp_i;
+            tmp=pp(:,s1)-pp_sstate(:,s0);
             theta_hat{s0,s1}=(1-obj.options.solve_disable_theta)*tmp(obj.steady_state_index.theta_plus);
         end
     end
