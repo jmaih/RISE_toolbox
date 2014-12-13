@@ -51,24 +51,6 @@ if ~isempty(steady_state_file)
         obj.steady_state_file_2_model_communication=...
             struct('original_endo_ids',original_endo_ids,...
             'located_vars_ids',located_vars_ids);
-        % variables whose names are found in var_names get a steady state. this
-        % includes the auxiliary variables, which are given in their
-        % current-period form in the cell string orig_endo_names_current
-        %         % take care of the variables that were logged in the model file
-        %         %--------------------------------------------------------------
-        %         logVars=obj.endogenous.name(obj.endogenous.is_log_var);
-        %         if ~isempty(logVars)
-        %             % inflate the list to include the auxiliary log vars
-        %             log_var_ids=[];
-        %             for ivar=1:numel(logVars)
-        %                 bingo=find(strcmp(logVars{ivar},obj.orig_endo_names_current));
-        %                 log_var_ids=[log_var_ids;bingo(:)]; %#ok<AGROW>
-        %             end %locate_variables(obj.orig_endo_names_current,var_names,true);
-        %             logVars=obj.orig_endo_names_current(log_var_ids);
-        %             % now just as above, find the variables in the returned names
-        %             ss_and_bgp_start_vals(logVars,:)=log(ss_and_bgp_start_vals(logVars,:));
-        %         end
-        
     end
     % now we actually solve the steady state. The second input argument is
     % set to true
@@ -101,7 +83,7 @@ elseif obj.options.steady_state_use_steady_state_model
     ssfunc=obj.routines.steady_state_model;
     if ~isempty(ssfunc) && (isa(ssfunc,'function_handle')||...
             (isstruct(ssfunc)&&~isempty(ssfunc.code)))
-        [ss,retcode]=steady_state_evaluation(ssfunc);
+        [ss,retcode,change_locs,pp_sstate]=steady_state_evaluation(ssfunc);
         if retcode
             retcode=1; % flag on the steady state
             if obj(1).options.debug
@@ -124,6 +106,12 @@ elseif obj.options.steady_state_use_steady_state_model
             % now put the content of ss into ss_and_bgp_start_vals
             ss_and_bgp_start_vals(1:endo_nbr,:)=ss;
             % exogenous auxiliary variables have steady state zero
+            
+            % now replace the parameters
+            %----------------------------
+            if ~isempty(change_locs)
+                obj.parameter_values(change_locs,:)=pp_sstate(change_locs,ones(1,number_of_regimes));
+            end
         end
     end
 end
@@ -132,30 +120,79 @@ if retcode && obj.options.debug
     utils.error.decipher(retcode)
 end
 
-    function [ss,retcode]=steady_state_evaluation(ssfunc) 
-        
-        options=optimset('display','none',...
-            'maxiter',obj.options.fix_point_maxiter,...
-            'tolfun',obj.options.fix_point_TolFun); %#ok<NASGU>
-        
-        retcode=0;
-        ss=[];
-        for ireg=1:number_of_regimes
-            % in ssfunc, the definitions have been substituted already in
-            % load_functions and so all is needed here is the parameters
-            [y,obj.parameter_values(:,ireg)]=utils.code.evaluate_functions(...
-                ssfunc,[],[],[],obj.parameter_values(:,ireg),[],[],[],[]); % y, x, ss, param, sparam, def, s0, s1
-            retcode=~all(isfinite(y));
-            if retcode
-                return
+    function [ss,retcode,change_locs,pp_sstate]=steady_state_evaluation(ssfunc)
+        ss=[]; 
+        change_locs=[];
+        [pp_sstate,~,retcode]=get_sstate_parameters();
+        if ~retcode
+            pp_update=pp_sstate;
+            for ireg=1:number_of_regimes
+                % in ssfunc, the definitions have been substituted already in
+                % load_functions and so all is needed here is the parameters
+                [y,pp_update(:,ireg)]=utils.code.evaluate_functions(...
+                    ssfunc,[],[],[],pp_sstate(:,ireg),[],[],[],[]); % y, x, ss, param, sparam, def, s0, s1
+                retcode=~all(isfinite(y));
+                if retcode
+                    return
+                end
+                if ireg==1
+                    ss=nan(numel(y),number_of_regimes);
+                end
+                ss(:,ireg)=y; %#ok<AGROW>
+                if obj.is_unique_steady_state
+                    ss=ss(:,ireg*ones(1,number_of_regimes));
+                    break
+                end
             end
-            if ireg==1
-                ss=nan(numel(y),number_of_regimes);
+            % check whether the parameters have been updated and if so push
+            %--------------------------------------------------------------
+            first_col=pp_sstate(:,1);
+            first_col_update=pp_update(:,1);
+            nanlocs=isnan(first_col);
+            if any(nanlocs(:))
+                nanlocs_update=isnan(first_col_update);
+                ddd=nanlocs-nanlocs_update;
+                if any(ddd(:))
+                    change_locs=nanlocs & ~nanlocs_update;
+                    % the nans are not in the same place: the parameters have changed
+                end
             end
-            ss(:,ireg)=y; %#ok<AGROW>
+            pp_sstate=pp_update;
+        end
+        function [pp_sstate,def_sstate,retcode]=get_sstate_parameters()
+            obj=derive_auxiliary_parameters(obj);
+            
+            pp=obj.parameter_values;
+            def=obj.solution.definitions;
+            
+            % compute the unique steady state based on the ergodic distribution
+            %------------------------------------------------------------------
+            def_sstate=def;
+            pp_sstate=pp;
+            retcode=0;
             if obj.is_unique_steady_state
-                ss=ss(:,ireg*ones(1,number_of_regimes));
-                break
+                % Something here to improve upon: we compute the steady state based on
+                % some information that we don't have yet, namely ys0. It seems both
+                % should be computed simultaneously... in other words, nonlinearly.
+                % This may destroy the ergodic distribution or even return some
+                % errors... The problem does not occurr with constant probabilities or
+                % when steady states are different
+                if obj.is_endogenous_switching_model
+                    error('please report this problem to junior.maih@gmail.com')
+                end
+                ys0_extended=ss_and_bgp_start_vals(:,1);
+                [TransMat,retcode]=compute_steady_state_transition_matrix(...
+                    obj.routines.transition_matrix,ys0_extended,pp(:,1),...
+                    def{1},sum(obj.exogenous.number));
+                if ~retcode
+                    [pp_unique,def_unique,retcode]=...
+                        dsge_tools.ergodic_parameters(TransMat.Qinit,def,pp);
+                    % override the parameters and the definitions as they might be used
+                    % for further processing in case the steady state is imposed
+                    %------------------------------------------------------------------
+                    pp_sstate=pp_unique(:,ones(1,number_of_regimes));
+                    def_sstate=cellfun(@(x)def_unique,def_sstate,'uniformOutput',false);
+                end
             end
         end
     end
