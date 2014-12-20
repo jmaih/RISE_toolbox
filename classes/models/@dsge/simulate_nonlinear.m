@@ -133,9 +133,6 @@ for t=1:min(t_last_shock,nsmpl)
                 end
                 %-------------------------------------------
             case 'sparse'
-                if t==100
-                    keyboard
-                end
                 [sims(:,t:end),retcode]=sparse_simulation_algorithm(sims(:,t:end));
             case 'lbj'
                 error('LBJ''s relaxation algorithm not yet implemented')
