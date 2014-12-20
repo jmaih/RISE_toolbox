@@ -103,8 +103,10 @@ for iv=1:nv
             error(['field ',found_name,' in db must be a ts'])
         end
         target_date=serial_date+lead_lag;
-        tmp=double(data(target_date));
-        v(iv,1,:)=permute(tmp,[2,1,3]);
+        if all(ismember(target_date,data.date_numbers))
+            tmp=double(data(target_date));
+            v(iv,1,:)=permute(tmp,[2,1,3]);
+        end
     end
 end
 
