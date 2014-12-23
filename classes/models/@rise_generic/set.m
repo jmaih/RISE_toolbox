@@ -204,6 +204,9 @@ end
                         error([mfilename,':: ',field,' not an appropriate propname of optimset '])
                     end
                 end
+            elseif any(strcmp(propname,{'estim_start_date','estim_end_date',...
+                    'data','data_demean','kf_presample'}))
+                obj.data_are_loaded=false;
             elseif any(strcmp(propname,{'data','data_cond_ct','data_cond_lb','data_cond_ub'}))
                 % could also check that the observable variables are included
                 % in data... I do that during estimation, I guess but I can do
