@@ -137,10 +137,10 @@ end
                         iter=0;
                     end
                 end
-                set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
-                    'ylim',[ymin,ymax])
                 hold off
             end
+            set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
+                'ylim',[ymin,ymax])
             vout={gca()};
         else
             h1h2={};
