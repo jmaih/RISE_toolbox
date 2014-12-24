@@ -414,6 +414,11 @@ end
         % OPTIONS COULD BE REPRESENTED IN A VECTOR, SO THAT IF AN ELEMENT
         % IS DIFFERENT, WHATEVER IT IS, THEN WE RESOLVE. BUT THIS IS NOT AN
         % URGENT MATTER.
+        if ~isfield(obj.current_solution_state,'solve_function_mode')
+            % maybe I should have refresh do this? and possibly
+            % redifferentiate the whole system?
+            obj.current_solution_state.solve_function_mode=obj.options.solve_function_mode;
+        end
         resolve_it=isempty(obj.current_solution_state)||...
             obj.estimation_under_way||...
             strcmp(obj.options.solve_initialization,'random')||...
