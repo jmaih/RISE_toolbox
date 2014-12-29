@@ -25,7 +25,7 @@ mc_names={markov_chains_.name};
 if numel(unique(mc_names))~=numel(mc_names)
     error('two markov chains with the same name')
 end
-generic_params=regexp(plist,'(a\d+|sig|omg)','match');
+generic_params=regexp(plist,'(a\d+|sig|omg|c)','match');
 generic_params=[generic_params{:}];
 generic_params=unique(generic_params);
 for im=1:nmc

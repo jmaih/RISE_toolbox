@@ -45,7 +45,10 @@ for ii=1:ncell
     if isempty(jj)
         bigimage{ii}=num2cell(themat);
     else
-        plist=cellstr(strcat(header,'_',int2str(jj),'_',int2str(kk)));
+        plist=strcat(header,'_',int2str(jj),'_',int2str(kk));
+        % remove any blank space
+        plist=cellfun(@(x)x(~isspace(x)),cellstr(plist),'uniformoutput',false);
+        
         ploc=locate_variables(plist,param_names);
         links{ii}=sub2ind(size(themat),jj,kk)+ploc*1i;
         image_themat=num2cell(themat);

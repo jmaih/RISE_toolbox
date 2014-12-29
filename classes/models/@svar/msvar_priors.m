@@ -114,7 +114,7 @@ obj=setup_priors(obj,MyPriors);
         [determ_names]=vartools.select_parameter_type(estim_names,'det_coef'); 
         for ip=1:numel(determ_names)
             pname=determ_names{ip};
-            eqtn=str2double(regexprep(pname,'\w+_(\w+)_.+','$1')); % eqtn=str2double(pname(3));
+            eqtn=str2double(regexprep(pname,'[a-z0-9A-Z]+_([a-z0-9A-Z]+)_.+','$1')); % eqtn=str2double(regexprep(pname,'\w+_(\w+)_.+','$1')); % eqtn=str2double(pname(3));
             [m,sd]=set_var_prior(eqtn,nan,nan);
             if use_priors
                 p.(pname)={m,m,sd,'normal_pdf'};
