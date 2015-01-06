@@ -170,12 +170,14 @@ if ~retcode
         % compute the residuals
         %----------------------
         user_resids=nan(endo_nbr,number_of_regimes);
-        for ireg=1:number_of_regimes
-            user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
-                pp(:,ireg),def{ireg});
+        if ~obj.is_optimal_policy_model
+            for ireg=1:number_of_regimes
+                user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
+                    pp(:,ireg),def{ireg});
+            end
+            user_resids(abs(user_resids)<1e-9)=0;
+            structural_matrices.user_resids=sparse(user_resids);
         end
-        user_resids(abs(user_resids)<1e-9)=0;
-        structural_matrices.user_resids=sparse(user_resids);
     end
     
     [obj.solution.transition_matrices,retcode]=...
