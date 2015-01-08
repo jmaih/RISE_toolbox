@@ -247,7 +247,7 @@ newobj=obj;
                     QQ(:,ii) = -QQ(:,ii);
                 end
             end
-            C{st} = transpose(R{st}'*QQ);
+            C{st} = R{st}*QQ;%<-- C{st} = transpose(R{st}'*QQ);
         end
     end
     function add_irf_sign_restrictions
