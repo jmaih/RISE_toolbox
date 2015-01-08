@@ -250,6 +250,9 @@ end
                             fill_time=[fill_time,left_operator(2:end)];
                             left_operator='';
                         elseif time_on && (strcmp(left_operator(1),')')||strcmp(left_operator(1),'}'))
+                            if isempty(fill_time)
+                                error([mfilename,':: missing lead or lag in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                            end
                             equation=update_leads_lags(equation,fill_time);
                             fill_time='';
                             time_on=false;
