@@ -35,7 +35,8 @@ if nargin==0
         'kf_tol',1e-20,...
         'kf_filtering_level',3,...
         'kf_riccati_tol',1e-6,...
-        'kf_nsteps',1);
+        'kf_nsteps',1,...
+        'kf_nan_future_obs_means_missing',true);
     init_options=kalman_initialization();
     defaults=utils.miscellaneous.mergestructures(filt_options,init_options);
     loglik=defaults;
@@ -58,10 +59,26 @@ if retcode
     Incr=[];
     Filters=[];
 else
-    if data_info.npages>1
+    if isfield(data_info,'npages') && data_info.npages>1
         [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info,state_trend,init,options);
     else
-        [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,state_trend,init,options);
+        test=false;
+        if test
+            assignin('base','syst_cell',syst)
+            assignin('base','state_trend_cell',state_trend)
+            assignin('base','init_cell',init)
+            assignin('base','data_info',data_info)
+            assignin('base','options',options)
+            [loglik_,Incr_,retcode_,Filters_]=msre_kalman_cell(syst,data_info,state_trend,init,options);
+            [syst,state_trend,init]=remove_cells(syst,state_trend,init);
+            assignin('base','syst',syst)
+            assignin('base','state_trend',state_trend)
+            assignin('base','init',init)
+            [loglik,Incr,retcode,Filters]=msre_kalman(syst,data_info,state_trend,init,options);
+            keyboard
+        else
+            [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,state_trend,init,options);
+        end
     end
 end
 if isempty(loglik)
@@ -112,6 +129,34 @@ end
         end
     end
 end
+
+function [syst,state_trend,init]=remove_cells(syst,state_trend,init)
+h=numel(syst.T);
+T=syst.T{1}(:,:,ones(1,h));
+R=syst.R{1}(:,:,ones(1,h));
+H=syst.H{1}(:,:,ones(1,h));
+trend=state_trend{1}(:,:,ones(1,h));
+a=init.a{1}(:,ones(1,h));
+P=init.P{1}(:,:,ones(1,h));
+RR=init.RR{1}(:,:,ones(1,h));
+for ireg=2:h
+    T(:,:,ireg)=syst.T{ireg};
+    R(:,:,ireg)=syst.R{ireg};
+    H(:,:,ireg)=syst.H{ireg};
+    trend(:,:,ireg)=state_trend{ireg};
+    a(:,ireg)=init.a{ireg};
+    P(:,:,ireg)=init.P{ireg};
+    RR(:,:,ireg)=init.RR{ireg};
+end
+syst.T=T;
+syst.R=R;
+syst.H=H;
+state_trend=trend;
+init.a=a;
+init.P=P;
+init.RR=RR;
+end
+
 function y=re_inflator(x,state)
 y=zeros(length(state),1);
 y(state)=x;
