@@ -47,7 +47,11 @@ for iii=1:nobj
     %-----------------------------------------------------
     if ~isempty(obj(iii).general_restrictions_data)
         ngenrest=ngenrest+1;
-        req=obj(iii).general_restrictions_data();
+        genrest_basic=obj(iii).options.estim_general_restrictions;
+        if iscell(genrest_basic)
+            genrest_basic=genrest_basic{1};
+        end
+        req=genrest_basic();
         obj.options.kf_filtering_level=req.kf_filtering_level;
         c{iii}=obj(iii).options.estim_penalty_factor;
     end
