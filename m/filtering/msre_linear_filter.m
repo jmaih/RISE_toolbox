@@ -106,7 +106,9 @@ end
             %--------------------
             data_info.varobs_id=game_old_positions(data_info.varobs_id);
             if isfield(data_info,'restr_y_id')
-                data_info.restr_y_id=game_old_positions(data_info.restr_y_id);
+                complex=imag(data_info.restr_y_id)*1i;
+                data_info.restr_y_id=game_old_positions(real(data_info.restr_y_id))+...
+                complex;
             end
             for istate=1:h
                 SS{istate}=SS{istate}(state);
