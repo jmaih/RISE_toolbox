@@ -17,7 +17,7 @@ function [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 % this filter assumes a state space of the form
@@ -33,6 +33,8 @@ include_in_likelihood=data_info.include_in_likelihood;
 no_more_missing=data_info.no_more_missing;
 obs_id=data_info.varobs_id;
 data=data_info.y;
+dataz=data_info.z;
+last_good_conditional_observation=data_info.last_good_conditional_observation;
 % N.B: data_info also contains x, the observations on the exogenous
 % variables (trend, etc). But those observations will come through
 % data_trend and so are not used directly in the filtering function.
@@ -50,37 +52,53 @@ a=init.a;
 P=init.P;
 PAItt=init.PAI00;
 % RR=init.RR;
+h=numel(T);
+a_nsteps=cell(1,h);
 
 % free up memory
 %---------------
 m=size(T{1},1);
-h=numel(T);
 npages=data_info.npages;
-% nshocks=size(R{1},2);
-kmax=size(R{1},3)-1;
-horizon=kmax+1;
+[~,exo_nbr,horizon]=size(R{1});
+kmax=horizon-1;
 horizon=min(npages-1,horizon); % the first page is hard information
 ncp=horizon;
 hypothesis=options.forecast_conditional_hypothesis;
+kf_nan_future_obs_means_missing=options.kf_nan_future_obs_means_missing;
+state_vars_location=1:m;
+        
+% holder of conditional data
+%----------------------------
+y0=struct('y',nan(m,1,horizon+1));
 
-restr_y_id=data_info.restr_y_id;
-restr_x_id=data_info.restr_x_id;
-if ~isempty(restr_x_id)
-    error('conditioning on shocks is not allowed in estimation')
-end
+restr_y_id_in_y=imag(data_info.restr_y_id);
+restr_y_id_in_state=real(data_info.restr_y_id);
+restr_z_id_in_state=real(data_info.restr_z_id);
+% if ~isempty(restr_z_id_in_state)
+%     error('conditioning on shocks is not allowed in estimation')
+% end
+% n_y_rest=numel(restr_y_id_in_y);
 
 DPHI=cell(1,h);
 DT=cell(1,h);
+ss=cell(1,h);
+Im=eye(m);
 for st=1:h
     [DPHI{st},DT{st}]=utils.forecast.conditional.build_shock_restrictions(...
         T{st},R{st},...
-        restr_y_id,restr_x_id,...
+        restr_y_id_in_state,restr_z_id_in_state,...
         ncp,... data availability
         horizon,... horizon +or-1
         hypothesis);
     % redress: remove the third dimension
     %-------------------------------------
     R{st}=R{st}(:,:);
+    if st==1
+        nc=size(DT{st},2);
+        nshocs=ncp*numel(restr_z_id_in_state);
+    end
+    DT{st}=[DT{st};zeros(nshocs,nc)];
+    ss{st}=(Im-T{st})\state_trend{st}(:,1);
 end
 
 Q=Qfunc(a{1});
@@ -90,8 +108,7 @@ PAI=transpose(Q)*PAItt;
 %----------------
 [p0,smpl]=size(data);
 smpl=min(smpl,find(include_in_likelihood,1,'last'));
-c_last=0;if ~isempty(state_trend),c_last=size(state_trend{1},2);end
-% rqr_last=size(RR{1},3);
+
 h_last=0;
 if ~isempty(H{1})
     h_last=size(H{1},3);
@@ -113,11 +130,6 @@ Rt=R;
 OMGt=[]; % uncertainty of the conditions
 Record=[];
 
-% free up memory
-%---------------
-% M=rmfield(M,{'data','T','data_structure','include_in_likelihood',...
-%     'data_trend','state_trend','t_dc_last','obs_id','a','P','Q','PAI00','H','RR'});
-
 % definitions and options
 %------------------------
 twopi=2*pi;
@@ -128,7 +140,20 @@ else
     % do not do multi-step forecasting during estimation
     nsteps=1;
 end
-riccati_tol=options.kf_riccati_tol;
+
+shocks=nan(exo_nbr,horizon);
+fkst_options_=struct('PAI',1,...
+    'Qfunc',@(x)1,...
+    'states',1,...
+    'shocks',shocks,...
+    'simul_update_shocks_handle',[],...
+    'simul_do_update_shocks',false,...
+    'forecast_conditional_hypothesis',options.forecast_conditional_hypothesis,...
+    'nsteps',nsteps,...
+    'burn',0,...
+    'k_future',kmax,...
+    'y',[]);
+
 kalman_tol=options.kf_tol;
 expanded_flag=store_filters>2;
 if expanded_flag
@@ -224,7 +249,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             
             % state covariance update (Ptt=P-P*Z*inv(F)*Z'*P)
             %------------------------------------------------
-            P{st}=P{st}-K(:,occur,st)*PZt';
+            P{st}=P{st}-K(:,occur,st)*PZt.';
             
             twopi_p_dF(st)=twopi^p*detF;
         end
@@ -258,9 +283,9 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     end
     
     [Q,retcode]=Qfunc(att{1});
-        if retcode
-            return
-        end
+    if retcode
+        return
+    end
     
     % Probabilities predictions
     %--------------------------
@@ -270,20 +295,20 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     
     % advance information: skip the first page with hard information
     %----------------------------------------------------------------
-    MUt=data(restr_y_id,t,1+(1:horizon));
+    MUt=data(restr_y_id_in_y,t,1+(1:horizon));
+    shocks_MUt=dataz(:,t,1+(1:horizon));
     
+    lgcobs=min(last_good_conditional_observation(t),horizon);
+    % keep the contemporaneous by default
+    lgcobs=max(lgcobs,1);
+
     % state and state covariance prediction
     %--------------------------------------
     for splus=1:h
-        MUt_splus=MUt(:,:);
-        if c_last>0 % remove the part that will be unexplained by the shocks
-            MUt_splus=MUt_splus-state_trend{st}(restr_y_id,min(t+1,c_last))*ones(1,horizon);
-        end
-        [a{splus},P{splus},Tt{splus},Rt{splus},Record]=predict_while_collapsing(Record,expanded_flag);
-        
-        if c_last>0 % <-- ~isempty(state_trend)
-            a{splus}(1:m)=a{splus}(1:m)+state_trend{splus}(:,min(t+1,c_last));
-        end
+        [a_nsteps{splus},P{splus},Tt{splus},Rt{splus}]=predict_while_collapsing(expanded_flag);
+        % trim in case many forecasts where produced in earlier rounds
+        %--------------------------------------------------------------
+        a{st}(1:m)=a_nsteps{st}(:,1);
     end
     
     if store_filters>0
@@ -294,7 +319,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     end
     
     if ~is_steady % && h==1
-        is_steady=check_steady_state_kalman(is_steady);
+        [is_steady,oldK]=utils.filtering.check_steady_state_kalman(...
+            is_steady,K,oldK,options,t,no_more_missing);
     end
 end
 
@@ -348,9 +374,11 @@ end
 %-------------------
 if store_filters>0
     for st=1:h
+        %         Filters.filt_shocks{st}=Filters.a{st}(m+1:end,:,:);
         Filters.a{st}=Filters.a{st}(1:m,:,:); % second dimension is the real-time forecasting steps
         Filters.P{st}=Filters.P{st}(1:m,1:m,:);
         if store_filters>1
+            %             Filters.update_shocks{st}=Filters.att{st}(m+1:end,:,:);
             Filters.att{st}=Filters.att{st}(1:m,:,:); % second dimension is the real-time forecasting steps
             Filters.Ptt{st}=Filters.Ptt{st}(1:m,1:m,:);
             if store_filters>2
@@ -371,36 +399,21 @@ if store_filters>0
     end
 end
 
-    function [a,P,Tt,Rt,Record]=predict_while_collapsing(Record,ExpandedFlag)
+    function [a,P,Tt,Rt]=predict_while_collapsing(ExpandedFlag)
         a=0;
         P=0;
         Tt=0;
         Rt=0;
         for snow=1:h
             pai_snow_Over_slead=Q(snow,splus)*PAItt(snow)/PAI(splus);
-            [a00_,P00_,Tt_snow,Rt_snow,Record]=utils.filtering.prediction_step(...
+            [a00_,P00_,Tt_snow,Rt_snow]=prediction_step(...
                 T{splus},R{splus},att{snow},Ptt{snow},...
-                MUt_splus,OMGt,DPHI{splus},DT{splus},Record,ExpandedFlag);
+                OMGt,DPHI{splus},DT{splus},ExpandedFlag);
             a=a+pai_snow_Over_slead*a00_;
             P=P+pai_snow_Over_slead*P00_;
             Tt=Tt+pai_snow_Over_slead*Tt_snow;
             Rt=Rt+pai_snow_Over_slead*Rt_snow;
         end
-    end
-    function is_steady=check_steady_state_kalman(is_steady)
-        % the likelihood affects the values of the updated
-        % probabilities. In turn, the updated probabilities affect the
-        % values of the predicted probabilities. The predicted
-        % probabilities enter the collapsing of the covariances and so,
-        % we never reach the steady state in this case. So far I am
-        % 100% sure about this. But in order to be 101% sure, I would
-        % like to run an example.
-        if t>no_more_missing
-            discrep=max(abs(K(:)-oldK));
-            is_steady=discrep<riccati_tol;
-%             fprintf(1,'iteration %4.0f  discrepancy %4.4f\n',t,discrep);
-        end
-        oldK=K(:);
     end
     function store_updates()
         Filters.PAItt(:,t)=PAItt;
@@ -413,7 +426,7 @@ end
                 v_store{st_}(occur,t)=v{st_};
                 % state matrices
                 Tt_store{st_}(:,:,t)=Tt{st_};
-                Rt_store{st_}(:,:,t)=Rt{st_};
+                Rt_store{st_}(:,:,t)=Rt{st};
             end
         end
     end
@@ -421,17 +434,8 @@ end
         Filters.PAI(:,t+1)=PAI;
         Filters.Q(:,:,t+1)=Q;
         for splus_=1:h
-            Filters.a{splus_}(:,1,t+1)=a{splus_};
+            Filters.a{splus_}(1:m,:,t+1)=a_nsteps{splus_};
             Filters.P{splus_}(:,:,t+1)=P{splus_};
-            for istep_=2:nsteps
-                % this assumes that we stay in the same state and we know
-                % we will stay. The more general case where we can jump to
-                % another state is left to the forecasting routine.
-                Filters.a{splus_}(:,istep_,t+1)=Tt{splus_}*Filters.a{splus_}(:,istep_-1,t+1);
-                if c_last>0 % <-- ~isempty(state_trend)
-                    Filters.a{splus_}(1:m,istep_,t+1)=Filters.a{splus_}(1:m,istep_,t+1)+state_trend{splus_}(:,min(t+istep_,c_last));
-                end
-            end
         end
     end
     function Filters=initialize_storage()
@@ -469,6 +473,47 @@ end
                     Filters.PAItT=zeros(h,smpl);
                 end
             end
+        end
+    end
+    function [a,P,Tt,Rt]=prediction_step(T,R,att,Ptt,OMGt,DPHI,DT,ExpandedFlag)
+        narginchk(4,8);
+        reduced=nargin==4;
+        % zero the useless entries otherwise the variables will appear as missing
+        if ~kf_nan_future_obs_means_missing
+            R(1:m,lgcobs*exo_nbr+1:end)=0;
+        end
+        Tt=T;
+        Rt=R;
+        MUt_splus=MUt(:,:);
+        MUt_splus=MUt_splus-ss{splus}(restr_y_id_in_state)*ones(1,horizon);
+        MUt_splus_old=[MUt_splus(:)
+            shocks_MUt(:)];
+        if ~reduced
+            reduced=reduced||(~ExpandedFlag && all(isnan(MUt_splus_old(:))));
+            if ~reduced
+                [Tt,Rt,~,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
+            end
+        end
+        
+        if reduced
+            Record=[];
+        end
+        
+        RR=Rt*Rt';
+        P=Tt*Ptt*transpose(Tt)+RR;
+        % Make sure we remain symmetric
+        P=utils.cov.symmetrize(P);
+        
+        if nsteps==1
+            a=bt+Tt*att;
+        else
+            shocks(restr_z_id_in_state,:)=shocks_MUt(:,:);
+            fkst_options_.shocks=shocks;
+            
+            y0.y(:,1,1)=att(state_vars_location);
+            y0.y(restr_y_id_in_state,1,2:end)=MUt(:,:);
+            [a,~,retcode]=utils.forecast.multi_step(y0,ss(splus),...
+                {[T,zeros(m,1),R]},state_vars_location,fkst_options_);
         end
     end
 end
