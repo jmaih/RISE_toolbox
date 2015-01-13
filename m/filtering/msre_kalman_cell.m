@@ -96,7 +96,6 @@ else
     % do not do multi-step forecasting during estimation
     nsteps=1;
 end
-riccati_tol=options.kf_riccati_tol;
 kalman_tol=options.kf_tol;
 
 % initialization of matrices
@@ -173,7 +172,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             
             % state covariance update (Ptt=P-P*Z*inv(F)*Z'*P)
             %------------------------------------------------
-            P{st}=P{st}-K(:,occur,st)*PZt';
+            P{st}=P{st}-K(:,occur,st)*PZt.';%<---P{st}=P{st}-K(:,occur,st)*P{st}(obsOccur,:);
             
             twopi_p_dF(st)=twopi^p*detF;
         end
@@ -256,7 +255,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     end
     
     if ~is_steady % && h==1
-        is_steady=check_steady_state_kalman(is_steady);
+        [is_steady,oldK]=utils.filtering.check_steady_state_kalman(...
+            is_steady,K,oldK,options,t,no_more_missing);
     end
 end
 
@@ -305,22 +305,6 @@ if store_filters>2 % store smoothed
     end
 end
 
-
-    function is_steady=check_steady_state_kalman(is_steady)
-        % the likelihood affects the values of the updated
-        % probabilities. In turn, the updated probabilities affect the
-        % values of the predicted probabilities. The predicted
-        % probabilities enter the collapsing of the covariances and so,
-        % we never reach the steady state in this case. So far I am
-        % 100% sure about this. But in order to be 101% sure, I would
-        % like to run an example.
-        if t>no_more_missing
-            discrep=max(abs(K(:)-oldK));
-            is_steady=discrep<riccati_tol;
-%             fprintf(1,'iteration %4.0f  discrepancy %4.4f\n',t,discrep);
-        end
-        oldK=K(:);
-    end
     function store_updates()
         Filters.PAItt(:,t)=PAItt;
         for st_=1:h
