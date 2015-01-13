@@ -184,6 +184,20 @@ d.data_structure=~isnan(d.y);
 %-------------------------------------------------------
 d.include_in_likelihood=false(1,smpl);
 d.include_in_likelihood(d.start:d.finish)=true;
+
+% conditional data
+%------------------
+dz=permute(d.z,[1,3,2]);
+last_non_nan=zeros(1,smpl);
+for t=1:smpl
+    good=find(any(~isnan(dz(:,:,t)),1),1,'last');
+    if isempty(good)
+        good=0;
+    end
+    last_non_nan(t)=good;
+end
+d.last_good_conditional_observation=last_non_nan;
+
 end
 
 
