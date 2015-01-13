@@ -308,7 +308,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         [a_nsteps{splus},P{splus},Tt{splus},Rt{splus}]=predict_while_collapsing(expanded_flag);
         % trim in case many forecasts where produced in earlier rounds
         %--------------------------------------------------------------
-        a{st}(1:m)=a_nsteps{st}(:,1);
+        a{st}(1:m)=a_nsteps{st}(1:m,1);
     end
     
     if store_filters>0
@@ -434,7 +434,7 @@ end
         Filters.PAI(:,t+1)=PAI;
         Filters.Q(:,:,t+1)=Q;
         for splus_=1:h
-            Filters.a{splus_}(1:m,:,t+1)=a_nsteps{splus_};
+            Filters.a{splus_}(1:m,:,t+1)=a_nsteps{splus_}(1:m,:);
             Filters.P{splus_}(:,:,t+1)=P{splus_};
         end
     end
