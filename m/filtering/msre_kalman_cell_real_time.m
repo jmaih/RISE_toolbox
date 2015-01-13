@@ -484,19 +484,20 @@ end
         end
         Tt=T;
         Rt=R;
+        bt=0;
         MUt_splus=MUt(:,:);
         MUt_splus=MUt_splus-ss{splus}(restr_y_id_in_state)*ones(1,horizon);
         MUt_splus_old=[MUt_splus(:)
             shocks_MUt(:)];
         if ~reduced
             reduced=reduced||(~ExpandedFlag && all(isnan(MUt_splus_old(:))));
-            if ~reduced
-                [Tt,Rt,~,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
-            end
         end
         
         if reduced
+            % no valid future information available, nothing to match
             Record=[];
+        else
+            [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
         end
         
         RR=Rt*Rt';
