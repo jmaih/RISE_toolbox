@@ -227,7 +227,11 @@ end
                 if isempty(propval)
                     absorbed=true;
                 else
-                    propval=str2func(propval);
+                    if ischar(propval)
+                        propval=str2func(propval);
+                    elseif iscell(propval) && ischar(propval{1})
+                        propval{1}=str2func(propval{1});
+                    end
                 end
             end
 
