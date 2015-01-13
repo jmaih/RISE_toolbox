@@ -46,7 +46,7 @@ function obj=estimate(obj,varargin)
 %   viol=myfunc(obj,varargin), with **obj** the parameterized RISE object
 %   which will be used in the computation of the restrictions violations.
 %   Hence the restrictions are entered either as  @myfunc or as
-%   {@myfunc,arg3,arg2,...}. Originally, RISE will call the function
+%   {@myfunc,arg2,arg3,...}. Originally, RISE will call the function
 %   without any inputs. In that case, RISE expects the output to be a
 %   structure with fields : 
 %       - **number_of_restrictions** : number of restrictions
