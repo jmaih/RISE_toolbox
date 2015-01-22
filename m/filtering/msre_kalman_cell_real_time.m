@@ -506,7 +506,7 @@ end
         P=utils.cov.symmetrize(P);
         
         if nsteps==1
-            a=bt+Tt*att;
+            a=[ss{splus};zeros(mm-m,1)]+bt+Tt*(att-[ss{splus};zeros(mm-m,1)]);
         else
             shocks(restr_z_id_in_state,:)=shocks_MUt(:,:);
             fkst_options_.shocks=shocks;
