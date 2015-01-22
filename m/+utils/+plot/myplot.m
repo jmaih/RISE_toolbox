@@ -78,7 +78,7 @@ if strcmp(funct_type,{'plot_real_time'})
         error('number of datasets cannot exceed 1 in real-time plots')
     end
     [nr,nc]=size(datta{1});
-    xtime=date_numbers{1}(1)-1:date_numbers{1}(end)+nc;
+    xtime=date_numbers{1}(1):date_numbers{1}(end)+nc+1;
     pp=plot_specs(xtime,nticks,rise_items.date_format);
 else
     pp=plot_specs(date_numbers{1},nticks,rise_items.date_format);
