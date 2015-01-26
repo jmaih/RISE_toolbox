@@ -74,6 +74,7 @@ y0=struct('y',nan(m,1,horizon+1));
 restr_y_id_in_y=imag(data_info.restr_y_id);
 restr_y_id_in_state=real(data_info.restr_y_id);
 restr_z_id_in_state=real(data_info.restr_z_id);
+active_shocks=setdiff(1:exo_nbr,restr_z_id_in_state);
 % if ~isempty(restr_z_id_in_state)
 %     error('conditioning on shocks is not allowed in estimation')
 % end
@@ -83,21 +84,23 @@ DPHI=cell(1,h);
 DT=cell(1,h);
 ss=cell(1,h);
 Im=eye(m);
+% Conditon on all the existing shocks and nan the relevant ones where
+% necessary
 for st=1:h
     [DPHI{st},DT{st}]=utils.forecast.conditional.build_shock_restrictions(...
         T{st},R{st},...
-        restr_y_id_in_state,restr_z_id_in_state,...
+        restr_y_id_in_state,1:exo_nbr,... restr_z_id_in_state
         ncp,... data availability
         horizon,... horizon +or-1
         hypothesis);
+    if st==1
+        nc=size(DT{st},2);
+        nshocks=ncp*exo_nbr;%<--nshocs=ncp*numel(restr_z_id_in_state);
+    end
     % redress: remove the third dimension
     %-------------------------------------
     R{st}=R{st}(:,:);
-    if st==1
-        nc=size(DT{st},2);
-        nshocs=ncp*numel(restr_z_id_in_state);
-    end
-    DT{st}=[DT{st};zeros(nshocs,nc)];
+    DT{st}=[DT{st};zeros(nshocks,nc)];
     ss{st}=(Im-T{st})\state_trend{st}(:,1);
 end
 
@@ -296,9 +299,16 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % advance information: skip the first page with hard information
     %----------------------------------------------------------------
     MUt=data(restr_y_id_in_y,t,1+(1:horizon));
+    MUt=MUt(:,:);
+
     shocks_MUt=dataz(:,t,1+(1:horizon));
     
+    last_mu=find(any(~isnan(MUt),1),1,'last');
+    if isempty(last_mu)
+        last_mu=0;
+    end
     lgcobs=min(last_good_conditional_observation(t),horizon);
+    lgcobs=min(last_mu,lgcobs);
     % keep the contemporaneous by default
     lgcobs=max(lgcobs,1);
 
@@ -308,7 +318,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         [a_nsteps{splus},P{splus},Tt{splus},Rt{splus}]=predict_while_collapsing(expanded_flag);
         % trim in case many forecasts where produced in earlier rounds
         %--------------------------------------------------------------
-        a{st}(1:m)=a_nsteps{st}(1:m,1);
+        a{st}=a_nsteps{st}(:,1);
     end
     
     if store_filters>0
@@ -374,11 +384,11 @@ end
 %-------------------
 if store_filters>0
     for st=1:h
-        %         Filters.filt_shocks{st}=Filters.a{st}(m+1:end,:,:);
+        Filters.eta_tlag{st}=Filters.a{st}(m+1:end,:,:);
         Filters.a{st}=Filters.a{st}(1:m,:,:); % second dimension is the real-time forecasting steps
         Filters.P{st}=Filters.P{st}(1:m,1:m,:);
         if store_filters>1
-            %             Filters.update_shocks{st}=Filters.att{st}(m+1:end,:,:);
+            Filters.eta_tt{st}=Filters.att{st}(m+1:end,:,:);
             Filters.att{st}=Filters.att{st}(1:m,:,:); % second dimension is the real-time forecasting steps
             Filters.Ptt{st}=Filters.Ptt{st}(1:m,1:m,:);
             if store_filters>2
@@ -434,13 +444,14 @@ end
         Filters.PAI(:,t+1)=PAI;
         Filters.Q(:,:,t+1)=Q;
         for splus_=1:h
-            Filters.a{splus_}(1:m,:,t+1)=a_nsteps{splus_}(1:m,:);
+            Filters.a{splus_}(:,:,t+1)=a_nsteps{splus_};
             Filters.P{splus_}(:,:,t+1)=P{splus_};
         end
     end
     function Filters=initialize_storage()
         Filters=struct();
         if store_filters>0 % store filters
+            Filters.eta_tlag=cell(1,h);
             Filters.a=repmat({zeros(mm,nsteps,smpl+1)},1,h);
             Filters.P=repmat({zeros(mm,mm,smpl+1)},1,h);
             for state=1:h
@@ -459,6 +470,7 @@ end
             Filters.Q=zeros(h,h,smpl+1);
             Filters.Q(:,:,1)=Q;
             if store_filters>1 % store updates
+                Filters.eta_tt=cell(1,h);
                 Filters.att=repmat({zeros(mm,1,smpl)},1,h);
                 Filters.Ptt=repmat({zeros(mm,mm,smpl)},1,h);
                 Filters.PAItt=zeros(h,smpl);
@@ -479,16 +491,18 @@ end
         narginchk(4,8);
         reduced=nargin==4;
         % zero the useless entries otherwise the variables will appear as missing
+        shocks_=nan(exo_nbr,horizon);
+        shocks_(restr_z_id_in_state,:)=shocks_MUt(:,:);
         if ~kf_nan_future_obs_means_missing
+            shocks_(active_shocks,lgcobs+1:end)=0;
             R(1:m,lgcobs*exo_nbr+1:end)=0;
         end
         Tt=T;
         Rt=R;
         bt=0;
-        MUt_splus=MUt(:,:);
-        MUt_splus=MUt_splus-ss{splus}(restr_y_id_in_state)*ones(1,horizon);
+        MUt_splus=MUt-ss{splus}(restr_y_id_in_state)*ones(1,horizon);
         MUt_splus_old=[MUt_splus(:)
-            shocks_MUt(:)];
+            shocks_(:)];
         if ~reduced
             reduced=reduced||(~ExpandedFlag && all(isnan(MUt_splus_old(:))));
         end
@@ -508,9 +522,7 @@ end
         if nsteps==1
             a=[ss{splus};zeros(mm-m,1)]+bt+Tt*(att-[ss{splus};zeros(mm-m,1)]);
         else
-            shocks(restr_z_id_in_state,:)=shocks_MUt(:,:);
-            fkst_options_.shocks=shocks;
-            
+            fkst_options_.shocks=shocks_;
             y0.y(:,1,1)=att(state_vars_location);
             y0.y(restr_y_id_in_state,1,2:end)=MUt(:,:);
             [a,~,retcode]=utils.forecast.multi_step(y0,ss(splus),...
