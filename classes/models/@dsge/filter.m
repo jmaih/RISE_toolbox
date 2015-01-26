@@ -145,15 +145,16 @@ syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc},'forced_state',obj.endogenou
 
 [LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,State_trend,SS,risk,obj.options);
 if  obj.options.kf_filtering_level && ~retcode
-    Fields={'a','att','atT','eta','epsilon','PAI','PAItt','PAItT';
-        'filtered_variables','updated_variables','smoothed_variables','smoothed_shocks',...
+    Fields={'a','att','atT','eta','eta_tt','eta_tlag','epsilon','PAI','PAItt','PAItT';
+        'filtered_variables','updated_variables','smoothed_variables',...
+        'smoothed_shocks','updated_shocks','filtered_shocks',...
         'smoothed_measurement_errors','filtered_regime_probabilities','updated_regime_probabilities',...
         'smoothed_regime_probabilities'};
     obj.filtering=struct();
     for ifield=1:size(Fields,2)
         if isfield(Filters,Fields{1,ifield})
             obj.filtering.(Fields{2,ifield})=Filters.(Fields{1,ifield});
-            if ismember(Fields{2,ifield},{'smoothed_variables','smoothed_shocks','smoothed_measurement_errors'})
+            if ismember(Fields{2,ifield},{'smoothed_variables','smoothed_shocks','updated_shocks','smoothed_measurement_errors'})
                 obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAItT,obj.filtering.(Fields{2,ifield}));
             elseif strcmp(Fields{2,ifield},'updated_variables')
                 obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAItt,obj.filtering.(Fields{2,ifield}));
