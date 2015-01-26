@@ -20,15 +20,7 @@ function obj=save_filters(obj)
 % See also: 
 
 
-Fields={'filtered_variables','Expected_filtered_variables',...
-    'updated_variables','Expected_updated_variables',...
-    'smoothed_variables','Expected_smoothed_variables',...
-    'smoothed_shocks','Expected_smoothed_shocks',...
-    'smoothed_measurement_errors','Expected_smoothed_measurement_errors',...
-    'filtered_regime_probabilities','updated_regime_probabilities',...
-    'smoothed_regime_probabilities',...
-    'filtered_state_probabilities','updated_state_probabilities',...
-    'smoothed_state_probabilities'};
+Fields=fieldnames(obj.filtering);
 rolling=[];
 Expected_rolling=[];
 
@@ -127,8 +119,10 @@ end
             % here...
             net_nexo=nvars-obj.exogenous.number(2);
             nloops=size(filtdata,2)/net_nexo;
-            current_reg_nbr=size(filtdata,3);
-            tmp=nan(nobs,nvars*nloops,current_reg_nbr);
+            [nobs_,~,current_reg_nbr]=size(filtdata);
+            % the number of observations could differ from one variable to
+            % another.
+            tmp=nan(nobs_,nvars*nloops,current_reg_nbr);
             % now push in the unobserved shocks and the observed ones (only
             % for the first period)
             % locate the observed shocks
