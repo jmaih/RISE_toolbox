@@ -33,7 +33,9 @@ for j=1:length(varargin)
             varargout{j}=V;
         end
     else
-        V(holes,:)=[];
+        if ~isempty(V)
+            V(holes,:)=[];
+        end
         varargout{j}=V;
     end
 end

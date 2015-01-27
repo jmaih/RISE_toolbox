@@ -32,9 +32,11 @@ end
 
 [endo_nbr,exo_nbr,NumberOfAnticipatedPeriods]=size(G);
 
-[MUy,OMGy,LBy,UBy,yrest_id,ncv,ncp]=ExtractConditions(EndogenousConditions);
+[MUy,OMGy,LBy,UBy,yrest_id,ncv,ncpe]=ExtractConditions(EndogenousConditions);
 
 [MUx,OMGx,LBx,UBx,xrest_id,ncvx,ncpx]=ExtractConditions(ShocksConditions);
+
+ncp=max(ncpe,ncpx);
 
 if NumberOfAnticipatedPeriods<1
     error([mfilename,':: Number of anticipated periods cannot be less than 1'])
@@ -45,11 +47,6 @@ end
 
 if NumberOfAnticipatedPeriods>ncp+1
     error([mfilename,':: Number of anticipated cannot exceed the number of conditioning periods'])
-end
-
-if ncv==0
-    NumberOfAnticipatedPeriods=0;
-    ncp=0;
 end
 
 % expected number of iterations

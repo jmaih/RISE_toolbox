@@ -384,7 +384,8 @@ end
 %-------------------
 if store_filters>0
     for st=1:h
-        Filters.eta_tlag{st}=Filters.a{st}(m+1:end,:,:);
+        % in terms of shocks we only save the first-step forecast
+        Filters.eta_tlag{st}=Filters.a{st}(m+1:end,1,:);
         Filters.a{st}=Filters.a{st}(1:m,:,:); % second dimension is the real-time forecasting steps
         Filters.P{st}=Filters.P{st}(1:m,1:m,:);
         if store_filters>1
@@ -519,14 +520,19 @@ end
         % Make sure we remain symmetric
         P=utils.cov.symmetrize(P);
         
-        if nsteps==1
+        % do the first step
             a=[ss{splus};zeros(mm-m,1)]+bt+Tt*(att-[ss{splus};zeros(mm-m,1)]);
-        else
+        % add the subsequent steps artificially in order to match the sizes
+        if nsteps>1
             fkst_options_.shocks=shocks_;
             y0.y(:,1,1)=att(state_vars_location);
             y0.y(restr_y_id_in_state,1,2:end)=MUt(:,:);
-            [a,~,retcode]=utils.forecast.multi_step(y0,ss(splus),...
+            [a_multi_steps,~,retcode]=utils.forecast.multi_step(y0,ss(splus),...
                 {[T,zeros(m,1),R]},state_vars_location,fkst_options_);
+            a=a(:,ones(1,nsteps));
+            a(1:m,:)=a_multi_steps;
+            % future shocks not collected for multi-step forecasting
+            a(m+1:end,2:end)=nan; 
         end
     end
 end

@@ -18,20 +18,25 @@ TotalNumberOfRestrictions=size(OMG,1);
 nendo=size(MUy,1);
 yrest=1:nendo;
 xrest=nendo+1:TotalNumberOfRestrictions;
+all_omega_empty=true;
 if ~isempty(OMGy)
     OMGc(yrest,yrest)=OMGy;
+    all_omega_empty=false;
 end
 if ~isempty(OMGx)
     OMGc(xrest,xrest)=OMGx;
+    all_omega_empty=false;
 end
 
 LB=[LBy;LBx];
 UB=[UBy;UBx];
 
-[junk,PositiveDefiniteness]=chol(OMGc); %#ok<ASGLU>
-if PositiveDefiniteness
-    warning([mfilename,':: Implied covariance matrix not positive definite, reverting to theoretical']) %#ok<WNTAG>
-    OMGc=OMG;
+if ~all_omega_empty
+    [junk,PositiveDefiniteness]=chol(OMGc); %#ok<ASGLU>
+    if PositiveDefiniteness
+        warning([mfilename,':: Implied covariance matrix not positive definite, reverting to theoretical']) %#ok<WNTAG>
+        OMGc=OMG;
+    end
 end
 
 end
