@@ -154,11 +154,11 @@ if  obj.options.kf_filtering_level && ~retcode
     for ifield=1:size(Fields,2)
         if isfield(Filters,Fields{1,ifield})
             obj.filtering.(Fields{2,ifield})=Filters.(Fields{1,ifield});
-            if ismember(Fields{2,ifield},{'smoothed_variables','smoothed_shocks','updated_shocks','smoothed_measurement_errors'})
+            if ismember(Fields{2,ifield},{'smoothed_variables','smoothed_shocks','smoothed_measurement_errors'})
                 obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAItT,obj.filtering.(Fields{2,ifield}));
-            elseif strcmp(Fields{2,ifield},'updated_variables')
+            elseif strcmp(Fields{2,ifield},{'updated_variables','updated_shocks'})
                 obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAItt,obj.filtering.(Fields{2,ifield}));
-            elseif strcmp(Fields{2,ifield},'filtered_variables')
+            elseif strcmp(Fields{2,ifield},{'filtered_variables','filtered_shocks'})
                 obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAI,obj.filtering.(Fields{2,ifield}));
             end
         end
