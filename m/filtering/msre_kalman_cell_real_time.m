@@ -158,7 +158,7 @@ fkst_options_=struct('PAI',1,...
     'y',[]);
 
 kalman_tol=options.kf_tol;
-expanded_flag=store_filters>2;
+expanded_flag=store_filters>0;
 if expanded_flag
     shock_span=size(DPHI{1},2);
     mm=m+shock_span;
@@ -337,7 +337,7 @@ end
 % included only if in range
 loglik=sum(Incr(include_in_likelihood));
 
-if expanded_flag % store smoothed
+if store_filters>2 % store smoothed
     r=zeros(mm,h);
     ZZ=eye(mm);
     ZZ=ZZ(obs_id,:);
