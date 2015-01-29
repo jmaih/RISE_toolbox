@@ -1,7 +1,7 @@
 
 Rationality In Switching Environments (RISE) Toolbox
 ================
-Welcome to RISE (Beta Version). For any issue, suggestion or bug
+Welcome to RISE!!! For any issue, suggestion or bug
 report, please send an email to [junior.maih AT gmail.com](junior.maih@gmail.com)
 
 RISE is an object-oriented Matlab toolbox for solving and estimating nonlinear
