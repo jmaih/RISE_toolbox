@@ -8,7 +8,10 @@ RISE is an object-oriented Matlab toolbox for solving and estimating nonlinear
 dynamic stochastic general equilibirium (henceforward, DSGE) or more generally
 Rational Expectations(hereinafter RE), models with switching parameters.
 
-Leading references in the field include various papers by Dan Waggoner and Tao Zha, which
+A new paper describing the problem and the solution approach in RISE
+can be found [here](http://www.norges-bank.no/en/Published/Papers/Working-Papers/2015/12015/).
+
+Other references in the field include various papers by Dan Waggoner and Tao Zha, which
 can be found [here](http://www.tzha.net/articles).
 
 In RISE, the switching of the parameters is governed by Markov processes and can be endogenous.
@@ -19,8 +22,8 @@ Expectations (MSRE) model and solves it using efficient algorithms.
 Constant-parameter DSGE/RE models are a special case. RISE also includes the solution
 and estimation of
 * [Loose commitment](http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=8686985) (or optimal policy) models
-* sticky information models
-* hybrid expectations models
+* sticky information models (Deprecated)
+* hybrid expectations models (Deprecated)
 * [models in which agents have information about future events](http://www.kansascityfed.org/publicat/events/research/2010CenBankForecasting/Maih_paper.pdf)
 
 Features of the toolbox
@@ -54,7 +57,7 @@ Example: Foerster, Rubio-Ramirez, Waggoner and Zha (2013)
 ---------------------
 ```RISE
 % the example can be found under RISE_toolbox\examples\MarkovSwitching\RamirezWaggonerZha2012
-% and the name of the file is frwz_nk.dyn
+% and the name of the file is frwz_nk.rs
 
 //Declare the endogenous
 endogenous	PAI,Y,R
