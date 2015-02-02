@@ -75,6 +75,18 @@ ze_0_plus=ze_0(1):size(obj.solution.Tz{1},2);
 zsig=obj.locations.after_solve.z.sig;
 endo_nbr=obj.endogenous.number(end);
 
+% load the restrictions if any: no reordering needed here since the filter
+% below follows the alphabetical order. Note this is still the linear
+% filter. In the nonlinear filter, things might be implemented differently
+%--------------------------------------------------------------------------
+sep_compl=complementarity_memoizer(obj);
+
+% find the anticipated shocks
+anticipated_shocks=[];
+if ~isempty(sep_compl)
+    anticipated_shocks=obj.exogenous.shock_horizon>0;
+end
+
 % extract the state and transition matrices
 T=cell(1,h); 
 R=T;
@@ -103,6 +115,9 @@ H=obj.solution.H;% measurement errors
 
 % deterministic shocks
 det_shocks=obj.exogenous.is_observed;
+if ~isempty(anticipated_shocks)
+    anticipated_shocks(det_shocks)=[];
+end
 kmax=max(obj.exogenous.shock_horizon);
 det_shocks=repmat(det_shocks,1,kmax+1);
 
@@ -141,7 +156,9 @@ end
 % initialization
 %---------------
 
-syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc},'forced_state',obj.endogenous.is_affect_trans_probs);
+syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc},'sep_compl',sep_compl,...
+    'anticipated_shocks',anticipated_shocks,...
+    'forced_state',obj.endogenous.is_affect_trans_probs);
 
 [LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,State_trend,SS,risk,obj.options);
 if  obj.options.kf_filtering_level && ~retcode
@@ -182,35 +199,3 @@ for istate=1:numel(vals)
 E=E+bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate});
 end
 % E=squeeze(sum(bsxfun(@times,permute(probs,[3,1,2]),vals),2));
-
-% function varargout=minimum_state_for_estimation(state,varargin)
-% % this function reduces the state size to accelerate estimation
-% % it returns the indices of the union of state variables and observable
-% % ones
-% if ~islogical(state)
-%     tmp=state;
-%     % The step below is critical for speed, though it may add some noise
-%     % when computing the filters for all the endogenous variables
-%     tmp(abs(tmp)<1e-9)=0; 
-%     state=any(tmp(:,:,1));
-%     for ii=2:size(tmp,3)
-%         state=state | any(tmp(:,:,ii));
-%     end
-% end
-% n=numel(state);
-% n_varg=length(varargin);
-% newstate=state;
-% for ii=1:n_varg
-%     newstate(varargin{ii})=true;
-% end
-% varargout=cell(1,n_varg+1);
-% varargout{1}=newstate;
-% for ii=1:n_varg
-%     newobs=false(1,n);
-%     newobs(varargin{ii})=true;
-%     newobs(~newstate)=[];
-%     newobs=find(newobs);
-%     [~,tags]=sort(varargin{ii});
-%     newobs(tags)=newobs;
-%     varargout{ii+1}=newobs;
-% end
