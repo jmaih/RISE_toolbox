@@ -59,26 +59,24 @@ if retcode
     Incr=[];
     Filters=[];
 else
-    if isfield(data_info,'npages') && data_info.npages>1
+    if ~isempty(syst.sep_compl)
+        [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
+            syst,data_info,state_trend,init,options);
+    elseif isfield(data_info,'npages') && data_info.npages>1 &&...
+            any([~isempty(data_info.restr_y_id),~isempty(data_info.restr_z_id)])
         [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info,state_trend,init,options);
     else
-        test=false;
-        if test
-            assignin('base','syst_cell',syst)
-            assignin('base','state_trend_cell',state_trend)
-            assignin('base','init_cell',init)
-            assignin('base','data_info',data_info)
-            assignin('base','options',options)
-            [loglik_,Incr_,retcode_,Filters_]=msre_kalman_cell(syst,data_info,state_trend,init,options);
-            [syst,state_trend,init]=remove_cells(syst,state_trend,init);
-            assignin('base','syst',syst)
-            assignin('base','state_trend',state_trend)
-            assignin('base','init',init)
-            [loglik,Incr,retcode,Filters]=msre_kalman(syst,data_info,state_trend,init,options);
-            keyboard
-        else
-            [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,state_trend,init,options);
-        end
+        [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
+            syst,data_info,state_trend,init,options);
+%         test=false;
+%         if test
+%             [loglik_,Incr_,retcode_,Filters_]=msre_kalman_cell(syst,data_info,state_trend,init,options);
+%             [syst,state_trend,init]=remove_cells(syst,state_trend,init);
+%             [loglik,Incr,retcode,Filters]=msre_kalman(syst,data_info,state_trend,init,options);
+%             keyboard
+%         else
+%             [loglik,Incr,retcode,Filters]=msre_kalman_cell(syst,data_info,state_trend,init,options);
+%         end
     end
 end
 if isempty(loglik)
@@ -120,6 +118,9 @@ end
                 end
             end
             syst.Qfunc=@(x)syst.Qfunc(re_inflator(x,state));
+            if ~isempty(syst.sep_cf)
+                syst.sep_cf=@(x)syst.sep_cf(re_inflator(x,state));
+            end
         end
         function newpos=game_old_positions(oldpos)
             newpos=false(1,n);
