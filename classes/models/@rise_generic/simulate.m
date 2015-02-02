@@ -50,6 +50,9 @@ function [db,states,retcode] = simulate(obj,varargin)
 %       time series, else a cell array with a matrix and information on
 %       elements that help reconstruct the time series.
 %
+%   - **simul_honor_constraints** [true|{false}]: honor restrictions during
+%       simulations. If true, agents have to be able anticipate the future.
+%
 % Outputs
 % --------
 %
@@ -90,6 +93,7 @@ if isempty(obj)
         'simul_regime',[],...
         'simul_update_shocks_handle',[],...
         'simul_do_update_shocks',false,...
+        'simul_honor_constraints',false,...
         'simul_to_time_series',true);
 %         'simul_start_date','',... does not seem to be in use
     return
