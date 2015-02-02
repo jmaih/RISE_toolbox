@@ -27,14 +27,11 @@ function Initcond=set_simulation_initial_conditions(obj)
 
 
 
-% complementarity: do it here so as to keep the memory light
+% complementarity: do it here so as to keep the memory light. Here we pick
+% the second argument only!!!
 %-----------------------------------------------------------
-if ~isfield(obj.routines,'complementarity')||... I do not expect VARs to have this although in theory they could.
-        isempty(obj.routines.complementarity)
-    complementarity=@(varargin)true;
-else
-    complementarity=complementarity_memoizer(obj);
-end
+[~,complementarity]=complementarity_memoizer(obj);
+
 
 simul_pruned=false;
 simul_sig=0;
@@ -197,29 +194,5 @@ Initcond.shocks=shocks;
 
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
             simul_history_end_date,y0(1).y);
-    end
-end
-
-function cf=complementarity_memoizer(obj)
-routines=obj.routines.complementarity;
-def=obj.solution.definitions{1};
-ss=obj.solution.ss{1};
-param=obj.parameter_values(:,1);
-clear obj
-
-cf=@build_complementarity;
-
-    function c=build_complementarity(y)
-        c=true;
-        x=[];
-        sparam=[];
-        s0=1;
-        s1=1;
-        for ii=1:numel(routines)
-            c= c && routines{ii}(y,x,ss,param,sparam,def,s0,s1); 
-            if ~c
-                break
-            end
-        end
     end
 end
