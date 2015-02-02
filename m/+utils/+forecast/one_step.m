@@ -1,4 +1,5 @@
-function y1=one_step(T,y0,ss,xloc,sig,shocks,order)
+function [y1,iter]=one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id)
+
 % H1 line
 %
 % Syntax
@@ -17,7 +18,90 @@ function y1=one_step(T,y0,ss,xloc,sig,shocks,order)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
+
+narginchk(7,9)
+
+n=nargin;
+if n==7||isempty(compl)
+    compl=@(x)1;
+end
+[nx,kplus1]=size(shocks);
+if isempty(cond_shocks_id)
+    cond_shocks_id=1:nx;
+end
+
+myzero=-sqrt(eps);
+badvector=@(x)any(compl(x)<myzero);
+fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);% none
+
+y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order);
+
+iter=0;
+if badvector(y1.y)
+    nrows=size(compl(y1.y),1);
+    if islogical(cond_shocks_id)
+        cond_shocks_id=find(cond_shocks_id);
+    end
+    n_cond_shocks=numel(cond_shocks_id);
+    y1k=y0(:,ones(1,kplus1+1));
+    done=false;
+    while ~done
+        iter=iter+1;
+        % find the shocks that make the violations go away and the
+        % constraints bind exactly
+        %------------------------------------------------------------------
+        shocks0=zeros(nx,kplus1);
+        shocks0(cond_shocks_id,1:iter)=nan;
+        e_id=isnan(shocks0);
+        ee0=zeros(n_cond_shocks*iter,1);
+        ee=fsolve(@multi_complementarity,ee0,fsolve_options);
+        shocks0(e_id)=ee;
+        % given those shocks, check that all future steps do not violate
+        % the constraints
+        %------------------------------------------------------------------
+        test_passed=true;
+        for icol=2:kplus1+1
+            shocks_i=[shocks0(:,icol-1:end),zeros(nx,icol-2)];
+            y1k(icol)=one_step_engine(T,y1k(icol-1),ss,xloc,sig,shocks_i,order);
+            test_passed=~badvector(y1k(icol).y);
+            if ~test_passed
+                break
+            end
+            % here we could/should stop whenever there is a lift-up, since
+            % there could be a chance that the step after the last one
+            % still violates the constraints. But then this is true only if
+            % the model is linear. If the model is nonlinear, it is
+            % certainly a good idea to go to the end.
+        end
+        if iter==kplus1
+            if ~all(compl(y1k(end).y)>myzero)
+                keyboard
+            end
+        end
+        % if the test is passed we are done
+        %----------------------------------
+        if test_passed
+            y1=y1k(2);
+            done=true;
+        end
+    end
+end
+
+    function viol=multi_complementarity(ee)
+        shocks0(e_id)=ee;
+        viol=zeros(nrows,iter);
+        for icol_=2:iter+1
+            shocks_i=[shocks0(:,icol_-1:end),zeros(nx,icol_-2)];
+            y1k(icol_)=one_step_engine(T,y1k(icol_-1),ss,xloc,sig,shocks_i,order);
+            viol(:,icol_-1)=compl(y1k(icol_).y);
+        end
+        viol=viol(:);
+    end
+
+end
+%--------------------------------------------------------------------------
+function y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order)
 
 % models with constants will have to be re-written as deviations from
 % steady state. One could also have a zero steady state and instead put the
@@ -61,7 +145,7 @@ for io=1:order
     % account for VARs with many lags
     %--------------------------------
     y1.y=y1.y+1/factorial(io)*T{io}*zkz;
-    if io==1 && prunned 
+    if io==1 && prunned
         % vars will never go in here!
         if isempty(y0.y_lin)
             y1.y_lin=y1.y;
@@ -84,7 +168,7 @@ end
         % deviations from the steady state: use bsxfun in case we are in
         % presence of a VAR
         %---------------------------------------------------------------
-        x=bsxfun(@minus,y00,ss); 
+        x=bsxfun(@minus,y00,ss);
         x=x(xloc,end:-1:1); % swap if we have many lags
         z=[
             x(:) % vectorize
@@ -94,6 +178,6 @@ end
         % take the sparse form to accelerate calculations in case of zero
         % shocks. This will also make the kroneckers sparse
         %----------------------------------------------------------------
-        z=sparse(z); 
+        z=sparse(z);
     end
 end
