@@ -102,6 +102,9 @@ for st=1:h
     R{st}=R{st}(:,:);
     DT{st}=[DT{st};zeros(nshocks,nc)];
     ss{st}=(Im-T{st})\state_trend{st}(:,1);
+    if any(any(abs(state_trend{st}(:,2:end)-state_trend{st}(:,1:end-1))))>1e-9
+        error('this filtering algorithm is not ready for deterministic terms')
+    end
 end
 
 Q=Qfunc(a{1});
