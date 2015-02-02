@@ -176,6 +176,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=re_order_output_rows(varargin)
         varargout=prepare_transition_routine(varargin)
         varargout=set_simulation_initial_conditions(varargin)
+        varargout=complementarity_memoizer(varargin)
     end
     methods(Hidden=true)
         varargout=load_data(varargin)
