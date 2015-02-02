@@ -33,7 +33,7 @@ end
 
 myzero=-sqrt(eps);
 badvector=@(x)any(compl(x)<myzero);
-fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);% none
+fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
 
 y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order);
 
