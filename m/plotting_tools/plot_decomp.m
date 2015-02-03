@@ -1,4 +1,4 @@
-function h=plot_decomp(obj,nticks)
+function plot_handle=plot_decomp(varargin)
 % H1 line
 %
 % Syntax
@@ -18,6 +18,14 @@ function h=plot_decomp(obj,nticks)
 % ---------
 %
 % See also: 
+
+plot_handle0=utils.plot.myplot(@plot_decomp,varargin{:});
+if nargout
+    plot_handle=plot_handle0;
+end
+
+%{
+function h=plot_decomp(obj,nticks)
 
 if nargin<2
     nticks=[];
@@ -43,3 +51,4 @@ hold off
 if nargout>0
     h=gca;
 end
+%}

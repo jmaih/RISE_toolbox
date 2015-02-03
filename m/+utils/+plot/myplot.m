@@ -142,6 +142,23 @@ end
             set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
                 'ylim',[ymin,ymax])
             vout={gca()};
+        elseif strcmp(funct_type,{'plot_decomp'})
+            uall=d{:};
+            upos=zeros(size(uall));
+            uneg=zeros(size(uall));
+            ipos=uall>=0;
+            ineg=uall<0;
+            upos(ipos)=uall(ipos);
+            uneg(ineg)=uall(ineg);
+            bar(pp.xdatenums,upos,'stack') %  area(this_pos)
+            hold on
+            bar(pp.xdatenums,uneg,'stack') % area(this_neg)
+            hold on
+            plot(pp.xdatenums,sum(uall,2),'k-','linewidth',2);
+            axis tight;
+            hold off
+            set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
+            vout={gca()};
         else
             h1h2={};
             if strcmp(funct_type,{'plotyy'})
