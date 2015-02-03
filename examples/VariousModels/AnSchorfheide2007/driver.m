@@ -96,4 +96,7 @@ end
 %% estimate a model
 %-------------------
 clc
-m1est=estimate(m1,'data',rawdata.US)
+m1est=estimate(m1,'data',rawdata.US);
+
+%% historical decomposition
+mydec=historical_decomposition(m1est)
