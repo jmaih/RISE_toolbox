@@ -118,7 +118,7 @@ end
                 end
             end
             syst.Qfunc=@(x)syst.Qfunc(re_inflator(x,state));
-            if ~isempty(syst.sep_cf)
+            if isfield(syst,'sep_cf') && ~isempty(syst.sep_cf)
                 syst.sep_cf=@(x)syst.sep_cf(re_inflator(x,state));
             end
         end

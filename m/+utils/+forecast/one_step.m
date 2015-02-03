@@ -26,6 +26,9 @@ n=nargin;
 if n==7||isempty(compl)
     compl=@(x)1;
 end
+if n==7
+    cond_shocks_id=[];
+end
 [nx,kplus1]=size(shocks);
 if isempty(cond_shocks_id)
     cond_shocks_id=1:nx;

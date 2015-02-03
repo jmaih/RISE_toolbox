@@ -96,6 +96,7 @@ kalman_tol=options.kf_tol;
 %----------------------------
 ss=cell(1,h);
 Im=eye(m);
+RR0=RR;
 for st=1:h
     ss{st}=(Im-T{st})\state_trend{st}(:,1);
     if any(any(abs(state_trend{st}(:,2:end)-state_trend{st}(:,1:end-1))))>1e-9
@@ -113,7 +114,6 @@ for st=1:h
             % store R for every period
             %--------------------------
             R_store=struct();
-            RR0=RR;
         end
         RR{st}=[RR{st},R{st}(:,:);
             R{st}(:,:).',eye(nshocks)];
