@@ -33,7 +33,7 @@ info=set_row('',repmat(self.varnames,[1,1,size(data,3)]));
 % mean
 %-----
 info=[info
-    set_row('count',utils.stat.nanmean(data,1))
+    set_row('mean',utils.stat.nanmean(data,1))
     ];
 
 % std
