@@ -1,4 +1,4 @@
-function [y1,iter]=one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id)
+function [y1,iter,retcode]=one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id)
 
 % H1 line
 %
@@ -41,12 +41,16 @@ fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
 y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order);
 
 iter=0;
+retcode=0;
 if badvector(y1.y)
     nrows=size(compl(y1.y),1);
     if islogical(cond_shocks_id)
         cond_shocks_id=find(cond_shocks_id);
     end
     n_cond_shocks=numel(cond_shocks_id);
+    if n_cond_shocks~=nrows
+        error('Singularity in the problem of matching restrictions')
+    end
     y1k=y0(:,ones(1,kplus1+1));
     done=false;
     while ~done
@@ -58,7 +62,12 @@ if badvector(y1.y)
         shocks0(cond_shocks_id,1:iter)=nan;
         e_id=isnan(shocks0);
         ee0=zeros(n_cond_shocks*iter,1);
-        ee=fsolve(@multi_complementarity,ee0,fsolve_options);
+        [ee,fval,exitflag]=fsolve(@multi_complementarity,ee0,fsolve_options);
+        exitflag=utils.optim.exitflag(exitflag,ee,max(abs(fval(:))));
+        if exitflag~=1
+            retcode=701;
+            return
+        end
         shocks0(e_id)=ee;
         % given those shocks, check that all future steps do not violate
         % the constraints
@@ -78,8 +87,13 @@ if badvector(y1.y)
             % certainly a good idea to go to the end.
         end
         if iter==kplus1
-            if ~all(compl(y1k(end).y)>myzero)
-                keyboard
+            % the last guys is also constrained. Do one more step to see if
+            % there is a lift up. If no lift up we are not out of the bush
+            %--------------------------------------------------------------
+            y1_last_uncond=one_step_engine(T,y1k(end),ss,xloc,sig,zeros(size(shocks0)),order);
+            if ~all(compl(y1_last_uncond.y)>myzero)
+                retcode=701;
+                return
             end
         end
         % if the test is passed we are done
