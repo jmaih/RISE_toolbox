@@ -66,6 +66,8 @@ PAI=transpose(Q)*PAItt;
 [p0,smpl]=size(data);
 smpl=min(smpl,find(include_in_likelihood,1,'last'));
 m=size(T{1},1);
+% keep a copy
+m_orig=m;
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
 nshocks=exo_nbr*horizon;
@@ -96,7 +98,6 @@ kalman_tol=options.kf_tol;
 %----------------------------
 ss=cell(1,h);
 Im=eye(m);
-RR0=RR;
 for st=1:h
     ss{st}=(Im-T{st})\state_trend{st}(:,1);
     if any(any(abs(state_trend{st}(:,2:end)-state_trend{st}(:,1:end-1))))>1e-9
@@ -129,8 +130,7 @@ for st=1:h
 end
 clear state_trend
 if store_filters
-    % update size and keep a copy
-    m_orig=m;
+    % update size
     m=size(T{1},1);
 end
 % time-varying R matrix
@@ -145,12 +145,6 @@ for st=1:h
     Tt{st}=transpose(T{st}); % permute(T,[2,1,3]); % transpose
     any_T=any_T|any(abs(T{st})>1e-9,1);
 end
-
-% free up memory
-%---------------
-% M=rmfield(M,{'data','T','data_structure','include_in_likelihood',...
-%     'data_trend','state_trend','t_dc_last','obs_id','a','P','Q','PAI00','H','RR'});
-
 
 % initialization of matrices
 %-----------------------------
@@ -294,15 +288,17 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         end
         [a{splus},iter]=do_one_step_forecast(T{splus},R{splus}(:,:),a{splus},ss{splus},...
             shocks,sep_compl,cond_shocks_id);
+        Rt{splus}=R{splus};
         if ~is_steady
-            RR_splus=RR0{splus};
-            if store_filters
-                Rt{splus}=R{splus};
+            % we will never be steady if we have restrictions!!!
+            %---------------------------------------------------
+            if isempty(sep_compl)
+                RR_splus=RR{splus};
+            else
                 Rt{splus}(1:m_orig,:,iter+2:end)=0;
-                RR_splus=Rt{splus}(:,:)*Rt{splus}(:,:).'; 
+                RR_splus=Rt{splus}(:,:)*Rt{splus}(:,:).';
             end
             P{splus}=T{splus}(:,any_T)*P{splus}(any_T,any_T)*Tt{splus}(any_T,:)+RR_splus;
-            %             P{splus}=T{splus}(:,any_T)*P{splus}(any_T,any_T)*Tt{splus}(any_T,:)+RR{splus}(:,:,min(t,rqr_last));
             P{splus}=utils.cov.symmetrize(P{splus});
         end
     end
@@ -314,7 +310,9 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         end
     end
     
-    if ~is_steady % && h==1
+    if ~is_steady && isempty(sep_compl) % && h==1
+        % don't check steadiness if the filter is constrained.
+        %------------------------------------------------------
         [is_steady,oldK]=utils.filtering.check_steady_state_kalman(...
             is_steady,K,oldK,options,t,no_more_missing);
     end
