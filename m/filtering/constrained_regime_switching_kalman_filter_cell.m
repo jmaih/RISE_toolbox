@@ -286,8 +286,11 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},iter]=do_one_step_forecast(T{splus},R{splus}(:,:),a{splus},ss{splus},...
+        [a{splus},iter,retcode]=do_one_step_forecast(T{splus},R{splus}(:,:),a{splus},ss{splus},...
             shocks,sep_compl,cond_shocks_id);
+        if retcode
+            return
+        end
         Rt{splus}=R{splus};
         if ~is_steady
             % we will never be steady if we have restrictions!!!
@@ -407,9 +410,13 @@ end
                 % this assumes that we stay in the same state and we know
                 % we will stay. The more general case where we can jump to
                 % another state is left to the forecasting routine.
-                Filters.a{splus_}(:,istep_,t+1)=do_one_step_forecast(T{splus_},R{splus_}(:,:),...
+                [Filters.a{splus_}(:,istep_,t+1),~,rcode]=do_one_step_forecast(T{splus_},R{splus_}(:,:),...
                     Filters.a{splus_}(:,istep_-1,t+1),ss{splus_},shocks,...
                     sep_compl,cond_shocks_id);
+                if rcode
+                    % do not exit completely...
+                    break
+                end
             end
         end
     end
@@ -452,7 +459,7 @@ end
     end
 end
 
-function [y1,iter]=do_one_step_forecast(T,R,y0,ss,shocks,compl,cond_shocks_id)
+function [y1,iter,retcode]=do_one_step_forecast(T,R,y0,ss,shocks,compl,cond_shocks_id)
 % y1: forecast
 % iter : number of shock periods required to satisfy the constraints.
 order=1; % order of approximation
@@ -462,6 +469,6 @@ m=size(T,2);
 T={[T,zeros(m,1),R(:,:)]};
 xloc=1:m;
 y0=struct('y',y0);
-[y1,iter]=utils.forecast.one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id);
+[y1,iter,retcode]=utils.forecast.one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id);
 y1=y1.y;
 end
