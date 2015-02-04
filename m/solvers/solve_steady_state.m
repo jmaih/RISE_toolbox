@@ -130,13 +130,9 @@ end
             otherwise
                 error('arg_zero_solver must be either 1 or 2')
         end
-        if ismember(exitflag,[1:4,-3]) && ~any(isnan(x1))
-            if resnorm > sqrt(optim_opt.TolFun)
-                exitflag=inf;
-            else
-                exitflag=1;
-                x1=reshape(x1,size(x0));
-            end
+        exitflag=utils.optim.exitflag(exitflag,x1,resnorm,sqrt(optim_opt.TolFun));
+        if exitflag==1
+            x1=reshape(x1,size(x0));
         end
     end
 end
