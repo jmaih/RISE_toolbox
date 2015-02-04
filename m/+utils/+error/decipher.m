@@ -89,6 +89,9 @@ switch code
         % ====== writing functions to disc ====== %
     case 603
         msg='code2file: empty cell';
+        % ====== Forecasting ====== %
+    case 701
+        msg='forecast: constraint violation';
     otherwise
         error([mfilename,':: Unknown error code'])
 end
