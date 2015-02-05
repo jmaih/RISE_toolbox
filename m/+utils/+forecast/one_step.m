@@ -1,4 +1,4 @@
-function [y1,iter,retcode]=one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id)
+function [y1,is_active_shock,retcode]=one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id)
 
 % H1 line
 %
@@ -38,10 +38,11 @@ myzero=-sqrt(eps);
 badvector=@(x)any(compl(x)<myzero);
 fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
 
-y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order);
+y1=utils.forecast.one_step_engine(T,y0,ss,xloc,sig,shocks,order);
 
 iter=0;
 retcode=0;
+is_active_shock=false(1,kplus1);
 if badvector(y1.y)
     nrows=size(compl(y1.y),1);
     if islogical(cond_shocks_id)
@@ -75,7 +76,8 @@ if badvector(y1.y)
         test_passed=true;
         for icol=2:kplus1+1
             shocks_i=[shocks0(:,icol-1:end),zeros(nx,icol-2)];
-            y1k(icol)=one_step_engine(T,y1k(icol-1),ss,xloc,sig,shocks_i,order);
+            y1k(icol)=utils.forecast.one_step_engine(T,y1k(icol-1),ss,xloc,...
+                sig,shocks_i,order);
             test_passed=~badvector(y1k(icol).y);
             if ~test_passed
                 break
@@ -90,7 +92,8 @@ if badvector(y1.y)
             % the last guys is also constrained. Do one more step to see if
             % there is a lift up. If no lift up we are not out of the bush
             %--------------------------------------------------------------
-            y1_last_uncond=one_step_engine(T,y1k(end),ss,xloc,sig,zeros(size(shocks0)),order);
+            y1_last_uncond=utils.forecast.one_step_engine(T,y1k(end),ss,...
+                xloc,sig,zeros(size(shocks0)),order);
             if ~all(compl(y1_last_uncond.y)>myzero)
                 retcode=701;
                 return
@@ -104,97 +107,18 @@ if badvector(y1.y)
         end
     end
 end
+is_active_shock(1:iter)=true;
 
     function viol=multi_complementarity(ee)
         shocks0(e_id)=ee;
         viol=zeros(nrows,iter);
         for icol_=2:iter+1
             shocks_i=[shocks0(:,icol_-1:end),zeros(nx,icol_-2)];
-            y1k(icol_)=one_step_engine(T,y1k(icol_-1),ss,xloc,sig,shocks_i,order);
+            y1k(icol_)=utils.forecast.one_step_engine(T,y1k(icol_-1),ss,...
+                xloc,sig,shocks_i,order);
             viol(:,icol_-1)=compl(y1k(icol_).y);
         end
         viol=viol(:);
     end
 
-end
-%--------------------------------------------------------------------------
-function y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order)
-
-% models with constants will have to be re-written as deviations from
-% steady state. One could also have a zero steady state and instead put the
-% constant as column in the shocks
-if nargin<7
-    order=numel(T);
-end
-if ~iscell(T)
-    error('first input must be a cell')
-end
-
-if ~isstruct(y0)
-    error('y0 should be a structure')
-end
-
-prunned=isfield(y0,'y_lin');
-if isempty(xloc)
-    % all variables are state variables
-    xloc=1:size(y0.y,1);
-end
-if isempty(sig)
-    % we assume by default that we do not have a model with sig. There will
-    % be a crash if the matrices' sizes do not correspond to the state
-    % vector.
-    sig=0;
-end
-
-% build z
-%--------
-z=buildz(y0.y);
-zkz=z;
-
-% initialize y1.y at the steady state
-%--------------------------------------
-y1=y0;
-y1.y=ss;
-
-% add the various orders of approximation
-%----------------------------------------
-for io=1:order
-    % account for VARs with many lags
-    %--------------------------------
-    y1.y=y1.y+1/factorial(io)*T{io}*zkz;
-    if io==1 && prunned
-        % vars will never go in here!
-        if isempty(y0.y_lin)
-            y1.y_lin=y1.y;
-        else
-            z_pruned=buildz(y0.y_lin);
-            zkz=z_pruned;
-            y1.y_lin=ss+1/factorial(io)*T{io}*zkz;
-        end
-    end
-    if io<order
-        if prunned && ~isempty(y0.y_lin)
-            zkz=kron(zkz,z_pruned);
-        else
-            zkz=kron(zkz,z);
-        end
-    end
-end
-
-    function z=buildz(y00)
-        % deviations from the steady state: use bsxfun in case we are in
-        % presence of a VAR
-        %---------------------------------------------------------------
-        x=bsxfun(@minus,y00,ss);
-        x=x(xloc,end:-1:1); % swap if we have many lags
-        z=[
-            x(:) % vectorize
-            sig
-            shocks(:)
-            ];
-        % take the sparse form to accelerate calculations in case of zero
-        % shocks. This will also make the kroneckers sparse
-        %----------------------------------------------------------------
-        z=sparse(z);
-    end
 end

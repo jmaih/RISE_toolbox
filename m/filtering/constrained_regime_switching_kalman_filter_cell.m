@@ -286,7 +286,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},iter,retcode]=do_one_step_forecast(T{splus},R{splus}(:,:),a{splus},ss{splus},...
+        [a{splus},is_active_shock,retcode]=do_one_step_forecast(T{splus},R{splus}(:,:),a{splus},ss{splus},...
             shocks,sep_compl,cond_shocks_id);
         if retcode
             return
@@ -298,7 +298,10 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             if isempty(sep_compl)
                 RR_splus=RR{splus};
             else
-                Rt{splus}(1:m_orig,:,iter+2:end)=0;
+                % always force the first shock to be active
+                is_active_shock(1)=true;
+                % Now kill the inactive locations
+                Rt{splus}(1:m_orig,:,~is_active_shock)=0;
                 RR_splus=Rt{splus}(:,:)*Rt{splus}(:,:).';
             end
             P{splus}=T{splus}(:,any_T)*P{splus}(any_T,any_T)*Tt{splus}(any_T,:)+RR_splus;
@@ -459,9 +462,9 @@ end
     end
 end
 
-function [y1,iter,retcode]=do_one_step_forecast(T,R,y0,ss,shocks,compl,cond_shocks_id)
+function [y1,is_active_shock,retcode]=do_one_step_forecast(T,R,y0,ss,shocks,compl,cond_shocks_id)
 % y1: forecast
-% iter : number of shock periods required to satisfy the constraints.
+% is_active_shock : location of shocks required to satisfy the constraints.
 order=1; % order of approximation
 sig=1; % perturbation coefficient note it has been mixed with the steady state
 m=size(T,2);
@@ -469,6 +472,7 @@ m=size(T,2);
 T={[T,zeros(m,1),R(:,:)]};
 xloc=1:m;
 y0=struct('y',y0);
-[y1,iter,retcode]=utils.forecast.one_step(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id);
+[y1,is_active_shock,retcode]=utils.forecast.one_step(T,y0,ss,xloc,sig,...
+shocks,order,compl,cond_shocks_id);
 y1=y1.y;
 end
