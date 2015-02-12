@@ -312,6 +312,7 @@ classdef dsge < rise_generic
         varargout=set_z_eplus_horizon(varargin)
         varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
+        varargout=filter_initialization(varargin)
     end
 end
 
