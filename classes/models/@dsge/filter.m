@@ -24,7 +24,7 @@ if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
-    obj=msre_linear_filter();%markov_switching_kalman_filter();
+    obj=filter_initialization(obj);
     return
 end
 
@@ -38,7 +38,10 @@ if nobj>1
     end
     return
 end
-
+% initialize remaining outputs
+%-------------------------------
+LogLik=-obj.options.estim_penalty;
+        
 if ~isempty(varargin)
 	obj=set(obj,varargin{:});
 end
@@ -48,135 +51,130 @@ if ~obj.data_are_loaded
 end
 
 resolve_flag=isempty(obj.solution)||isempty(obj.solution.Tz{1});
-%
+
 %% solve the object
 if resolve_flag
     [obj,retcode]=obj.solve();
     if retcode
-        LogLik=-obj.options.estim_penalty;
-		if obj(1).options.debug
-			utils.error.decipher(retcode)
-		end
+        if obj(1).options.debug
+            utils.error.decipher(retcode)
+        end
         return
     end
 end
 h=obj.markov_chains.regimes_number;
 
-% extract the steady state
-SS=obj.solution.ss;
+%% initialize: load solution, set initial conditions, constraints, etc.
+[init,retcode]=filter_initialization(obj);
 
-iov=obj.inv_order_var.after_solve;
-zpb=obj.locations.after_solve.z.pb;
-tpb=obj.locations.after_solve.t.pb;
-ze_0=obj.locations.after_solve.z.e_0;
-% columns of all shocks and not just the contemporaneous ones
-%-------------------------------------------------------------
-ze_0_plus=ze_0(1):size(obj.solution.Tz{1},2);
-zsig=obj.locations.after_solve.z.sig;
-endo_nbr=obj.endogenous.number(end);
-
-% load the restrictions if any: no reordering needed here since the filter
-% below follows the alphabetical order. Note this is still the linear
-% filter. In the nonlinear filter, things might be implemented differently
-%--------------------------------------------------------------------------
-sep_compl=complementarity_memoizer(obj);
-
-% find the anticipated shocks
-anticipated_shocks=[];
-if ~isempty(sep_compl)
-    anticipated_shocks=obj.exogenous.shock_horizon>0;
-end
-
-% extract the state and transition matrices
-T=cell(1,h); 
-R=T;
-% risk term
-%----------
-risk=T;
-Tall=zeros(endo_nbr);
-for ireg=1:h
-    tmp=obj.solution.Tz{ireg};
-    Tall(:,tpb)=tmp(:,zpb);
-    T{ireg}=Tall;
-    % The rows are already ordered alphabetically. Now reorder the columns
-    %---------------------------------------------------------------------
-    T{ireg}=T{ireg}(:,iov);
-    R{ireg}=tmp(:,ze_0_plus);
-    risk{ireg}=obj.options.simul_sig*tmp(:,zsig);
-end
-clear Tall
-% extract data and put them in the order_var order as well
-%---------------------------------------------------------
-data=obj.data;
-
-Qfunc=prepare_transition_routine(obj);
-
-H=obj.solution.H;% measurement errors
-
-% deterministic shocks
-det_shocks=obj.exogenous.is_observed;
-if ~isempty(anticipated_shocks)
-    anticipated_shocks(det_shocks)=[];
-end
-kmax=max(obj.exogenous.shock_horizon);
-det_shocks=repmat(det_shocks,1,kmax+1);
-
-% load deterministic shock data
-%------------------------------
-sizx=size(obj.data.x);
-if numel(sizx)==2
-    sizx=[sizx,1];
-end
-exo_data=cat(1,ones(1,sizx(2),sizx(3)),obj.data.x);
-
-% constant and deterministic terms
-%---------------------------------
-I=speye(endo_nbr);
-State_trend=cell(1,h);
-exo_nbr=obj.exogenous.number(1);
-endo_nbr=obj.endogenous.number(end);
-for istate=1:h
-    const_st=SS{istate};
-    if any(const_st)
-        const_st=(I-T{istate})*const_st;
+if retcode
+    if obj(1).options.debug
+        utils.error.decipher(retcode)
     end
-    const_st=const_st+risk{istate};
-    Coef_det_st=[const_st,R{istate}(:,det_shocks)];
-    % take only the first page of exogenous data
-    %--------------------------------------------
-    State_trend{istate}=bsxfun(@times,Coef_det_st,exo_data(:,:,1));
-    % Trim R for the stochastic exogenous variables
-    %----------------------------------------------
-    R{istate}(:,det_shocks,:)=[];
-    % fold for the filter
-    %---------------------
-    R{istate}=reshape(R{istate},[endo_nbr,exo_nbr,kmax+1]);
+    return
+end
+%% re-inflate everything in order to store filters if necessary
+init=re_inflator(init,obj.options.kf_filtering_level);
+
+%% extract data and update the position of observables
+%------------------------------------------------------
+data_info=obj.data;
+data_info.varobs_id=obj.inv_order_var.after_solve(data_info.varobs_id);
+
+data_structure=data_info.data_structure;
+% no_more_missing=data_info.no_more_missing;
+% over-write data_info.varobs_id
+data_info.varobs_id=init.obs_id;
+obs_id=data_info.varobs_id;
+y=data_info.y;
+% exogenous data will have only one page...
+%--------------------------------------------
+U=data_info.x(:,:,1);
+
+shoot=obj.options.simul_frwrd_back_shoot;
+% state matrices
+%---------------
+init.ff=do_one_step_forecast(init.T,init.steady_state,init.sep_compl,...
+    init.anticipated_shocks,init.state_vars_location,obj.options.simul_sig,...
+    init.horizon,init.is_det_shock,shoot);
+
+% mapping from states to observables
+%------------------------------------
+z=recover_positions(obs_id,data_structure,data_info.no_more_missing);
+is_real_time=isfield(data_info,'npages') && data_info.npages>1 &&...
+    any([~isempty(data_info.restr_y_id),~isempty(data_info.restr_z_id)]);
+if isempty(obj.options.kf_user_algo)
+    if obj.options.solve_order==1
+        if is_real_time
+            if ~isempty(U)
+                error('real-time filtering with exogenous variables not ready')
+            end
+            [LogLik,Incr,retcode,Filters]=msre_kalman_cell_real_time(...
+                init,y,U,z,obj.options);
+        else
+            [LogLik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
+                init,y,U,z,obj.options);
+        end
+    else
+        if is_real_time
+            error('nonlinear filtering with real-time information not ready')
+        end
+        [LogLik,Incr,retcode,Filters]=switching_divided_difference_filter(...
+            init,y,U,z,obj.options);
+    end
+else
+    if ischar(obj.options.kf_user_algo)
+        obj.options.kf_user_algo=str2func(obj.options.kf_user_algo);
+    end
+    [LogLik,Incr,retcode,Filters]=obj.options.kf_user_algo(init,y,U,z,obj.options);
 end
 
-% initialization
-%---------------
+if obj.options.kf_filtering_level && ~retcode
+    % squash the filters from the inflation
+    %---------------------------------------
+    table_map={
+        'a','P','eta_tlag'
+        'att','Ptt','eta_tt'
+        'atT','PtT','eta'
+        };
+    for ifield=1:size(table_map,1);
+        if isfield(Filters,table_map{ifield,1})
+            aa=table_map{ifield,1};
+            bb=table_map{ifield,2};
+            cc=table_map{ifield,3};
+            for st=1:h
+                % in terms of shocks we only save the first-step forecast
+                [Filters.(aa){st},Filters.(bb){st},Filters.(cc){st}]=...
+                    utils.filtering.squasher(Filters.(aa){st},Filters.(bb){st},init.m_orig);
+            end
+        end
+    end
 
-syst=struct('T',{T},'R',{R},'H',{H},'Qfunc',{Qfunc},'sep_compl',sep_compl,...
-    'anticipated_shocks',anticipated_shocks,...
-    'forced_state',obj.endogenous.is_affect_trans_probs);
-
-[LogLik,Incr,retcode,Filters]=msre_linear_filter(syst,data,State_trend,SS,risk,obj.options);
-if  obj.options.kf_filtering_level && ~retcode
     Fields={'a','att','atT','eta','eta_tt','eta_tlag','epsilon','PAI','PAItt','PAItT';
         'filtered_variables','updated_variables','smoothed_variables',...
         'smoothed_shocks','updated_shocks','filtered_shocks',...
         'smoothed_measurement_errors','filtered_regime_probabilities','updated_regime_probabilities',...
         'smoothed_regime_probabilities'};
     obj.filtering=struct();
+    iov=obj.inv_order_var.after_solve;
     for ifield=1:size(Fields,2)
-        if isfield(Filters,Fields{1,ifield})
-            obj.filtering.(Fields{2,ifield})=Filters.(Fields{1,ifield});
-            if any(strcmp(Fields{2,ifield},{'smoothed_variables','smoothed_shocks','smoothed_measurement_errors'}))
-                obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAItT,obj.filtering.(Fields{2,ifield}));
-            elseif any(strcmp(Fields{2,ifield},{'updated_variables','updated_shocks'}))
-                obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAItt,obj.filtering.(Fields{2,ifield}));
-            elseif any(strcmp(Fields{2,ifield},{'filtered_variables','filtered_shocks'}))
-                obj.filtering.(['Expected_',Fields{2,ifield}])=expectation(Filters.PAI,obj.filtering.(Fields{2,ifield}));
+        main_field=Fields{1,ifield};
+        alias=Fields{2,ifield};
+        if isfield(Filters,main_field)
+            if any(strcmp(main_field,table_map(:,1))) 
+                % re-order endogenous variables alphabetically
+                %-----------------------------------------------
+                for reg=1:h
+                    Filters.(main_field){reg}=Filters.(main_field){reg}(iov,:,:,:);
+                end
+            end
+            obj.filtering.(alias)=Filters.(main_field);
+            if any(strcmp(alias,{'smoothed_variables','smoothed_shocks','smoothed_measurement_errors'}))
+                obj.filtering.(['Expected_',alias])=expectation(Filters.PAItT,obj.filtering.(alias));
+            elseif any(strcmp(alias,{'updated_variables','updated_shocks'}))
+                obj.filtering.(['Expected_',alias])=expectation(Filters.PAItt,obj.filtering.(alias));
+            elseif any(strcmp(alias,{'filtered_variables','filtered_shocks'}))
+                obj.filtering.(['Expected_',alias])=expectation(Filters.PAI,obj.filtering.(alias));
             end
         end
     end
@@ -187,9 +185,58 @@ if  obj.options.kf_filtering_level && ~retcode
     end
     %=====================================
 end
+
 if isnan(LogLik)||retcode
     % for minimization
     LogLik=-obj.options.estim_penalty;
+end
+
+end
+
+function z=recover_positions(obs_id,data_structure,no_more_missing_t)
+
+z=@do_it;
+
+    function [ny,occur,obsOccur,no_further_miss]=do_it(t)
+        occur=data_structure(:,t);
+        ny=sum(occur); % number of observables to be used in likelihood computation
+        obsOccur=obs_id(occur);
+        no_further_miss=t>=no_more_missing_t;
+    end
+end
+
+function ff=do_one_step_forecast(T,ss,compl,cond_shocks_id,xloc,sig,...
+    horizon,is_det_shock,shoot)
+% y1: forecast
+% is_active_shock : location of shocks required to satisfy the constraints.
+% sig: perturbation parameter 
+order=size(T,1);
+nstoch=sum(~is_det_shock);
+exo_nbr=numel(is_det_shock);
+
+ff=@my_one_step;
+
+    function varargout=my_one_step(rt,y0,stoch_shocks,det_shocks) 
+        % [y1,is_active_shock,retcode]=my_one_step(rt,y0,shocks)
+        if nargin<4
+            det_shocks=[];
+        end
+        y0=struct('y',y0);
+        shocks=zeros(exo_nbr,horizon);
+        shocks(~is_det_shock,:)=reshape(stoch_shocks,nstoch,horizon);
+        if ~isempty(det_shocks)
+            span_det=size(det_shocks,2);
+            shocks(is_det_shock,1:span_det)=det_shocks;
+        end
+        if shoot
+            [varargout{1:nargout}]=utils.forecast.one_step_frwrd_back_shooting(...
+                T(:,rt),y0,ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
+        else
+            [varargout{1:nargout}]=utils.forecast.one_step(T(:,rt),y0,...
+                ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
+        end
+        varargout{1}=varargout{1}.y;
+    end
 end
 
 function E=expectation(probs,vals)
@@ -199,3 +246,51 @@ for istate=1:numel(vals)
 E=E+bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate});
 end
 % E=squeeze(sum(bsxfun(@times,permute(probs,[3,1,2]),vals),2));
+end
+
+function init=re_inflator(init,kf_filtering_level)
+m_orig=size(init.a{1},1);
+if kf_filtering_level
+    is_det_shock=init.is_det_shock;
+    exo_nbr=numel(is_det_shock);
+    horizon=init.horizon;
+    nshocks=exo_nbr*horizon;
+    h=numel(init.PAI00);
+    nstates=numel(init.state_vars_location);
+    for st=1:h
+        init.a{st}=[init.a{st};zeros(nshocks,1)];
+        init.steady_state{st}=[init.steady_state{st};zeros(nshocks,1)];
+        init.P{st}=[init.P{st},zeros(m_orig,nshocks)
+            zeros(nshocks,m_orig),eye(nshocks)];
+        for io=1:size(init.T,1)
+            ncols=size(init.T{io,st},2);
+            batch=zeros(nshocks,ncols);
+            if io==1
+                % place the identities
+                batch(:,nstates+2:end)=eye(nshocks);
+            end
+            init.T{io,st}=[init.T{io,st};batch];
+            if io==1
+                % collect the Te and Te_det instead of recomputing them
+                %-------------------------------------------------------
+                Te_all=reshape(init.T{io,st}(:,nstates+2:end),...
+                    [m_orig+nshocks,exo_nbr,horizon]);
+                init.Te{st}=Te_all(:,~is_det_shock,:);
+                init.Te_det{st}=Te_all(:,is_det_shock,:);
+                
+            end
+        end
+        % decoupled first order
+        %----------------------
+        init.Tx{st}=[init.Tx{st};zeros(nshocks,nstates)];
+        init.Tsig{st}=[init.Tsig{st};zeros(nshocks,1)];
+        
+        Te_Te=init.Te{st}(:,:)*init.Te{st}(:,:).';
+        Te_Te(1:m_orig,1:m_orig)=init.Te_Te_prime{st};
+        init.Te_Te_prime{st}=Te_Te;
+    end
+end
+init.m_orig=m_orig;
+init.m=size(init.a{1},1);
+
+end
