@@ -180,11 +180,6 @@ d.no_more_missing=min(d.finish,tmp+1);
 % re-fold
 d.data_structure=~isnan(d.y);
 
-% points to include in the calculation of the likelihood
-%-------------------------------------------------------
-d.include_in_likelihood=false(1,smpl);
-d.include_in_likelihood(d.start:d.finish)=true;
-
 % conditional data
 %------------------
 dz=permute(d.z,[1,3,2]);
