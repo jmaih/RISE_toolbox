@@ -35,15 +35,20 @@ if isempty(cond_shocks_id)
 end
 
 myzero=-sqrt(eps);
-badvector=@(x)any(compl(x)<myzero);
-fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
+% badvector=@(x)any(compl(x)<myzero); % recreating this slows things down...
+debug=false;
+if debug
+    fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);
+else
+    fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
+end
 
 y1=utils.forecast.one_step_engine(T,y0,ss,xloc,sig,shocks,order);
 
 iter=0;
 retcode=0;
 is_active_shock=false(1,kplus1);
-if badvector(y1.y)
+if any(compl(y1.y)<myzero) % <---badvector(y1.y)
     nrows=size(compl(y1.y),1);
     if islogical(cond_shocks_id)
         cond_shocks_id=find(cond_shocks_id);
@@ -59,7 +64,7 @@ if badvector(y1.y)
         % find the shocks that make the violations go away and the
         % constraints bind exactly
         %------------------------------------------------------------------
-        shocks0=zeros(nx,kplus1);
+        shocks0=shocks;
         shocks0(cond_shocks_id,1:iter)=nan;
         e_id=isnan(shocks0);
         ee0=zeros(n_cond_shocks*iter,1);
@@ -78,7 +83,7 @@ if badvector(y1.y)
             shocks_i=[shocks0(:,icol-1:end),zeros(nx,icol-2)];
             y1k(icol)=utils.forecast.one_step_engine(T,y1k(icol-1),ss,xloc,...
                 sig,shocks_i,order);
-            test_passed=~badvector(y1k(icol).y);
+            test_passed=~any(compl(y1k(icol).y)<myzero);% test_passed=~badvector(y1k(icol).y);
             if ~test_passed
                 break
             end
