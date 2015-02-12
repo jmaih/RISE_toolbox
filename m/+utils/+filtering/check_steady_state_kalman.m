@@ -21,8 +21,8 @@ function [is_steady,oldK]=check_steady_state_kalman(is_steady,K,oldK,options,t,n
 %
 % - **t** [integer]: iteration number
 %
-% - **no_more_missing** [integer]: iteration/date at which there are no
-%   more missing observations
+% - **no_more_missing** [boolean]: true if there are no more missing
+% observations, false otherwise.
 %
 % Outputs
 % --------
@@ -47,7 +47,7 @@ function [is_steady,oldK]=check_steady_state_kalman(is_steady,K,oldK,options,t,n
 % we never reach the steady state in this case. So far I am
 % 100% sure about this. But in order to be 101% sure, I would
 % like to run an example.
-if t>no_more_missing && ~is_steady
+if no_more_missing && ~is_steady
     discrep=max(abs(K(:)-oldK));
     is_steady=discrep<options.kf_riccati_tol;
     if options.debug
