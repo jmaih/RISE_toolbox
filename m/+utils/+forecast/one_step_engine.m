@@ -1,5 +1,25 @@
 function y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order)
 
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also:
+
 % models with constants will have to be re-written as deviations from
 % steady state. One could also have a zero steady state and instead put the
 % constant as column in the shocks
