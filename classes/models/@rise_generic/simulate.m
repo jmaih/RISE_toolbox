@@ -53,6 +53,10 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   - **simul_honor_constraints** [true|{false}]: honor restrictions during
 %       simulations. If true, agents have to be able anticipate the future.
 %
+%   - **simul_frwrd_back_shoot** [true|{false}]: uses an algorithm that
+%   checks the constraints are satisfied at all horizons instead of just
+%   one at a time.
+%
 % Outputs
 % --------
 %
@@ -94,8 +98,9 @@ if isempty(obj)
         'simul_update_shocks_handle',[],...
         'simul_do_update_shocks',false,...
         'simul_honor_constraints',false,...
+        'simul_frwrd_back_shoot',false,...
         'simul_to_time_series',true);
-%         'simul_start_date','',... does not seem to be in use
+    %         'simul_start_date','',... does not seem to be in use
     return
 end
 nobj=numel(obj);
