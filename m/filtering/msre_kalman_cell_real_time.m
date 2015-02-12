@@ -1,4 +1,5 @@
-function [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info,state_trend,init,options)
+function [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(...
+    syst,data_y,U,z,options)%syst,data_info,state_trend,init,options
 % H1 line
 %
 % Syntax
@@ -28,43 +29,81 @@ function [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(syst,data_info
 
 % data
 %-----
-data_structure=data_info.data_structure;
-include_in_likelihood=data_info.include_in_likelihood;
-no_more_missing=data_info.no_more_missing;
-obs_id=data_info.varobs_id;
-data=data_info.y;
-dataz=data_info.z;
-last_good_conditional_observation=data_info.last_good_conditional_observation;
-% N.B: data_info also contains x, the observations on the exogenous
-% variables (trend, etc). But those observations will come through
-% data_trend and so are not used directly in the filtering function.
+obs_id=syst.obs_id;
+
+% first iterate to consider in the computation of the likelihood.
+%-------------------------------------------------------------------
+first=syst.start;
 
 % state matrices
 %---------------
-T=syst.T;
-R=syst.R;
+ff=syst.ff;
+T=syst.Tx;
+R=syst.Te;
 H=syst.H;
 Qfunc=syst.Qfunc;
+sep_compl=syst.sep_compl;
+xlocs=syst.state_vars_location;
 
 % initial conditions
 %-------------------
-a=init.a;
-P=init.P;
-PAItt=init.PAI00;
-% RR=init.RR;
-h=numel(T);
-a_nsteps=cell(1,h);
+a=syst.a;
+P=syst.P;
+PAItt=syst.PAI00;
+RR=syst.Te_Te_prime;
+% current size of the system after expansion
+m=syst.m; % size(T{1},1);
+% size of the system prior to expansion
+m_orig=syst.m_orig;
+ss=syst.steady_state;
 
 % free up memory
 %---------------
-m=size(T{1},1);
-npages=data_info.npages;
+clear syst
+
+Q=Qfunc(a{1});
+PAI=transpose(Q)*PAItt;
+
+% matrices' sizes
+%----------------
+[p0,smpl,npages]=size(data_y);
+h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
 kmax=horizon-1;
 horizon=min(npages-1,horizon); % the first page is hard information
 ncp=horizon;
 hypothesis=options.forecast_conditional_hypothesis;
 kf_nan_future_obs_means_missing=options.kf_nan_future_obs_means_missing;
+tmax_u=size(U,2);
+if tmax_u
+    error('real time filtering with exogenous variables not ready')
+end
+% shocks=zeros(exo_nbr,horizon);
+
+% this system works with square matrices for the time being
+%-----------------------------------------------------------
+tmp=zeros(m);
+for ireg=1:h
+    tmp(:,xlocs)=T{ireg};
+    T{ireg}=tmp;
+end
+clear tmp
+
+% data
+%-----
+data_structure=data_info.data_structure;
+dataz=data_info.z;
+last_good_conditional_observation=data_info.last_good_conditional_observation;
+% N.B: data_info also contains x, the observations on the exogenous
+% variables (trend, etc). But those observations will come through
+% data_trend and so are not used directly in the filtering function.
+
+% initial conditions
+%-------------------
+a_nsteps=cell(1,h);
+
+% free up memory
+%---------------
 state_vars_location=1:m;
         
 % holder of conditional data
@@ -82,8 +121,6 @@ active_shocks=setdiff(1:exo_nbr,restr_z_id_in_state);
 
 DPHI=cell(1,h);
 DT=cell(1,h);
-ss=cell(1,h);
-Im=eye(m);
 % Conditon on all the existing shocks and nan the relevant ones where
 % necessary
 for st=1:h
@@ -101,32 +138,11 @@ for st=1:h
     %-------------------------------------
     R{st}=R{st}(:,:);
     DT{st}=[DT{st};zeros(nshocks,nc)];
-    ss{st}=(Im-T{st})\state_trend{st}(:,1);
-    if any(any(abs(state_trend{st}(:,2:end)-state_trend{st}(:,1:end-1))))>1e-9
-        error('this filtering algorithm is not ready for deterministic terms')
-    end
 end
-
-Q=Qfunc(a{1});
-PAI=transpose(Q)*PAItt;
-
-% matrices' sizes
-%----------------
-[p0,smpl]=size(data);
-smpl=min(smpl,find(include_in_likelihood,1,'last'));
 
 h_last=0;
 if ~isempty(H{1})
     h_last=size(H{1},3);
-end
-
-% few transformations
-%--------------------
-Tt=T;
-any_T=false(1,m);
-for st=1:h
-    Tt{st}=transpose(T{st}); % permute(T,[2,1,3]); % transpose
-    any_T=any_T|any(abs(T{st})>1e-9,1);
 end
 
 % Intialize time-varying matrices
@@ -177,7 +193,6 @@ if expanded_flag
 else
     mm=m;
 end
-clear data_info syst init
 
 % initialization of matrices
 %-----------------------------
@@ -215,10 +230,8 @@ is_steady=false;
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
-    occur=data_structure(:,t);
-    p=sum(occur); % number of observables to be used in likelihood computation
-    y=data(occur,t);
-    obsOccur=obs_id(occur); %<-- Z=M.Z(occur,:);
+    [p,occur,obsOccur,no_more_missing]=z(t);
+    y=data_y(occur,t,1);
     
     likt=0;
     for st=1:h
@@ -301,7 +314,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     
     % advance information: skip the first page with hard information
     %----------------------------------------------------------------
-    MUt=data(restr_y_id_in_y,t,1+(1:horizon));
+    MUt=data_y(restr_y_id_in_y,t,1+(1:horizon));
     MUt=MUt(:,:);
 
     shocks_MUt=dataz(:,t,1+(1:horizon));
@@ -338,7 +351,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
 end
 
 % included only if in range
-loglik=sum(Incr(include_in_likelihood));
+loglik=sum(Incr(first:end));
 
 if store_filters>2 % store smoothed
     r=zeros(mm,h);
@@ -349,7 +362,7 @@ if store_filters>2 % store smoothed
         occur=data_structure(:,t);
         obsOccur=obs_id(occur); %<-- Z=M.Z(occur,:);
         Z=ZZ(occur,:);
-        y=data(occur,t);
+        y=data_y(occur,t);
         for s0=1:h
             for s1=1:h
                 % joint probability of s0 (today) and s1 (tomorrow)
@@ -379,36 +392,6 @@ if store_filters>2 % store smoothed
         SumProbs=sum(Filters.PAItT(:,t));
         if abs(SumProbs-1)>1e-8
             Filters.PAItT(:,t)=Filters.PAItT(:,t)/SumProbs;
-        end
-    end
-end
-
-% let's play squash
-%-------------------
-if store_filters>0
-    for st=1:h
-        % in terms of shocks we only save the first-step forecast
-        Filters.eta_tlag{st}=Filters.a{st}(m+1:end,1,:);
-        Filters.a{st}=Filters.a{st}(1:m,:,:); % second dimension is the real-time forecasting steps
-        Filters.P{st}=Filters.P{st}(1:m,1:m,:);
-        if store_filters>1
-            Filters.eta_tt{st}=Filters.att{st}(m+1:end,:,:);
-            Filters.att{st}=Filters.att{st}(1:m,:,:); % second dimension is the real-time forecasting steps
-            Filters.Ptt{st}=Filters.Ptt{st}(1:m,1:m,:);
-            if store_filters>2
-                % In real-time, the smoothed shocks of interest are to be
-                % found after the endogenous variables in the state vector
-                % and not in the usual smoothed disturbances. This is
-                % because in the presence of conditional information,
-                % smoothed shocks are no longer IID whereas smoothed
-                % disturbances are. In order to be able to reconstruct the
-                % smoothed series in the absence of the time varying state
-                % matrices, we need the smoothed shocks, not the smoothed
-                % disturbances. And so we discard the smoothed disturbances
-                Filters.eta{st}=Filters.atT{st}(m+1:end,:,:);
-                Filters.atT{st}=Filters.atT{st}(1:m,:,:); % second dimension is the real-time forecasting steps
-                Filters.PtT{st}=Filters.PtT{st}(1:m,1:m,:);
-            end
         end
     end
 end
