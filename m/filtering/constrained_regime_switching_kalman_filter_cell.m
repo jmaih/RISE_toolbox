@@ -1,5 +1,7 @@
 function [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
-    syst,data_info,state_trend,init,options)
+    syst,data_y,U,z,options)%syst,data_info,state_trend,init,options
+
+
 % H1 line
 %
 % Syntax
@@ -29,48 +31,48 @@ function [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filte
 
 % data
 %-----
-data_structure=data_info.data_structure;
-include_in_likelihood=data_info.include_in_likelihood;
-no_more_missing=data_info.no_more_missing;
-obs_id=data_info.varobs_id;
-data=data_info.y;
-% N.B: data_info also contains x, the observations on the exogenous
-% variables (trend, etc). But those observations will come through
-% data_trend and so are not used directly in the filtering function.
+obs_id=syst.obs_id;
+
+% first iterate to consider in the computation of the likelihood.
+%-------------------------------------------------------------------
+first=syst.start;
 
 % state matrices
 %---------------
-T=syst.T;
-R=syst.R;
+ff=syst.ff;
+T=syst.Tx;
+R=syst.Te;
 H=syst.H;
 Qfunc=syst.Qfunc;
 sep_compl=syst.sep_compl;
-cond_shocks_id=syst.anticipated_shocks;
+% cond_shocks_id=syst.anticipated_shocks;
+% ss=syst.steady_state;
+xlocs=syst.state_vars_location;
 
 % initial conditions
 %-------------------
-a=init.a;
-P=init.P;
-PAItt=init.PAI00;
-RR=init.RR;
+a=syst.a;
+P=syst.P;
+PAItt=syst.PAI00;
+RR=syst.Te_Te_prime;
+% current size of the system after expansion
+m=syst.m; % size(T{1},1);
+% size of the system prior to expansion
+m_orig=syst.m_orig;
 
 % free up memory
 %---------------
-clear data_info syst init
+clear syst
 
 Q=Qfunc(a{1});
 PAI=transpose(Q)*PAItt;
 
 % matrices' sizes
 %----------------
-[p0,smpl]=size(data);
-smpl=min(smpl,find(include_in_likelihood,1,'last'));
-m=size(T{1},1);
-% keep a copy
-m_orig=m;
+[p0,smpl]=size(data_y);
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
-nshocks=exo_nbr*horizon;
+tmax_u=size(U,2);
 shocks=zeros(exo_nbr,horizon);
 
 h_last=0;
@@ -94,41 +96,6 @@ else
 end
 kalman_tol=options.kf_tol;
 
-% re-create the steady state
-%----------------------------
-ss=cell(1,h);
-Im=eye(m);
-for st=1:h
-    ss{st}=(Im-T{st})\state_trend{st}(:,1);
-    if any(any(abs(state_trend{st}(:,2:end)-state_trend{st}(:,1:end-1))))>1e-9
-        error('this filtering algorithm is not ready for deterministic terms')
-    end
-    if store_filters
-        % resize everything: T=[T 0;0 0], R=[R;eye()]; a=[a;0]; P=[P,0;0 eye()]
-        %----------------------------------------------------------------------
-        ss{st}=[ss{st};zeros(nshocks,1)];
-        T{st}=[T{st},zeros(m,nshocks)
-            zeros(nshocks,m+nshocks)];
-        if st==1
-            Rproto=[R{1}(:,:)
-                eye(nshocks)];
-            % store R for every period
-            %--------------------------
-            R_store=struct();
-        end
-        RR{st}=[RR{st},R{st}(:,:);
-            R{st}(:,:).',eye(nshocks)];
-        Rproto(1:m,:)=R{st}(:,:);
-        R{st}=reshape(Rproto,[m+nshocks,exo_nbr,horizon]);
-        a{st}=[a{st};zeros(nshocks,1)];
-        P{st}=[P{st},zeros(m,nshocks)
-            zeros(nshocks,m),eye(nshocks)];
-        if st==h
-            clear Rproto
-        end
-    end
-end
-clear state_trend
 if store_filters
     % update size
     m=size(T{1},1);
@@ -140,10 +107,8 @@ Rt=cell(1,h);
 % few transformations
 %--------------------
 Tt=T;
-any_T=false(1,m);
 for st=1:h
     Tt{st}=transpose(T{st}); % permute(T,[2,1,3]); % transpose
-    any_T=any_T|any(abs(T{st})>1e-9,1);
 end
 
 % initialization of matrices
@@ -151,12 +116,7 @@ end
 loglik=[];
 Incr=nan(smpl,1);
 
-if store_filters>2
-    K_store=[];
-    iF_store=[];
-    v_store=[];
-end
-Filters=initialize_storage();
+[Filters,K_store,iF_store,v_store]=utils.filtering.initialize_storage(a,P,PAI,Q,p0,exo_nbr,horizon,nsteps,smpl,store_filters);
 
 oldK=inf;
 PAI01y=nan(h,1);
@@ -180,10 +140,8 @@ is_steady=false;
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
-    occur=data_structure(:,t);
-    p=sum(occur); % number of observables to be used in likelihood computation
-    y=data(occur,t);
-    obsOccur=obs_id(occur); %<-- Z=M.Z(occur,:);
+    [p,occur,obsOccur,no_more_missing]=z(t);
+    y=data_y(occur,t);
     
     likt=0;
     for st=1:h
@@ -270,6 +228,11 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     
     % state and state covariance prediction
     %--------------------------------------
+    if t<=tmax_u
+        Ut=U(:,t);
+    else
+        Ut=[];
+    end
     for splus=1:h
         a{splus}=zeros(m,1);
         if ~is_steady
@@ -286,8 +249,10 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},is_active_shock,retcode]=do_one_step_forecast(T{splus},R{splus}(:,:),a{splus},ss{splus},...
-            shocks,sep_compl,cond_shocks_id);
+%         [a{splus},is_active_shock,retcode]=do_one_step_forecast(T{splus},...
+%             R{splus}(:,:),a{splus},ss{splus},shocks,sep_compl,...
+%             cond_shocks_id,shoot);
+        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},shocks,Ut);
         if retcode
             return
         end
@@ -304,7 +269,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 Rt{splus}(1:m_orig,:,~is_active_shock)=0;
                 RR_splus=Rt{splus}(:,:)*Rt{splus}(:,:).';
             end
-            P{splus}=T{splus}(:,any_T)*P{splus}(any_T,any_T)*Tt{splus}(any_T,:)+RR_splus;
+            P{splus}=T{splus}*P{splus}(xlocs,xlocs)*Tt{splus}+RR_splus;
             P{splus}=utils.cov.symmetrize(P{splus});
         end
     end
@@ -325,7 +290,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
 end
 
 % included only if in range
-loglik=sum(Incr(include_in_likelihood));
+loglik=sum(Incr(first:end));
 
 if store_filters>2 % store smoothed
     r=zeros(m,h);
@@ -333,10 +298,9 @@ if store_filters>2 % store smoothed
     ZZ=ZZ(obs_id,:);
     for t=smpl:-1:1
         Q=Filters.Q(:,:,t);
-        occur=data_structure(:,t);
-        obsOccur=obs_id(occur); %<-- Z=M.Z(occur,:);
+        [~,occur,obsOccur]=z(t);
         Z=ZZ(occur,:);
-        y=data(occur,t);
+        y=data_y(occur,t);
         for s0=1:h
             for s1=1:h
                 % joint probability of s0 (today) and s1 (tomorrow)
@@ -370,27 +334,6 @@ if store_filters>2 % store smoothed
     end
 end
 
-% let's play squash
-%-------------------
-if store_filters
-    for st=1:h
-        % in terms of shocks we only save the first-step forecast
-        [Filters.a{st},Filters.P{st},Filters.eta_tlag{st}]=...
-            utils.filtering.squasher(Filters.a{st},Filters.P{st},m_orig);
-        if store_filters>1
-            [Filters.att{st},Filters.Ptt{st},Filters.eta_tt{st}]=...
-                utils.filtering.squasher(Filters.att{st},Filters.Ptt{st},m_orig);
-            if store_filters>2
-%                 if st==1
-%                     old_eta=Filters.eta;
-%                 end
-                [Filters.atT{st},Filters.PtT{st},Filters.eta{st}]=...
-                    utils.filtering.squasher(Filters.atT{st},Filters.PtT{st},m_orig);
-            end
-        end
-    end
-end
-
     function store_updates()
         Filters.PAItt(:,t)=PAItt;
         for st_=1:h
@@ -413,9 +356,16 @@ end
                 % this assumes that we stay in the same state and we know
                 % we will stay. The more general case where we can jump to
                 % another state is left to the forecasting routine.
-                [Filters.a{splus_}(:,istep_,t+1),~,rcode]=do_one_step_forecast(T{splus_},R{splus_}(:,:),...
-                    Filters.a{splus_}(:,istep_-1,t+1),ss{splus_},shocks,...
-                    sep_compl,cond_shocks_id);
+%                 [Filters.a{splus_}(:,istep_,t+1),~,rcode]=do_one_step_forecast(T{splus_},R{splus_}(:,:),...
+%                     Filters.a{splus_}(:,istep_-1,t+1),ss{splus_},shocks,...
+%                     sep_compl,cond_shocks_id,shoot);
+                if t+istep_-1<=tmax_u
+                    Utplus=U(:,t+istep_-1);
+                else
+                    Utplus=[];
+                end
+                [Filters.a{splus_}(:,istep_,t+1),~,rcode]=ff(splus_,...
+                    Filters.a{splus_}(:,istep_-1,t+1),shocks,Utplus);
                 if rcode
                     % do not exit completely...
                     break
@@ -423,56 +373,30 @@ end
             end
         end
     end
-    function Filters=initialize_storage()
-        Filters=struct();
-        if store_filters>0 % store filters
-            Filters.a=repmat({zeros(m,nsteps,smpl+1)},1,h);
-            Filters.P=repmat({zeros(m,m,smpl+1)},1,h);
-            for state=1:h
-                Filters.a{state}(:,1,1)=a{state};
-                Filters.P{state}(:,:,1)=P{state};
-            end
-            Filters.PAI=zeros(h,smpl+1);
-            Filters.PAI(:,1)=PAI;
-            for istep=2:nsteps
-                % in steady state, we remain at the steady state
-                %------------------------------------------------
-                for state=1:h
-                    Filters.a{state}(:,istep,1)=Filters.a{state}(:,istep-1,1);
-                end
-            end
-            Filters.Q=zeros(h,h,smpl+1);
-            Filters.Q(:,:,1)=Q;
-            if store_filters>1 % store updates
-                Filters.att=repmat({zeros(m,1,smpl)},1,h);
-                Filters.Ptt=repmat({zeros(m,m,smpl)},1,h);
-                Filters.PAItt=zeros(h,smpl);
-                if store_filters>2 % store smoothed
-                    K_store=repmat({zeros(m,p0,smpl)},1,h);
-                    iF_store=repmat({zeros(p0,p0,smpl)},1,h);
-                    v_store=repmat({zeros(p0,smpl)},1,h);
-                    Filters.atT=repmat({zeros(m,1,smpl)},1,h);
-                    Filters.PtT=repmat({zeros(m,m,smpl)},1,h);
-                    Filters.eta=repmat({zeros(exo_nbr*horizon,1,smpl)},1,h); % smoothed shocks
-                    Filters.epsilon=repmat({zeros(p0,1,smpl)},1,h); % smoothed measurement errors
-                    Filters.PAItT=zeros(h,smpl);
-                end
-            end
-        end
-    end
 end
 
-function [y1,is_active_shock,retcode]=do_one_step_forecast(T,R,y0,ss,shocks,compl,cond_shocks_id)
-% y1: forecast
-% is_active_shock : location of shocks required to satisfy the constraints.
-order=1; % order of approximation
-sig=1; % perturbation coefficient note it has been mixed with the steady state
-m=size(T,2);
-% add a column for the perturbation coefficient and put into a cell
-T={[T,zeros(m,1),R(:,:)]};
-xloc=1:m;
-y0=struct('y',y0);
-[y1,is_active_shock,retcode]=utils.forecast.one_step(T,y0,ss,xloc,sig,...
-shocks,order,compl,cond_shocks_id);
-y1=y1.y;
-end
+% function [y1,is_active_shock,retcode]=do_one_step_forecast(T,R,y0,ss,shocks,...
+% compl,cond_shocks_id,shoot)
+% if nargin<8
+% shoot=false;
+% end
+% % y1: forecast
+% % is_active_shock : location of shocks required to satisfy the constraints.
+% order=1; % order of approximation
+% sig=1; % perturbation coefficient note it has been mixed with the steady state
+% m=size(T,2);
+% % add a column for the perturbation coefficient and put into a cell
+% T={[T,zeros(m,1),R(:,:)]};
+% xloc=1:m;
+% y0=struct('y',y0);
+%     [y1,is_active_shock,retcode]=utils.forecast.one_step_hybrid(T,y0,ss,xloc,sig,...
+%         shocks,order,compl,cond_shocks_id,shoot);
+% % if shoot
+% %     [y1,is_active_shock,retcode]=utils.forecast.one_step_frwrd_back_shooting(T,y0,ss,xloc,sig,...
+% %         shocks,order,compl,cond_shocks_id);
+% % else
+% %     [y1,is_active_shock,retcode]=utils.forecast.one_step(T,y0,ss,xloc,sig,...
+% %         shocks,order,compl,cond_shocks_id);
+% % end
+% y1=y1.y;
+% end
