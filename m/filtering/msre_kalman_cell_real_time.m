@@ -1,5 +1,6 @@
 function [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(...
-    syst,data_y,U,z,options)%syst,data_info,state_trend,init,options
+    syst,y_data,U,z,e_data,options)
+
 % H1 line
 %
 % Syntax
@@ -37,12 +38,12 @@ first=syst.start;
 
 % state matrices
 %---------------
-ff=syst.ff;
+% ff=syst.ff;
 T=syst.Tx;
 R=syst.Te;
 H=syst.H;
 Qfunc=syst.Qfunc;
-sep_compl=syst.sep_compl;
+% sep_compl=syst.sep_compl;
 xlocs=syst.state_vars_location;
 
 % initial conditions
@@ -54,7 +55,7 @@ RR=syst.Te_Te_prime;
 % current size of the system after expansion
 m=syst.m; % size(T{1},1);
 % size of the system prior to expansion
-m_orig=syst.m_orig;
+% m_orig=syst.m_orig;
 ss=syst.steady_state;
 
 % free up memory
@@ -63,6 +64,14 @@ clear syst
 
 Q=Qfunc(a{1});
 PAI=transpose(Q)*PAItt;
+
+% data
+%------
+data_y=y_data{1};
+dataz=e_data{1};
+restr_y_id_in_y=imag(y_data{2});
+restr_y_id_in_state=real(y_data{2});
+restr_z_id_in_state=real(e_data{2});
 
 % matrices' sizes
 %----------------
@@ -73,12 +82,14 @@ kmax=horizon-1;
 horizon=min(npages-1,horizon); % the first page is hard information
 ncp=horizon;
 hypothesis=options.forecast_conditional_hypothesis;
+if ~strcmpi(hypothesis,'nas')
+    error('real-time filtering no longer works with hypotheses other than NAS')
+end
 kf_nan_future_obs_means_missing=options.kf_nan_future_obs_means_missing;
-tmax_u=size(U,2);
-if tmax_u
+[nrows,tmax_u]=size(U);
+if min(nrows,tmax_u)>0
     error('real time filtering with exogenous variables not ready')
 end
-% shocks=zeros(exo_nbr,horizon);
 
 % this system works with square matrices for the time being
 %-----------------------------------------------------------
@@ -88,15 +99,6 @@ for ireg=1:h
     T{ireg}=tmp;
 end
 clear tmp
-
-% data
-%-----
-data_structure=data_info.data_structure;
-dataz=data_info.z;
-last_good_conditional_observation=data_info.last_good_conditional_observation;
-% N.B: data_info also contains x, the observations on the exogenous
-% variables (trend, etc). But those observations will come through
-% data_trend and so are not used directly in the filtering function.
 
 % initial conditions
 %-------------------
@@ -110,14 +112,7 @@ state_vars_location=1:m;
 %----------------------------
 y0=struct('y',nan(m,1,horizon+1));
 
-restr_y_id_in_y=imag(data_info.restr_y_id);
-restr_y_id_in_state=real(data_info.restr_y_id);
-restr_z_id_in_state=real(data_info.restr_z_id);
 active_shocks=setdiff(1:exo_nbr,restr_z_id_in_state);
-% if ~isempty(restr_z_id_in_state)
-%     error('conditioning on shocks is not allowed in estimation')
-% end
-% n_y_rest=numel(restr_y_id_in_y);
 
 DPHI=cell(1,h);
 DT=cell(1,h);
@@ -177,21 +172,13 @@ fkst_options_=struct('PAI',1,...
     'y',[]);
 
 kalman_tol=options.kf_tol;
-expanded_flag=store_filters>0;
-if expanded_flag
+if store_filters
     shock_span=size(DPHI{1},2);
-    mm=m+shock_span;
-    % remember all shocks have standard deviation 1
-    %----------------------------------------------
-    Pstandard=eye(mm);
-    for st=1:h
-        a{st}=[a{st};zeros(shock_span,1)];
-        Pstandard(1:m,1:m)=P{st};
-        P{st}=Pstandard;
-    end
-    clear Pstandard
-else
-    mm=m;
+    K_store=[];
+    iF_store=[];
+    v_store=[];
+    Tt_store=repmat({nan(m,m,smpl)},1,h);
+    Rt_store=repmat({nan(m,shock_span,smpl)},1,h);
 end
 
 % initialization of matrices
@@ -199,13 +186,6 @@ end
 loglik=[];
 Incr=nan(smpl,1);
 
-if expanded_flag
-    K_store=[];
-    iF_store=[];
-    v_store=[];
-    Tt_store=repmat({nan(mm,mm,smpl)},1,h);
-    Rt_store=repmat({nan(mm,shock_span,smpl)},1,h);
-end
 Filters=initialize_storage();
 
 oldK=inf;
@@ -217,7 +197,7 @@ twopi_p_dF=nan(1,h);
 iF=cell(1,h);
 v=cell(1,h);
 % This also changes size but we need to assess whether we reach the steady state fast or not
-K=zeros(mm,p0,h); % <---K=cell(1,h);
+K=zeros(m,p0,h); % <---K=cell(1,h);
 
 % no problem
 %-----------
@@ -230,7 +210,7 @@ is_steady=false;
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
-    [p,occur,obsOccur,no_more_missing]=z(t);
+    [p,occur,obsOccur,no_more_missing,lgcobs_t]=z(t);
     y=data_y(occur,t,1);
     
     likt=0;
@@ -323,7 +303,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     if isempty(last_mu)
         last_mu=0;
     end
-    lgcobs=min(last_good_conditional_observation(t),horizon);
+    lgcobs=min(lgcobs_t,horizon);
     lgcobs=min(last_mu,lgcobs);
     % keep the contemporaneous by default
     lgcobs=max(lgcobs,1);
@@ -331,7 +311,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % state and state covariance prediction
     %--------------------------------------
     for splus=1:h
-        [a_nsteps{splus},P{splus},Tt{splus},Rt{splus}]=predict_while_collapsing(expanded_flag);
+        [a_nsteps{splus},P{splus},Tt{splus},Rt{splus}]=predict_while_collapsing();
         % trim in case many forecasts where produced in earlier rounds
         %--------------------------------------------------------------
         a{st}=a_nsteps{st}(:,1);
@@ -354,13 +334,12 @@ end
 loglik=sum(Incr(first:end));
 
 if store_filters>2 % store smoothed
-    r=zeros(mm,h);
-    ZZ=eye(mm);
+    r=zeros(m,h);
+    ZZ=eye(m);
     ZZ=ZZ(obs_id,:);
     for t=smpl:-1:1
         Q=Filters.Q(:,:,t);
-        occur=data_structure(:,t);
-        obsOccur=obs_id(occur); %<-- Z=M.Z(occur,:);
+        [~,occur,obsOccur]=z(t);
         Z=ZZ(occur,:);
         y=data_y(occur,t);
         for s0=1:h
@@ -396,7 +375,7 @@ if store_filters>2 % store smoothed
     end
 end
 
-    function [a,P,Tt,Rt]=predict_while_collapsing(ExpandedFlag)
+    function [a,P,Tt,Rt]=predict_while_collapsing()
         a=0;
         P=0;
         Tt=0;
@@ -405,7 +384,7 @@ end
             pai_snow_Over_slead=Q(snow,splus)*PAItt(snow)/PAI(splus);
             [a00_,P00_,Tt_snow,Rt_snow]=prediction_step(...
                 T{splus},R{splus},att{snow},Ptt{snow},...
-                OMGt,DPHI{splus},DT{splus},ExpandedFlag);
+                OMGt,DPHI{splus},DT{splus});
             a=a+pai_snow_Over_slead*a00_;
             P=P+pai_snow_Over_slead*P00_;
             Tt=Tt+pai_snow_Over_slead*Tt_snow;
@@ -417,7 +396,7 @@ end
         for st_=1:h
             Filters.att{st_}(:,1,t)=att{st_};
             Filters.Ptt{st_}(:,:,t)=Ptt{st_};
-            if expanded_flag
+            if store_filters
                 K_store{st_}(:,occur,t)=K(:,occur,st_);
                 iF_store{st_}(occur,occur,t)=iF{st_};
                 v_store{st_}(occur,t)=v{st_};
@@ -439,8 +418,8 @@ end
         Filters=struct();
         if store_filters>0 % store filters
             Filters.eta_tlag=cell(1,h);
-            Filters.a=repmat({zeros(mm,nsteps,smpl+1)},1,h);
-            Filters.P=repmat({zeros(mm,mm,smpl+1)},1,h);
+            Filters.a=repmat({zeros(m,nsteps,smpl+1)},1,h);
+            Filters.P=repmat({zeros(m,m,smpl+1)},1,h);
             for state=1:h
                 Filters.a{state}(:,1,1)=a{state};
                 Filters.P{state}(:,:,1)=P{state};
@@ -458,15 +437,15 @@ end
             Filters.Q(:,:,1)=Q;
             if store_filters>1 % store updates
                 Filters.eta_tt=cell(1,h);
-                Filters.att=repmat({zeros(mm,1,smpl)},1,h);
-                Filters.Ptt=repmat({zeros(mm,mm,smpl)},1,h);
+                Filters.att=repmat({zeros(m,1,smpl)},1,h);
+                Filters.Ptt=repmat({zeros(m,m,smpl)},1,h);
                 Filters.PAItt=zeros(h,smpl);
-                if expanded_flag % store smoothed
-                    K_store=repmat({zeros(mm,p0,smpl)},1,h);
+                if store_filters>2 % store smoothed
+                    K_store=repmat({zeros(m,p0,smpl)},1,h);
                     iF_store=repmat({zeros(p0,p0,smpl)},1,h);
                     v_store=repmat({zeros(p0,smpl)},1,h);
-                    Filters.atT=repmat({zeros(mm,1,smpl)},1,h);
-                    Filters.PtT=repmat({zeros(mm,mm,smpl)},1,h);
+                    Filters.atT=repmat({zeros(m,1,smpl)},1,h);
+                    Filters.PtT=repmat({zeros(m,m,smpl)},1,h);
                     Filters.eta=repmat({zeros(shock_span,1,smpl)},1,h); % smoothed shocks
                     Filters.epsilon=repmat({zeros(p0,1,smpl)},1,h); % smoothed measurement errors
                     Filters.PAItT=zeros(h,smpl);
@@ -474,9 +453,8 @@ end
             end
         end
     end
-    function [a,P,Tt,Rt]=prediction_step(T,R,att,Ptt,OMGt,DPHI,DT,ExpandedFlag)
-        narginchk(4,8);
-        reduced=nargin==4;
+    function [a,P,Tt,Rt]=prediction_step(T,R,att,Ptt,OMGt,DPHI,DT)
+        narginchk(7,7);
         % zero the useless entries otherwise the variables will appear as missing
         shocks_=nan(exo_nbr,horizon);
         shocks_(restr_z_id_in_state,:)=shocks_MUt(:,:);
@@ -484,22 +462,11 @@ end
             shocks_(active_shocks,lgcobs+1:end)=0;
             R(1:m,lgcobs*exo_nbr+1:end)=0;
         end
-        Tt=T;
-        Rt=R;
-        bt=0;
         MUt_splus=MUt-ss{splus}(restr_y_id_in_state)*ones(1,horizon);
         MUt_splus_old=[MUt_splus(:)
             shocks_(:)];
-        if ~reduced
-            reduced=reduced||(~ExpandedFlag && all(isnan(MUt_splus_old(:))));
-        end
-        
-        if reduced
-            % no valid future information available, nothing to match
-            Record=[];
-        else
-            [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
-        end
+        ExpandedFlag=false; 
+        [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
         
         RR=Rt*Rt';
         P=Tt*Ptt*transpose(Tt)+RR;
@@ -507,7 +474,7 @@ end
         P=utils.cov.symmetrize(P);
         
         % do the first step
-            a=[ss{splus};zeros(mm-m,1)]+bt+Tt*(att-[ss{splus};zeros(mm-m,1)]);
+            a=ss{splus}+bt+Tt*(att-ss{splus});
         % add the subsequent steps artificially in order to match the sizes
         if nsteps>1
             fkst_options_.shocks=shocks_;

@@ -100,7 +100,8 @@ init.ff=do_one_step_forecast(init.T,init.steady_state,init.sep_compl,...
 
 % mapping from states to observables
 %------------------------------------
-z=recover_positions(obs_id,data_structure,data_info.no_more_missing);
+z=recover_positions(obs_id,data_structure,data_info.no_more_missing,...
+    data_info.last_good_conditional_observation);
 is_real_time=isfield(data_info,'npages') && data_info.npages>1 &&...
     any([~isempty(data_info.restr_y_id),~isempty(data_info.restr_z_id)]);
 if isempty(obj.options.kf_user_algo)
@@ -109,8 +110,14 @@ if isempty(obj.options.kf_user_algo)
             if ~isempty(U)
                 error('real-time filtering with exogenous variables not ready')
             end
+            mu_id=data_info.restr_y_id;
+            iov=obj.inv_order_var.after_solve;
+            mu_id=iov(real(mu_id))+imag(mu_id)*1i;
+            shock_id=data_info.restr_z_id;
+            e_data={data_info.z,shock_id};
+            y_data={y,mu_id};
             [LogLik,Incr,retcode,Filters]=msre_kalman_cell_real_time(...
-                init,y,U,z,obj.options);
+                init,y_data,U,z,e_data,obj.options);
         else
             [LogLik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
                 init,y,U,z,obj.options);
@@ -186,22 +193,24 @@ if obj.options.kf_filtering_level && ~retcode
     %=====================================
 end
 
-if isnan(LogLik)||retcode
+if isempty(LogLik)||isnan(LogLik)||retcode
     % for minimization
     LogLik=-obj.options.estim_penalty;
 end
 
 end
 
-function z=recover_positions(obs_id,data_structure,no_more_missing_t)
+function z=recover_positions(obs_id,data_structure,no_more_missing_t,...
+    last_good_conditional_observation)
 
 z=@do_it;
 
-    function [ny,occur,obsOccur,no_further_miss]=do_it(t)
+    function [ny,occur,obsOccur,no_further_miss,lgco]=do_it(t)
         occur=data_structure(:,t);
         ny=sum(occur); % number of observables to be used in likelihood computation
         obsOccur=obs_id(occur);
         no_further_miss=t>=no_more_missing_t;
+        lgco=last_good_conditional_observation(t);
     end
 end
 
