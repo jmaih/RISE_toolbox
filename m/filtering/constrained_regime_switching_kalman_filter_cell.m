@@ -318,7 +318,7 @@ if store_filters>2 % store smoothed
             %--------------------------
             [Filters.atT{s0}(:,1,t),Filters.eta{s0}(:,1,t),r(:,s0)]=...
                 utils.filtering.smoothing_step(Filters.a{s0}(:,1,t),r(:,s0),...
-                K_store{s0}(:,occur,t),Filters.P{s0}(:,:,t),T{s0},...
+                K_store{s0}(:,occur,t),Filters.P{s0}(:,:,t),resquare(T{s0}),...
                 R_store(t).R{s0}(:,:),Z,iF_store{s0}(occur,occur,t),...
                 v_store{s0}(occur,t));
             % smoothed measurement errors
@@ -333,6 +333,12 @@ if store_filters>2 % store smoothed
         end
     end
 end
+
+    function T=resquare(T)
+        tmp=zeros(m);
+        tmp(:,xlocs)=T;
+        T=tmp;
+    end
 
     function store_updates()
         Filters.PAItt(:,t)=PAItt;
