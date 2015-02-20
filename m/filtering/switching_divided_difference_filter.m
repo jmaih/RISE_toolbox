@@ -74,6 +74,9 @@ Sw=cell_householder(syst.H);
 Sv=cell_householder(syst.SIGeta);
 
 store_filters=options.kf_filtering_level;
+% smoothing not ready
+%---------------------
+store_filters=min(store_filters,2);
 if store_filters
     nsteps=options.kf_nsteps;
 else
