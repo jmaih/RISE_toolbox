@@ -90,16 +90,15 @@ twopi=2*pi;
 store_filters=options.kf_filtering_level;
 if store_filters
     nsteps=options.kf_nsteps;
+    if store_filters>2
+        R_store=struct();
+     end
 else
     % do not do multi-step forecasting during estimation
     nsteps=1;
 end
 kalman_tol=options.kf_tol;
 
-if store_filters
-    % update size
-    m=size(T{1},1);
-end
 % time-varying R matrix
 %-----------------------
 Rt=cell(1,h);
@@ -249,9 +248,6 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-%         [a{splus},is_active_shock,retcode]=do_one_step_forecast(T{splus},...
-%             R{splus}(:,:),a{splus},ss{splus},shocks,sep_compl,...
-%             cond_shocks_id,shoot);
         [a{splus},is_active_shock,retcode]=ff(splus,a{splus},shocks,Ut);
         if retcode
             return
@@ -362,9 +358,6 @@ end
                 % this assumes that we stay in the same state and we know
                 % we will stay. The more general case where we can jump to
                 % another state is left to the forecasting routine.
-%                 [Filters.a{splus_}(:,istep_,t+1),~,rcode]=do_one_step_forecast(T{splus_},R{splus_}(:,:),...
-%                     Filters.a{splus_}(:,istep_-1,t+1),ss{splus_},shocks,...
-%                     sep_compl,cond_shocks_id,shoot);
                 if t+istep_-1<=tmax_u
                     Utplus=U(:,t+istep_-1);
                 else
@@ -380,29 +373,3 @@ end
         end
     end
 end
-
-% function [y1,is_active_shock,retcode]=do_one_step_forecast(T,R,y0,ss,shocks,...
-% compl,cond_shocks_id,shoot)
-% if nargin<8
-% shoot=false;
-% end
-% % y1: forecast
-% % is_active_shock : location of shocks required to satisfy the constraints.
-% order=1; % order of approximation
-% sig=1; % perturbation coefficient note it has been mixed with the steady state
-% m=size(T,2);
-% % add a column for the perturbation coefficient and put into a cell
-% T={[T,zeros(m,1),R(:,:)]};
-% xloc=1:m;
-% y0=struct('y',y0);
-%     [y1,is_active_shock,retcode]=utils.forecast.one_step_hybrid(T,y0,ss,xloc,sig,...
-%         shocks,order,compl,cond_shocks_id,shoot);
-% % if shoot
-% %     [y1,is_active_shock,retcode]=utils.forecast.one_step_frwrd_back_shooting(T,y0,ss,xloc,sig,...
-% %         shocks,order,compl,cond_shocks_id);
-% % else
-% %     [y1,is_active_shock,retcode]=utils.forecast.one_step(T,y0,ss,xloc,sig,...
-% %         shocks,order,compl,cond_shocks_id);
-% % end
-% y1=y1.y;
-% end
