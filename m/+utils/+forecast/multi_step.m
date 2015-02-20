@@ -42,7 +42,8 @@ penalty=1e+6;
 do_Qt=nargout>3;
 span=options.nsteps+options.burn;
 sims=nan(endo_nbr,options.nsteps);
-        nx=size(shocks,1);
+nsv=numel(state_vars_location);
+nx=(size(T{1,1},2)-nsv-1)/(options.k_future+1); %<---size(shocks,1);
 
 condforkst=~isempty(y_conditions);
 if condforkst
@@ -151,7 +152,6 @@ end
         %----------------------------
         n=size(T{rt},1);
         H=zeros(n);
-        nsv=numel(state_vars_location);
         H(:,state_vars_location)=T{rt}(:,1:nsv);
         risk=T{rt}(:,nsv+1);
         G=reshape(T{rt}(:,nsv+2:end),[n,nx,options.k_future+1]);
