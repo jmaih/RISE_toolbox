@@ -160,22 +160,46 @@ y=re_order_output_rows(obj,y);
 
 y0cols=size(y0(1).y,2);
 start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
+
+smpl=numel(states);
+[states_,markov_chains]=regimes2states(states);
+
+vnames=[obj.endogenous.name,'regime',markov_chains];
+endo_nbr=obj.endogenous.number(end);
+yy=nan(smpl+1,endo_nbr+1+numel(markov_chains));
+yy(:,1:endo_nbr)=y(1:endo_nbr,:)';
+yy(2:end,endo_nbr+1:end)=[states,states_];
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
     %--------------------------------------------------------------------------
     % store only the relevant rows in case we are dealing with a VAR with many
     % lags
-    db=ts(start_date,y(1:obj.endogenous.number(end),:)',obj.endogenous.name);
+    db=ts(start_date,yy,vnames);
     db=pages2struct(db);
 else
-    db={y(1:obj.endogenous.number(end),:)',...
+    db={yy,...
         {
         '1=time, start_date=',start_date
-        '2= endogenous names',obj.endogenous.name
+        '2= endogenous names',vnames
         }
         };
 end
+
+    function [states,markov_chains]=regimes2states(regimes_history)
+        regimes_tables=obj.markov_chains.regimes;
+        markov_chains=regimes_tables(1,2:end);
+        nchains=numel(markov_chains);
+        reg_table=cell2mat(regimes_tables(2:end,2:end));
+        states=nan(smpl,nchains);
+        
+        max_reg=max(regimes_history);
+        for ireg=1:max_reg
+            pos=regimes_history==ireg;
+            n=sum(pos);
+            states(pos,:)=reg_table(ireg*ones(n,1),:);
+        end
+    end
 end
 
 function sim_data=format_simulated_data_output(sim_data)
