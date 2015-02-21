@@ -424,7 +424,9 @@ end
                         %----------- {name,tex_name,in-use-flag} --------------
                         nvars=numel(block.listing)+1;
                         block.listing(nvars)=parser.listing('name',tokk);
-                        
+                        % update list in case many items are on the same line!!!
+                        %-------------------------------------------------------
+                        current_list={block.listing.name};
                         if strcmp(current_block_name,'parameters')
                             block.listing(nvars).governing_chain=current_markov_chain_name;
                             % exogenous transition probabilities can only be
