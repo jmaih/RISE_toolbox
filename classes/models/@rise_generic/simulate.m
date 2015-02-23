@@ -57,6 +57,9 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   checks the constraints are satisfied at all horizons instead of just
 %   one at a time.
 %
+%   - **simul_shock_uncertainty** [true|{false}]: draw shocks over the
+%   simulation horizon.
+%
 % Outputs
 % --------
 %
@@ -99,7 +102,8 @@ if isempty(obj)
         'simul_do_update_shocks',false,...
         'simul_honor_constraints',false,...
         'simul_frwrd_back_shoot',false,...
-        'simul_to_time_series',true);
+        'simul_to_time_series',true,...
+        'simul_shock_uncertainty',false);
     %         'simul_start_date','',... does not seem to be in use
     return
 end
@@ -161,14 +165,14 @@ y=re_order_output_rows(obj,y);
 y0cols=size(y0(1).y,2);
 start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
 
-smpl=numel(states);
+smpl_states=numel(states);
 [states_,markov_chains]=regimes2states(states);
-
+smpl=size(y,2)-1;
 vnames=[obj.endogenous.name,'regime',markov_chains];
 endo_nbr=obj.endogenous.number(end);
 yy=nan(smpl+1,endo_nbr+1+numel(markov_chains));
 yy(:,1:endo_nbr)=y(1:endo_nbr,:)';
-yy(2:end,endo_nbr+1:end)=[states,states_];
+yy(2:end,endo_nbr+1:end)=[states(1:smpl),states_(1:smpl)];
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
@@ -191,7 +195,7 @@ end
         markov_chains=regimes_tables(1,2:end);
         nchains=numel(markov_chains);
         reg_table=cell2mat(regimes_tables(2:end,2:end));
-        states=nan(smpl,nchains);
+        states=nan(smpl_states,nchains);
         
         max_reg=max(regimes_history);
         for ireg=1:max_reg
