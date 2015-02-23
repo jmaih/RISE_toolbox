@@ -75,7 +75,7 @@ PAI=transpose(Q)*PAItt;
 
 % matrices' sizes
 %----------------
-[p0,smpl,~]=size(data_y);
+[p0,smpl,npages]=size(data_y);
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
 tmax_u=size(U,2);
@@ -398,16 +398,17 @@ end
             atmp=a_filt+Kv;
             myshocks=shocks;
         else
-        % compute the conditional update
-        %-------------------------------------------------------------
+            % compute the conditional update
+            %-------------------------------------------------------------
             y0=simul_initial_conditions(a_filt);
+            options.nsteps=lgcobs+1;
             [fsteps,~,retcode,~,myshocks]=utils.forecast.multi_step(y0,...
                 ss(st),Tbig(st),xlocs,options);
             atmp=fsteps(:,1);
         end
         a_update=atmp;
         function lgcobs=last_good_future_information(t)
-            expected_data=squeeze(data_y(:,t,2:horizon));
+            expected_data=squeeze(data_y(:,t,2:min(horizon,npages)));
             good_obs=any(~isnan(expected_data),1);
             lgcobs=length(good_obs);
             while ~isempty(good_obs)
