@@ -395,6 +395,7 @@ classdef ts
         varargout=quantile(varargin)
         varargout=range(varargin)
         varargout=reset_start_date(varargin)
+        varargout=reset_data(varargin)
         varargout=transform(varargin)
     end
     methods(Static)
