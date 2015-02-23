@@ -14,11 +14,15 @@ function cond_fkst_db=forecast(obj,varargin)
 %
 % - **varargin** : additional inputs coming in pairs. These include but are
 %   not restricted to:
+%
 %   - **forecast_to_time_series** [{true}|false]: sets the output to time
 %       series format or not
+%
 %   - **forecast_nsteps** [integer|{12}]: number of forecasting steps
+%
 %   - **forecast_start_date** [char|numeric|serial date]: date when the
 %       forecasts start (end of history + 1)
+%
 %   - **forecast_conditional_hypothesis** [{jma}|ncp|nas]: in dsge models in
 %       which agents have information beyond the current period, this
 %       option determines the number of periods of shocks need to match the
@@ -30,10 +34,15 @@ function cond_fkst_db=forecast(obj,varargin)
 %           the number of the number of conditioning periods
 %       - Hypothesis **nas** assumes there are as many shocks periods as
 %           the number of anticipated steps
+%
 %   - **forecast_cond_endo_vars** [{''},char|cellstr]: names of conditional
 %   endogenous variables to be used either in forecasting or in estimation
+%
 %   - **forecast_cond_exo_vars** [{''},char|cellstr]: names of conditional
 %   exogenous variables to be used either in forecasting or in estimation
+%
+%   - **forecast_shock_uncertainty** [true|{false}]: draw shocks over the
+%   simulation horizon.
 %
 % Outputs
 % --------
@@ -72,6 +81,7 @@ if isempty(obj)
     end
     cond_fkst_db=struct('forecast_conditional_hypothesis',0,...
         'forecast_start_date','',...
+        'forecast_shock_uncertainty',false,...
         'forecast_nsteps',12,...
         'forecast_cond_endo_vars','',...
         'forecast_cond_exo_vars','',...
@@ -101,7 +111,8 @@ obj=set(obj,...
     'simul_periods',obj.options.forecast_nsteps,...
     'simul_history_end_date',end_date,...
     'simul_historical_data',fkstdata,...
-    'simul_burn',0);
+    'simul_burn',0,...
+    'simul_shock_uncertainty',obj.options.forecast_shock_uncertainty);
 
 obj.options.simul_to_time_series=obj.options.forecast_to_time_series;
 
