@@ -1,5 +1,5 @@
 function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell(...
-    syst,data_y,U,z,options)
+    syst,data_y,U,z,options,impose_conditions)
 
 
 % H1 line
@@ -31,6 +31,9 @@ function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell(...
 
 cutoff=-sqrt(eps);
 
+if nargin<6
+    impose_conditions=false;
+end
 % data
 %-----
 obs_id=syst.obs_id;
@@ -72,11 +75,14 @@ PAI=transpose(Q)*PAItt;
 
 % matrices' sizes
 %----------------
-[p0,smpl,npages]=size(data_y);
+[p0,smpl,~]=size(data_y);
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
 tmax_u=size(U,2);
 shocks=zeros(exo_nbr,horizon);
+if impose_conditions
+    myshocks=cell(1,h);
+end
 
 h_last=0;
 if ~isempty(H{1})
@@ -144,6 +150,8 @@ options.Qfunc=@(x)1;
 options.y=[];
 options.burn=0;
 options.k_future=horizon-1;
+% forecast all the way...
+options.nsteps=horizon;
 
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
@@ -192,8 +200,12 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         end
         % state update (att=a+K*v)
         %-------------------------
-        [a{st},retcode]=state_update(a{st},K(:,occur,st)*v{st},st);% <--- a{st}=a{st}+K(:,occur,st)*v{st};
-        
+        if impose_conditions
+            [a{st},retcode,myshocks{st}]=state_update_without_test(a{st},K(:,occur,st)*v{st},st);
+        else
+            [a{st},retcode]=state_update_with_test(a{st},K(:,occur,st)*v{st},st);
+            % <--- a{st}=a{st}+K(:,occur,st)*v{st};
+        end
         if retcode
             return
         end
@@ -249,6 +261,11 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if ~is_steady
             P{splus}=zeros(m);
         end
+        if impose_conditions
+            expected_shocks=0;
+        else
+            expected_shocks=shocks;
+        end
         for st=1:h
             if h==1
                 pai_st_splus=1;
@@ -256,11 +273,22 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 pai_st_splus=Q(st,splus)*PAItt(st)/PAI(splus);
             end
             a{splus}=a{splus}+pai_st_splus*att{st};
+            if impose_conditions
+                % forecast with the expected shocks we had from the
+                % updating step
+                %---------------------------------------------------
+                expected_shocks=expected_shocks+pai_st_splus*myshocks{st};
+                if st==h
+                    % remove the first period since the shocks were
+                    % expected already from the period before...
+                    expected_shocks=[expected_shocks(:,2:horizon),shocks(:,1)];
+                end
+            end
             if ~is_steady
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},shocks,Ut);
+        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks,Ut);
         if retcode
             return
         end
@@ -342,7 +370,58 @@ if store_filters>2 % store smoothed
     end
 end
 
-    function [a_update,retcode]=state_update(a_filt,Kv,st)
+    function y0=simul_initial_conditions(a_filt,start_iter)
+        if nargin<2
+            start_iter=horizon;
+        end
+        af=nan(m,1,horizon+1);
+        af(:,1,1)=a_filt;
+        % add conditional information
+        af(obs_id,1,1+(1:start_iter))=data_y(:,t,1:start_iter);
+        % compute a conditional forecast
+        y0=struct('y',af);
+        options.shocks=shocks;
+        % all shocks can be used in the update (first period)
+        %----------------------------------------------------
+        options.shocks(:,1)=nan;
+        % beyond the first period, only the shocks with long reach can
+        % be used
+        options.shocks(cond_shocks_id,1:horizon)=nan;
+    end
+
+    function [a_update,retcode,myshocks]=state_update_without_test(a_filt,Kv,st)
+        retcode=0;
+        lgcobs=last_good_future_information(t);
+        if lgcobs==0
+            % compute the simple update: expected shocks are zero
+            %-----------------------------------------------------
+            atmp=a_filt+Kv;
+            myshocks=shocks;
+        else
+        % compute the conditional update
+        %-------------------------------------------------------------
+            y0=simul_initial_conditions(a_filt);
+            [fsteps,~,retcode,~,myshocks]=utils.forecast.multi_step(y0,...
+                ss(st),Tbig(st),xlocs,options);
+            atmp=fsteps(:,1);
+        end
+        a_update=atmp;
+        function lgcobs=last_good_future_information(t)
+            expected_data=squeeze(data_y(:,t,2:horizon));
+            good_obs=any(~isnan(expected_data),1);
+            lgcobs=length(good_obs);
+            while ~isempty(good_obs)
+                if good_obs(end)
+                    break
+                else
+                    good_obs(end)=[];
+                    lgcobs=lgcobs-1;
+                end
+            end
+        end
+    end
+
+    function [a_update,retcode]=state_update_with_test(a_filt,Kv,st)
         retcode=0;
         % compute the update
         %--------------------
@@ -357,27 +436,13 @@ end
         % will be binding
         %----------------------------------------------------------------
         start_iter=1;
-        % forecast all the way...
-        options.nsteps=horizon;
         if options.debug
             old_update=atmp(:,ones(1,horizon));
             old_update(:,2:end)=nan;
         end
         while start_iter<horizon && violations
             start_iter=start_iter+1;
-            af=nan(m,1,horizon+1);
-            af(:,1,1)=a_filt;
-            % add conditional information
-            af(obs_id,1,1+(1:start_iter))=data_y(:,t,1:start_iter);
-            % compute a conditional forecast
-            y0=struct('y',af);
-            options.shocks=shocks;
-            % all shocks can be used in the update (first period)
-            %----------------------------------------------------
-            options.shocks(:,1)=nan;
-            % beyond the first period, only the shocks with long reach can
-            % be used
-            options.shocks(cond_shocks_id,1:start_iter)=nan;
+            y0=simul_initial_conditions(a_filt,start_iter);
             [fsteps,~,retcode]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
             for iter=1:options.nsteps
                 violations=any(sep_compl(fsteps(:,iter))<cutoff);
@@ -389,7 +454,7 @@ end
                 % if we have come so far, then there is no violation in the
                 % last step. But there could be some in the future step
                 f__=fsteps(:,end)-ss{st};
-                a_expect=ss{st}+T{st}*f__;
+                a_expect=ss{st}+T{st}*f__(xlocs);
                 violations=any(sep_compl(a_expect)<cutoff);
             end
             if ~violations
