@@ -1,4 +1,4 @@
-function [sims,states,retcode,Qt]=multi_step(y0,ss,T,state_vars_location,options)
+function [sims,states,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_location,options)
 % H1 line
 %
 % Syntax
@@ -47,6 +47,7 @@ nx=(size(T{1,1},2)-nsv-1)/(options.k_future+1); %<---size(shocks,1);
 
 condforkst=~isempty(y_conditions);
 if condforkst
+    myshocks=[];
     if options.burn
         error('conditional forecasting and burn-in not allowed')
     end
@@ -77,6 +78,7 @@ if condforkst
 else
     % condition on shocks only
     condition_on_shocks_only(shocks);
+    myshocks=shocks;
 end
 
     function nonlinear_conditional_forecasting_tools()
@@ -167,7 +169,7 @@ end
         else
             ShocksConditions=[];
         end
-        [~,CYfMean]=utils.forecast.conditional.forecast_engine(...
+        [~,CYfMean,myshocks]=utils.forecast.conditional.forecast_engine(...
             Y0,H,G,EndogenousConditions,ShocksConditions,options.nsteps,...
             NumberOfSimulations,forecast_conditional_hypothesis);
         % skip the initial conditions and add the mean
