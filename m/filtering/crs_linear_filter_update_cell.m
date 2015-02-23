@@ -192,8 +192,11 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         end
         % state update (att=a+K*v)
         %-------------------------
-        a{st}=state_update(a{st},K(:,occur,st)*v{st},st);% <--- a{st}=a{st}+K(:,occur,st)*v{st};
+        [a{st},retcode]=state_update(a{st},K(:,occur,st)*v{st},st);% <--- a{st}=a{st}+K(:,occur,st)*v{st};
         
+        if retcode
+            return
+        end
         f01=(twopi_p_dF(st)*exp(v{st}'*iF{st}*v{st}))^(-0.5);
         PAI01y(st)=PAI(st)*f01;
         likt=likt+PAI01y(st);
@@ -385,7 +388,8 @@ end
             if start_iter==horizon
                 % if we have come so far, then there is no violation in the
                 % last step. But there could be some in the future step
-                a_expect=ss{st}+T{st}*(fsteps(xlocs,end)-ss{st});
+                f__=fsteps(:,end)-ss{st};
+                a_expect=ss{st}+T{st}*f__;
                 violations=any(sep_compl(a_expect)<cutoff);
             end
             if ~violations
