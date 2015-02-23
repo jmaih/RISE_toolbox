@@ -130,10 +130,20 @@ if isempty(obj.options.kf_user_algo)
             init,y,U,z,obj.options);
     end
 else
+    vargs={};
     if ischar(obj.options.kf_user_algo)
         obj.options.kf_user_algo=str2func(obj.options.kf_user_algo);
     end
-    [LogLik,Incr,retcode,Filters]=obj.options.kf_user_algo(init,y,U,z,obj.options);
+    if iscell(obj.options.kf_user_algo)
+        if ischar(obj.options.kf_user_algo{1})
+            obj.options.kf_user_algo{1}=str2func(obj.options.kf_user_algo{1});
+        end
+        vargs=obj.options.kf_user_algo(2:end);
+        user_filter=obj.options.kf_user_algo{1};
+    else
+        user_filter=obj.options.kf_user_algo;
+    end
+    [LogLik,Incr,retcode,Filters]=user_filter(init,y,U,z,obj.options,vargs{:});
 end
 
 if obj.options.kf_filtering_level && ~retcode
