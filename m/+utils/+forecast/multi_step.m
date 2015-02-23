@@ -23,7 +23,7 @@ function [sims,states,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_locatio
 endo_nbr=size(y0.y,1);
 PAI=options.PAI;
 Qfunc=options.Qfunc;
-states=options.states;
+states=options.states(:);
 shocks=options.shocks;
 simul_update_shocks_handle=options.simul_update_shocks_handle;
 simul_do_update_shocks=options.simul_do_update_shocks;
@@ -46,20 +46,25 @@ nsv=numel(state_vars_location);
 nx=(size(T{1,1},2)-nsv-1)/(options.k_future+1); %<---size(shocks,1);
 
 condforkst=~isempty(y_conditions);
+%-------------------------------------
+all_known_states=~any(isnan(states));
+unique_state=numel(PAI)==1||(all_known_states && all(states==states(1)));
+% model_is_linear=size(T,1)==1;
+if unique_state
+    if isnan(states(1))
+        % no states were provided. Uniqueness in this case implies that
+        % we have only one state
+        states(:)=1;
+    end
+end
+%-------------------------------------
 if condforkst
     myshocks=[];
     if options.burn
         error('conditional forecasting and burn-in not allowed')
     end
-    all_known_states=~any(isnan(states));
-    unique_state=numel(PAI)==1||(all_known_states && all(states==states(1)));
     model_is_linear=size(T,1)==1;
     if unique_state
-        if isnan(states(1))
-            % no states were provided. Uniqueness in this case implies that
-            % we have only one state
-            states(:)=1;
-        end
         if model_is_linear
             % apply standard tools
             standard_conditional_forecasting_tools();
