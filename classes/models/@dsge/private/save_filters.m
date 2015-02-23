@@ -158,10 +158,14 @@ end
             if size(datta,2)~=numel(others)
                 others='';
             end
-            if isempty(others)
-                out.(vnames{ivar})=ts(dateInfo,datta);
+            if ivar==1
+                if isempty(others)
+                    out.(vnames{ivar})=ts(dateInfo,datta);
+                else
+                    out.(vnames{ivar})=ts(dateInfo,datta,others);
+                end
             else
-                out.(vnames{ivar})=ts(dateInfo,datta,others);
+                out.(vnames{ivar})=reset_data(out.(vnames{ivar-1}),datta);
             end
         end
         function reprocess_filters()
