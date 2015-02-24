@@ -11,7 +11,7 @@ junk/*
 *.bat
 *.bak
 *.log
-*old*
+#*old*
 *.aux
 *.out
 *.toc
