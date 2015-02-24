@@ -57,7 +57,7 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   checks the constraints are satisfied at all horizons instead of just
 %   one at a time.
 %
-%   - **simul_shock_uncertainty** [true|{false}]: draw shocks over the
+%   - **simul_shock_uncertainty** [{true}|false]: draw shocks over the
 %   simulation horizon.
 %
 % Outputs
@@ -103,7 +103,7 @@ if isempty(obj)
         'simul_honor_constraints',false,...
         'simul_frwrd_back_shoot',false,...
         'simul_to_time_series',true,...
-        'simul_shock_uncertainty',false);
+        'simul_shock_uncertainty',true);
     %         'simul_start_date','',... does not seem to be in use
     return
 end
