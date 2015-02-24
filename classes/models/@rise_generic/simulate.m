@@ -172,7 +172,7 @@ vnames=[obj.endogenous.name,'regime',markov_chains];
 endo_nbr=obj.endogenous.number(end);
 yy=nan(smpl+1,endo_nbr+1+numel(markov_chains));
 yy(:,1:endo_nbr)=y(1:endo_nbr,:)';
-yy(2:end,endo_nbr+1:end)=[states(1:smpl),states_(1:smpl)];
+yy(2:end,endo_nbr+1:end)=[states(1:smpl),states_(1:smpl,:)];
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
