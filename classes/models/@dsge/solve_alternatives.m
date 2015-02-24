@@ -55,7 +55,8 @@ file2save2=obj.options.solve_alternatives_file2save2;
 
 % initialize the solution
 %-------------------------
-allobj=dsge.empty(0);
+classobj=class(obj);
+allobj=eval([classobj,'.empty(0)']);
 [obj,retcode]=obj.solve();
 sols=0;
 indep_sols=0;
