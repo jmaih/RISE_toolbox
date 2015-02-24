@@ -68,7 +68,8 @@ simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
 shocks=[];
 states=[];
-scale_shocks=1;
+% scale_shocks=1;
+shocks_found=false;
 if ~isempty(simul_historical_data)
     if isstruct(simul_historical_data)
         simul_historical_data=ts.collect(simul_historical_data);
@@ -88,9 +89,6 @@ if ~isempty(simul_historical_data)
     % now load shocks
     %----------------
     set_shocks_and_states()
-    % in case shocks are not produced right above, set to 0 all the shocks
-    % that will be created randomly below
-    scale_shocks=0; 
 end
 
 Qfunc=prepare_transition_routine(obj);
@@ -120,7 +118,7 @@ Initcond=struct('y',{y0},...
     'forecast_conditional_hypothesis',obj.options.forecast_conditional_hypothesis);
 %-----------------------------------------
 Initcond.burn=obj.options.simul_burn;
-if ~isempty(shocks)
+if shocks_found
     % shocks have already been set from the initial conditions no
     % burn-in simulations necessary
     Initcond.burn=0;
@@ -128,7 +126,7 @@ else
     exo_nbr=sum(obj.exogenous.number);
     which_shocks=true(1,exo_nbr);
     which_shocks(obj.exogenous.is_observed)=false;
-    shocks=scale_shocks*utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
+    shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
 end
 if isempty(states)
     states=nan(Initcond.nsteps+Initcond.burn,1);
@@ -163,7 +161,7 @@ Initcond.shocks=shocks;
             date2serial(simul_history_end_date)+1);
         regime_start=utils.forecast.load_start_values('regime',simul_historical_data,...
             date2serial(simul_history_end_date)+1);
-        
+        shocks_found=any(ismember(shock_names,simul_historical_data.varnames));
         % put into a single page
         %-----------------------
         shocks_start=shocks_start(:,:);
