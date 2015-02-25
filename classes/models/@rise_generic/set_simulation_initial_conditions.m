@@ -30,8 +30,7 @@ function Initcond=set_simulation_initial_conditions(obj)
 % complementarity: do it here so as to keep the memory light. Here we pick
 % the second argument only!!!
 %-----------------------------------------------------------
-[~,complementarity]=complementarity_memoizer(obj);
-
+[sep_compl,complementarity]=complementarity_memoizer(obj);
 
 simul_pruned=false;
 simul_sig=0;
@@ -103,6 +102,15 @@ if ~isfield(obj.options,'simul_do_update_shocks')
     obj.options.simul_do_update_shocks=[];
 end
 
+% shock structure: initial+anticipate
+exo_nbr=sum(obj.exogenous.number);
+shock_structure=false(exo_nbr,k_future);
+if k_future
+    for iexo=1:exo_nbr
+        shock_structure(iexo,1:obj.exogenous.shock_horizon(iexo))=true;
+    end
+end
+shock_structure=[false(exo_nbr,1),shock_structure];
 Initcond=struct('y',{y0},...
     'PAI',PAI,...
     'simul_history_end_date',simul_history_end_date,...
@@ -115,7 +123,9 @@ Initcond=struct('y',{y0},...
     'k_future',k_future,...
     'simul_update_shocks_handle',obj.options.simul_update_shocks_handle,...
     'simul_do_update_shocks',obj.options.simul_do_update_shocks,...
-    'forecast_conditional_hypothesis',obj.options.forecast_conditional_hypothesis);
+    'forecast_conditional_hypothesis',obj.options.forecast_conditional_hypothesis,...
+    'shock_structure',shock_structure,...
+    'sep_compl',sep_compl);
 %-----------------------------------------
 Initcond.burn=obj.options.simul_burn;
 if shocks_found
@@ -123,7 +133,6 @@ if shocks_found
     % burn-in simulations necessary
     Initcond.burn=0;
 else
-    exo_nbr=sum(obj.exogenous.number);
     which_shocks=true(1,exo_nbr);
     which_shocks(obj.exogenous.is_observed)=false;
     shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
