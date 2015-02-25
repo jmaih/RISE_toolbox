@@ -401,9 +401,11 @@ end
             % compute the conditional update
             %-------------------------------------------------------------
             y0=simul_initial_conditions(a_filt);
-            options.nsteps=lgcobs+1;
+            options_=options;
+            options_.nsteps=lgcobs+1;
+            options_.shocks(:,options_.nsteps+1:end)=0;
             [fsteps,~,retcode,~,myshocks]=utils.forecast.multi_step(y0,...
-                ss(st),Tbig(st),xlocs,options);
+                ss(st),Tbig(st),xlocs,options_);
             atmp=fsteps(:,1);
         end
         a_update=atmp;
