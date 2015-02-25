@@ -60,6 +60,12 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   - **simul_shock_uncertainty** [{true}|false]: draw shocks over the
 %   simulation horizon.
 %
+%   - **simul_honor_constraints_through_switch** [true|{false}]: if true,
+%   constraints are honored through the switching mechanism. In that case
+%   the number of regimes should be greater than 1. If false, constraints
+%   are honored through an anticipatory behavior. In this case, there
+%   should be shocks that are foreseen.
+%
 % Outputs
 % --------
 %
@@ -103,7 +109,8 @@ if isempty(obj)
         'simul_honor_constraints',false,...
         'simul_frwrd_back_shoot',false,...
         'simul_to_time_series',true,...
-        'simul_shock_uncertainty',true);
+        'simul_shock_uncertainty',true,...
+        'simul_honor_constraints_through_switch',false);
     %         'simul_start_date','',... does not seem to be in use
     return
 end
@@ -148,8 +155,10 @@ y0.y=y0.y(new_order,:,:); % [variables,ncols,1+n_conditions]
 % inverted prior to evaluation.
 %--------------------------------------------------------------------------
 iov(new_order)=1:numel(new_order);
-Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
-Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
+Initcond.Qfunc=rememoize(Initcond.Qfunc,iov);
+Initcond.complementarity=rememoize(Initcond.complementarity,iov);
+Initcond.sep_compl=rememoize(Initcond.sep_compl,iov);
+Initcond.simul_honor_constraints_through_switch=obj.options.simul_honor_constraints_through_switch;
 
 [y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
@@ -203,6 +212,13 @@ end
             n=sum(pos);
             states(pos,:)=reg_table(ireg*ones(n,1),:);
         end
+    end
+end
+
+function f=rememoize(g,iov)
+f=@engine;
+    function varargout=engine(x)
+        [varargout{1:nargout}]=g(x(iov));
     end
 end
 

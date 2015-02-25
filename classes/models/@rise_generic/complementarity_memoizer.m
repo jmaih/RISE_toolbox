@@ -42,8 +42,11 @@ else
 end
 nrout=numel(routines);
 hc=nrout>0 && obj.options.simul_honor_constraints;
-if hc && ~any(obj.exogenous.shock_horizon>0)
-    error('restrictions detected but no anticipatory behavior to satisfy them')
+simul_honor_constraints_through_switch=obj.markov_chains.regimes_number>1 &&...
+    obj.options.simul_honor_constraints_through_switch;
+if hc && ~(simul_honor_constraints_through_switch||...
+        any(obj.exogenous.shock_horizon>0))
+    error('restrictions detected but no anticipatory or switching behavior to satisfy them')
 end
 clear obj
 sep_cf=separate_complementarity;
