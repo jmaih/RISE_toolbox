@@ -250,11 +250,17 @@ end
             y1=utils.forecast.one_step(T(:,rt),y0,ss{rt},state_vars_location,...
                 options.simul_sig,shocks_t,options.simul_order);
             if ~options.complementarity(y1.y)
-                if ~isnan(states(t))
-                    error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',states(t))) %#ok<SPERR>
+                if options.simul_honor_constraints_through_switch
+                    if ~isnan(states(t))
+                        error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',states(t))) %#ok<SPERR>
+                    end
+                    state_list(state_list==rt)=[];
+                    rt=nan;
+                else
+                    y1=utils.forecast.one_step(T(:,rt),y0,ss{rt},state_vars_location,...
+                        options.simul_sig,shocks_t,options.simul_order,...
+                        options.sep_compl,options.shock_structure);
                 end
-                state_list(state_list==rt)=[];
-                rt=nan;
             end
             function cp=rebuild_cp()
                 PAI00=PAI(state_list);
