@@ -386,6 +386,7 @@ classdef ts
         varargout=cat(varargin)
         varargout=decompose_series(varargin)
         varargout=drop(varargin)
+        varargout=dust_up(varargin)
         varargout=horzcat(varargin)
         varargout=isfinite(varargin)
         varargout=isinf(varargin)
@@ -394,8 +395,8 @@ classdef ts
         varargout=pages2struct(varargin)
         varargout=quantile(varargin)
         varargout=range(varargin)
-        varargout=reset_start_date(varargin)
         varargout=reset_data(varargin)
+        varargout=reset_start_date(varargin)
         varargout=transform(varargin)
     end
     methods(Static)
