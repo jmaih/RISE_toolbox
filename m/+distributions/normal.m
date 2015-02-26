@@ -174,7 +174,7 @@ if nargin<5
         c=0;
     end
 end
-icdf=a+b*(sqrt(2)*erfinv(2*u-1));
+icdf=a+b.*(sqrt(2).*erfinv(2*u-1));
 end
 
 function d=draws(a,b,n,c,d)
@@ -183,7 +183,7 @@ if nargin<5
     if nargin<4
         c=0;
         if nargin<3
-            n=1;
+            n=numel(b);
         end
     end
 end

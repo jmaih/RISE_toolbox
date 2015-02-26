@@ -174,7 +174,7 @@ if nargin<5
     if nargin<4
         c=0;
         if nargin<3
-            n=1;
+            n=numel(b);
         end
     end
 end
@@ -199,7 +199,7 @@ a2=(d-mu)/sig;
 PHI1=.5*(1+erf(a1/sqrt(2)));
 PHI2=.5*(1+erf(a2/sqrt(2)));
 D=PHI2-PHI1;
-icdf=a+b*sqrt(2)*erfinv(2*(D*u+PHI1)-1);
+icdf=a+b.*sqrt(2).*erfinv(2*(D.*u+PHI1)-1);
 end
 
 function lpdf=log_density(theta,a,b,c,d)

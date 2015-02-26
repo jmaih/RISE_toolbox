@@ -139,7 +139,7 @@ if nargin<5
     if nargin<4
         c=0;
         if nargin<3
-            n=1;
+            n=numel(b);
         end
     end
 end
@@ -153,7 +153,7 @@ if nargin<5
         c=0;
     end
 end
-icdf=exp(b.*(sqrt(2)*erfinv(2*u-1))+a);
+icdf=exp(b.*(sqrt(2).*erfinv(2*u-1))+a);
 end
 
 function lpdf=log_density(theta,a,b,c,d)

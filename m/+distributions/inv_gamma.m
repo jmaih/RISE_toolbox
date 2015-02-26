@@ -206,7 +206,7 @@ end
             if nargin<4
                 c=0;
                 if nargin<3
-                    n=1;
+                    n=numel(b);
                 end
             end
         end

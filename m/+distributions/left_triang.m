@@ -17,7 +17,7 @@ function varargout=left_triang(lowerquantileORmean,upperquantileORstdev,prob,~,~
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
@@ -91,7 +91,7 @@ if s<=0
     error([mfilename,':: s must be >0'])
 end
 s2=s*sqrt(2);
-        a=m-s2;
+a=m-s2;
 b=a+3*s2;
 fval=0;
 end
@@ -106,14 +106,14 @@ end
 
 function d=draws(a,b,n,~,~)
 if nargin<3
-    n=1;
+    n=numel(b);
 end
 d=inverse_cdf(rand(n,1),a,b);
 end
 
 function icdf=inverse_cdf(u,a,b,~,~)
 mm=b;
-icdf=a+sqrt(u*(b-a)*(mm-a));
+icdf=a+sqrt(u.*(b-a).*(mm-a));
 end
 
 function lpdf=log_density(theta,a,b,~,~)
