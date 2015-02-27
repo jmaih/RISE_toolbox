@@ -97,6 +97,14 @@ nv = size(Sv{1},2); % number of structural shocks
 horizon=syst.horizon;
 shocks0=zeros(nv,horizon);
 tmax_u=size(U,2);
+if tmax_u
+    % update the state (x_{1|0} with the deterministic variables
+    %------------------------------------------------------------
+    Ut=U(:,0+1);
+    for splus=1:h
+        [x0{splus}]=ff(splus,x0{splus},shocks0,Ut);
+    end
+end
 
 [ny0,T] = size(y);
 delta = sqrt(3);
@@ -244,8 +252,8 @@ for t = 1:T
             
         end
         
-        if t<=tmax_u
-            Ut=U(:,t);
+        if t+1<=tmax_u
+            Ut=U(:,t+1);
         else
             Ut=[];
         end

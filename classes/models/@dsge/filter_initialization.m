@@ -135,7 +135,11 @@ end
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
         endo_nbr=obj.endogenous.number(end);
         iov(new_order)=1:numel(new_order);
-        obs_id=iov(obj.observables.state_id);
+        obs_id=real(obj.observables.state_id);
+        % remove exogenous
+        obs_id(obs_id==0)=[];
+        % turn into the correct order
+        obs_id=iov(obs_id);
         % If possible, trim solution for Minimum state filtering 
         %---------------------------------------------------------
         [grand_state]=Minimum_state_variable_filtration();

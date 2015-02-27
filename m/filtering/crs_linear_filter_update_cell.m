@@ -78,8 +78,17 @@ PAI=transpose(Q)*PAItt;
 [p0,smpl,npages]=size(data_y);
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
-tmax_u=size(U,2);
 shocks=zeros(exo_nbr,horizon);
+tmax_u=size(U,2);
+if tmax_u
+    % update the state (a_{1|0} with the deterministic variables
+    %------------------------------------------------------------
+    Ut=U(:,0+1);
+    for splus=1:h
+        [a{splus}]=ff(splus,a{splus},shocks,Ut);
+    end
+end
+
 if impose_conditions
     myshocks=cell(1,h);
 end
@@ -255,8 +264,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     
     % state and state covariance prediction
     %--------------------------------------
-    if t<=tmax_u
-        Ut=U(:,t);
+    if t+1<=tmax_u
+        Ut=U(:,t+1);
     else
         Ut=[];
     end

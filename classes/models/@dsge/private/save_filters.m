@@ -114,33 +114,6 @@ end
         elseif shocks_flag
             vnames=obj.exogenous.name;
             nvars=sum(obj.exogenous.number);
-            % add the observations on the exogenous observed variables in
-            % order to do things in one go. otherwise there will be a crash
-            % here...
-            net_nexo=nvars-obj.exogenous.number(2);
-            nloops=size(filtdata,2)/net_nexo;
-            [nobs_,~,current_reg_nbr]=size(filtdata);
-            % the number of observations could differ from one variable to
-            % another.
-            tmp=nan(nobs_,nvars*nloops,current_reg_nbr);
-            % now push in the unobserved shocks and the observed ones (only
-            % for the first period)
-            % locate the observed shocks
-            iobs=ismember(vnames,obj.observables.name(~obj.observables.is_endogenous));
-            xxx=obj.data.x;
-            if ~isempty(xxx)
-                tmp(:,iobs,1)=transpose(xxx);
-                % the other pages are nan...
-            end
-            not_iobs=1:nvars*nloops;
-            if any(iobs)
-                proto=(1:nvars:nvars*nloops)-1;
-                for jj=find(iobs)
-                    not_iobs=setdiff(not_iobs,proto+jj);
-                end
-            end
-            tmp(:,not_iobs,:)=filtdata;
-            filtdata=tmp;
         elseif measerrs_flag
             vnames=obj.observables.name;
             nvars=obj.observables.number(1);
