@@ -25,6 +25,15 @@ PAI=options.PAI;
 Qfunc=options.Qfunc;
 states=options.states(:);
 shocks=options.shocks;
+cond_shocks_id=[];
+if options.k_future
+    if isfield(options,'shock_structure')
+        cond_shocks_id=any(options.shock_structure,2);
+    else
+        cond_shocks_id=any(isnan(shocks(:,2:end)),2);
+    end
+end
+
 simul_update_shocks_handle=options.simul_update_shocks_handle;
 simul_do_update_shocks=options.simul_do_update_shocks;
 forecast_conditional_hypothesis=options.forecast_conditional_hypothesis;
@@ -247,7 +256,7 @@ end
                 lucky=find(cp>rand,1,'first')-1;
                 rt=state_list(lucky);
             end
-            y1=utils.forecast.one_step(T(:,rt),y0,ss{rt},state_vars_location,...
+            y1=utils.forecast.one_step_fbs(T(:,rt),y0,ss{rt},state_vars_location,...
                 options.simul_sig,shocks_t,options.simul_order);
             if ~options.complementarity(y1.y)
                 if options.simul_honor_constraints_through_switch
@@ -257,9 +266,9 @@ end
                     state_list(state_list==rt)=[];
                     rt=nan;
                 else
-                    y1=utils.forecast.one_step(T(:,rt),y0,ss{rt},state_vars_location,...
+                    y1=utils.forecast.one_step_fbs(T(:,rt),y0,ss{rt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
-                        options.sep_compl,options.shock_structure);
+                        options.sep_compl,cond_shocks_id);
                 end
             end
             function cp=rebuild_cp()
