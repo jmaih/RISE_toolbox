@@ -137,6 +137,10 @@ v=cell(1,h);
 % This also changes size but we need to assess whether we reach the steady state fast or not
 K=zeros(m,p0,h); % <---K=cell(1,h);
 
+% this will be useful for multi-step forecasting
+%------------------------------------------------
+expected_shocks=cell(1,h);
+
 % no problem
 %-----------
 retcode=0;
@@ -262,9 +266,9 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             P{splus}=zeros(m);
         end
         if impose_conditions
-            expected_shocks=0;
+            expected_shocks{splus}=0;
         else
-            expected_shocks=shocks;
+            expected_shocks{splus}=shocks;
         end
         for st=1:h
             if h==1
@@ -277,18 +281,18 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 % forecast with the expected shocks we had from the
                 % updating step
                 %---------------------------------------------------
-                expected_shocks=expected_shocks+pai_st_splus*myshocks{st};
+                expected_shocks{splus}=expected_shocks{splus}+pai_st_splus*myshocks{st};
                 if st==h
                     % remove the first period since the shocks were
                     % expected already from the period before...
-                    expected_shocks=[expected_shocks(:,2:horizon),shocks(:,1)];
+                    expected_shocks{splus}=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
                 end
             end
             if ~is_steady
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks,Ut);
+        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks{splus},Ut);
         if retcode
             return
         end
@@ -500,6 +504,9 @@ end
         for splus_=1:h
             Filters.a{splus_}(:,1,t+1)=a{splus_};
             Filters.P{splus_}(:,:,t+1)=P{splus_};
+            % remove the first period since the shocks were
+            % expected already from the period before...
+            shocks_splus=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
             for istep_=2:nsteps
                 % this assumes that we stay in the same state and we know
                 % we will stay. The more general case where we can jump to
@@ -510,7 +517,9 @@ end
                     Utplus=[];
                 end
                 [Filters.a{splus_}(:,istep_,t+1),~,rcode]=ff(splus_,...
-                    Filters.a{splus_}(:,istep_-1,t+1),shocks,Utplus);
+                    Filters.a{splus_}(:,istep_-1,t+1),shocks_splus,Utplus);
+                % update the shocks
+                shocks_splus=[shocks_splus(:,2:end),shocks(:,1)];
                 if rcode
                     % do not exit completely...
                     break
