@@ -75,12 +75,6 @@ if ~retcode
                 end
                 residuals=resid_func(ys(:,ireg),pp_i,def_i);
                 exitflag=max(abs(residuals))<=TolFun;
-%                 if ~exitflag
-%                     if debug
-%                         disp('using lsqnonlin or fsolve on a linear model')
-%                     end
-%                     [ys(:,ireg),exitflag]=steady_state_solver_engine(ys0(:,ireg));
-%                 end
             else
                 % Here is why we need good initial values. You cannot, say start at
                 % zero for a variable in logs...
