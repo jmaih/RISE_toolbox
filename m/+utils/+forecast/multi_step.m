@@ -101,11 +101,6 @@ end
         %------------------------------------------------------------------
         EndogenousConditions=recreate_conditions(y_conditions);
         ct=transpose(EndogenousConditions{1});
-%         if any(any(shocks))
-%             ShocksConditions=recreate_conditions(shocks);
-%         else
-%             ShocksConditions=[];
-%         end
         horizon=options.k_future+1;
         nap=horizon;
         ncp=size(ct,2);
@@ -200,7 +195,9 @@ end
                 if ~isempty(simul_update_shocks_handle) && simul_do_update_shocks
                     shocks_t=simul_update_shocks_handle(shocks_t,y0.y);
                 end
-                
+                if options.simul_anticipate_zero
+                    shocks_t(:,2:end)=0;
+                end
                 % compute transition matrix and switching probabilities
                 %------------------------------------------------------
                 [Q,retcode]=Qfunc(y0.y);

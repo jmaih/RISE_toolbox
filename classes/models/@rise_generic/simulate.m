@@ -66,6 +66,10 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   are honored through an anticipatory behavior. In this case, there
 %   should be shocks that are foreseen.
 %
+%   - **simul_anticipate_zero** [true|{false}]: When shocks are drawn, this
+%   option allows to impose that agents continue to see only the
+%   contemporaneous shocks.
+%
 % Outputs
 % --------
 %
@@ -110,7 +114,8 @@ if isempty(obj)
         'simul_frwrd_back_shoot',false,...
         'simul_to_time_series',true,...
         'simul_shock_uncertainty',true,...
-        'simul_honor_constraints_through_switch',false);
+        'simul_honor_constraints_through_switch',false,...
+        'simul_anticipate_zero',false);
     %         'simul_start_date','',... does not seem to be in use
     return
 end
@@ -159,6 +164,7 @@ Initcond.Qfunc=rememoize(Initcond.Qfunc,iov);
 Initcond.complementarity=rememoize(Initcond.complementarity,iov);
 Initcond.sep_compl=rememoize(Initcond.sep_compl,iov);
 Initcond.simul_honor_constraints_through_switch=obj.options.simul_honor_constraints_through_switch;
+Initcond.simul_anticipate_zero=obj.options.simul_anticipate_zero;
 
 [y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
