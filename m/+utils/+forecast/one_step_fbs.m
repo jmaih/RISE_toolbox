@@ -38,6 +38,7 @@ end
 y1k=y0(:,ones(1,kplus1+1));
 if n==7
     compl=[];
+    nrows=0;
 else
     nrows=size(compl(y0.y),1);
 end
