@@ -25,6 +25,10 @@ if nargin<6
     arg_zero_solver=1;
 end
 debug=optim_opt.debug;
+TolFun=optim_opt.TolFun;
+if TolFun<1e-6
+    TolFun=1e-6;
+end
 
 nregs=size(ys0,2);
 ys=ys0;
@@ -70,13 +74,13 @@ if ~retcode
                     % whether I should put a switch...
                 end
                 residuals=resid_func(ys(:,ireg),pp_i,def_i);
-                exitflag=max(abs(residuals))<=optim_opt.TolFun;
-                if ~exitflag
-                    if debug
-                        disp('using lsqnonlin or fsolve on a linear model')
-                    end
-                    [ys(:,ireg),exitflag]=steady_state_solver_engine(ys0(:,ireg));
-                end
+                exitflag=max(abs(residuals))<=TolFun;
+%                 if ~exitflag
+%                     if debug
+%                         disp('using lsqnonlin or fsolve on a linear model')
+%                     end
+%                     [ys(:,ireg),exitflag]=steady_state_solver_engine(ys0(:,ireg));
+%                 end
             else
                 % Here is why we need good initial values. You cannot, say start at
                 % zero for a variable in logs...
@@ -89,7 +93,7 @@ if ~retcode
                         keyboard
                     end
                     exitflag=-4;
-                elseif max(abs(residuals))<=optim_opt.TolFun
+                elseif max(abs(residuals))<=TolFun
                     exitflag=1;
                 else
                     [ys(:,ireg),exitflag]=steady_state_solver_engine(ys0(:,ireg));
@@ -130,7 +134,7 @@ end
             otherwise
                 error('arg_zero_solver must be either 1 or 2')
         end
-        exitflag=utils.optim.exitflag(exitflag,x1,resnorm,sqrt(optim_opt.TolFun));
+        exitflag=utils.optim.exitflag(exitflag,x1,resnorm,sqrt(TolFun));
         if exitflag==1
             x1=reshape(x1,size(x0));
         end
