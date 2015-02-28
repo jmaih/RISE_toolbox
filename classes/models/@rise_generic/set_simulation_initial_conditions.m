@@ -70,6 +70,7 @@ states=[];
 % scale_shocks=1;
 shocks_found=false;
 if ~isempty(simul_historical_data)
+    obj.options.simul_burn=0;
     if isstruct(simul_historical_data)
         simul_historical_data=ts.collect(simul_historical_data);
     end
