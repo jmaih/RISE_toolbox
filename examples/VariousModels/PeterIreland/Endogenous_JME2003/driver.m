@@ -2,33 +2,29 @@
 clear all
 close all
 clc
-%% RISE the model
-m=rise('ireland2003');
-
+%% RISE the model and assign the steady state file
+linear=true;
+if linear
+    m=rise('ireland2003_linear');
+else
+    m=rise('ireland2003','steady_state_file','ireland2003_sstate');
+end
+%% get the parameters
+[p,priors]=ireland2003_parameterization();
+%% push the baseline calibration
+m=set(m,'parameters',p);
+%% do various things (solving, irfs, vardec, simulation, etc...)
+clc
+[ms,retcode]=solve(m);
+ms.print_solution
 %% load the data
-mydat=load('cimpr.dat');
-bigt = size(mydat,1);
-
-ct=mydat(:,1);
-it=mydat(:,1);
-mt=mydat(:,1);
-trend = (1:bigt)';
-xxx = [ ones(bigt,1),trend];
-
-betac = xxx\ct;
-betai = xxx\it;
-betam = xxx\mt;
-
-ct = ct - betac(2)*trend;
-it = it - betai(2)*trend;
-mt = mt - betam(2)*trend;
-
-mydat(:,1:3)=[ct,it,mt];
-data=ts('1959Q1',mydat,{'LC','LI','LM','LPI','LR'});
-data=pages2struct(data);
-data.TREND=ts(data.LC.start,trend);
+data=ireland2003_create_data();
 %%
-ms=estimate(m,'data',data,'kf_tol',0);
+profile off
+profile on
+ms=estimate(m,'data',data,'kf_tol',0,'estim_priors',priors,'estim_start_date','1979Q3');
+profile off
+profile viewer
 %% Redo filtering?
-
-mfilt=filter(ms,'data',data,'kf_tol',0);
+clc
+[mfilt,LogLik,Incr,retcode]=filter(m,'data',data,'kf_tol',0,'estim_end_date','1979Q2');
