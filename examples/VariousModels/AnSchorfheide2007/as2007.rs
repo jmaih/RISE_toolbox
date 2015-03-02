@@ -1,5 +1,7 @@
-% Sungbae An and Frank Schorfheide (2007): "Bayesian Analysis of DSGE Models"
-% Econometric Reviews, 26(2-4):113-172, 2007
+%-----------------------------------------------------------------------------%
+% Sungbae An and Frank Schorfheide (2007): "Bayesian Analysis of DSGE Models" %
+% Econometric Reviews, 26(2-4):113-172, 2007								  %
+%-----------------------------------------------------------------------------%
 
 endogenous AC "Adjustment costs" B "Bonds" C "Consumption" D "profits" GBAR "Government spending"
 G H "Hours worked" LAMBDA M N PAI "Inflation" Q10 R "Interest rate" RSTAR SC T W XI YSTAR Y Z

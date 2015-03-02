@@ -2,7 +2,7 @@
 % "The forward method as a solution refinement in rational expectations Models"
 % Journal of Economics Dynamics and Control 35 (2011) 257-272
 %
-% The rise flag "multiple" is the model with multiple equilibria
+% The rise flag "multiple" when set to true gives the model with multiple equilibria
 
 endogenous PAI, Y, R, I
 
