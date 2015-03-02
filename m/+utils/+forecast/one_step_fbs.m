@@ -28,7 +28,7 @@ n=nargin;
 
 myzero=-sqrt(eps);
 
-debug=~true;
+debug=false;
 if debug
     fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);
 else
@@ -42,6 +42,7 @@ if n==7
 else
     nrows=size(compl(y0.y),1);
 end
+
 % compute the first forecast and detect any violation: quick exit if none
 %------------------------------------------------------------------------
 check_first_only=true;
