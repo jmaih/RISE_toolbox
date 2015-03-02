@@ -96,7 +96,8 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %       - **retcode** : 0 if no problem found when solving the problem
 %
 % - **solve_log_approx_vars** [char|cellstr|{[]}]: List of variables for
-% which we want to take a log expansion (x_t-x_ss)/x_ss
+% which we want to take a log expansion (x_t-x_ss)/x_ss, which approximates
+% log(x_t/x_ss) for x_t/x_ss close to 1.
 %
 % Outputs
 % --------
