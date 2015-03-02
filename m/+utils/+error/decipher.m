@@ -17,7 +17,7 @@ function msgout=decipher(code)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 n=numel(code);
 if n>1
@@ -60,7 +60,7 @@ switch code
     case 26
         msg='VAR approximation to the DSGE failed';
     case 27
-        msg='Tried taking a log-expansion of a variable whose steady state is close to 0';
+        msg='Cannot take a log-expansion of a variable whose steady state is close to 0';
         % ====== filtering and likelihood evaluation ====== %
     case 301
         msg='Maximum number of iterations reached in Lyapunov solution';
