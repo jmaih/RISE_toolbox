@@ -17,12 +17,13 @@ function dictionary=parse(FileName,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
-% by the way, I can still declare exogenous and make them observable at the
+% - can declare exogenous and make them observable at the
 % same time. The exogenous that are observed are determisitic. This opens
 % the door for estimating partial equilibrium models
-% the rise_flags are either a structure or a cell array with two columns!!!
+% - the rise_flags are either a structure or a cell array with two
+% columns!!! 
 
 DefaultOptions=...
     struct('definitions_in_param_differentiation',false,...
@@ -497,10 +498,10 @@ for ii=1:numel(equation_type)
         [status,pos]=dictionary.determine_status(item,dictionary);
         switch status
             case 'y'
-                if any([is_sseq,is_planner,is_tvp,is_mcp]) 
+                if any([is_sseq,is_planner,is_tvp,is_mcp])
                     % is_tvp is added here because only contemporaneous
                     % variables enter the tvp be it in steady state or
-                    % during filtering.  
+                    % during filtering.
                     index=pos;
                 else
                     index=abs(lead_or_lag-2);
@@ -524,7 +525,7 @@ for ii=1:numel(equation_type)
                         o_m=[o_m,'{',sprintf('%0.0f',lead_or_lag),'}'];
                     end
                     sh_o=[sh_o,'y(',sprintf('%0.0f',index),')'];
-                        
+                    
                     s_m=[s_m,item];
                     sh_s=[sh_s,'y(',sprintf('%0.0f',pos),')'];
                     this_bgp_lead=overall_max_lead_lag+lead_or_lag;
@@ -563,7 +564,7 @@ for ii=1:numel(equation_type)
                     if lead_or_lag % 'param(',sprintf('%0.0f',pos),')'
                         error('leads on parameters not allowed in definitions')
                     end
-                    sh_d=[sh_d,sprintf('param(%0.0f)',pos)];% 
+                    sh_d=[sh_d,sprintf('param(%0.0f)',pos)];%
                     o_d=[o_d,item];
                 elseif is_tvp
                     if lead_or_lag
@@ -831,7 +832,7 @@ routines.static_bgp=utils.code.code2func(static.shadow_BGP_model);
     differentiate_system(...
     routines.static_bgp,...
     dictionary.input_list,wrt,1);
-    routines.symbolic.static_bgp={original_funcs,wrt};
+routines.symbolic.static_bgp={original_funcs,wrt};
 disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 % dynamic model wrt param
@@ -850,7 +851,7 @@ end
     differentiate_system(...
     ppdd(dynamic.shadow_model),...
     dictionary.input_list,wrt,1);
-    routines.symbolic.parameters={original_funcs,wrt};
+routines.symbolic.parameters={original_funcs,wrt};
 disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 
@@ -875,9 +876,9 @@ if is_model_with_planner_objective
     routines.planner_loss_commitment_discount=utils.code.code2func(planner_shadow_model,dictionary.input_list);
     routines.symbolic.planner_objective={original_funcs,wrt};
 end
-%% Add final variables list to the dictionary 
+%% Add final variables list to the dictionary
 % the unsorted variables are variables sorted according to their order in
-% during the solving of the model. 
+% during the solving of the model.
 unsorted_endogenous=dictionary.orig_endogenous(dictionary.order_var.before_solve);
 logical_incidence=dictionary.lead_lag_incidence.before_solve(dictionary.order_var.before_solve,:);
 
@@ -1173,14 +1174,14 @@ locations=struct();
     0,... number of shocks periods beyond the current
     numel(spindex)... future switching parameters
     );
-    v{strcmp(v(:,1),'s_0'),2}=siz.ns;
-    
-    v(strncmp(v(:,1),'p',1),2)={siz.np};
-    
-    v(strncmp(v(:,1),'b',1),2)={siz.nb};
-   
-    v(strncmp(v(:,1),'f',1),2)={siz.nf};
-    
+v{strcmp(v(:,1),'s_0'),2}=siz.ns;
+
+v(strncmp(v(:,1),'p',1),2)={siz.np};
+
+v(strncmp(v(:,1),'b',1),2)={siz.nb};
+
+v(strncmp(v(:,1),'f',1),2)={siz.nf};
+
 steady_state_index=struct();
 if isempty(LLI)
     ywrt={};
