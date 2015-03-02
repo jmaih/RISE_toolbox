@@ -60,9 +60,10 @@ for ishock=1:m1.exogenous.number(1)
         if ivar==1
             legend({M.legend})
         end
-    end    
+    end
 end
 %% simulate artificial data
+
 close all
 mysimul=simulate(M);
 figure('name','Simulated data');
