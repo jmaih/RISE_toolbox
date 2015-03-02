@@ -1,6 +1,8 @@
 % Woodford(2003) model as presented in Seonghoon Cho and Antonio Moreno (2011): 
 % "The forward method as a solution refinement in rational expectations Models"
 % Journal of Economics Dynamics and Control 35 (2011) 257-272
+%
+% The rise flag "multiple" is the model with multiple equilibria
 
 endogenous PAI, Y, R, I
 
@@ -21,11 +23,11 @@ parameterization
 	delta, 0.99;
 	kappa,0.3;
 	mu, .55;
-	@# if multiple
+	@#if multiple
 		beta,0.95;
-	@# else
+	@#else
 		beta,1.5;
-	@# end
+	@#end
 	phi, 1;
 	rho,.8;
 	lambda,.1;

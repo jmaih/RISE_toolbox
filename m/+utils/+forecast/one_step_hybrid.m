@@ -1,5 +1,5 @@
-function [y1,is_active_shock,retcode]=one_step_fbs(T,y0,ss,xloc,sig,...
-    shocks,order,compl,cond_shocks_id)
+function [y1,is_active_shock,retcode]=one_step_hybrid(T,y0,ss,xloc,sig,...
+    shocks,order,compl,cond_shocks_id,shoot)
 
 % H1 line
 %
@@ -21,14 +21,32 @@ function [y1,is_active_shock,retcode]=one_step_fbs(T,y0,ss,xloc,sig,...
 %
 % See also:
 
-narginchk(7,9)
+narginchk(7,10)
 
 n=nargin;
+if n<10
+    shoot=[];
+    if n<9
+        cond_shocks_id=[];
+        if nargin<8
+            compl=[];
+        end
+    end
+end
+if isempty(compl)
+    compl=@(x)1;
+end
+if isempty(shoot)
+    shoot=false;
+end
 [nx,kplus1]=size(shocks);
+if isempty(cond_shocks_id)
+    cond_shocks_id=1:nx;
+end
 
 myzero=-sqrt(eps);
-
-debug=~true;
+badvector=@(x)any(compl(x)<myzero);
+debug=true;
 if debug
     fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);
 else
@@ -36,24 +54,24 @@ else
 end
 
 y1k=y0(:,ones(1,kplus1+1));
-if n==7
-    compl=[];
-    nrows=0;
+nrows=size(compl(y0.y),1);
+% compute all the forecasts and detect the first violation
+%---------------------------------------------------------
+if shoot
+    up_to=inf;
 else
-    nrows=size(compl(y0.y),1);
+    % at the beginning check only the first guy
+    %------------------------------------------
+    up_to=1;
 end
-% compute the first forecast and detect any violation: quick exit if none
-%------------------------------------------------------------------------
-check_first_only=true;
 [~,first_viol]=multi_step_shooting(shocks,true);
 
+% try a quick exit
+%------------------
 y1=y1k(2);
 retcode=0;
 is_active_shock=false(1,kplus1);
 if ~isempty(first_viol)
-    % now check the entire stretch
-    %------------------------------
-    check_first_only=false;
     is_active_shock(first_viol)=true;
     if islogical(cond_shocks_id)
         cond_shocks_id=find(cond_shocks_id);
@@ -97,13 +115,17 @@ if ~isempty(first_viol)
                 %--------------------------------------------------------------
                 y1_last_uncond=utils.forecast.one_step_engine(T,y1k(end),ss,...
                     xloc,sig,zeros(size(shocks0)),order);
-                if ~all(compl(y1_last_uncond.y)>myzero)
+                if badvector(y1_last_uncond.y)
                     retcode=701;
                     return
                 end
             end
         else
             is_active_shock(first_viol)=true;
+            % update the number of guys to check
+            if ~shoot
+                up_to=up_to+1;
+            end
         end
     end
     y1=y1k(2);
@@ -122,25 +144,20 @@ end
         end
         viol=zeros(nrows,kplus1);
         first_viol=[];
-        for icol_=2:kplus1+1 %<--size(y,2)
-            shocks_i=[shocks(:,icol_-1:end),zeros(nx,icol_-2)];
-            y1k(icol_)=utils.forecast.one_step_engine(T,y1k(icol_-1),ss,...
+        for icol_=1:kplus1 %<--size(y,2)
+            shocks_i=[shocks(:,icol_:end),zeros(nx,icol_-1)];
+            y1k(icol_+1)=utils.forecast.one_step_engine(T,y1k(icol_),ss,...
                 xloc,sig,shocks_i,order);
-            if isempty(compl)
-                % if no restrictions, exit after the first forecast to
-                % save time 
-                return
-            end
-            viol(:,icol_-1)=compl(y1k(icol_).y);
-            if isempty(first_viol) && ~all(compl(y1k(icol_).y)>myzero)
-                first_viol=icol_-1;
+            viol(:,icol_)=compl(y1k(icol_+1).y);
+            if isempty(first_viol) && badvector(y1k(icol_+1).y)
+                first_viol=icol_;
                 if stop_at_viol
                     break
                 end
-            end
-            if icol_==2 && check_first_only
-                return
+            elseif icol_==up_to
+                break
             end
         end
     end
+
 end

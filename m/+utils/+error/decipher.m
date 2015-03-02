@@ -59,6 +59,8 @@ switch code
         msg='System unstable';
     case 26
         msg='VAR approximation to the DSGE failed';
+    case 27
+        msg='Tried taking a log-expansion of a variable whose steady state is close to 0';
         % ====== filtering and likelihood evaluation ====== %
     case 301
         msg='Maximum number of iterations reached in Lyapunov solution';

@@ -41,34 +41,34 @@ if start_at_mode
     priors.sig_x	   ={0.0224 , 0.0005, 2  };
     priors.sig_z	   ={0.0153 , 0.0005, 2  };
 else
-    betatr = 0.1065;
+    betatr = 0.1094;
     priors.beta	       ={(100*betatr)^2/(1+(100*betatr)^2) , 0.9, 0.9999};
      
-    priors.gam	       ={0.0310 , 0.0005, 2 };
+    priors.gam	       ={0.0428 , 0.0005, 2 };
     
-    alphatr = 0.5187;
+    alphatr = 0.5116;
     priors.alpha	   ={alphatr^2/(1+alphatr^2) , 0.0005, 1 };
     
-    priors.phi_p_trans={0.00001, 0, 2};
-    priors.phi_k_trans={0.2468, 0, 2};
+    priors.phi_p_trans={1.5125, 0, 2};
+    priors.phi_k_trans={0.3426, 0, 2};
     
-    priors.mu_ss_trans={0.0089, 0.0005, 2 };
+    priors.mu_ss_trans={0.0086, 0.0005, 2 };
     
-    priors.omega_r	   ={2.6469 , 0.5, 5};
-    priors.omega_mu    ={0.6982 , -5,  5};
-    priors.omega_y	   ={-0.1091 , -5,  5 };
-    priors.omega_pai   ={3.7892 , -5,  5 };
-    priors.e_ss	       ={3.9759 , 0.0005, 5 };
-    priors.z_ss_trans  ={0.7022, 0, 2};
+    priors.omega_r	   ={2.4903 , 0.5, 5};
+    priors.omega_mu    ={1.1670 , -5,  5};
+    priors.omega_y	   ={-0.0384 , -5,  5 };
+    priors.omega_pai   ={2.8918 , -5,  5 };
+    priors.e_ss	       ={3.7927 , 0.0005, 5 };
+    priors.z_ss_trans  ={0.7127, 0, 2};
     priors.rho_a	   ={0.9 , 0, 1 };
     priors.rho_e	   ={0.9 , 0, 1 };
     priors.rho_x	   ={0.9 , 0, 1 };
     priors.rho_z	   ={0.9 , 0, 1 };
     priors.rho_v	   ={0.5 , 0, 1 };
-    priors.sig_a	   ={0.0230 , 0.0005, 2 };
-    priors.sig_e	   ={0.0081 , 0.0005, 2  };
-    priors.sig_x	   ={0.0854 , 0.0005, 2  };
-    priors.sig_z	   ={0.0109 , 0.0005, 2  };
+    priors.sig_a	   ={0.0200 , 0.0005, 2 };
+    priors.sig_e	   ={0.0085 , 0.0005, 2  };
+    priors.sig_x	   ={0.3112 , 0.0005, 2  };
+    priors.sig_z	   ={0.0201 , 0.0005, 2  };
 end
 
 est_list=fieldnames(priors);

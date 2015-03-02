@@ -11,27 +11,27 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
 % Inputs
 % -------
-% 
+%
 % - **obj** [rise|dsge]: scalar or vector of model objects. The optional
 % options below come in pairs.
-% 
+%
 % - **solve_accelerate** [{false}|true]: Accelerate or do not accelerate
 % the solving
-% 
+%
 % - **solve_check_stability** [{true}|false]: check stability of Markov
 % switching models while solving. The stability of constant-parameter
 % models is always checked whether that of markov-switching models is
 % optional. This is because (1) the procedure is computationally intensive
 % and (2) there is no define stability criterion under endogenous switching
-% 
+%
 % - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
 % derivatives
-% 
+%
 % - **solve_disable_theta** [true|{false}]: option for nullifying the
 % effect of future switching parameters on the solution
-% 
+%
 % - **solve_order** [integer|{1}]: order of approximation
-% 
+%
 % - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
 % of shocks beyond the current period. When the input is :
 %   - an integer : all the shocks receive the same anticipation horizon
@@ -41,29 +41,29 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %   - a cell : the cell must have two colums. Each row in the first column
 %   holds the name of a particular shock and each row in the second column
 %   holds the horizon of the shock. e.g. {'ea',4;'eb',3}
-% 
+%
 % - **solve_alternatives_file2save2** [{[]}|char]: name of the file to
 % write the results of the alternative solutions
-% 
+%
 % - **solve_alternatives_nsim** [integer|{100}]: Number of initial guesses
 % for the solution sampled randomly, when attempting to find all possible
 % solutions.
-% 
+%
 %  - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
 %   - in the **amateur** or **explicit** mode the functions are kept in
-%   cell arrays of anonymous functions and evaluated using for loops 
+%   cell arrays of anonymous functions and evaluated using for loops
 %   - in the **vectorized** or **professional** mode the functions are
 %   compacted into one long and unreadable function.
 %   - in the **disc** mode the functions are written to disc in a
-%   subdirectory called routines. 
-% 
+%   subdirectory called routines.
+%
 % - **solve_initialization** [{'backward'}|'zeros'|'random']: Type of
 % initialization of the solution of switching models:
 %   - **backward** : the initial guess is the solution of the model without
 %   forward-looking terms
 %   - **zeros** : the initial guess is zero
 %   - **random** : the initial guess is random
-% 
+%
 % - **solver** [{[]}|char|user_defined]: solver for the dsge model. The
 % following are possible:
 %   - **loose_commitment** : RISE automatically uses this when it detects
@@ -94,6 +94,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %       - **eigenvalues** [empty|vector]: optional vector of eigenvalues of
 %       the problem
 %       - **retcode** : 0 if no problem found when solving the problem
+%
+% - **solve_log_approx_vars** [char|cellstr|{[]}]: List of variables for
+% which we want to take a log expansion (x_t-x_ss)/x_ss
 %
 % Outputs
 % --------
@@ -156,7 +159,8 @@ if isempty(obj)
         'solve_derivatives_type','symbolic',...%['symbolic','numerical','automatic']
         'solve_accelerate',false,...
         'solve_function_mode','explicit',... %['explicit','disc','vectorized'] see dsge.set
-        'solve_shock_horizon',[]));%
+        'solve_shock_horizon',[],...
+        'solve_log_approx_vars',[]));%
     return
 end
 
@@ -256,21 +260,28 @@ if solve_order>0 && ~retcode && resolve_it
         end
         inv_order_var=obj.inv_order_var.after_solve;
         if ~retcode
-            T_fields=fieldnames(T);
-            nregs=numel(T.Tz);
-            for ifield_=1:numel(T_fields)
-                fname=T_fields{ifield_};
-                % re-order the rows right here, right now
-                %----------------------------------------
-                for ireg=1:nregs
-                    T.(fname){ireg}=T.(fname){ireg}(inv_order_var,:);
-                end
-                obj.solution.(fname)=T.(fname);
+            % Take the log approximation if required
+            solve_log_approx_vars=obj.options.solve_log_approx_vars;
+            if ~isempty(solve_log_approx_vars)
+                retcode=log_expansion();
             end
-            obj.solution.eigval=eigval;
-            
-            obj=set_z_eplus_horizon(obj);
-            obj.solution.user_resids=structural_matrices.user_resids;
+            if ~retcode
+                T_fields=fieldnames(T);
+                nregs=numel(T.Tz);
+                for ifield_=1:numel(T_fields)
+                    fname=T_fields{ifield_};
+                    % re-order the rows right here, right now
+                    %----------------------------------------
+                    for ireg=1:nregs
+                        T.(fname){ireg}=T.(fname){ireg}(inv_order_var,:);
+                    end
+                    obj.solution.(fname)=T.(fname);
+                end
+                obj.solution.eigval=eigval;
+                
+                obj=set_z_eplus_horizon(obj);
+                obj.solution.user_resids=structural_matrices.user_resids;
+            end
         end
     end
 end
@@ -457,7 +468,6 @@ end
                 );
         end
     end
-
     function retcode=solve_zeroth_order()
         retcode=0;
         if resolve_it
@@ -523,6 +533,64 @@ end
             cc=[c_leads(:);c_current(:);c_lags(:)];
             change_loc=cc~=0;
             bgp_coefs=cc(change_loc);
+        end
+    end
+
+    function retcode=log_expansion()
+        retcode=0;
+        if ischar(solve_log_approx_vars)
+            solve_log_approx_vars=cellstr(solve_log_approx_vars);
+        end
+        log_vars=false(1,obj.endogenous.number(end));
+        log_vars(locate_variables(solve_log_approx_vars,obj.endogenous.name))=true;
+        % cannot be some original log_var
+        %---------------------------------
+        double_log=log_vars & obj.endogenous.is_log_var;
+        if any(double_log)
+            disp(obj.endogenous.name(double_log))
+            error(['The variables above were already in log-form. ',...
+                'A further log-expansion cannot be taken on them'])
+        end
+        % cannot be observable
+        %----------------------
+        if obj.observables.number(1)
+            obs_id=real(obj.observables.state_id);
+            log_obs=log_vars(obs_id);
+            if any(log_obs)
+                disp(obj.endogenous.name(log_obs))
+                error('The variables above are observed. They cannot be log-expanded')
+            end
+        end
+        % cannot have a zero steady state
+        state_list = [get(obj,'endo_list(predetermined)'),...
+            get(obj,'endo_list(pred_frwrd_looking)')];
+        is_log_var_state=ismember(state_list,solve_log_approx_vars);
+        order_var=obj.order_var.after_solve;
+        state_pos_inv_order=locate_variables(state_list,obj.endogenous.name);
+        nstates=size(T.Tz{1},2);
+        nxx=nstates-numel(state_pos_inv_order);
+        for ireg_=1:h
+            ss__=obj.solution.ss{ireg_}(:).';
+            ss_state_list=ss__(state_pos_inv_order);
+            ss_state_list(is_log_var_state)=true;
+            ss_state_list=[ss_state_list,ones(1,nxx)];
+            obj.solution.ss{ireg_}(log_vars)=0;
+            ss__(~log_vars)=1;
+            if any(abs(ss__(log_vars))<fix_point_TolFun)
+                retcode=27;
+            end
+            if retcode
+                return
+            end
+            ss__=ss__(order_var);
+            zkz=1;
+            Tz_='T';
+            for io=1:obj.options.solve_order
+                zkz=kron(zkz,ss_state_list);
+                Tz_=[Tz_,'z'];
+                T.(Tz_){ireg_}=bsxfun(@times,T.(Tz_){ireg_},zkz);
+                T.(Tz_){ireg_}=bsxfun(@rdivide,T.(Tz_){ireg_},ss__(:));
+            end
         end
     end
 end

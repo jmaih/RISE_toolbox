@@ -1,14 +1,13 @@
 % Sungbae An and Frank Schorfheide (2007): "Bayesian Analysis of DSGE Models"
-% Econometric Reviews, 26(2–4):113–172, 2007
+% Econometric Reviews, 26(2-4):113-172, 2007
 
 endogenous AC "Adjustment costs" B "Bonds" C "Consumption" D "profits" GBAR "Government spending"
 G H "Hours worked" LAMBDA M N PAI "Inflation" Q10 R "Interest rate" RSTAR SC T W XI YSTAR Y Z
 YGR INFL INT 
 
-
 exogenous EPS_Z "TFP" EPS_R "Monetary policy" EPS_G "Gov. spending"
 
-parameters upsilon rho_z r_a gam_q kappa tau chi_m chi_h pai_a paistar psi1 psi2 ginv rho_g rho_r
+parameters upsilon rho_z r r_a gam_q kappa tau chi_m chi_h pai_a paistar psi1 psi2 ginv rho_g rho_r
 sig_r100 sig_g100 sig_z100
 
 observables YGR INFL INT
@@ -24,7 +23,6 @@ model
 	# sig_z = sig_z100/100;
 	# phi = (1-upsilon)*tau/(upsilon*kappa*pai^2); 
 	# g = 1/ginv;
-	# r = 1+r_a/400; 
 
 	% main model equations
 	%----------------------
@@ -95,6 +93,8 @@ steady_state_model
 
 	Z = 1;
 
+	Q10 = 1/(gam*Z);
+
 	AC = 0;
 
 	W = 1-upsilon;
@@ -119,19 +119,23 @@ steady_state_model
 
 	H = N;
 
+	PAI = paistar;  %
+
+	R = PAI/beta*gam*Z;  %
+
+	RSTAR = R; %
+
 	@#if gap_rule
-		RSTAR = r*paistar*(Y/YSTAR)^psi2; 
+		r = RSTAR/(paistar*(Y/YSTAR)^psi2); %
 	@#else
-		RSTAR = r*paistar*Z^psi2; 
+		r = RSTAR/(paistar*Z^psi2); 
 	@#end
 
-	R = RSTAR;
+	r_a = 400*(r-1);
+	
+	M = chi_m/((1-beta/(PAI*gam*Z))*LAMBDA);  %
 
-	PAI = beta*R/(gam*Z);
-
-	M = chi_m/((1-beta/(PAI*gam*Z))*LAMBDA);
-
-	T = GBAR-(1-R/(PAI*gam*Z))*B-(1-1/(PAI*gam*Z))*M;
+	T = GBAR-(1-R/(PAI*gam*Z))*B-(1-1/(PAI*gam*Z))*M; %
 
 	SC = C + GBAR-W*H-D;
 
@@ -151,7 +155,7 @@ parameterization
 	rho_r, 0.5, 0.5, 0.2, beta_pdf;
 	rho_g, 0.8, 0.8, 0.1, beta_pdf;
 	rho_z, 0.66, 0.66, 0.15, beta_pdf;
-	r_a,   0.5, 0.5, 0.5, gamma_pdf;
+%%%%%	r_a,   0.5, 0.5, 0.5, gamma_pdf;
 	pai_a, 7.0, 7.0, 2.0, gamma_pdf;
 	gam_q, 0.4, 0.4, 0.2, normal_pdf;
 	sig_r100, 0.4,0.4, 4, inv_gamma_pdf;

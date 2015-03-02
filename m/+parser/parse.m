@@ -1021,6 +1021,7 @@ dictionary.endogenous.is_state=dictionary.endogenous.is_predetermined|...
     dictionary.endogenous.is_pred_frwrd_looking;
 dictionary.endogenous.is_frwrd_looking=sparse((logical_incidence(:,1) & ~logical_incidence(:,3))');
 dictionary.endogenous.is_log_var=sparse([endogenous.is_log_var]);
+dictionary.endogenous.is_log_expanded=sparse(false(size(dictionary.endogenous.is_log_var)));
 dictionary.endogenous.is_auxiliary=sparse([endogenous.is_auxiliary]);
 dictionary.endogenous.is_affect_trans_probs=sparse([endogenous.is_trans_prob]);
 clear endogenous logical_incidence

@@ -1,3 +1,6 @@
+%% housekeeping
+clear all
+close all
 %% load data and plot the data
 %-----------------------------
 data  = load('data/US_EURO.txt');
@@ -35,11 +38,6 @@ for iname=1:numel(vnames)
         legend(upper(legend_))
     end
 end
-%% RISE the various versions of model
-m1=rise('as2007','rise_flags',{'gap_rule',true});
-m2=rise('as2007','rise_flags',{'gap_rule',false});
-%% variables of interest
-myvars={'C','D','GBAR','AC','H','M','PAI','R','W','Y','YSTAR'};% B G LAMBDA N Q10 RSTAR SC T XI
 %% do some impulse responses
 
 M=set([m1,m2],'legend',{'gap rule','growth rule'});
