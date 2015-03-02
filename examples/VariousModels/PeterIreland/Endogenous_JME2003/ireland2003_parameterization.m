@@ -6,13 +6,13 @@ end
 % fixed parameters
 %------------------
 pfix=struct();
-pfix.g		  =1 ; % the trend will be removed prior to estimation...
+pfix.g =1 ; % the trend will be removed prior to estimation...
 deltatr = sqrt(0.025/0.975);
-pfix.delta	  = deltatr^2/(1+deltatr^2); % 0.025 ;
-pfix.eta	  =1.5 ;
-thetatr	  =5 ;
+pfix.delta = deltatr^2/(1+deltatr^2); % 0.025 ;
+pfix.eta =1.5 ;
+thetatr	 =5 ;
 pfix.theta = 1 + abs(thetatr);
-pfix.sig_v	  =0.01 ;
+pfix.sig_v =0.01 ;
 
 % parameters estimated Maximum Likelihood (or rather uniform priors in
 % RISE's language
@@ -43,7 +43,7 @@ if start_at_mode
 else
     betatr = 0.1094;
     priors.beta	       ={(100*betatr)^2/(1+(100*betatr)^2) , 0.9, 0.9999};
-     
+    
     priors.gam	       ={0.0428 , 0.0005, 2 };
     
     alphatr = 0.5116;
