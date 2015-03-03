@@ -83,6 +83,9 @@ ncsp = utils.forecast.conditional.number_of_conditioning_shocks_periods(hypo,ncp
 sizg=size(G);
 endo_nbr=sizg(1);
 exo_nbr=sizg(2);
+if numel(sizg==2)
+    sizg=[sizg,1];
+end
 if nap>sizg(3)
     error('solution of the model not consistent with the number of anticipated periods')
 end
