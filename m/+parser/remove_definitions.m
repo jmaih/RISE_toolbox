@@ -38,13 +38,16 @@ for ifield=1:numel(fields)
     tmp=definitions.(ff); %#ok<NASGU>
     eval([ff,'=tmp;'])
 end
-for ii=1:numel(in)
+for ii_zz_kk=1:numel(in)
+    % this works as long as the user does not use ii_zz_kk as a name in the
+    % definitions.
+    %----------------------------------------------------------------------
     try
-        tmp=eval(in{ii}(3:end-1));
+        tmp=eval(in{ii_zz_kk}(3:end-1));
         if isa(tmp,'double')
             tmp=num2str(tmp);
         end
-        out{ii}=tmp;
+        out{ii_zz_kk}=tmp;
     end
 end
 end
