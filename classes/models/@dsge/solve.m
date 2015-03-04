@@ -577,7 +577,7 @@ end
             ss_state_list=[ss_state_list,ones(1,nxx)];
             obj.solution.ss{ireg_}(log_vars)=0;
             ss__(~log_vars)=1;
-            if any(abs(ss__(log_vars))<fix_point_TolFun)
+            if any(abs(ss__(log_vars))<obj.options.fix_point_TolFun)
                 retcode=27;
             end
             if retcode
@@ -590,7 +590,10 @@ end
                 zkz=kron(zkz,ss_state_list);
                 Tz_=[Tz_,'z'];
                 T.(Tz_){ireg_}=bsxfun(@times,T.(Tz_){ireg_},zkz);
-                T.(Tz_){ireg_}=bsxfun(@rdivide,T.(Tz_){ireg_},ss__(:));
+                % we need to full this because the various multiplications
+                % transform to sparse and create problems with reshape
+                % later on.
+                T.(Tz_){ireg_}=full(bsxfun(@rdivide,T.(Tz_){ireg_},ss__(:)));
             end
         end
     end
