@@ -58,10 +58,11 @@ y1.y=ss;
 
 % add the various orders of approximation
 %----------------------------------------
+ifact=1./cumprod(1:order);
 for io=1:order
     % account for VARs with many lags
     %--------------------------------
-    y1.y=y1.y+1/factorial(io)*T{io}*zkz;
+    y1.y=y1.y+ifact(io)*T{io}*zkz;
     if io==1 && prunned
         % vars will never go in here!
         if isempty(y0.y_lin)
@@ -69,7 +70,7 @@ for io=1:order
         else
             z_pruned=buildz(y0.y_lin);
             zkz=z_pruned;
-            y1.y_lin=ss+1/factorial(io)*T{io}*zkz;
+            y1.y_lin=ss+ifact(io)*T{io}*zkz;
         end
     end
     if io<order

@@ -216,13 +216,14 @@ end
         
         chop=1e-9;
         Tzname='T';
+		ifact=1./cumprod(1:order(end));
         for io=1:orders(end)
             Tzname=[Tzname,'z'];
             if any(io==orders)
                 Tz=obj.solution.(Tzname){regime_index}(ids,:)';
                 bigtime=[
                     bigtime
-                    1/factorial(io)*Tz];
+                    ifact(io)*Tz];
             end
         end
         
