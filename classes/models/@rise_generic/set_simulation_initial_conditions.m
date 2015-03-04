@@ -20,6 +20,22 @@ function Initcond=set_simulation_initial_conditions(obj)
 % More About
 % ------------
 %
+% - if future values of endogenous are found, they are discarded the
+% variables are not explicitly declared as conditioning endogenous
+% variables.
+%
+% - if either endogenous or exogenous variables are declared as
+% conditioning variables, we automatically have a conditional forecasting
+% exercise.
+%
+% - if no variable is declared as conditioning, we have a simulation
+% exercise, in which case, there is a burn-in period.
+%
+% - Initialization is always done at the steady state and the declared
+% endogenous variables merely override the steady state values. This means
+% that if a variable is not found in the database, it is initialized at its
+% steady state.
+%
 % Examples
 % ---------
 %
@@ -27,8 +43,7 @@ function Initcond=set_simulation_initial_conditions(obj)
 
 
 
-% complementarity: do it here so as to keep the memory light. Here we pick
-% the second argument only!!!
+% complementarity: do it here so as to keep the memory light
 %-----------------------------------------------------------
 [sep_compl,complementarity]=complementarity_memoizer(obj);
 
@@ -63,12 +78,13 @@ ss=sum(bsxfun(@times,ss,PAI(:).'),2);
 y0=struct('y',[],'y_lin',[]);
 y0(1).y=vec(ss(:,ones(1,nlags)));
 
+exo_nbr=sum(obj.exogenous.number);
 simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
 shocks=[];
 states=[];
-% scale_shocks=1;
-shocks_found=false;
+
+is_conditional_forecasting=false;
 if ~isempty(simul_historical_data)
     % no burn-in with historical data
     %----------------------------------
@@ -106,7 +122,6 @@ if ~isfield(obj.options,'simul_do_update_shocks')
 end
 
 % shock structure: initial+anticipate
-exo_nbr=sum(obj.exogenous.number);
 shock_structure=false(exo_nbr,k_future);
 if k_future
     for iexo=1:exo_nbr
@@ -131,7 +146,7 @@ Initcond=struct('y',{y0},...
     'sep_compl',sep_compl);
 %-----------------------------------------
 Initcond.burn=obj.options.simul_burn;
-if shocks_found
+if is_conditional_forecasting
     % shocks have already been set from the initial conditions no
     % burn-in simulations necessary
     Initcond.burn=0;
@@ -162,36 +177,53 @@ Initcond.states=states;
 Initcond.shocks=shocks;
 
     function set_shocks_and_states()
-        % check there is no shock with name regime (this should be done right
-        % from the parser)
-        %--------------------------------------------------------------------
         shock_names=obj.exogenous.name;
-        
-        % for the shocks, the first state is right after the end of history
-        %------------------------------------------------------------------
-        shocks_start=utils.forecast.load_start_values(shock_names,simul_historical_data,...
-            date2serial(simul_history_end_date)+1);
-        regime_start=utils.forecast.load_start_values('regime',simul_historical_data,...
-            date2serial(simul_history_end_date)+1);
-        shocks_found=any(ismember(shock_names,simul_historical_data.varnames));
-        % put into a single page
-        %-----------------------
-        shocks_start=shocks_start(:,:);
-        regime_start=regime_start(:,:);
-        % extend the shocks with zeros
-        %-----------------------------
+        conditional_shocks=obj.options.forecast_cond_exo_vars;
         simul_periods=obj.options.simul_periods;
-        nshocks=numel(shock_names)+1;
-        shocks=zeros(nshocks,simul_periods+k_future);
-        ncols=min(size(shocks_start,2),simul_periods+k_future);
-        shocks(1:end-1,1:ncols)=shocks_start(:,1:ncols);
-        ncols=min(size(regime_start,2),simul_periods+k_future);
-        shocks(end,1:ncols)=regime_start(1,1:ncols);
-        clear regime_start shocks_start
-        states=shocks(end,:);
-        shocks=shocks(1:end-1,:);
-        % there is no such a thing as a zero state/regime
-        states(states==0)=nan;
+        states=nan(1,simul_periods);
+        shocks=nan(exo_nbr,simul_periods+k_future);
+        if isempty(conditional_shocks)
+            is_conditional_forecasting=size(y0(1).y,3)>1;
+        else
+            is_conditional_forecasting=true;
+            if ischar(conditional_shocks)
+                conditional_shocks=cellstr(conditional_shocks);
+            end
+            regime_pos=find(strcmp('regime',conditional_shocks));
+            if ~isempty(regime_pos)
+                conditional_shocks(regime_pos)=[];
+            end
+            shock_pos=[];
+            if ~isempty(conditional_shocks)
+                shock_pos=locate_variables(conditional_shocks,shock_names);
+            end
+            if ~isempty(regime_pos)
+                conditional_shocks=[conditional_shocks(:).','regime'];
+            end
+            % the length/number of pages of the dataset depends on the
+            % horizon of the shocks but for the moment, we consider all pages
+            pages=[];
+            verdier=utils.time_series.data_request(simul_historical_data,...
+                conditional_shocks,date2serial(simul_history_end_date),...
+                [],pages);
+            % remove first page (shocks of the past!!!)
+            %-------------------------------------------
+            verdier=squeeze(verdier(:,:,2:end));
+            npages=size(verdier,2);
+            % now chop until the forecast horizon
+            %--------------------------------------
+            ncols=min(simul_periods,npages);
+            if ~isempty(regime_pos)
+                states(1:ncols)=verdier(end,1:ncols);
+                verdier(end,:)=[];
+            end
+            ncols=min(simul_periods+k_future,npages);
+            shocks(shock_pos,1:ncols)=verdier(:,1:ncols);
+        end
+        if ~is_conditional_forecasting
+            states=[];
+            shocks=[];
+        end
     end
 
     function set_endogenous_variables()
@@ -204,5 +236,21 @@ Initcond.shocks=shocks;
 
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
             simul_history_end_date,y0(1).y);
+        conditional_vars=obj.options.forecast_cond_endo_vars;
+        % x it future values of variables not declared as conditioning
+        %------------------------------------------------------------------
+        if size(y0(1).y,3)>1
+            is_cond_var=ismember(obj.endogenous.name,conditional_vars);
+            y0(1).y(~is_cond_var,:,2:end)=nan;
+            % start trimming from the back
+            %-----------------------------
+            while size(y0(1).y,3)>1
+                last=y0(1).y(:,:,end);
+                if any(~isnan(last(:)))
+                    break
+                end
+                y0(1).y(:,:,end)=[];
+            end
+        end
     end
 end
