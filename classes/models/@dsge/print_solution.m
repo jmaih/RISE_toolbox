@@ -216,7 +216,7 @@ end
         
         chop=1e-9;
         Tzname='T';
-		ifact=1./cumprod(1:order(end));
+		ifact=1./cumprod(1:orders(end));
         for io=1:orders(end)
             Tzname=[Tzname,'z'];
             if any(io==orders)
