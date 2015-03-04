@@ -1,4 +1,4 @@
-@#include "ireland2003.rs"
+@#include "emosp.rs"
 
 steady_state_model
 	X=1;

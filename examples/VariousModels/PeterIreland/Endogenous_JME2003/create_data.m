@@ -1,4 +1,4 @@
-function data=ireland2003_create_data()
+function data=create_data()
 
 mydat=load('cimpr.dat');
 bigt = size(mydat,1);

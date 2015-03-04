@@ -1,4 +1,4 @@
-function [ys,obj,retcode,imposed]=ireland2003_sstate(obj,flag)
+function [ys,obj,retcode,imposed]=sstate_file(obj,flag)
 
 % This return code says that there is no problem so far
 %------------------------------------------------------

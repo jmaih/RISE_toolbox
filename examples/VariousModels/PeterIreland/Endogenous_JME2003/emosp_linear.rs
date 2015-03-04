@@ -1,3 +1,10 @@
+% Peter N. Ireland (2003): "Endogenous money of sticky prices?"
+% Journal of Monetary Economics 50 (2003) 1623--1648
+%
+% Log-linearized version of the model with a flag "original"
+% for choosing between the original equations or the slightly
+% rewritten ones ones. (see page 13 in the notes)
+
 endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
 LC LI LM LPI LR
 
@@ -56,18 +63,35 @@ model(linear)
 
 	E = rho_e*E{-1}+sig_e*EPS_E;
 
-	gam*rss*A = gam*rss*LAMBDA+rss*(1+(gam-1)*lambdass*css)*C+(rss-1)*lambdass*mss*E+
-				(gam-1)*(rss-1)*lambdass*mss*M;
+	@#if original
+		gam*rss*A = gam*rss*LAMBDA+rss*(1+(gam-1)*lambdass*css)*C+(rss-1)*lambdass*mss*E+
+					(gam-1)*(rss-1)*lambdass*mss*M;
+	@#else
+		gam*rss*A = gam*rss*LAMBDA+rss*(1+(gam-1)*lambdass*css)*C+(rss-1)*lambdass*mss*E
+					+(gam-1)*(rss-1)*lambdass*mss*MU
+					+(gam-1)*(rss-1)*lambdass*mss*M{-1}
+					-(gam-1)*(rss-1)*lambdass*mss*PAI;
+	@#end
 
 	0 = eta*LAMBDA+eta*W-lambdass*wss*hss*H;
 
-	(rss-1)*E+(rss-1)*C = (rss-1)*M+gam*R;
+	@#if original
+		(rss-1)*E+(rss-1)*C = (rss-1)*M+gam*R;
+	@#else
+		(rss-1)*E+(rss-1)*C = (rss-1)*MU+(rss-1)*M{-1}-(rss-1)*PAI+gam*R;
+	@#end
 
 	LAMBDA =R+LAMBDA{+1}-PAI{+1};
 
-	g*LAMBDA-g*X-phi_k*K{-1} = g*LAMBDA{+1}+beta*qss*Q{+1}-beta*(1-delta)*X{+1}
-		+beta*phi_k*K{+1}
-		-(1+beta)*phi_k*K;
+	@#if original
+		g*LAMBDA-g*X-phi_k*K{-1} = g*LAMBDA{+1}+beta*qss*Q{+1}-beta*(1-delta)*X{+1}
+			+beta*phi_k*K{+1}
+			-(1+beta)*phi_k*K;
+	@#else
+		g*LAMBDA-(g+beta*(phi_k*(1-(1-delta)/g)-(1-delta))*rho_x)*X-phi_k*K{-1} = 
+		g*LAMBDA{+1}+beta*qss*Q{+1}+(beta*(1-delta)/g-(1+beta))*phi_k*K
+		+beta*phi_k*(1-(1-delta)/g)*I{+1};
+	@#end
 		
 	Z = rho_z*Z{-1}+sig_z*EPS_Z;
 

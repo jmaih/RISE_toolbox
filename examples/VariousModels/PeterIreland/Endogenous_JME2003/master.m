@@ -5,12 +5,12 @@ clc
 %% RISE the model and assign the steady state file
 linear=true;
 if linear
-    m=rise('ireland2003_linear');
+    m=rise('emosp_linear','rise_flags',{'original',false});
 else
-    m=rise('ireland2003','steady_state_file','ireland2003_sstate');
+    m=rise('emosp','steady_state_file','sstate_file');
 end
 %% get the parameters
-[p,priors]=ireland2003_parameterization();
+[p,priors]=create_parameters();
 %% push the baseline calibration
 m=set(m,'parameters',p);
 %% do various things (solving, irfs, vardec, simulation, etc...)
@@ -18,7 +18,7 @@ clc
 [ms,retcode]=solve(m);
 ms.print_solution
 %% load the data
-data=ireland2003_create_data();
+data=create_data();
 %%
 profile off
 profile on

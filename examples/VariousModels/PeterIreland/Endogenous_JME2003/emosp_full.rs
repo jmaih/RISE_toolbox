@@ -1,4 +1,4 @@
-@#include "ireland2003_ssmodel.rs"
+@#include "emosp_ssmodel.rs"
 
 parameterization
 	% fixed parameters

@@ -1,3 +1,8 @@
+% Peter N. Ireland (2003): "Endogenous money of sticky prices?"
+% Journal of Monetary Economics 50 (2003) 1623--1648
+%
+% Nonlinear version of the model.
+
 endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
 LC LI LM LPI LR
 

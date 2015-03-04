@@ -1,4 +1,4 @@
-function [p,priors]=ireland2003_parameterization(start_at_mode)
+function [p,priors]=create_parameters(start_at_mode)
 if nargin==0
     start_at_mode=false;
 end
