@@ -68,9 +68,14 @@ while ~isempty(varargin)
         end
         cellnames=[cellnames,db_i.varnames(:).'];
         celldata=[celldata,cell(1,db_i.NumberOfVariables)];
-        for ivar=1:db_i.NumberOfVariables
+        if db_i.NumberOfVariables==1
             offset=offset+1;
-            celldata{offset}=db_i(db_i.varnames{ivar});
+            celldata{offset}=db_i;
+        else
+            for ivar=1:db_i.NumberOfVariables
+                offset=offset+1;
+                celldata{offset}=db_i(db_i.varnames{ivar});
+            end
         end
     elseif isa(db_i,'struct')
         fields=fieldnames(db_i);
