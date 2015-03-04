@@ -149,10 +149,7 @@ end
         end
         function set_tex_names()
             if ~isstruct(propval)
-                if ~iscellstr(propval) && size(propval,2)==2
-                    error('propval must be a structure of a cellstr with two columns')
-                end
-                propval=cell2struct(propval(:,2),propval(:,1),1);
+                error('propval must be a structure')
             end
             fields=fieldnames(propval);
             for ifield=1:numel(fields)

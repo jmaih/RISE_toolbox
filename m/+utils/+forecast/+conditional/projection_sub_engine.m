@@ -103,31 +103,15 @@ OMG		=Conditions{2};
 LB    	=Conditions{3}.LB;
 UB    	=Conditions{3}.UB;
 rest_id	=Conditions{4};
-
-% trim from the end
-%-------------------
-discard=false(1,size(MU,2));
-nan_mu=any(isnan(MU),1);
-good=find(~nan_mu,1,'last');
-if ~isempty(good)
-    discard(good+1:end)=true;
+[ncv,ncp]=size(MU);
+if ~isequal(size(LB),[ncv,ncp])||~isequal(size(UB),[ncv,ncp])
+    error([mfilename,':: LB and UB must have the same size as the Central Tendency'])
 end
-MU=MU(:,~discard);
-LB=LB(:,~discard);
-UB=UB(:,~discard);
-if isempty(MU)
-    [MU,OMG,LB,UB,rest_id,ncv,ncp]=ExtractConditions([]);
-else
-    [ncv,ncp]=size(MU);
-    if ~isequal(size(LB),[ncv,ncp])||~isequal(size(UB),[ncv,ncp])
-        error([mfilename,':: LB and UB must have the same size as the Central Tendency'])
-    end
-    if ~isequal(ncv,numel(rest_id))
-        error([mfilename,':: Number of conditioning variables inconsistent with the bounds'])
-    end
-    MU=MU(:);
-    LB=LB(:);
-    UB=UB(:);
+if ~isequal(ncv,numel(rest_id))
+    error([mfilename,':: Number of conditioning variables inconsistent with the bounds'])
 end
 
+MU=MU(:);
+LB=LB(:);
+UB=UB(:);
 end
