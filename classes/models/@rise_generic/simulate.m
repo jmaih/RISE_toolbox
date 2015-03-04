@@ -148,23 +148,13 @@ Initcond=set_simulation_initial_conditions(obj);
 % load the order_var solution
 %-----------------------------
 [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+
+Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
+
 y0=Initcond.y;
 if numel(y0)>1
     error('more than one initial conditions')
 end
-y0.y=full(y0.y); % [variables,ncols,1+n_conditions]
-y0.y=y0.y(new_order,:,:); % [variables,ncols,1+n_conditions]
-% adjust the transition and complementarity functions according to the
-% order_var: they will be fed with order_var, but they expect the
-% alphabetical order and so the order_var they are fed with has to be
-% inverted prior to evaluation.
-%--------------------------------------------------------------------------
-iov(new_order)=1:numel(new_order);
-Initcond.Qfunc=rememoize(Initcond.Qfunc,iov);
-Initcond.complementarity=rememoize(Initcond.complementarity,iov);
-Initcond.sep_compl=rememoize(Initcond.sep_compl,iov);
-Initcond.simul_honor_constraints_through_switch=obj.options.simul_honor_constraints_through_switch;
-Initcond.simul_anticipate_zero=obj.options.simul_anticipate_zero;
 
 [y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
@@ -218,13 +208,6 @@ end
             n=sum(pos);
             states(pos,:)=reg_table(ireg*ones(n,1),:);
         end
-    end
-end
-
-function f=rememoize(g,iov)
-f=@engine;
-    function varargout=engine(x)
-        [varargout{1:nargout}]=g(x(iov));
     end
 end
 

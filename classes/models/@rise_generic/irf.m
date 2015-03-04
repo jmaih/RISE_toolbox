@@ -197,6 +197,9 @@ myirfs=format_irf_output(myirfs);
         % load the order_var solution
         %-----------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+        
+        Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
+        
         if solve_order==1 % first-order solution ||isa(obj,'rfvar')
             % kill the steady state and the initial conditions
             for ireg=1:h
@@ -205,9 +208,6 @@ myirfs=format_irf_output(myirfs);
             Initcond.y.y=0*Initcond.y.y;
         end
         y0=Initcond.y;
-        % adjust the start values according to the order_var
-        %---------------------------------------------------
-        y0.y=y0.y(new_order,:);
             
         % adjust the transition function according to the order_var
         %-----------------------------------------------------------
