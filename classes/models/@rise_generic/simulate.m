@@ -156,7 +156,7 @@ if numel(y0)>1
     error('more than one initial conditions')
 end
 
-[y,states,retcode]=utils.forecast.multi_step(y0(1),steady_state,T,...
+[y,states,retcode,~,myshocks]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
 
 % add initial conditions: only the actual data on the first page
@@ -172,12 +172,17 @@ start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
 
 smpl_states=numel(states);
 [states_,markov_chains]=regimes2states(states);
-smpl=size(y,2)-1;
-vnames=[obj.endogenous.name,'regime',markov_chains];
+smply=size(y,2);
+[exo_nbr,smplx]=size(myshocks);
+myshocks=[zeros(exo_nbr,1),myshocks];
+smplx=smplx+1;
+vnames=[obj.endogenous.name,obj.exogenous.name,'regime',markov_chains];
 endo_nbr=obj.endogenous.number(end);
-yy=nan(smpl+1,endo_nbr+1+numel(markov_chains));
-yy(:,1:endo_nbr)=y(1:endo_nbr,:)';
-yy(2:end,endo_nbr+1:end)=[states(1:smpl),states_(1:smpl,:)];
+smpl=max(smplx,smply);
+yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains));
+yy(1:smply,1:endo_nbr)=y(1:endo_nbr,:)';
+yy(1:smplx,endo_nbr+(1:exo_nbr))=myshocks';
+yy(2:smply,endo_nbr+exo_nbr+1:end)=[states(1:smply-1),states_(1:smply-1,:)];
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
