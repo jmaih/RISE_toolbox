@@ -13,8 +13,13 @@ MUx=ReplaceFullVectorIfMissing(MUx,DYbar(ncvcp+1:end),LBx,UBx,ncvx,ncpx);
 %=============================
 
 MUc=[MUy;MUx];
+missing=numel(DYbar)-numel(MUc);
+if missing<0;
+    missing=0;
+end
+MUc=[MUc;nan(missing,1)];
+TotalNumberOfRestrictions=numel(MUc);
 OMGc=OMG;
-TotalNumberOfRestrictions=size(OMG,1);
 nendo=size(MUy,1);
 yrest=1:nendo;
 xrest=nendo+1:TotalNumberOfRestrictions;
@@ -28,8 +33,8 @@ if ~isempty(OMGx)
     all_omega_empty=false;
 end
 
-LB=[LBy;LBx];
-UB=[UBy;UBx];
+LB=[LBy;LBx;nan(missing,1)];
+UB=[UBy;UBx;nan(missing,1)];
 
 if ~all_omega_empty
     [junk,PositiveDefiniteness]=chol(OMGc); %#ok<ASGLU>
