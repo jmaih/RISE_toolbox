@@ -1,6 +1,9 @@
-function [p,priors]=create_parameters(start_at_mode)
-if nargin==0
+function [p,priors]=create_parameters(sticky_price_model,start_at_mode)
+if nargin<2
     start_at_mode=false;
+    if nargin<1
+        sticky_price_model=true;
+    end
 end
 
 % fixed parameters
@@ -13,6 +16,10 @@ pfix.eta =1.5 ;
 thetatr	 =5 ;
 pfix.theta = 1 + abs(thetatr);
 pfix.sig_v =0.01 ;
+% initially set the sticky price parameter to 0 and update it only if
+% necessary
+%-------------------------------------------------------------------------
+pfix.phi_p_trans=0;
 
 % parameters estimated Maximum Likelihood (or rather uniform priors in
 % RISE's language
@@ -22,7 +29,9 @@ if start_at_mode
     priors.beta	       ={0.9980 , 0.9, 0.9999};
     priors.gam		   ={0.0736 , 0.0005, 2 };
     priors.alpha	   ={0.2022 , 0.0005, 1 };
-    priors.phi_p_trans ={54.0745/100, 0, 2};
+    if ~sticky_price_model
+        priors.phi_p_trans ={54.0745/100, 0, 2};
+    end
     priors.phi_k_trans ={12.4368/100, 0, 2};
     priors.mu_ss_trans ={1.0110-1, 0.0005, 2 };
     priors.omega_r	   ={3.0296 , 0.5, 5};
@@ -49,7 +58,9 @@ else
     alphatr = 0.5116;
     priors.alpha	   ={alphatr^2/(1+alphatr^2) , 0.0005, 1 };
     
-    priors.phi_p_trans={1.5125, 0, 2};
+    if ~sticky_price_model
+        priors.phi_p_trans={1.5125, 0, 2};
+    end
     priors.phi_k_trans={0.3426, 0, 2};
     
     priors.mu_ss_trans={0.0086, 0.0005, 2 };
