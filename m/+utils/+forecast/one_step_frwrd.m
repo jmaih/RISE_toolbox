@@ -47,7 +47,7 @@ y1=utils.forecast.one_step_engine(T,y0,ss,xloc,sig,shocks,order);
 
 iter=0;
 retcode=0;
-% is_active_shock=false(1,kplus1);
+is_active_shock=false(1,kplus1);
 if any(compl(y1.y)<myzero) % <---badvector(y1.y)
     nrows=size(compl(y1.y),1);
     if islogical(cond_shocks_id)
@@ -72,6 +72,7 @@ if any(compl(y1.y)<myzero) % <---badvector(y1.y)
         exitflag=utils.optim.exitflag(exitflag,ee,max(abs(fval(:))));
         if exitflag~=1
             retcode=701;
+            is_active_shock=any(abs(shocks)>sqrt(eps),1); % is_active_shock(1:iter)=true;
             return
         end
         shocks0(e_id)=ee;
@@ -101,6 +102,7 @@ if any(compl(y1.y)<myzero) % <---badvector(y1.y)
                 xloc,sig,zeros(size(shocks0)),order);
             if ~all(compl(y1_last_uncond.y)>myzero)
                 retcode=701;
+                is_active_shock=any(abs(shocks)>sqrt(eps),1); % is_active_shock(1:iter)=true;
                 return
             end
         end
