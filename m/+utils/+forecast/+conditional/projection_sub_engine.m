@@ -104,17 +104,17 @@ LB    	=Conditions{3}.LB;
 UB    	=Conditions{3}.UB;
 rest_id	=Conditions{4};
 
-% trim from the end
-%-------------------
-discard=false(1,size(MU,2));
-nan_mu=any(isnan(MU),1);
-good=find(~nan_mu,1,'last');
-if ~isempty(good)
-    discard(good+1:end)=true;
-end
-MU=MU(:,~discard);
-LB=LB(:,~discard);
-UB=UB(:,~discard);
+% % % % % % % trim from the end: This is seems to create more problems
+% % % % % % %------------------- should be revisited.
+% % % % % % discard=false(1,size(MU,2));
+% % % % % % not_nan_mu=any(~isnan(MU),1);
+% % % % % % good=find(not_nan_mu,1,'last');
+% % % % % % if ~isempty(good)
+% % % % % %     discard(good+1:end)=true;
+% % % % % % end
+% % % % % % MU=MU(:,~discard);
+% % % % % % LB=LB(:,~discard);
+% % % % % % UB=UB(:,~discard);
 if isempty(MU)
     [MU,OMG,LB,UB,rest_id,ncv,ncp]=ExtractConditions([]);
 else
