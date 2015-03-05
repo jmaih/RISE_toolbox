@@ -1,9 +1,12 @@
 % Peter N. Ireland (2003): "Endogenous money of sticky prices?"
 % Journal of Monetary Economics 50 (2003) 1623--1648
 %
-% Log-linearized version of the model with a flag "original"
-% for choosing between the original equations or the slightly
-% rewritten ones ones. (see page 13 in the notes)
+% Log-linearized version of the model with a flag "original" for choosing between
+% the original equations or the slightly rewritten ones. (see page 13 in the notes)
+%
+% The alternative form allows Peter Ireland to get rid of variables that
+% are both predetermined and forward looking. But we don't need to do this
+% in RISE
 
 endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
 LC LI LM LPI LR

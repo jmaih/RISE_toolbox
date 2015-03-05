@@ -66,14 +66,40 @@ model
 	MU =g*M/M{-1}*PAI;
 
 	% Measurement equations
-	%-----------------------
+	%------------------------
+	% To derive those, we know that C=css*exp(log(C/css))=css*exp(chat)
+	% so that log(C)=log(css)+chat, which we have from the measurement
+	% equations of the log-linearized model. Following this route may
+	% be misleading. Instead, define X=log(C) and take a log-linear
+	% approximation X=X(C0)+[(C-C0)/C0]*C0*X'(C0)
 
-	LC=log(C)+log(g)*TREND;
+	LC=log(steady_state(C))*(1+log(C/steady_state(C)))+log(g)*TREND;
 
-	LI=log(I)+log(g)*TREND;
+	LI=log(steady_state(I))*(1+log(I/steady_state(I)))+log(g)*TREND;
 
-	LM=log(M)+log(g)*TREND;
+	LM=log(steady_state(M))*(1+log(M/steady_state(M)))+log(g)*TREND;
 
-	LPI=log(PAI);
+	LPI=log(steady_state(PAI))*(1+log(PAI/steady_state(PAI)));
 
-	LR=log(R);
+	LR=log(steady_state(R))*(1+log(R/steady_state(R)));
+
+%	LC=log(steady_state(C))*C/steady_state(C)+log(g)*TREND;
+%
+%	LI=log(steady_state(I))*I/steady_state(I)+log(g)*TREND;
+%
+%	LM=log(steady_state(M))*M/steady_state(M)+log(g)*TREND;
+%
+%	LPI=log(steady_state(PAI))*PAI/steady_state(PAI);
+%
+%	LR=log(steady_state(R))*R/steady_state(R);
+
+%	% linear model measurement equations
+%	LC=C+log(css)+log(g)*TREND;
+%
+%	LI=I+log(iss)+log(g)*TREND;
+%
+%	LM=M+log(mss)+log(g)*TREND;
+%
+%	LPI=PAI+log(paiss);
+%
+%	LR=R+log(rss);
