@@ -70,8 +70,9 @@ model
 	% To derive those, we know that C=css*exp(log(C/css))=css*exp(chat)
 	% so that log(C)=log(css)+chat, which we have from the measurement
 	% equations of the log-linearized model. Following this route may
-	% be misleading. Instead, define X=log(C) and take a log-linear
-	% approximation X=X(C0)+[(C-C0)/C0]*C0*X'(C0)
+	% be misleading. I worked out the following through trial and error
+	% but there must be a logic to it. Note that replacing log(X/xss)
+	% with X/xss-1 should also work.
 
 	LC=log(steady_state(C))*(1+log(C/steady_state(C)))+log(g)*TREND;
 
@@ -83,15 +84,6 @@ model
 
 	LR=log(steady_state(R))*(1+log(R/steady_state(R)));
 
-%	LC=log(steady_state(C))*C/steady_state(C)+log(g)*TREND;
-%
-%	LI=log(steady_state(I))*I/steady_state(I)+log(g)*TREND;
-%
-%	LM=log(steady_state(M))*M/steady_state(M)+log(g)*TREND;
-%
-%	LPI=log(steady_state(PAI))*PAI/steady_state(PAI);
-%
-%	LR=log(steady_state(R))*R/steady_state(R);
 
 %	% linear model measurement equations
 %	LC=C+log(css)+log(g)*TREND;
