@@ -29,7 +29,7 @@ if start_at_mode
     priors.beta	       ={0.9980 , 0.9, 0.9999};
     priors.gam		   ={0.0736 , 0.0005, 2 };
     priors.alpha	   ={0.2022 , 0.0005, 1 };
-    if ~sticky_price_model
+    if sticky_price_model
         priors.phi_p_trans ={54.0745/100, 0, 2};
     end
     priors.phi_k_trans ={12.4368/100, 0, 2};
@@ -58,7 +58,7 @@ else
     alphatr = 0.5116;
     priors.alpha	   ={alphatr^2/(1+alphatr^2) , 0.0005, 1 };
     
-    if ~sticky_price_model
+    if sticky_price_model
         priors.phi_p_trans={1.5125, 0, 2};
     end
     priors.phi_k_trans={0.3426, 0, 2};
