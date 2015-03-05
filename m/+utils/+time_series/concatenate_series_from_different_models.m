@@ -36,7 +36,16 @@ for ivar=1:numel(varList)
             mod_names=strcat('model_',cellfun(@num2str,num2cell(1:nobj),'uniformOutput',false));
             reg_names=strcat('regime_',cellfun(@num2str,num2cell(1:data_size(2)),'uniformOutput',false));
         end
-        tank(:,imod,:)=datta;
+        % some variables (like states), may have one observation less. This
+        % may still not work as expected, precisely if there are nans here
+        % and there. in particular, if the first series start later than
+        % the others, etc.
+        %------------------------------------------------------------------
+        try
+            tank(:,imod,:)=datta;
+        catch
+            tank(2:end,imod,:)=datta;
+        end
     end
     if data_size(2)>1
         for ireg=1:data_size(2)
