@@ -562,21 +562,17 @@ end
                 error('The variables above are observed. They cannot be log-expanded')
             end
         end
-        % cannot have a zero steady state
-        state_list = [get(obj,'endo_list(predetermined)'),...
-            get(obj,'endo_list(pred_frwrd_looking)')];
-        is_log_var_state=ismember(state_list,solve_log_approx_vars);
+        tt=obj.locations.after_solve.t;
+        pb_pos=[tt.p,tt.b];
+        npb=numel(pb_pos);
         order_var=obj.order_var.after_solve;
-        state_pos_inv_order=locate_variables(state_list,obj.endogenous.name);
         nstates=size(T.Tz{1},2);
-        nxx=nstates-numel(state_pos_inv_order);
+        ss_state_list=ones(1,nstates);
         for ireg_=1:h
             ss__=obj.solution.ss{ireg_}(:).';
-            ss_state_list=ss__(state_pos_inv_order);
-            ss_state_list(is_log_var_state)=true;
-            ss_state_list=[ss_state_list,ones(1,nxx)];
             obj.solution.ss{ireg_}(log_vars)=0;
-            ss__(~log_vars)=1;
+            % cannot have a zero steady state
+            %---------------------------------
             if any(abs(ss__(log_vars))<obj.options.fix_point_TolFun)
                 retcode=27;
             end
@@ -584,6 +580,7 @@ end
                 return
             end
             ss__=ss__(order_var);
+            ss_state_list(1:npb)=ss__(pb_pos);
             zkz=1;
             Tz_='T';
             for io=1:obj.options.solve_order
