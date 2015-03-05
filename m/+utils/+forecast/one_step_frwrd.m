@@ -47,7 +47,7 @@ y1=utils.forecast.one_step_engine(T,y0,ss,xloc,sig,shocks,order);
 
 iter=0;
 retcode=0;
-is_active_shock=false(1,kplus1);
+% is_active_shock=false(1,kplus1);
 if any(compl(y1.y)<myzero) % <---badvector(y1.y)
     nrows=size(compl(y1.y),1);
     if islogical(cond_shocks_id)
