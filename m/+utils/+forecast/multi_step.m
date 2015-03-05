@@ -100,20 +100,19 @@ end
         % case
         %------------------------------------------------------------------
         EndogenousConditions=recreate_conditions(y_conditions);
-        ct=transpose(EndogenousConditions{1});
+        ct=EndogenousConditions{1};
         horizon=options.k_future+1;
         nap=horizon;
         ncp=size(ct,2);
         ncsp = utils.forecast.conditional.number_of_conditioning_shocks_periods(...
             forecast_conditional_hypothesis,ncp,nap);
         missing_shocks=max(0,ncsp-size(shocks,2));
-        myshocks=[shocks,nan(nx,missing_shocks)];
+        % set shocks beyond the shocks availability to zero.
+        myshocks=[shocks,zeros(nx,missing_shocks)];
         myshocks=myshocks(:,1:ncsp);
-        % set all zero shocks to nans : we probably don't want to condition
-        % on zero shocks, this is most likely the result of initialization
-        %------------------------------------------------------------------
-        myshocks(myshocks==0)=nan;
+        
         % the nan shocks are the ones to estimate
+        %-----------------------------------------
         estim_shocks=isnan(myshocks);
         % Set the nan shocks to 0: a simple simulation with shocks will be
         % performed in the absence of further constraints. otherwise, the
