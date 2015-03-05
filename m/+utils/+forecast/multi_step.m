@@ -186,6 +186,9 @@ end
 
     function condition_on_shocks_only(shocks)
         y1=[];
+        % shocks that are nan are shocks that are not conditioned on
+        %------------------------------------------------------------
+        shocks(isnan(shocks))=0;
         for t=1:span
             if ~retcode
                 % process shocks
