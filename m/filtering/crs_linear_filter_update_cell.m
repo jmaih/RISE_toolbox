@@ -89,9 +89,7 @@ if tmax_u
     end
 end
 
-if impose_conditions
-    myshocks=cell(1,h);
-end
+myshocks=cell(1,h);
 
 h_last=0;
 if ~isempty(H{1})
@@ -159,7 +157,7 @@ is_steady=false;
 %------------------------------------------------
 options.PAI=1;
 options.states=ones(horizon,1);
-options.Qfunc=@(x)1;
+options.Qfunc=Qfunc;
 options.y=[];
 options.burn=0;
 options.k_future=horizon-1;
@@ -216,7 +214,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if impose_conditions
             [a{st},retcode,myshocks{st}]=state_update_without_test(a{st},K(:,occur,st)*v{st},st);
         else
-            [a{st},retcode]=state_update_with_test(a{st},K(:,occur,st)*v{st},st);
+            [a{st},retcode,myshocks{st}]=state_update_with_test(a{st},K(:,occur,st)*v{st},st);
             % <--- a{st}=a{st}+K(:,occur,st)*v{st};
         end
         if retcode
@@ -274,11 +272,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if ~is_steady
             P{splus}=zeros(m);
         end
-        if impose_conditions
-            expected_shocks{splus}=0;
-        else
             expected_shocks{splus}=shocks;
-        end
         for st=1:h
             if h==1
                 pai_st_splus=1;
@@ -286,16 +280,14 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 pai_st_splus=Q(st,splus)*PAItt(st)/PAI(splus);
             end
             a{splus}=a{splus}+pai_st_splus*att{st};
-            if impose_conditions
-                % forecast with the expected shocks we had from the
-                % updating step
-                %---------------------------------------------------
-                expected_shocks{splus}=expected_shocks{splus}+pai_st_splus*myshocks{st};
-                if st==h
-                    % remove the first period since the shocks were
-                    % expected already from the period before...
-                    expected_shocks{splus}=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
-                end
+            % forecast with the expected shocks we had from the
+            % updating step
+            %---------------------------------------------------
+            expected_shocks{splus}=expected_shocks{splus}+pai_st_splus*myshocks{st};
+            if st==h
+                % remove the first period since the shocks were
+                % expected already from the period before...
+                expected_shocks{splus}=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
             end
             if ~is_steady
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
@@ -399,7 +391,7 @@ end
         options.shocks(:,1)=nan;
         % beyond the first period, only the shocks with long reach can
         % be used
-        options.shocks(cond_shocks_id,1:horizon)=nan;
+        options.shocks(cond_shocks_id,1:start_iter)=nan;
     end
 
     function [a_update,retcode,myshocks]=state_update_without_test(a_filt,Kv,st)
@@ -437,7 +429,7 @@ end
         end
     end
 
-    function [a_update,retcode]=state_update_with_test(a_filt,Kv,st)
+    function [a_update,retcode,myshocks_]=state_update_with_test(a_filt,Kv,st)
         retcode=0;
         % compute the update
         %--------------------
@@ -456,10 +448,13 @@ end
             old_update=atmp(:,ones(1,horizon));
             old_update(:,2:end)=nan;
         end
+        % initialize the shocks
+        %------------------------
+        myshocks_=shocks;
         while start_iter<horizon && violations
             start_iter=start_iter+1;
             y0=simul_initial_conditions(a_filt,start_iter);
-            [fsteps,~,retcode]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
+            [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
             for iter=1:options.nsteps
                 violations=any(sep_compl(fsteps(:,iter))<cutoff);
                 if violations
@@ -480,6 +475,10 @@ end
                 old_update(:,start_iter)=fsteps(:,1);
             end
         end
+        % make sure we have the correct size since there may be more shocks
+        % resulting from forecasting multi-periods
+        %------------------------------------------------------------------
+        myshocks_=myshocks_(:,1:horizon);
         if options.debug && start_iter>1
             keyboard
         end
@@ -507,6 +506,7 @@ end
             end
         end
     end
+
     function store_predictions()
         Filters.PAI(:,t+1)=PAI;
         Filters.Q(:,:,t+1)=Q;
