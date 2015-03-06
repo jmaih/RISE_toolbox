@@ -102,14 +102,23 @@ end
         EndogenousConditions=recreate_conditions(y_conditions);
         ct=EndogenousConditions{1};
         horizon=options.k_future+1;
-        nap=horizon;
-        ncp=size(ct,2);
-        ncsp = utils.forecast.conditional.number_of_conditioning_shocks_periods(...
-            forecast_conditional_hypothesis,ncp,nap);
-        missing_shocks=max(0,ncsp-size(shocks,2));
+%         nap=horizon;
+        shocks_=shocks;
+        ncols_shocks=size(shocks_,2);
+        ncols_ct=size(ct,2);
+        if strcmpi(forecast_conditional_hypothesis,'nas')
+            shocks_=shocks_(:,1:horizon);
+            ct=ct(:,1:min(ncols_ct,horizon));
+            ncols_shocks=size(shocks_,2);
+            ncols_ct=size(ct,2);
+        end
+%         ncp=max(ncols_ct,ncols_shocks);
+%         ncsp = utils.forecast.conditional.number_of_conditioning_shocks_periods(...
+%             forecast_conditional_hypothesis,ncp,nap);
+        needed_shocks=options.nsteps+options.k_future;
+        missing_shocks=max(0,needed_shocks-ncols_shocks);%<--missing_shocks=max(0,ncsp-ncols_shocks);
         % set shocks beyond the shocks availability to zero.
-        myshocks=[shocks,zeros(nx,missing_shocks)];
-        myshocks=myshocks(:,1:ncsp);
+        myshocks=[shocks_,zeros(nx,missing_shocks)];
         
         % the nan shocks are the ones to estimate
         %-----------------------------------------
@@ -122,7 +131,7 @@ end
         
         % trim the conditional information up to the number of steps
         %-----------------------------------------------------------
-        endo_horizon=min(ncp,options.nsteps);
+        endo_horizon=min(ncols_ct,options.nsteps);
         ct=ct(:,1:endo_horizon);
         
         % the non-nan elements are the targets to hit
@@ -136,7 +145,9 @@ end
         % the predictions by adjusting the unconstrained shocks
         %--------------------------------------------------------------
         x1=fsolve(@model_distance,myshocks(estim_shocks),...
-            optimset('display','iter','TolFun',sqrt(eps)));
+            optimset('display','none','TolFun',sqrt(eps)));
+%         x1=lsqnonlin(@model_distance,myshocks(estim_shocks),[],[],...
+%             optimset('display','none','TolFun',sqrt(eps)));
         myshocks(estim_shocks)=x1;
         
         % rebuild the final sims
@@ -173,7 +184,12 @@ end
         NumberOfSimulations=0;
         EndogenousConditions=recreate_conditions(bsxfun(@minus,y_conditions,ss_));
         if ~isempty(shocks)
-            ShocksConditions=recreate_conditions(shocks);
+            % chop the shocks before sending them forward if the assumption
+            % is nas
+            if strcmpi(forecast_conditional_hypothesis,'nas')
+                shocks_=shocks(:,1:options.k_future+1);
+            end
+            ShocksConditions=recreate_conditions(shocks_);
         else
             ShocksConditions=[];
         end
@@ -189,20 +205,21 @@ end
         % shocks that are nan are shocks that are not conditioned on
         %------------------------------------------------------------
         shocks(isnan(shocks))=0;
+        y00=y0;
         for t=1:span
             if ~retcode
                 % process shocks
                 %----------------
                 shocks_t=shocks(:,t+(0:options.k_future));
                 if ~isempty(simul_update_shocks_handle) && simul_do_update_shocks
-                    shocks_t=simul_update_shocks_handle(shocks_t,y0.y);
+                    shocks_t=simul_update_shocks_handle(shocks_t,y00.y);
                 end
                 if options.simul_anticipate_zero
                     shocks_t(:,2:end)=0;
                 end
                 % compute transition matrix and switching probabilities
                 %------------------------------------------------------
-                [Q,retcode]=Qfunc(y0.y);
+                [Q,retcode]=Qfunc(y00.y);
                 if ~retcode
                     rt=states(t);
                     if isnan(rt)
@@ -243,7 +260,7 @@ end
                     if t>options.burn
                         sims(:,t-options.burn)=y1.y;
                     end
-                    y0=y1;
+                    y00=y1;
                     y1=[];
                 end
             end
@@ -255,7 +272,7 @@ end
                 lucky=find(cp>rand,1,'first')-1;
                 rt=state_list(lucky);
             end
-            y1=utils.forecast.one_step_fbs(T(:,rt),y0,ss{rt},state_vars_location,...
+            y1=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                 options.simul_sig,shocks_t,options.simul_order);
             if ~options.complementarity(y1.y)
                 if options.simul_honor_constraints_through_switch
@@ -265,7 +282,7 @@ end
                     state_list(state_list==rt)=[];
                     rt=nan;
                 else
-                    y1=utils.forecast.one_step_fbs(T(:,rt),y0,ss{rt},state_vars_location,...
+                    y1=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
                         options.sep_compl,cond_shocks_id);
                 end
