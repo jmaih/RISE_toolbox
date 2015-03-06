@@ -356,6 +356,11 @@ end
                         blocks_to_discard_coz_they_are_defs(nblks,1)=false;
                     end
                     equation=initialize_equation();
+                    % clear the mcp_flag
+                    %--------------------
+                    if mcp_flag
+                        mcp_flag=false;
+                    end
                 end
             end
         end
@@ -367,8 +372,8 @@ end
                         file_name_,' at line ',sprintf('%0.0f',iline_)])
                 end
                 mcp_test_passed=false;
-                mcp_inequalities={'ge','gt','le','lt',...
-                    '>=','>','<=','<'};
+                mcp_inequalities={'>=','<='...,'>','<','ge','gt','le','lt',
+                    };
             end
             checked=false;
             % look for equality signs
@@ -390,10 +395,15 @@ end
                             file_name_,' at line ',sprintf('%0.0f',iline_)])
                     end
                     % 2- one of the following ge gt le lt
-                    if any(strcmp(equation{1,ic},mcp_inequalities))
+                    for iii=1:numel(mcp_inequalities)
+                        loc=strfind(equation{1,ic},mcp_inequalities{iii});
+                        if ~isempty(loc)
+                            break
+                        end
+                    end
+                    if ~isempty(loc)
                         if ~mcp_test_passed
-                            if any(strcmp(equation{1,ic},mcp_inequalities(5:end))) &&...
-                                    (ic==1||ic==size(equation,2)-1)
+                            if (ic==1||ic==size(equation,2)-1)
                                 error(['inequality mis-placed in complementarity constraint in ',...
                                     file_name_,' at line ',sprintf('%0.0f',iline_)])
                             end
@@ -455,14 +465,35 @@ end
             if size(equality_signs,2)>1
                 error([mfilename,':: multiple equality signs found in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
             elseif size(equality_signs,2)==1
-                if ~mcp_flag
                     % validate the lhs and the rhs of the equality separately
                     lhs=equation(:,1:equality_signs{1}-1);
                     rhs=equation(:,equality_signs{1}+1:end);
+                    if isempty(rhs)||isempty(lhs)
+                        error([mfilename,':: left-hand side or right-hand side badly specified in ',...
+                            file_name_,' at line ',sprintf('%0.0f',iline_)])
+                    end
                     % split the middle cell and isolate the equality sign
                     string=equation{1,equality_signs{1}};
-                    left_string=string(1:equality_signs{2}-1);
-                    right_string=string(equality_signs{2}+1:end);
+                    left_string=[];
+                    right_string=[];
+                    if mcp_flag
+                        % locate > or < and =
+                        inequal=strfind(string,'<');
+                        inequal_type=1;
+                        if isempty(inequal)
+                            inequal=strfind(string,'>');
+                            inequal_type=2;
+                        end
+                        equal_=strfind(string,'=');
+                        lhs=[lhs,transpose({string(1:inequal-1),[]})];
+                        rhs=[transpose({string(equal_+1:end),[]}),rhs];
+                        if inequal_type==1
+                            lhs=[transpose({'-(',[]}),lhs,transpose({')',[]})];
+                        end
+                    else
+                        left_string=string(1:equality_signs{2}-1);
+                        right_string=string(equality_signs{2}+1:end);
+                    end
                     if ~isempty(left_string)
                         % add to the lhs
                         lhs=[lhs,transpose({left_string,[]})];
@@ -496,7 +527,9 @@ end
                         middle=transpose({'=',[]});
                     end
                     equation=[lhs,middle,rhs];
-                end
+                    if mcp_flag
+                        equation{1,end}=[equation{1,end}(1:end-1),'>=0;'];
+                    end
             end
             if ~checked
                 % then there was no equality sign and so, check the whole
