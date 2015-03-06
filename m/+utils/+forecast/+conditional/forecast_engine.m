@@ -113,7 +113,15 @@ if nargout>1
         error([mfilename,':: some elements in LB greater than their counterparts in UB'])
     end
     
-    CSOMG=transpose(chol(OMG));
+    [CSOMG,procrustes_] = chol(OMG,'lower'); % <--CSOMG=transpose(chol(OMG));
+    % repair covariance if necessary
+    %--------------------------------
+    if procrustes_
+        warning('Procrustes came to rescue. Thank Procrustes!!!')
+        OMG=utils.cov.nearest(OMG);
+        CSOMG = chol(OMG,'lower');
+    end
+
     % Compute the theoretical mean (doesn't change with the tightening in a symmetric
     % distribution)
     rmean=TruncatedMultivariateNormalMean(rstar,rlow,rhigh,CSOMG);
