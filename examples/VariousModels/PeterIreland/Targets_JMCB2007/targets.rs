@@ -5,7 +5,7 @@
 % data start 1959Q1
 
 endogenous Y "Output" C "Consumption" PAI "Gross inflation" PAISTAR "Inflation target" A LAMBDA Z
-R "Gross nom. int. rate" THETA GY GPAI GR RRPAI Q X "Output gap" V E
+R "Gross nom. int. rate" THETA GY GPAI GR RRPAI Q X "Output gap" V E EPS_THETA
 GY_HAT GPAI_HAT RRPAI_HAT
 
 observables GY_HAT GPAI_HAT RRPAI_HAT
@@ -16,7 +16,8 @@ parameters	psi	alpha rho_a	sig_a gam beta rho_e thetass sig_e zss sig_z rho_pai 
 	delta_a	delta_e	delta_z	sig_pai	rho_v sig_v ess
 
 model
-
+	% Auxiliary parameters (see definitions on page 9 in the notes)
+	%--------------------------------------------------------------
 	# phi =(thetass-1)/psi;
 
 	# sig_theta=phi*sig_e;
@@ -33,9 +34,7 @@ model
 
 	 LAMBDA = beta*R*1/Z{+1}*1/PAISTAR{+1}*LAMBDA{+1}/PAI{+1};
 
-	 log(E/ess) = rho_e*log(E{-1}/ess)+sig_e*EPS_E;
-
-	 THETA=thetass*(E/ess)^phi;
+	 log(THETA) = (1-rho_theta)*log(thetass)+rho_theta*log(THETA{-1})+sig_theta*EPS_THETA;
 
 	 log(Z)=log(zss)+sig_z*EPS_Z;
 
@@ -57,9 +56,16 @@ model
 	log(R) = log(R{-1})+rho_pai*log(PAI)+rho_x*log(X/steady_state(X))+
 		rho_gy*log(GY/steady_state(GY))-log(PAISTAR)+log(V);
 
-	log(PAISTAR)=delta_a*EPS_A-delta_theta*EPS_E-delta_z*EPS_Z+sig_pai*EPS_PAI;
+	log(PAISTAR)=delta_a*EPS_A-delta_theta*EPS_THETA-delta_z*EPS_Z+sig_pai*EPS_PAI;
 
 	log(V)=rho_v*log(V{-1})+sig_v*EPS_V;
+
+	% Auxiliary equations (page 9 in the notes)
+	%-------------------------------------------
+
+	log(E/ess) = 1/phi*log(THETA/thetass);
+
+	EPS_THETA=EPS_E;
 
 	% Measurement equations
 	%----------------------
