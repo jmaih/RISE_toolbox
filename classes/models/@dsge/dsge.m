@@ -67,7 +67,6 @@ classdef dsge < rise_generic
         online_routines
     end
     properties (SetAccess = private, Hidden = true)
-        current_solution_state
         dates_filtering % those two options should be moved elsewhere so that they are visible...
         dates_smoothing
         dsge_prior_weight_id
@@ -114,6 +113,10 @@ classdef dsge < rise_generic
         %------------------------------------------------------
         reordering_index
         equations_reordering_for_multipliers
+        % provision for solving and resolving
+        %--------------------------------------
+        warrant_resolving = true % resolve the model initialized to true
+        warrant_setup_change = true % initialization of functions, derivatives, etc.
     end
     properties(SetAccess=protected)
         % values of auxiliary parameters defined in the model file with a #

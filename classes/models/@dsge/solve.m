@@ -149,19 +149,35 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - etc...
 
 if isempty(obj)
-    if nargout>1
-        error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-    end
-    obj=utils.miscellaneous.mergestructures(optimal_policy_solver_h(obj),...
-        dsge_solver_h(obj),...
-        struct('solver',[],...
-        'solve_order',1,...
-        'solve_check_stability',true,...
-        'solve_derivatives_type','symbolic',...%['symbolic','numerical','automatic']
-        'solve_accelerate',false,...
+    is_SetupChangeAndResolve=struct(...
         'solve_function_mode','explicit',... %['explicit','disc','vectorized'] see dsge.set
+        'solve_derivatives_type','symbolic');%...%['symbolic','numerical','automatic']
+    
+    is_ResolveOnly=struct('solver',[],...
+        'solve_order',1,...
         'solve_shock_horizon',[],...
-        'solve_log_approx_vars',[]));%
+        'solve_initialization','backward',... ['zeros','backward','random']
+        'solve_log_approx_vars',[],...
+        'solve_accelerate',false,...
+        'solve_disable_theta',false);
+    % add the defaults from fix point iterator
+    fpi=fix_point_iterator();
+    is_ResolveOnly=utils.miscellaneous.mergestructures(is_ResolveOnly,fpi);
+    
+    others=struct('solve_check_stability',true);
+
+    obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
+        optimal_policy_solver_h(obj),others);%
+    if nargout>1
+        retcode1=fieldnames(is_ResolveOnly);
+        retcode1=[retcode1(:).','parameters'];
+        retcode2=fieldnames(is_SetupChangeAndResolve);
+        retcode=struct('resolve_only',{retcode1},...
+            'change_setup_and_resolve',{retcode2(:).'});
+        if nargout>2
+            error([mfilename,':: when the object is emtpy, nargout must be at most 2'])
+        end
+    end
     return
 end
 
@@ -182,6 +198,10 @@ if nobj>1
     end
     return
 end
+
+% this flag forces resolve to get the structural matrices of the system
+%-----------------------------------------------------------------------
+is_struct_mat_out=nargout>2;
 
 % initialize elements that will be used by different sub-functions
 %-----------------------------------------------------------------
@@ -286,8 +306,13 @@ if solve_order>0 && ~retcode && resolve_it
         end
     end
 end
-if retcode && obj.options.debug
-    utils.error.decipher(retcode)
+if retcode
+    if obj.options.debug
+        utils.error.decipher(retcode)
+    end
+else
+    obj.warrant_resolving=false;
+    obj.warrant_setup_change=false;
 end
 
     function retcode=evaluate_all_derivatives()
@@ -420,53 +445,14 @@ end
         % that there no shocks. If order==0, this will later on help set
         % the conditional information to nan. But for the purpose of
         % expanding the model, the expansion order is at least 1.
-        % NORMALLY ALL OPTIONS SHOULD BE CHECKED. FOR INSTANCE ONE MAY WANT
-        % TO SEE THE EFFECT OF CHANGING THE TOLERANCE LEVEL ON THE SOLUTION
-        % AND CURRENTLY, THIS IS NOT TAKEN CARE OF. AT SOME LEVEL, ALL THE
-        % OPTIONS COULD BE REPRESENTED IN A VECTOR, SO THAT IF AN ELEMENT
-        % IS DIFFERENT, WHATEVER IT IS, THEN WE RESOLVE. BUT THIS IS NOT AN
-        % URGENT MATTER.
-        resolve_it=isempty(obj.current_solution_state)||...
-            obj.estimation_under_way||...
+        resolve_it=obj.estimation_under_way||obj.warrant_resolving||...
             strcmp(obj.options.solve_initialization,'random')||...
-            ~isfield(obj.solution,'Tz');
-        horizon=max(obj.exogenous.shock_horizon);
-        load_ssfuncs=isempty(obj.current_solution_state);
-        if ~resolve_it && ~isfield(obj.current_solution_state,'solve_function_mode')
-            % maybe I should have refresh do this? and possibly
-            % redifferentiate the whole system?
-            obj.current_solution_state.solve_function_mode=obj.options.solve_function_mode;
-        end
-        if resolve_it
-            obj.current_solution_state=fill_solve_state_info();
-        else
-            new_state=fill_solve_state_info();
-            try
-                load_ssfuncs=load_ssfuncs||...
-                    ~strcmp(new_state.derivatives_type,obj.current_solution_state.derivatives_type)||...
-                    ~strcmp(new_state.solve_function_mode,obj.current_solution_state.solve_function_mode);
-            catch
-                load_ssfuncs=true;
-            end
-            resolve_it= ~isequal(new_state,obj.current_solution_state);
-            if resolve_it
-                obj.current_solution_state=new_state;
-            end
-        end
+            ~isfield(obj.solution,'Tz')||is_struct_mat_out;
+        load_ssfuncs=obj.warrant_setup_change;
         % steady state functions (just for output)
         %-----------------------------------------
         if load_ssfuncs
             obj.steady_state_funcs=recreate_steady_state_functions(obj);
-        end
-        
-        function new_state=fill_solve_state_info()
-            new_state=struct('horizon',horizon,...
-                'solution_algo',obj.options.solver,...
-                'solve_order',solve_order,...
-                'params',params,...
-                'derivatives_type',obj.options.solve_derivatives_type,...
-                'solve_function_mode',obj.options.solve_function_mode...
-                );
         end
     end
     function retcode=solve_zeroth_order()

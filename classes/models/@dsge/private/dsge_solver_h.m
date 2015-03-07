@@ -25,10 +25,7 @@ if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
-    T=struct('solve_disable_theta',false);
-    % gather the defaults from fix point iterator and initial guess
-    T=utils.miscellaneous.mergestructures(T,fix_point_iterator(),...
-        dsge_tools.utils.msre_initial_guess());
+    T=struct();
     return
 end
 

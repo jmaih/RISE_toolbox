@@ -56,21 +56,33 @@ if isempty(obj)
     return
 end
 
-nobj=numel(obj);
+% the options warranting setup change also imply the resolving of the model
+%--------------------------------------------------------------------------
+[~,bingo]=solve(dsge.empty(0));
+change_setup_and_resolve=bingo.change_setup_and_resolve;     
+resolve_only=bingo.resolve_only;
 
+is_resolve=false;
+is_setup_change=false;
 shock_horizon_id=[];
 use_disc_id=[];
 nn=length(varargin);
 for ii=1:2:nn
-    if strcmp(varargin{ii},'solve_shock_horizon')
+    this_option=varargin{ii};
+    if strcmp(this_option,'solve_shock_horizon')
         if nn>ii
             shock_horizon_id=[ii,ii+1];
         else
             shock_horizon_id=ii;
         end
-    elseif strcmp(varargin{ii},'solve_function_mode')
+    elseif strcmp(this_option,'solve_function_mode')
         use_disc_id=[ii,ii+1];
     end
+    is_setup_change=is_setup_change||...
+        any(strcmp(this_option,change_setup_and_resolve));
+    
+    is_resolve=is_resolve||is_setup_change||...
+        any(strcmp(this_option,resolve_only));
 end
 solve_shock_horizon=varargin(shock_horizon_id);
 solve_function_mode=varargin(use_disc_id);
@@ -78,14 +90,36 @@ varargin(shock_horizon_id)=[];
 % do not remove the disc property since that option has to be visible
 % unlike the shocks horizon. varargin(use_disc_id)=[];
 obj=set@rise_generic(obj,varargin{:});
+
+nobj=numel(obj);
+% do this one at a time
+%-----------------------
+for ii=1:nobj
+    if is_resolve
+        % the model will be resolved
+        %----------------------------
+        obj(ii).warrant_resolving=true;
+    end
+    if is_setup_change
+        obj(ii).warrant_setup_change=true;
+    end
+end
 if ~isempty(shock_horizon_id)
     if numel(shock_horizon_id)==1
         % display the options
-        error('somethings should be implemented in this case: contact junior.maih@gmail.com')
+        error('something should be implemented in this case: contact junior.maih@gmail.com')
     else
-        set_shock_horizon()
+        % turn into struct if cell
+        %---------------------------
+        value=process_cell(solve_shock_horizon{2});
+        % do this one at a time
+        %-----------------------
+        for ii=1:nobj
+            obj(ii)=set_shock_horizon(obj(ii));
+        end
     end
 end
+
 if ~isempty(solve_function_mode)
     solve_function_mode=solve_function_mode{2};
     % do this one at a time
@@ -128,49 +162,43 @@ end
         end
     end
 
-    function set_shock_horizon()
-        value=solve_shock_horizon{2};
-        % turn into struct if cell
-        %---------------------------
-        process_cell()
+    function this=set_shock_horizon(this)
         
         % this has to be done one at a time
         %-----------------------------------
-        for iobj=1:nobj
-            if isa(value,'double') && numel(value)==1
-                value=round(abs(value));
-                obj(iobj).exogenous.shock_horizon(~obj(iobj).exogenous.is_observed)=value;
-            elseif isstruct(value)
-                fields=fieldnames(value);
-                shock_locs=locate_variables(fields,obj(iobj).exogenous.name);
-                obs_status=obj(iobj).exogenous.is_observed(shock_locs);
-                if any(obs_status)
-                    disp(fields(obs_status))
-                    error('the shocks above are deterministic and there horizon cannot be set')
-                end
-                for ifield=1:numel(fields)
-                    shock=fields{ifield};
-                    v=round(abs(value.(shock)));
-                    obj(iobj).exogenous.shock_horizon(shock_locs(ifield))=v;
-                end
-            else
-                error('value must be a scalar or a structure')
+        if isa(value,'double') && numel(value)==1
+            value=round(abs(value));
+            this.exogenous.shock_horizon(~this.exogenous.is_observed)=value;
+        elseif isstruct(value)
+            fields=fieldnames(value);
+            shock_locs=locate_variables(fields,this.exogenous.name);
+            obs_status=this.exogenous.is_observed(shock_locs);
+            if any(obs_status)
+                disp(fields(obs_status))
+                error('the shocks above are deterministic and there horizon cannot be set')
             end
-        end
-        
-        function process_cell()
-            if iscell(value)
-                if size(value,2)~=2
-                    error('when setting the shock horizon as a cell, the cell must have two columns')
-                end
-                ff=value(:,1);
-                check=cellfun(@isvarname,ff,'uniformOutput',false);
-                check=all([check{:}]);
-                if ~check
-                    error('when setting the shock horizon as a cell, the first column should have valid variable names')
-                end
-                value=cell2struct(value(:,2),ff,1);
+            for ifield=1:numel(fields)
+                shock=fields{ifield};
+                v=round(abs(value.(shock)));
+                this.exogenous.shock_horizon(shock_locs(ifield))=v;
             end
+        else
+            error('value must be a scalar or a structure')
         end
     end
+end
+
+function value=process_cell(value)
+if iscell(value)
+    if size(value,2)~=2
+        error('when setting the shock horizon as a cell, the cell must have two columns')
+    end
+    ff=value(:,1);
+    check=cellfun(@isvarname,ff,'uniformOutput',false);
+    check=all([check{:}]);
+    if ~check
+        error('when setting the shock horizon as a cell, the first column should have valid variable names')
+    end
+    value=cell2struct(value(:,2),ff,1);
+end
 end

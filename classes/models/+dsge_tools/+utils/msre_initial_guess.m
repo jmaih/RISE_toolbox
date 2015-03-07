@@ -20,7 +20,7 @@ function T0=msre_initial_guess(A0,dpb_minus,dbf_plus,solve_initialization)
 % See also: 
 
 if nargin==0
-    T0=struct('solve_initialization','backward');
+    T0=struct();
     return
 end
 n=size(A0{1},1);
