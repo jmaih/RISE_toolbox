@@ -1,9 +1,15 @@
-function [p,priors]=create_parameters(version,start_from_mode)
-if nargin<2
+function [p,priors]=create_parameters(version,linear,start_from_mode)
+if nargin<3
     start_from_mode=[];
-    if nargin<1
-        version=[];
+    if nargin<2
+        linear=[];
+        if nargin<1
+            version=[];
+        end
     end
+end
+if isempty(linear)
+    error('model type should be specified through linear set to true or false')
 end
 if isempty(start_from_mode)
     start_from_mode=false;
@@ -19,10 +25,12 @@ switch version
 end
 
 p=struct();
-% own parameterization: those parameters do not exist
-%----------------------------------------------------
-p.thetass=6;
-p.ess=1;
+if ~linear
+    % own parameterization: those parameters do not exist
+    %----------------------------------------------------
+    p.thetass=6;
+    p.ess=1;
+end
 
 % some parameters (beta and zss) are computed from the data
 %--------------------------------------------

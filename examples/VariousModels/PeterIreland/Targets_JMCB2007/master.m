@@ -1,9 +1,14 @@
 %% housekeeping
 clc
 %% RISE the model
-m=rise('targets','steady_state_file','sstate_model');
+linear=~true;
+if linear
+    m=rise('targets_lin');
+else
+    m=rise('targets','steady_state_file','sstate_model');
+end
 %% get the parameters
-[p,priors]=create_parameters('a',false);
+[p,priors]=create_parameters('a',linear,false);
 %% push the parameters
 m=set(m,'parameters',p);
 %% create data

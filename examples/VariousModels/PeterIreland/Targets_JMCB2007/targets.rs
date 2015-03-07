@@ -1,4 +1,4 @@
-% Peter N. Ireland (2007): "Changes in the Federal Reserve’s Inflation Target:
+% Peter N. Ireland (2007): "Changes in the Federal Reserve's Inflation Target:
 % Causes and Consequences" Journal of Money, Credit and Banking, Vol. 39, No. 8 (December 2007)
 %
 % Nonlinear model
@@ -70,11 +70,11 @@ model
 	% Measurement equations
 	%----------------------
 
-	GY_HAT=steady_state(GY)*log(GY/steady_state(GY));
+	GY_HAT=log(GY/steady_state(GY));
 
-	GPAI_HAT=steady_state(GPAI)*log(GPAI/steady_state(GPAI));
+	GPAI_HAT=log(GPAI/steady_state(GPAI));
 
-	RRPAI_HAT=steady_state(RRPAI)*log(RRPAI/steady_state(RRPAI));
+	RRPAI_HAT=log(RRPAI/steady_state(RRPAI));
 
 %steady_state_model
 %
@@ -95,4 +95,3 @@ model
 %	R=zss/beta;
 %	RRPAI=zss/beta;
 %	E=ess;
-	
