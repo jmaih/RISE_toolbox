@@ -8,28 +8,36 @@ else
     m=rise('targets','steady_state_file','sstate_model');
 end
 %% get the parameters
-[p,priors]=create_parameters('a',linear,false);
+version='a';
+% 'a' % model with an endogenous inflation target.
+% 'b' % model with an exogenous inflation target.
+% 'd' % model with backward-looking price setting.
+start_at_mode=false;
+
+[p,priors]=create_parameters(version,linear,start_at_mode);
+
 %% push the parameters
 m=set(m,'parameters',p);
+
 %% create data
 [data]=create_data();
-%% estimate the model
 
+%% estimate the model
 ms=estimate(m,'data',data,'estim_priors',priors);
-%%
-[mtest,LogLik3,~,retcode]=filter(m,'data',data);
+
 %% Impulse responses
 myirfs=irf(ms);
-%%
+
+%% plot responses
 myvars={'Y','PAI','R','X'};
-locs=locate_variables(myvars,m.endogenous.name);
-myvtex=m.endogenous.tex_name(locs);
-sstate=get(mtest,'sstate');
+locs=locate_variables(myvars,ms.endogenous.name);
+myvtex=ms.endogenous.tex_name(locs);
+sstate=get(ms,'sstate');
 ssdev=false;
 
 shocks={'EPS_A','EPS_E','EPS_Z','EPS_V','EPS_PAI'};%m.exogenous.name;
-locs=locate_variables(shocks,m.exogenous.name);
-myshtex=m.exogenous.tex_name(locs);
+locs=locate_variables(shocks,ms.exogenous.name);
+myshtex=ms.exogenous.tex_name(locs);
 close all
 figure('name','Impulse reponses');
 iter=0;
