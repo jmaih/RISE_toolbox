@@ -90,6 +90,10 @@ if data_provided
     allvars=union(obj.observables.name,...
         union(forecast_cond_endo_vars,forecast_cond_exo_vars));
     
+    % remove empty cells to avoid a warning about non-found variables
+    %------------------------------------------------------------------
+    allvars=allvars(cellfun(@(x)~isempty(x),allvars,'uniformOutput',true));
+    
     % the length/number of pages of the dataset depends on the horizon of the
     % shocks but for the moment, we consider all pages
     pages=[];
