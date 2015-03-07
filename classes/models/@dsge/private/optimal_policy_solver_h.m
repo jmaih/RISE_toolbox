@@ -25,8 +25,7 @@ if isempty(obj)
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
     T=struct('lc_reconvexify',false,...
-        'lc_algorithm','short',...
-        'lc_initialization','zeros');
+        'lc_algorithm','short');
     return
 end
 gam=structural_matrices.planner.commitment{1};
@@ -143,13 +142,15 @@ lc_reconvexify=options.lc_reconvexify;
 GAMm=big_gam1();
 
 if isempty(H0)
-    switch options.lc_initialization
+    switch options.solve_initialization
         case 'zeros'
             H0=zeros(n,n,h);
         case 'random'
             H0=randn(n,n,h);
+        case 'backward'
+            error('backward initialization not yet implemented for loose commitment')
         otherwise
-            error(['initialization ',parser.any2str(options.lc_initialization),' unknown'])
+            error(['initialization ',parser.any2str(options.solve_initialization),' unknown'])
     end
     use_pinv=true;
     H0=iterate_func(H0,use_pinv);
