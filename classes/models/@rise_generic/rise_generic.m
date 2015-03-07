@@ -70,19 +70,19 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         filtering
     end
     properties(SetAccess = protected, Hidden = true)%(SetAccess=protected)
-        estimation_restrictions
-        parameter_values
         data
         data_are_loaded = false
-        estimation_under_way=false;
-        estim_hyperparams=[]
-        estim_distributions={}
         estim_distrib_locations={}
-        linear_restrictions_data
+        estim_distributions={}
+        estim_hyperparams=[]
+        estimation_restrictions
+        estimation_under_way=false;
         general_restrictions_data
+        linear_restrictions_data
         list_of_issues
-        routines=struct()
         miscellaneous=struct() % will hold elements that are not classified
+        parameter_values
+        routines=struct()
     end
     
     methods(Abstract)
