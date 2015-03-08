@@ -272,7 +272,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if ~is_steady
             P{splus}=zeros(m);
         end
-            expected_shocks{splus}=shocks;
+        expected_shocks{splus}=shocks;
         for st=1:h
             if h==1
                 pai_st_splus=1;
@@ -283,7 +283,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             % forecast with the expected shocks we had from the
             % updating step
             %---------------------------------------------------
-            expected_shocks{splus}=expected_shocks{splus}+pai_st_splus*myshocks{st};
+            expected_shocks{splus}=expected_shocks{splus}+...
+                pai_st_splus*myshocks{st}(:,1:horizon);
             if st==h
                 % remove the first period since the shocks were
                 % expected already from the period before...
