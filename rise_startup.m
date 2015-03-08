@@ -174,6 +174,9 @@ end
 
 if flag
     set(0,'default');
+    % also remove the root path although it was added by the user manually
+    %---------------------------------------------------------------------
+    rmpath(fileparts(which(mfilename)))
 else
     welcome_message();
 end
