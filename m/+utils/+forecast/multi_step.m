@@ -92,7 +92,7 @@ if condforkst
 else
     % condition on shocks only
     condition_on_shocks_only(shocks);
-    myshocks=shocks;
+    myshocks=shocks(:,options.burn+1:end);
 end
 
     function nonlinear_conditional_forecasting_tools()
