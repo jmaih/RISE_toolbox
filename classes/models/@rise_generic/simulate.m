@@ -159,30 +159,37 @@ end
 [y,states,retcode,~,myshocks]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
 
-% add initial conditions: only the actual data on the first page
+% add initial conditions: (only the actual data on the first page)
+% ONLY IF THERE WAS NO BURN-IN
 %---------------------------------------------------------------
-y=[y0(1).y(:,:,1),y];
+if Initcond.burn==0
+    % we include history
+    y=[y0(1).y(:,:,1),y];
+    y0cols=size(y0(1).y,2);
+else
+    % then we start after the end of history
+    y0cols=0;
+end
 
 % put y in the correct order before storing
 %------------------------------------------
 y=re_order_output_rows(obj,y);
 
-y0cols=size(y0(1).y,2);
 start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
 
 smpl_states=numel(states);
 [states_,markov_chains]=regimes2states(states);
 smply=size(y,2);
 [exo_nbr,smplx]=size(myshocks);
-myshocks=[zeros(exo_nbr,1),myshocks];
-smplx=smplx+1;
+myshocks=[zeros(exo_nbr,y0cols),myshocks];
+smplx=smplx+y0cols;
 vnames=[obj.endogenous.name,obj.exogenous.name,'regime',markov_chains];
 endo_nbr=obj.endogenous.number(end);
 smpl=max(smplx,smply);
 yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains));
 yy(1:smply,1:endo_nbr)=y(1:endo_nbr,:)';
 yy(1:smplx,endo_nbr+(1:exo_nbr))=myshocks';
-yy(2:smply,endo_nbr+exo_nbr+1:end)=[states(1:smply-1),states_(1:smply-1,:)];
+yy(y0cols+1:smply,endo_nbr+exo_nbr+1:end)=[states,states_];
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
