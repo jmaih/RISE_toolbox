@@ -79,7 +79,9 @@ PAI=transpose(Q)*PAItt;
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
 shocks=zeros(exo_nbr,horizon);
-tmax_u=size(U,2);
+% deterministic variables only if rows present
+%----------------------------------------------
+tmax_u=size(U,2)*(size(U,1)>0);
 if tmax_u
     % update the state (a_{1|0} with the deterministic variables
     %------------------------------------------------------------

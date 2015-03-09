@@ -96,7 +96,9 @@ nv = size(Sv{1},2); % number of structural shocks
 %----------------
 horizon=syst.horizon;
 shocks0=zeros(nv,horizon);
-tmax_u=size(U,2);
+% deterministic variables only if rows present
+%----------------------------------------------
+tmax_u=size(U,2)*(size(U,1)>0);
 if tmax_u
     % update the state (x_{1|0} with the deterministic variables
     %------------------------------------------------------------
