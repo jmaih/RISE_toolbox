@@ -560,18 +560,29 @@ end
             % cannot have a zero steady state
             %---------------------------------
             if any(abs(ss__(log_vars))<obj.options.fix_point_TolFun)
+                if obj.options.debug
+                    zero_sstate=abs(ss__)<obj.options.fix_point_TolFun & log_vars;
+                    disp(obj.endogenous.name(zero_sstate))
+                end
                 retcode=27;
             end
             if retcode
                 return
             end
+            % Set to 1, the temporary steady state of the variables that
+            % are not log expanded. Otherwise we will be forcing all the
+            % variables to be log-expanded including those that have
+            % steady state zero.
+            ss__(~log_vars)=1;
+            % now operate in the order_var mode
+            %----------------------------------
             ss__=ss__(order_var);
             ss_state_list(1:npb)=ss__(pb_pos);
             zkz=1;
             Tz_='T';
             for io=1:obj.options.solve_order
                 zkz=kron(zkz,ss_state_list);
-                Tz_=[Tz_,'z'];
+                Tz_=[Tz_,'z']; %#ok<AGROW>
                 T.(Tz_){ireg_}=bsxfun(@times,T.(Tz_){ireg_},zkz);
                 % we need to full this because the various multiplications
                 % transform to sparse and create problems with reshape
