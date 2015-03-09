@@ -17,7 +17,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 if isempty(obj)
@@ -36,6 +36,9 @@ elseif strcmpi(PropertyName,'solution')
 elseif ismember(lower(PropertyName),{'trend','growth','bgp'})
     Reply=load_steady_state_or_balanced_growth(obj.solution.bgp);
 elseif ismember(lower(PropertyName),{'sstate','steadystate','steady_state'})
+    if isempty(obj.solution)
+        error('The model has not been solved')
+    end
     Reply=load_steady_state_or_balanced_growth(obj.solution.ss);
 elseif ismember(lower(PropertyName),{'par_vals','parameters'})% <--strcmpi(PropertyName,'par_vals')
     Reply=load_par_vals();
@@ -133,6 +136,9 @@ end
         end
     end
     function Reply=load_definitions()
+        if isempty(obj.solution)
+            error('The model has not been solved')
+        end
         formulae=obj.definitions.dynamic;
         def_vals=obj.solution.definitions;
         ndefs=numel(formulae);
