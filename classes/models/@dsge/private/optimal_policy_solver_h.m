@@ -148,7 +148,7 @@ if isempty(H0)
         case 'random'
             H0=randn(n,n,h);
         case 'backward'
-            error('backward initialization not yet implemented for loose commitment')
+            H0=backward_sol();
         otherwise
             error(['initialization ',parser.any2str(options.solve_initialization),' unknown'])
     end
@@ -266,5 +266,18 @@ end
         end
         
         GAM0(lamb,y)=A0{rt}+g0_y_l_1;
+    end
+
+    function H0=backward_sol()
+        H0=zeros(n,n,h);
+        AA0=zeros(n);
+        AAminus=zeros(n);
+        for rt_=1:h
+            AA0(1:ny,1:ny)=2*W{rt_};
+            AA0(1:ny,ny+1:end)=A0{rt_}.';
+            AA0(ny+1:end,1:ny)=A0{rt_};
+            AAminus(ny+1:end,1:ny)=Aminus{rt_};
+            H0(:,:,rt_)=AA0\AAminus;
+        end
     end
 end
