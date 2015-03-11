@@ -129,9 +129,14 @@ end
 twopi=2*pi;
 % smoothing not ready
 %---------------------
-store_filters=min(options.kf_filtering_level,2);
+store_filters=options.kf_filtering_level;
 if store_filters
     nsteps=options.kf_nsteps;
+    if store_filters>2
+        % place holder for smoothing gains
+        %----------------------------------
+        SG=repmat({nan(m,m,smpl)},1,h);
+    end
 else
     % do not do multi-step forecasting during estimation
     nsteps=1;
@@ -273,13 +278,13 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             a{splus}=a{splus}+pai_st_splus*att{st};
             P{splus}=P{splus}+pai_st_splus*Ptt{st};
         end
-        [x]=sigma_points(a{splus},P{splus});
+        [xtt]=sigma_points(a{splus},P{splus});
         a_plus=0;
-        x_plus=[x,zeros(m,2*nshocks)];
+        x_plus=[xtt,zeros(m,2*nshocks)];
         % run sigma points for states 
         %-----------------------------
         for jj=1:2*m+1
-            [x_plus(:,jj),~,retcode]=ff(splus,x(:,jj),shocks,Ut);
+            [x_plus(:,jj),~,retcode]=ff(splus,xtt(:,jj),shocks,Ut);
             if retcode
                 return
             end
@@ -307,8 +312,21 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             offset=offset+1;
         end
         P_plus=0;
+        C_t_tp1=0;
         for jj=1:size(x_plus,2);
-            P_plus=P_plus+w(jj)*(x_plus(:,jj)-a_plus)*(x_plus(:,jj)-a_plus).';
+            x_a=x_plus(:,jj)-a_plus;
+            P_plus=P_plus+w(jj)*(x_a*x_a.');
+            if store_filters>2 % store smoothed
+                if jj<=2*m+1
+                    C_t_tp1=C_t_tp1+w(jj)*(xtt(:,jj)-a{splus})*x_a.';
+                    % the remaining increments are zeros since the first
+                    % parenthesis in these cases is a{splus}-a{splus}
+                end
+                if jj==2*(m+nshocks)+1
+                    % Compute smoothing gain and store for later use...
+                    SG{splus}(:,:,t)=C_t_tp1/P_plus;
+                end
+            end
         end
         a{splus}=a_plus;
         % the symmetrization step could have been saved but we want to give
@@ -327,11 +345,56 @@ end
 % included only if in range
 loglik=sum(Incr(first:end));
 
+if store_filters>2 % store smoothed
+    for t=smpl:-1:1
+        Q=Filters.Q(:,:,t);
+        [~,occur,obsOccur]=z(t);
+        y=data_y(occur,t);
+        for s0=1:h
+            for s1=1:h
+                % joint probability of s0 (today) and s1 (tomorrow)
+                if t==smpl
+                    pai_0_1=Q(s0,s1)*Filters.PAItt(s0,t);
+                else
+                    pai_0_1=Q(s0,s1)*Filters.PAItt(s0,t)*...
+                        Filters.PAItT(s1,t+1)/Filters.PAI(s1,t+1);
+                end
+                % smoothed probabilities
+                %-----------------------
+                Filters.PAItT(s0,t)=Filters.PAItT(s0,t)+pai_0_1;
+            end
+            % smoothed state
+            %------------------
+            Filters.atT{s0}(:,1,t)=Filters.att{s0}(:,1,t);
+            % P_{t|T}=P_{t|t}+SG*(P_{t+1|T}-P_{t+1|t})*SG.'
+            if t<smpl
+                Filters.atT{s0}(:,1,t)=Filters.atT{s0}(:,1,t)+...
+                    SG{s0}(:,:,t)*(Filters.atT{s0}(:,1,t+1)-Filters.a{s0}(:,1,t+1));
+            end
+            % smoothed measurement errors
+            %--------------------------
+            Filters.epsilon{s0}(occur,1,t)=y-Filters.atT{s0}(obsOccur,1,t);
+        end
+        % correction for the smoothed probabilities [the approximation involved does not always work
+        % especially when dealing with endogenous switching.
+        SumProbs=sum(Filters.PAItT(:,t));
+        if abs(SumProbs-1)>1e-8
+            Filters.PAItT(:,t)=Filters.PAItT(:,t)/SumProbs;
+        end
+    end
+end
+
+
     function store_updates()
         Filters.PAItt(:,t)=PAItt;
         for st_=1:h
             Filters.att{st_}(:,1,t)=a{st_};
             Filters.Ptt{st_}(:,:,t)=P{st_};
+%             if store_filters>2
+%                 K_store{st_}(:,occur,t)=K(:,occur,st_);
+%                 iF_store{st_}(occur,occur,t)=iPvv{st_};
+%                 v_store{st_}(occur,t)=v{st_};
+%             end
         end
     end
 
