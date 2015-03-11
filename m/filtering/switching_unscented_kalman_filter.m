@@ -324,7 +324,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 end
                 if jj==2*(m+nshocks)+1
                     % Compute smoothing gain and store for later use...
-                    SG{splus}(:,:,t)=C_t_tp1/P_plus;
+                    SG{splus}(:,:,t)=C_t_tp1/utils.cov.nearest(P_plus);
                 end
             end
         end
