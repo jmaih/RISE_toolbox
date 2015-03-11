@@ -302,6 +302,12 @@ if solve_order>0 && ~retcode && resolve_it
                 
                 obj=set_z_eplus_horizon(obj);
                 obj.solution.user_resids=structural_matrices.user_resids;
+                if obj.options.solve_check_stability && ...
+                        ~any(strcmp(obj.options.solver,{'rise_1','klein','aim','sims'}))%
+                    if ~obj.is_stable_system
+                        retcode=25; % system unstable
+                    end
+                end
             end
         end
     end
