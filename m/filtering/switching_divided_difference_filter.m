@@ -69,6 +69,7 @@ x0=syst.a;
 h = numel(x0);
 Qfunc=syst.Qfunc;
 ff=syst.ff;
+kf_householder_chol=options.kf_householder_chol;
 S0=cell_householder(syst.P);
 Sw=cell_householder(syst.H);
 Sv=cell_householder(syst.SIGeta);
@@ -165,7 +166,7 @@ for t = 1:T
         
         Pxy = Sbarx{rt}*Syxbar_1';
         
-        Sy = utils.cov.householder([Syxbar_1,Syw_1]);
+        Sy = utils.cov.householder([Syxbar_1,Syw_1],kf_householder_chol);
         
         F = Sy*Sy';
         
@@ -205,7 +206,8 @@ for t = 1:T
         else
             KSyw_1=K*Syw_1;
         end
-        Shat_x{rt} = utils.cov.householder([Sbarx{rt} - K*Syxbar_1, KSyw_1]);
+        Shat_x{rt} = utils.cov.householder([Sbarx{rt} - K*Syxbar_1, KSyw_1],...
+            kf_householder_chol);
         
     end
     
@@ -299,7 +301,7 @@ loglik = sum(Incr(first:end));
         Sxv_1=scal2*Sxv_1;
         Sxv_2=scal3*Sxv_2;
         
-        Sbarx = utils.cov.householder([Sxx_1,Sxv_1,Sxx_2,Sxv_2]);
+        Sbarx = utils.cov.householder([Sxx_1,Sxv_1,Sxx_2,Sxv_2],kf_householder_chol);
         
         if strcmp(type,'stirling')
             xbar = scal0*f0 +  scal1*xbar;
@@ -351,7 +353,8 @@ loglik = sum(Incr(first:end));
         for reg=1:h
             if ~isempty(P{reg})
                 [UU,SS,VV] = svd(P{reg});
-                C=utils.cov.householder(UU*diag(sqrt(diag(SS)))*VV.');
+                C=utils.cov.householder(UU*diag(sqrt(diag(SS)))*VV.',...
+                    kf_householder_chol);
                 S{reg}=C; % <-- S{rt}=chol(P{rt},'lower');
             end
         end

@@ -44,6 +44,10 @@ function [init,retcode]=filter_initialization(obj,varargin)%T,R,steadystate,risk
 %   algorithm. It should have the same inputs and outputs as e.g.
 %   switching_divided_difference_filter.m. 
 %
+%   - **kf_householder_chol** [{false}|true]: if true, return the cholesky
+%   decomposition when taking the householder transformation. This option
+%   is primarily used in the switching divided difference filter.
+%
 % Outputs
 % --------
 %
@@ -87,7 +91,8 @@ if isempty(obj)
         'kf_riccati_tol',1e-6,...
         'kf_nsteps',1,...
         'kf_user_algo','',...
-        'kf_nan_future_obs_means_missing',true);
+        'kf_nan_future_obs_means_missing',true,...
+        'kf_householder_chol',false);
     lyap_options=lyapunov_equation();
     defaults=utils.miscellaneous.mergestructures(defaults,lyap_options);
     init=defaults;
