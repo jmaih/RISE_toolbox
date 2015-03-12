@@ -18,7 +18,7 @@ function vcov=nearest(vcov0,debug)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if nargin<2
     debug=false;
@@ -30,12 +30,16 @@ vcov=.5*(vcov0+vcov0.');
 
 oldD=diag(D);
 
-D=max(oldD,sqrt(eps));
-
-vcov = V*diag(max(D,sqrt(eps)))*V';
-
-if debug && max(abs(D-oldD))>1e-6
-    warning('Covariance matrix altered')
+% quick exit
+%------------
+if any(oldD<=0)
+    D=max(oldD,sqrt(eps));
+    
+    vcov = V*diag(max(D,sqrt(eps)))*V';
+    
+    if debug && max(abs(D-oldD))>1e-6
+        warning('Covariance matrix altered')
+    end
 end
 
 end
