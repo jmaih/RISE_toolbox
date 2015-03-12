@@ -1,5 +1,6 @@
-function vcov=nearest(vcov0)
-% H1 line
+function vcov=nearest(vcov0,debug)
+
+% nearest -- computes nearest covariance matrix
 %
 % Syntax
 % -------
@@ -19,11 +20,22 @@ function vcov=nearest(vcov0)
 %
 % See also: 
 
-% nearest covariance matrix
+if nargin<2
+    debug=false;
+end
+
 vcov=.5*(vcov0+vcov0.');
+
 [V,D] = eig(vcov);
-vcov = V*diag(max(diag(D),sqrt(eps)))*V';
-if max(abs(vcov(:)-vcov0(:)))>1e-6
+
+oldD=diag(D);
+
+D=max(oldD,sqrt(eps));
+
+vcov = V*diag(max(D,sqrt(eps)))*V';
+
+if debug && max(abs(D-oldD))>1e-6
     warning('Covariance matrix altered')
 end
+
 end
