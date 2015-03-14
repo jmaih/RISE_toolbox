@@ -29,22 +29,37 @@ output=struct();
 nobj=numel(dbcell);
 for ivar=1:numel(varList)
     for imod=1:numel(dbcell)
-        datta=double(dbcell{imod}.(varList{ivar}));
+        this=dbcell{imod}.(varList{ivar});
+        dn=this.date_numbers;
+        datta=double(this);
         if imod==1 && ivar==1
             data_size=size(datta);
-            tank=zeros(data_size(1),nobj,data_size(2));
+            tank=nan(data_size(1),nobj,data_size(2));
             mod_names=strcat('model_',cellfun(@num2str,num2cell(1:nobj),'uniformOutput',false));
             reg_names=strcat('regime_',cellfun(@num2str,num2cell(1:data_size(2)),'uniformOutput',false));
-        end
-        % some variables (like states), may have one observation less. This
-        % may still not work as expected, precisely if there are nans here
-        % and there. in particular, if the first series start later than
-        % the others, etc.
-        %------------------------------------------------------------------
-        try
+            dn0=dn;
+            big_start=dn0(1);
+            big_end=dn0(end);
             tank(:,imod,:)=datta;
-        catch
-            tank(2:end,imod,:)=datta;
+        else
+            before=big_start-dn(1);
+            if before>0
+                big_start=dn(1);
+                tank=cat(1,nan(before,nobj,data_size(2)),tank);
+            end
+            after=dn(end)-big_end;
+            if after>0
+                big_end=dn(end);
+                tank=cat(1,tank,nan(after,nobj,data_size(2)));
+            end
+            if before||after
+                dn0=big_start:big_end;
+            end
+            % better start search from the beginning
+            start=find(dn(1)==dn0,1,'first');
+            % better start search from the end
+            finish=find(dn(end)==dn0,1,'last');
+            tank(start:finish,imod,:)=datta;
         end
     end
     if data_size(2)>1
