@@ -1,4 +1,4 @@
-function [y1,is_active_shock,retcode]=one_step_fbs(T,y0,ss,xloc,sig,...
+function [y1,is_active_shock,retcode,shocks]=one_step_fbs(T,y0,ss,xloc,sig,...
     shocks,order,compl,cond_shocks_id)
 
 % H1 line
@@ -28,12 +28,6 @@ n=nargin;
 
 myzero=-sqrt(eps);
 
-debug=false;
-if debug
-    fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);
-else
-    fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
-end
 
 y1k=y0(:,ones(1,kplus1+1));
 if n==7
@@ -52,6 +46,12 @@ y1=y1k(2);
 retcode=0;
 is_active_shock=false(1,kplus1);
 if ~isempty(first_viol)
+    debug=false;
+    if debug
+        fsolve_options=struct('Display','iter','TolFun',1e-12,'TolX',1e-12);
+    else
+        fsolve_options=struct('Display','none','TolFun',1e-12,'TolX',1e-12);
+    end
     % now check the entire stretch
     %------------------------------
     check_first_only=false;
@@ -108,6 +108,7 @@ if ~isempty(first_viol)
         end
     end
     y1=y1k(2);
+    shocks=shocks0;
 end
 
     function viol=multi_complementarity(ee)

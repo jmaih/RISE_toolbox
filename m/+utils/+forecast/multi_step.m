@@ -274,7 +274,7 @@ end
             end
             y1=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                 options.simul_sig,shocks_t,options.simul_order);
-            if ~options.complementarity(y1.y)
+            if ~isempty(options.complementarity) && ~options.complementarity(y1.y)
                 if options.simul_honor_constraints_through_switch
                     if ~isnan(states(t))
                         error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',states(t))) %#ok<SPERR>
@@ -282,9 +282,11 @@ end
                     state_list(state_list==rt)=[];
                     rt=nan;
                 else
-                    y1=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
+                    [y1,~,retcode,shocks_t1]=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
                         options.sep_compl,cond_shocks_id);
+                    % update the shocks...
+                    shocks(:,t+(0:options.k_future))=shocks_t1;
                 end
             end
             function cp=rebuild_cp()
