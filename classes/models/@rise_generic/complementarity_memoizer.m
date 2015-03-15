@@ -36,9 +36,13 @@ if ~isfield(obj.routines,'complementarity')||... I do not expect VARs to have th
     routines=[];
 else
     routines=obj.routines.complementarity;
-    def=obj.solution.definitions{1};
-    ss=obj.solution.ss{1};
-    param=obj.parameter_values(:,1);
+    def=obj.solution.definitions{1}; %#ok<NASGU>
+    ss=obj.solution.ss{1}; %#ok<NASGU>
+    param=obj.parameter_values(:,1); %#ok<NASGU>
+    % missing inputs
+    %-----------------
+    x=[];sparam=[];s0=1;s1=1; %#ok<NASGU>
+    rise_inputs=parser.input_list;
 end
 nrout=numel(routines);
 hc=nrout>0 && obj.options.simul_honor_constraints;
@@ -49,65 +53,47 @@ if hc && ~(simul_honor_constraints_through_switch||...
     error('restrictions detected but no anticipatory or switching behavior to satisfy them')
 end
 clear obj
-sep_cf=separate_complementarity;
-if nargout>1
-    cf=@build_complementarity;
+
+sep_cf=[];
+cf=[];
+if ~hc
+    return
 end
-
-    function c=separate_complementarity()
-        c=[];
-        if ~hc
-            return
-        end
-        dd=cell(1,nrout);
-        for ii=1:nrout
-            if ii==1
-                x=[];
-                sparam=[];
-                s0=1;
-                s1=1;
-            end
-            % those functions are expected to return scalar values
-            %-----------------------------------------------------
-            rout_i=func2str(routines{ii});
-            right_par=find(rout_i==')',1,'first');
-            if ii==1
-                header=rout_i(1:right_par);
-            end
-            ge_=strfind(rout_i,'>=');
-            if isempty(ge_)||numel(ge_)>1
-                error('">=" missing or too many ">="')
-            end
-            dd{ii}=rout_i(right_par+1:ge_-1);
-            right=rout_i(ge_+2:end);
-            if ~strcmp(right,'0')
-                error('right-hand side of constraints must be 0')
-            end
-            if ii==nrout
-                dd=cell2mat(strcat(dd,';'));
-                dd=str2func([header,'[',dd(1:end-1),']']);
-                c=utils.code.anonymize_to_one_input(dd,x,ss,param,sparam,def,s0,s1);
-            end
+dd=cell(1,nrout);
+for ii=1:nrout
+    if ii==1
+        % make sure the inputs [EXCEPT THE FIRST] are all here
+        %------------------------------------------------------
+        for inp=2:numel(rise_inputs)
+            eval([rise_inputs{inp},'=',rise_inputs{inp},';'])
         end
     end
-
-    function c=build_complementarity(y)
-        c=true;
-        if ~hc
-            return
-        end
-        for ii=1:nrout
-            if ii==1
-                x=[];
-                sparam=[];
-                s0=1;
-                s1=1;
-            end
-            c= c && routines{ii}(y,x,ss,param,sparam,def,s0,s1);
-            if ~c
-                break
-            end
-        end
+    % those functions are expected to return scalar values
+    %-----------------------------------------------------
+    rout_i=func2str(routines{ii});
+    right_par=find(rout_i==')',1,'first');
+    if ii==1
+        header=rout_i(1:right_par);
     end
+    % check that all inputs are correct
+    %-----------------------------------
+    your_inputs=regexp(header(3:end-1),',','split');
+    if ~all(strcmp(your_inputs,rise_inputs))
+        error('wrong input names')
+    end
+    ge_=strfind(rout_i,'>=');
+    if isempty(ge_)||numel(ge_)>1
+        error('">=" missing or too many ">="')
+    end
+    dd{ii}=rout_i(right_par+1:ge_-1);
+end
+dd=cell2mat(strcat(dd,';'));
+
+sep_cf=str2func(['@(',rise_inputs{1},')[',dd(1:end-1),']']);
+cf=str2func(['@(',rise_inputs{1},')all([',dd(1:end-1),']>=0)']);
+
+% no need for memoization at this point. all params, defs, ss, x, are
+% indexed as if they were matrices and str2func in that case treats them as
+% variables to be included in the workspace.
 
 end
