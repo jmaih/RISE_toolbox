@@ -19,7 +19,7 @@ function Initcond=initial_conditions_to_order_var(Initcond,new_order,options)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 % adjust the start values according to the order_var
@@ -36,22 +36,21 @@ iov(new_order)=1:numel(new_order);
 % alphabetical order and so the order_var they are fed with has to be
 % inverted prior to evaluation.
 %--------------------------------------------------------------------------
-Initcond.Qfunc=rememoize(Initcond.Qfunc,iov);
+% Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
+Initcond.Qfunc=memoize(Initcond.Qfunc,iov);
 
-Initcond.complementarity=rememoize(Initcond.complementarity,iov);
+if ~isempty(Initcond.complementarity)
+%     Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
+    Initcond.complementarity=memoize(Initcond.complementarity,iov);
+end
 
-Initcond.sep_compl=rememoize(Initcond.sep_compl,iov);
+if ~isempty(Initcond.sep_compl)
+%     Initcond.sep_compl=@(x)Initcond.sep_compl(x(iov));
+    Initcond.sep_compl=memoize(Initcond.sep_compl,iov);
+end
 
 Initcond.simul_honor_constraints_through_switch=options.simul_honor_constraints_through_switch;
 
 Initcond.simul_anticipate_zero=options.simul_anticipate_zero;
 
 end
-
-function f=rememoize(g,iov)
-f=@engine;
-    function varargout=engine(x)
-        [varargout{1:nargout}]=g(x(iov));
-    end
-end
-
