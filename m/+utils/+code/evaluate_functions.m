@@ -77,7 +77,7 @@ end
                 if isfield(tmp(iout),'map')
                     ii=tmp(iout).map(:,1);
                     jj=tmp(iout).map(:,2);
-                    for irows=1:size(xcell,1)
+                    for irows=size(xcell,1):-1:1
                         nguys=numel(jj{irows});
                         if nguys>1
                             ii{irows}=ii{irows}*ones(1,nguys);
@@ -101,7 +101,7 @@ end
     function xout=main_engine()
         n=numel(xcell);
         xout=xcell;
-        for item=1:n
+        for item=n:-1:1
             if ~isempty(xcell{item})
                 xout{item}=xcell{item}(varargin{:});
             end
