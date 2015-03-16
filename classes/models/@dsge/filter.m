@@ -91,12 +91,12 @@ y=data_info.y;
 %--------------------------------------------
 U=data_info.x(:,:,1);
 
-shoot=obj.options.simul_frwrd_back_shoot;
+% shoot=obj.options.simul_frwrd_back_shoot;
 % state matrices
 %---------------
 init.ff=do_one_step_forecast(init.T,init.steady_state,init.sep_compl,...
     init.anticipated_shocks,init.state_vars_location,obj.options.simul_sig,...
-    init.horizon,init.is_det_shock,shoot);
+    init.horizon,init.is_det_shock);%,shoot
 
 % mapping from states to observables
 %------------------------------------
@@ -225,7 +225,7 @@ z=@do_it;
 end
 
 function ff=do_one_step_forecast(T,ss,compl,cond_shocks_id,xloc,sig,...
-    horizon,is_det_shock,shoot)
+    horizon,is_det_shock)
 % y1: forecast
 % is_active_shock : location of shocks required to satisfy the constraints.
 % sig: perturbation parameter 
@@ -236,7 +236,7 @@ exo_nbr=numel(is_det_shock);
 ff=@my_one_step;
 
     function varargout=my_one_step(rt,y0,stoch_shocks,det_shocks) 
-        % [y1,is_active_shock,retcode]=my_one_step(rt,y0,shocks)
+        % [y1,is_active_shock,retcode,shocks]=my_one_step(rt,y0,shocks)
         if nargin<4
             det_shocks=[];
         end
@@ -247,11 +247,17 @@ ff=@my_one_step;
             span_det=size(det_shocks,2);
             shocks(is_det_shock,1:span_det)=det_shocks;
         end
-        if shoot
-            [varargout{1:nargout}]=utils.forecast.one_step_frwrd_back_shooting(...
-                T(:,rt),y0,ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
+        nout=nargout;
+        if isempty(compl)
+            y1=utils.forecast.one_step_engine(T(:,rt),y0,ss{rt},xloc,sig,...
+                    shocks,order);
+            outputs={y1,false(1,exo_nbr),0,shocks};
+            varargout=cell(1,nout);
+            for iarg=1:nout
+                varargout{iarg}=outputs{iarg};
+            end
         else
-            [varargout{1:nargout}]=utils.forecast.one_step_frwrd(T(:,rt),y0,...
+            [varargout{1:nout}]=utils.forecast.one_step_fbs(T(:,rt),y0,...
                 ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
         end
         varargout{1}=varargout{1}.y;
