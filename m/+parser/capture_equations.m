@@ -160,6 +160,9 @@ end
                             is_lhs_def=true;
                             equation.is_def=true;
                             equation.type='def';
+                            if isempty(tokk)
+                                error([mfilename,':: definition missing in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
+                            end
                             definitions_loc.(tokk)=nblks+1;
                         elseif mcp_flag
                             equation.is_mcp=true;
