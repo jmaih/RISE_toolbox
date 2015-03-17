@@ -550,7 +550,7 @@ end
             obs_id=real(obj.observables.state_id);
             log_obs=log_vars(obs_id);
             if any(log_obs)
-                disp(obj.endogenous.name(log_obs))
+                disp(obj.endogenous.name(obs_id(log_obs)))
                 error('The variables above are observed. They cannot be log-expanded')
             end
         end
