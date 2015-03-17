@@ -710,8 +710,8 @@ end
             Tzp=Tzp(order_var,:);
         end
         function [Tzp,eigval,retcode]=rise_solve_1(Afrwrd_plus,Apred_0,Afrwrd_0,Apred_minus)
-            A=[Apred_0,Afrwrd_plus]; % pred,frwrd
-            B=-[Apred_minus,Afrwrd_0]; % pred,frwrd
+            A=real([Apred_0,Afrwrd_plus]); % pred,frwrd
+            B=real(-[Apred_minus,Afrwrd_0]); % pred,frwrd
             npred=size(Apred_0,2);
             nfrwrd=size(Afrwrd_0,2);
             % real schur decomposition
