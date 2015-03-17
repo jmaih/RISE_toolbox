@@ -1,4 +1,4 @@
-function [PbParams,M1,M2,RM2i,OMG,DYbar,UU,SS,Yf,MU,LB,UB,R]=projection_sub_engine(Hypothesis,Nsteps,H,G,Y0,...
+function [PbParams,M1,M2,RM2i,OMG,DYbar,UU,SS,Yf,MU,LB,UB,R,retcode]=projection_sub_engine(Hypothesis,Nsteps,H,G,Y0,...
     EndogenousConditions,ShocksConditions,verbose) 
 % H1 line
 %
@@ -72,7 +72,7 @@ ShocksCond={MUx,OMGx,LBx,UBx,ncvx,ncpx};
 % matrix in case OMG is a scalar
 [MU,OMG,LB,UB,R,DYbar]=utils.forecast.conditional.remove_holes(MU,{OMG},LB,UB,R,DYbar);
 
-[M1,M2,RM2i,qq,UU,SS]=utils.forecast.conditional.null_and_column_spaces(R,verbose);
+[M1,M2,RM2i,qq,UU,SS,retcode]=utils.forecast.conditional.null_and_column_spaces(R,verbose);
 
 PbParams.maxiter=maxiter;
 PbParams.endo_nbr=endo_nbr;

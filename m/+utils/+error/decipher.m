@@ -94,6 +94,8 @@ switch code
         % ====== Forecasting ====== %
     case 701
         msg='forecast: constraint violation';
+    case 702
+        msg='rank deficiency in null and column spaces';
     otherwise
         error([mfilename,':: Unknown error code'])
 end

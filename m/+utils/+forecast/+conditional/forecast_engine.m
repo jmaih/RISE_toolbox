@@ -1,4 +1,4 @@
-function [Yf,CYfMean,Emean,CYf,E]=forecast_engine(Y0,H,G,EndogenousConditions,...
+function [Yf,CYfMean,Emean,CYf,E,retcode]=forecast_engine(Y0,H,G,EndogenousConditions,...
     ShocksConditions,Nsteps,NumberOfSimulations,Hypothesis,method)
 % forecast_engine - computes conditional forecasts for linear models
 %
@@ -98,9 +98,17 @@ if isempty(Hypothesis)
     Hypothesis=0;
 end
 
-[PbParams,M1,M2,RM2i,OMG,DYbar,UU,SS,Yf,MU,LB,UB]=...
+[PbParams,M1,M2,RM2i,OMG,DYbar,UU,SS,Yf,MU,LB,UB,~,retcode]=...
     utils.forecast.conditional.projection_sub_engine(Hypothesis,Nsteps,H,G,Y0,...
     EndogenousConditions,ShocksConditions);
+if retcode
+    Yf=[];
+    CYfMean=[];
+    Emean=[];
+    CYf=[];
+    E=[];
+    return
+end
 Yf=format_forecast_output(Yf);
 if nargout>1
     [rstar,rlow,rhigh,OMG]=ConditionalDistributionOfShocks(MU,OMG,LB,UB,DYbar);

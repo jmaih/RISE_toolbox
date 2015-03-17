@@ -458,6 +458,10 @@ end
             start_iter=start_iter+1;
             y0=simul_initial_conditions(a_filt,start_iter);
             [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
+            if retcode
+                a_update=[];
+                return
+            end
             for iter=1:options.nsteps
                 violations=any(sep_compl(fsteps(:,iter))<cutoff);
                 if violations

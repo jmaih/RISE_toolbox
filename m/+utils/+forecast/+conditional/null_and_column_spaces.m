@@ -1,4 +1,4 @@
-function [M1,M2,RM2i,q,U,S]=null_and_column_spaces(R,verbose)
+function [M1,M2,RM2i,q,U,S,retcode]=null_and_column_spaces(R,verbose)
 % H1 line
 %
 % Syntax
@@ -24,9 +24,15 @@ verbose=false;
 end
 [q,cols]=size(R);
 
+retcode=0;
 if rank(R)~=q
-    disp([mfilename,':: Restrictions are not independent or they are not affected by the shocks selected'])
-    error([mfilename,':: Check your restrictions or the shocks that should explain those restrictions'])
+    disp([mfilename,':: Restrictions are not independent or they are not ',...
+        'affected by the shocks selected. You may want to check your ',...
+        'restrictions or the shocks that are meant to explain those ',...
+        'restrictions'])
+    M1=[];M2=[];RM2i=[];U=[];S=[];
+    retcode=702;
+    return
 end
 
 DegreesOfFreedom=cols-q;

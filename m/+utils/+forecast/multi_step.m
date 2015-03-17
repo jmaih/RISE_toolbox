@@ -193,11 +193,15 @@ end
         else
             ShocksConditions=[];
         end
-        [~,CYfMean,myshocks]=utils.forecast.conditional.forecast_engine(...
+        [~,CYfMean,myshocks,~,~,retcode]=utils.forecast.conditional.forecast_engine(...
             Y0,H,G,EndogenousConditions,ShocksConditions,options.nsteps,...
             NumberOfSimulations,forecast_conditional_hypothesis);
         % skip the initial conditions and add the mean
-        sims=bsxfun(@plus,CYfMean(:,2:end),ss_);
+        if retcode
+            sims=[];
+        else
+            sims=bsxfun(@plus,CYfMean(:,2:end),ss_);
+        end
     end
 
     function condition_on_shocks_only(shocks)
