@@ -48,6 +48,7 @@ end
 
 % build z
 %--------
+nlags=size(y0.y,2);
 z=buildz(y0.y);
 zkz=z;
 
@@ -86,7 +87,7 @@ end
         % deviations from the steady state: use bsxfun in case we are in
         % presence of a VAR
         %---------------------------------------------------------------
-        x=bsxfun(@minus,y00,ss);
+        x=y00-ss(:,ones(nlags,1));%<--x=bsxfun(@minus,y00,ss);
         x=x(xloc,end:-1:1); % swap if we have many lags
         z=[
             x(:) % vectorize
