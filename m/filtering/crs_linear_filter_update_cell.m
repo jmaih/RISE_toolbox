@@ -133,7 +133,7 @@ end
 loglik=[];
 Incr=nan(smpl,1);
 
-[Filters,K_store,iF_store,v_store]=utils.filtering.initialize_storage(a,P,PAI,Q,p0,exo_nbr,horizon,nsteps,smpl,store_filters);
+[Filters]=utils.filtering.initialize_storage(a,P,PAI,Q,p0,exo_nbr,horizon,nsteps,smpl,store_filters);
 
 oldK=inf;
 PAI01y=nan(h,1);
@@ -337,13 +337,9 @@ end
 loglik=sum(Incr(first:end));
 
 if store_filters>2 % store smoothed
-    r=zeros(m,h);
-    ZZ=eye(m);
-    ZZ=ZZ(obs_id,:);
     for t=smpl:-1:1
         Q=Filters.Q(:,:,t);
         [~,occur,obsOccur]=z(t);
-        Z=ZZ(occur,:);
         y=data_y(occur,t);
         for s0=1:h
             for s1=1:h
@@ -360,11 +356,14 @@ if store_filters>2 % store smoothed
             end
             % smoothed state and shocks
             %--------------------------
-            [Filters.atT{s0}(:,1,t),Filters.eta{s0}(:,1,t),r(:,s0)]=...
-                utils.filtering.smoothing_step(Filters.a{s0}(:,1,t),r(:,s0),...
-                K_store{s0}(:,occur,t),Filters.P{s0}(:,:,t),resquare(T{s0}),...
-                R_store(t).R{s0}(:,:),Z,iF_store{s0}(occur,occur,t),...
-                v_store{s0}(occur,t));
+            if t==smpl
+                Filters.atT{s0}(:,1,t)=Filters.att{s0}(:,1,t);
+            else
+                [Filters.atT{s0}(:,1,t)]=utils.filtering.smoothing_step_classical(...
+                    resquare(T{s0}),Filters.att{s0}(:,1,t),...
+                    Filters.Ptt{s0}(:,:,t),Filters.P{s0}(:,:,t+1),...
+                    Filters.atT{s0}(:,1,t+1),Filters.a{s0}(:,1,t+1));
+            end
             % smoothed measurement errors
             %--------------------------
             Filters.epsilon{s0}(occur,1,t)=y-Filters.atT{s0}(obsOccur,1,t);
@@ -506,11 +505,6 @@ end
         for st_=1:h
             Filters.att{st_}(:,1,t)=a{st_};
             Filters.Ptt{st_}(:,:,t)=P{st_};
-            if store_filters>2
-                K_store{st_}(:,occur,t)=K(:,occur,st_);
-                iF_store{st_}(occur,occur,t)=iF{st_};
-                v_store{st_}(occur,t)=v{st_};
-            end
         end
     end
 
