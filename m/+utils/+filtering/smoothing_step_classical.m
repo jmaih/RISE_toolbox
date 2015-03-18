@@ -38,7 +38,8 @@ function [alpha_t]=smoothing_step_classical(T,att,Ptt,Ptplus1,alpha_plus,a_plus)
 alpha_t=att;
 
 if ~isempty(Ptt)
-    alpha_t=alpha_t+Ptt*T.'*Ptplus1\(alpha_plus-a_plus);
+    alpha_t=alpha_t+Ptt*T.'*pinv(Ptplus1)*(alpha_plus-a_plus);
+%     alpha_t=alpha_t+Ptt*T.'*Ptplus1\(alpha_plus-a_plus);
 end
 
 end
