@@ -154,9 +154,6 @@ end
         % load the restrictions if any:
         %------------------------------
         sep_compl=complementarity_memoizer(obj);
-        if isempty(sep_compl)
-            sep_compl=@(x)1;
-        end
         sep_compl=small_memo(sep_compl,iov,grand_state);
         
         % find the anticipated shocks
@@ -305,14 +302,18 @@ function ffunc=small_memo(gfunc,iov,grand_state)
 % of obj.endogenous.name. This function makes it possible to have the
 % variables in the inv_order_var order and still apply the functions of
 % interest.
-if nargin<2
-    grand_state=[];
+if isempty(gfunc)
+    ffunc=gfunc;
+else
+    if nargin<2
+        grand_state=[];
+    end
+    if isempty(grand_state)
+        grand_state=1:numel(iov);
+    end
+    nx=numel(iov);
+    ffunc=@do_it;
 end
-if isempty(grand_state)
-    grand_state=1:numel(iov);
-end
-nx=numel(iov);
-ffunc=@do_it;
 
     function varargout=do_it(y)
         % the y vector could be longer if we are storing the filters, in
