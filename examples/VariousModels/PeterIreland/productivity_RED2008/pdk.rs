@@ -23,6 +23,7 @@ exogenous ELA EAG
 @#end
 
 parameters gam beta	rhola sigla	agtr rhoga sigga  phik_C_tr phih_C_tr
+
 @#for ii in Sektors
 	theta_@{ii} eta_@{ii}	kappa_@{ii}	delta_@{ii}	rhol_@{ii}
 	sigl_@{ii} zg_@{ii}_tr	rhog_@{ii}	sigg_@{ii}
