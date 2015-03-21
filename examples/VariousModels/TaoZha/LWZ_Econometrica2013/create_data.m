@@ -1,4 +1,4 @@
-
+function data=create_data()
 data_zz=[  ...
  -1.6955763e-02  -2.0713870e-02   1.1464670e-02   8.8793970e-03  -3.3828488e-03  -1.4798166e+00
  -1.6738397e-02   4.7394901e-03   1.8610699e-03   2.5168101e-02  -1.9327476e-02  -1.4759462e+00
@@ -145,12 +145,6 @@ data_zz=[  ...
   6.1264146e-02   1.0386041e-02   5.4089929e-03   1.9197574e-02  -2.7106442e-03  -1.4943402e+00
 ];
 
-
+data=ts('1975Q1',data_zz,{'DLogQl','DLogQ','DLogC','DLogI','DLogB','LogL'});
 				 
-DLogQl=data_zz(:,1);
-DLogQ=data_zz(:,2);
-DLogC=data_zz(:,3);
-DLogI=data_zz(:,4);
-DLogB=data_zz(:,5);
-LogL=data_zz(:,6);
 
