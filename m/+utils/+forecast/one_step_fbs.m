@@ -44,7 +44,7 @@ check_first_only=true;
 
 y1=y1k(2);
 retcode=0;
-is_active_shock=false(1,kplus1);
+is_active_shock=any(abs(shocks)>sqrt(eps),1);
 if ~isempty(first_viol)
     debug=false;
     if debug
