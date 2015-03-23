@@ -91,9 +91,9 @@ if condforkst
     end
 else
     % condition on shocks only
-    condition_on_shocks_only(shocks);
-    myshocks=shocks(:,options.burn+1:end);
-end
+    shocks__=condition_on_shocks_only(shocks);
+    myshocks=shocks__(:,options.burn+1:end);
+ end
 
     function nonlinear_conditional_forecasting_tools()
         % here we do not substract the steady state as we do in the linear
@@ -204,7 +204,7 @@ end
         end
     end
 
-    function condition_on_shocks_only(shocks)
+    function shocks=condition_on_shocks_only(shocks)
         y1=[];
         % shocks that are nan are shocks that are not conditioned on
         %------------------------------------------------------------
