@@ -33,6 +33,7 @@ priors.sig_Eps_mu       ={ 0.01 , 0.0001, 2      , 'inv_gamma_pdf(0.9)', 0.00000
 priors.sig_Eps_phi      ={ 0.01 , 0.0001, 2      , 'inv_gamma_pdf(0.9)', 0.000000000001, 100         };
 priors.sig_Eps_psi      ={ 0.01 , 0.0001, 2      , 'inv_gamma_pdf(0.9)', 0.000000000001, 100         };
 priors.sig_Eps_xitheta  ={ 0.01 , 0.0001, 2      , 'inv_gamma_pdf(0.9)', 0.000000000001, 100         };
+
 if start_from_mode
     priors.gamma_e{1}= 0.658435028;
     priors.gamma_h{1}= 0.497555761;

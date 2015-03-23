@@ -16,7 +16,8 @@ N "Labor hours"
 I "Investment"
 Y "Output"
 Ch "Consumption (household)"
-Ce "Consumption(entrepreneur)" Qk
+Ce "Consumption(entrepreneur)"
+Qk
 Lh "Land holdings (household)"
 Le "Land holdings(entrepreneur)"
 K "Capital"

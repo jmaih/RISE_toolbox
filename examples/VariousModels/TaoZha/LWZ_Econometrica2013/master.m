@@ -6,7 +6,7 @@ m=rise('lwz_model');
 
 %% get the parameters
 
-[p,priors]=create_parameters(false);
+[p,priors]=create_parameters(true);
 
 m=set(m,'parameters',p);
 
