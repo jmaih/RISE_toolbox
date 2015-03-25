@@ -236,6 +236,12 @@ Initcond.shocks=shocks;
 
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
             simul_history_end_date,y0(1).y);
+        
+        % past regimes for the computation of initial regime probabilities
+        %-----------------------------------------------------------------
+        PAI=utils.forecast.load_start_values(obj.markov_chains.regime_names,...
+            simul_historical_data,simul_history_end_date,PAI);
+
         conditional_vars=obj.options.forecast_cond_endo_vars;
         % x it future values of variables not declared as conditioning
         %------------------------------------------------------------------
