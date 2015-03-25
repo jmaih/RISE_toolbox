@@ -208,13 +208,7 @@ myirfs=format_irf_output(myirfs);
             Initcond.y.y=0*Initcond.y.y;
         end
         y0=Initcond.y;
-            
-        % adjust the transition function according to the order_var
-        %-----------------------------------------------------------
-        iov(new_order)=1:numel(new_order);
-        Initcond.Qfunc=@(x)Initcond.Qfunc(x(iov));
-        Initcond.complementarity=@(x)Initcond.complementarity(x(iov));
-        
+                   
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
         if ~girf
             irf_draws=1;
