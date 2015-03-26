@@ -239,8 +239,11 @@ Initcond.shocks=shocks;
         
         % past regimes for the computation of initial regime probabilities
         %-----------------------------------------------------------------
-        PAI=utils.forecast.load_start_values(obj.markov_chains.regime_names,...
-            simul_historical_data,simul_history_end_date,PAI);
+        PAI_lag=utils.forecast.load_start_values(obj.markov_chains.regime_names,...
+            simul_historical_data,simul_history_end_date,nan(size(PAI)));
+        if all(~isnan(PAI_lag))
+            PAI=transpose(obj.solution.transition_matrices.Q)*PAI_lag;
+        end
 
         conditional_vars=obj.options.forecast_cond_endo_vars;
         % x it future values of variables not declared as conditioning
