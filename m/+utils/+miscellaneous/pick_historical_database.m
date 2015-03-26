@@ -43,12 +43,23 @@ function histdb=pick_historical_database(m,type,hist_end_date)
 % data belong to. For instance, suppose we have 3 regimes and that the
 % second regime is picked based on the distribution [.5,.2,.3] at the
 % desired (or default) end date of history. Once the regime is picked,
-% those probabilities are modified to [0,1,0].
+% those probabilities are modified to [0,1,0]. This information is useful
+% for determining the distribution, the next regime is drawn from.
+%
+% - if the type of database chosen is the "mean", the probability
+% distribution of the historical regimes remain unchanged. i.e. [.5,.2,.3]
+% remains [.5,.2,.3]. The consequence is that the historical state is not
+% known with certainty.
+%
+% - if the user adds a time series called "regime" to the database, the
+% information on the distribution of the historical probabilities is
+% irrelevant since the regime variables should inform the forecasting
+% procedure about where the system is going in the future.
 %
 % Examples
 % ---------
 %
-% See also:  
+% See also:   
 
 if nargin<3
     hist_end_date=[];
