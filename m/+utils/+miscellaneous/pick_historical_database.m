@@ -32,6 +32,9 @@ function histdb=pick_historical_database(m,type,hist_end_date)
 % More About
 % ------------
 %
+% - The database is always drawn from the updated data and not the smoothed
+% ones.
+%
 % - if the number of regimes is 1, "type" and "hist_end_date" are
 % superfluous.
 %
@@ -45,7 +48,7 @@ function histdb=pick_historical_database(m,type,hist_end_date)
 % Examples
 % ---------
 %
-% See also: 
+% See also:  
 
 if nargin<3
     hist_end_date=[];

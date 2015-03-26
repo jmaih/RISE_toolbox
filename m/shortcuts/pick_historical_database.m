@@ -32,6 +32,9 @@ function varargout=pick_historical_database(varargin)
 % More About
 % ------------
 %
+% - The database is always drawn from the updated data and not the smoothed
+% ones.
+%
 % - if the number of regimes is 1, "type" and "hist_end_date" are
 % superfluous.
 %
