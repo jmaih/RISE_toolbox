@@ -76,7 +76,7 @@ for pc=1:number_of_parallel_chains
         offset=offset+nvals;
         for ii=1:nvals
             iter=iter+1;
-            [theta_mean,V0]=rise_moments.recursive_moments(theta_mean,V0,Params(:,ii),iter);
+            [theta_mean,V0]=utils.moments.recursive(theta_mean,V0,Params(:,ii),iter);
             if iter==size(recursive_mean,2)
                 recursive_mean(:,end+(1:incmnt),:)=nan;
                 recursive_variance(:,end+(1:incmnt),:)=nan;
