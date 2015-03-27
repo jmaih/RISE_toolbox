@@ -165,21 +165,21 @@ else
     ss_and_bgp_start_vals(1:last_item,:)=ys(1:last_item,:);
 end
 
-if ~retcode
-    if obj.is_imposed_steady_state
-        % compute the residuals
-        %----------------------
-        user_resids=nan(endo_nbr,number_of_regimes);
-        if ~obj.is_optimal_policy_model
-            for ireg=1:number_of_regimes
-                user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
-                    pp(:,ireg),def{ireg});
-            end
-            user_resids(abs(user_resids)<1e-9)=0;
-            structural_matrices.user_resids=sparse(user_resids);
+if retcode||obj.is_imposed_steady_state
+    % compute the residuals
+    %----------------------
+    user_resids=nan(endo_nbr,number_of_regimes);
+    if ~obj.is_optimal_policy_model
+        for ireg=1:number_of_regimes
+            user_resids(:,ireg)=ss_residuals(ss_and_bgp_start_vals(1:last_item,ireg),...
+                pp(:,ireg),def{ireg});
         end
+        user_resids(abs(user_resids)<1e-9)=0;
+        structural_matrices.user_resids=sparse(user_resids);
     end
-    
+end
+
+if ~retcode    
     [obj.solution.transition_matrices,retcode]=...
         compute_steady_state_transition_matrix(obj.routines.transition_matrix,...
         ss_and_bgp_start_vals(:,1),pp(:,1),def{1},...

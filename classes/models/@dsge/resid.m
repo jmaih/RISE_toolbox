@@ -1,52 +1,54 @@
 function r=resid(obj,varargin)
-% H1 line
+% resid -- compute the residuals from the steady state
 %
 % Syntax
 % -------
 % ::
 %
+%   r=resid(obj)
+%
+%   r=resid(obj,varargin)
+%
 % Inputs
 % -------
+%
+% - **obj** [rise|dsge]: model object
+%
+% - **varargin** [pairs of arguments]: 
 %
 % Outputs
 % --------
 %
+% - **r** [vector|matrix]: residuals
+%
 % More About
 % ------------
+%
+% - if no output is requested, the residuals are printed on screen
 %
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
-% this function displays the initial residuals of a model (before checking
-% that the inital guess actually delivers the steady state)
 if isempty(obj)
     r=struct();
     return
 end
 
-[obj,ss_and_bgp_start_vals,ssfuncs,retcode]=initial_steady_state(obj,varargin{:});
+[~,structural_matrices]=compute_steady_state(obj,varargin{:});
 
-if retcode
-    if obj.options.debug
-        utils.error.decipher(retcode)
+r=full(structural_matrices.user_resids);
+
+[eqtns_nbr,number_of_regimes]=size(r);
+add_on=repmat('%0.4g ',1,number_of_regimes);
+if nargout==0
+    disp(' ')
+    for ieqtn=1:eqtns_nbr
+        these_resids=num2cell(r(ieqtn,:));
+        fprintf(1,['equation #%0.0f : ',add_on,' \n'],ieqtn,these_resids{:});
     end
-else
-    endo_nbr=obj.endogenous.number(end);
-    x=ss_and_bgp_start_vals(1:endo_nbr,:);
-    % r is potentially a matrix rather than a vector
-    %-----------------------------------------------
-    r=ss_residuals(x,ssfuncs.static,ssfuncs.jac_static,obj);
-    r=reshape(r,endo_nbr,[]);
-    [eqtns_nbr,number_of_regimes]=size(r);
-    add_on=repmat('%0.4g ',1,number_of_regimes);
-    if nargout==0
-        disp(' ')
-        for ieqtn=1:eqtns_nbr
-            these_resids=num2cell(r(ieqtn,:));
-            fprintf(1,['equation #%0.0f : ',add_on,' \n'],ieqtn,these_resids{:});
-        end
-        clear r
-    end
+    clear r
+end
+
 end
