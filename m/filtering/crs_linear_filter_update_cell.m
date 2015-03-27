@@ -441,7 +441,7 @@ end
         %----------------------------------------------------------------
         atmp_ss=atmp-ss{st};
         a_expect=ss{st}+T{st}*atmp_ss(xlocs);
-        violations=any(sep_compl(a_expect)<cutoff);
+        violations=~isempty(sep_compl) && any(sep_compl(a_expect)<cutoff);
         % if we can expect violations, inform the state that constraints
         % will be binding
         %----------------------------------------------------------------
