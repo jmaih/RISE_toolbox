@@ -124,7 +124,7 @@ if update_random_number_stream
     if ismember('setGlobalStream',stream_methods)
         RandStream.setGlobalStream(s);
     else
-        RandStream.setDefaultStream(s); %#ok<SETRS>
+        RandStream.setDefaultStream(s); 
     end
 end
     function set_one_at_a_time()
