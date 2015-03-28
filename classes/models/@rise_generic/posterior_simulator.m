@@ -174,9 +174,6 @@ for pc=1:mcmc_number_of_parallel_chains
     funevals{pc}=start.funevals;
 end
 
-% obj.estimation_under_way=false; no longer required since the name of the
-% output is changed
-
 if do_not_save_to_disk
     tmp=postSims;
     postSims=struct();
