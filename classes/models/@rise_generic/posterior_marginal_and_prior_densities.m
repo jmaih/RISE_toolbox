@@ -1,35 +1,47 @@
 function ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
-% H1 line
+% posterior_marginal_and_prior_densities -- computes posterior and prior
+% densities for estimated parameters
 %
 % Syntax
 % -------
 % ::
 %
+%   ppdata=posterior_marginal_and_prior_densities(obj)
+%
+%   ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
+%
 % Inputs
 % -------
+%
+% - **obj** [rise|dsge|rfvar|svar]: model object
+%
+% - **simulation_folder** [[]|char|struct]: location of the simulations. If
+% empty, it is assumed that the simulations are saved to disc and are
+% located in the address found in obj.folders_paths.simulations. If it is a
+% "char", this corresponds to the location of the simulation. Otherwise, if
+% it is a struct, then it has to be the output of posterior_simulator.m
 %
 % Outputs
 % --------
 %
+% - **ppdata** [struct]: optional output argument, ppdata is a structure
+% containing the information needed to plot the posterior and prior
+% densities. The user can always plot those using
+% utils.plot.prior_posterior(ppdata.(pname)), where pname is the name of
+% one particular parameter of interest. 
+%
 % More About
 % ------------
+%
+% - if there are no output arguments, figures with posterior and prior
+% marginal densities are plotted, but not saved!!!.
+% see also utils.plot.prior_posterior
 %
 % Examples
 % ---------
 %
 % See also: 
 
-% computes the posterior and marginal densities.
-% - the optional argument simulation_folder can either be the output of
-% posterior_simulator.m or the path where the posterior simulations are
-% stored.
-% - the optional output argument ppdata is a structure containing the
-% information needed to plot the posterior and prior densities. The user
-% can always plot those using utils.plot.prior_posterior(ppdata.(pname))
-% where pname is the name of one particular parameter of interest.
-% - if there are no output arguments, figures with posterior and prior
-% marginal densities are plotted, but not saved!!!.
-% see also utils.plot.prior_posterior
 if isempty(obj)
     ppdata=struct();
     return
