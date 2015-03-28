@@ -50,10 +50,8 @@ if ~obj.data_are_loaded
     obj=obj.load_data;
 end
 
-resolve_flag=isempty(obj.solution)||isempty(obj.solution.Tz{1});
-
 %% solve the object
-if resolve_flag
+if obj.warrant_resolving
     [obj,retcode]=obj.solve();
     if retcode
         if obj(1).options.debug
@@ -91,7 +89,6 @@ y=data_info.y;
 %--------------------------------------------
 U=data_info.x(:,:,1);
 
-% shoot=obj.options.simul_frwrd_back_shoot;
 % state matrices
 %---------------
 init.ff=do_one_step_forecast(init.T,init.steady_state,init.sep_compl,...
