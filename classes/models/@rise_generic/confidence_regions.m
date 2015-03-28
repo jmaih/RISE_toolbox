@@ -21,7 +21,7 @@ function ppdata_=confidence_regions(obj,simulation_folder,regions)
 % empty, it is assumed that the simulations are saved to disc and are
 % located in the address found in obj.folders_paths.simulations. If it is a
 % "char", this corresponds to the location of the simulation. Otherwise, if
-% it is a struct, then the fields of the struct contain the simulations
+% it is a struct, then it has to be the output of posterior_simulator.m
 %
 % - **regions** [[]|scalar|vector]: regions for which the one wants to
 % compute the quantiles of the distribution. all elements should be
@@ -66,7 +66,7 @@ end
 
 regions=sort(regions);
 regions=regions(:); 
-p=100-regions;
+p=sort([100-regions,regions],2);
 p=vec(p.').'; % in this way, the result is also a row vector
 nregions=numel(regions);
 regions=regions(:)'; 
