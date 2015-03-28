@@ -184,10 +184,11 @@ else
         NumberOfSimulations=0;
         EndogenousConditions=recreate_conditions(bsxfun(@minus,y_conditions,ss_));
         if ~isempty(shocks)
+            shocks_=shocks;
             % chop the shocks before sending them forward if the assumption
             % is nas
             if strcmpi(forecast_conditional_hypothesis,'nas')
-                shocks_=shocks(:,1:options.k_future+1);
+                shocks_=shocks_(:,1:options.k_future+1);
             end
             ShocksConditions=recreate_conditions(shocks_);
         else
