@@ -89,12 +89,7 @@ end
 
         % give the prior density the same range as ss.f_kdens
         %-----------------------------------------------------
-        if max(ss.f_prior)==min(ss.f_prior)
-            ratio=.5;
-        else
-            ratio=(ss.f_prior-min(ss.f_prior))/(max(ss.f_prior)-min(ss.f_prior));
-        end
-        ss.f_prior=min(ss.f_kdens)+ratio*(max(ss.f_kdens)-min(ss.f_kdens));
+        ss.f_prior=utils.miscellaneous.apply_property('range',ss.f_kdens,ss.f_prior);
     end
 
 end
