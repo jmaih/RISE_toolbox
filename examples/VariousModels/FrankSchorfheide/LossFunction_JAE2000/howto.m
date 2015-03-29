@@ -67,3 +67,37 @@ profile on
 m=estimate(m);%,'optimizer',@csminwellwrap,'debug',true
 profile off
 profile viewer
+
+%% do posterior simulation
+[obj,postSims]=posterior_simulator(m,'mcmc_number_of_simulations',1000,...
+    'mcmc_number_of_parallel_chains',1);
+%% update the description of the parameters
+m=set(m,'tex_name',...
+    {
+    'alp','\alpha'
+    'bet','\beta' 
+    'gam','\gamma' 
+    'rho','\rho' 
+    'psi','\psi'
+	'del','\delta' 
+    'sig_a','\sigma_a' 
+    'sig_m','\sigma_m'
+    });
+%% plot priors, posteriors, priors and posteriors
+plot_priors(m)
+plot_posteriors(m,postSims)
+plot_priors_and_posteriors(m,postSims)
+%% plot priors, posteriors, priors and posteriors for a subset of parameters
+myparams={'alp','gam','psi'};
+plot_priors(m,myparams)
+plot_posteriors(m,postSims,myparams)
+plot_priors_and_posteriors(m,postSims,myparams)
+%% check curvature at the mode
+mode_curvature(m)
+
+%% check curvature at the mode for a subset of parameters
+profile off
+profile on
+mode_curvature(m,myparams)
+profile off
+profile viewer

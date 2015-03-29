@@ -20,7 +20,8 @@ endogenous m P c e W R k d n l gy_obs gp_obs y dA
 
 exogenous e_a e_m
 
-parameters alp bet gam mst rho psi del sig_a sig_m
+parameters alp "\alpha" bet "\beta" gam "\gamma" mst rho "\rho" psi "\psi"
+	del "\delta" sig_a "\sigma_a" sig_m  "\sigma_m"
 
 observables gp_obs gy_obs
 
