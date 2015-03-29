@@ -1,4 +1,4 @@
-function ppdata=plot_priors_and_posteriors(obj,simulation_folder)
+function ppdata=plot_priors_and_posteriors(obj,simulation_folder,parlist)
 % plot_priors_and_posteriors -- computes posterior and prior densities for
 % estimated parameters 
 %
@@ -20,6 +20,9 @@ function ppdata=plot_priors_and_posteriors(obj,simulation_folder)
 % located in the address found in obj.folders_paths.simulations. If it is a
 % "char", this corresponds to the location of the simulation. Otherwise, if
 % it is a struct, then it has to be the output of posterior_simulator.m
+%
+% - **parlist** [[]|char|cellstr]: list of the parameters for which one
+% wants to plot the priors and the posteriors
 %
 % Outputs
 % --------
@@ -47,18 +50,26 @@ if isempty(obj)
     return
 end
 
-if nargin<2
+if nargin<3
+    parlist=[];
+    if nargin<2
+        simulation_folder=[];
+    end
+end
+
+if isempty(simulation_folder)
     simulation_folder=obj.folders_paths.simulations;
 end
 
 % do posterior densitities
 %---------------------------
-post_dens=plot_posteriors(obj,simulation_folder);
+post_dens=plot_posteriors(obj,simulation_folder,parlist);
+
+vnames=fieldnames(post_dens);
 
 % do prior densities for all parameters
 %----------------------------------------
-prior_dens=plot_priors(obj);
-vnames=fieldnames(prior_dens);
+prior_dens=plot_priors(obj,vnames);
 
 % create the data
 %----------------

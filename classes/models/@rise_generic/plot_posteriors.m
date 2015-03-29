@@ -1,4 +1,4 @@
-function pdata=plot_posteriors(obj,simulation_folder)
+function pdata=plot_posteriors(obj,simulation_folder,parlist)
 % plot_posteriors -- computes posterior densities for estimated parameters
 %
 % Syntax
@@ -19,6 +19,9 @@ function pdata=plot_posteriors(obj,simulation_folder)
 % located in the address found in obj.folders_paths.simulations. If it is a
 % "char", this corresponds to the location of the simulation. Otherwise, if
 % it is a struct, then it has to be the output of posterior_simulator.m
+%
+% - **parlist** [[]|char|cellstr]: list of the parameters for which one
+% wants to plot the posteriors
 %
 % Outputs
 % --------
@@ -46,7 +49,14 @@ if isempty(obj)
     return
 end
 
-if nargin<2
+if nargin<3
+    parlist=[];
+    if nargin<2
+        simulation_folder=[];
+    end
+end
+
+if isempty(simulation_folder)
     simulation_folder=obj.folders_paths.simulations;
 end
 
@@ -68,15 +78,19 @@ number_of_matrices=numel(W);
 
 % do prior densities for all parameters
 %----------------------------------------
-prior_dens=plot_priors(obj);
+prior_dens=plot_priors(obj,parlist);
 vnames=fieldnames(prior_dens);
+% locate those names
+allpnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+    {obj.estimation.priors.name},'uniformOutput',false);
+vlocs=locate_variables(vnames,allpnames);
 N=numel(prior_dens.(vnames{1}).x_prior);
 
 is_posterior_max=isfield(obj.estimation.posterior_maximization,'mode');
 post_mode_sim=[];
 f_post_mode_sim=-inf;
 if is_posterior_max
-    post_mode=obj.estimation.posterior_maximization.mode;
+    post_mode=obj.estimation.posterior_maximization.mode(vlocs);
 %     f_post_mode=obj.estimation.posterior_maximization.log_post;
 end
 
@@ -97,11 +111,11 @@ for ipar=1:npar
             fm=-tmp.minus_logpost_params;
             best=find(fm==max(fm),1,'first');
             if fm(best)>f_post_mode_sim
-                post_mode_sim=tmp.Params(:,best);
+                post_mode_sim=tmp.Params(vlocs,best);
                 f_post_mode_sim=fm(best);
             end
         end
-        all_vals=[all_vals;tmp.Params(ipar,:).']; %#ok<AGROW>
+        all_vals=[all_vals;tmp.Params(vlocs(ipar),:).']; %#ok<AGROW>
     end
     tex_name=prior_dens.(vnames{ipar}).tex_name;
     pdata_.(vnames{ipar})=do_one_post(ipar);

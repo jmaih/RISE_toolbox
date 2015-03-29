@@ -31,7 +31,7 @@ function db=mode_curvature(obj,varlist,type)
 % More About
 % ------------
 %
-% - when no output is requested, plots are made but not saved. 
+% - when no output is requested, plots are made but not saved.
 %
 % - one way to plot the curvatures from the output is to use the function
 % utils.plot.curvature
@@ -51,9 +51,9 @@ end
 
 if nargin<3
     type=[];
-if nargin<2
-    varlist=[];
-end
+    if nargin<2
+        varlist=[];
+    end
 end
 
 if isempty(type)

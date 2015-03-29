@@ -1,4 +1,4 @@
-function pdata=plot_priors(obj,varargin)
+function pdata=plot_priors(obj,parlist)
 % plot_priors -- computes prior densities for estimated parameters
 %
 % Syntax
@@ -14,7 +14,8 @@ function pdata=plot_priors(obj,varargin)
 %
 % - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **varargin** [pairwise arguments]: usual arguments of RISE
+% - **parlist** [[]|char|cellstr]: list of the parameters for which one
+% wants to plot the priors
 %
 % Outputs
 % --------
@@ -45,8 +46,6 @@ if nargout
     pdata=0;
 end
 
-obj=set(obj,varargin{:});
-
 nobj=numel(obj);
 
 if nobj>1
@@ -66,18 +65,37 @@ end
 
 %----------------------------------------
 N=obj.options.prior_discretize^2;
-pnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+allpnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
     {obj.estimation.priors.name},'uniformOutput',false);
-tex_names={obj.estimation.priors.tex_name};
+if nargin<2
+    parlist=[];
+end
+if isempty(parlist)
+    parlist=allpnames;
+else
+    if ischar(parlist)
+        parlist=cellstr(parlist);
+    end
+    parlist=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+        parlist,'uniformOutput',false);
+end
+plocs=locate_variables(parlist,allpnames);
+if numel(unique(plocs))~=numel(plocs)
+    error('parameter names duplicated')
+end
 
-distr={obj.estimation.priors.prior_distrib};
+pnames=parlist;
+
+tex_names={obj.estimation.priors(plocs).tex_name};
+
+distr={obj.estimation.priors(plocs).prior_distrib};
 % recollect the densities
 for idistr=1:numel(distr)
     distr{idistr}=distributions.(distr{idistr});
 end
-lb=vertcat(obj.estimation.priors.lower_bound);
-ub=vertcat(obj.estimation.priors.upper_bound);
-hypers=obj.estim_hyperparams;
+lb=vertcat(obj.estimation.priors(plocs).lower_bound);
+ub=vertcat(obj.estimation.priors(plocs).upper_bound);
+hypers=obj.estim_hyperparams(plocs,:);
 npar=numel(lb);
 prior_dens=struct();
 for ipar=1:npar
