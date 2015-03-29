@@ -26,19 +26,14 @@ if isempty(obj)
     return
 end
 
-if nargin>1 && ~isempty(params)
+if ~isempty(params)
     % this is general enough and includes measurement errors
     ids=obj.estimation_restrictions(:,1);
     inflate=obj.estimation_restrictions(:,2);
     obj.parameter_values(ids)=params(inflate);
+    % ensure the model will be re-solved no matter what
+    %---------------------------------------------------
+    if ~obj.estimation_under_way
+        obj=set(obj,'parameters',{});
+    end
 end
-
-%{
-if nargin>1 && ~isempty(params)
-    % this is general enough and includes measurement errors
-    ids=obj.estimation_restrictions(:,1);
-    params=params(obj.estimation_restrictions(:,2));
-    obj=obj.set_parameters({ids,params});
-end
-% obj=set(obj,'parameters',value)
-%}
