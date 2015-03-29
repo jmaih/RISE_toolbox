@@ -25,6 +25,10 @@ function obj=setup_calibration(obj,Calibration)
 % is not allowed to have situations where one parameter is a vector and
 % some other is not. Then RISE will complain that the parameter is not
 % controlled by the const markov chain.
+
+if isempty(Calibration)
+    return
+end
 param_names=obj.parameters.name;
 
 grand_chains_to_small=obj.markov_chains.grand_chains_to_small;
