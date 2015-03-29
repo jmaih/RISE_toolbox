@@ -100,7 +100,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
                 obj=rise_generic.reset(obj,varargin{:});
             end
         end
-        varargout=check_optimum(varargin)
         varargout=confidence_regions(varargin)
         varargout=draw_parameter(varargin)
         varargout=evaluate_nonlinear_restrictions(varargin)
@@ -114,6 +113,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=log_marginal_data_density(varargin)
         varargout=log_posterior_kernel(varargin)
         varargout=log_prior_density(varargin)
+        varargout=mode_curvature(varargin)
         varargout=plot_priors(varargin)
         varargout=plot_priors_and_posteriors(varargin)
         varargout=plot_posteriors(varargin)
