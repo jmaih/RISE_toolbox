@@ -192,6 +192,28 @@ end
                         obj.observables.tex_name{loc}=propval.(thisfield);
                     end
                 end
+                if strcmp(type,'parameters') && ...
+                        ~isempty(obj.estimation) && ...
+                        isfield(obj.estimation,'priors')
+                    % get the chain_names
+                    %---------------------
+                    chain_names=setdiff(obj.markov_chains.chain_names,'const');
+                    % check the priors if they exist...
+                    allpnames=parser.valid_param_name_to_tex_name(...
+                        {obj.estimation.priors.name},chain_names);
+                    ncols=length(thisfield);
+                    bingo=find(strncmp(thisfield,allpnames,ncols));
+                    for ip=1:numel(bingo)
+                        ppos=bingo(ip);
+                        if strcmp(thisfield,allpnames{ppos})
+                            obj.estimation.priors(ppos).tex_name=propval.(thisfield);
+                        elseif length(allpnames{ppos})>ncols && ...
+                                strcmp(allpnames{ppos}(ncols+1),'(')
+                            obj.estimation.priors(ppos).tex_name=...
+                                [propval.(thisfield),allpnames{ppos}(ncols+1:end)];
+                        end                        
+                    end
+                end
             end
         end
         function set_one_option()
