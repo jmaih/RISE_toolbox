@@ -1,15 +1,36 @@
 function hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
-% H1 line
+% multiple -- multiple plots in graphs
 %
 % Syntax
 % -------
 % ::
 %
+%   hfig=multiple(plotfunc,vnames,fig_title,r0,c0)
+%
+%   hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
+%
 % Inputs
 % -------
 %
+% - **plotfunc** [function handle]: which takes as input a valid variable
+%   name and returns (1) the name/description of the variable/parameter
+%   plotted, (2) the legend 
+%
+% - **vnames** [cellstr]: names of variables to be plotted
+%
+% - **fig_title** [char]: main title of the figures to plot
+%
+% - **r0** [integer]:: the desired maximum number of rows in each figure
+%
+% - **c0** [integer]:: the desired maximum number of columns in each figure
+%
+% - **varargin** [|{}]:: pairwise elements of entering the title and the
+% legend output arguments
+%
 % Outputs
 % --------
+%
+% - **hfig** [handles]: handles to the different figures created
 %
 % More About
 % ------------
@@ -18,20 +39,6 @@ function hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
 % ---------
 %
 % See also: 
-
-% this function plots multiple graphs and figures
-% input arguments
-%   - plotfunc: a function handle which takes as input a valid variable
-%   name and returns (1) the name/description of the variable/parameter
-%   plotted, (2) the legend 
-%   in case there are multiple plots.
-%   - vnames: cellstr of variables to be plotted
-%   - fig_title: the main title of the figures
-%   - r0: the desired maximum number of rows in each figure
-%   - c0: the desired maximum number of columns in each figure
-%   - varargin: pairwise elements of entering the title and the legend
-% output arguments
-%   - hfig: handles to the different figures created
 
 if ischar(vnames)
     vnames=cellstr(vnames);
