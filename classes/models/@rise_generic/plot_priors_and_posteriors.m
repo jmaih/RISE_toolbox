@@ -86,7 +86,7 @@ else
     %--------------
     r0=obj.options.graphics(1);
     c0=obj.options.graphics(2);
-    titel='priors and posterior marginal densities';
+    titel='prior and posterior(marginal) densities';
     
     utils.plot.multiple(@(xname)plotfunc(xname,ppdata_),...
         vnames,titel,r0,c0,...

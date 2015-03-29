@@ -110,7 +110,7 @@ else
     %--------------
     r0=obj.options.graphics(1);
     c0=obj.options.graphics(2);
-    titel='priors and posterior marginal densities';
+    titel='prior densities';
     
     utils.plot.multiple(@(xname)plotfunc(xname,prior_dens),...
         pnames,titel,r0,c0,...
