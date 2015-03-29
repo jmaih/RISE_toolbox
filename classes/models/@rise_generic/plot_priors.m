@@ -1,0 +1,117 @@
+function pdata=plot_priors(obj,varargin)
+% plot_priors -- computes prior densities for estimated parameters
+%
+% Syntax
+% -------
+% ::
+%
+%   ppdata=plot_priors(obj)
+%
+%   ppdata=posterior_plots(obj,varargin)
+%
+% Inputs
+% -------
+%
+% - **obj** [rise|dsge|rfvar|svar]: model object
+%
+% - **varargin** [pairwise arguments]: usual arguments of RISE
+%
+% Outputs
+% --------
+%
+% - **pdata** [struct]: optional output argument, pdata is a structure
+% containing the information needed to plot the prior densities. The user
+% can always plot those using utils.plot.prior_posterior(ppdata.(pname)),
+% where pname is the name of one particular parameter of interest.
+%
+% More About
+% ------------
+%
+% - if there are no output arguments, figures with prior densities are
+% plotted, but not saved!!!.
+%
+% Examples
+% ---------
+%
+% See also: utils.plot.prior_posterior
+
+
+if isempty(obj)
+    % For the computation of check plots, priors and posteriors
+    pdata=struct('prior_discretize',20);
+    return
+end
+if nargout
+    pdata=0;
+end
+
+obj=set(obj,varargin{:});
+
+nobj=numel(obj);
+
+if nobj>1
+    retcode_=cell(1,nobj);
+    for iobj=1:nobj
+        if nargout
+            retcode_{iobj}=plot_priors(obj(iobj));
+        else
+            plot_priors(obj(iobj));
+        end
+    end
+    if nargout
+        pdata=recode_;
+    end
+    return
+end
+
+%----------------------------------------
+N=obj.options.prior_discretize^2;
+pnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+    {obj.estimation.priors.name},'uniformOutput',false);
+tex_names={obj.estimation.priors.tex_name};
+
+distr={obj.estimation.priors.prior_distrib};
+% recollect the densities
+for idistr=1:numel(distr)
+    distr{idistr}=distributions.(distr{idistr});
+end
+lb=vertcat(obj.estimation.priors.lower_bound);
+ub=vertcat(obj.estimation.priors.upper_bound);
+hypers=obj.estim_hyperparams;
+npar=numel(lb);
+prior_dens=struct();
+for ipar=1:npar
+    prior_dens.(pnames{ipar})=do_one_prior(ipar);
+end
+%----------------------------------------
+
+if nargout
+    pdata=prior_dens;
+else
+    % plot the data
+    %--------------
+    r0=obj.options.graphics(1);
+    c0=obj.options.graphics(2);
+    titel='priors and posterior marginal densities';
+    
+    utils.plot.multiple(@(xname)plotfunc(xname,prior_dens),...
+        pnames,titel,r0,c0,...
+        'FontSize',11,'FontWeight','normal');
+end
+
+    function pdens=do_one_prior(ipar)
+        pdens=struct();
+        x_prior=vec(linspace(lb(ipar),ub(ipar),N));
+        pdens.x_prior=x_prior;
+        pdens.f_prior=distr{ipar}(x_prior,hypers(ipar,1),hypers(ipar,2));
+        pdens.tex_name=tex_names{ipar};
+        pdens.x_min=lb(ipar);
+        pdens.x_max=ub(ipar);
+    end
+
+end
+
+function [tex_name,legend_]=plotfunc(pname,ppdata)
+% the caller may use the tex_name information to override the title...
+[~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),'LineWidth',2.5);
+end

@@ -1,14 +1,13 @@
-function ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
-% posterior_marginal_and_prior_densities -- computes posterior and prior
-% densities for estimated parameters
+function ppdata=posterior_plots(obj,simulation_folder)
+% posterior_plots -- computes posterior densities for estimated parameters
 %
 % Syntax
 % -------
 % ::
 %
-%   ppdata=posterior_marginal_and_prior_densities(obj)
+%   ppdata=posterior_plots(obj)
 %
-%   ppdata=posterior_marginal_and_prior_densities(obj,simulation_folder)
+%   ppdata=posterior_plots(obj,simulation_folder)
 %
 % Inputs
 % -------
@@ -67,31 +66,21 @@ else
 end
 number_of_matrices=numel(W);
 
+% do prior densities for all parameters
+%----------------------------------------
+[prior_dens,N,vnames]=compute_prior_densities(obj);
 
-N=obj.options.prior_discretize^2;
-
-distr={obj.estimation.priors.prior_distrib};
-% recollect the densities
-for idistr=1:numel(distr)
-    distr{idistr}=distributions.(distr{idistr});
+is_posterior_max=isfield(obj.estimation.posterior_maximization,'mode');
+post_mode_sim=[];
+f_post_mode_sim=-inf;
+if is_posterior_max
+    post_mode=obj.estimation.posterior_maximization.mode;
+%     f_post_mode=obj.estimation.posterior_maximization.log_post;
 end
-lb=vertcat(obj.estimation.priors.lower_bound);
-ub=vertcat(obj.estimation.priors.upper_bound);
-
-post_mode=obj.estimation.posterior_maximization.mode;
-f_post_mode=obj.estimation.posterior_maximization.log_post;
-post_mode_sim=post_mode;
-f_post_mode_sim=f_post_mode;
-
-hypers=obj.estim_hyperparams;
-
-vnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
-    {obj.estimation.priors.name},'uniformOutput',false);
-tex_names={obj.estimation.priors.tex_name};
 
 % create the data
 %----------------
-npar=size(post_mode,1);
+npar=numel(vnames);
 ppdata_=struct();
 for ipar=1:npar
     all_vals=[];
@@ -101,18 +90,18 @@ for ipar=1:npar
         else
             tmp=simulation_folder.(W{m});
         end
-        Params=tmp.Params(ipar,:);
         if ipar==1
             % try and locate the sampling posterior mode
             fm=-tmp.minus_logpost_params;
             best=find(fm==max(fm),1,'first');
             if fm(best)>f_post_mode_sim
-                post_mode_sim=Params(:,best);
+                post_mode_sim=tmp.Params(:,best);
                 f_post_mode_sim=fm(best);
             end
         end
-        all_vals=[all_vals;Params(:)]; %#ok<AGROW>
+        all_vals=[all_vals;tmp.Params(ipar,:).']; %#ok<AGROW>
     end
+    tex_name=prior_dens.(vnames{ipar}).tex_name;
     ppdata_.(vnames{ipar})=do_one_post_prior(ipar);
 end
 
@@ -132,31 +121,23 @@ end
 
     function ss=do_one_post_prior(ipar)
         ss=struct();
-        ss.tex_name=tex_names{ipar};
         ss.mean_sim=mean(all_vals);
-        ss.min_sim = min(all_vals);
-        ss.max_sim = max(all_vals);
+        x_min_sim = min(all_vals);
+        x_max_sim = max(all_vals);
         [ss.f_kdens,ss.x_kdens]=distributions.kernel_density(all_vals,[],[],'normal',N);
-        ss.post_mode=post_mode(ipar);
-        ss.post_mode_sim=post_mode_sim(ipar);
-        ss.x_prior=linspace(lb(ipar),ub(ipar),N);
-        ss.x_prior=ss.x_prior(:);
-        ss.f_prior=distr{ipar}(ss.x_prior,hypers(ipar,1),hypers(ipar,2));
-        
-        % give it the same range as ss.f_kdens
-        %-------------------------------------
-        if max(ss.f_prior)==min(ss.f_prior)
-            ratio=.5;
-        else
-            ratio=(ss.f_prior-min(ss.f_prior))/(max(ss.f_prior)-min(ss.f_prior));
+        if is_posterior_max
+            ss.post_mode=post_mode(ipar);
         end
-        ss.f_prior=min(ss.f_kdens)+ratio*(max(ss.f_kdens)-min(ss.f_kdens));
+        ss.post_mode_sim=post_mode_sim(ipar);
+        ss.x_min=x_min_sim;
+        ss.x_max=x_max_sim;
+        ss.tex_name=tex_name;
     end
 
 end
 
 function [tex_name,legend_]=plotfunc(pname,ppdata)
-tex_name=ppdata.(pname).tex_name;
-[~,legend_]=utils.plot.prior_posterior(ppdata.(pname),'LineWidth',2.5);
+% the caller may use the tex_name information to override the title...
+[~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),'LineWidth',2.5);
 end
 
