@@ -113,9 +113,9 @@ classdef dsge < rise_generic
         %------------------------------------------------------
         reordering_index
         equations_reordering_for_multipliers
-        % provision for solving and resolving
-        %--------------------------------------
-        warrant_resolving = true % resolve the model initialized to true
+        % provision for functions, solving and resolving
+        %--------------------------------------------------
+        warrant_resolving = true;
         warrant_setup_change = true % initialization of functions, derivatives, etc.
     end
     properties(SetAccess=protected)
@@ -305,17 +305,21 @@ classdef dsge < rise_generic
     methods(Sealed)
         varargout=simulate(varargin)
     end
+    methods(Access=protected)
+        varargout=setup_calibration(varargin)
+    end
     methods(Access=protected,Hidden=true)
         varargout=re_order_output_rows(varargin)
         varargout=prepare_transition_routine(varargin)
     end
     methods(Hidden=true)
-        varargout=load_data(varargin)
+        varargout=assign_estimates(varargin)
         varargout=do_not_anticipate_future_shocks(varargin)
-        varargout=set_z_eplus_horizon(varargin)
+        varargout=filter_initialization(varargin)
         varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
-        varargout=filter_initialization(varargin)
+        varargout=load_data(varargin)
+        varargout=set_z_eplus_horizon(varargin)
     end
 end
 

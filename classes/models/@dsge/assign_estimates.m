@@ -11,7 +11,7 @@ function obj=assign_estimates(obj,params)
 % Inputs
 % -------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [rise|dsge]: model object
 %
 % - **params** [vector]: values of parameters estimated or under estimation
 % or under posterior simulation
@@ -19,7 +19,7 @@ function obj=assign_estimates(obj,params)
 % Outputs
 % --------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [rise|dsge]: model object
 %
 % More About
 % ------------
@@ -38,7 +38,8 @@ end
 
 if ~isempty(params)
     % this is general enough and includes measurement errors
-    ids=obj.estimation_restrictions(:,1);
-    inflate=obj.estimation_restrictions(:,2);
-    obj.parameter_values(ids)=params(inflate);
+    obj=assign_estimates@rise_generic(obj,params);
+    % ensure the model will be re-solved no matter what
+    %---------------------------------------------------
+    obj.warrant_resolving = true;
 end

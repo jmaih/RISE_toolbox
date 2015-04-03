@@ -1,30 +1,43 @@
 function obj=setup_calibration(obj,Calibration)
-% H1 line
+% setup_calibration -- set parameters
 %
 % Syntax
 % -------
 % ::
 %
+%   obj=setup_calibration(obj,Calibration)
+%
 % Inputs
 % -------
+%
+% - **obj** [rise_generic]: model object
+%
+% - **Calibration** [struct|cell]: calibration to push. There are two
+% possibilities:
+%   - Calibration is a struct: the fields are the parameter names and each
+%   name contains a parameter value.
+%   - Calibration is a cell: the cell has two columns. The first column
+%   holds the names of the parameters to change and the second column their
+%   values.
 %
 % Outputs
 % --------
 %
+% - **obj** [rise_generic]: model object
+%
 % More About
 % ------------
+%
+% - the parameter values could be vectors if e.g. we want to take the entire
+% parameterization of one model and push it into an identical model. But it
+% is not allowed to have situations where one parameter is a vector and
+% some other is not. Then RISE will complain that the parameter is not
+% controlled by the const markov chain.
 %
 % Examples
 % ---------
 %
 % See also: 
-
-% Calibration is either a struct or a cell of the form {names,param_data}
-% the parameter values could be vectors if e.g. we want to take the entire
-% parameterization of one model and push it into an identical model. But it
-% is not allowed to have situations where one parameter is a vector and
-% some other is not. Then RISE will complain that the parameter is not
-% controlled by the const markov chain.
 
 if isempty(Calibration)
     return
