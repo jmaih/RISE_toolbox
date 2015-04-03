@@ -181,8 +181,8 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=set_simulation_initial_conditions(varargin)
     end
     methods(Hidden=true)
-        varargout=load_data(varargin)
         varargout=assign_estimates(varargin)
+        varargout=load_data(varargin)
     end
 end
 
