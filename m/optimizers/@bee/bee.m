@@ -199,7 +199,7 @@ s = RandStream.create('mt19937ar','seed',obj.rand_seed);
 try
     RandStream.setGlobalStream(s);
 catch %#ok<CTCH>
-    RandStream.setDefaultStream(s); %#ok<SETRS>
+    RandStream.setDefaultStream(s); 
 end
 
 [obj.xx(:,n0+1:end),obj.ff(n0+1:end),...
