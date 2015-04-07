@@ -44,12 +44,15 @@ function [h,legend_,tex_name]=curvature(xname,db)
 legend_={'log post','log lik','mode'};
 pp=db.(xname);
 tex_name=pp.tex_name;
+
 low_f=min(min([pp.log_post,pp.log_lik]));
 high_f=max(max([pp.log_post,pp.log_lik]));
+rescale=(high_f-low_f)/10000;
+
 posj=find(abs(pp.x-pp.mode)==min(abs(pp.x-pp.mode)),1,'first');
 plot(pp.x,pp.log_post,...
     pp.x,pp.log_lik,...
-    [pp.x(posj),pp.x(posj)],[low_f,high_f],...
+    [pp.x(posj),pp.x(posj)],[(1-rescale)*low_f,high_f],...
     'linewidth',1.5)
 title(pp.tex_name)
 
@@ -60,7 +63,12 @@ if any(isnan(pp.log_post))
     hold off
 end
 
-axis tight % xlim([min(pp.x),max(pp.x)])
+% size of the plot
+%-----------------
+x_min=min(pp.x);
+x_max=max(pp.x);
+axis([x_min x_max (1-rescale)*low_f (1+rescale)*high_f]);
+% % axis tight % xlim([min(pp.x),max(pp.x)])
 h=gca();
 
 end
