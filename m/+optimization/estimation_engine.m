@@ -17,7 +17,7 @@ function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_bloc
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify | notify-detailed | final | final-detailed ]
@@ -40,9 +40,9 @@ if nargin==0
 end
 if nargin<3
     estim_blocks=[];
-	if nargin<2
-	 hessian_type=[];
-	 end
+    if nargin<2
+        hessian_type=[];
+    end
 end
 OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
 if isempty(PROBLEM.solver)
@@ -99,14 +99,26 @@ if ischar(optimizer)
     optimizer=str2func(optimizer);
 end
 
+% hessian
+%---------
+H=[];
 if block_flag
     options.optimizer=optimizer;
     [xfinal,ffinal,exitflag]=blockwise_optimization(fh,x0,lb,ub,options,vargs{:});
 else
     if strcmp(tmp,'fmincon')
-        [xfinal,ffinal,exitflag]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
+        [xfinal,ffinal,exitflag,~,~,~,H]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
+    elseif strcmp(tmp,'fminunc')
+        [xfinal,ffinal,exitflag,~,~,H]=optimizer(fh,x0,lb,ub,options,vargs{:});
     else
-        [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
+        nout=nargout(optimizer);
+        if nout==3
+            [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
+        elseif nout>=4
+            [xfinal,ffinal,exitflag,H]=optimizer(fh,x0,lb,ub,options,vargs{:});
+        else
+            error('optimizer should have at least 3 outputs')
+        end
     end
 end
 
@@ -115,23 +127,28 @@ xbest=xfinal;
 fbest=ffinal;
 TranslateOptimization(exitflag);
 
-% compute Hessian
-issue='';
-switch lower(hessian_type)
-    case 'fd'
-        H = utils.hessian.finite_differences(fh,xbest);
-    case 'opg'
-        H = utils.hessian.outer_product(fh,xbest);
-        if any(any(isnan(H)))||any(any(isinf(H)))
-            issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
+% compute Hessian if empty
+%--------------------------
+if ~isempty(H)
+    issue='Hessian/covariance from optimizer (not numerically calculated)';
+else
+    issue='';
+    switch lower(hessian_type)
+        case 'fd'
+            H = utils.hessian.finite_differences(fh,xbest);
+        case 'opg'
+            H = utils.hessian.outer_product(fh,xbest);
+            if any(any(isnan(H)))||any(any(isinf(H)))
+                issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
+                warning([mfilename,':: ',issue]) %#ok<WNTAG>
+                warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
+                H = finite_difference_hessian(fh,xbest);
+            end
+        otherwise
+            issue=['unknow hessian option ',hessian_type,' using finite differences'];
             warning([mfilename,':: ',issue]) %#ok<WNTAG>
-            warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
             H = finite_difference_hessian(fh,xbest);
-        end
-    otherwise
-        issue=['unknow hessian option ',hessian_type,' using finite differences'];
-        warning([mfilename,':: ',issue]) %#ok<WNTAG>
-        H = finite_difference_hessian(fh,xbest);
+    end
 end
 
 end
@@ -232,7 +249,7 @@ end
 % the definition of interior point. Further testing with wrapper function
 % fminsearch_bnd also gave the wrong starting value function. This points
 % in the direction of a penalty arising with the parameters not being in
-% the interior.  
+% the interior.
 % I probably should revisit the way I impose constraints in abc: this
 % should be obsolete by now
 
