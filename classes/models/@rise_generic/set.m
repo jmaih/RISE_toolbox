@@ -219,16 +219,12 @@ end
         function set_one_option()
             absorbed=false;
             if strcmp(propname,'optimset')
-                subfields=fieldnames(propval);
-                for sbf=1:numel(subfields)
-                    field=subfields{sbf};
-                    if isfield(obj.options.(propname),field)
-                        obj.options.(propname).(field)=propval.(field);
-                        absorbed=true;
-                    else
-                        error([mfilename,':: ',field,' not an appropriate propname of optimset '])
-                    end
+                [obj.options.(propname),missing]=utils.miscellaneous.setfield(obj.options.(propname),propval);
+                if ~isempty(missing)
+                    disp(missing)
+                    error('the fields above are not recognized')
                 end
+                absorbed=true;
             elseif any(strcmp(propname,{'estim_start_date','estim_end_date',...
                     'data','data_demean','kf_presample'}))
                 obj.data_are_loaded=false;

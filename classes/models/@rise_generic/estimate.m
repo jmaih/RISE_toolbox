@@ -183,16 +183,6 @@ if nn
     if rem(nn,2)~=0
         error([mfilename,':: arguments must come in pairs'])
     end
-    discard=[];
-    for ii=1:.5*nn
-        if strcmp(varargin{2*ii-1},'optimset')
-            for jj=1:nobj
-                obj(jj).options.optimset=utils.miscellaneous.setfield(obj(jj).options.optimset,varargin{2*ii});
-            end
-            discard=[2*ii-1,2*ii];
-        end
-    end
-    varargin(discard)=[];
     if ~isempty(varargin)
         for jj=1:nobj
             obj(jj)=set(obj(jj),varargin{:});
