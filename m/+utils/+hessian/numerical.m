@@ -48,19 +48,19 @@ end
 issue='';
 switch lower(hessian_type)
     case 'fd'
-        H(:,:,2) = utils.hessian.finite_differences(fh,xbest);
+        H = utils.hessian.finite_differences(fh,xbest);
     case 'opg'
-        H(:,:,2) = utils.hessian.outer_product(fh,xbest);
+        H = utils.hessian.outer_product(fh,xbest);
         if any(any(isnan(H(:,:,2))))||any(any(isinf(H(:,:,2))))
             issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
             warning([mfilename,':: ',issue]) %#ok<WNTAG>
             warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
-            H(:,:,2) = finite_difference_hessian(fh,xbest);
+            H= finite_difference_hessian(fh,xbest);
         end
     otherwise
         issue=['unknow hessian option ',hessian_type,' using finite differences'];
         warning([mfilename,':: ',issue]) %#ok<WNTAG>
-        H(:,:,2) = utils.hessian.finite_differences(fh,xbest);
+        H = utils.hessian.finite_differences(fh,xbest);
 end
 
 end
