@@ -48,17 +48,17 @@ function obj=estimate(obj,varargin)
 %   Hence the restrictions are entered either as  @myfunc or as
 %   {@myfunc,arg2,arg3,...}. Originally, RISE will call the function
 %   without any inputs. In that case, RISE expects the output to be a
-%   structure with fields : 
+%   structure with fields :
 %       - **number_of_restrictions** : number of restrictions
 %       - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
 %       for the computation of the restrictions. If 1, only the filtered
 %       variables are required. If 2, the updated variables are required.
-%       If 3, the smoothed variables are required. 
+%       If 3, the smoothed variables are required.
 %   When the function is called with inputs, RISE expects as output the
 %   values of the restrictions. The sign of the violations does not matter.
 %   All the user has to do is to put a zero where the restrictions are not
 %   violated.
-%   
+%
 % - **estim_linear_restrictions** [{[]}|cell]: This is most often used in
 %   the estimation of rfvar or svar models either to impose block
 %   exogeneity or to impose other forms of linear restrictions. When not
@@ -122,12 +122,9 @@ function obj=estimate(obj,varargin)
 %       - **exitflag**: a flag similar to the ones provided by matlab's
 %       optimization functions.
 %
-% - **hessian_type** [{'fd'}|'opg']: The hessian is either computed by
-%   finite differences (fd) or by outer-product-gradient (opg)
-%
-% - **hessian_repair** [{false}|true]: If the Hessian is not positive
-%   definite, it nevertheless can be repaired and prepared for a potential
-%   mcmc simulation.
+% - **estim_optimizer_hessian** [{false}|true]: Use the hessian computed by
+% the optimizer. Else, store the hessian returned by the optimizer, but
+% also compute and use the numerical hessian.
 %
 % Outputs
 % --------
@@ -142,18 +139,17 @@ function obj=estimate(obj,varargin)
 % - recursive estimation may be done easily by passing a different
 %   estim_end_date at the beginning of each estimation run.
 %
-% - It is also possible to estimate a dsge model using conditional  
+% - It is also possible to estimate a dsge model using conditional
 %   future information on endogenous (**forecast_cond_endo_vars**) as well.
-%   as on exogenous (**forecast_cond_exo_vars**). The dataset provided in 
-%   this case must have several pages. The first page is the actual data, 
+%   as on exogenous (**forecast_cond_exo_vars**). The dataset provided in
+%   this case must have several pages. The first page is the actual data,
 %   while the subsequent pages are the expectations data.
 %   See help dsge.forecast for more information
 %
 % Examples
 % ---------
 %
-% See also: 
-
+% See also:
 
 nobj=numel(obj);
 if nobj==0
@@ -171,7 +167,8 @@ if nobj==0
         'estim_blocks',[],...
         'estim_priors',[],...
         'estim_penalty',1e+8,...
-        'estim_penalty_factor',10);
+        'estim_penalty_factor',10,...
+        'estim_optimizer_hessian',false);
     % violations of the restrictions in a vector for instance in order to impose the max operator ZLB, Linde and Maih
     obj=utils.miscellaneous.mergestructures(optimization.estimation_engine(),...
         main_defaults);
@@ -269,27 +266,9 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 obj=setup_linear_restrictions(obj);
 obj=setup_general_restrictions(obj);
 
-npar=size(x0,1);
-
 [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,ub); %#ok<ASGLU>
 
 numberOfActiveInequalities=numel(viol);
-
-% make the hessian positive definite if necessary but keep a copy of the
-% original
-orig_H=H;
-if obj(1).options.hessian_repair
-    [Hc,Hinv] = utils.cov.conditioner(H);
-    if max(abs(Hc(:)-H(:)))>1e-6
-        warning([mfilename,':: non-positive definite hessian made diagonally dominant']) %#ok<WNTAG>
-        H=Hc; clear Hc
-        Hinv=inv(H);
-    end
-else
-    Hinv=inv(H);
-end
-% the standard deviations
-SD=sqrt(diag(Hinv));
 
 if ~isempty(issue)
     list_of_issues=[list_of_issues;{issue}];
@@ -297,9 +276,6 @@ end
 
 estim_end_time=clock;
 for ii=1:nobj
-    % set the end time for estimation, even if it does not include the
-    % smoothing part below.
-    obj(ii).estimation.posterior_maximization.estim_end_time=estim_end_time;
     % set the filtering/smoothing flag to 3 in order to get out the final
     % outputs with the smoothed and filtered variables (if feasible)
     
@@ -309,35 +285,38 @@ for ii=1:nobj
     g=evaluate_nonlinear_restrictions(obj(ii));
     nonlin_penalty=utils.estim.penalize_violations(g{1},obj(ii).options.estim_penalty_factor);
     
+    post_max=obj(ii).estimation.posterior_maximization;
+    % set the end time for estimation, even if it does not include the
+    % smoothing part done in conclude_estimation.
+    post_max.estim_end_time=estim_end_time;
     % capture the final parameters and their standard deviations
-    obj(ii).estimation.posterior_maximization.mode=x1;
-    obj(ii).estimation.posterior_maximization.mode_stdev=SD;
+    post_max.mode=x1;
     
-    % rebuild the parameter object. This can be done now coz estimation_under_way is set to false
-    % log_mdd=.5*npar*log(2*pi)-.5*log(det(H))+log_post;
-    % or alternatively
-    log_mdd=.5*npar*log(2*pi)+.5*log(det(Hinv))+log_post;
+    % Hessian
+    post_max.hessian=H;
     
-    obj(ii).estimation.posterior_maximization.log_prior=log_prior(1);
-    obj(ii).estimation.posterior_maximization.log_endog_prior=log_prior(2);
-    obj(ii).estimation.posterior_maximization.nonlinear_restrictions_penalty=nonlin_penalty;
-    obj(ii).estimation.posterior_maximization.log_post=log_post;
-    obj(ii).estimation.posterior_maximization.log_lik=log_lik;
-    obj(ii).estimation.posterior_maximization.log_marginal_data_density_laplace=log_mdd;
-    obj(ii).estimation.posterior_maximization.active_inequalities_number=numberOfActiveInequalities;
-    obj(ii).estimation.posterior_maximization.vcov=Hinv;
-    obj(ii).estimation.posterior_maximization.funevals=funevals;
+    post_max.log_prior=log_prior(1);
+    post_max.log_endog_prior=log_prior(2);
+    post_max.nonlinear_restrictions_penalty=nonlin_penalty;
+    post_max.log_post=log_post;
+    post_max.log_lik=log_lik;
+    post_max.active_inequalities_number=numberOfActiveInequalities;
+    post_max.funevals=funevals;
+    
+    % Marginal data density and other variable outputs that can be calculated separately
+    %-----------------------------------------------------------------------------------
+    post_max=generic_tools.posterior_maximization_variable_quantities(post_max,H,...
+        obj(ii).options.estim_optimizer_hessian);
+    
+    obj(ii).estimation.posterior_maximization=post_max;
     
     obj(ii).list_of_issues=list_of_issues;
     
     if isdir(obj(ii).options.results_folder)
         save([obj(ii).options.results_folder,filesep,'estimation',filesep,...
-            'estimated_model'],'obj','x1','x0','f1','f0','H','Hinv')
+            'estimated_model'],'obj','x1','x0','f1','f0','H')
     end
 end
 % disp Estimation results
 print_estimation_results(obj);
-
 end
-
-

@@ -106,6 +106,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=estimate(varargin)
         varargout=forecast(varargin)
         varargout=get(varargin)
+        varargout=hessian(varargin)
         varargout=historical_decomposition(varargin)
         varargout=irf(varargin)
         varargout=isnan(varargin)

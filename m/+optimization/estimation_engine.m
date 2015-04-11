@@ -29,7 +29,6 @@ opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify
     'MaxTime',3600);%: [ positive scalar | {7200} ]
 opt.optimizer='fmincon'; % default is fmincon
 opt.hessian_type='fd';  % (finite differences) alternatives: 'opg' (outer-product gradient)
-opt.hessian_repair=false;  % repair the hessian at the end of estimation
 
 if nargin==0
     if nargout>1
@@ -101,21 +100,22 @@ end
 
 % hessian
 %---------
-H=[];
+d=numel(x0);
+H=nan(d,d,2);
 if block_flag
     options.optimizer=optimizer;
     [xfinal,ffinal,exitflag]=blockwise_optimization(fh,x0,lb,ub,options,vargs{:});
 else
     if strcmp(tmp,'fmincon')
-        [xfinal,ffinal,exitflag,~,~,~,H]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
+        [xfinal,ffinal,exitflag,~,~,~,H(:,:,1)]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
     elseif strcmp(tmp,'fminunc')
-        [xfinal,ffinal,exitflag,~,~,H]=optimizer(fh,x0,lb,ub,options,vargs{:});
+        [xfinal,ffinal,exitflag,~,~,H(:,:,1)]=optimizer(fh,x0,lb,ub,options,vargs{:});
     else
         nout=nargout(optimizer);
         if nout==3
             [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
         elseif nout>=4
-            [xfinal,ffinal,exitflag,H]=optimizer(fh,x0,lb,ub,options,vargs{:});
+            [xfinal,ffinal,exitflag,H(:,:,1)]=optimizer(fh,x0,lb,ub,options,vargs{:});
         else
             error('optimizer should have at least 3 outputs')
         end
@@ -127,29 +127,9 @@ xbest=xfinal;
 fbest=ffinal;
 TranslateOptimization(exitflag);
 
-% compute Hessian if empty
-%--------------------------
-if ~isempty(H)
-    issue='Hessian/covariance from optimizer (not numerically calculated)';
-else
-    issue='';
-    switch lower(hessian_type)
-        case 'fd'
-            H = utils.hessian.finite_differences(fh,xbest);
-        case 'opg'
-            H = utils.hessian.outer_product(fh,xbest);
-            if any(any(isnan(H)))||any(any(isinf(H)))
-                issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
-                warning([mfilename,':: ',issue]) %#ok<WNTAG>
-                warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
-                H = finite_difference_hessian(fh,xbest);
-            end
-        otherwise
-            issue=['unknow hessian option ',hessian_type,' using finite differences'];
-            warning([mfilename,':: ',issue]) %#ok<WNTAG>
-            H = finite_difference_hessian(fh,xbest);
-    end
-end
+% compute the numerical hessian
+%-------------------------------
+[H(:,:,2),issue]=utils.hessian.numerical(fh,xbest,hessian_type);
 
 end
 

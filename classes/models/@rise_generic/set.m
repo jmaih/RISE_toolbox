@@ -218,7 +218,19 @@ end
         end
         function set_one_option()
             absorbed=false;
-            if strcmp(propname,'optimset')
+            if strcmp(propname,'estim_optimizer_hessian')
+                if ~(islogical(propval)||...
+                        (isa(propval,'double') && isscalar(propval) && propval==fix(propval) && propval>0))
+                    error('property estim_optimizer_hessian should be true, false or an integer')
+                end
+                if isfield(obj.estimation,'posterior_maximization') && ...
+                        ~isempty(obj.estimation.posterior_maximization.hessian)
+                    post_max=obj.estimation.posterior_maximization;
+                    post_max=generic_tools.posterior_maximization_variable_quantities(...
+                        post_max,post_max.hessian,propval);
+                    obj.estimation.posterior_maximization=post_max;
+                end
+            elseif strcmp(propname,'optimset')
                 [obj.options.(propname),missing]=utils.miscellaneous.setfield(obj.options.(propname),propval);
                 if ~isempty(missing)
                     disp(missing)

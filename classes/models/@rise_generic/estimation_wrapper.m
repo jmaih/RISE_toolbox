@@ -1,16 +1,49 @@
 function [x1,f1,H,issue,viol,obj,funevals]=...
     estimation_wrapper(obj,action,x0,lb,ub,funevals)
-% H1 line
+
+% estimation_wrapper -- environment for the estimation of parameters
 %
 % Syntax
 % -------
 % ::
 %
+%   [x1,f1,H,issue,viol,obj,funevals]=estimation_wrapper(obj,action,x0,lb,ub,funevals)
+%
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge|svar|rfvar]: model object
+%
+% - **action** [''|{'eval'}|'estimate']: intended action
+%
+% - **x0** [[]|d x 1 vector]: paramter vector for start of the optimization
+% or for log-posterior-kernel evaluation
+%
+% - **lb** [d x 1 vector]: lower bound of the parameters to estimate
+%
+% - **ub** [d x 1 vector]: upper bound of the parameters to estimate
+%
+% - **funevals** [[]|numeric]: function evaluations
+%
 % Outputs
 % --------
+%
+% - **x1** [[]|d x 1 vector]: final paramter vector
+%
+% - **f1** [numeric]: value of objective function evaluated at x1
+%
+% - **H** [d x d x 2 array]: Hessian, such that H(:,:,1) is the hessian
+% computed returned from the optimizer and H(:,:,2) is the hessian computed
+% numerically by RISE.
+%
+% - **issue** [char|cellstr]: list of problems encountered during the
+% process
+%
+% - **viol** [[]|vector]: restriction violations
+%
+% - **obj** [rise|dsge|svar|rfvar]: model object possibly modified
+%
+% - **funevals** [[]|numeric]: function evaluations
 %
 % More About
 % ------------
@@ -107,7 +140,15 @@ end
 x1 = linear_restricts.a_func(x1);
 if ~isempty(H)
     % the second arguments indicates that it is a covariance term
-    H = linear_restricts.a_func(H,true);
+    d=numel(x1);
+    npages=size(H,3);
+    Htmp=nan(d,d,npages);
+    for ipage=1:npages
+        if ~any(isnan(vec(H(:,:,ipage))))
+            Htmp(:,:,ipage) = linear_restricts.a_func(H(:,:,ipage),true);
+        end
+    end
+    H=Htmp; clear Htmp
 end
 
     function [minus_log_post,retcode]=fh_wrapper(xtilde)
