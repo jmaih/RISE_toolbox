@@ -74,28 +74,15 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     fh=@(x)uminus(log_posterior_kernel(obj,x));
     f1=fh(x1);
     f0=fh(x0);
-    % compute Hessian
+    % compute Hessian: we always compute two hessians, one returned by the optimizer and the other computed numerically
     %----------------
+    H=repmat(eye(npar,npar),[1,1,2]);
     if compute_hessian
-        switch lower(obj.options.hessian_type)
-            case 'fd'
-                H = utils.hessian.finite_differences(fh,x1);
-            case 'opg'
-                H = utils.hessian.outer_product(fh,x1);
-                if any(any(isnan(H)))||any(any(isinf(H)))
-                    issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
-                    warning([mfilename,':: ',issue]) %#ok<WNTAG>
-                    warning([mfilename,':: OPG unstable for calculation of Hessian, switching to finite differences']) %#ok<WNTAG>
-                    H = finite_difference_hessian(fh,x1);
-                end
-            otherwise
-                issue=['unknow hessian option ',hessian_type,' using finite differences'];
-                warning([mfilename,':: ',issue]) %#ok<WNTAG>
-                H = finite_difference_hessian(fh,x1);
-        end
+		% compute the numerical hessian
+		%-------------------------------
+		[H(:,:,2),issue]=utils.hessian.numerical(fh,x1,lower(obj.options.hessian_type));
     else
         warning([mfilename,':: this variance for one-regime VARs is wrong'])
-        H=eye(npar);
     end
     % add remaining items
     %--------------------
