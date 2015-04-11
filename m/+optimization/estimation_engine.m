@@ -28,7 +28,6 @@ opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify
     'UseParallel','never',...%: [ always | {never} ]
     'MaxTime',3600);%: [ positive scalar | {7200} ]
 opt.optimizer='fmincon'; % default is fmincon
-opt.hessian_type='fd';  % (finite differences) alternatives: 'opg' (outer-product gradient)
 
 if nargin==0
     if nargout>1
@@ -62,14 +61,12 @@ lb=PROBLEM.lb;
 ub=PROBLEM.ub;
 optim_opt=PROBLEM.options;
 
-if isempty(hessian_type)
-    hessian_type=opt.hessian_type;
-end
 options=opt.optimset;
 options=utils.miscellaneous.setfield(options,optim_opt);
 
 if isempty(hessian_type)
-    hessian_type='fd';
+    hessian_type=utils.hessian.numerical();
+	hessian_type=hessian_type.hessian_type;
 end
 
 block_flag=~isempty(estim_blocks);
