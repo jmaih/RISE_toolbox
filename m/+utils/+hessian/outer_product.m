@@ -24,7 +24,9 @@ function [H,H2,grad]=outer_product(Objective,xparam,varargin)
 % the first one will not be used. The second one is the
 % different increments of the likelihood
 
-Objective=fcnchk(Objective,length(varargin));
+if ischar(Objective)
+    Objective=str2func(Objective);
+end
 
 [grad,grad2] = finite_difference_double_gradient(Objective,xparam,varargin{:});
 H=grad2'*grad2;
