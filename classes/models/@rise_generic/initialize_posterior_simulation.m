@@ -34,7 +34,7 @@ if not_optimized
     x0=[obj.estimation.priors.start]';
     npar=numel(obj(1).estimation.priors);
     vcov=eye(npar);
-    [minus_log_post,retcode]=fh_wrapper(x0);
+    [minus_log_post,retcode]=pull_objective(x0);
     f0=minus_log_post;
     if retcode
         msg=utils.error.decipher(retcode);
@@ -55,8 +55,8 @@ adapt_covariance=adapt_covariance||obj.options.mcmc_adapt_covariance;
 CS=transpose(chol(vcov));
 %----------------------------------------
 number_of_burns=round(obj.options.mcmc_burn_rate*obj.options.mcmc_number_of_simulations);
-init=struct('x0',x0,'f0',f0,'CS',CS,...'lb',lb,'ub',ub,
-    'c',c,'objective',@(x)fh_wrapper(x),...
+init=struct('x0',x0,'f0',f0,'CS',CS,...
+    'c',c,'objective',pull_objective(obj),...
     'drawfun',@(varargin)drawfun(varargin{:}),...
     'adapt_covariance',adapt_covariance,...
     'thin',obj.options.mcmc_thin,...
@@ -64,25 +64,4 @@ init=struct('x0',x0,'f0',f0,'CS',CS,...'lb',lb,'ub',ub,
     'funevals',0);
 total_draws=number_of_burns+obj.options.mcmc_number_of_simulations;
 
-    function [minus_log_post,retcode]=fh_wrapper(x)
-        % this function returns the minimax if there are many objects
-        % evaluated simultaneously
-        
-        retcode=0;
-        if any(x<lb)||any(x>ub)
-            retcode=7;
-        else
-            [~,minus_log_post,~,issue,viol]=...
-                estimation_wrapper(obj,[],x,lb,ub,0); % function evaluations computed elsewhere
-            if ~isempty(issue)
-                retcode=issue;
-            end
-            if ~isempty(viol) && any(viol>0)
-                retcode=7;
-            end
-        end
-        if retcode
-            minus_log_post=obj.options.estim_penalty;
-        end
-    end
 end
