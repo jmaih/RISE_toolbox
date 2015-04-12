@@ -19,7 +19,7 @@ function [ys,retcode]=solve_steady_state(ys0,def,pp,resid_func,...
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if nargin<6
     arg_zero_solver=1;
@@ -80,10 +80,18 @@ if ~retcode
                 % zero for a variable in logs...
                 residuals=resid_func(ys0(:,ireg),pp_i,def_i);
                 nan_residuals=isnan(residuals);
-                if any(nan_residuals)
+                imag_residuals=logical(imag(residuals));
+                if any(nan_residuals|imag_residuals)
                     if debug
-                        disp(find(nan_residuals))
-                        disp('the equations # above have nan residuals in the computation of the steady state')
+                        if any(nan_residuals)
+                            culprits=find(nan_residuals);
+                            type='nan';
+                        else
+                            type='imaginary';
+                            culprits=find(imag_residuals);
+                        end
+                        disp(culprits)
+                        disp(['the equations # above have ',type,' residuals in the computation of the steady state'])
                         keyboard
                     end
                     exitflag=-4;
@@ -100,7 +108,7 @@ if ~retcode
         end
     end
     
-    if ~any(isnan(ys(:))) && exitflag==1
+    if isreal(y) && ~any(isnan(ys(:))) && all(isfinite(ys(:))) && exitflag==1
         % maybe I should not do the following? especially here?
         ys(abs(ys)<1e-12)=0;
         retcode=0;

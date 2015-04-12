@@ -17,7 +17,7 @@ function [obj,ss_and_bgp_start_vals,retcode]=initial_steady_state(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 obj=set(obj,varargin{:});
@@ -121,7 +121,7 @@ if retcode && obj.options.debug
 end
 
     function [ss,retcode,change_locs,pp_sstate]=steady_state_evaluation(ssfunc)
-        ss=[]; 
+        ss=[];
         change_locs=[];
         [pp_sstate,~,retcode]=get_sstate_parameters();
         if ~retcode
@@ -131,7 +131,7 @@ end
                 % load_functions and so all is needed here is the parameters
                 [y,pp_update(:,ireg)]=utils.code.evaluate_functions(...
                     ssfunc,[],[],[],pp_sstate(:,ireg),[],[],[],[]); % y, x, ss, param, sparam, def, s0, s1
-                retcode=~all(isfinite(y));
+                retcode=~(all(isfinite(y)) && isreal(y));
                 if retcode
                     return
                 end
