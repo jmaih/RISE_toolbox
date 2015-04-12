@@ -108,7 +108,7 @@ if ~retcode
         end
     end
     
-    if isreal(y) && ~any(isnan(ys(:))) && all(isfinite(ys(:))) && exitflag==1
+    if isreal(ys) && ~any(isnan(ys(:))) && all(isfinite(ys(:))) && exitflag==1
         % maybe I should not do the following? especially here?
         ys(abs(ys)<1e-12)=0;
         retcode=0;
