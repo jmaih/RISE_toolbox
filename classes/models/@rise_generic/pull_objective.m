@@ -52,6 +52,7 @@ ub=[obj.estimation.priors.upper_bound]';
 % try to avoid unnecessary computations like storing filters and so on
 %----------------------------------------------------------------------
 obj.estimation_under_way=true;
+obj.options.kf_filtering_level=0;
 
 ff=@engine;
 
