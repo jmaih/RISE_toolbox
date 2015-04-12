@@ -34,6 +34,11 @@ function [ff,lb,ub]=pull_objective(obj,varargin)
 %   - hessian computation, 
 %   - posterior simulation 
 %
+% - Using this function is potentially costly, one could alternatively
+% simply use log_posterior_kernel. However, if there are restrictions, they
+% will not be enforced. Nevertheless it is an interesting proposition that
+% should be investigated further.
+%
 % Examples
 % ---------
 %
