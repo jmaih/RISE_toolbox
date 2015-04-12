@@ -17,7 +17,7 @@ function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 if isempty(obj)
@@ -41,9 +41,9 @@ end
 % initialize remaining outputs
 %-------------------------------
 LogLik=-obj.options.estim_penalty;
-        
+
 if ~isempty(varargin)
-	obj=set(obj,varargin{:});
+    obj=set(obj,varargin{:});
 end
 
 if ~obj.data_are_loaded
@@ -163,7 +163,7 @@ if obj.options.kf_filtering_level && ~retcode
             end
         end
     end
-
+    
     Fields={'a','att','atT','eta','eta_tt','eta_tlag','epsilon','PAI','PAItt','PAItT';
         'filtered_variables','updated_variables','smoothed_variables',...
         'smoothed_shocks','updated_shocks','filtered_shocks',...
@@ -175,7 +175,7 @@ if obj.options.kf_filtering_level && ~retcode
         main_field=Fields{1,ifield};
         alias=Fields{2,ifield};
         if isfield(Filters,main_field)
-            if any(strcmp(main_field,table_map(:,1))) 
+            if any(strcmp(main_field,table_map(:,1)))
                 % re-order endogenous variables alphabetically
                 %-----------------------------------------------
                 for reg=1:h
@@ -225,14 +225,15 @@ function ff=do_one_step_forecast(T,ss,compl,cond_shocks_id,xloc,sig,...
     horizon,is_det_shock)
 % y1: forecast
 % is_active_shock : location of shocks required to satisfy the constraints.
-% sig: perturbation parameter 
+% sig: perturbation parameter
 order=size(T,1);
 nstoch=sum(~is_det_shock);
 exo_nbr=numel(is_det_shock);
+nx=numel(xloc);
 
 ff=@my_one_step;
 
-    function varargout=my_one_step(rt,y0,stoch_shocks,det_shocks) 
+    function varargout=my_one_step(rt,y0,stoch_shocks,det_shocks)
         % [y1,is_active_shock,retcode,shocks]=my_one_step(rt,y0,shocks)
         if nargin<4
             det_shocks=[];
@@ -246,14 +247,25 @@ ff=@my_one_step;
         end
         nout=nargout;
         if isempty(compl)
-            y1=utils.forecast.one_step_engine(T(:,rt),y0,ss{rt},xloc,sig,...
+            if all(shocks==0) && order==1
+                % quick exit if possible
+                %------------------------
+                y_yss=y0.y-ss{rt};
+                y1.y=ss{rt}+T{1,rt}(:,1:nx)*y_yss(xloc)+T{1,rt}(:,nx+1)*sig;
+            else
+                % if shocks and/or higher orders, do it the hard way
+                %----------------------------------------------------
+                y1=utils.forecast.one_step_engine(T(:,rt),y0,ss{rt},xloc,sig,...
                     shocks,order);
+            end
             outputs={y1,false(1,exo_nbr),0,shocks};
             varargout=cell(1,nout);
             for iarg=1:nout
                 varargout{iarg}=outputs{iarg};
             end
         else
+            % if restrictions, this is unavoidable
+            %--------------------------------------
             [varargout{1:nout}]=utils.forecast.one_step_fbs(T(:,rt),y0,...
                 ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
         end
@@ -264,8 +276,8 @@ end
 function E=expectation(probs,vals)
 E=0;
 for istate=1:numel(vals)
-% E=E+squeeze(bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate}));
-E=E+bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate});
+    % E=E+squeeze(bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate}));
+    E=E+bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate});
 end
 % E=squeeze(sum(bsxfun(@times,permute(probs,[3,1,2]),vals),2));
 end
