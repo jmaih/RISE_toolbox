@@ -2,11 +2,7 @@
 close all
 clear
 clc
-%%
-cd C:\Users\Junior\Dropbox\RISE\RISE_Toolbox\examples\VariousModels\SmetsWouters
-%% add the necessary paths
-addpath C:\Users\Junior\Dropbox\RISE\RISE_Toolbox
-rise_startup();
+
 %% load the data and construct the time series
 dat=load('usmodel_data');
 vnames=fieldnames(dat);
