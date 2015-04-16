@@ -124,7 +124,7 @@ if update_random_number_stream
     if ismember('setGlobalStream',stream_methods)
         RandStream.setGlobalStream(s);
     else
-        RandStream.setDefaultStream(s);  %#ok<SETRS>
+        RandStream.setDefaultStream(s);  
     end
 end
     function set_one_at_a_time()
@@ -225,6 +225,12 @@ end
                 end
                 if isfield(obj.estimation,'posterior_maximization') && ...
                         ~isempty(obj.estimation.posterior_maximization.hessian)
+                    Old_hess=obj.estimation.posterior_maximization.hessian;
+                    if propval==true && any(isnan(vec(Old_hess(:,:,2))))
+                        % recompute the numerical hessian since it was not
+                        % computed
+                        obj=hessian(obj);
+                    end
                     post_max=obj.estimation.posterior_maximization;
                     post_max=generic_tools.posterior_maximization_variable_quantities(...
                         post_max,post_max.hessian,propval);

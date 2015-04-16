@@ -60,6 +60,10 @@ x0=PROBLEM.x0;
 lb=PROBLEM.lb;
 ub=PROBLEM.ub;
 optim_opt=PROBLEM.options;
+estim_optimizer_hessian=PROBLEM.estim_optimizer_hessian;
+% Try not to upset Matlab
+%-------------------------
+PROBLEM=rmfield(PROBLEM,'estim_optimizer_hessian');
 
 options=opt.optimset;
 options=utils.miscellaneous.setfield(options,optim_opt);
@@ -124,9 +128,14 @@ xbest=xfinal;
 fbest=ffinal;
 TranslateOptimization(exitflag);
 
-% compute the numerical hessian
-%-------------------------------
-[H(:,:,2),issue]=utils.hessian.numerical(fh,xbest,hessian_type);
+% compute the numerical hessian only if the user wants it or if the
+% optimizer hessian is not available
+%---------------------------------------------------------------------
+estim_optimizer_hessian=estim_optimizer_hessian && ~any(isnan(vec(H(:,:,1))));
+
+if ~estim_optimizer_hessian
+    [H(:,:,2),issue]=utils.hessian.numerical(fh,xbest,hessian_type);
+end
 
 end
 
