@@ -68,7 +68,8 @@ switch code
         msg='Nans in Lyapunov solution';
     case 303
         msg='Explosion limit reached in Lyapunov solution';
-        %     case 304
+    case 304
+        msg='Failure of covariance in the determination of sigma points';
     case 305
         msg='Covariance of forecast errors not positive definite';
     case 306

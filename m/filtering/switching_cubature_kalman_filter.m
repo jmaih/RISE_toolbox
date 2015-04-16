@@ -275,7 +275,10 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             a{splus}=a{splus}+pai_st_splus*att{st};
             P{splus}=P{splus}+pai_st_splus*Ptt{st};
         end
-        [xtt]=utils.filtering.sigma_points(a{splus},P{splus},'ckf',sqrt_m);
+        [xtt,retcode]=utils.filtering.sigma_points(a{splus},P{splus},'ckf',sqrt_m);
+		if retcode
+			return
+		end
         a_plus=0;
         x_plus=[xtt,zeros(m,2*nshocks)];
         % run sigma points for states

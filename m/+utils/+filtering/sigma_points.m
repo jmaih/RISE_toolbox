@@ -1,20 +1,30 @@
-function [x]=sigma_points(a,P,type,scale)
+function [x,retcode]=sigma_points(a,P,type,scale)
 if nargin<4
     scale=[];
 end
 if isempty(scale)
     get_scale();
 end
-% symmetrizing is not enough to get a positive definite matrix
-Pstar=scale*chol(utils.cov.nearest(P),'lower');
-x=[bsxfun(@plus,a,Pstar),... points to the right
-    bsxfun(@minus,a,Pstar)]; % points to the left
-switch type
-    case 'ckf'
-    case {'ukf','ddf'}
-        x=[a,x]; % add center
-    otherwise
-        error(['unknown type of rule ',type])
+retcode=0;
+check=any(isnan(P(:)))||any(abs(P(:)>1e+5));
+if ~check
+    [Pstar,check]=chol(utils.cov.nearest(P),'lower');
+end
+if check
+    x=[];
+    retcode=304;
+else
+    % symmetrizing is not enough to get a positive definite matrix
+    Pstar=scale*Pstar;
+    x=[bsxfun(@plus,a,Pstar),... points to the right
+        bsxfun(@minus,a,Pstar)]; % points to the left
+    switch type
+        case 'ckf'
+        case {'ukf','ddf'}
+            x=[a,x]; % add center
+        otherwise
+            error(['unknown type of rule ',type])
+    end
 end
 
     function get_scale()
