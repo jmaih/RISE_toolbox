@@ -208,7 +208,8 @@ Initcond.shocks=shocks;
                 [],pages);
             % remove first page (shocks of the past!!!)
             %-------------------------------------------
-            verdier=squeeze(verdier(:,:,2:end));
+            % squeeze does not work well with singleton dimensions...
+            verdier=permute(verdier(:,:,2:end),[1,3,2]); % <-- squeeze(verdier(:,:,2:end));
             npages=size(verdier,2);
             % now chop until the forecast horizon
             %--------------------------------------

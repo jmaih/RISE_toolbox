@@ -40,6 +40,7 @@ end
 
 if ~ischar(pivot_date)
     pivot_date=serial2date(pivot_date);
+    pivot_date=char(pivot_date);
 end
 
 db=db([pivot_date,':',db.finish]);
