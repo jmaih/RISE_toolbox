@@ -24,7 +24,7 @@ mest=estimate(m,'data',data,'estim_priors',priors,...
     'solve_log_approx_vars',log_vars);
 %% Impulse response functions
 myirfs=irf(mest);
-
+% % close,shock='EPS_Z';plot(cumsum(myirfs.(shock).Z)+myirfs.(shock).Y)
 close all
 % mest=set(mest,'tex_name',{
 %     'Y','Output'
