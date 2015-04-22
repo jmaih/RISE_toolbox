@@ -33,13 +33,14 @@ vcov=.5*(vcov0+vcov0.');
 
 oldD=diag(D);
 
+too_low=sqrt(eps);
 % quick exit
 %------------
-if any(oldD<=0)
+if any(oldD<too_low)
     if farthest
         oldD=abs(oldD);
     end
-    D=max(oldD,sqrt(eps));
+    D=max(oldD,too_low);
     
     vcov = V*diag(max(D,sqrt(eps)))*V';
     
