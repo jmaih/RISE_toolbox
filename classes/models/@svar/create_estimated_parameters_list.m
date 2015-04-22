@@ -27,7 +27,7 @@ end
 
 % create baseline from the template for the estimation
 %-----------------------------------------------------
-[plist,fixed_struct]=vartools.create_baseline_parameters(obj.estim_param_template,obj.parameters.name);
+[plist,fixed_struct]=vartools.create_baseline_parameters(obj.param_template,obj.parameters.name);
 
 Regimes=obj.markov_chains.regimes;
 nstates=nan(1,obj.markov_chains.chains_number);

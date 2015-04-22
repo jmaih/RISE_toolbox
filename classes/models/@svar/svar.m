@@ -60,7 +60,6 @@ classdef svar < rise_generic
     end
     properties(SetAccess = private, Hidden = true)%Access=private
         nx
-        estim_param_template
         % the elements below should be for reduced-form vars only
         % hence, the var shall inherit from the structural var
         construction_data
@@ -120,36 +119,7 @@ classdef svar < rise_generic
             if isempty(obj)
                 [varargout{1:nout}]=estimate@rise_generic(obj);
             else
-                % use the options to apply the zero restrictions on
-                % individual parameters (above and beyond the earlier block
-                % exogeneity
-                %----------------------------------------------------------
-                obj.estim_param_template=obj.param_template;
-                % get the names of the estimated parameters from the
-                % information in obj.estim_param_template: the transition
-                % probabilities are automatically estimated.
-                %----------------------------------------------------------
-                estim_names=create_estimated_parameters_list(obj);
-                
-                obj.estimation_restrictions=parameters_links(obj,estim_names);
-                
-                % load the data
-                %--------------
-                [obj,issue,retcode]=load_data(obj,varargin{:});
-                if retcode
-                    error(issue)
-                end
-                obj=msvar_priors(obj,estim_names);
-                if isa(obj,'stochvol')
-                    [varargout{1:nout}]=posterior_simulator(obj,...
-                        'mcmc_gibbs_sampler_func',@stochvol_tools.gibbs_sampler);
-                else
-                    obj.routines.likelihood=@vartools.var_likelihood;
-                    if nout>nargout('rise_generic/estimate')
-                        error('number of output arguments exceeds the maximum')
-                    end
-                    [varargout{1:nout}]=estimate@rise_generic(obj);
-                end
+                [varargout{1:nout}]=estimate@rise_generic(obj);
             end
         end
         function obj=set(obj,varargin)
@@ -159,6 +129,8 @@ classdef svar < rise_generic
                 obj=set@rise_generic(obj,varargin{:});
                 % combine with specific elements if necessary
             else
+                very_special={'vp_prior_type','estim_linear_restrictions','data'};
+                redo_priors=false;
                 for iobj=1:numel(obj)
                     vargs=varargin;
                     constr_data=obj(iobj).construction_data;
@@ -177,6 +149,9 @@ classdef svar < rise_generic
                             end
                         elseif any(strcmp(ff,fo))
                             options_.(ff)=val;
+                            if any(strcmp(ff,very_special))
+                                redo_priors=true;
+                            end
                         else
                             processed([iarg,iarg+1])=false;
                             % don't do anything, we will use the generic method
@@ -186,10 +161,33 @@ classdef svar < rise_generic
                     if construction_data_is_modified
                         obj(iobj)=svar(constr_data);
                     end
+                    obj.routines.likelihood=@vartools.var_likelihood;
                     obj(iobj).options=options_;
                     vargs(processed)=[];
                     if ~isempty(vargs)
                         obj(iobj)=set@rise_generic(obj(iobj),vargs{:});
+                    end
+                    if redo_priors && ~isempty(obj(iobj).options.data)
+                        if isa(obj(iobj).options.data,'ts') && ...
+                                obj(iobj).options.data.NumberOfObservations==0
+                            return
+                        end
+                        % get the names of the estimated parameters from
+                        % the information in obj.estim_param_template: the
+                        % transition probabilities are automatically
+                        % estimated.
+                        %--------------------------------------------------
+                        estim_names=create_estimated_parameters_list(obj);
+                        
+                        obj.estimation_restrictions=parameters_links(obj,estim_names);
+                        
+                        % load the data
+                        %--------------
+                        [obj,issue,retcode]=load_data(obj);
+                        if retcode
+                            error(issue)
+                        end
+                        obj=msvar_priors(obj,estim_names);
                     end
                 end
             end
