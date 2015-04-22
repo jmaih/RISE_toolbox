@@ -1,5 +1,5 @@
 %% housekeeping
-clear all
+clear classes
 clc
 close all
 %% "rise" the model
@@ -62,7 +62,7 @@ database.varnames=vnames;
 m=set(m,'data',database,'estim_end_date',end_date);
 
 %% estimate the model
-
+profile off
 profile on
 m=estimate(m);%,'optimizer',@csminwellwrap,'debug',true
 profile off
@@ -94,6 +94,9 @@ plot_posteriors(m,postSims,myparams)
 plot_priors_and_posteriors(m,postSims,myparams)
 %% check curvature at the mode
 mode_curvature(m)
+
+%% check curvature at the mode for a subset of parameters
+mode_curvature(m,myparams)
 
 %% check curvature at the mode for a subset of parameters
 profile off
