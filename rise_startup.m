@@ -55,8 +55,12 @@ else
         miktex_version=regexp(latex_paths,['(?i)M(iK|ac)TeX(\s+|\',filesep,')'],'match');
         miktex_version=[miktex_version{:}];
     end
-    miktex_version=strrep(miktex_version,filesep,' ');
-    miktex_version=miktex_version{1};
+    if isempty(miktex_version)
+        miktex_version='version could not be identified';
+    else
+        miktex_version=strrep(miktex_version,filesep,' ');
+        miktex_version=miktex_version{1};
+    end
 end
 % Decide if using or not the RISE print and plot settings
 %--------------------------------------------------------
