@@ -31,8 +31,8 @@ default_xout={
     'is_trans_prob',false,@(x)islogical(x)% all parameters
     'is_log_var',false,@(x)islogical(x)% all endogenous
     'is_endogenous',false,@(x)islogical(x)% all observables
-    'max_lead',0,@(x)isdouble(x) && isscalar(x) && floor(x)==ceil(x) && x>=0% all variables and parameters
-    'max_lag',0,@(x)isdouble(x) && isscalar(x) && floor(x)==ceil(x) && x<=0% all variables and parameters
+    'max_lead',0,@(x)isa(x,'double') && isscalar(x) && floor(x)==ceil(x) && x>=0% all variables and parameters
+    'max_lag',0,@(x)isa(x,'double') && isscalar(x) && floor(x)==ceil(x) && x<=0% all variables and parameters
     'state_id',nan,@(x)isdouble(x) && isscalar(x) && floor(x)==ceil(x) && x>=0% all observables
 	'is_auxiliary',false,@(x)islogical(x)% all endogenous
     };
