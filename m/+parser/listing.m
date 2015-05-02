@@ -23,6 +23,7 @@ function xout=listing(varargin)
 
 default_xout={
     'name','',@(x)isvarname(x)% all
+    'current_name','',@(x)isvarname(x)% all
     'tex_name','',@(x)ischar(x)% all
     'is_in_use',false,@(x)islogical(x)% all exogenous and parameters
     'governing_chain','',@(x)isvarname(x)% all parameters
@@ -49,6 +50,9 @@ end
 if nargin
     if isempty(xout.name)
         error('must have a name')
+    end
+    if isempty(xout.current_name)
+        xout.current_name=xout.name;
     end
 else
     xout=xout(1:0);
