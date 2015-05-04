@@ -799,7 +799,7 @@ clear unsorted_endogenous
 
 %% With all variables known, we can do the complementarity
 [~,~,~,~,~,shadow_complementarity]=parser.shadowize(dictionary,mcp_eqtns,...
-    mcp_type,orig_endogenous_current,overall_max_lead_lag);
+    mcp_type,overall_max_lead_lag);
 
 routines.complementarity=utils.code.code2func(shadow_complementarity,parser.input_list);
 
