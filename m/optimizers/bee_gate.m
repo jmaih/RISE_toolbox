@@ -1,4 +1,4 @@
-function [x,f,exitflag,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
+function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 % bee_gate gateway to bee
 %
 % Syntax
@@ -91,6 +91,8 @@ end
 
 x=obj.best;
 f=obj.best_fval;
+nx=numel(x);
+H=nan(nx);
 
 if obj.iterations>=obj.MaxIter || ...
         obj.funcCount>=obj.MaxFunEvals || ...
