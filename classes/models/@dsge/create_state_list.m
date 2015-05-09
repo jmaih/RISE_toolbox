@@ -78,7 +78,7 @@ for io=1:max(orders)
         new_state=state_list;
     else
         for istate=1:numel(old_state)
-            new_state=[new_state,strcat(old_state{istate},',',state_list)];
+            new_state=[new_state,strcat(old_state{istate},',',state_list)]; %#ok<*AGROW>
         end
     end
     old_state=new_state;
