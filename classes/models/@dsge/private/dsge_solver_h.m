@@ -321,7 +321,9 @@ if nargin<3
     tol=sqrt(eps);
 end
 if max(abs(dvv(:)))<tol || max(abs(vz(:)))<tol
-    Y=0;
+    nd=size(dvv,1);
+    [~,nz]=size(vz);
+    Y=zeros(nd,nz^2);
 else
     Y=utils.kronecker.A_times_k_kron_B(dvv,vz,2);
 end
@@ -339,7 +341,7 @@ end
 [nv,nz]=size(vz);
 
 if max(abs(dvvv(:)))<tol || max(abs(vz(:)))<tol
-    Y=0;
+    Y=zeros(nd,nz^3);
 else
     if new_algo
         Y=utils.kronecker.A_times_k_kron_B(dvvv,vz,3);
@@ -364,7 +366,7 @@ end
 [~,nz]=size(vz);
 kk=2;ll=3;jj=4;
 if max(abs(dvv(:)))<tol || max(abs(vz(:)))<tol || max(abs(vzz(:)))<tol
-    Y=0;
+    Y=zeros(nd,nz^3);
 else
     if new_algo
         Y=utils.kronecker.A_times_B_kron_C(dvv,vz,vzz);
