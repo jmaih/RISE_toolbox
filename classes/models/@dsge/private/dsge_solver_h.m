@@ -68,20 +68,9 @@ end
     function [T,retcode]=solve_higher_orders(T,others,accelerate)
         % second-order moments
         %---------------------
+        [mompos,zz_sig_loc]=moments_positions(siz,2);
         Eu_u=sparse(siz.nz^2,siz.nz^2);
-        start=siz.nz^2-siz.ne^2;
-        zz_sig_loc=(siz.nz+1)*(siz.np+siz.nb)+1;
-        Ie=speye(siz.ne);
-        Eu_u(start+1:end,zz_sig_loc)=Ie(:);% Ie(:)*kron(msig,msig)
-        if obj.options.debug
-            msig=zeros(1,siz.nz);
-            msig(siz.np+siz.nb+1)=1;
-            Eu_u_=sparse(siz.nz^2,siz.nz^2);
-            Eu_u_(start+1:end,:)=Ie(:)*kron(msig,msig);
-            disp(Eu_u_-Eu_u)
-            keyboard
-        end
-        clear Ie % msig
+        Eu_u(mompos,zz_sig_loc)=1;
         
         a0_z=zeros(siz.nv,siz.nz);
         a0_z(pos.v.b_minus,pos.z.b)=eye(siz.nb);
