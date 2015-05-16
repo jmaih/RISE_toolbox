@@ -213,13 +213,11 @@ xss=zeros(nx,1);
 [the_leads,the_current,the_lags,indices,nind,endo_nbr]=create_indices(obj.lead_lag_incidence.before_solve);
 structural_matrices=[];
 
-if obj.is_optimal_policy_model % || obj.estimation_under_way
-    obj.options.solve_order=1;
-end
 solve_order=obj.options.solve_order;
 params=obj.parameter_values;
 resolve_it=check_whether_to_resolve();
 h=obj.markov_chains.small_markov_chain_info.regimes_number;
+
 
 % solve zeroth order or steady state ... and measurement errors
 %--------------------------------------------------------------
@@ -236,40 +234,23 @@ if solve_order>0 && ~retcode && resolve_it
     %---------------------------------------------------------------------
     retcode=evaluate_all_derivatives();
     if ~retcode
+        loose_com_col=[];
+        is_loose_commit=false;
         if obj.is_optimal_policy_model
-            [T,eigval,zmultcols,retcode]=optimal_policy_solver_h(obj,structural_matrices);
-            % expand solution to account for loose commitment
-            %------------------------------------------------
+            is_loose_commit=(structural_matrices.planner.commitment{1}<1||...
+                strcmp(obj.options.solver,'loose_commitment'));
             loose_com_col=find(strcmp(obj.markov_chains.chain_names,parser.loose_commit));
-            if ~retcode && ~isempty(loose_com_col)
-                big_regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
-                small_regimes=cell2mat(obj.markov_chains.small_markov_chain_info.regimes(2:end,2:end));
-                bigh=obj.markov_chains.regimes_number;
-                loose_com_regimes=big_regimes(:,loose_com_col);
-                big_regimes(:,loose_com_col)=[];
-                Tz=cell(1,bigh);
-                % including the definitions, the steady state, etc.
-                %--------------------------------------------------
-                ss_=Tz;
-                def_=Tz;
-                bgp_=Tz;
-                for ireg=1:bigh
-                    bingo=all(bsxfun(@minus,big_regimes(ireg,:),small_regimes)==0,2);
-                    Tsol=T.Tz{bingo};
-                    if loose_com_regimes(ireg)==2 && ... % discretion: set multipliers to zero
-                            ~obj.options.lc_reconvexify; % under reconvexification, we do not zero the multipliers
-                        Tsol(:,zmultcols)=0;
-                    end
-                    Tz{ireg}=Tsol;
-                    def_{ireg}=obj.solution.definitions{bingo};
-                    ss_{ireg}=obj.solution.ss{bingo};
-                    bgp_{ireg}=obj.solution.bgp{bingo};
-                end
-                obj.solution.definitions=def_;
-                obj.solution.ss=ss_;
-                obj.solution.bgp=bgp_;
-                T.Tz=Tz;
+            if (~isempty(loose_com_col)||is_loose_commit) && obj.options.solve_order>1
+                error('Loose commitment model only solved up to first order so far')
             end
+        end
+        
+        if is_loose_commit
+            % for loose commitment, only order 1 is available
+            %-------------------------------------------------
+            obj.options.solve_order=1;
+            [T,eigval,retcode,obj]=optimal_policy_solver_h(obj,structural_matrices);
+            
             % set the name of the solver
             %---------------------------
             if isempty(obj.options.solver)
@@ -277,16 +258,19 @@ if solve_order>0 && ~retcode && resolve_it
             end
         else
             [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices);
-            % options may have changed and so we re-collect obj
         end
-        inv_order_var=obj.inv_order_var.after_solve;
         if ~retcode
+            % expand solution to account for loose commitment
+            %------------------------------------------------
+            [obj,T]=expand_optimal_policy_solution(obj,T,loose_com_col);
+            
             % Take the log approximation if required
             solve_log_approx_vars=obj.options.solve_log_approx_vars;
             if ~isempty(solve_log_approx_vars)
                 retcode=log_expansion();
             end
             if ~retcode
+                inv_order_var=obj.inv_order_var.after_solve;
                 T_fields=fieldnames(T);
                 nregs=numel(T.Tz);
                 for ifield_=1:numel(T_fields)
@@ -384,7 +368,7 @@ end
         end
         % Compute planner information first
         %----------------------------------
-        if obj.is_optimal_policy_model || obj.is_optimal_simple_rule_model
+        if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
             planner=struct(...
                 'objective',{cell(1,h)},...
                 'commitment',{cell(1,h)},...
@@ -401,46 +385,29 @@ end
                         retcode=6;
                     end
                     if ~retcode
-                        s1=s0;
-                        % pick the hessian directly
-                        order__=2;
-                        if symbolic_type
-                            [~,weights]=utils.code.evaluate_functions(...
-                                obj.routines.planner_objective_derivatives,...
-                                ss(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
-                        elseif automatic_type
-                            D01=utils.code.evaluate_automatic_derivatives(...
-                                obj.routines.symbolic.planner_objective,order__,...
-                                ss(:,s0),xss,ss(:,s0),params(:,s0),[],def{s0},s0,s1);
-                            weights=D01{order__};
-                        else
-                            weights=utils.code.evaluate_policy_objective_hessian_numerically(...
-                                obj.routines.planner_objective,...
-                                ss(:,s0),[],ss(:,s0),params(:,s0),[],def{s0},s0,s1);
-                            % here the weights have to be re-ordered,
-                            % unlike in the other cases, where it is done
-                            % by the order of differentiation
-                            weights=weights(obj.order_var.before_solve,obj.order_var.before_solve);
-                        end
-                        if ~utils.error.valid(weights)
-                            retcode=6;
-                        end
-                        if ~retcode
-                            planner.objective{s0}=lcd(1);
-                            planner.commitment{s0}=lcd(2);
-                            planner.discount{s0}=lcd(3);
-                            planner.weights{s0}=sparse(reshape(weights,orig_endo_nbr,orig_endo_nbr));
+                        planner.objective{s0}=lcd(1);
+                        planner.commitment{s0}=lcd(2);
+                        planner.discount{s0}=lcd(3);
+                        if obj.is_optimal_simple_rule_model
+                            ww=zeros(obj.routines.planner_osr_support.size);
+                            ww(obj.routines.planner_osr_support.map)=lcd(4:end);
+                            ww=ww(obj.routines.planner_osr_support.partitions);
+                            ww=reshape(ww,orig_endo_nbr,orig_endo_nbr);
+                            good_order=obj.routines.planner_osr_support.derivatives_re_order;
+                            planner.weights{s0}=sparse(ww(good_order,good_order));
                         end
                     end
                 end
             end
             structural_matrices.planner=planner;
-            % change the ordering of the weight for the user. OSR will use
-            % the structural matrices, which are ordered according to
-            % order_var
-            iov=obj.inv_order_var.before_solve;
-            for s0=1:h
-                planner.weights{s0}=planner.weights{s0}(iov,iov);
+            if obj.is_optimal_simple_rule_model
+                % change the ordering of the weight for the user. OSR will use
+                % the structural matrices, which are ordered according to
+                % order_var
+                iov=obj.inv_order_var.before_solve;
+                for s0=1:h
+                    planner.weights{s0}=planner.weights{s0}(iov,iov);
+                end
             end
             obj.solution.planner=planner; clear planner
         end
@@ -497,13 +464,10 @@ end
             ys=zeros(nind,h);
             ss=zeros(endo_nbr,h);
             def=obj.solution.definitions;
-            % in case of optimal policy, we are not interested in the whole
-            % vector of sstates. We need to locate what we need
-            original=obj.endogenous.is_original;
             for s0=1:h
                 for s1=1:h
                     if s0==1
-                        ss(:,s1)=obj.solution.ss{s1}(original);
+                        ss(:,s1)=obj.solution.ss{s1};
                         ys(:,s1)=ss(indices,s1);
                         % y needs to be modified for the variables that have a
                         % nonzero balanced-growth path
