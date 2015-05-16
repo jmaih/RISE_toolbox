@@ -63,22 +63,24 @@ dictionary.parse_debug=DefaultOptions.parse_debug;
 
 FileName(isspace(FileName))=[];
 loc=strfind(FileName,'.');
+valid_extensions={'.rs','.rz','.dsge'};
 if isempty(loc)
     dictionary.filename=FileName;
-    if exist([FileName,'.rs'],'file')
-        FileName=[FileName,'.rs'];
-    elseif exist([FileName,'.rz'],'file')
-        FileName=[FileName,'.rz'];
-    elseif exist([FileName,'.dsge'],'file')
-        FileName=[FileName,'.dsge'];
-    else
+    found=false;
+    iext=0;
+    while ~found && iext<numel(valid_extensions)
+        iext=iext+1;
+        found=exist([FileName,valid_extensions{iext}],'file');
+    end
+    if ~found
         error([mfilename,':: ',FileName,'.rs or ',FileName,'.rz  or ',FileName,'.dsge not found'])
     end
+    FileName=[FileName,valid_extensions{iext}];
 else
     ext=FileName(loc:end);
-    %     if ~(strcmp(ext,'.rs')||strcmp(ext,'.dyn')||strcmp(ext,'.mod'))
-    if ~ismember(ext,{'.rs','.rz','.dsge'})%||strcmp(ext,'.dyn')||strcmp(ext,'.mod'))
-        error([mfilename,':: Input file is expected to be a .rs or a .rz  or a .dsge file'])
+    if ~any(strcmp(ext,valid_extensions))
+        disp(valid_extensions)
+        error([mfilename,':: Input file is expected to have one of the above extenstions'])
     end
     dictionary.filename=FileName(1:loc-1);
 end
@@ -113,7 +115,6 @@ clear RawFile
 %% Populate the dictionary
 [dictionary,blocks]=parser.declarations2dictionary(dictionary,blocks);
 
-
 %% add the chain names to dictionary so that the parsing of the model does
 % not complain although the chain names acquired so far through the
 % parameters are not expected to enter the model block
@@ -125,370 +126,115 @@ dictionary.chain_names={dictionary.markov_chains.name};
 
 %% Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
-current_block_id=find(strcmp('model',{blocks.name}));
-more_string='';
-if dictionary.definitions_inserted
-    more_string='(& possibly definitions insertions)';
-end
-if dictionary.parse_debug
-    profile off
-    profile on
-else
-    tic
-end
-[Model_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'model');
-if dictionary.parse_debug
-    profile off
-    profile viewer
-    keyboard
-else
-    disp([mfilename,':: Model parsing ',more_string,'. ',sprintf('%0.4f',toc),' seconds'])
+
+[Model_block,is_deficient_eqtns]=do_model();
+
+%% optimal policy and optimal simple rule block
+
+[Model_block,PlannerObjective_block,is_model_with_planner_objective,jac_toc_]=...
+            do_optimal_policy_or_optimal_simple_rule(Model_block);
+if ~isempty(jac_toc_)
+    disp([mfilename,':: First-order conditions of optimal policy :',sprintf('%0.4f',jac_toc_),' seconds'])
 end
 
-if isempty(Model_block)
-    error([mfilename,':: no model declared'])
-end
-% remove item from block
-blocks(current_block_id)=[];
 %% after parsing the model block, update the markov chains (time-varying probabilities)
 % sorting the endogenous switching probabilities is more or less useless
 dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities);
 
-%% add more equations if necessary, such that the max_lag and max_lead are 1
-% replace exogenous lags with auxiliary endogenous variables
-% update the number of endogenous variables accordingly
-% Also keep the same equations to be added to the steady state model
-auxiliary_steady_state_equations=cell(0,4);
-orig_endogenous_current=dictionary.orig_endogenous; % these are the variables without the augmentation add-on
-all_fields=fieldnames(parser.listing);
-main_endo_fields={'name','tex_name','max_lead','max_lag','is_log_var',...
-    'is_auxiliary','is_trans_prob'};
-useless_fields=setdiff(all_fields,main_endo_fields);
-overall_max_lead_lag=max([dictionary.orig_endogenous.max_lead]);
-overall_max_lead_lag=max([abs([dictionary.orig_endogenous.max_lag]),overall_max_lead_lag]);
-for ii=1:numel(dictionary.orig_endogenous)
-    if dictionary.orig_endogenous(ii).max_lead<2
-        continue
-    end
-    vname=dictionary.orig_endogenous(ii).name;
-    lead_i=dictionary.orig_endogenous(ii).max_lead;
-    vold=vname;
-    for i2=2:lead_i
-        new_name=parser.create_auxiliary_name(vname,i2-1);
-        new_var=struct('name',new_name,'tex_name','','max_lead',1,...
-            'max_lag',0,'is_log_var',false,...
-            'is_auxiliary',true,'is_trans_prob',false);
-        Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vold,1}',{';',[]}'],0,1,'normal'}]; %#ok<*AGROW> %
-        auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0,'normal'}]; %<-- add maxLag and maxLead
-        if i2-1==1 % set the lead to 1
-            dictionary.orig_endogenous(ii).max_lead=1;
-        end
-        for ifield=1:numel(useless_fields)
-            new_var.(useless_fields{ifield})=nan;
-        end
-        dictionary.orig_endogenous=[dictionary.orig_endogenous,new_var];
-        orig_endogenous_current=[orig_endogenous_current,dictionary.orig_endogenous(ii)];
-        vold=new_var.name;
-    end
-end
-
-% now merge endogenous and exogenous
-n_endog=numel(dictionary.orig_endogenous);
-variables=[dictionary.orig_endogenous,dictionary.exogenous];
-for ii=1:numel(variables)
-    is_endogenous=ii<=n_endog;
-    % for endogenous,lags have to be greater than 1, for exogenous, lags
-    % have to be greater than 0
-    if (is_endogenous && variables(ii).max_lag>-2)||(~is_endogenous && variables(ii).max_lag>-1)
-        continue
-    end
-    vname=variables(ii).name;
-    if ~is_endogenous
-        % then create an auxiliary variable and an auxiliary equation
-        % before proceeding
-        new_var=struct('name',[vname,'_0'],'tex_name','','max_lead',0,...
-            'max_lag',-1,'is_log_var',false,'is_auxiliary',true,...
-            'is_trans_prob',false);
-        Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vname,0}',{';',[]}'],0,0,'normal'}]; %
-        % The steady state is computed with zero shocks. and so instead of
-        % setting the name of the shock, I write 0
-        auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{'0',0}',{';',[]}'],0,0,'normal'}]; %<-- add maxLag and maxLead
-        for ifield=1:numel(useless_fields)
-            new_var.(useless_fields{ifield})=nan;
-        end
-        dictionary.orig_endogenous=[dictionary.orig_endogenous,new_var];
-        orig_endogenous_current=[orig_endogenous_current,variables(ii)];
-        % correct the lag structure of the original variable
-        vloc=strcmp(variables(ii).name,{dictionary.exogenous.name});
-        dictionary.exogenous(vloc).max_lag=0;
-        vname=new_var.name;
-    end
-    vold=vname;
-    for i2=2:abs(variables(ii).max_lag)
-        % update the lag structure of the original variable if it is
-        % endogenous
-        if i2==2 && is_endogenous
-            vloc=strcmp(variables(ii).name,{dictionary.orig_endogenous.name});
-            dictionary.orig_endogenous(vloc).max_lag=-1;
-        end
-        new_name=parser.create_auxiliary_name(vname,uminus(i2-1));
-        new_var=struct('name',new_name,'tex_name','','max_lead',0,...
-            'max_lag',-1,'is_log_var',false,'is_auxiliary',true,...
-            'is_trans_prob',false);
-        
-        Model_block=[Model_block;
-            {[{new_var.name,0}',{'-',[]}',{vold,-1}',{';',[]}'],-1,0,'normal'}]; %
-        auxiliary_steady_state_equations=[auxiliary_steady_state_equations
-            {[{new_var.name,0}',{'=',[]}',{vold,0}',{';',[]}'],0,0,'normal'}]; %<-- add maxLag and maxLead
-        for ifield=1:numel(useless_fields)
-            new_var.(useless_fields{ifield})=nan;
-        end
-        dictionary.orig_endogenous=[dictionary.orig_endogenous,new_var];
-        orig_endogenous_current=[orig_endogenous_current,variables(ii)];
-        vold=new_var.name;
-    end
-end
-% remove this from workspace
-clear variables
-
 %% Now we can re-order the original (and augmented) endogenous
 [~,tags]=sort({dictionary.orig_endogenous.name});
 dictionary.orig_endogenous=dictionary.orig_endogenous(tags);
-% as well as the same list but without the augmentation add-ons
-orig_endogenous_current=orig_endogenous_current(tags);
 
 %% Now we re-write the model and update leads and lags
 % at the same time, construct the incidence and occurrence matrices
 orig_endo_nbr=numel(dictionary.orig_endogenous);
 
-number_of_equations=size(Model_block,1);
-Occurrence=false(number_of_equations,orig_endo_nbr,3);
-equation_type=ones(number_of_equations,1);
-for ii=1:number_of_equations
-    eq_i= Model_block{ii,1};
-    maxLag= Model_block{ii,2};
-    maxLead= Model_block{ii,3};
-    if strcmp(Model_block{ii,4},'def') % <---ismember(eq_i{1,1},dictionary.definitions) && strcmp(eq_i{1,2}(1),'=')
-        equation_type(ii)=2;
-    elseif strcmp(Model_block{ii,4},'tvp') % <---ismember(eq_i{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i{1,2}(1),'=')
-        equation_type(ii)=3;
-    elseif strcmp(Model_block{ii,4},'mcp') % <---ismember(eq_i{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i{1,2}(1),'=')
-        equation_type(ii)=4;
-    end
-    for i2=1:size(eq_i,2)
-        if ~isempty(eq_i{2,i2})
-            vname=eq_i{1,i2};
-            status=dictionary.determine_status(vname,dictionary);
-            time=-1; new_item=false;
-            if ~isempty(eq_i{2,i2})&& abs(eq_i{2,i2})>0
-                if strcmp(status,'param')
-                    if eq_i{2,i2}>1||eq_i{2,i2}<0
-                        error('parameters can only have leads of 1')
-                    end
-                elseif strcmp(status,'x')
-                    new_item=true;
-                    if abs(eq_i{2,i2})==1
-                        % change the name, but not the lag structure
-                        eq_i{1,i2}=[vname,'_0'];
-                    else
-                        % change both the name and the lag structure
-                        eq_i{1,i2}=parser.create_auxiliary_name([vname,'_0'],eq_i{2,i2}+1);
-                    end
-                elseif strcmp(status,'y')&& abs(eq_i{2,i2})>1
-                    new_item=true;
-                    % change both the name and the lag structure
-                    if eq_i{2,i2}>0
-                        eq_i{1,i2}=parser.create_auxiliary_name(vname,eq_i{2,i2}-1);
-                        time=1;
-                    elseif eq_i{2,i2}<0
-                        eq_i{1,i2}=parser.create_auxiliary_name(vname,eq_i{2,i2}+1);
-                    end
-                end
-            end
-            if new_item
-                eq_i{2,i2}=time;
-            end
-            var_loc=strcmp(eq_i{1,i2},{dictionary.orig_endogenous.name});
-            lag_or_lead=eq_i{2,i2}+2;
-            if any(var_loc) && equation_type(ii)==2
-                error([mfilename,':: equation (',sprintf('%0.0f',ii),') detected to be a definition cannot contain variables'])
-            elseif equation_type(ii)==3 && ismember(lag_or_lead,[3,1])
-                error([mfilename,':: equation (',sprintf('%0.0f',ii),') detected to describe endogenous switching cannot contain leads or lags'])
-            end
-            Occurrence(ii,var_loc,lag_or_lead)=true;
-        end
-    end
-    Model_block{ii,1}= eq_i;
-    Model_block{ii,2}= max(-1,maxLag);
-    Model_block{ii,3}= min(1,maxLead);
-end
-% keep only the structural equations
-Occurrence=Occurrence(equation_type==1,:,:);
+[equation_type,Occurrence]=equation_types_and_variables_occurrences();
+
 
 %% Steady state Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
 % the steady state model block
-
-static=struct('is_imposed_steady_state',false,'is_unique_steady_state',false);
-current_block_id=find(strcmp('steady_state_model',{blocks.name}));
-if dictionary.parse_debug
-    profile off
-    profile on
-else
-    tic
-end
-[SteadyStateModel_block,dictionary,static]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'steady_state_model',static);
-if dictionary.parse_debug
-    profile off
-    profile viewer
-    keyboard
-else
-    disp([mfilename,':: Steady State Model parsing . ',sprintf('%0.4f',toc),' seconds'])
-end
-
-% remove item from block
-blocks(current_block_id)=[];
-
-% if there are steady state equations, then add the auxiliary equations
-if ~isempty(SteadyStateModel_block)
-    SteadyStateModel_block=[SteadyStateModel_block
-        auxiliary_steady_state_equations];
-end
-
+[static,SteadyStateModel_block,auxiliary_steady_state_equations]=do_steady_state();
 %% exogenous definitions block
-% this block needs a special treatment as the information provided here
-% will only be used when building the dataset for estimation and/or during
-% forecasting.
-current_block_id=find(strcmp('exogenous_definition',{blocks.name}));
-if dictionary.parse_debug
-    profile off
-    profile on
-else
-    tic
-end
-[ExogenousDefinition_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'exogenous_definition');
-if dictionary.parse_debug
-    profile off
-    profile viewer
-    keyboard
-else
-    disp([mfilename,':: exogenous definitions block parsing . ',sprintf('%0.4f',toc),' seconds'])
-end
 
-% remove item from block
-blocks(current_block_id)=[];
-% the equations have been validated, now rebuild them and keep a list of
-% the variables defined
-DefinedExoList=cell(1,0);%{}
-for ii=1:size(ExogenousDefinition_block,1)
-    DefinedExoList=[DefinedExoList,ExogenousDefinition_block{ii,1}(1,1)];
-    eq_i='';
-    for jj=1:size(ExogenousDefinition_block{ii,1},2)
-        eq_i=[eq_i,ExogenousDefinition_block{ii,1}{1,jj}];
-        if ~isempty(ExogenousDefinition_block{ii,1}{2,jj}) && ExogenousDefinition_block{ii}{2,jj}~=0
-            eq_i=[eq_i,'{',sprintf('%0.0f',ExogenousDefinition_block{ii,1}{2,jj}),'}'];
-        end
-    end
-    ExogenousDefinition_block{ii,1}=eq_i;
-end
-% assign information to dictionary
-dictionary.exogenous_equations=struct('name',DefinedExoList,'equation',transpose(ExogenousDefinition_block(:,1)));
-clear ExogenousDefinition_block DefinedExoList
-%% optimal policy block
-current_block_id=find(strcmp('planner_objective',{blocks.name}));
-[dictionary,PlannerObjective_block,is_model_with_planner_objective]=...
-    parser.planner_objective(dictionary,blocks(current_block_id).listing);
-
-% remove item from block
-blocks(current_block_id)=[];
+do_exogenous_definitions();
 
 %% parameterization block
-current_block_id=find(strcmp('parameterization',{blocks.name}));
 
-dictionary.Parameterization_block=parser.capture_parameterization(dictionary,blocks(current_block_id).listing);
-
-% remove item from block
-blocks(current_block_id)=[];
+do_parameterization();
 
 %% parameter restrictions block.
 
-current_block_id=find(strcmp('parameter_restrictions',{blocks.name}));
-
-[Param_rest_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'parameter_restrictions');
-% remove item from block
-blocks(current_block_id)=[]; %#ok<NASGU>
-
-% remove the columns with information about the maxLead and maxLag: the
-% capture of parameterization does not require it and might even crash
-dictionary.Param_rest_block=Param_rest_block(:,1);
-clear Param_rest_block
+do_parameter_restrictions();
 
 %% Lump together the model and steady-state model
-AllModels=[Model_block;
-    SteadyStateModel_block;
-    PlannerObjective_block];
+static_mult_equations=[];
+if dictionary.is_optimal_policy_model
+    static_mult_equations=dictionary.planner_system.static_mult_equations{1};
+end
+osr_derivatives=[];
+if dictionary.is_optimal_simple_rule_model
+    osr_derivatives=dictionary.planner_system.osr.derivatives;
+end
+AllModels=[Model_block
+    SteadyStateModel_block
+    auxiliary_steady_state_equations
+    PlannerObjective_block
+    osr_derivatives
+    static_mult_equations];
+% steady state equations (including auxiliary) are identified by number 5
+aux_ss_eq_nbr=size(auxiliary_steady_state_equations,1);
 ss_eq_nbr=size(SteadyStateModel_block,1);
-% steady state equations are identified by number 5
-planobj_eq_nbr=size(PlannerObjective_block,1);
 % dictionary.planner_system objective equations are identified by number 6
-equation_type=[equation_type;5*ones(ss_eq_nbr,1);6*ones(planobj_eq_nbr,1)];
-
-% collect information about leads and lags which will be used to determine
-% the status of the lagrange multipliers later on. But keep only the
-% information about the structural equations
-%--------------------------------------------------------------------------
-equations_maxLag_maxLead=cell2mat(Model_block(equation_type==1,2:3));
+planobj_eq_nbr=size(PlannerObjective_block,1);
+osr_derivs_eqn_nbr=size(osr_derivatives,1);
+% mult steady state identified by number 7
+stat_mult_eq_nbr=size(static_mult_equations,1);
+equation_type=[equation_type
+    5*ones(ss_eq_nbr+aux_ss_eq_nbr,1)
+    6*ones(planobj_eq_nbr+osr_derivs_eqn_nbr,1)
+    7*ones(stat_mult_eq_nbr,1)];
 
 clear Model_block SteadyStateModel_block PlannerObjective_block
 %% Incidence matrix
 % Now and only now can we build the incidence matrix
-dictionary.lead_lag_incidence.before_solve=zeros(3,orig_endo_nbr);
-for ii=1:3
-    for jj=1:orig_endo_nbr
-        if any(Occurrence(:,jj,ii))
-            dictionary.lead_lag_incidence.before_solve(ii,jj)=1;
-        end
-    end
-end
-dictionary.lead_lag_incidence.before_solve=transpose(flipud(dictionary.lead_lag_incidence.before_solve));
-dictionary.lead_lag_incidence.before_solve(dictionary.lead_lag_incidence.before_solve>0)=1:nnz(dictionary.lead_lag_incidence.before_solve);
-
-appear_as_current=dictionary.lead_lag_incidence.before_solve(:,2)>0;
-if any(~appear_as_current)
-    disp('The following variables::')
-    disp(old_endo_names(~appear_as_current))
-    error('do not appear as current')
-end
+do_incidence_matrix();
 
 %% models in shadow/technical/tactical form
 
-% extract the mcp equations as they have to be processed after the final
-% list of endogenous is known...
+overall_max_lead_lag=max([dictionary.orig_endogenous.max_lead]);
+overall_max_lead_lag=max([abs([dictionary.orig_endogenous.max_lag]),overall_max_lead_lag]);
 
-is_mcp=equation_type==4;
-mcp_eqtns=AllModels(is_mcp,:);
-mcp_type=equation_type(is_mcp);
-equation_type(is_mcp)=[];
-AllModels(is_mcp,:)=[];
-
+dictionary.endogenous=dictionary.orig_endogenous;
 [dictionary,...
     dynamic,...
     stat,...
     defs,...
-    shadow_tvp]=parser.shadowize(dictionary,AllModels,...
+    shadow_tvp,...
+    shadow_complementarity]=parser.shadowize(dictionary,AllModels,...
     equation_type,overall_max_lead_lag);
 orig_definitions=defs.original;
 shadow_definitions=defs.shadow;
 static=utils.miscellaneous.mergestructures(static,stat);
 
+if dictionary.is_optimal_policy_model
+    dictionary.planner_system.static_mult_equations{1}=...
+        static.steady_state_shadow_model(ss_eq_nbr+aux_ss_eq_nbr+1:end);
+end
+
+static.steady_state_auxiliary_eqtns=...
+    static.steady_state_shadow_model(ss_eq_nbr+(1:aux_ss_eq_nbr));
+
+static.steady_state_shadow_model(ss_eq_nbr+1:end)=[];
+
 % collect the future switching parameters
 %----------------------------------------
 fsp=regexp(dynamic.shadow_model,'sparam\(\d+\)','match');
 fsp=unique([fsp{:}]);
+if ~isempty(fsp)
+    error('future switching parameters should have been substituted at this stage')
+end
 switching_parameters_leads_index=regexprep(fsp,'sparam\((\d+)\)','$1');
 switching_parameters_leads_index=str2num(char(switching_parameters_leads_index)); %#ok<ST2NM>
 dictionary.fsp=fsp;
@@ -507,7 +253,7 @@ for ii=1:numel(old_shadow_steady_state_model)
         static.steady_state_shadow_model=[static.steady_state_shadow_model;{eq_i}];
         eq_i={'retcode=1-(exitflag==1);'};
         if ii<numel(old_shadow_steady_state_model)
-            eq_i=[eq_i;{'if ~retcode,'}];
+            eq_i=[eq_i;{'if ~retcode,'}]; %#ok<*AGROW>
             fsolve_nbr=fsolve_nbr+1;
         end
         static.steady_state_shadow_model=[static.steady_state_shadow_model;eq_i];
@@ -525,18 +271,32 @@ if ~isempty(static.steady_state_shadow_model)
 end
 %% replace the list of definition names with definition equations
 dictionary.definitions=struct('model',orig_definitions,'shadow',shadow_definitions);
-%% initialize the routines structure
+%% Routines structure
 routines=struct();
 
-%% definitions routine
+% With all variables known, we can do the complementarity
+%---------------------------------------------------------
+routines.complementarity=utils.code.code2func(shadow_complementarity,parser.input_list);
+
+% definitions routine
+%---------------------
 routines.definitions=utils.code.code2func(...
     parser.substitute_definitions(shadow_definitions),'param');
-%% steady state model routine (cannot be written as a function)
+
+% steady state model routine (cannot be written as a function)
+%--------------------------------------------------------------
 routines.steady_state_model=parser.substitute_definitions(...
     static.steady_state_shadow_model,shadow_definitions);
 routines.steady_state_model=struct('code',cell2mat(routines.steady_state_model(:)'),...
     'argins',{parser.input_list},...
     'argouts',{{'y','param'}});
+
+routines.steady_state_auxiliary_eqtns=parser.substitute_definitions(...
+    static.steady_state_auxiliary_eqtns,shadow_definitions);
+routines.steady_state_auxiliary_eqtns=struct('code',cell2mat(routines.steady_state_auxiliary_eqtns(:)'),...
+    'argins',{parser.input_list},...
+    'argouts',{{'y'}});
+
 %% load transition matrices and transform markov chains
 % the Trans mat will go into the computation of derivatives
 % dictionary=parser.transition_probabilities(dictionary,shadow_tvp);
@@ -564,6 +324,7 @@ end
 dictionary.is_endogenous_switching_model=any(dictionary.markov_chains.chain_is_endogenous);
 %% Computation of derivatives
 %
+
 disp(' ')
 disp('Now computing symbolic derivatives...')
 disp(' ')
@@ -610,9 +371,6 @@ end
 %----------------------
 routines.symbolic.probs_times_dynamic={original_funcs,wrt};
 
-% % profile off, profile viewer
-% % keyboard
-
 % static model wrt y
 %--------------------
 static_incidence=zeros(orig_endo_nbr,3);
@@ -621,8 +379,7 @@ wrt=dynamic_differentiation_list(static_incidence,0,[]);
 
 routines.static=utils.code.code2func(static.shadow_model);
 [routines.static_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
-    differentiate_system(...
-    routines.static,dictionary.input_list,wrt,1);
+    differentiate_system(routines.static,dictionary.input_list,wrt,1);
 routines.symbolic.static={original_funcs,wrt};
 disp([mfilename,':: 1st-order derivatives of static model wrt y(0). ',...
     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
@@ -641,6 +398,7 @@ routines.static_bgp=utils.code.code2func(static.shadow_BGP_model);
 routines.symbolic.static_bgp={original_funcs,wrt};
 disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+
 % dynamic model wrt param
 %------------------------
 param_nbr = numel(dictionary.parameters);
@@ -661,26 +419,40 @@ routines.symbolic.parameters={original_funcs,wrt};
 disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 
-%% planner objective
-
+%% optimal policy and optimal simple rules routines
+%-----------------------------------------
 if is_model_with_planner_objective
-    % we use the same order as in the dynamic model to avoid a mismatch
-    %------------------------------------------------------------------
-    optimal_policy_incidence=dictionary.order_var.before_solve;
-    wrt=dynamic_differentiation_list(optimal_policy_incidence,0,[]);
+    planner_shadow_model=strrep(strrep(dictionary.planner_system.shadow_model,'discount-',''),'commitment-','');
     
-    routines.planner_objective=utils.code.code2func(dictionary.planner_system.shadow_model(1));
-    [routines.planner_objective_derivatives,numEqtns,numVars,jac_toc,...
-        original_funcs]=differentiate_system(...
-        dictionary.planner_system.shadow_model(1),...
-        dictionary.input_list,wrt,2);
-    disp([mfilename,':: 1st and 2nd-order derivatives of planner objective wrt y(0). ',...
-        sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.0f',jac_toc),' seconds'])
+    if dictionary.is_optimal_policy_model
+        tmp=utils.code.code2func(dictionary.planner_system.static_mult_equations{1},...
+            parser.input_list);
+        
+        routines.planner_static_mult=tmp;
+        routines.planner_static_mult_support=...
+            dictionary.planner_system.static_mult_equations(2:end);
+        dictionary.planner_system=rmfield(dictionary.planner_system,...
+            'static_mult_equations');
+    else
+        osr_=dictionary.planner_system.osr;
+        endo_names={dictionary.orig_endogenous.name};
+        ordered_endo_names=endo_names(dictionary.order_var.before_solve);
+        der_reo=locate_variables(ordered_endo_names,osr_.wrt);
+        routines.planner_osr_support=struct('derivatives_re_order',der_reo,...
+            'partitions',osr_.partitions,...
+            'map',cell2mat(osr_.map(:,2)),'size',osr_.size);
+        % we take the second column since the first column with the
+        % equation numbers do not matter: originally we had only one equation
+        clear osr_
+    end
     % add the loss, the commitment degree and discount
     %-------------------------------------------------
-    planner_shadow_model=strrep(strrep(dictionary.planner_system.shadow_model,'discount-',''),'commitment-','');
     routines.planner_loss_commitment_discount=utils.code.code2func(planner_shadow_model,dictionary.input_list);
-    routines.symbolic.planner_objective={original_funcs,wrt};
+    
+    routines.planner_objective=utils.code.code2func(dictionary.planner_system.shadow_model(1));
+
+    dictionary.planner_system=rmfield(dictionary.planner_system,...
+        {'shadow_model','model'});
 end
 %% Add final variables list to the dictionary
 % the unsorted variables are variables sorted according to their order in
@@ -693,89 +465,22 @@ dictionary.NumberOfEquations=sum(equation_type==1);
 % finally check that the number of equations is consistent with the number
 % of variables
 
-dictionary.is_sticky_information_model=ismember('sticky_information_lambda',{dictionary.parameters.name});
-
-dictionary.is_hybrid_expectations_model=ismember('hybrid_expectations_lambda',{dictionary.parameters.name});
-
 dictionary.is_dsge_var_model=ismember('dsge_prior_weight',{dictionary.parameters.name});
-
-dictionary.is_optimal_policy_model=is_model_with_planner_objective && ...
-    dictionary.NumberOfEquations<numel(dictionary.orig_endogenous);
-
-dictionary.is_optimal_simple_rule_model=is_model_with_planner_objective && ...
-    dictionary.NumberOfEquations==numel(dictionary.orig_endogenous);
-
-if dictionary.is_sticky_information_model && dictionary.is_hybrid_expectations_model
-    error([mfilename,':: you are not allowed to solve a model with both hybrid expectations and sticky information'])
-end
-
-dictionary.forward_looking_ids='NA';
-dictionary.equations_reordering_for_multipliers=[];
-unsorted_extra=unsorted_endogenous(1:0);
-if dictionary.is_optimal_policy_model
-    if dictionary.is_sticky_information_model
-        error([mfilename,':: you are not allowed to solve a sticky information model with loose commitment'])
-    end
-    if dictionary.is_hybrid_expectations_model
-        error([mfilename,':: you are not allowed to solve a hybrid expectations model with loose commitment'])
-    end
-    
-    % lagrange multipliers
-    %---------------------
-    for eq=1:dictionary.NumberOfEquations
-        new_var=struct('name',['mult_',sprintf('%0.0f',eq)],'tex_name','',...
-            'max_lead',-equations_maxLag_maxLead(eq,1),... % lags govern the leads
-            'max_lag',-equations_maxLag_maxLead(eq,2),... % leads govern the lags
-            'is_log_var',false,'is_auxiliary',false,'is_trans_prob',false);
-        for ifield=1:numel(useless_fields)
-            new_var.(useless_fields{ifield})=nan;
-        end
-        unsorted_extra=[unsorted_extra,new_var];
-    end
-    LLI_EXTRA=[-equations_maxLag_maxLead(:,1),...
-        ones(dictionary.NumberOfEquations,1),...
-        -equations_maxLag_maxLead(:,2)];
-    parts=utils.solve.partition_variables(LLI_EXTRA);
-    unsorted_extra=unsorted_extra(parts.order_var);
-    LLI_EXTRA=LLI_EXTRA(parts.order_var,:);
-    dictionary.equations_reordering_for_multipliers=parts.order_var;
-else
-    added=0;
-    assert(numel(dictionary.orig_endogenous)==sum(equation_type==1),...
-        '# equations different from # endogenous variables')
-    if dictionary.is_sticky_information_model
-        dictionary.forward_looking_ids=find(dictionary.lead_lag_incidence.before_solve(:,3));
-        for ii=1:numel(dictionary.forward_looking_ids)
-            id=dictionary.forward_looking_ids(ii);
-            new_var=struct('name',['SI_',dictionary.orig_endogenous{id}],'tex_name','',...
-                'max_lead',0,'max_lag',0,'is_log_var',false,...
-                'is_auxiliary',true,'is_trans_prob',false);
-            for ifield=1:numel(useless_fields)
-                new_var.(useless_fields{ifield})=nan;
-            end
-            unsorted_extra=[unsorted_extra,new_var];
-        end
-        added=numel(dictionary.forward_looking_ids);
-    end
-    % this will be used for the determination of the status of the variables.
-    % the added variables are given status of static, which is misleading when
-    % added>0
-    LLI_EXTRA=repmat([0,1,0],added,1);
-end
-unsorted_endogenous=[unsorted_endogenous,unsorted_extra];
-logical_incidence=[logical_incidence;LLI_EXTRA];
 
 % now we can resort the final variables
 [~,tags]=sort({unsorted_endogenous.name});
 logical_incidence=logical_incidence(tags,:);
 dictionary.endogenous=unsorted_endogenous(tags);
 
-% update the lead-lag incidence and the order of the variables
-%-------------------------------------------------------------
+% update the lead-lag incidence and the order of the variables: with the
+% new settings, this is not expected to ever change
+%--------------------------------------------------------------------------
 dictionary.lead_lag_incidence.after_solve=logical_incidence;
 dictionary.lead_lag_incidence.after_solve(dictionary.lead_lag_incidence.after_solve~=0)=1:nnz(dictionary.lead_lag_incidence.after_solve);
-% update the topology of the solution
-%------------------------------------
+
+% update the topology of the solution: with the new settings, this is not
+% expected to ever change
+%--------------------------------------------------------------------------
 [dictionary.siz.after_solve,...
     dictionary.locations.after_solve.t,...
     dictionary.locations.after_solve.z,~,...
@@ -789,19 +494,7 @@ dictionary.lead_lag_incidence.after_solve(dictionary.lead_lag_incidence.after_so
     );
 dictionary.switching_parameters_leads_index=switching_parameters_leads_index;
 
-% reorder the solution of loose commitment or sticky information so that it
-% conforms with order_var
-%--------------------------------------------------------------------------
-dictionary.reordering_index=locate_variables(...
-    {dictionary.endogenous(dictionary.order_var.after_solve).name},{unsorted_endogenous.name});
-dictionary.reordering_index=transpose(dictionary.reordering_index(:));
 clear unsorted_endogenous
-
-%% With all variables known, we can do the complementarity
-[~,~,~,~,~,shadow_complementarity]=parser.shadowize(dictionary,mcp_eqtns,...
-    mcp_type,overall_max_lead_lag);
-
-routines.complementarity=utils.code.code2func(shadow_complementarity,parser.input_list);
 
 %% give greek names to endogenous, exogenous, parameters
 dictionary.endogenous=parser.greekify(dictionary.endogenous);
@@ -825,9 +518,9 @@ endogenous=dictionary.endogenous;
 dictionary.endogenous=struct();
 dictionary.endogenous.name={endogenous.name};
 dictionary.endogenous.tex_name={endogenous.tex_name};
-dictionary.endogenous.is_original=sparse(ismember(dictionary.endogenous.name,{dictionary.orig_endogenous.name}));
-dictionary.endogenous.number=full([sum(dictionary.endogenous.is_original),numel(dictionary.endogenous.is_original)]);
-dictionary.endogenous.is_lagrange_multiplier=sparse(strncmp('mult_',{endogenous.name},5));
+dictionary.endogenous.is_original=sparse(ismember(dictionary.endogenous.name,old_endo_names));
+dictionary.endogenous.number=numel(dictionary.endogenous.is_original);
+dictionary.endogenous.is_lagrange_multiplier=sparse(strncmp('MULT_',{endogenous.name},5));
 dictionary.endogenous.is_static=sparse((~logical_incidence(:,1)&~logical_incidence(:,3))');
 dictionary.endogenous.is_predetermined=sparse((~logical_incidence(:,1)&logical_incidence(:,3))');
 dictionary.endogenous.is_pred_frwrd_looking=sparse((logical_incidence(:,1) & logical_incidence(:,3))');
@@ -838,6 +531,11 @@ dictionary.endogenous.is_log_var=sparse([endogenous.is_log_var]);
 dictionary.endogenous.is_log_expanded=sparse(false(size(dictionary.endogenous.is_log_var)));
 dictionary.endogenous.is_auxiliary=sparse([endogenous.is_auxiliary]);
 dictionary.endogenous.is_affect_trans_probs=sparse([endogenous.is_trans_prob]);
+hbe={dictionary.parameters.name};
+hbe=hbe(strncmp(hbe,'hbe_param_',10));
+hbe=regexprep(hbe,'hbe_param_(\w+)','$1');
+dictionary.endogenous.is_hybrid_expect=ismember(dictionary.endogenous.name,hbe);
+
 clear endogenous logical_incidence
 
 exogenous=dictionary.exogenous;
@@ -883,7 +581,7 @@ clear parameters
 
 % variable names for the original endogenous but without the augmentation
 % add-ons
-dictionary.orig_endo_names_current={orig_endogenous_current.name};
+dictionary.orig_endo_names_current={dictionary.orig_endogenous.current_name};
 
 % equations
 %----------
@@ -911,6 +609,233 @@ dictionary.routines=routines;
 
 dictionary=orderfields(dictionary);
 
+    function [Model_block,PlannerObjective_block,...
+            is_model_with_planner_objective,jac_toc_]=...
+            do_optimal_policy_or_optimal_simple_rule(Model_block)
+        
+        current_block_id=find(strcmp('planner_objective',{blocks.name}));
+        
+        [dictionary,PlannerObjective_block,is_model_with_planner_objective]=...
+            parser.planner_objective(dictionary,blocks(current_block_id).listing);
+        
+        % remove item from block
+        blocks(current_block_id)=[];
+        
+        jac_toc_=[];
+        dictionary.is_optimal_simple_rule_model=...
+            ~is_deficient_eqtns && is_model_with_planner_objective;
+        
+        dictionary.is_optimal_policy_model=...
+            is_model_with_planner_objective && is_deficient_eqtns;
+        
+        if dictionary.is_optimal_policy_model|| dictionary.is_optimal_simple_rule_model
+            [Model_block,dictionary,jac_toc_]=parser.optimal_policy_system(...
+                PlannerObjective_block,Model_block,dictionary);
+        end
+    end
+
+    function [Model_block,is_deficient_eqtns]=do_model()
+        current_block_id=find(strcmp('model',{blocks.name}));
+        more_string='';
+        if dictionary.definitions_inserted
+            more_string='(& possibly definitions insertions)';
+        end
+        if dictionary.parse_debug
+            profile off
+            profile on
+        else
+            tic
+        end
+        [Model_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'model');
+        if dictionary.parse_debug
+            profile off
+            profile viewer
+            keyboard
+        else
+            disp([mfilename,':: Model parsing ',more_string,'. ',sprintf('%0.4f',toc),' seconds'])
+        end
+        
+        if isempty(Model_block)
+            error([mfilename,':: no model declared'])
+        end
+        % remove item from block
+        blocks(current_block_id)=[];
+        
+        % make auxiliary equations out of the list of endogenous variables
+        [dictionary,Model_block]=...
+            parser.create_auxiliary_equations(dictionary,Model_block);
+        
+        % Then modify the system for hybrid expectations
+        %------------------------------------------------
+        [Model_block,dictionary]=parser.hybrid_expectator(Model_block,dictionary);
+
+        neqtns=sum(strcmp(Model_block(:,end),'normal'));
+        nendo=numel(dictionary.orig_endogenous);
+        if nendo<neqtns
+            error('More equations than the number of endogenous variables')
+        end
+        is_deficient_eqtns=neqtns<nendo;
+    end
+
+    function do_incidence_matrix()
+        
+        before_solve=zeros(3,orig_endo_nbr);
+        for iii=1:3
+            for jj=1:orig_endo_nbr
+                if any(Occurrence(:,jj,iii))
+                    before_solve(iii,jj)=1;
+                end
+            end
+        end
+        before_solve=transpose(flipud(before_solve));
+        before_solve(before_solve>0)=1:nnz(before_solve);
+        
+        appear_as_current=before_solve(:,2)>0;
+        if any(~appear_as_current)
+            disp('The following variables::')
+            allendo={dictionary.orig_endogenous.name};
+            disp(allendo(~appear_as_current))
+            error('do not appear as current')
+        end
+        dictionary.lead_lag_incidence.before_solve=before_solve;
+    end
+
+    function [equation_type,Occurrence]=equation_types_and_variables_occurrences()
+        number_of_equations=size(Model_block,1);
+        Occurrence=false(number_of_equations,orig_endo_nbr,3);
+        equation_type=ones(number_of_equations,1);
+        for iii=1:number_of_equations
+            eq_i_= Model_block{iii,1};
+            if strcmp(Model_block{iii,4},'def') % <---ismember(eq_i_{1,1},dictionary.definitions) && strcmp(eq_i_{1,2}(1),'=')
+                equation_type(iii)=2;
+            elseif strcmp(Model_block{iii,4},'tvp') % <---ismember(eq_i_{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i_{1,2}(1),'=')
+                equation_type(iii)=3;
+            elseif strcmp(Model_block{iii,4},'mcp') % <---ismember(eq_i_{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i_{1,2}(1),'=')
+                equation_type(iii)=4;
+            end
+            for ii2=1:size(eq_i_,2)
+                if ~isempty(eq_i_{2,ii2})
+                    var_loc=strcmp(eq_i_{1,ii2},{dictionary.orig_endogenous.name});
+                    lag_or_lead=eq_i_{2,ii2}+2;
+                    if any(var_loc) && equation_type(iii)==2
+                        error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to be a definition cannot contain variables'])
+                    elseif equation_type(iii)==3 && ismember(lag_or_lead,[3,1])
+                        error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to describe endogenous switching cannot contain leads or lags'])
+                    end
+                    Occurrence(iii,var_loc,lag_or_lead)=true;
+                end
+            end
+        end
+        % keep only the structural equations
+        Occurrence=Occurrence(equation_type==1,:,:);
+    end
+
+    function [static,SteadyStateModel_block,auxiliary_steady_state_equations]=do_steady_state()
+        static=struct('is_imposed_steady_state',false,'is_unique_steady_state',false);
+        current_block_id=find(strcmp('steady_state_model',{blocks.name}));
+        if dictionary.parse_debug
+            profile off
+            profile on
+        else
+            tic
+        end
+        [SteadyStateModel_block,dictionary,static]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'steady_state_model',static);
+        if dictionary.parse_debug
+            profile off
+            profile viewer
+            keyboard
+        else
+            disp([mfilename,':: Steady State Model parsing . ',sprintf('%0.4f',toc),' seconds'])
+        end
+        
+        % get list of endogenous defined in the steady state: do this
+        % everytime there is an auxiliary variable
+        %----------------------------------------------------
+        nsstate=size(SteadyStateModel_block,1);
+        sstate_model_aux_vars=cell(1,nsstate);
+        iter=0;
+        for irow_=1:nsstate
+            vname=SteadyStateModel_block{irow_,1}{1,1};
+            if any(strcmp(vname,{dictionary.orig_endogenous.name}))
+                iter=iter+1;
+                sstate_model_aux_vars{iter}=vname;
+            end
+        end
+        dictionary.auxiliary_variables.sstate_model=sstate_model_aux_vars(1:iter);
+        
+        % remove item from block
+        blocks(current_block_id)=[];
+                
+        auxiliary_steady_state_equations=dictionary.auxiliary_equations;
+        for irow_=1:size(auxiliary_steady_state_equations,1)
+            tmp_=auxiliary_steady_state_equations{irow_,1}(1,:);
+            tmp_{2}=strrep(tmp_{2},'-','=');
+            auxiliary_steady_state_equations{irow_,1}(1,:)=tmp_;
+        end
+    end
+
+    function do_parameter_restrictions()
+        
+        current_block_id=find(strcmp('parameter_restrictions',{blocks.name}));
+        
+        [Param_rest_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'parameter_restrictions');
+        % remove item from block
+        blocks(current_block_id)=[];
+        
+        % remove the columns with information about the maxLead and maxLag: the
+        % capture of parameterization does not require it and might even crash
+        dictionary.Param_rest_block=Param_rest_block(:,1);
+    end
+
+    function do_parameterization()
+        
+        current_block_id=find(strcmp('parameterization',{blocks.name}));
+        
+        dictionary.Parameterization_block=parser.capture_parameterization(dictionary,blocks(current_block_id).listing);
+        
+        % remove item from block
+        blocks(current_block_id)=[];
+    end
+
+    function do_exogenous_definitions()
+        % this block needs a special treatment as the information provided here
+        % will only be used when building the dataset for estimation and/or during
+        % forecasting.
+        current_block_id=find(strcmp('exogenous_definition',{blocks.name}));
+        if dictionary.parse_debug
+            profile off
+            profile on
+        else
+            tic
+        end
+        [ExogenousDefinition_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'exogenous_definition');
+        if dictionary.parse_debug
+            profile off
+            profile viewer
+            keyboard
+        else
+            disp([mfilename,':: exogenous definitions block parsing . ',sprintf('%0.4f',toc),' seconds'])
+        end
+        
+        % remove item from block
+        blocks(current_block_id)=[];
+        % the equations have been validated, now rebuild them and keep a list of
+        % the variables defined
+        DefinedExoList=cell(1,0);%{}
+        for iii=1:size(ExogenousDefinition_block,1)
+            DefinedExoList=[DefinedExoList,ExogenousDefinition_block{iii,1}(1,1)];
+            eq_i_='';
+            for jjj=1:size(ExogenousDefinition_block{iii,1},2)
+                eq_i_=[eq_i_,ExogenousDefinition_block{iii,1}{1,jjj}];
+                if ~isempty(ExogenousDefinition_block{iii,1}{2,jjj}) && ExogenousDefinition_block{iii}{2,jjj}~=0
+                    eq_i_=[eq_i_,'{',sprintf('%0.0f',ExogenousDefinition_block{iii,1}{2,jjj}),'}'];
+                end
+            end
+            ExogenousDefinition_block{iii,1}=eq_i_;
+        end
+        % assign information to dictionary
+        dictionary.exogenous_equations=struct('name',DefinedExoList,'equation',transpose(ExogenousDefinition_block(:,1)));
+    end
 end
 
 function [derivs,numEqtns,numVars,jac_toc,original_funcs]=differentiate_system(myfunc,input_list,wrt,order)
