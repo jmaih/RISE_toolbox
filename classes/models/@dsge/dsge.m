@@ -67,10 +67,10 @@ classdef dsge < rise_generic
         online_routines
     end
     properties (SetAccess = private, Hidden = true)
+        auxiliary_variables % variables for which the user does not need to solve for the steady state
         dates_filtering % those two options should be moved elsewhere so that they are visible...
         dates_smoothing
         dsge_prior_weight_id
-        forward_looking_ids
         hybrid_expectations_lambda_id
         is_dsge_var_model
         is_endogenous_switching_model
@@ -81,7 +81,6 @@ classdef dsge < rise_generic
         is_linear_model
         is_optimal_policy_model
         is_optimal_simple_rule_model
-        is_sticky_information_model
         is_purely_backward_looking_model
         is_purely_forward_looking_model
         is_stationary_model
@@ -109,10 +108,6 @@ classdef dsge < rise_generic
         % provision for automatic differentiation
         %----------------------------------------
         steady_state_index
-        % provision for loose commitment and sticky information
-        %------------------------------------------------------
-        reordering_index
-        equations_reordering_for_multipliers
         % provision for functions, solving and resolving
         %--------------------------------------------------
         warrant_resolving = true;
@@ -180,8 +175,9 @@ classdef dsge < rise_generic
             dictionary=parser.parse(model_filename,cmfArgins{:});
             % build the equations object
             quick_fill={'lead_lag_incidence','filename',...
-                'reordering_index','orig_endo_names_current',... %
-                'planner_system','is_sticky_information_model',...
+                'orig_endo_names_current',... %
+                'planner_system',...
+                'auxiliary_variables',...
                 'is_hybrid_expectations_model','is_optimal_policy_model',...
                 'is_dsge_var_model','is_optimal_simple_rule_model',...
                 'is_hybrid_model','is_purely_backward_looking_model',...
@@ -193,7 +189,7 @@ classdef dsge < rise_generic
                 'raw_file','rawfile_triggers','equations','definitions',...
                 'markov_chains','v','locations','siz','order_var',...
                 'inv_order_var','steady_state_index',...
-                'equations_reordering_for_multipliers','routines'};
+                'routines'};
             
             % check that all the shocks in the model are in use
             not_in_use=dictionary.exogenous.name(~dictionary.exogenous.is_in_use);
@@ -214,12 +210,7 @@ classdef dsge < rise_generic
             if obj.is_hybrid_expectations_model
                 obj.hybrid_expectations_lambda_id=find(strcmp('hybrid_expectations_lambda',obj.parameters.name),1);
             end
-            
-            if obj.is_sticky_information_model
-                obj.forward_looking_ids=dictionary.forward_looking_ids;
-                obj.sticky_information_lambda_id=find(strcmp('sticky_information_lambda',obj.parameters.name),1);
-            end
-            
+                        
             % Once the names of the exogenous variables are known, we can
             % build the options.
             %--------------------------------------------------------------
@@ -249,21 +240,22 @@ classdef dsge < rise_generic
             
             % conclude
             disp(' ')
-            if obj.is_sticky_information_model
-                disp([mfilename,':: Sticky Information (SI) model detected'])
-            elseif obj.is_hybrid_expectations_model
-                disp([mfilename,':: Hybrid Expectations (HE) model detected'])
-            elseif obj.is_optimal_policy_model
-                disp([mfilename,':: Switching Optimal Policy model in ',int2str(obj.markov_chains.regimes_number),' regimes detected'])
-            elseif obj.is_dsge_var_model
-                disp([mfilename,':: DSGE-VAR model detected'])
-            elseif obj.is_optimal_simple_rule_model
-                disp([mfilename,':: Optimal Simple Rule (OSR) model detected'])
-            elseif obj.is_endogenous_switching_model
-                disp([mfilename,':: Endogenous Switching DSGE model in ',int2str(obj.markov_chains.regimes_number),' regimes detected'])
-            else
-                disp([mfilename,':: Exogenous Switching DSGE model in ',int2str(obj.markov_chains.regimes_number),' regimes detected'])
+            switch_type='Exogenous';
+            if obj.is_endogenous_switching_model
+                switch_type='Endogenous';
             end
+            
+            if obj.is_optimal_policy_model
+                model_type='Optimal Policy';
+            elseif obj.is_dsge_var_model
+                model_type='DSGE-VAR';
+            elseif obj.is_optimal_simple_rule_model
+                model_type='Optimal Simple Rule (OSR)';
+            else
+                model_type='DSGE';
+            end
+            disp([mfilename,':: ',switch_type,' Switching ',model_type,' model in ',int2str(obj.markov_chains.regimes_number),' regimes detected'])
+            
             if obj.is_hybrid_model
                 disp([mfilename,':: model has both backward and forward-looking components'])
             elseif obj.is_purely_backward_looking_model
@@ -272,6 +264,10 @@ classdef dsge < rise_generic
                 disp([mfilename,':: model is purely forward-looking'])
             else
                 disp([mfilename,':: model is purely static'])
+            end
+            
+            if obj.is_hybrid_expectations_model
+                disp([mfilename,':: The model features Hybrid Expectations'])
             end
             
             function create_folders_and_add_further_routines()
