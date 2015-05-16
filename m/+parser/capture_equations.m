@@ -73,6 +73,11 @@ end
             'is_mcp',false); % complementarity condition
     end
     function [block,equation]=capture_equations_engine(block,cell_info,block_name,equation)
+        % if a parameter has a lead, create an auxiliary variable for it
+        % if a variable has a lead or a lag greater than one, replace it
+        % with the corresponding auxiliary variable and update the lead or
+        % lag of the variable in the list and then create auxiliary
+        % equations when the parsing of the model is done.
         
         iline_=cell_info{1};
         rawline_=cell_info{2};
@@ -599,21 +604,9 @@ end
             if ~isnumeric(leadorlag)||~isequal(leadorlag,floor(leadorlag))
                 error([mfilename,':: time syntax error in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
             end
-            variable=equation.eqtn{1,end};
-            position=find(strcmp(variable,{dictionary.orig_endogenous.name}));
-            if ~isempty(position)
-                dictionary.orig_endogenous(position).max_lag=min(dictionary.orig_endogenous(position).max_lag,leadorlag);
-                dictionary.orig_endogenous(position).max_lead=max(dictionary.orig_endogenous(position).max_lead,leadorlag);
-            else
-                position=find(strcmp(variable,{dictionary.exogenous.name}));
-                if ~isempty(position)
-                    if leadorlag>0
-                        error([mfilename,':: exogenous variable ',equation.eqtn{1,end},' cannot have leads. Check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-                    dictionary.exogenous(position).max_lag=min(dictionary.exogenous(position).max_lag,leadorlag);
-                end
-            end
-            equation.eqtn{2,end}=leadorlag;
+            variable=equation.eqtn{1,end};            
+            [equation.eqtn,dictionary,leadorlag]=parser.straigthen_equation(...
+                equation.eqtn,variable,leadorlag,dictionary);
             equation.max_lag=min(equation.max_lag,leadorlag);
             equation.max_lead=max(equation.max_lead,leadorlag);
         end
