@@ -41,8 +41,8 @@ if ~isempty(steady_state_file)
     % this alternative is more general in the sense that it allows you to
     % modify the parameters, e.g. so that the model replicates the things
     % you want.
-    nout=nargout(steady_state_file);
     if isempty(obj.steady_state_file_2_model_communication)
+        nout=nargout(steady_state_file);
         % false means do not solve the steady state
         var_names=steady_state_file(obj,false);
         original_endo_ids=locate_variables(obj.orig_endo_names_current,var_names,true);
@@ -50,11 +50,11 @@ if ~isempty(steady_state_file)
         original_endo_ids=original_endo_ids(located_vars_ids);
         obj.steady_state_file_2_model_communication=...
             struct('original_endo_ids',original_endo_ids,...
-            'located_vars_ids',located_vars_ids);
+            'located_vars_ids',located_vars_ids,'nargout',nout);
     end
     % now we actually solve the steady state. The second input argument is
     % set to true
-    if nout==4
+    if obj.steady_state_file_2_model_communication.nargout==4
         [ss,obj,retcode,is_imposed]=steady_state_file(obj,true);
         obj.is_imposed_steady_state=is_imposed;
     else
@@ -81,6 +81,7 @@ if ~isempty(steady_state_file)
     end
 elseif obj.options.steady_state_use_steady_state_model
     ssfunc=obj.routines.steady_state_model;
+    nx=sum(obj.exogenous.number);xss=zeros(nx,1);
     if ~isempty(ssfunc) && (isa(ssfunc,'function_handle')||...
             (isstruct(ssfunc)&&~isempty(ssfunc.code)))
         [ss,retcode,change_locs,pp_sstate]=steady_state_evaluation(ssfunc);
@@ -90,19 +91,6 @@ elseif obj.options.steady_state_use_steady_state_model
                 utils.error.decipher(retcode)
             end
         else
-            if obj.is_optimal_policy_model
-                if isempty(obj.steady_state_file_2_model_communication)
-                    % if this is to be used in this case, perhaps it should
-                    % change name too.
-                    original_endo_ids=find(~obj.endogenous.is_lagrange_multiplier);
-                    obj.steady_state_file_2_model_communication=...
-                        struct('original_endo_ids',original_endo_ids,...
-                        'located_vars_ids',[]);
-                end
-                tmp=zeros(endo_nbr,number_of_regimes);
-                tmp(obj.steady_state_file_2_model_communication.original_endo_ids,:)=ss;
-                ss=tmp; clear tmp;
-            end
             % now put the content of ss into ss_and_bgp_start_vals
             ss_and_bgp_start_vals(1:endo_nbr,:)=ss;
             % exogenous auxiliary variables have steady state zero
@@ -123,14 +111,12 @@ end
     function [ss,retcode,change_locs,pp_sstate]=steady_state_evaluation(ssfunc)
         ss=[];
         change_locs=[];
-        [pp_sstate,~,retcode]=get_sstate_parameters();
+        [pp_sstate,def_sstate,retcode]=get_sstate_parameters();
         if ~retcode
             pp_update=pp_sstate;
             for ireg=1:number_of_regimes
-                % in ssfunc, the definitions have been substituted already in
-                % load_functions and so all is needed here is the parameters
                 [y,pp_update(:,ireg)]=utils.code.evaluate_functions(...
-                    ssfunc,[],[],[],pp_sstate(:,ireg),[],[],[],[]); % y, x, ss, param, sparam, def, s0, s1
+                    ssfunc,[],xss,[],pp_sstate(:,ireg),[],def_sstate{ireg},[],[]); % y, x, ss, param, sparam, def, s0, s1
                 retcode=~(all(isfinite(y)) && isreal(y));
                 if retcode
                     return
@@ -138,6 +124,8 @@ end
                 if ireg==1
                     ss=nan(numel(y),number_of_regimes);
                 end
+                y=auxiliary_endo_sstate_evaluation(obj,y,xss,pp_sstate(:,ireg),def_sstate{ireg});
+
                 ss(:,ireg)=y; %#ok<AGROW>
                 if obj.is_unique_steady_state
                     ss=ss(:,ireg*ones(1,number_of_regimes));
@@ -159,6 +147,7 @@ end
             end
             pp_sstate=pp_update;
         end
+        
         function [pp_sstate,def_sstate,retcode]=get_sstate_parameters()
             obj=derive_auxiliary_parameters(obj);
             
