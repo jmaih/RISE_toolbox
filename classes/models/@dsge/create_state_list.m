@@ -40,10 +40,10 @@ if isempty(m)
     return
 end
 
-if nargin<2
-    orders=[];
-    if nargin<3
-        compact_form=false;
+if nargin<3
+    compact_form=false;
+    if nargin<2
+        orders=[];
     end
 end
 if isempty(orders)
