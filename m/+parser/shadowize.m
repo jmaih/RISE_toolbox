@@ -46,7 +46,7 @@ for ii=1:numel(equation_type)
     is_def=equation_type(ii)==2;
     is_tvp=equation_type(ii)==3;
     is_mcp=equation_type(ii)==4;
-    is_sseq=equation_type(ii)==5;
+    is_sseq=any(equation_type(ii)==[5,7]);
     is_planner=equation_type(ii)==6;
     
     for jj=1:size(eq_i,2)
