@@ -1,4 +1,4 @@
-function [T,eigval,zmultcols,retcode]=optimal_policy_solver_h(obj,structural_matrices)...
+function [T,eigval,retcode,obj]=optimal_policy_solver_h(obj,structural_matrices,do_alphabet)
 % H1 line
 %
 % Syntax
@@ -28,18 +28,16 @@ if isempty(obj)
         'lc_algorithm','short');
     return
 end
+
+if nargin<3
+    do_alphabet=true;
+end
+
 gam=structural_matrices.planner.commitment{1};
 beta=structural_matrices.planner.discount{1};
-W=structural_matrices.planner.weights;
 Q=structural_matrices.transition_matrices.Qinit;
 shock_horizon=max(obj.exogenous.shock_horizon);
-% re-order the rows of Aplus, A0, Aminus and B so that the lagrange
-% multipliers are in the order : [static, pred, both, frwrd]
-%-------------------------------------------------------------------
-% eq_re_mult=equations_reordering_for_multipliers
 
-reordering_index=obj.reordering_index;
-eq_re_mult=obj.equations_reordering_for_multipliers;
 h=size(Q,1);
 
 % form Aplus, A0, Aminus, B
@@ -78,16 +76,14 @@ for rt=1:h
 end
 clear aplus Aminus__
 
-Aplus=re_order_rows(Aplus);
-A0=re_order_rows(A0);
-Aminus=re_order_rows(Aminus);
-B=re_order_rows(B);
+[AAplus,AA0,AAminus,BB,WW,reordering_index]=recreate_partial_system();
+
 H0=[];
 
 % solve the problem
 %------------------
-[H,G,zmultcols,retcode]=loose_commitment_engine(...
-    gam,beta,W,Aplus,A0,Aminus,B,Q,H0,shock_horizon,obj.options);
+[H,G,retcode]=loose_commitment_engine(...
+    gam,beta,WW,AAplus,AA0,AAminus,BB,Q,H0,shock_horizon,obj.options);
 
 T=[];
 eigval=[];
@@ -104,29 +100,119 @@ if ~retcode
     for ireg=1:h
         T.Tz{ireg}=[H(:,:,ireg),Tzsig,reshape(G(:,:,ireg,:),nrows,[])];
     end
-    % augment multcols accordingly
-    %-----------------------------
-    exo_nbr=size(G,2);
-    zmultcols=[zmultcols,false(1,exo_nbr*(shock_horizon+1))];
 end
+
+    function [AAplus,AA0,AAminus,BB,WW,reordering_index]=recreate_partial_system()
+        if do_alphabet
+            alphabetize()
+        end
+        
+        [new_y_order,mult_cols,y_cols,orig_eqtns_rows,reordering_index]=load_help_indexes();
+        % the order in the following call is strict and may not be changed
+        %-----------------------------------------------------------------
+        [AAplus,AA0,AAminus,BB,WW]=extract(Aplus,A0,Aminus,B);
+        
+        function [new_y_order,mult_cols,y_cols,orig_eqtns_rows,...
+                reordering_index]=load_help_indexes()
+            if ~isfield(obj.planner_system,'')
+                % first put back in alphabetical order
+                %-------------------------------------
+                ylist=obj.endogenous.name;
+                order_var_list=ylist(obj.order_var.before_solve);
+                if do_alphabet
+                    mult_cols=obj.endogenous.is_lagrange_multiplier;
+                else
+                    mult_cols=obj.endogenous.is_lagrange_multiplier(obj.order_var.before_solve);
+                    ylist=order_var_list;
+                end
+                y_cols=~mult_cols;
+                mult_list=ylist(mult_cols);
+                ylist=ylist(y_cols);
+                % multipliers ordered last in the solution
+                %-----------------------------------------
+                grand_list=[ylist,mult_list];
+                reordering_index=locate_variables(order_var_list,grand_list);
+                new_y_order=locate_variables(ylist,obj.planner_system.wrt);
+                nmult=sum(mult_cols);
+                norigeqtns=nmult;
+                % in the derivations, the original equations are placed on top
+                %--------------------------------------------------------------
+                orig_eqtns_rows=true(1,obj.endogenous.number(end));
+                orig_eqtns_rows(norigeqtns+1:end)=false;
+                obj.planner_system.new_y_order=new_y_order;
+                obj.planner_system.mult_cols=mult_cols;
+                obj.planner_system.y_cols=y_cols;
+                obj.planner_system.orig_eqtns_rows=orig_eqtns_rows;
+                obj.planner_system.reordering_index=reordering_index;
+            end
+            new_y_order=obj.planner_system.new_y_order;
+            mult_cols=obj.planner_system.mult_cols;
+            y_cols=obj.planner_system.y_cols;
+            orig_eqtns_rows=obj.planner_system.orig_eqtns_rows;
+            reordering_index=obj.planner_system.reordering_index;
+        end
+
+        function varargout=extract(varargin)
+            nargs=numel(varargin);
+            if nargout~=nargs+1
+                error('mismatch between number of inputs and outputs')
+            end
+            varargout=cell(1,nargs+1);
+            for iarg=1:nargs
+                arg=varargin{iarg};
+                for ii=1:numel(arg)
+                    if iarg==nargs
+                        b=arg{ii}(orig_eqtns_rows,:);
+                    else
+                        b=arg{ii}(orig_eqtns_rows,y_cols);
+                        if obj.options.debug && iarg==2
+                            % this works only for A0 since the coefficient
+                            % matrices for the multipliers are swapped and
+                            % scaled by powers of beta.
+                            atest=-arg{ii}(~orig_eqtns_rows,mult_cols).';
+                            disp(max(max(abs(b-atest(:,new_y_order)))))
+                            keyboard
+                        end
+                    end
+                    varargout{iarg}{ii}=b;
+                    % add the weights
+                    %-----------------
+                    if iarg==2
+                        varargout{end}{ii}=weights_extractor();
+                    end
+                end
+            end
+            function W=weights_extractor()
+                % minus-ize so as to reproduce the same solution as the
+                % non-loose commitment program.
+                W=-.5*arg{ii}(~orig_eqtns_rows,y_cols);
+                % re-order the rows according to the order in use
+                W=W(new_y_order,:);
+            end
+        end
+        
+        function alphabetize()
+            iov=obj.inv_order_var.before_solve;
+            A0=engine(A0);
+            Aplus=engine(Aplus);
+            Aminus=engine(Aminus);
+            function b=engine(a)
+                b=a;
+                for ii=1:numel(a)
+                    b{ii}=a{ii}(:,iov);
+                end
+            end
+        end
+    end
 
     function re_order_solution()
         H=H(reordering_index,reordering_index,:);
         H=H(:,obj.locations.after_solve.t.pb,:);
         G=G(reordering_index,:,:,:);
-        zmultcols=zmultcols(reordering_index);
-        % keep only the state multipliers
-        %--------------------------------
-        zmultcols=zmultcols(obj.locations.after_solve.t.pb);
-    end
-    function X=re_order_rows(X)
-        for ii=1:numel(X)
-            X{ii}=X{ii}(eq_re_mult,:);
-        end
     end
 end
 
-function [H,G,multcols,retcode]=loose_commitment_engine(...
+function [H,G,retcode]=loose_commitment_engine(...
     gam,beta,W,Aplus,A0,Aminus,B,Q,H0,k,options)
 
 [nmult,ny]=size(A0{1});
@@ -135,7 +221,6 @@ nx=size(B{1},2);
 n=nmult+ny;
 y=1:ny;
 lamb=ny+1:n;
-multcols=[false(1,ny),true(1,nmult)];
 
 lc_reconvexify=options.lc_reconvexify;
 
