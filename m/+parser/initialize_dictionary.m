@@ -19,11 +19,8 @@ function dictionary = initialize_dictionary()
 %
 % See also: 
 
-%UNTITLED9 Summary of this function goes here
-%   Detailed explanation goes here
-
 dictionary=struct();
-
+dictionary.auxiliary_variables=struct('model',{{}},'sstate_model',{{}});
 dictionary.definitions={};
 % unlike the declared list, definitions will never be sorted
 dictionary.known_words={'steady_state','argzero','x0_','x1_','param_obj','commitment','discount',...
@@ -46,9 +43,7 @@ end
 % structure instead of a 1 x 1. I have experienced it when using parallel
 % computing, but not otherwise.
 dictionary.Distributions=strrep(mydistrlist,'.m','_pdf');
-% % % dictionary.Distributions={'uniform_pdf','unif_pdf','normal_pdf','norm_pdf',...
-% % %     'gamma_pdf','gam_pdf','beta_pdf','invg_pdf','inv_gamma_pdf',...
-% % %     'inv_gamma2_pdf','dirichlet_pdf'};
+
 dictionary.syntax_special={'y]','param]',')]','x]','[(',']=','@f','(@','])',...
     '([','[n','n]',...
     '>=','<=','param>','>param',')>','>(','>f','(cn','cn)','cn,',',cn',',n',...
