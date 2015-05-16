@@ -26,6 +26,16 @@ if obj.is_dsge_var_model
     obj.dsge_prior_weight_id=find(strcmp('dsge_prior_weight',param_names),1);
 end
 
+if obj.is_hybrid_expectations_model
+    % set all hybrid coefficients to 1
+    pnames=obj.parameters.name;
+    good=strncmp(pnames,'hbe_param_',10);
+    pnames=pnames(good);
+    np=numel(pnames);
+    hbe_calibration=[pnames(:),num2cell(ones(np,1))];
+    obj=setup_calibration(obj,hbe_calibration);
+end
+
 % baseline calibration
 %---------------------
 obj=setup_calibration(obj,ParameterizationArray.Calibration);
