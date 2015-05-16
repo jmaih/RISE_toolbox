@@ -66,11 +66,10 @@ if obj.options.solve_order>=1
 end
 
     function [T,retcode]=solve_higher_orders(T,others,accelerate)
-        % second-order moments
-        %---------------------
-        [mompos,zz_sig_loc]=moments_positions(siz,2);
-        Eu_u=sparse(siz.nz^2,siz.nz^2);
-        Eu_u(mompos,zz_sig_loc)=1;
+        
+        % higher-order moments
+        %----------------------        
+        [Eu{1:obj.options.solve_order}]=u_higher_order_moments(siz);
         
         a0_z=zeros(siz.nv,siz.nz);
         a0_z(pos.v.b_minus,pos.z.b)=eye(siz.nb);
@@ -145,10 +144,10 @@ end
             
             function res=dvv_Evz_vz()
                 res=fvv_vx_vx(structural_matrices.dvv{r0,r1},a0_z);
-                res=res+fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu_u;
+                res=res+fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu{2};
                 if obj.options.debug
-                    tmp1=fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu_u;
-                    tmp2=structural_matrices.dvv{r0,r1}*kron(a1_z,a1_z)*Eu_u;
+                    tmp1=fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu{2};
+                    tmp2=structural_matrices.dvv{r0,r1}*kron(a1_z,a1_z)*Eu{2};
                     max(max(abs(tmp1-tmp2)))
                     keyboard
                 end
@@ -183,9 +182,9 @@ end
             end
             
             function res=dvv_Evz_vzz()
-                Eu_u_hz=kron(Eu_u,hz);
+                Eu_u_hz=kron(Eu{2},hz);
                 Eu_hz_u=utils.kronecker.shuffle(Eu_u_hz,[siz.nz,siz.nz],[siz.nz,siz.nz].^2);
-                res=fvv_vx_vxx_omega_1(structural_matrices.dvv{r0,r1},a0_z,a0_zz+a1_zz*Eu_u)+...
+                res=fvv_vx_vxx_omega_1(structural_matrices.dvv{r0,r1},a0_z,a0_zz+a1_zz*Eu{2})+...
                     structural_matrices.dvv{r0,r1}*kron(a1_z,a1_zz)*(Eu_u_hz+Eu_hz_u);
             end
             
@@ -195,7 +194,7 @@ end
             
             function res=dvvv_Evz_vz_vz()
                 res=fvvv_vx_vx_vx(structural_matrices.dvvv{r0,r1},a0_z);
-                k011u=kron(a0_z,kron(a1_z,a1_z)*Eu_u);
+                k011u=kron(a0_z,kron(a1_z,a1_z)*Eu{2});
                 siz_a0=size(a0_z);
                 siz_a1_u=siz_a0;
                 k11u0 = utils.kronecker.shuffle(k011u,siz_a0,siz_a1_u.^2);
@@ -283,7 +282,7 @@ end
                     ATCzzz=utils.kronecker.A_times_k_kron_B(AT,hz,oo);
                     ATCzzz=ATCzzz+AT*E_u_o;
                     if oo==3
-                        ATCzzz=ATCzzz+AT*Pfunc(hz,Eu_u);
+                        ATCzzz=ATCzzz+AT*Pfunc(hz,Eu{2});
                     end
                     if accelerate
                         ATCzzz=ATCzzz(:,shrink);
@@ -293,10 +292,10 @@ end
             function E_u_o=Ekron_u_oo()
                 switch oo
                     case 2
-                        E_u_o=Eu_u;
+                        E_u_o=Eu{2};
                     case 3
                         % no skewed shocks?
-                        E_u_o=0;
+                        E_u_o=Eu{3};
                     otherwise
                         error(['approximation of order ',int2str(oo),' not yet implemented'])
                 end
