@@ -143,7 +143,7 @@ if optimopt.is_unique
     end
 end
 
-if obj.is_optimal_policy_model||obj.is_imposed_steady_state
+if obj.is_imposed_steady_state
     if isempty(obj.is_stationary_model)
         obj.is_stationary_model=true;
         % this will have to change some day...
