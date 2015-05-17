@@ -345,8 +345,7 @@ end
                             ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
                     else
                         [G01{1:1}]=utils.code.evaluate_jacobian_numerically(obj.routines.probs_times_dynamic,...
-                            ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1,...
-                            obj.switching_parameters_leads_index);
+                            ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                         % The columns are to be put in the order_var order
                         G01{1}(:,1:nind)=G01{1}(:,reordering);
                     end

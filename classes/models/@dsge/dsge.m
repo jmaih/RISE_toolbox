@@ -96,7 +96,6 @@ classdef dsge < rise_generic
         steady_state_file_2_model_communication
         steady_state_funcs % holder for steady-state calculating functions
         sticky_information_lambda_id
-        switching_parameters_leads_index
         input_list
         % statistics on the order of the variables
         %--------------------------------------------

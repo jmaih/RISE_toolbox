@@ -235,9 +235,6 @@ fsp=unique([fsp{:}]);
 if ~isempty(fsp)
     error('future switching parameters should have been substituted at this stage')
 end
-switching_parameters_leads_index=regexprep(fsp,'sparam\((\d+)\)','$1');
-switching_parameters_leads_index=str2num(char(switching_parameters_leads_index)); %#ok<ST2NM>
-dictionary.fsp=fsp;
 
 static.steady_state_shadow_model=strrep(static.steady_state_shadow_model,...
     'x1_=','[x1_,fval,exitflag]=');
@@ -337,7 +334,7 @@ exo_nbr=numel(dictionary.exogenous);
 % no leads or lags in the endogenous probabilities: then we know that the
 % status (static,pred,both,frwrd) of the variables does not change.
 
-% v=[f+,b+,s0,p_0,b_0,f_0,p_minus,b_minus,e_0,theta_plus]
+% v=[f+,b+,s0,p_0,b_0,f_0,p_minus,b_minus,e_0]
 routines.dynamic=utils.code.code2func(dynamic.shadow_model);
 
 [wrt,dictionary.v,...
@@ -346,7 +343,7 @@ routines.dynamic=utils.code.code2func(dynamic.shadow_model);
     dictionary.order_var,...
     dictionary.inv_order_var,...
     dictionary.steady_state_index]=dynamic_differentiation_list(...
-    dictionary.lead_lag_incidence.before_solve,exo_nbr,switching_parameters_leads_index);
+    dictionary.lead_lag_incidence.before_solve,exo_nbr,[]);
 %----------------------
 if dictionary.parse_debug
     profile off
@@ -375,7 +372,7 @@ routines.symbolic.probs_times_dynamic={original_funcs,wrt};
 %--------------------
 static_incidence=zeros(orig_endo_nbr,3);
 static_incidence(:,2)=1:orig_endo_nbr;
-wrt=dynamic_differentiation_list(static_incidence,0,[]);
+wrt=dynamic_differentiation_list(static_incidence,0);
 
 routines.static=utils.code.code2func(static.shadow_model);
 [routines.static_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
@@ -388,7 +385,7 @@ disp([mfilename,':: 1st-order derivatives of static model wrt y(0). ',...
 %---------------------------------
 bgp_incidence=zeros(2*orig_endo_nbr,3);
 bgp_incidence(:,2)=1:2*orig_endo_nbr;
-wrt=dynamic_differentiation_list(bgp_incidence,0,[]);
+wrt=dynamic_differentiation_list(bgp_incidence,0);
 
 routines.static_bgp=utils.code.code2func(static.shadow_BGP_model);
 [routines.static_bgp_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
@@ -402,7 +399,7 @@ disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
 % dynamic model wrt param
 %------------------------
 param_nbr = numel(dictionary.parameters);
-wrt=dynamic_differentiation_list([],0,[],1:param_nbr);
+wrt=dynamic_differentiation_list([],0,1:param_nbr);
 ppdd=@(x)x;%dynamic.shadow_model;
 if ~dictionary.definitions_inserted
     if DefaultOptions.definitions_in_param_differentiation
@@ -487,10 +484,7 @@ dictionary.lead_lag_incidence.after_solve(dictionary.lead_lag_incidence.after_so
     utils.solve.solution_topology(...
     dictionary.lead_lag_incidence.after_solve,...
     exo_nbr,... number of shocks
-    0,... number of shocks periods beyond the current
-    numel(switching_parameters_leads_index)... future switching parameters
-    );
-dictionary.switching_parameters_leads_index=switching_parameters_leads_index;
+    0); % number of shocks periods beyond the current
 
 clear unsorted_endogenous
 
@@ -880,8 +874,8 @@ jac_toc=toc;
 end
 
 function [wrt,v,locations,siz,order_var,inv_order_var,steady_state_index]=...
-    dynamic_differentiation_list(LLI,exo_nbr,spindex,pindex)%% partition the endogenous
-if nargin<4
+    dynamic_differentiation_list(LLI,exo_nbr,pindex)%% partition the endogenous
+if nargin<3
     pindex=[];
 end
 
@@ -897,7 +891,6 @@ v={
     'p_minus',0
     'b_minus',0
     'e_0',0
-    'theta_plus',0
     };
 fields=v(:,1);
 
@@ -907,9 +900,7 @@ locations=struct();
     utils.solve.solution_topology(...
     LLI,...
     exo_nbr,... number of shocks
-    0,... number of shocks periods beyond the current
-    numel(spindex)... future switching parameters
-    );
+    0);% number of shocks periods beyond the current
 v{strcmp(v(:,1),'s_0'),2}=siz.ns;
 
 v(strncmp(v(:,1),'p',1),2)={siz.np};
@@ -942,19 +933,13 @@ else
 end
 v{strcmp(v(:,1),'e_0'),2}=siz.ne;
 
-% switching parameters
-%---------------------
-spwrt=process_parameters(spindex,'s');
-steady_state_index.theta_plus=spindex(:)';
-v{strcmp(v(:,1),'theta_plus'),2}=siz.ntheta;
-
 % constant parameters
 %--------------------
 pwrt=process_parameters(pindex,'');
 
 % differentiation list
 %---------------------
-wrt=[ywrt(:)',xwrt(:)',spwrt(:)',pwrt(:)'];
+wrt=[ywrt(:)',xwrt(:)',pwrt(:)'];
 steady_state_index.wrt=wrt;
 
 % v-locations

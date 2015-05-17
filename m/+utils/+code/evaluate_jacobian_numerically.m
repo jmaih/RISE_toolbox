@@ -1,11 +1,11 @@
-function J=evaluate_jacobian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1,switch_params_leads_index)
+function J=evaluate_jacobian_numerically(funcs,y,x,ss,param,def,s0,s1)
 % evaluate_jacobian_numerically - numerical evaluation of the jacobian of the objective function
 %
 % Syntax
 % -------
 % ::
 %
-%   J=evaluate_jacobian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1)
+%   J=evaluate_jacobian_numerically(funcs,y,x,ss,param,def,s0,s1)
 %
 % Inputs
 % -------
@@ -21,16 +21,11 @@ function J=evaluate_jacobian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1,swi
 %
 % - **param** [vector]: parameter vector 
 %
-% - **sparam** [vector]: vector of parameters appearing with a lead 
-%
 % - **def** [vector]: values of definitions 
 %
 % - **s0** [scalar]: state today 
 %
 % - **s1** [scalar]: state tomorrow 
-%
-% - **switch_params_leads_index** [[]|scalar|vector]: indices of the
-%   switching parameters appearing with a lead
 %
 % Outputs
 % --------
@@ -50,9 +45,7 @@ function J=evaluate_jacobian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1,swi
 
 ny=size(y,1);
 nx=size(x,1);
-yx=[y;x;sparam(switch_params_leads_index)];%
-nyxsp=numel(yx);
-sp=sparam(:,ones(1,nyxsp));
+yx=[y;x];%
 if ~iscell(funcs)
     funcs={funcs};
 end
@@ -74,7 +67,6 @@ end
     function f=newobjective(yx)
         yy=yx(1:ny,:);
         xx=yx(ny+(1:nx),:);
-        sp(switch_params_leads_index,:)=yx(ny+nx+1:end,:);
-        f=funcs{irow}(yy,xx,ss,param,sp,def,s0,s1);
+        f=funcs{irow}(yy,xx,ss,param,def,s0,s1);
     end
 end

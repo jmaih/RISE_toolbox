@@ -1,9 +1,7 @@
 function [siz,t,z,parts,order_var,inv_order_var]=solution_topology(...
     lead_lag_incidence,...
     exo_nbr,... number of shocks
-    kfuture,... number of shocks periods beyond the current
-    ntheta... future switching parameters
-    )
+    kfuture) % number of shocks periods beyond the current
 % H1 line
 %
 % Syntax
@@ -24,12 +22,9 @@ function [siz,t,z,parts,order_var,inv_order_var]=solution_topology(...
 %
 % See also: 
 
-if nargin<4
-    ntheta=0;
     if nargin<3
         kfuture=0;
     end
-end
 
 [parts]=utils.solve.partition_variables(lead_lag_incidence);
 
@@ -44,8 +39,7 @@ siz=struct('ns',numel(static),...
     'np',numel(pred),...
     'nb',numel(both),...
     'nf',numel(frwrd),...
-    'ne',exo_nbr,...
-    'ntheta',ntheta);
+    'ne',exo_nbr);
 
 % z-locations
 %------------

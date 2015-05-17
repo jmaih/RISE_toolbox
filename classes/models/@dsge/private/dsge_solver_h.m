@@ -53,7 +53,6 @@ if obj.options.solve_order>=1
     % Structure of elements that will move across different orders
     %-------------------------------------------------------------
     others=struct();
-    others.theta_hat=structural_matrices.theta_hat;
     
     [T.Tz,others,eigval,retcode,obj.options]=solve_first_order(structural_matrices,...
         others,siz,pos,obj.options,shock_horizon);
@@ -135,7 +134,6 @@ end
                 for r1=1:siz.h
                     a1_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:);
                     a0_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hz;
-                    a0_z(pos.v.theta_plus,pos.z.sig)=others.theta_hat{r0,r1};
                     Dzz(:,:,r0)=Dzz(:,:,r0)+dvv_Evz_vz();
                 end
                 % precondition
@@ -167,7 +165,6 @@ end
                 for r1=1:siz.h
                     a1_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:);
                     a0_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hz;
-                    a0_z(pos.v.theta_plus,pos.z.sig)=others.theta_hat{r0,r1};
                     
                     a0_zz(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hzz+T.Tzz{r1}(pos.t.bf,:)*kron(hz,hz);
                     a1_zz(pos.v.bf_plus,:)=T.Tzz{r1}(pos.t.bf,:);
@@ -401,13 +398,11 @@ if ~retcode
             A0(:,:,rt)=A0(:,:,rt)+A0_0_1;
             % provision for non-certainty equivalence
             %----------------------------------------
-            dtheta_plus=dv{rt,rplus}(:,pos.v.theta_plus);
             df_plus=dv{rt,rplus}(:,pos.v.f_plus);
             db_plus=dv{rt,rplus}(:,pos.v.b_plus);
             df_Lf_Tzp_Lp(:,pos.t.p)=df_plus*Tz_pb(pos.t.f,1:siz.np,rplus);% place in the p position
             db_Lb_Tzb_Lb(:,pos.t.b)=db_plus*Tz_pb(pos.t.b,siz.np+(1:siz.nb),rplus);% place in the b position
             A0sig(:,:,rt) = A0sig(:,:,rt) + A0_0_1 + df_Lf_Tzp_Lp + db_Lb_Tzb_Lb;
-            dt_t(:,rt)=dt_t(:,rt)+dtheta_plus*others.theta_hat{rt,rplus};
             
             % provision for shock impacts
             %----------------------------

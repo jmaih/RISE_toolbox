@@ -186,19 +186,7 @@ if ~retcode
         sum(obj.exogenous.number));
     
     structural_matrices.transition_matrices=obj.solution.transition_matrices;
-    
-    % compute theta_hat depending on the choice of steady state
-    %-----------------------------------------------------------
-    
-    theta_hat=cell(number_of_regimes);
-    for s1=1:number_of_regimes
-        for s0=1:number_of_regimes
-            tmp=pp(:,s1)-pp_sstate(:,s0);
-            theta_hat{s0,s1}=(1-obj.options.solve_disable_theta)*tmp(obj.steady_state_index.theta_plus);
-        end
-    end
-    structural_matrices.theta_hat=theta_hat;
-    
+        
     ss_=ss_and_bgp_start_vals(1:endo_nbr,:);
     bgp_=ss_and_bgp_start_vals(endo_nbr+1:end,:);
     ss_tvp=ss_(obj.endogenous.is_affect_trans_probs,:);
