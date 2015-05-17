@@ -76,7 +76,7 @@ if neat %nargout==1
     if nargout>1
         error('functional programming does not allow more than one output')
     end
-    status=if_elseif(any(strcmp(x,{dict.orig_endogenous.name})),'y',... %(1)
+    status=if_elseif(any(strcmp(x,{dict.endogenous.name})),'y',... %(1)
     any(strcmp(x,{dict.exogenous.name})),'x',... %(2)
     any(strcmp(x,{dict.parameters.name})),'param',... %(3)
     any(strcmp(x,dict.add_operators)),'+',... %(4)
@@ -94,7 +94,7 @@ if neat %nargout==1
     1,'unknown');
 else
     status='unknown';
-    loc=find(strcmp(x,{dict.orig_endogenous.name}),1,'first');
+    loc=find(strcmp(x,{dict.endogenous.name}),1,'first');
     if ~isempty(loc)
         status='y'; %(1)
     else

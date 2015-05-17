@@ -65,12 +65,12 @@ if naux
 end
 
     function update_equation()
-        if ~ismember(new_var,{dic.orig_endogenous.name})
+        if ~ismember(new_var,{dic.endogenous.name})
             added_eqtn=[new_var,'=',lambda,'*',vname,'+(1-',lambda,')*',new_var,'{-1};'];
             aux_eqtns=[aux_eqtns;added_eqtn];
             ss_eqtn=[new_var,'=',vname,';'];
             ss_eqtns=[ss_eqtns;ss_eqtn];
-            dic.orig_endogenous(end+1)=parser.listing('name',new_var);
+            dic.endogenous(end+1)=parser.listing('name',new_var);
             dic.parameters(end+1)=parser.listing('name',newp,...
                 'governing_chain',const_loc);
             dic.auxiliary_variables.model{end+1}=new_var;

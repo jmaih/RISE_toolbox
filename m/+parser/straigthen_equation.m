@@ -1,7 +1,7 @@
 function [eqtn,dico,leadorlag]=straigthen_equation(eqtn,variable,leadorlag,dico)
 
 if abs(leadorlag)>0
-    endo_names={dico.orig_endogenous.name};
+    endo_names={dico.endogenous.name};
     param_exo=[{dico.parameters.name},{dico.exogenous.name}];
     
     is_param_Or_exo=any(strcmp(variable,param_exo));
@@ -14,7 +14,7 @@ if abs(leadorlag)>0
         if ~any(strcmp(new_variable,endo_names))
             new_var=parser.listing('name',new_variable);
             %new_var=parser.listing('name',new_variable,'current_name',variable);
-            dico.orig_endogenous(end+1)=new_var;
+            dico.endogenous(end+1)=new_var;
             % correspondingly, an equation has to be created
             %------------------------------------------------
             create_latent_equation(new_variable,variable);
@@ -24,7 +24,7 @@ if abs(leadorlag)>0
     elseif abs(leadorlag)>1
         % realm of endogenous variables
         leadorlag__=leadorlag;
-        dico.orig_endogenous=parser.update_variable_lead_lag(dico.orig_endogenous,variable,leadorlag);
+        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,variable,leadorlag);
         if leadorlag>0
             new_var=parser.create_auxiliary_name(variable,leadorlag__-1,true);
             leadorlag=1;
@@ -33,10 +33,10 @@ if abs(leadorlag)>0
             leadorlag=-1;
         end
         eqtn{1,end}=new_var;
-        dico.orig_endogenous=parser.update_variable_lead_lag(dico.orig_endogenous,...
+        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,...
             new_var,leadorlag,variable);
     else
-        dico.orig_endogenous=parser.update_variable_lead_lag(dico.orig_endogenous,variable,leadorlag);
+        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,variable,leadorlag);
     end
     eqtn{2,end}=leadorlag;
 end

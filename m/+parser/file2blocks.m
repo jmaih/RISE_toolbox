@@ -33,7 +33,7 @@ markov_chains=parser.initialize_markov_chain('const',1,'is_endogenous',false);
 
 all_chain_names={markov_chains.name};
 blocks={
-    'orig_endogenous'       ,{'var','endogenous'}    ,listing
+    'endogenous'       ,{'var','endogenous'}    ,listing
     'exogenous'             ,{'varexo','exogenous'}  ,listing
     'parameters'            ,'parameters'            ,listing
     'observables'           ,{'varobs','observables'},listing
@@ -46,7 +46,7 @@ blocks={
     'parameter_restrictions','parameter_restrictions',cell(0,3)
     };
 
-% 'orig_endogenous','exogenous','parameters','observables' blocks are just
+% 'endogenous','exogenous','parameters','observables' blocks are just
 % declarations. The corresponding blocks are to hold name and tex_name
 % respectively
 
@@ -94,7 +94,7 @@ while iline<NumberOfLines
     [is_trigger,last_block_id]=check_block(tok,trigger_map,last_block_id);
     current_block_name=blocks(last_block_id).name;
     switch current_block_name
-        case {'log_vars','orig_endogenous','exogenous','parameters','observables'}
+        case {'log_vars','endogenous','exogenous','parameters','observables'}
             blocks(last_block_id)=construct_list(blocks(last_block_id),rawline,tok);
         case {'model','steady_state_model','parameterization',...
                 'planner_objective','exogenous_definition','parameter_restrictions'}
@@ -116,7 +116,7 @@ end
 
 % sort the declaration blocks
 %----------------------------
-sort_list={'log_vars','orig_endogenous','exogenous','parameters','observables'};
+sort_list={'log_vars','endogenous','exogenous','parameters','observables'};
 for isort=1:numel(sort_list)
     loc=strcmp(sort_list{isort},blknames);
     [~,tags]=sort({blocks(loc).listing.name});
@@ -130,7 +130,7 @@ markov_chains=markov_chains(tags);
 
 logvarBlock=strcmp('log_vars',{blocks.name});
 logvar_names={blocks(logvarBlock).listing.name};
-endogBlock=strcmp('orig_endogenous',{blocks.name});
+endogBlock=strcmp('endogenous',{blocks.name});
 endovar_names={blocks(endogBlock).listing.name};
 exogBlock=strcmp('exogenous',{blocks.name});
 exovar_names={blocks(exogBlock).listing.name};

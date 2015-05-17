@@ -22,7 +22,7 @@ function [dictionary,blocks,old_endo_names]=logvars2logvars(dictionary,blocks)
 logvarnames={dictionary.log_vars.name};
 % old endo names will be useful if there is a problem in the model and has
 % to be constructed prior to changing the names of the variables.
-old_endo_names={dictionary.orig_endogenous.name};
+old_endo_names={dictionary.endogenous.name};
 
 if ~isempty(logvarnames)
     if dictionary.is_linear_model
@@ -37,9 +37,9 @@ if ~isempty(logvarnames)
             blocks(target_blocks{iblk}).listing(:,2)=regexprep(blocks(target_blocks{iblk}).listing(:,2),...
                 ['(?<!\w+)',logvarnames{ivar},'(?!\w+)'],['exp(LOG_',logvarnames{ivar},')']);
         end
-        loc=strcmp(logvarnames{ivar},{dictionary.orig_endogenous.name});
-        dictionary.orig_endogenous(loc).name=['LOG_',logvarnames{ivar}];
-        dictionary.orig_endogenous(loc).is_log_var=true;
+        loc=strcmp(logvarnames{ivar},{dictionary.endogenous.name});
+        dictionary.endogenous(loc).name=['LOG_',logvarnames{ivar}];
+        dictionary.endogenous(loc).is_log_var=true;
     end
     % re-write the steady state model if we have equations such as exp(LOG_)=
     ssblock=blocks(target_blocks{2}).listing(:,2);

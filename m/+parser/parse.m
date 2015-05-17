@@ -142,12 +142,12 @@ end
 dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities);
 
 %% Now we can re-order the original (and augmented) endogenous
-[~,tags]=sort({dictionary.orig_endogenous.name});
-dictionary.orig_endogenous=dictionary.orig_endogenous(tags);
+[~,tags]=sort({dictionary.endogenous.name});
+dictionary.endogenous=dictionary.endogenous(tags);
 
 %% Now we re-write the model and update leads and lags
 % at the same time, construct the incidence and occurrence matrices
-orig_endo_nbr=numel(dictionary.orig_endogenous);
+orig_endo_nbr=numel(dictionary.endogenous);
 
 [equation_type,Occurrence]=equation_types_and_variables_occurrences();
 
@@ -203,10 +203,9 @@ do_incidence_matrix();
 
 %% models in shadow/technical/tactical form
 
-overall_max_lead_lag=max([dictionary.orig_endogenous.max_lead]);
-overall_max_lead_lag=max([abs([dictionary.orig_endogenous.max_lag]),overall_max_lead_lag]);
+overall_max_lead_lag=max([dictionary.endogenous.max_lead]);
+overall_max_lead_lag=max([abs([dictionary.endogenous.max_lag]),overall_max_lead_lag]);
 
-dictionary.endogenous=dictionary.orig_endogenous;
 [dictionary,...
     dynamic,...
     stat,...
@@ -432,7 +431,7 @@ if is_model_with_planner_objective
             'static_mult_equations');
     else
         osr_=dictionary.planner_system.osr;
-        endo_names={dictionary.orig_endogenous.name};
+        endo_names={dictionary.endogenous.name};
         ordered_endo_names=endo_names(dictionary.order_var);
         der_reo=locate_variables(ordered_endo_names,osr_.wrt);
         routines.planner_osr_support=struct('derivatives_re_order',der_reo,...
@@ -454,7 +453,7 @@ end
 %% Add final variables list to the dictionary
 % the unsorted variables are variables sorted according to their order in
 % during the solving of the model.
-unsorted_endogenous=dictionary.orig_endogenous(dictionary.order_var);
+unsorted_endogenous=dictionary.endogenous(dictionary.order_var);
 logical_incidence=dictionary.lead_lag_incidence.before_solve(dictionary.order_var,:);
 
 dictionary.NumberOfEquations=sum(equation_type==1);
@@ -490,7 +489,7 @@ clear unsorted_endogenous
 
 %% give greek names to endogenous, exogenous, parameters
 dictionary.endogenous=parser.greekify(dictionary.endogenous);
-dictionary.orig_endogenous=parser.greekify(dictionary.orig_endogenous);
+dictionary.endogenous=parser.greekify(dictionary.endogenous);
 dictionary.exogenous=parser.greekify(dictionary.exogenous);
 dictionary.parameters=parser.greekify(dictionary.parameters);
 
@@ -573,7 +572,7 @@ clear parameters
 
 % variable names for the original endogenous but without the augmentation
 % add-ons
-dictionary.orig_endo_names_current={dictionary.orig_endogenous.current_name};
+dictionary.orig_endo_names_current={dictionary.endogenous.current_name};
 
 % equations
 %----------
@@ -662,7 +661,7 @@ dictionary=orderfields(dictionary);
         [Model_block,dictionary]=parser.hybrid_expectator(Model_block,dictionary);
 
         neqtns=sum(strcmp(Model_block(:,end),'normal'));
-        nendo=numel(dictionary.orig_endogenous);
+        nendo=numel(dictionary.endogenous);
         if nendo<neqtns
             error('More equations than the number of endogenous variables')
         end
@@ -685,7 +684,7 @@ dictionary=orderfields(dictionary);
         appear_as_current=before_solve(:,2)>0;
         if any(~appear_as_current)
             disp('The following variables::')
-            allendo={dictionary.orig_endogenous.name};
+            allendo={dictionary.endogenous.name};
             disp(allendo(~appear_as_current))
             error('do not appear as current')
         end
@@ -707,7 +706,7 @@ dictionary=orderfields(dictionary);
             end
             for ii2=1:size(eq_i_,2)
                 if ~isempty(eq_i_{2,ii2})
-                    var_loc=strcmp(eq_i_{1,ii2},{dictionary.orig_endogenous.name});
+                    var_loc=strcmp(eq_i_{1,ii2},{dictionary.endogenous.name});
                     lag_or_lead=eq_i_{2,ii2}+2;
                     if any(var_loc) && equation_type(iii)==2
                         error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to be a definition cannot contain variables'])
@@ -748,7 +747,7 @@ dictionary=orderfields(dictionary);
         iter=0;
         for irow_=1:nsstate
             vname=SteadyStateModel_block{irow_,1}{1,1};
-            if any(strcmp(vname,{dictionary.orig_endogenous.name}))
+            if any(strcmp(vname,{dictionary.endogenous.name}))
                 iter=iter+1;
                 sstate_model_aux_vars{iter}=vname;
             end

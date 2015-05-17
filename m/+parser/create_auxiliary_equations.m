@@ -12,7 +12,7 @@ end
 
 listing=cell(100,3);
 ilist=0;
-endog=dic.orig_endogenous;
+endog=dic.endogenous;
 endo_nbr=numel(endog);
 new_auxvars=cell(1,100);
 for ivar=1:endo_nbr
@@ -26,7 +26,7 @@ for ivar=1:endo_nbr
         do_one_variable(excess_leads,1);
     end
 end
-dic.orig_endogenous=endog;
+dic.endogenous=endog;
 
 listing=listing(1:ilist,:);
 if isfield(dic,'latent_equations')

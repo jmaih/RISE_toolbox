@@ -424,7 +424,7 @@ end
                 elseif strcmp(block_name,'parameter_restrictions')
                     % Restrictions for the parameter restriction block
                     % 1- no variable
-                    if ismember(equation{1,ic},{dictionary.orig_endogenous.name})
+                    if ismember(equation{1,ic},{dictionary.endogenous.name})
                         error([mfilename,':: no variable allowed in the parameter_restrictions block'])
                     end
                     % 2- if parenthesis after a parameter, then one of the elements

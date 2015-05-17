@@ -37,7 +37,7 @@ numberOfAdditionalEquations=numel(Policy_vars);
 % add utility and welfare
 %-------------------------
 for iv=1:numberOfAdditionalEquations
-    dic.orig_endogenous(end+1)=parser.listing('name',Policy_vars{iv});
+    dic.endogenous(end+1)=parser.listing('name',Policy_vars{iv});
     %%%%%dic.auxiliary_variables{end+1}=Policy_vars{iv};
     
     [tmp,dic]=parser.capture_equations(dic,Policy_equations(iv,:),'model');
@@ -48,7 +48,7 @@ end
 
 neqtns=size(constraints,1);
 
-endo_names={dic.orig_endogenous.name};
+endo_names={dic.endogenous.name};
 exo_names={dic.exogenous.name};
 param_names={dic.parameters.name};
 
@@ -286,7 +286,7 @@ jac_toc=toc;
             
             % add to the list of endogenous
             %-------------------------------
-            dic.orig_endogenous(end+1)=parser.listing('name',mult_name);
+            dic.endogenous(end+1)=parser.listing('name',mult_name);
             
             % create arguments for splanar
             %------------------------------

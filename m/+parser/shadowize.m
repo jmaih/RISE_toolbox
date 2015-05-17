@@ -6,7 +6,7 @@ function [dictionary,...
     shadow_complementarity]=shadowize(dictionary,AllModels,equation_type,...
     overall_max_lead_lag)
 
-orig_endo_nbr=numel(dictionary.orig_endogenous);
+orig_endo_nbr=numel(dictionary.endogenous);
 
 % dynamic to be merged later with the other portion
 %---------------------------------------------------
@@ -75,7 +75,7 @@ for ii=1:numel(equation_type)
                     error([mfilename,':: definitions cannot contain variables']);
                 elseif is_tvp
                     sh_tvp=[sh_tvp,'y(',sprintf('%0.0f',index),')'];  %#ok<*AGROW>
-                    dictionary.orig_endogenous(pos).is_trans_prob=true;
+                    dictionary.endogenous(pos).is_trans_prob=true;
                 elseif is_sseq
                     sh_ssm=[sh_ssm,'y(',sprintf('%0.0f',index),')'];
                 elseif is_planner
@@ -193,7 +193,7 @@ for ii=1:numel(equation_type)
                     if is_mcp
                         pos=find(strcmp(Vss,{dictionary.endogenous.name}));
                     else
-                        pos=find(strcmp(Vss,{dictionary.orig_endogenous.name}));
+                        pos=find(strcmp(Vss,{dictionary.endogenous.name}));
                     end
                     eq_i{1,jj+2}=sprintf('%0.0f',pos);
                 end

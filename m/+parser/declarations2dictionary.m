@@ -24,7 +24,7 @@ function [dictionary,blocks] = declarations2dictionary(dictionary,blocks)
 
 % add the list of endogenous,exogenous,parameters and observables and
 % remove them from the blocks
-dic_items={'orig_endogenous','exogenous','parameters','observables','log_vars'};
+dic_items={'endogenous','exogenous','parameters','observables','log_vars'};
 for ii=1:numel(dic_items)
     loc=strcmp(dic_items{ii},{blocks.name});
     listing=blocks(loc).listing;
