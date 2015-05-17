@@ -158,6 +158,7 @@ end
                 error('mismatch between number of inputs and outputs')
             end
             varargout=cell(1,nargs+1);
+            varargout(1:nargs)=varargin;
             for iarg=1:nargs
                 arg=varargin{iarg};
                 for ii=1:numel(arg)
@@ -362,7 +363,10 @@ end
             AA0(1:ny,ny+1:end)=A0{rt_}.';
             AA0(ny+1:end,1:ny)=A0{rt_};
             AAminus(ny+1:end,1:ny)=Aminus{rt_};
-            H0(:,:,rt_)=AA0\AAminus;
+            H0(:,:,rt_)=pinv(AA0)\AAminus;
+            if any(any(isnan(H0(:,:,rt_))))
+                H0(:,:,rt_)=0;
+            end
         end
     end
 end
