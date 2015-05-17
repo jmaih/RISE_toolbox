@@ -75,7 +75,7 @@ else
     order__=1;
     jacobian_dynamic_model=obj.routines.probs_times_dynamic_derivatives(order__);
 end
-order_var=obj.order_var.after_solve;
+order_var=obj.order_var;
 % locations of various variables in the jacobian
 %-----------------------------------------------
 ns=numel(obj.locations.before_solve.v.s_0);

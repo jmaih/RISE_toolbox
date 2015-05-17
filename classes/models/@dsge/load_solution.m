@@ -40,7 +40,7 @@ end
 is_alphabetical_order=strcmp(type,'iov');
 
 regimes_number=obj.markov_chains.regimes_number;
-ov=obj.order_var.after_solve;
+ov=obj.order_var;
 order=obj.options.solve_order;
 T=cell(order,regimes_number);
 R=cell(1,regimes_number);
@@ -55,7 +55,7 @@ order_var_solution();
 % now get the inv_order_var solution if necessary
 %------------------------------------------------
 if is_alphabetical_order
-    iov=obj.inv_order_var.after_solve;
+    iov=obj.inv_order_var;
     % only for order 1
     inv_order_var_solution()
 	new_order=1:numel(new_order);

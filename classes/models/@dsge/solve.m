@@ -270,7 +270,7 @@ if solve_order>0 && ~retcode && resolve_it
                 retcode=log_expansion();
             end
             if ~retcode
-                inv_order_var=obj.inv_order_var.after_solve;
+                inv_order_var=obj.inv_order_var;
                 T_fields=fieldnames(T);
                 nregs=numel(T.Tz);
                 for ifield_=1:numel(T_fields)
@@ -321,7 +321,7 @@ end
                     error('numerical derivatives not implemented for orders greater than 1')
                 end
                 % prepare the re-ordering of the endogenous columns
-                reordering=obj.lead_lag_incidence.before_solve(obj.order_var.before_solve,:);
+                reordering=obj.lead_lag_incidence.before_solve(obj.order_var,:);
                 reordering=reordering(reordering>0);
             end
         end
@@ -404,7 +404,7 @@ end
                 % change the ordering of the weight for the user. OSR will use
                 % the structural matrices, which are ordered according to
                 % order_var
-                iov=obj.inv_order_var.before_solve;
+                iov=obj.inv_order_var;
                 for s0=1:h
                     planner.weights{s0}=planner.weights{s0}(iov,iov);
                 end
@@ -521,7 +521,7 @@ end
         tt=obj.locations.after_solve.t;
         pb_pos=[tt.p,tt.b];
         npb=numel(pb_pos);
-        order_var=obj.order_var.after_solve;
+        order_var=obj.order_var;
         nstates=size(T.Tz{1},2);
         ss_state_list=ones(1,nstates);
         for ireg_=1:h

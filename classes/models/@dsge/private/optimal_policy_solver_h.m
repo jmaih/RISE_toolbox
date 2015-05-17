@@ -118,11 +118,11 @@ end
                 % first put back in alphabetical order
                 %-------------------------------------
                 ylist=obj.endogenous.name;
-                order_var_list=ylist(obj.order_var.before_solve);
+                order_var_list=ylist(obj.order_var);
                 if do_alphabet
                     mult_cols=obj.endogenous.is_lagrange_multiplier;
                 else
-                    mult_cols=obj.endogenous.is_lagrange_multiplier(obj.order_var.before_solve);
+                    mult_cols=obj.endogenous.is_lagrange_multiplier(obj.order_var);
                     ylist=order_var_list;
                 end
                 y_cols=~mult_cols;
@@ -192,7 +192,7 @@ end
         end
         
         function alphabetize()
-            iov=obj.inv_order_var.before_solve;
+            iov=obj.inv_order_var;
             A0=engine(A0);
             Aplus=engine(Aplus);
             Aminus=engine(Aminus);

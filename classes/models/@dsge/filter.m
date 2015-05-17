@@ -77,7 +77,7 @@ init=re_inflator(init,obj.options.kf_filtering_level);
 %% extract data and update the position of observables
 %------------------------------------------------------
 data_info=obj.data;
-data_info.varobs_id=obj.inv_order_var.after_solve(data_info.varobs_id);
+data_info.varobs_id=obj.inv_order_var(data_info.varobs_id);
 
 data_structure=data_info.data_structure;
 % no_more_missing=data_info.no_more_missing;
@@ -108,7 +108,7 @@ if isempty(obj.options.kf_user_algo)
                 error('real-time filtering with exogenous variables not ready')
             end
             mu_id=data_info.restr_y_id;
-            iov=obj.inv_order_var.after_solve;
+            iov=obj.inv_order_var;
             mu_id=iov(real(mu_id))+imag(mu_id)*1i;
             shock_id=data_info.restr_z_id;
             e_data={data_info.z,shock_id};
@@ -170,7 +170,7 @@ if obj.options.kf_filtering_level && ~retcode
         'smoothed_measurement_errors','filtered_regime_probabilities','updated_regime_probabilities',...
         'smoothed_regime_probabilities'};
     obj.filtering=struct();
-    iov=obj.inv_order_var.after_solve;
+    iov=obj.inv_order_var;
     for ifield=1:size(Fields,2)
         main_field=Fields{1,ifield};
         alias=Fields{2,ifield};

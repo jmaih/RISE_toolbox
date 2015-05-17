@@ -49,7 +49,7 @@ else
         % the theoretical variances come ordered alphabetically. Order them
         % in the order_var order
         %------------------------------------------------------------------
-        ov=obj.order_var.after_solve;
+        ov=obj.order_var;
         A=A(ov,ov,1);
         % I could accelerate the step below by picking only the relevant
         % variables...

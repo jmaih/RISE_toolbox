@@ -175,7 +175,7 @@ flag=max_eig<=obj.options.stability_criterion;%1+1e-12
         end
         T_red=T(regimes_red);
         % Now focus on the states only
-        ov=obj.order_var.after_solve;
+        ov=obj.order_var;
         pb=obj.locations.after_solve.t.pb;
         zpb=obj.locations.after_solve.z.pb;
         %================= trimming preparation=================%

@@ -82,7 +82,7 @@ exo_nbr = numel(exo_names);
 reg_nbr=obj.markov_chains.regimes_number;
 
 % collect the state matrices
-iov=obj.inv_order_var.after_solve;
+iov=obj.inv_order_var;
 T=cell(1,reg_nbr);
 R=cell(1,reg_nbr);
 Tsig=cell(1,reg_nbr);
