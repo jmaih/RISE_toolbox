@@ -25,7 +25,8 @@ if isempty(obj)
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
     T=struct('lc_reconvexify',false,...
-        'lc_algorithm','short');
+        'lc_algorithm','short',...
+        'lc_use_pinv',false);
     return
 end
 
@@ -224,6 +225,7 @@ y=1:ny;
 lamb=ny+1:n;
 
 lc_reconvexify=options.lc_reconvexify;
+lc_use_pinv=options.lc_use_pinv;
 
 GAMm=big_gam1();
 
@@ -247,7 +249,10 @@ H0=reshape(H0,n,n,h);
 
 GAM0i=cell(1,h);
 for rt=1:h
-    GAM0i{rt}=pinv(big_gam0(rt));
+    GAM0i{rt}=big_gam0(rt)\eye(n);
+    if lc_use_pinv && any(any(isnan()))
+        GAM0i{rt}=pinv(big_gam0(rt));
+    end
 end
 
 G=zeros(n,nx,h,k+1);
@@ -266,7 +271,7 @@ end
         for r0=1:h
             GAM0=big_gam0(r0);
             H1(:,:,r0)=-GAM0\GAMm{r0};
-            if any(any(isnan(H1(:,:,r0))))
+            if lc_use_pinv && any(any(isnan(H1(:,:,r0))))
                 H1(:,:,r0)=-pinv(GAM0)*GAMm{r0};
             end
         end
@@ -358,9 +363,9 @@ end
             AA0(1:ny,ny+1:end)=A0{rt_}.';
             AA0(ny+1:end,1:ny)=A0{rt_};
             AAminus(ny+1:end,1:ny)=Aminus{rt_};
-            H0(:,:,rt_)=pinv(AA0)\AAminus;
-            if any(any(isnan(H0(:,:,rt_))))
-                H0(:,:,rt_)=0;
+            H0(:,:,rt_)=AA0\AAminus;
+            if lc_use_pinv && any(any(isnan(H0(:,:,rt_))))
+                H0(:,:,rt_)=pinv(AA0)*AAminus;
             end
         end
     end
