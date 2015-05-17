@@ -250,7 +250,7 @@ H0=reshape(H0,n,n,h);
 GAM0i=cell(1,h);
 for rt=1:h
     GAM0i{rt}=big_gam0(rt)\eye(n);
-    if lc_use_pinv && any(any(isnan()))
+    if lc_use_pinv && any(any(isnan(GAM0i{rt})))
         GAM0i{rt}=pinv(big_gam0(rt));
     end
 end
