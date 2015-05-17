@@ -238,8 +238,7 @@ if isempty(H0)
         otherwise
             error(['initialization ',parser.any2str(options.solve_initialization),' unknown'])
     end
-    use_pinv=true;
-    H0=iterate_func(H0,use_pinv);
+    H0=iterate_func(H0);
 end
 
 H0=reshape(H0,n,n,h);
@@ -248,7 +247,7 @@ H0=reshape(H0,n,n,h);
 
 GAM0i=cell(1,h);
 for rt=1:h
-    GAM0i{rt}=big_gam0(rt)\eye(n);
+    GAM0i{rt}=pinv(big_gam0(rt));
 end
 
 G=zeros(n,nx,h,k+1);
@@ -261,18 +260,14 @@ for ik=1:k+1
     G(:,:,:,ik)=solve_shock_impact(GAMe);
 end
 
-    function [H1,H1_H0]=iterate_func(H00,use_pinv)
-        if nargin<2
-            use_pinv=false;
-        end
+    function [H1,H1_H0]=iterate_func(H00)
         H1=H00;
         H0=H00; % this is needed for the computation of GAM0
         for r0=1:h
             GAM0=big_gam0(r0);
-            if use_pinv
+            H1(:,:,r0)=-GAM0\GAMm{r0};
+            if any(any(isnan(H1(:,:,r0))))
                 H1(:,:,r0)=-pinv(GAM0)*GAMm{r0};
-            else
-                H1(:,:,r0)=-GAM0\GAMm{r0};
             end
         end
         H1_H0=H1-H00;
