@@ -374,7 +374,7 @@ end
                 'discount',{cell(1,h)},...
                 'weights',{cell(1,h)}...
                 );
-            orig_endo_nbr=obj.endogenous.number(1);
+            orig_endo_nbr=obj.endogenous.number;
             for s0=1:h
                 if ~retcode
                     lcd=utils.code.evaluate_functions(...
@@ -497,7 +497,7 @@ end
         if ischar(solve_log_approx_vars)
             solve_log_approx_vars=cellstr(solve_log_approx_vars);
         end
-        log_vars=false(1,obj.endogenous.number(end));
+        log_vars=false(1,obj.endogenous.number);
         log_vars(locate_variables(solve_log_approx_vars,obj.endogenous.name))=true;
         % cannot be some original log_var
         %---------------------------------

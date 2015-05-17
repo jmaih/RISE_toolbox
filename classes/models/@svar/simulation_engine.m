@@ -35,7 +35,7 @@ if isempty(x0_linear)
     simul_with_shocks=~obj.options.simul_no_shocks;
     is_observed=obj.exogenous.is_observed;
     exo_nbr=sum(obj.exogenous.number);
-    endo_nbr=obj.endogenous.number(end);
+    endo_nbr=obj.endogenous.number;
 end
 if isempty(shocks)
     shocks=generic_tools.set_exogenous_data(exo_nbr,is_observed,simul_with_shocks,z);

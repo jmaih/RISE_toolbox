@@ -75,7 +75,7 @@ histdec_start_date=obj.options.histdec_start_date;
 
 endo_names=obj.endogenous.name;
 exo_names=obj.exogenous.name;
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 % number of shocks: this is potentially a problem if there are exogenous
 % deterministic variables
 exo_nbr = numel(exo_names);
@@ -352,7 +352,7 @@ histdec_method  =obj.options.histdec_method  ;
 
 endo_names=obj.endogenous.name;
 exo_names=obj.exogenous.name;
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 % number of shocks: this is potentially a problem if there are exogenous
 % deterministic variables
 exo_nbr = numel(exo_names);

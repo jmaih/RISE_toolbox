@@ -121,7 +121,7 @@ x1_linear=x1;
         simul_with_shocks=~obj.options.simul_no_shocks;
         is_observed=obj.exogenous.is_observed;
         exo_nbr=sum(obj.exogenous.number);
-        endo_nbr=obj.endogenous.number(end);
+        endo_nbr=obj.endogenous.number;
         
         [A,RHO_A,THETA_A,SIG,RHO_SIG,THETA_SIG,OMG,RHO_OMG,THETA_OMG]=...
             stochvol.form_parameter_matrices(obj);

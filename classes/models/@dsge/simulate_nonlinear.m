@@ -50,7 +50,7 @@ forecast_exogenous=upload_exogenous_forecast_func();
 % unnecessary optimizations when the process has already landed.
 t_last_shock=forecast_exogenous();
 
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 
 s0=1;
 s1=1;

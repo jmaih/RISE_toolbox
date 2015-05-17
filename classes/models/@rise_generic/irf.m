@@ -239,7 +239,7 @@ myirfs=format_irf_output(myirfs);
         
         % initialize output
         %------------------
-        endo_nbr=obj.endogenous.number(end);
+        endo_nbr=obj.endogenous.number;
         Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,number_of_threads);
         retcode=0;
         for istate=1:number_of_threads

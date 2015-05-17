@@ -45,7 +45,7 @@ if retcode
     return
 end
 
-n=obj.endogenous.number(end);
+n=obj.endogenous.number;
 
 V=zeros(n,n,autocov_ar+1);
 

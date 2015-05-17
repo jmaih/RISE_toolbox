@@ -125,7 +125,7 @@ end
                 destination_root.table('title','Model Parameters',...
                     'log',this_table,'longtable',true)
             case 'solution'
-                if isempty(varlist) && obj(1).endogenous.number(end)>5
+                if isempty(varlist) && obj(1).endogenous.number>5
                     warning(['Reporting the solution for perhaps too many variables. ',...
                         'All the columns might not fit a the report'])
                 end

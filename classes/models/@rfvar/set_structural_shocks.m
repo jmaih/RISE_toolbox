@@ -41,7 +41,7 @@ if ~isempty(stshocks)
         end
         odd=~odd;
     end
-    missing=obj.endogenous.number(1)-size(tmp,1);
+    missing=obj.endogenous.number-size(tmp,1);
     if missing<0
         error(['there cannot be more structural shocks than the number of '...
             'reduced-form shocks or endogenous variables'])

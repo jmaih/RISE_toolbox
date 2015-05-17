@@ -23,7 +23,7 @@ function [obj,ss_and_bgp_start_vals,retcode]=initial_steady_state(obj,varargin)
 obj=set(obj,varargin{:});
 
 number_of_regimes=obj.markov_chains.small_markov_chain_info.regimes_number;
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 ss_and_bgp_start_vals=zeros(2*endo_nbr,number_of_regimes);
 
 [obj,retcode]=compute_definitions(obj);

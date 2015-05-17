@@ -71,7 +71,7 @@ end
 disp(' ')
 disp('MODEL SUMMARY')
 disp(' ')
-disp(['  Number of variables:         ' int2str(obj.endogenous.number(end))])
+disp(['  Number of variables:         ' int2str(obj.endogenous.number)])
 disp(['  Number of stochastic shocks: ' int2str(obj.exogenous.number(1))])
 if isa(obj,'dsge')
 disp(['  Number of state variables:   ' int2str(nnz(lead_lag_incidence.after_solve(:,3)))])

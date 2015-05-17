@@ -62,7 +62,7 @@ if is_alphabetical_order
 	state_vars_location=[];
 end
     function inv_order_var_solution()
-        endo_nbr_=obj.endogenous.number(end);
+        endo_nbr_=obj.endogenous.number;
         exo_nbr_=sum(obj.exogenous.number);
         z_pb=obj.locations.after_solve.z.pb;
         t_pb=state_vars_location;

@@ -78,7 +78,7 @@ k=max(100,max(vardec_periods));
 
 % collect the state matrices
 Q=obj.solution.transition_matrices.Q;
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 exo_nbr=sum(obj.exogenous.number);
 horizon=1;
 if isa(obj,'dsge')

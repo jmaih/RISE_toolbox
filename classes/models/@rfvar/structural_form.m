@@ -111,7 +111,7 @@ if obj.identification.over
     error('error the model is over-identified and cannot be rotated')
 end
 
-endo_nbr=obj.endogenous.number(1);
+endo_nbr=obj.endogenous.number;
 nlags=obj.nlags;
 nx=obj.nx;
 exo_nbr=obj.exogenous.number(1);
@@ -178,7 +178,7 @@ while ~success && rounds<irf_sample_max
         Cnew{istate}(abs(Cnew{istate})<1e-12)=0;
         if obj.options.debug
             check_rotation_adequacy(C{istate},Cnew{istate});
-            bigtable=cell(obj.endogenous.number(end)+1,sum(obj.exogenous.number)+1);
+            bigtable=cell(obj.endogenous.number+1,sum(obj.exogenous.number)+1);
             bigtable(2:end,1)=obj.endogenous.name;
             bigtable(1,2:end)=obj.exogenous.name;
             bigtable(2:end,2:end)=num2cell(Cnew{istate});

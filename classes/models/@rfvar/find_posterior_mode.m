@@ -55,11 +55,11 @@ if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
     [a2tilde_post,a2tilde_ols,estimafy]=posterior_mode_engine(vdata.Xtilde,...
         vdata.ytilde,a2tilde_prior);
     
-    resid_post=reshape(a2tilde_post.resid,obj.endogenous.number(end),[]);
+    resid_post=reshape(a2tilde_post.resid,obj.endogenous.number,[]);
     K=(npar-sum(1:nvars))/nvars;
     vcov=(resid_post*resid_post.')/(nobs-K);
     
-    resid_ols=reshape(a2tilde_ols.resid,obj.endogenous.number(end),[]);
+    resid_ols=reshape(a2tilde_ols.resid,obj.endogenous.number,[]);
     a2tilde_ols.SSE=(resid_ols*resid_ols.');
     a2tilde_ols.SIGMA = a2tilde_ols.SSE./(nobs-K);
     
@@ -154,7 +154,7 @@ end
                     iSIGU=diag(1./diag(obj.miscellaneous.constant_var.sigma_));
                 else
                     results=vartools.ols(bigy,bigx,0,false);
-                    iSIGU=results.SIGols\eye(obj.endogenous.number(end));%
+                    iSIGU=results.SIGols\eye(obj.endogenous.number);%
                 end
                 iSIGU=kron(eye(smpl),iSIGU);%<---iSIGU=kron(iSIGU,eye(smpl));
                 % N.B: for the indep_normal_wishart, This is not the exact
@@ -193,7 +193,7 @@ end
 % %             %------------------------------------------------------------------
 % %             if strcmp(obj.options.vp_prior_type,'jeffrey')
 % %                 results=vartools.ols(bigy,bigx,0,false);
-% %                 iSIGU_fishy=results.SIGols\eye(obj.endogenous.number(end));%
+% %                 iSIGU_fishy=results.SIGols\eye(obj.endogenous.number);%
 % %                 post.V=inv(X'*kron(eye(smpl),iSIGU_fishy)*X);
 % %             end
         end

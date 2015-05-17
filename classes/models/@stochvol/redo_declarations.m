@@ -26,7 +26,7 @@ old_exo_names=setdiff(old_exo_names,observed_exo_names);
 exo_names=old_exo_names;
 old_endo_names=obj.endogenous.name;
 endo_names=old_endo_names;
-orig_endo_nbr=obj.endogenous.number(end);
+orig_endo_nbr=obj.endogenous.number;
 
 param_template=obj.param_template;
 sig_loc=find(strcmp(param_template(1,:),'sig'));

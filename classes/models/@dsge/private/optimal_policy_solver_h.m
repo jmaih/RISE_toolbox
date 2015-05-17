@@ -138,7 +138,7 @@ end
                 norigeqtns=nmult;
                 % in the derivations, the original equations are placed on top
                 %--------------------------------------------------------------
-                orig_eqtns_rows=true(1,obj.endogenous.number(end));
+                orig_eqtns_rows=true(1,obj.endogenous.number);
                 orig_eqtns_rows(norigeqtns+1:end)=false;
                 obj.planner_system.new_y_order=new_y_order;
                 obj.planner_system.mult_cols=mult_cols;

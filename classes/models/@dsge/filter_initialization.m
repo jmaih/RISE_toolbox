@@ -138,7 +138,7 @@ end
         % load solution in order_var form
         %---------------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
-        endo_nbr=obj.endogenous.number(end);
+        endo_nbr=obj.endogenous.number;
         iov(new_order)=1:numel(new_order);
         obs_id=real(obj.observables.state_id);
         % remove exogenous

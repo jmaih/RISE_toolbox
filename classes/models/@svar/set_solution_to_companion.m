@@ -31,7 +31,7 @@ if isempty(obj.solution)
     error('model has not been solved')
 end
 
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 exo_nbr=sum(obj.exogenous.number);
 reg_nbr=obj.markov_chains.regimes_number;
 

@@ -46,7 +46,7 @@ if nsteps>1
         rolling{ireg}=permute(rolling{ireg},[3,2,1]); %#ok<AGROW>
     end
     Expected_rolling=permute(Expected_rolling,[3,2,1]);
-    nvars=obj.endogenous.number(end);
+    nvars=obj.endogenous.number;
     vnames=obj.endogenous.name;
     rmse=nan(nvars,nsteps,h);
     expect_rmse=nan(nvars,nsteps);
@@ -109,7 +109,7 @@ end
         
         out=struct();
         if variables_flag
-            nvars=obj.endogenous.number(end);
+            nvars=obj.endogenous.number;
             vnames=obj.endogenous.name;
         elseif shocks_flag
             vnames=obj.exogenous.name;

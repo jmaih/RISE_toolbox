@@ -107,7 +107,7 @@ number_of_regimes=size(ss_and_bgp_start_vals,2);
 func_ss=obj.steady_state_funcs.static; % func_ss_static func_ss_bgp
 func_jac=obj.steady_state_funcs.jac_static; % func_jac_static func_jac_bgp
 
-endo_nbr=obj.endogenous.number(end);
+endo_nbr=obj.endogenous.number;
 if isempty(obj.is_stationary_model)|| obj.is_stationary_model
     last_item=endo_nbr;
 else

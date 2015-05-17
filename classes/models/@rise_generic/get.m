@@ -162,7 +162,7 @@ end
         endo_names=obj.endogenous.name;
         h=numel(item);
         tmp=nan(1,h);
-        for ii=1:obj.endogenous.number(end)
+        for ii=1:obj.endogenous.number
             for ireg=1:h
                 tmp(ireg)=item{ireg}(ii);
             end
