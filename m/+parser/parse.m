@@ -509,6 +509,7 @@ endogenous=dictionary.endogenous;
 dictionary.endogenous=struct();
 dictionary.endogenous.name={endogenous.name};
 dictionary.endogenous.tex_name={endogenous.tex_name};
+dictionary.endogenous.current_name={endogenous.current_name};
 dictionary.endogenous.is_original=sparse(ismember(dictionary.endogenous.name,old_endo_names));
 dictionary.endogenous.number=numel(dictionary.endogenous.is_original);
 dictionary.endogenous.is_lagrange_multiplier=sparse(strncmp('MULT_',{endogenous.name},5));
