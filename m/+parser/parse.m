@@ -571,10 +571,6 @@ dictionary.parameters.is_in_use=sparse([parameters.is_in_use]);
 dictionary.parameters.governing_chain=[parameters.governing_chain];
 clear parameters
 
-% variable names for the original endogenous but without the augmentation
-% add-ons
-dictionary.orig_endo_names_current={dictionary.endogenous.current_name};
-
 % equations
 %----------
 dictionary.equations.dynamic=dynamic.model;
@@ -586,9 +582,6 @@ dictionary.equations.number=numel(dynamic.model);
 dictionary.is_imposed_steady_state=static.is_imposed_steady_state;
 dictionary.is_unique_steady_state=static.is_unique_steady_state;
 
-% dictionary.model_derivatives=dynamic.model_derivatives;
-% dictionary.steady_state_shadow_model=static.steady_state_shadow_model;
-%  char({dictionary.equations.shadow_balanced_growth_path})
 definitions=dictionary.definitions;
 dictionary.definitions=struct();
 dictionary.definitions.dynamic={definitions.model};

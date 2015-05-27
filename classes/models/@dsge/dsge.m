@@ -89,7 +89,6 @@ classdef dsge < rise_generic
         measurement_errors_restrictions
         model_derivatives
         number_of_restrictions
-        orig_endo_names_current
         planner_system
         raw_file
         rawfile_triggers
@@ -174,7 +173,6 @@ classdef dsge < rise_generic
             dictionary=parser.parse(model_filename,cmfArgins{:});
             % build the equations object
             quick_fill={'lead_lag_incidence','filename',...
-                'orig_endo_names_current',... %
                 'planner_system',...
                 'auxiliary_variables',...
                 'is_hybrid_expectations_model','is_optimal_policy_model',...
