@@ -19,7 +19,7 @@ if abs(leadorlag)>0
             %------------------------------------------------
             create_latent_equation(new_variable,variable);
         end
-        [eqtn,dico,leadorlag]=straigthen_equation(eqtn,new_variable,leadorlag,dico);
+        [eqtn,dico,leadorlag]=parser.straigthen_equation(eqtn,new_variable,leadorlag,dico);
         return
     elseif abs(leadorlag)>1
         % realm of endogenous variables
