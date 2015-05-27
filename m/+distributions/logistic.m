@@ -17,7 +17,7 @@ function varargout=logistic(lowerquantileORmean,upperquantileORstdev,prob,c,d)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
@@ -99,40 +99,40 @@ end
 
 end
 
-    function [a,b,fval]=moments_2_hyperparameters(m,s,c,d)
-        if nargin<4
-            d=[];
-            if nargin<3
-                c=[];
-            end
-        end
-        if m<=0
-            error([mfilename,':: m must be >0'])
-        end
-        if s<=0
-            error([mfilename,':: s must be >0'])
-        end
-        aa=m;
-        bb=s*sqrt(3)/pi;
-        [ab,fval]=fsolve(@objective,[aa;bb],optimset('display','off'),c,d,m,s);
-		fval=norm(fval);
-        a=ab(1);
-        b=ab(2);
-        function res=objective(x,c,d,m,s)
-            res=hyperparameters_2_moments(x(1),x(2),c,d)-[m,s]';
-            if any(isnan(res))
-                res=1e+8*ones(2,1);
-            end
+function [a,b,fval]=moments_2_hyperparameters(m,s,c,d)
+if nargin<4
+    d=[];
+    if nargin<3
+        c=[];
+    end
+end
+if m<=0
+    error([mfilename,':: m must be >0'])
+end
+if s<=0
+    error([mfilename,':: s must be >0'])
+end
+aa=m;
+bb=s*sqrt(3)/pi;
+[ab,fval]=fsolve(@objective,[aa;bb],optimset('display','off'),c,d,m,s);
+fval=norm(fval);
+a=ab(1);
+b=ab(2);
+    function res=objective(x,c,d,m,s)
+        res=hyperparameters_2_moments(x(1),x(2),c,d)-[m,s]';
+        if any(isnan(res))
+            res=1e+8*ones(2,1);
         end
     end
+end
 
-    function moments=hyperparameters_2_moments(a,b,c,d)
-        if b<=0
-            moments=nan(2,1);
-        else
-		    moments=[a;b*pi/sqrt(3)];
-        end
-    end
+function moments=hyperparameters_2_moments(a,b,~,~)
+if b<=0
+    moments=nan(2,1);
+else
+    moments=[a;b*pi/sqrt(3)];
+end
+end
 
 function icdf=inverse_cdf(u,a,b,~,~)
 icdf=a+b*log(u./(1-u));
