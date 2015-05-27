@@ -99,13 +99,7 @@ end
 
 end
 
-function [a,b,fval]=moments_2_hyperparameters(m,s,c,d)
-if nargin<4
-    d=[];
-    if nargin<3
-        c=[];
-    end
-end
+function [a,b,fval]=moments_2_hyperparameters(m,s,~,~)
 if m<=0
     error([mfilename,':: m must be >0'])
 end
@@ -114,19 +108,19 @@ if s<=0
 end
 bb=sqrt(log(s^2+m^2)-2*log(m));
 aa=log(m)-.5*bb^2;
-[ab,fval]=fsolve(@objective,[aa;bb],optimset('display','off'),c,d,m,s);
+[ab,fval]=fsolve(@objective,[aa;bb],optimset('display','off'),m,s);
 fval=norm(fval);
 a=ab(1);
 b=ab(2);
-    function res=objective(x,c,d,m,s)
-        res=hyperparameters_2_moments(x(1),x(2),c,d)-[m,s]';
+    function res=objective(x,m,s)
+        res=hyperparameters_2_moments(x(1),x(2))-[m,s]';
         if any(isnan(res))
             res=1e+8*ones(2,1);
         end
     end
 end
 
-function moments=hyperparameters_2_moments(a,b,c,d)
+function moments=hyperparameters_2_moments(a,b,~,~)
 if b<=0
     moments=nan(2,1);
 else
@@ -146,22 +140,16 @@ end
 d=inverse_cdf(rand(n,1),a,b,c,d);
 end
 
-function icdf=inverse_cdf(u,a,b,c,d)
-if nargin<5
-    d=1;
-    if nargin<4
-        c=0;
-    end
-end
+function icdf=inverse_cdf(u,a,b,~,~)
 icdf=exp(b.*(sqrt(2).*erfinv(2*u-1))+a);
 end
 
-function lpdf=log_density(theta,a,b,c,d)
+function lpdf=log_density(theta,a,b,~,~)
 lpdf=-log(theta.*b*sqrt(2*pi))-.5*((log(theta)-a)./b).^2;
 target=theta>0;
 lpdf(~target)=-inf;
 end
-function cdf=cumulative_density_function(theta,a,b,c,d)
+function cdf=cumulative_density_function(theta,a,b,~,~)
 zz=((log(theta)-a)./b);
 cdf=.5*(1+erf(zz/sqrt(2)));
 target=theta>0;
