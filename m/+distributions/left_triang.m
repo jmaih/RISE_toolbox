@@ -35,12 +35,12 @@ function varargout=left_triang(lowerquantileORmean,upperquantileORstdev,prob,~,~
 %                        'space' is the domain for hyperparameters 'a' and 'b'
 % CASE 2: with no inputs, the function returns {lpdfn,cdfn,icdfn,rndfn}
 % where
-%                  'lpdfn(theta,a,b,c,d)' is the log density function
-%                  'cdfn(theta,a,b,c,d)' is the cumulative density function
-%                  'icdfn(u,a,b,c,d)' is the inverse of the cdf
-%                  'rndfn(a,b,n,c,d)' is the function that computes draws
-%                  'm2h(m,s,c,d)' returns the hyperparameters given m and s
-%                  'h2m(a,b,c,d)' returns the moments given the hyperparams
+%                  'lpdfn(theta,a,b)' is the log density function
+%                  'cdfn(theta,a,b)' is the cumulative density function
+%                  'icdfn(u,a,b)' is the inverse of the cdf
+%                  'rndfn(a,b,n)' is the function that computes draws
+%                  'm2h(m,s)' returns the hyperparameters given m and s
+%                  'h2m(a,b)' returns the moments given the hyperparams
 %
 cdfn=@cumulative_density_function;
 
@@ -61,16 +61,16 @@ if hyperparameter_mode
     % find the hyperparameters space
     space=hyperparameters();
     if mean_stdev_flag
-        [a,b,fval]=moments_2_hyperparameters(lowerquantileORmean,upperquantileORstdev,c,d);
+        [a,b,fval]=moments_2_hyperparameters(lowerquantileORmean,upperquantileORstdev);
         moments=[lowerquantileORmean,upperquantileORstdev];
     else
-        [ab,fval,retcode]=distributions.find_hyperparameters(space,cdfn,lowerquantileORmean,upperquantileORstdev,prob,c,d);
+        [ab,fval,retcode]=distributions.find_hyperparameters(space,cdfn,lowerquantileORmean,upperquantileORstdev,prob);
         if retcode
             error([mfilename,':: could not find the hyperparameters of the distribution'])
         end
         a=ab(1);
         b=ab(2);
-        moments=hyperparameters_2_moments(a,b,c,d);
+        moments=hyperparameters_2_moments(a,b);
     end
     
     moments=struct('mean',moments(1),'sd',moments(2));
