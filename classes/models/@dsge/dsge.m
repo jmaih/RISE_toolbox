@@ -76,7 +76,6 @@ classdef dsge < rise_generic
         is_endogenous_switching_model
         is_hybrid_expectations_model
         is_hybrid_model
-        is_imposed_steady_state=false;
         is_in_use_parameter
         is_linear_model
         is_optimal_policy_model
@@ -84,7 +83,6 @@ classdef dsge < rise_generic
         is_purely_backward_looking_model
         is_purely_forward_looking_model
         is_stationary_model
-        is_unique_steady_state=false;
         lead_lag_incidence
         measurement_errors_restrictions
         model_derivatives
@@ -96,6 +94,11 @@ classdef dsge < rise_generic
         steady_state_funcs % holder for steady-state calculating functions
         sticky_information_lambda_id
         input_list
+        % steady state model characteristics
+        %------------------------------------
+        is_imposed_steady_state=false
+        is_initial_guess_steady_state=false
+        is_unique_steady_state=false
         % statistics on the order of the variables
         %--------------------------------------------
         v
@@ -182,6 +185,7 @@ classdef dsge < rise_generic
                 'is_linear_model',...
                 'is_endogenous_switching_model','input_list',...
                 'is_imposed_steady_state','is_unique_steady_state',...
+                'is_initial_guess_steady_state',...
                 'endogenous','exogenous','parameters','observables',...
                 'raw_file','rawfile_triggers','equations','definitions',...
                 'markov_chains','v','locations','siz','order_var',...
