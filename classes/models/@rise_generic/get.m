@@ -14,6 +14,15 @@ function [Reply,retcode]=get(obj,PropertyName)
 % More About
 % ------------
 %
+% - It is now possible to get parameters in 3 different formats
+%   - get(obj,'parameters') or get(obj,'parameters(default)') returns the
+%   parameters in the usual way
+%   - get(obj,'parameters(struct)') returns the parameters in vector of
+%   structures, where each structure is a separate regime
+%   - get(obj,'parameters(cell)') returns the parameters in cell array in
+%   which the first column is the list of the parameters and the subsequent
+%   columns are the different regimes.
+%
 % Examples
 % ---------
 %
@@ -40,7 +49,8 @@ elseif ismember(lower(PropertyName),{'sstate','steadystate','steady_state'})
         error('The model has not been solved')
     end
     Reply=load_steady_state_or_balanced_growth(obj.solution.ss);
-elseif ismember(lower(PropertyName),{'par_vals','parameters'})% <--strcmpi(PropertyName,'par_vals')
+elseif strncmpi(PropertyName,'parameters',length('parameters'))||...
+        strncmpi(PropertyName,'par_vals',length('par_vals'))
     Reply=load_par_vals();
 elseif strncmpi(PropertyName,'par_list',length('par_list'))
     Reply=load_list('parameters',length('par_list'));
@@ -170,12 +180,35 @@ end
         end
     end
     function Reply=load_par_vals()
-        Reply=struct();
-        pnames=get(obj,'par_list');
-        for ipar=1:numel(pnames)
-            Reply.(pnames{ipar})=obj.parameter_values(ipar,:);
+        type='default';
+        left_par=PropertyName=='(';
+        if any(left_par)
+            left_par=find(left_par);
+            if ~strcmp(PropertyName(end),')')
+                error(['right parenthesis expected at the end of string, but found ',PropertyName(end)])
+            end
+            type=PropertyName(left_par+1:end-1);
         end
-        
+        Reply=struct();
+        pnames=obj.parameters.name;
+        pvals=obj.parameter_values;
+        [np,nregs]=size(pvals);
+        switch type
+            case {'','default'}
+                for ipar=1:np
+                    Reply.(pnames{ipar})=pvals(ipar,:);
+                end
+            case 'struct'
+                for ireg=1:nregs
+                    for ipar=1:np
+                        Reply(ireg).(pnames{ipar})=pvals(ipar,ireg);
+                    end
+                end
+            case 'cell'
+                Reply=[pnames(:),num2cell(pvals)];
+            otherwise
+                error(['unknown type ',type])
+        end
     end
     function Reply=load_list(type,proplength,type2)
         if nargin<3
