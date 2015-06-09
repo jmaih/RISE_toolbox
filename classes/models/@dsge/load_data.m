@@ -53,32 +53,7 @@ if data_provided %simulation_available ||
             'n',n,'p',p,'constant',const);
         obj=obj.set_properties('dsge_var',dsge_var);
     end
- 
-    % Provision for Endogenous Priors
-    if ~isempty(obj.options.prior_endogenous)
-        prior_endogenous=obj.options.prior_endogenous;
-        targets=[];
-        prior_sample=[];
-        do_it=false;
-        if islogical(prior_endogenous) 
-            if prior_endogenous==true
-                do_it=true;
-            end
-        elseif isstruct(prior_endogenous)
-            if isfield(prior_endogenous,'targets')
-                targets=prior_endogenous.targets;
-                do_it=true;
-            end
-            if isfield(prior_endogenous,'prior_sample')
-                prior_sample=prior_endogenous.prior_sample;
-                do_it=true;
-            end
-        end
-        if do_it
-            obj.endogenous_priors=rise_endo_priors(obj,targets,prior_sample);
-        end
-    end
-    
+     
     % information on the conditional variables
     %------------------------------------------
     kmax=max(obj.exogenous.shock_horizon);

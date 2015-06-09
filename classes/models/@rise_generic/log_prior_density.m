@@ -60,11 +60,10 @@ if ~isempty(param)
         end
     elseif ischar(param) % This should be moved elsewhere to avoid recomputing the covariance...
         if ~isempty(obj.estimation.endogenous_priors) && obj.markov_chains.regimes_number==1 % not provided for switching models yet
-            % this assumes the new parameter vector is already pushed in
-            [tv,retcode]=theoretical_autocovariances(obj,0);
-            if ~retcode
-                this=obj.estimation.endogenous_priors;
-                lnprior=log_density(this,tv(:,:,1));
+            [endo_priors_func,vargs]=utils.code.user_function_to_rise_function(obj.estimation.endogenous_priors);
+            [lnprior,obj.user_endo_priors_info,retcode]=endo_priors_func(obj,obj.user_endo_priors_info,vargs{:});
+            if retcode
+                retcode=309;
             end
         end
     end
