@@ -42,12 +42,14 @@ for ii=1:ninput
     inp_name=input_list{ii};
     vlength=length(inp_name);
     pos=strncmp(inp_name,allsymb,vlength);
-    if any(strcmp(inp_name,{'s0','s1'}))
-        symbvals(pos)=varargin{ii};
-    else
-        locs=regexprep(allsymb(pos),'\w+_(\d+)','$1');
-        locs=cellfun(@(x)str2double(x),locs,'uniformOutput',false);
-        symbvals(pos)=varargin{ii}(cell2mat(locs));
+    if any(pos)
+        if any(strcmp(inp_name,{'s0','s1'}))
+            symbvals(pos)=varargin{ii};
+        else
+            locs=regexprep(allsymb(pos),'\w+_(\d+)','$1');
+            locs=cellfun(@(x)str2double(x),locs,'uniformOutput',false);
+            symbvals(pos)=varargin{ii}(cell2mat(locs));
+        end
     end
 end
 inactive=setdiff(allsymb,with_respect_to);
