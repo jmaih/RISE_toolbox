@@ -113,6 +113,9 @@ classdef dsge < rise_generic
         %--------------------------------------------------
         warrant_resolving = true;
         warrant_setup_change = true % initialization of functions, derivatives, etc.
+        % user information
+        %------------------
+        user_endogenous_priors_info
     end
     properties(SetAccess=protected)
         % values of auxiliary parameters defined in the model file with a #
