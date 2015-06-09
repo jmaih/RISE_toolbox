@@ -20,7 +20,7 @@ function dictionary = initialize_dictionary()
 % See also: 
 
 dictionary=struct();
-dictionary.auxiliary_variables=struct('model',{{}},'sstate_model',{{}});
+dictionary.auxiliary_variables=struct('model',{{}},'ssmodel_solved',{{}});
 dictionary.definitions={};
 % unlike the declared list, definitions will never be sorted
 dictionary.known_words={'steady_state','argzero','x0_','x1_','param_obj','commitment','discount',...
