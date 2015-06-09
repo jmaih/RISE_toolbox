@@ -1,4 +1,5 @@
 function [modelBlock,dic,jac_toc]=optimal_policy_system(Utility,constraints,dic)
+
 % H1 line
 %
 % Syntax
@@ -34,6 +35,8 @@ constraints=constraints(good,:);
 dic.parameters(end+1)=parser.listing('name',discount_name);
 
 numberOfAdditionalEquations=numel(Policy_vars);
+
+dic.auxiliary_variables.model=[dic.auxiliary_variables.model,Policy_vars];
 % add utility and welfare
 %-------------------------
 for iv=1:numberOfAdditionalEquations
@@ -52,12 +55,18 @@ endo_names={dic.endogenous.name};
 exo_names={dic.exogenous.name};
 param_names={dic.parameters.name};
 
-% symbols list, putting the parameters LAST!!!
-%----------------------------------------------
+% symbols list
+%--------------
 symb_list=[dic.definitions(:).',endo_names,exo_names,param_names];
 nvars=numel(endo_names);
 
 [eqtns,wrt,occur,nleads,ncurrent,numVars]=get_equations_to_differentiate();
+
+% add the steady states to the symbols list
+%-------------------------------------------
+sstate_names=regexp(eqtns,'steady_state_\w+','match');
+sstate_names=unique([sstate_names{:}]);
+symb_list=[sstate_names(:).',symb_list];
 
 order=dic.is_optimal_policy_model+2*dic.is_optimal_simple_rule_model;
 
@@ -255,6 +264,10 @@ jac_toc=toc;
             end
         end
         
+        % replace calls to steady states
+        %--------------------------------
+        eqtns=regexprep(eqtns,'(steady_state)\((\w+)\)','$1_$2');
+        
         % construct the list of the variables to differentiate
         %-----------------------------------------------------
         wrt=[wrt_leads(occur(1,:)),endo_names,wrt_lags(occur(3,:))];
@@ -319,6 +332,10 @@ jac_toc=toc;
         % replace discount by its value
         %-------------------------------
         x=strrep(x,discount_name,discount);
+        
+        % replace steady states (steady_state_C --> steady_state(C))
+        %-----------------------------------------------------------
+        x=regexprep(x,'(steady_state)_(\w+)','$1($2)');
         
         % add a column of nan at the beginning and a column of opt pol at the end
         %-------------------------------------------------------------------------

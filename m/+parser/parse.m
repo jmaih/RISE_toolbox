@@ -263,10 +263,12 @@ end
 clear old_shadow_steady_state_model
 % now add the prelude
 if ~isempty(static.steady_state_shadow_model)
-    static.steady_state_shadow_model=[{['y=zeros(',sprintf('%0.0f',orig_endo_nbr),',1);']};static.steady_state_shadow_model];
+    static.steady_state_shadow_model=[{['if ~exist(''y'',''var''),y=zeros(',sprintf('%0.0f',orig_endo_nbr),',1); end;']};static.steady_state_shadow_model];
 end
 %% replace the list of definition names with definition equations
-dictionary.definitions=struct('model',orig_definitions,'shadow',shadow_definitions);
+dictionary.definitions=struct('name',dictionary.definitions(:),...
+    'model',orig_definitions(:),'shadow',shadow_definitions(:));
+
 %% Routines structure
 routines=struct();
 
@@ -421,8 +423,8 @@ if is_model_with_planner_objective
     planner_shadow_model=strrep(strrep(dictionary.planner_system.shadow_model,'discount-',''),'commitment-','');
     
     if dictionary.is_optimal_policy_model
-        tmp=utils.code.code2func(dictionary.planner_system.static_mult_equations{1},...
-            parser.input_list);
+        tmp=parser.replace_steady_state_call(dictionary.planner_system.static_mult_equations{1});
+        tmp=utils.code.code2func(tmp,parser.input_list);
         
         routines.planner_static_mult=tmp;
         routines.planner_static_mult_support=...
@@ -528,6 +530,17 @@ hbe=hbe(strncmp(hbe,'hbe_param_',10));
 hbe=regexprep(hbe,'hbe_param_(\w+)','$1');
 dictionary.endogenous.is_hybrid_expect=ismember(dictionary.endogenous.name,hbe);
 
+% re-encode the auxiliary variables
+%------------------------------------
+dictionary.auxiliary_variables.sstate_solved=...
+    union(dictionary.auxiliary_variables.model,dictionary.auxiliary_variables.ssmodel_solved);
+encode=@(x)vec(ismember(dictionary.endogenous.name,x)).';
+fields=fieldnames(dictionary.auxiliary_variables);
+for ifield=1:numel(fields)
+    ff=fields{ifield};
+    dictionary.auxiliary_variables.(ff)=encode(dictionary.auxiliary_variables.(ff));
+end
+
 clear endogenous logical_incidence
 
 exogenous=dictionary.exogenous;
@@ -581,9 +594,11 @@ dictionary.equations.shadow_balanced_growth_path=static.shadow_BGP_model;
 dictionary.equations.number=numel(dynamic.model);
 dictionary.is_imposed_steady_state=static.is_imposed_steady_state;
 dictionary.is_unique_steady_state=static.is_unique_steady_state;
+dictionary.is_initial_guess_steady_state=static.is_initial_guess_steady_state;
 
 definitions=dictionary.definitions;
 dictionary.definitions=struct();
+dictionary.definitions.name={definitions.name};
 dictionary.definitions.dynamic={definitions.model};
 dictionary.definitions.dynamic=dictionary.definitions.dynamic(:);
 dictionary.definitions.shadow_dynamic={definitions.shadow};
@@ -716,7 +731,9 @@ dictionary=orderfields(dictionary);
     end
 
     function [static,SteadyStateModel_block,auxiliary_steady_state_equations]=do_steady_state()
-        static=struct('is_imposed_steady_state',false,'is_unique_steady_state',false);
+        static=struct('is_imposed_steady_state',false,...
+            'is_unique_steady_state',false,...
+            'is_initial_guess_steady_state',false);
         current_block_id=find(strcmp('steady_state_model',{blocks.name}));
         if dictionary.parse_debug
             profile off
@@ -746,7 +763,7 @@ dictionary=orderfields(dictionary);
                 sstate_model_aux_vars{iter}=vname;
             end
         end
-        dictionary.auxiliary_variables.sstate_model=sstate_model_aux_vars(1:iter);
+        dictionary.auxiliary_variables.ssmodel_solved=sstate_model_aux_vars(1:iter);
         
         % remove item from block
         blocks(current_block_id)=[];
