@@ -78,6 +78,8 @@ switch code
         msg='Nan, Inf or complex in log prior';
     case 308
         msg='Inconsistent ergodic probabilities (nans or sum different from 1)';
+    case 309
+        msg='error in the computation of user-defined endogenous priors';
         % ====== finding hyperparameters ====== %
     case 402
         msg='finding hyperparameters failed';
