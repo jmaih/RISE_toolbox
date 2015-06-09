@@ -332,17 +332,16 @@ end
         retcode=0;
         G01=cell(1,solve_order);
         for s1=1:h
-            sparam=params(:,s1);
             for s0=1:h
                 if ~retcode
                     % Note: G(s0,s1) =: ps0(s0,s1)*F(s0)
                     if symbolic_type
                         [G01{1:solve_order}]=utils.code.evaluate_functions(obj.routines.probs_times_dynamic_derivatives,...
-                            ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
+                            ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                     elseif automatic_type
                         G01=utils.code.evaluate_automatic_derivatives(...
                             obj.routines.symbolic.probs_times_dynamic,solve_order,...
-                            ys(:,s0),xss,ss(:,s0),params(:,s0),sparam,def{s0},s0,s1);
+                            ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                     else
                         [G01{1:1}]=utils.code.evaluate_jacobian_numerically(obj.routines.probs_times_dynamic,...
                             ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);

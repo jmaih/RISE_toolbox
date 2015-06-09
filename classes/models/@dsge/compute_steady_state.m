@@ -356,9 +356,9 @@ end
             elseif feasible_steady_state_model
                 % here the parameters are a vector
                 %----------------------------------
-                % y, x, ss, param, sparam, def, s0, s1
+                % y, x, ss, param, def, s0, s1
                 % with ys as input, vector ss will not be initialized!!!
-                [ss,p_update]=utils.code.evaluate_functions(steady_state_model,ys,x,[],pp,[],dd,[],[]);
+                [ss,p_update]=utils.code.evaluate_functions(steady_state_model,ys,x,[],pp,dd,[],[]);
                 % check which parameters have been updated and push back
                 %--------------------------------------------------------
                 nanlocs=isnan(pp);
@@ -384,8 +384,8 @@ end
             % evaluate residuals
             %--------------------
             y_=ss;
-            r=utils.code.evaluate_functions(static_model,y_,x,ss,pp,[],dd,[],[]); % func_ss
-            Jac=utils.code.evaluate_functions(static_model_jacobian,y_,x,ss,pp,[],dd,[],[]);%func_jac
+            r=utils.code.evaluate_functions(static_model,y_,x,ss,pp,dd,[],[]); % func_ss
+            Jac=utils.code.evaluate_functions(static_model_jacobian,y_,x,ss,pp,dd,[],[]);%func_jac
         end
     end
 
@@ -432,7 +432,6 @@ end
         else
             [pp_unique,def_unique,retcode]=...
                 dsge_tools.ergodic_parameters(TransMat.Qinit,d,p);
-            def_unique={def_unique};
         end
     end
 end

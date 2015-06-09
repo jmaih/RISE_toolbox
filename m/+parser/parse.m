@@ -227,14 +227,6 @@ static.steady_state_auxiliary_eqtns=...
 
 static.steady_state_shadow_model(ss_eq_nbr+1:end)=[];
 
-% collect the future switching parameters
-%----------------------------------------
-fsp=regexp(dynamic.shadow_model,'sparam\(\d+\)','match');
-fsp=unique([fsp{:}]);
-if ~isempty(fsp)
-    error('future switching parameters should have been substituted at this stage')
-end
-
 static.steady_state_shadow_model=strrep(static.steady_state_shadow_model,...
     'x1_=','[x1_,fval,exitflag]=');
 static.steady_state_shadow_model=strrep(static.steady_state_shadow_model,...
