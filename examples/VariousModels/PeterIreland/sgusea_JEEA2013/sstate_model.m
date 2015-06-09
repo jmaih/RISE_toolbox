@@ -1,30 +1,75 @@
-function [ys,obj,retcode,imposed]=sstate_model(obj,flag)
+function [y,newp,retcode]=sstate_model(obj,y,p,d,id) %#ok<INUSL>
+% sstate_model -- shows the new way of writing a RISE steady state file
+%
+% Syntax
+% -------
+% ::
+%
+%   [y,newp,retcode]=sstate_model(obj,y,p,d,id)
+%
+% Inputs
+% -------
+%
+% - **obj** [rise|dsge]: model object (not always needed)
+%
+% - **y** [vector]: endo_nbr x 1 vector of initial steady state
+%
+% - **p** [struct]: parameter structure
+%
+% - **d** [struct]: definitions
+%
+% - **id** [vector]: location of the variables to calculate
+%
+% Outputs
+% --------
+%
+% - **y** []: endo_nbr x 1 vector of updated steady state
+%
+% - **newp** [struct]: structure containing updated parameters if any
+%
+% - **retcode** [0|number]: return 0 if there are no problems, else return
+%   any number different from 0
+%
+% More About
+% ------------
+%
+% - this is new approach has three main advantages relative to the previous
+%   one:
+%   - The file is valid whether we have many regimes or not
+%   - The user does not need to know what regime is being computed
+%   - It is in sync with the steady state model
+%
+% Examples
+% ---------
+%
+% See also:
 
-persistent yss
+persistent yss newp_
 
 retcode=0;
-imposed=false;
-if flag==0
-    ys={'X_H','X_F','TAU_H','TAU_F','P_H','D_H','D_F','R','Q_H','Q_F',...
+if nargin==1
+    y={'X_H','X_F','TAU_H','TAU_F','P_H','D_H','D_F','R','Q_H','Q_F',...
         'P_F','P_A','P_B','Y_A','Y_B','K_H','K_F','L_H','L_F','W_H','W_F',...
         'I_H','I_F','C_H','C_F','A_H','B_H','A_F','B_F','LAMBDA_H',...
         'LAMBDA_F','XI_H','XI_F','N_H','N_F','RER','TOT','CTILDE_H',...
         'CTILDE_F','ITILDE_H','ITILDE_F','G_CH','G_IH','R_GC_H','R_CFH',...
         'R_IFH','R_GC_F',...
         'G_F','G_H','M_F','M_H','V_F','V_H','V_HF','Z_F','Z_H','Z_HF'};
+    % flags on the calculation
+    %--------------------------
+    newp=struct('unique',true,'imposed',true,'initial_guess',false);
     % initialize the persistent variable at first call
     %--------------------------------------------------
     yss=[];
 else
     if isempty(yss)
-        p=get(obj,'parameters');
-        newp=struct();
+        newp_=struct();
         if p.theta == 1
             p.theta = 1.000001;
-            newp.theta=p.theta;
+            newp_.theta=p.theta;
         elseif p.theta < 0.01
             p.theta  = 0.01;
-            newp.theta=p.theta;
+            newp_.theta=p.theta;
         end
         
         v=p.vss_H;
@@ -115,10 +160,6 @@ else
             ITILDE_F,G_CH,G_IH,R_GC_H,R_CFH,R_IFH,R_GC_F,...
             G_F,G_H,M_F,M_H,V_F,V_H,V_HF,Z_F,Z_H,Z_HF].';
         
-        % push the new parameters
-        %-------------------------
-        obj=set(obj,'parameters',newp);
-        
         % populate the persistent variable
         %---------------------------------
         yss=ys;
@@ -127,6 +168,16 @@ else
         %------------------------------------------------------------------
         ys=yss;
     end
+    % check the validity of the calculations
+    %----------------------------------------
+    if ~utils.error.valid(ys)
+        retcode=1;
+    else
+        % push the calculations
+        %----------------------
+        y(id)=ys;
+    end
+    newp=newp_;
 end
 
     function resid=pfssfn(pf)

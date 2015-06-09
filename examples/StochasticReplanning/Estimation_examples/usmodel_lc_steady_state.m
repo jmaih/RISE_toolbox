@@ -1,31 +1,91 @@
-function [ss,obj,retcode,imposed]=usmodel_lc_steady_state(obj,flag)
+function [y,newp,retcode]=usmodel_lc_steady_state(obj,y,p,d,id) %#ok<INUSL>
+% steady_state_file -- shows the new way of writing a RISE steady state
+% file
+%
+% Syntax
+% -------
+% ::
+%
+%   [y,newp,retcode]=steady_state_file(obj,y,p,d,id)
+%
+% Inputs
+% -------
+%
+% - **obj** [rise|dsge]: model object (not always needed)
+%
+% - **y** [vector]: endo_nbr x 1 vector of initial steady state
+%
+% - **p** [struct]: parameter structure
+%
+% - **d** [struct]: definitions
+%
+% - **id** [vector]: location of the variables to calculate
+%
+% Outputs
+% --------
+%
+% - **y** []: endo_nbr x 1 vector of updated steady state
+%
+% - **newp** [struct]: structure containing updated parameters if any
+%
+% - **retcode** [0|number]: return 0 if there are no problems, else return
+%   any number different from 0
+%
+% More About
+% ------------
+%
+% - this is new approach has three main advantages relative to the previous
+%   one:
+%   - The file is valid whether we have many regimes or not
+%   - The user does not need to know what regime is being computed
+%   - It is in sync with the steady state model
+%
+% Examples
+% ---------
+%
+% See also:
 
-imposed=true;
 retcode=0;
-ss=[];
-if flag==0
-    params={'dy','dc','dinve','dw','pinfobs','robs','labobs'};
+if nargin==1
+    % list of endogenous variables to be calculated
+    %----------------------------------------------
+    y={'dy','dc','dinve','dw','pinfobs','robs','labobs'};
+    % flags on the calculation
+    %--------------------------
+    newp=struct('unique',false,'imposed',true,'initial_guess',false);
 else
-    pp=get(obj,'parameters');
-	
-	% the parameter below is not assigned a value in the model file
-	% we set it and push it back into the rise object.
-	nonset=struct('pelin_tp_2_1',1-pp.pelin_tp_1_2);
-	obj=set(obj,'parameters',nonset);
+    % if some parameters are computed in the steady state, they have to be
+    % returned in a structure or in a cell with two columns
+    %----------------------------------------------------------------------
+    newp=struct('pelin_tp_2_1',1-p.pelin_tp_1_2);
     %---------------------------------
-    cpie=1+pp.constepinf/100;
-    cgamma=1+pp.ctrend/100 ;
-    cbeta=1/(1+pp.constebeta/100);
-    cr=cpie/(cbeta*cgamma^(-pp.csigma));
+    cpie=1+p.constepinf/100;
+    cgamma=1+p.ctrend/100 ;
+    cbeta=1/(1+p.constebeta/100);
+    cr=cpie/(cbeta*cgamma^(-p.csigma));
     conster=(cr-1)*100;
     %---------------------------------
-    dy=pp.ctrend;
-    dc=pp.ctrend;
-    dinve=pp.ctrend;
-    dw=pp.ctrend;
-    pinfobs=pp.constepinf;
+    dy=p.ctrend;
+    dc=p.ctrend;
+    dinve=p.ctrend;
+    dw=p.ctrend;
+    pinfobs=p.constepinf;
     robs = conster;
-    labobs = pp.constelab;
+    labobs = p.constelab;
     
+    % create the vector of computed steady state values
+    %---------------------------------------------------
     ss=[dy,dc,dinve,dw,pinfobs,robs,labobs]';
+    
+    % check the validity of the calculations
+    %----------------------------------------
+    if ~utils.error.valid(ss)
+        retcode=1;
+    else
+        % push the calculations
+        %----------------------
+        y(id)=ss(:);
+    end
+end
+
 end

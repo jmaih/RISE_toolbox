@@ -1,12 +1,61 @@
-function [ys,obj,retcode,imposed]=sstate_model(obj,flag)
+function [y,newp,retcode]=sstate_model(obj,y,p,d,id) %#ok<INUSL>
+% sstate_model -- shows the new way of writing a RISE steady state file
+%
+% Syntax
+% -------
+% ::
+%
+%   [y,newp,retcode]=sstate_model(obj,y,p,d,id)
+%
+% Inputs
+% -------
+%
+% - **obj** [rise|dsge]: model object (not always needed)
+%
+% - **y** [vector]: endo_nbr x 1 vector of initial steady state
+%
+% - **p** [struct]: parameter structure
+%
+% - **d** [struct]: definitions
+%
+% - **id** [vector]: location of the variables to calculate
+%
+% Outputs
+% --------
+%
+% - **y** []: endo_nbr x 1 vector of updated steady state
+%
+% - **newp** [struct]: structure containing updated parameters if any
+%
+% - **retcode** [0|number]: return 0 if there are no problems, else return
+%   any number different from 0
+%
+% More About
+% ------------
+%
+% - this is new approach has three main advantages relative to the previous
+%   one:
+%   - The file is valid whether we have many regimes or not
+%   - The user does not need to know what regime is being computed
+%   - It is in sync with the steady state model
+%
+% Examples
+% ---------
+%
+% See also:
 
-imposed=false;
 retcode=0;
-if flag==0
-    ys={'A','THETA','Z','PAISTAR','V','PAI','Y','C','GY','GPAI','GR',...
+if nargin==1
+    y={'A','THETA','Z','PAISTAR','V','PAI','Y','C','GY','GPAI','GR',...
         'LAMBDA','Q','X','R','RRPAI','E'};
+    % flags on the calculation
+    %--------------------------
+    newp=struct('unique',true,'imposed',true,'initial_guess',false);
 else
-    p=get(obj,'parameters');
+    % no parameter to update
+    %-----------------------
+    newp=struct();
+    
     A=1;
     THETA=p.thetass;
     Z=p.zss;
@@ -27,8 +76,14 @@ else
     
     ys=[A,THETA,Z,PAISTAR,V,PAI,Y,C,GY,GPAI,GR,LAMBDA,Q,X,R,RRPAI,E];
     ys=ys(:);
-    if any(isnan(ys))||any(isinf(ys))
+    % check the validity of the calculations
+    %----------------------------------------
+    if ~utils.error.valid(ys)
         retcode=1;
+    else
+        % push the calculations
+        %----------------------
+        y(id)=ys;
     end
 end
 

@@ -349,10 +349,11 @@ end
             if feasible_steady_state_file
                 % here the parameters must be turned into a structure
                 %-----------------------------------------------------
-                [ss,newp,retcode]=steady_state_file(ys,...
+                [ss,newp,retcode]=steady_state_file(obj,...
+                    ys,...
                     vector2struct(pnames,pp),...
                     vector2struct(dnames,dd),...
-                    ids,obj);
+                    ids);
             elseif feasible_steady_state_model
                 % here the parameters are a vector
                 %----------------------------------
@@ -395,9 +396,9 @@ end
         ssfile_solved=[];
         if ~isempty(steady_state_file)
             if isempty(obj.steady_state_file_2_model_communication)
-                % call the function without arguments to get the settings
-                %----------------------------------------------------------
-                [var_names,new_settings]=steady_state_file();
+                % call the function with the object only
+                %----------------------------------------
+                [var_names,new_settings]=steady_state_file(obj);
                 default_settings=struct('unique',false,'imposed',false,...
                     'initial_guess',true);
                 ff=fieldnames(new_settings);
