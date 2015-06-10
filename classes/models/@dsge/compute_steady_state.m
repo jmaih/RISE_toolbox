@@ -391,6 +391,12 @@ end
     end
 
     function [steady_state_file,ids,ssfile_solved]=prepare_steady_state_program()
+        if ~isa(obj.options.steady_state_file,'function_handle')
+            if ~ischar(obj.options.steady_state_file)
+                error('steady state file must be a function handle or a char')
+            end
+            obj.options.steady_state_file=str2func(obj.options.steady_state_file);
+        end
         steady_state_file=obj.options.steady_state_file;
         ids=[];
         ssfile_solved=[];
