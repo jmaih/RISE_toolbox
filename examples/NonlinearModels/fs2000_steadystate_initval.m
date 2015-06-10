@@ -1,4 +1,4 @@
-function [ss,newp,retcode]=fs2000_steadystate_initval(obj,ss,pp,d,id) %#ok<INUSL,INUSD>
+function [ss,newp,retcode]=fs2000_steadystate_initval(obj,ss,pp,d,id) %#ok<INUSL>
 % fs2000_steadystate_initval --  gives good start values for the steady
 % state of fs2000: this is the equivalent of dynare's initvals
 %
@@ -73,7 +73,7 @@ if nargin==1
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------
-    newp=struct();
+    newp=[];
     
     ys =cell2mat(tmp(:,2));
     

@@ -57,7 +57,7 @@ else
     % no parameter is computed in the steady state file, return an empty
     % structure
     %----------------------------------------------------------------------
-    newp=struct();
+    newp=[];
     
     %---------------------------------
     cpie=1+p.constepinf/100;

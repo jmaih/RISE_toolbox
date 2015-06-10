@@ -54,7 +54,7 @@ if nargin==1
 else
     % no parameter to update
     %-----------------------
-    newp=struct();
+    newp=[];
     
     A=1;
     THETA=p.thetass;

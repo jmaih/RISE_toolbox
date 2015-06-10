@@ -55,7 +55,7 @@ if nargin==1
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------
-    newp=struct();
+    newp=[];
     
     % computation of the steady state
     %--------------------------------
