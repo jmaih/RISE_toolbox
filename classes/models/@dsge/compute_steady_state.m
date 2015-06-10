@@ -119,13 +119,26 @@ d=obj.solution.definitions;
 pnames=obj.parameters.name;
 dnames=obj.definitions.name;
 
-[steady_state_file,ids,ssfile_solved]=prepare_steady_state_program();
+[steady_state_file,ids,ssfile_solved,is_param_changed_in_ssfile]=...
+    prepare_steady_state_program();
 feasible_steady_state_file=~isempty(steady_state_file);
 
 steady_state_model=obj.routines.steady_state_model;
+is_param_changed_in_ssmodel=obj.is_param_changed_in_ssmodel;
+
 feasible_steady_state_model=~feasible_steady_state_file &&...
     ~isempty(steady_state_model) && ...
     obj.options.steady_state_use_steady_state_model;
+
+% after having parsed the ssfile and the ssmodel, we can do this
+%----------------------------------------------------------------
+is_initial_guess_steady_state=obj.is_initial_guess_steady_state;
+errmsg=['With an initial guess for the steady state, ',...
+        'the parameters cannot be modified in the steady state ',...
+        'model or file'];
+if is_initial_guess_steady_state && any(is_param_changed_in_ssmodel)
+    error(errmsg)
+end
 
 if isempty(obj.is_stationary_model)
     if (~isempty(steady_state_file)||~isempty(steady_state_model))
@@ -165,7 +178,12 @@ else
 end
 
 if ~retcode
+    % update the parameters
+    %-----------------------
     obj.parameter_values=p;
+    
+    % prepare output
+    %-----------------
     structural_matrices.user_resids=r;
     if obj.is_unique_steady_state
         [~,~,obj.solution.transition_matrices,retcode]=ergodic_parameters(ss(:,1));
@@ -200,22 +218,6 @@ end
 % -------------------------- Nested functions --------------------------- %
 %-------------------------------------------------------------------------%
 
-    function push_new_parameters(newp,regimes)
-        if ~isempty(newp)
-            if obj.is_initial_guess_steady_state
-                error(['With an initial guess for the steady state, ',...
-                    'the parameters cannot be modified in the steady state ',...
-                    'model or file'])
-            end
-            fields=fieldnames(newp);
-            locs=locate_variables(fields,obj.parameters.name);
-            for ifield=1:numel(fields)
-                pid=locs(ifield);
-                p(pid,regimes)=newp.(fields{ifield});
-            end
-        end
-    end
-
     function flag=success(r)        
         flag=utils.error.valid(r) && solves_steady_state();
         function flag=solves_steady_state()
@@ -232,16 +234,15 @@ end
             if retcode
                 return
             end
-            [ss(:,ireg),newp,retcode,r(:,ireg),Jac]=...
-                do_one_regime(y(:,ireg),p(:,ireg),d{ireg});
+            p_ireg=p(:,ireg);
+            [ss(:,ireg),p_ireg,retcode,r(:,ireg),Jac]=...
+                do_one_regime(y(:,ireg),p_ireg,d{ireg});
             if ~retcode
-                if success(r(:,ireg))
-                    push_new_parameters(newp,ireg)
-                else
+                if ~success(r(:,ireg))
                     if obj.is_linear_model
                         ss0=ss(:,ireg)-Jac\r(:,ireg);
-                        [ss(:,ireg),newp,retcode,r(:,ireg)]=do_one_regime(...
-                            ss0,p(:,ireg),d{ireg});
+                        [ss(:,ireg),p_ireg,retcode,r(:,ireg)]=do_one_regime(...
+                            ss0,p_ireg,d{ireg});
                     else
                         if obj.is_initial_guess_steady_state
                             feasible_steady_state_file=false;
@@ -258,11 +259,19 @@ end
                                 vlist=~ssfile_solved & vlist;
                             end
                         end
-                        [ss(:,ireg),r(:,ireg),newp,retcode]=optimizer_over_vlist(vlist,ireg);
+                        [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg);
                     end
                     if ~retcode
                         if success(r(:,ireg))
-                            push_new_parameters(newp,ireg)
+                            if nregs<number_of_regimes
+                                if feasible_steady_state_model
+                                    p(is_param_changed_in_ssmodel,2:number_of_regimes)=p(is_param_changed_in_ssmodel,1)*ones(1,number_of_regimes-1);
+                                elseif feasible_steady_state_file
+                                    p(is_param_changed_in_ssfile,2:number_of_regimes)=p(is_param_changed_in_ssfile,1)*ones(1,number_of_regimes-1);
+                                end
+                            else
+                                p(:,ireg)=p_ireg;
+                            end
                         else
                             retcode=1;
                         end
@@ -277,12 +286,20 @@ end
         if number_of_regimes>1 && nregs<number_of_regimes
             ss=ss(:,ones(1,number_of_regimes));
             r=r(:,ones(1,number_of_regimes));
-            push_new_parameters(newp,2:number_of_regimes)
         end
         
-        function [ss,resids,newp,retcode]=optimizer_over_vlist(vlist,ireg)
+        function [ss,resids,retcode]=optimizer_over_vlist(vlist,ireg)
             nv=sum(vlist);
-            ssc0=.5*rand(nv,1)+sqrt(eps);
+            ssc0=zeros(nv,1);
+            % check that we do not get problems starting at zero
+            %---------------------------------------------------
+            [~,~,~,rcode]=concentrated_residuals(ssc0);
+            if rcode
+                ssc0=rand(nv,1);
+                if debug
+                    warning('randomized initial conditions for sstate solver')
+                end
+            end
             if debug
                 optimopt.Display='iter';
                 %                 optimopt.Jacobian='off';
@@ -315,34 +332,35 @@ end
             exitflag=utils.optim.exitflag(exitflag,ssc1,resnorm,sqrt_tol);
             %--------------------------------------------------------------
             retcode=1-(exitflag==1);
-            [resids,Jac,ss,newp]=concentrated_residuals(ssc1);
+            [resids,Jac,ss]=concentrated_residuals(ssc1);
             function fval=minimizer(ssc)
                 fval=concentrated_residuals(ssc);
                 fval=norm(fval);
             end
-            function [resids,Jac,ss1,newp]=concentrated_residuals(ssc)
+            function [resids,Jac,ss1,rcode]=concentrated_residuals(ssc)
                 sstmp=y(:,ireg);
                 sstmp(vlist)=ssc;
-                [ss1,newp,rcode,resids,Jac]=do_one_regime(sstmp,p(:,ireg),...
+                [ss1,p_ireg,rcode,resids,Jac]=do_one_regime(sstmp,p_ireg,...
                     d{ireg});
                 if rcode||any(isnan(resids))||any(isinf(resids))
                     tmp=sqrt(obj.options.estim_penalty/(endo_nbr*nv));
                     Jac=tmp*ones(endo_nbr,nv);
                     resids=Jac(:,1);
+                    % explicitly signal there is a problem
+                    %--------------------------------------
+                    rcode=inf; 
                 else
                     Jac=Jac(:,vlist);
                 end
             end
         end
         
-        function [ss,newp,retcode,r,Jac]=do_one_regime(ys,pp,dd)
+        function [ss,pp,retcode,r,Jac]=do_one_regime(ys,pp,dd)
             retcode=0;
-            newp=[]; ss=[];r=[];Jac=[];
+            ss=[];r=[];Jac=[];
             if obj.is_unique_steady_state
                 [pp,dd,~,retcode]=ergodic_parameters(ys);
-                if retcode
-                    return
-                end
+                if retcode,return,end
             end
             % compute first pass of steady state
             %------------------------------------
@@ -354,30 +372,32 @@ end
                     vector2struct(pnames,pp),...
                     vector2struct(dnames,dd),...
                     ids);
+                
+                if ~isempty(newp)
+                    fnames=fieldnames(newp);
+                    locs=locate_variables(fnames,obj.parameters.name);
+                    if ~any(is_param_changed_in_ssfile)
+                        is_param_changed_in_ssfile(locs)=true;
+                    end
+                    if is_initial_guess_steady_state && any(is_param_changed_in_ssfile)
+                        error(errmsg)
+                    end
+                    for ipos=1:numel(locs)
+                        pp(locs(ipos))=newp.(fnames{ipos});
+                    end
+                end
             elseif feasible_steady_state_model
                 % here the parameters are a vector
                 %----------------------------------
                 % y, x, ss, param, def, s0, s1
                 % with ys as input, vector ss will not be initialized!!!
-                [ss,p_update]=utils.code.evaluate_functions(steady_state_model,ys,x,[],pp,dd,[],[]);
-                % check which parameters have been updated and push back
-                %--------------------------------------------------------
-                nanlocs=isnan(pp);
-                if any(nanlocs(:))
-                    nanlocs_update=isnan(p_update);
-                    ddd=nanlocs-nanlocs_update;
-                    if any(ddd(:))
-                        change_locs=find(nanlocs & ~nanlocs_update);
-                        newp=struct();
-                        for ipp=1:numel(change_locs)
-                            newp.(pnames{ipp})=p_update(change_locs(ipp));
-                        end
-                    end
-                end
+                [ss,pp]=utils.code.evaluate_functions(steady_state_model,ys,x,[],pp,dd,[],[]);
             else
                 ss=ys;
             end
             
+            if retcode,return,end
+                
             % compute auxiliary steady state
             %---------------------------------
             ss=auxiliary_endo_sstate_evaluation(obj,ss,x,pp,dd);
@@ -390,8 +410,10 @@ end
         end
     end
 
-    function [steady_state_file,ids,ssfile_solved]=prepare_steady_state_program()
-        if ~isa(obj.options.steady_state_file,'function_handle')
+    function [steady_state_file,ids,ssfile_solved,is_param_changed_in_ssfile]=prepare_steady_state_program()
+        is_param_changed_in_ssfile=false(1,sum(obj.parameters.number));
+        if ~isempty(obj.options.steady_state_file) && ...
+                ~isa(obj.options.steady_state_file,'function_handle')
             if ~ischar(obj.options.steady_state_file)
                 error('steady state file must be a function handle or a char')
             end
