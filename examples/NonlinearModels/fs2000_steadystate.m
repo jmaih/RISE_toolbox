@@ -1,14 +1,16 @@
-function [ss,newp,retcode]=fs2000_steadystate(ss,pp,d,id,obj) %#ok<INUSL,INUSD>
+function [ss,newp,retcode]=fs2000_steadystate(obj,ss,pp,d,id) %#ok<INUSL>
 % fs2000_steadystate --  computes the steady state of fs2000 analytically
 %
 % Syntax
 % -------
 % ::
 %
-%   [y,newp,retcode]=fs2000_steadystate(y,p,d,id,obj)
+%   [y,newp,retcode]=fs2000_steadystate(obj,y,p,d,id)
 %
 % Inputs
 % -------
+%
+% - **obj** [rise|dsge]: model object (not always needed)
 %
 % - **ss** [vector]: endo_nbr x 1 vector of initial steady state
 %
@@ -17,8 +19,6 @@ function [ss,newp,retcode]=fs2000_steadystate(ss,pp,d,id,obj) %#ok<INUSL,INUSD>
 % - **d** [struct]: definitions
 %
 % - **id** [vector]: location of the variables to calculate
-%
-% - **obj** [rise|dsge]: model object (not always needed)
 %
 % Outputs
 % --------
@@ -45,7 +45,7 @@ function [ss,newp,retcode]=fs2000_steadystate(ss,pp,d,id,obj) %#ok<INUSL,INUSD>
 % See also:
 
 retcode=0;
-if nargin==0
+if nargin==1
     % list of endogenous variables to be calculated
     %----------------------------------------------
     ss={'m','P','c','e','W','R','k','d','n','l','gy_obs','gp_obs','y','dA'};
