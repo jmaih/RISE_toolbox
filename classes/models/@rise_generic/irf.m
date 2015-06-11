@@ -153,6 +153,10 @@ myirfs=format_irf_output(myirfs);
         if ischar(irf_shock_list)
             irf_shock_list=cellstr(irf_shock_list);
         end
+        % sort in case the user has not listed the shocks in the alphabetic
+        % order
+        %------------------------------------------------------------------
+        irf_shock_list=sort(irf_shock_list);
         position=locate_variables(irf_shock_list,exoList,true);
         if any(isnan(position))
             disp(irf_shock_list(isnan(position)))
