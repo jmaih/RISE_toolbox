@@ -130,7 +130,9 @@ for iarg=1:numel(argins__)
 end
 % evaluate the code
 %------------------
-eval(code__)
+if ~isempty(code__)
+    eval(code__)
+end
 % recover the outputs
 %--------------------
 varargout=argouts__(1:nout);
