@@ -141,7 +141,8 @@ if is_initial_guess_steady_state && any(is_param_changed_in_ssmodel)
 end
 
 if isempty(obj.is_stationary_model)
-    if (~isempty(steady_state_file)||~isempty(steady_state_model))
+    if ~is_initial_guess_steady_state && ...
+            (~isempty(steady_state_file)||~isempty(steady_state_model))
         obj.is_stationary_model=true;
     end
 end
@@ -184,7 +185,7 @@ if ~retcode
     
     % prepare output
     %-----------------
-    structural_matrices.user_resids=r;
+    structural_matrices.user_resids=r(1:endo_nbr,:);
     if obj.is_unique_steady_state
         [~,~,obj.solution.transition_matrices,retcode]=ergodic_parameters(ss(:,1));
     else
@@ -259,6 +260,8 @@ end
                                 vlist=~ssfile_solved & vlist;
                             end
                         end
+                        missing=size(ss,1)-numel(vlist);
+                        vlist=[vlist,true(1,missing)];
                         [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg);
                     end
                     if ~retcode
