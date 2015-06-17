@@ -23,6 +23,7 @@ function y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order)
 % models with constants will have to be re-written as deviations from
 % steady state. One could also have a zero steady state and instead put the
 % constant as column in the shocks
+
 if nargin<7
     order=numel(T);
 end
@@ -33,8 +34,6 @@ end
 if ~isstruct(y0)
     error('y0 should be a structure')
 end
-
-prunned=isfield(y0,'y_lin');
 if isempty(xloc)
     % all variables are state variables
     xloc=1:size(y0.y,1);
@@ -45,58 +44,108 @@ if isempty(sig)
     % vector.
     sig=0;
 end
-
-% build z
-%--------
 nlags=size(y0.y,2);
-z=buildz(y0.y);
-zkz=z;
+is_var=nlags>1;
 
-% initialize y1.y at the steady state
-%--------------------------------------
+pruned=isfield(y0,'y_lin');
+
+% initialize output
+%-------------------
 y1=y0;
-y1.y=ss;
+
+% initial conditions
+%--------
+if pruned
+    y0=y0.y_lin;
+    if isempty(y0)
+        y0=y1.y;
+    end
+else
+    y0=y0.y;
+end
+[n,no]=size(y0);
+% demean
+%--------
+y0=y0-ss(:,ones(1,no));
+
+% resize
+%--------
+if no<order
+    if no==1
+        y0=[y0,zeros(n,order-1)];
+    else
+        error('number of columns of y0 inconsistent with order of approximation')
+    end
+elseif (order<no||is_var) && order~=1
+    error('order appears to be inconsistent with # columns of y0')
+end
+
+y1.y=0;
+y01=zeros(n,order);
+zkz=1;
+if ~pruned
+    z=stateify(1);
+end
 
 % add the various orders of approximation
 %----------------------------------------
 ifact=1./cumprod(1:order);
-for io=1:order
-    % account for VARs with many lags
-    %--------------------------------
-    y1.y=y1.y+ifact(io)*T{io}*zkz;
-    if io==1 && prunned
-        % vars will never go in here!
-        if isempty(y0.y_lin)
-            y1.y_lin=y1.y;
-        else
-            z_pruned=buildz(y0.y_lin);
-            zkz=z_pruned;
-            y1.y_lin=ss+ifact(io)*T{io}*zkz;
-        end
+for iy=1:order
+    for io=1*pruned+(1-pruned)*iy:iy
+        zkz=mykron(io,zkz);
+        y01(:,iy)=y01(:,iy)+ifact(io)*T{io}*zkz;
     end
-    if io<order
-        if prunned && ~isempty(y0.y_lin)
-            zkz=kron(zkz,z_pruned);
+    % cumulate main output
+    %---------------------
+    y1.y=y1.y+y01(:,iy);
+    % now add the mean and store
+    %----------------------------
+    y01(:,iy)=y01(:,iy)+ss;
+end
+
+y1.y=y1.y+ss;
+if pruned
+    y1.y_lin=y01;
+end
+
+    function zkz=mykron(io,zkz)
+        if pruned
+            zkz=0;
+            [C,nrows]=find_combinations();
+            for irow=1:nrows
+                thisrow=C(irow,:);
+                zi=stateify(thisrow(1));
+                for icol=2:io
+                    zi=kron(zi,stateify(thisrow(icol)));
+                end
+                zkz=zkz+zi;
+            end
         else
             zkz=kron(zkz,z);
         end
+        function [C,nrows]=find_combinations()
+            % find all combinations (with repetition) of io elements such
+            % that the sum is iy
+            %--------------------------------------------------------------
+            C=utils.gridfuncs.mygrid(iy*ones(1,io));
+            test=sum(C,2)==iy;
+            C=C(test,:);
+            nrows=size(C,1);
+        end
     end
-end
-
-    function z=buildz(y00)
-        % deviations from the steady state: use bsxfun in case we are in
-        % presence of a VAR
-        %---------------------------------------------------------------
-        x=y00-ss(:,ones(nlags,1));%<--x=bsxfun(@minus,y00,ss);
-        x=x(xloc,end:-1:1); % swap if we have many lags
-        z=[
-            x(:) % vectorize
-            sig
-            shocks(:)
-            ];
-        % take the sparse form to accelerate calculations in case of zero
-        % shocks. This will also make the kroneckers sparse
-        %----------------------------------------------------------------
-        z=sparse(z);
+    function z=stateify(id)
+        if is_var
+            x=y0(xloc,end:-1:1);% flip around if we have many lags
+        else
+            x=y0(xloc,id);
+        end
+        % nullify sig and shocks when id>1
+        %---------------------------------
+        zero_coef=1-(id>1);
+        % form the state vector
+        %-----------------------
+        z=[x
+            zero_coef*sig
+            zero_coef*shocks(:)];
     end
 end
