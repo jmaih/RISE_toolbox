@@ -81,8 +81,8 @@ else
     
     e = 1;
     
-    gp_obs = m/dA;
-    gy_obs = dA;
+    gp_obs = log(m/dA);
+    gy_obs = log(dA);
     
     ys =[m P c e W R k d n l gy_obs gp_obs y dA]';
     
