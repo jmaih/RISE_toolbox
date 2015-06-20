@@ -48,7 +48,11 @@ if obj.options.solve_order>=1
     shock_horizon=max(obj.exogenous.shock_horizon);
     siz.nz=siz.np+siz.nb+1+siz.ne*(1+shock_horizon);
     siz.nd=size(structural_matrices.dv{1,1},1); % number of equations
-    pos.z.e_plus=pos.z.e_0(end)+(1:shock_horizon*siz.ne);
+    if siz.ne
+        pos.z.e_plus=pos.z.e_0(end)+(1:shock_horizon*siz.ne);
+    else
+        pos.z.e_plus=(1:shock_horizon*siz.ne);
+    end
     
     % Structure of elements that will move across different orders
     %-------------------------------------------------------------

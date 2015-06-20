@@ -140,6 +140,9 @@ end
             catch
                 locb = builtin('_ismemberfirst',icA,ndx1);
             end
+            if isequal(locb,0)
+                locb=[];
+            end
             function [indC] = myunique
                 numRows = size(A,1);
                 [sortA,indSortA] = sortrows(A);
