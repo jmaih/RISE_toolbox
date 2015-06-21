@@ -1109,15 +1109,8 @@ if oo_>1
 end
 end
 
-function C=autofill_symmetry(C,bigset,proto,current_level,nvars)
-
-siz=size(C);
 
 
-
-end
-
-%{
 function C=autofill_symmetry(C,bigset,proto,current_level,nvars)
 % autofill_symmetry --  symmetrizer for higher-order derivatives of aplanar
 %
@@ -1229,4 +1222,3 @@ end
         end
     end
 end
-%}
