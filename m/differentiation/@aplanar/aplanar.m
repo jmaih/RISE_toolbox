@@ -90,6 +90,10 @@ classdef aplanar
             % More About
             % ------------
             %
+            % - it is desirable to further save some computations by
+            % computing the shrinks only and then expanding entire maps as
+            % in splanar...
+            %
             % Examples
             % ---------
             %
