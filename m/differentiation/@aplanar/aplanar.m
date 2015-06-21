@@ -73,13 +73,13 @@ classdef aplanar
             % Inputs
             % -------
             %
-            % - **v** [vector]: 
+            % - **v** [vector]:
             %
-            % - **nvars** [integer]: 
+            % - **nvars** [integer]:
             %
-            % - **vpos** [scalar|vector]: 
+            % - **vpos** [scalar|vector]:
             %
-            % - **order_** [integer]: 
+            % - **order_** [integer]:
             %
             % Outputs
             % --------
@@ -152,7 +152,7 @@ classdef aplanar
             obj=.5*(log(1+g)-log(1-g));
         end
         function obj = cos(g)
-            obj=g;
+            obj=reinitialize(g);
             sx=sin(g.x);
             f=cos(g.x);
             obj.x=f;
@@ -164,16 +164,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1
+                if oo>1 && obj.dx(1,ii)
                     for jj=1:ii
                         do_second_order();
-                        if oo>2
+                        if oo>2 && obj.dxx(1,ii,jj)
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -186,15 +186,9 @@ classdef aplanar
                 end
             end
             function do_second_order()
-                if ii==1 && jj==1
-                    obj.dxx=zeros(1,obj.nvars,obj.nvars);
-                end
                 obj.dxx(1,ii,jj)=-sx*g.dxx(1,ii,jj)-g.dx(1,ii)*g.dx(1,jj)*f;
             end
             function do_third_order()
-                if ii==1 && jj==1 && kk==1
-                    obj.dxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxx(1,ii,jj,kk)=-(g.dx(1,kk)*g.dxx(1,ii,jj)+...
                     g.dxx(1,jj,kk)*g.dx(1,ii)+...
                     g.dx(1,jj)*g.dxx(1,ii,kk))*f...
@@ -202,9 +196,6 @@ classdef aplanar
                     -g.dx(1,ii)*g.dx(1,jj)*obj.dx(1,kk);
             end
             function do_fourth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1
-                    obj.dxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll)=-(...
                     g.dxx(1,kk,ll)*g.dxx(1,ii,jj)+...
                     g.dx(1,kk)*g.dxxx(1,ii,jj,ll)+...
@@ -227,9 +218,6 @@ classdef aplanar
                     -sx*g.dxxx(1,ii,jj,kk,ll);
             end
             function do_fifth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1 && mm==1
-                    obj.dxxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll,mm)=-(...
                     g.dxxx(1,kk,ll,mm)*g.dxx(1,ii,jj)+...
                     g.dxx(1,kk,ll)*g.dxxx(1,ii,jj,mm)+...
@@ -296,7 +284,7 @@ classdef aplanar
             obj = cosh(g)/sinh(g);
         end
         function obj = erf(g)
-            obj=g;
+            obj=reinitialize(g);
             f=erf(g.x);
             obj.x=f;
             oo=obj.order;
@@ -307,16 +295,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1
+                if oo>1 && obj.dx(1,ii)
                     for jj=1:ii
                         do_second_order();
-                        if oo>2
+                        if oo>2 && obj.dxx(1,ii,jj)
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -329,24 +317,15 @@ classdef aplanar
                 end
             end
             function do_second_order()
-                if ii==1 && jj==1
-                    obj.dxx=zeros(1,obj.nvars,obj.nvars);
-                end
                 obj.dxx(1,ii,jj)=2*(g.dxx(1,ii,jj)*f-g.dx(1,jj)*obj.dx(1,ii));
             end
             function do_third_order()
-                if ii==1 && jj==1 && kk==1
-                    obj.dxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxx(1,ii,jj,kk)=2*(g.dxxx(1,ii,jj,kk)*f...
                     +g.dxx(1,ii,jj)*obj.dx(1,kk)...
                     -g.dxx(1,jj,kk)*obj.dx(1,ii)...
                     -g.dx(1,jj)*g.dxx(1,ii,kk));
             end
             function do_fourth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1
-                    obj.dxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll)=2*(...
                     g.dxxx(1,ii,jj,kk,ll)*f...
                     +g.dxxx(1,ii,jj,kk)*obj.dx(1,ll)...
@@ -359,9 +338,6 @@ classdef aplanar
                     );
             end
             function do_fifth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1 && mm==1
-                    obj.dxxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=2*(...
                     g.dxxxx(1,ii,jj,kk,ll,mm)*f...
                     +g.dxxxx(1,ii,jj,kk,ll)*obj.dx(1,mm)...
@@ -383,27 +359,27 @@ classdef aplanar
             end
         end
         function obj = exp(g)
-            obj=g;
+            obj=reinitialize(g);
             f=exp(g.x);
             obj.x=f;
             oo=obj.order;
             for ii=1:g.nvars
                 if ii==1
-                    obj.dx=g.dx*obj.x;
+                    obj.dx=g.dx*f;
                     if oo==1
                         break
                     end
                 end
-                if oo>1
+                if oo>1 && obj.dx(1,ii)
                     for jj=1:ii
                         do_second_order();
-                        if oo>2
+                        if oo>2 && obj.dxx(1,ii,jj)
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -416,24 +392,15 @@ classdef aplanar
                 end
             end
             function do_second_order()
-                if ii==1 && jj==1
-                    obj.dxx=zeros(1,obj.nvars,obj.nvars);
-                end
-                obj.dxx(1,ii,jj)=g.dxx(1,ii,jj)*f+g.dx(1,jj)*obj.dx(1,ii);
+                obj.dxx(1,ii,jj)=g.dxx(1,ii,jj)*f+g.dx(1,ii)*obj.dx(1,jj);
             end
             function do_third_order()
-                if ii==1 && jj==1 && kk==1
-                    obj.dxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxx(1,ii,jj,kk)=g.dxxx(1,ii,jj,kk)*f+...
+                    g.dxx(1,ii,jj)*obj.dx(1,kk)+...
                     g.dxx(1,ii,kk)*obj.dx(1,jj)+...
-                    g.dxx(1,jj,kk)*obj.dx(1,ii)+...
-                    g.dx(1,kk)*obj.dxx(1,ii,jj);
+                    g.dx(1,ii)*obj.dxx(1,jj,kk);
             end
             function do_fourth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1
-                    obj.dxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll)=g.dxxxx(1,ii,jj,kk,ll)*f+...
                     g.dxxx(1,ii,jj,kk)*obj.dx(1,ll)+...
                     g.dxxx(1,ii,kk,ll)*obj.dx(1,jj)+...
@@ -444,9 +411,6 @@ classdef aplanar
                     g.dx(1,kk)*obj.dxxx(1,ii,jj,ll);
             end
             function do_fifth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1 && mm==1
-                    obj.dxxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=g.dxxxxx(1,ii,jj,kk,ll,mm)*f+...
                     g.dxxxx(1,ii,jj,kk,ll)*obj.dx(1,mm)+...
                     g.dxxxx(1,ii,jj,kk,mm)*obj.dx(1,ll)+...
@@ -466,7 +430,7 @@ classdef aplanar
             end
         end
         function obj = log(g)
-            obj=g;
+            obj=reinitialize(g);
             obj.x=log(g.x);
             oo=obj.order;
             igx=1/g.x;
@@ -477,16 +441,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1
+                if oo>1 && obj.dx(1,ii)
                     for jj=1:ii
                         do_second_order();
-                        if oo>2
+                        if oo>2 && obj.dxx(1,ii,jj)
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -499,57 +463,53 @@ classdef aplanar
                 end
             end
             function do_second_order()
-                if ii==1 && jj==1
-                    obj.dxx=zeros(1,obj.nvars,obj.nvars);
-                end
                 obj.dxx(1,ii,jj)=igx*g.dxx(1,ii,jj)-obj.dx(1,ii)*obj.dx(1,jj);
             end
             function do_third_order()
-                if ii==1 && jj==1 && kk==1
-                    obj.dxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxx(1,ii,jj,kk)=igx*(g.dxxx(1,ii,jj,kk)-g.dxx(1,ii,jj)*obj.dx(1,kk))...
-                    -obj.dxx(1,jj,kk)*obj.dx(1,ii)...
-                    -obj.dxx(1,ii,kk)*obj.dx(1,jj);
+                    -(...
+                    obj.dxx(1,jj,kk)*obj.dx(1,ii)...
+                    +obj.dxx(1,ii,kk)*obj.dx(1,jj)...
+                    );
             end
             function do_fourth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1
-                    obj.dxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll)=igx*(...
                     g.dxxxx(1,ii,jj,kk,ll)...
                     -g.dxxx(1,ii,jj,kk)*obj.dx(1,ll)...
-                    -(g.dxxx(1,ii,jj,ll)-obj.dxx(1,ii,jj)*obj.dx(1,ll))*obj.dx(1,kk)...
-                    -obj.dxx(1,ii,jj)*obj.dxx(1,kk,ll)...
-                    )...
-                    -obj.dxxx(1,jj,kk,ll)*obj.dx(1,ii)...
-                    -obj.dxxx(1,ii,kk,ll)*obj.dx(1,jj)...
-                    -obj.dxx(1,jj,kk)*obj.dxx(1,ii,ll)...
-                    -obj.dxx(1,jj,ll)*obj.dxx(1,ii,kk);
+                    -(g.dxxx(1,ii,jj,ll)-g.dxx(1,ii,jj)*obj.dx(1,ll))*obj.dx(1,kk)...
+                    -g.dxx(1,ii,jj)*obj.dxx(1,kk,ll)...
+                    )-(...
+                    obj.dxxx(1,jj,kk,ll)*obj.dx(1,ii)...
+                    +obj.dxxx(1,ii,kk,ll)*obj.dx(1,jj)...
+                    +obj.dxx(1,jj,kk)*obj.dxx(1,ii,ll)...
+                    +obj.dxx(1,jj,ll)*obj.dxx(1,ii,kk));
             end
             function do_fifth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1 && mm==1
-                    obj.dxxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
-                obj.dxxxxx(1,ii,jj,kk,ll,mm)=igx*(...
-                    g.dxxxxx(1,ii,jj,kk,ll,mm)...
-                    -g.dxxxx(1,ii,jj,kk,ll)*obj.dx(1,mm)...
-                    -(g.dxxxx(1,ii,jj,kk,mm)-g.dxxx(1,ii,jj,kk)*obj.dx(1,mm))*obj.dx(1,ll)...
-                    -g.dxxx(1,ii,jj,kk)*obj.dxx(1,ll,mm)...
-                    -(g.dxxxx(1,ii,jj,ll,mm)-g.dxxx(1,ii,jj,ll)*obj.dx(1,mm)...
-                    -(g.dxxx(1,ii,jj,mm)-g.dxx(1,ii,jj)*obj.dx(1,mm))*obj.dx(1,ll))*obj.dx(1,kk)...
-                    -(g.dxxx(1,ii,jj,ll)-g.dxx(1,ii,jj)*obj.dx(1,ll))*obj.dxx(1,kk,mm)...
-                    -(g.dxxx(1,ii,jj,mm)-g.dxx(1,ii,jj)*obj.dx(1,mm))*obj.dxx(1,kk,ll)...
-                    -g.dxx(1,ii,jj)*g.dxxx(1,kk,ll,mm)...
-                    )...
-                    -obj.dxxxx(1,jj,kk,ll,mm)*obj.dx(1,ii)...
-                    -obj.dxxxx(1,ii,kk,ll,mm)*obj.dx(1,jj)...
-                    -obj.dxxx(1,jj,kk,ll)*obj.dxx(1,ii,mm)...
-                    -obj.dxxx(1,jj,kk,mm)*obj.dxx(1,ii,ll)...
-                    -obj.dxxx(1,ii,ll,mm)*obj.dxx(1,jj,kk)...
-                    -obj.dxxx(1,jj,ll,mm)*obj.dxx(1,ii,kk)...
-                    -obj.dxxx(1,ii,kk,mm)*obj.dxx(1,jj,ll)...
-                    -obj.dxxx(1,ii,kk,ll)*obj.dxx(1,jj,mm);
+                a1=g.dxxxxx(1,ii,jj,kk,ll,mm)-g.dxxxx(1,ii,jj,kk,ll)*obj.dx(1,mm);
+                
+                a2=(g.dxxxx(1,ii,jj,kk,mm)-g.dxxx(1,ii,jj,kk)*obj.dx(1,mm))*obj.dx(1,ll)+...
+                    g.dxxx(1,ii,jj,kk)*obj.dxx(1,ll,mm);
+                
+                a3=(g.dxxxx(1,ii,jj,ll,mm)-g.dxxx(1,ii,jj,ll)*obj.dx(1,mm))*obj.dx(1,kk)+...
+                    g.dxxx(1,ii,jj,ll)*obj.dxx(1,kk,mm);
+                
+                a4=(g.dxxx(1,ii,jj,mm)-g.dxx(1,ii,jj)*obj.dx(1,mm))*obj.dx(1,ll)*obj.dx(1,kk)+...
+                    g.dxx(1,ii,jj)*obj.dxx(1,ll,mm)*obj.dx(1,kk)+...
+                    g.dxx(1,ii,jj)*obj.dx(1,ll)*obj.dxx(1,kk,mm);
+                
+                a5=(g.dxxx(1,ii,jj,mm)-g.dxx(1,ii,jj)*obj.dx(1,mm))*obj.dxx(1,kk,ll)+...
+                    g.dxx(1,ii,jj)*obj.dxxx(1,kk,ll,mm);
+                
+                a6=obj.dxxxx(1,ii,kk,ll,mm)*obj.dx(1,jj)+...
+                    obj.dxxx(1,ii,kk,ll)*obj.dxx(1,jj,mm)+...
+                    obj.dxxx(1,ii,kk,mm)*obj.dxx(1,jj,ll)+...
+                    obj.dxx(1,ii,kk)*obj.dxxx(1,jj,ll,mm)+...
+                    obj.dxxx(1,ii,ll,mm)*obj.dxx(1,jj,kk)+...
+                    obj.dxx(1,ii,ll)*obj.dxxx(1,jj,kk,mm)+...
+                    obj.dxx(1,ii,mm)*obj.dxxx(1,jj,kk,ll)+...
+                    obj.dx(1,ii)*obj.dxxxx(1,jj,kk,ll,mm);
+                
+                obj.dxxxxx(1,ii,jj,kk,ll,mm)=igx*(a1-a2-a3+a4-a5)-a6;
             end
         end
         function obj = log10(g)
@@ -559,7 +519,7 @@ classdef aplanar
             obj=zero_derivatives(@sign,g);
         end
         function obj = sin(g)
-            obj=g;
+            obj=reinitialize(g);
             cx=cos(g.x);
             f=sin(g.x);
             obj.x=f;
@@ -571,16 +531,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1
+                if oo>1 && obj.dx(1,ii)
                     for jj=1:ii
                         do_second_order();
-                        if oo>2
+                        if oo>2 && obj.dxx(1,ii,jj)
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -593,15 +553,9 @@ classdef aplanar
                 end
             end
             function do_second_order()
-                if ii==1 && jj==1
-                    obj.dxx=zeros(1,obj.nvars,obj.nvars);
-                end
                 obj.dxx(1,ii,jj)=cx*g.dxx(1,ii,jj)-g.dx(1,ii)*g.dx(1,jj)*f;
             end
             function do_third_order()
-                if ii==1 && jj==1 && kk==1
-                    obj.dxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxx(1,ii,jj,kk)=-(g.dx(1,kk)*g.dxx(1,ii,jj)+...
                     g.dxx(1,jj,kk)*g.dx(1,ii)+...
                     g.dx(1,jj)*g.dxx(1,ii,kk))*f...
@@ -609,9 +563,6 @@ classdef aplanar
                     -g.dx(1,ii)*g.dx(1,jj)*obj.dx(1,kk);
             end
             function do_fourth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1
-                    obj.dxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll)=-(...
                     g.dxx(1,kk,ll)*g.dxx(1,ii,jj)+...
                     g.dx(1,kk)*g.dxxx(1,ii,jj,ll)+...
@@ -634,9 +585,6 @@ classdef aplanar
                     +cx*g.dxxx(1,ii,jj,kk,ll);
             end
             function do_fifth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1 && mm==1
-                    obj.dxxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll,mm)=-(...
                     g.dxxx(1,kk,ll,mm)*g.dxx(1,ii,jj)+...
                     g.dxx(1,kk,ll)*g.dxxx(1,ii,jj,mm)+...
@@ -825,7 +773,7 @@ classdef aplanar
                 % if h==0,obj=0;
                 obj=apply_to_all(g,@times,h);
             else
-                obj=g;
+                obj=reinitialize(g);
                 obj.x=g.x*h.x;
                 oo=obj.order;
                 for ii=1:g.nvars
@@ -835,16 +783,16 @@ classdef aplanar
                             break
                         end
                     end
-                    if oo>1
+                    if oo>1 && obj.dx(1,ii)
                         for jj=1:ii
                             do_second_order();
-                            if oo>2
+                            if oo>2 && obj.dxx(1,ii,jj)
                                 for kk=1:jj
                                     do_third_order();
-                                    if oo>3
+                                    if oo>3 && obj.dxxx(1,ii,jj,kk)
                                         for ll=1:kk
                                             do_fourth_order();
-                                            if oo>4
+                                            if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
                                                 for mm=1:ll
                                                     do_fifth_order();
                                                 end
@@ -858,18 +806,12 @@ classdef aplanar
                 end
             end
             function do_second_order()
-                if ii==1 && jj==1
-                    obj.dxx=zeros(1,obj.nvars,obj.nvars);
-                end
                 obj.dxx(1,ii,jj)=g.dxx(1,ii,jj)*h.x...
                     +g.dx(1,ii)*h.dx(1,jj)...
                     +g.dx(1,jj)*h.dx(1,ii)...
                     +g.x*h.dxx(1,ii,jj);
             end
             function do_third_order()
-                if ii==1 && jj==1 && kk==1
-                    obj.dxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxx(1,ii,jj,kk)=g.dxxx(1,ii,jj,kk)*h.x...
                     +g.dxx(1,ii,jj)*h.dx(1,kk)...
                     +g.dxx(1,ii,kk)*h.dx(1,jj)...
@@ -880,9 +822,6 @@ classdef aplanar
                     +g.x*h.dxxx(1,ii,jj,kk);
             end
             function do_fourth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1
-                    obj.dxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxx(1,ii,jj,kk,ll)=g.dxxxx(1,ii,jj,kk,ll)*h.x...
                     +g.dxxx(1,ii,jj,kk)*h.dx(1,ll)...
                     +g.dxxx(1,ii,jj,ll)*h.dx(1,kk)...
@@ -901,9 +840,6 @@ classdef aplanar
                     +g.x*h.dxxxx(1,ii,jj,kk,ll);
             end
             function do_fifth_order()
-                if ii==1 && jj==1 && kk==1 && ll==1 && mm==1
-                    obj.dxxxxx=zeros(1,obj.nvars,obj.nvars,obj.nvars,obj.nvars,obj.nvars);
-                end
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=g.dxxxxx(1,ii,jj,kk,ll,mm)*h.x...
                     +g.dxxxx(1,ii,jj,kk,ll)*h.dx(1,mm)...
                     +g.dxxxx(1,ii,jj,kk,mm)*h.dx(1,ll)...
@@ -1154,6 +1090,34 @@ classdef aplanar
     end
 end
 
+function obj=reinitialize(g)
+obj=g;
+obj.x=0;
+oo_=g.order;
+obj.dx(:)=0;
+if oo_>1
+    obj.dxx(:)=0;
+    if oo_>2
+        obj.dxxx(:)=0;
+        if oo_>3
+            obj.dxxxx(:)=0;
+            if oo_>4
+                obj.dxxxxx(:)=0;
+            end
+        end
+    end
+end
+end
+
+function C=autofill_symmetry(C,bigset,proto,current_level,nvars)
+
+siz=size(C);
+
+
+
+end
+
+%{
 function C=autofill_symmetry(C,bigset,proto,current_level,nvars)
 % autofill_symmetry --  symmetrizer for higher-order derivatives of aplanar
 %
@@ -1186,7 +1150,7 @@ function C=autofill_symmetry(C,bigset,proto,current_level,nvars)
 % computed. e.g. aplanar computes f(i,j,k) such that i>=j>=k. This function
 % uses that information to fill in f(i,k,j), f(j,i,k), f(j,k,i), f(k,i,j),
 % f(k,j,i), which are all equal to f(i,j,k)
-% 
+%
 %
 % Examples
 % ---------
@@ -1265,3 +1229,4 @@ end
         end
     end
 end
+%}
