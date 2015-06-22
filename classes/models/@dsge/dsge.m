@@ -70,7 +70,6 @@ classdef dsge < rise_generic
         auxiliary_variables % variables for which the user does not need to solve for the steady state
         dates_filtering % those two options should be moved elsewhere so that they are visible...
         dates_smoothing
-        dsge_prior_weight_id
         hybrid_expectations_lambda_id
         is_dsge_var_model
         is_endogenous_switching_model
@@ -114,6 +113,10 @@ classdef dsge < rise_generic
         %--------------------------------------------------
         warrant_resolving = true;
         warrant_setup_change = true % initialization of functions, derivatives, etc.
+        % dsge_var stuff
+        %---------------
+        dsge_var
+        dsge_prior_weight_id
         % user information
         %------------------
         user_endogenous_priors_info
@@ -125,7 +128,6 @@ classdef dsge < rise_generic
         equations
         % paths for the different folders in which RISE stores information
         folders_paths
-        dsge_var
         % name of the rs/rz/dsge file read
         filename='';
     end
@@ -133,6 +135,7 @@ classdef dsge < rise_generic
         varargout=conclude_estimation(varargin)
     end
     methods
+        varargout=bvar_dsge(varargin)
         varargout=check_derivatives(varargin)
         varargout=create_state_list(varargin)
         varargout=filter(varargin)

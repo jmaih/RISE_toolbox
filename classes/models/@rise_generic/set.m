@@ -323,9 +323,6 @@ end
         MainOptions={
             % set output folder name
             'results_folder',results_folder
-            % ====== solve options ======
-            'dsge_varlag',4
-            'dsge_var_constant',true
             % ====== graphic and debugging options ======
             'graphics',[rows,cols]
             'verbose',false
