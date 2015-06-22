@@ -1,7 +1,8 @@
 function [Model_block,dic]=hybrid_expectator(Model_block,dic)
 
-w='hbe_w';
-lambda='hbe_lambda';
+names=parser.name4hybrid_expectation();
+w=names{1};
+lambda=names{2};
 
 if nargin==0
     Model_block=struct('w',w,'lambda',lambda);

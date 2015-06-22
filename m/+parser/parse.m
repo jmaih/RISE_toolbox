@@ -455,11 +455,6 @@ logical_incidence=dictionary.lead_lag_incidence.before_solve(dictionary.order_va
 
 dictionary.NumberOfEquations=sum(equation_type==1);
 
-% finally check that the number of equations is consistent with the number
-% of variables
-
-dictionary.is_dsge_var_model=ismember('dsge_prior_weight',{dictionary.parameters.name});
-
 % now we can resort the final variables
 [~,tags]=sort({unsorted_endogenous.name});
 logical_incidence=logical_incidence(tags,:);
@@ -489,17 +484,6 @@ dictionary.endogenous=parser.greekify(dictionary.endogenous);
 dictionary.endogenous=parser.greekify(dictionary.endogenous);
 dictionary.exogenous=parser.greekify(dictionary.exogenous);
 dictionary.parameters=parser.greekify(dictionary.parameters);
-
-dictionary.is_purely_forward_looking_model=false;
-dictionary.is_purely_backward_looking_model=false;
-dictionary.is_hybrid_model=any(dictionary.lead_lag_incidence.before_solve(:,1)) && any(dictionary.lead_lag_incidence.before_solve(:,3));
-if ~dictionary.is_hybrid_model
-    if any(dictionary.lead_lag_incidence.before_solve(:,1))
-        dictionary.is_purely_forward_looking_model=true;
-    elseif any(dictionary.lead_lag_incidence.before_solve(:,3))
-        dictionary.is_purely_backward_looking_model=true;
-    end
-end
 
 % format endogenous, parameters, observables, etc
 endogenous=dictionary.endogenous;
@@ -565,6 +549,19 @@ dictionary.observables.tex_name=tex_names;
 dictionary.observables.number=full([sum(dictionary.observables.is_endogenous),sum(~dictionary.observables.is_endogenous)]);
 clear observables
 
+% parameters and model types
+%----------------------------
+dictionary.is_purely_forward_looking_model=false;
+dictionary.is_purely_backward_looking_model=false;
+dictionary.is_hybrid_model=any(dictionary.lead_lag_incidence.before_solve(:,1)) && any(dictionary.lead_lag_incidence.before_solve(:,3));
+if ~dictionary.is_hybrid_model
+    if any(dictionary.lead_lag_incidence.before_solve(:,1))
+        dictionary.is_purely_forward_looking_model=true;
+    elseif any(dictionary.lead_lag_incidence.before_solve(:,3))
+        dictionary.is_purely_backward_looking_model=true;
+    end
+end
+
 parameters=dictionary.parameters;
 dictionary.parameters=struct();
 dictionary.parameters.name={parameters.name};
@@ -576,6 +573,9 @@ dictionary.parameters.is_measurement_error=sparse([parameters.is_measurement_err
 % below is full
 dictionary.parameters.number=full([sum(~dictionary.parameters.is_switching),sum(dictionary.parameters.is_switching)]);
 dictionary.parameters.is_in_use=sparse([parameters.is_in_use]);
+dsge_var_id=strcmp(dictionary.parameters.name,parser.name4dsgevar());
+dictionary.is_dsge_var_model=any(dsge_var_id);
+dictionary.parameters.is_in_use(dsge_var_id)=true;
 dictionary.parameters.governing_chain=[parameters.governing_chain];
 clear parameters
 
