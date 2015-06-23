@@ -66,7 +66,7 @@ if v<k
     error([mfilename,':: the degrees of freedom should exceed the dimension of S'])
 end
 mu=0; % <--- zeros(k,v)
-X=mu+C*randn(k,v);
 C=chol(S,'lower');
+X=mu+C*randn(k,v);
 d=X*X';
 end
