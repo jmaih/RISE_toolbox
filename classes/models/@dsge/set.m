@@ -70,6 +70,9 @@ nn=length(varargin);
 for ii=1:2:nn
     this_option=varargin{ii};
     if strcmp(this_option,'solve_shock_horizon')
+        if obj.is_dsge_var_model
+            error('Not possible to set "solve_shock_horizon" in a dsge-var model')
+        end
         if nn>ii
             shock_horizon_id=[ii,ii+1];
         else
