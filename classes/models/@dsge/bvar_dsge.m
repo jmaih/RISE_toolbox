@@ -79,7 +79,7 @@ end
             dsge_var.posterior.SIG=SIGb;
             dsge_var.posterior.ZZi=ltgxxi;
             dsge_var.posterior.ZZ=ltgxx;
-            dsge_var.posterior.inverse_wishart.df=[fix((1+lambda)*T-k),n];
+            dsge_var.posterior.inverse_wishart.df=fix((1+lambda)*T-k);
             dsge_var.lambda=lambda;
         end
         obj.dsge_var=dsge_var;
