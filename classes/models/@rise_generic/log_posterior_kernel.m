@@ -38,12 +38,15 @@ likelihood_func=obj.routines.likelihood;
 [log_prior(1),retcode]=log_prior_density(obj,param);
 if ~retcode
     [log_lik,Incr,retcode,obj]=likelihood_func(param,obj);
-    if ~retcode
-        [log_prior(2),retcode]=log_prior_density(obj,'endogenous');
-        if ~retcode
+    % under dsge-var, log_lik can be a vector such that the first element
+    % is the var-dsge and the second element is the dsge. retcode also can
+    % be a two-element vector
+    if ~retcode(1) % pick the right retcode
+        [log_prior(2),retcode(1)]=log_prior_density(obj,'endogenous');
+        if ~retcode(1)
             log_post=log_lik+sum(log_prior);
             if log_post<=-obj.options.estim_penalty
-                retcode=306; % unlikely parameter vector
+                retcode(1)=306; % unlikely parameter vector
             end
         end
     end
