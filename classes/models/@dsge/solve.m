@@ -303,6 +303,11 @@ if retcode
 else
     obj.warrant_resolving=false;
     obj.warrant_setup_change=false;
+    % do the bvar-dsge setup
+    do_bvar_dsge=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
+    if do_bvar_dsge
+        obj=bvar_dsge(obj);
+    end
 end
 
     function retcode=evaluate_all_derivatives()
@@ -437,6 +442,7 @@ end
             obj.solution.planner=planner; clear planner
         end
     end
+
     function resolve_it=check_whether_to_resolve()
         % forward expansion order
         % if order==0, it means there is no ancitipation. It does not mean
@@ -453,6 +459,7 @@ end
             obj.steady_state_funcs=recreate_steady_state_functions(obj);
         end
     end
+
     function retcode=solve_zeroth_order()
         retcode=0;
         if resolve_it

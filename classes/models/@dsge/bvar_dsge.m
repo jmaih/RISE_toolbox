@@ -1,4 +1,4 @@
-function [obj,retcode,LogLik]=bvar_dsge(obj,varargin)
+function [obj,retcode]=bvar_dsge(obj,varargin)
 
 if isempty(obj)
     obj=struct('dsgevar_lag',4,... # lags
@@ -23,79 +23,64 @@ if max(obj.exogenous.shock_horizon)>1
     error([mfilename,':: dsge-var with anticipations not implemented yet'])
 end
 
-[obj,retcode]=solve(obj);
-
 % initialize those and return if there is a problem
 % note we take the negative of the penalty to maximize
 
-LogLik=-obj.options.estim_penalty;
+dsge_var=create_dsge_var_tank(obj);
 
+% load the elements computed in load_data, using the Schorfheide notation
+%-------------------------------------------------------------------------
+p=dsge_var.p;% the var order
+T=dsge_var.T;% the sample size
+const=dsge_var.constant; % flag for constant
+n=dsge_var.n; % number of variables
+k=const+n*p;
+
+% theoretical autocovariances: impose that 
+% 1- the model is not resolved otherwise we enter an infinite loop
+%--------------------------------------------------------------------
+[A,retcode]=theoretical_autocovariances(obj,'autocov_ar',p,...
+    'autocov_model_resolve',false);
 if ~retcode
-    
-    dsge_var=create_dsge_var_tank(obj);
-    
-    % load the elements computed in load_data, using the Schorfheide notation
-    %-------------------------------------------------------------------------
-    p=dsge_var.p;% the var order
-    T=dsge_var.T;% the sample size
-    const=dsge_var.constant; % flag for constant
-    n=dsge_var.n; % number of variables
-    k=const+n*p;
-    
-    % theoretical autocovariances
-    %-----------------------------
-    [A,retcode]=theoretical_autocovariances(obj,'autocov_ar',p);
+    % VAR approximation of the DSGE model
+    %-------------------------------------
+    ids=obj.observables.state_id;
+    steady_state=obj.solution.ss{1}(ids);
+    [PHI_theta,SIG_theta,GXX,GYX,GXY,GYY,retcode]=var_approximation_to_the_dsge(steady_state,A(ids,ids,:),const);
     if ~retcode
-        % VAR approximation of the DSGE model
-        %-------------------------------------
-        ids=obj.observables.state_id;
-        steady_state=obj.solution.ss{1}(ids);
-        [PHI_theta,SIG_theta,GXX,GYX,GXY,GYY,retcode]=var_approximation_to_the_dsge(steady_state,A(ids,ids,:),const);
-        if ~retcode
-            % the prior weight is given by the dsge model
-            %---------------------------------------------
-            lambda=obj.parameter_values(obj.dsge_prior_weight_id,1);
-            if lambda*T>k+n
-                % load the empirical moment matrices
-                %-----------------------------------
-                YY=dsge_var.YY;
-                YX=dsge_var.YX;
-                XX=dsge_var.XX;
-                XY=dsge_var.XY;
-                
-                % the resulting Bayesian VAR combines prior(dsge) and the data
-                % through the empirical moments
-                [PHIb,SIGb,ltgxx,ltgxxi]=bvar_dsge_mode();
-                
-                % compute likelihood
-                if nargout>2
-                    LogLik=bvar_dsge_likelihood();
-                end
-            end
-            if obj.options.debug
-                disp(LogLik)
-            end
-            if obj.options.kf_filtering_level
-                % now we filter the data, provided, the parameters
-                % estimated using the dsge-var do not have a low density as
-                % from the point of view of the pure dsge.
-                [obj,dsge_var.dsge_log_lik,~,dsge_var.dsge_retcode]=filter(obj);
-            end 
+        % the prior weight is given by the dsge model
+        %---------------------------------------------
+        lambda=obj.parameter_values(obj.dsge_prior_weight_id,1);
+        if lambda*T>k+n
+            % load the empirical moment matrices
+            %-----------------------------------
+            YY=dsge_var.YY;
+            YX=dsge_var.YX;
+            XX=dsge_var.XX;
+            XY=dsge_var.XY;
+            
+            % the resulting Bayesian VAR combines prior(dsge) and the data
+            % through the empirical moments
+            [PHIb,SIGb,ltgxx,ltgxxi]=bvar_dsge_mode();
+            
         end
+        store_dsge_var();
     end
 end
-
-store_dsge_var();
 
     function store_dsge_var()
         if retcode
             dsge_var=[];
         else
-            dsge_var.var_approx=struct('PHI',PHI_theta,'SIG',SIG_theta);
+            dsge_var.var_approx=struct('PHI',PHI_theta,...
+                'SIG',SIG_theta,...
+                'GXX',GXX);
             dsge_var.posterior.PHI=PHIb;
             dsge_var.posterior.SIG=SIGb;
             dsge_var.posterior.ZZi=ltgxxi;
+            dsge_var.posterior.ZZ=ltgxx;
             dsge_var.posterior.inverse_wishart.df=[fix((1+lambda)*T-k),n];
+            dsge_var.lambda=lambda;
         end
         obj.dsge_var=dsge_var;
     end
@@ -153,23 +138,6 @@ store_dsge_var();
         else
             PHI=Gxxi*GXY;
             SIG=GYY-GYX*Gxxi*GXY;
-        end
-    end
-
-    function LogLik=bvar_dsge_likelihood()
-        if isinf(lambda)
-            LogLik = -.5*T*log(det(SIGb))...
-                -.5*n*T*log(2*pi)...
-                -.5*trace(SIGb\(YY-YX*PHIb-PHIb'*XY+PHIb'*XX*PHIb));
-        else
-            LogLik=-.5*n*log(det(ltgxx))...
-                -.5*((1+lambda)*T-k)*log(det((1+lambda)*T*SIGb))...
-                +.5*n*log(det(lambda*T*GXX))...
-                +.5*(lambda*T-k)*log(det(lambda*T*SIG_theta))...
-                -.5*n*T*log(2*pi)...
-                +.5*n*T*log(2)...
-                +sum(gammaln(.5*((1+lambda)*T-k+1-(1:n))))...
-                -sum(gammaln(.5*(lambda*T-k+1-(1:n))));
         end
     end
 
