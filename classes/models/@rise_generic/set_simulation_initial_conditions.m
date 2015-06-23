@@ -52,6 +52,7 @@ simul_sig=0;
 simul_order=1;
 nlags=1;
 k_future=0;
+do_dsge_var=false;
 if isa(obj,'svar')
     nlags=obj.nlags;
 elseif isa(obj,'dsge')
@@ -63,6 +64,7 @@ elseif isa(obj,'dsge')
     else
         simul_order=obj.options.simul_order;
     end
+    do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
 else
     error(['model of class ',class(obj),' not ready for simulation'])
 end
@@ -75,6 +77,10 @@ if retcode
     error(decipher(retcode))
 end
 ss=sum(bsxfun(@times,ss,PAI(:).'),2);
+if do_dsge_var
+    nlags=obj.options.dsgevar_lag;
+    ss=ss(obj.observables.state_id,1);
+end
 y0=struct('y',[],'y_lin',[]);
 y0(1).y=vec(ss(:,ones(1,nlags)));
 
@@ -228,7 +234,11 @@ Initcond.shocks=shocks;
     end
 
     function set_endogenous_variables()
-        endo_names=obj.endogenous.name(:);
+        if do_dsge_var
+            endo_names=mx.observables.name(:);
+        else
+            endo_names=obj.endogenous.name(:);
+        end
         endo_names=endo_names(:,ones(1,nlags));
         for ilag=2:nlags
             endo_names(:,ilag)=strcat(endo_names(:,ilag),sprintf('{-%0.0f}',ilag-1));

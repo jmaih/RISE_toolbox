@@ -172,6 +172,7 @@ myirfs=format_irf_output(myirfs);
         end
         which_shocks=false(1,exo_nbr);
         which_shocks(position)=true;
+        nshocks=sum(which_shocks);
         det_shocks=false(1,exo_nbr);
         det_pos=locate_variables(detList,exoList,true);
         det_shocks(det_pos)=true;
@@ -185,22 +186,23 @@ myirfs=format_irf_output(myirfs);
             error('model cannot be solved')
         end
         solve_order=1;
+        do_dsge_var=false;
         if is_dsge
+            do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
             solve_order=obj.options.solve_order;
             % hide future shocks if required
             %-------------------------------
             obj=do_not_anticipate_future_shocks(obj);
         end
-        nshocks=sum(which_shocks);
-        
+        % load the order_var solution
+        %-----------------------------
+        [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
+       
         % initial conditions
         %-------------------
         Initcond=set_simulation_initial_conditions(obj);
         
         h=obj.markov_chains.regimes_number;
-        % load the order_var solution
-        %-----------------------------
-        [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
         
         Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
         
@@ -241,10 +243,20 @@ myirfs=format_irf_output(myirfs);
         end
         % the shocks drawn in the initial conditions will be ignored
         
-        % initialize output
-        %------------------
+        % initialize output: use nans so that only the relevant can be zero
+        %------------------------------------------------------------------
         endo_nbr=obj.endogenous.number;
-        Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,number_of_threads);
+        Impulse_dsge=nan(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,...
+            number_of_threads);
+        % select only the relevant rows in case we are dealing with
+        % a VAR with many lags a BVAR_DSGE
+        %----------------------------------------------------------
+        relevant=1:endo_nbr;
+        max_rows=endo_nbr;
+        if do_dsge_var
+            max_rows=obj.observables.number(1);
+            relevant=obj.inv_order_var(obj.observables.state_id);
+        end
         retcode=0;
         for istate=1:number_of_threads
             if ~retcode
@@ -253,10 +265,7 @@ myirfs=format_irf_output(myirfs);
                 end
                 [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
                     state_vars_location,which_shocks,det_shocks,Initcond);
-                % select only the relevant rows in case we are dealing with
-                % a VAR with many lags
-                %----------------------------------------------------------
-                Impulse_dsge(:,:,:,:,istate)=xxxx(1:endo_nbr,:,:,:);
+                Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end
         
@@ -287,13 +296,15 @@ myirfs=format_irf_output(myirfs);
             end
             RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
             if irf_to_time_series
+                store_nans=true;
                 dsge_irfs=struct();
                 vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
                 for ishock=1:nshocks
                     shock_name=irf_shock_list{ishock};
                     for vv=1:numel(irf_var_list)
                         dsge_irfs.(shock_name).(irf_var_list{vv})=...
-                            ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),RegimeNames);
+                            ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),...
+                            RegimeNames,[],store_nans);
                     end
                 end
             else

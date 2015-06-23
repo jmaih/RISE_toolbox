@@ -3,8 +3,8 @@ function [obj,retcode]=bvar_dsge(obj,varargin)
 if isempty(obj)
     obj=struct('dsgevar_lag',4,... # lags
         'dsgevar_constant',true,... VAR admits constant
-        'dsgevar_var_regime',true... use the var for irf, forecasting and simulation
-        ); %
+        'dsgevar_var_regime',true,... use the var for irf, forecasting and simulation
+        'dsgevar_inner_param_uncertainty',false); %
     return
 end
 

@@ -1,4 +1,4 @@
-function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,type)
+function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,type,do_bvar_dsge)
 % H1 line
 %
 % Syntax
@@ -17,7 +17,7 @@ function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,type
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % when the type is ov, R is empty while T is of size solve_order x
 % regimes_number. Basically, T is returned as Tz, Tzz, Tzzz, etc. where the
@@ -34,16 +34,26 @@ if isempty(obj)
     return
 end
 
+if nargin<3
+    do_bvar_dsge=false;
+end
 if ~any(strcmp(type,{'ov','iov'}))
     error('type should be ov (order var) or iov (inv order var)')
 end
-is_alphabetical_order=strcmp(type,'iov');
 
+is_alphabetical_order=strcmp(type,'iov');
+if do_bvar_dsge
+    if ~obj.is_dsge_var_model && obj.options.dsgevar_var_regime
+        error('requesting the VAR solution without conditions being met')
+    end
+    is_alphabetical_order=true;
+end
 regimes_number=obj.markov_chains.regimes_number;
-ov=obj.order_var;
 order=obj.options.solve_order;
 T=cell(order,regimes_number);
 R=cell(1,regimes_number);
+
+ov=obj.order_var;
 steady_state=obj.solution.ss;
 new_order=ov;
 state_vars_location=obj.locations.after_solve.t.pb;
@@ -58,9 +68,74 @@ if is_alphabetical_order
     iov=obj.inv_order_var;
     % only for order 1
     inv_order_var_solution()
-	new_order=1:numel(new_order);
-	state_vars_location=[];
+    new_order=1:numel(new_order);
+    state_vars_location=[];
 end
+    
+if do_bvar_dsge
+    k_minus_constant=bvar_dsge_solution();
+    new_order=1:k_minus_constant;
+end
+
+    function k_minus_constant=bvar_dsge_solution()
+        T_bvardsge=obj.dsge_var.T;
+        n=obj.dsge_var.n;
+        p=obj.dsge_var.p;
+        constant=obj.dsge_var.constant;
+        k_minus_constant=n*p;
+        PHI=obj.dsge_var.posterior.PHI;
+        SIG=obj.dsge_var.posterior.SIG;
+        if obj.options.dsgevar_inner_param_uncertainty
+            lambda=obj.dsge_var.lambda;
+            S=(1+lambda)*T_bvardsge*SIG;
+            df=obj.dsge_var.posterior.inverse_wishart.df(1);
+            [~,~,~,rndfn]=distributions.inv_wishart();
+            SIG_draw=rndfn(S,df);
+            COV_PHI=kron(SIG_draw,obj.dsge_var.posterior.ZZi);
+            CS=transpose(chol(COV_PHI));
+            is_explosive=true;
+            while is_explosive
+                PHI_draw=PHI(:)+CS*randn(size(CS,1),1);
+                PHI_draw=reshape(PHI_draw,size(PHI));
+                T{1}=companion_form(PHI_draw(constant+1:end,:)');
+                is_explosive=max(eig(T{1}))>=obj.options.stability_criterion;
+            end
+        else
+            PHI_draw=PHI;
+            SIG_draw=SIG;
+            T{1}=companion_form(PHI_draw(constant+1:end,:)');
+        end
+        
+        % compute the mean to be used in various simulations?
+        if constant
+            c=[PHI_draw(1,:)';zeros(n*(p-1),1)];
+            mu=(eye(k_minus_constant)-T{1})\c;
+        else
+            mu=zeros(k_minus_constant,1);
+        end
+        % old_steady_state=steady_state;
+        steady_state{1}=mu;
+        
+        % Get rotation
+        stochastic=~obj.exogenous.is_observed;
+        nx=sum(stochastic);
+        Atheta = R{1}(obj.observables.state_id,stochastic); %
+        [OMEGAstar,SIGMAtr] = qr(Atheta');  %#ok<ASGLU>
+        
+        % identification
+        %----------------
+        SIGtrOMEGA = transpose(chol(SIG_draw))*OMEGAstar';
+        R{1}=[SIGtrOMEGA;zeros(n*(p-1),nx)];% R{1}=SIGtrOMEGA;% 
+        
+        % splice and destroy
+        %-------------------
+        T{1}=[T{1},zeros(k_minus_constant,1),R{1}]; %[T,sig,R]
+        function c=companion_form(x)
+            c=[x
+            eye(n*(p-1)),zeros(n*(p-1),n)];
+        end
+    end
+
     function inv_order_var_solution()
         endo_nbr_=obj.endogenous.number;
         exo_nbr_=sum(obj.exogenous.number);
@@ -75,7 +150,7 @@ end
             tmp(:,t_pb)=T{1,isol}(:,z_pb);
             % separate autoregressive part from shocks
             %-----------------------------------------
-            Tz{isol}=tmp(iov,iov); 
+            Tz{isol}=tmp(iov,iov);
             R{isol}=T{1,isol}(iov,e_0(1):end);
             if regimes_number>1
                 if isol==1
