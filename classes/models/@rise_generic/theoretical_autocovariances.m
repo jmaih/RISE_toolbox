@@ -23,7 +23,8 @@ if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
-    V=struct('autocov_ar',5);
+    V=struct('autocov_ar',5,...
+        'autocov_model_resolve',true);
     return
 end
 
@@ -39,8 +40,11 @@ end
 obj=set(obj,varargin{:});
 autocov_ar=obj.options.autocov_ar;
 
-[obj,retcode]=solve(obj);
+retcode=0;
 V=[];
+if obj.options.autocov_model_resolve
+    [obj,retcode]=solve(obj);
+end
 if retcode
     return
 end
