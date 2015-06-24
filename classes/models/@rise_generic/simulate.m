@@ -147,7 +147,11 @@ Initcond=set_simulation_initial_conditions(obj);
 
 % load the order_var solution
 %-----------------------------
-[T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+do_dsge_var=false;
+if isa(obj,'dsge')
+    do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
+end
+[T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
 
 Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
 
@@ -169,6 +173,18 @@ if Initcond.burn==0
 else
     % then we start after the end of history
     y0cols=0;
+end
+
+% recompose the output if we have a dsge-var
+%-------------------------------------------
+if do_dsge_var
+    endo_nbr=obj.endogenous.number;
+    max_rows=obj.observables.number(1);
+    relevant=obj.inv_order_var(obj.observables.state_id);
+    ncols=size(y,2);
+    yold=y;
+    y=zeros(endo_nbr,ncols)+1i;
+    y(relevant,:)=yold(1:max_rows,:);
 end
 
 % put y in the correct order before storing

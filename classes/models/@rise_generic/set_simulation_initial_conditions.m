@@ -235,7 +235,7 @@ Initcond.shocks=shocks;
 
     function set_endogenous_variables()
         if do_dsge_var
-            endo_names=mx.observables.name(:);
+            endo_names=obj.observables.name(:);
         else
             endo_names=obj.endogenous.name(:);
         end

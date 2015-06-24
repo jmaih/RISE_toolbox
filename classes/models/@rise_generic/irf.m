@@ -243,11 +243,12 @@ myirfs=format_irf_output(myirfs);
         end
         % the shocks drawn in the initial conditions will be ignored
         
-        % initialize output: use nans so that only the relevant can be zero
+        % initialize output: use imaginaries for the non-computed
+        % variables. This is so that the time series object does not squeak
         %------------------------------------------------------------------
         endo_nbr=obj.endogenous.number;
-        Impulse_dsge=nan(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,...
-            number_of_threads);
+        Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,...
+            number_of_threads)+1i;
         % select only the relevant rows in case we are dealing with
         % a VAR with many lags a BVAR_DSGE
         %----------------------------------------------------------
@@ -296,15 +297,13 @@ myirfs=format_irf_output(myirfs);
             end
             RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
             if irf_to_time_series
-                store_nans=true;
                 dsge_irfs=struct();
                 vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
                 for ishock=1:nshocks
                     shock_name=irf_shock_list{ishock};
                     for vv=1:numel(irf_var_list)
                         dsge_irfs.(shock_name).(irf_var_list{vv})=...
-                            ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),...
-                            RegimeNames,[],store_nans);
+                            ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),RegimeNames);
                     end
                 end
             else
