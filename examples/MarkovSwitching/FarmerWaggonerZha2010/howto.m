@@ -4,9 +4,6 @@ clear
 clc
 %% add the necessary paths
 rise_startup()
-%% set the profiler
-profile off
-profile on
 %% create the generic model object
 generic=rise('fwz10_nasty');
 %% 3 parameterizations
@@ -41,8 +38,7 @@ pp_3.a_tp_1_2=1-.9;
 pp_3.a_tp_2_1=1-.8;   
 
 %% vector of models with the different parameterizations
-solvers={'newton_kronecker','newton_system','newton_kronecker_iteration',...
-    'functional_iteration'};
+solvers={'mnk','fwz','mn','mfi'};
 number_of_solvers=numel(solvers);
 
 for ii=1:3
@@ -67,19 +63,18 @@ for ii=1:3
     end
 end
 
-%% for each parameterization, find all possible solutions
-Final_Results=cell(4,number_of_solvers+1);
-for ii=1:3
-    Final_Results{ii+1,1}=['pp_',int2str(ii)];
-    for solver=1:number_of_solvers
-        if ii==1
-            Final_Results{1,solver+1}=solvers{solver};
-        end
-        disp(['Parameterization ::',int2str(ii),', solver ::',solvers{solver}])
-        eval(['bank_solver_param_',int2str(ii),'_',int2str(solver),'=models_with_solver_',int2str(solver),'(ii,1).solve_alternatives;'])
-        Final_Results{ii+1,solver+1}=max(size(eval(['bank_solver_param_',int2str(ii),'_',int2str(solver)])));
-    end
-end
-disp(Final_Results)
-profile off 
-profile viewer
+
+% %% for each parameterization, find all possible solutions
+% Final_Results=cell(4,number_of_solvers+1);
+% for ii=1:3
+%     Final_Results{ii+1,1}=['pp_',int2str(ii)];
+%     for solver=1:number_of_solvers
+%         if ii==1
+%             Final_Results{1,solver+1}=solvers{solver};
+%         end
+%         disp(['Parameterization ::',int2str(ii),', solver ::',solvers{solver}])
+%         eval(['bank_solver_param_',int2str(ii),'_',int2str(solver),'=models_with_solver_',int2str(solver),'(ii,1).solve_alternatives;'])
+%         Final_Results{ii+1,solver+1}=max(size(eval(['bank_solver_param_',int2str(ii),'_',int2str(solver)])));
+%     end
+% end
+% disp(Final_Results)
