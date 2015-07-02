@@ -1,4 +1,4 @@
-function [Regimes,unique_regimes]=mygrid(v)
+function [Regimes,unique_regimes]=mygrid(v,vectorized)
 % mygrid creates a grid of points
 %
 % Syntax
@@ -7,11 +7,16 @@ function [Regimes,unique_regimes]=mygrid(v)
 %
 %   [Regimes,unique_regimes]=mygrid(v)
 %
+%   [Regimes,unique_regimes]=mygrid(v,vectorized)
+%
 % Inputs
 % -------
 %
 % - **v** [scalar|vector] : n x 1 or 1 x n each entry in the vector
 %   represents the number of elements along that dimension
+%
+% - **vectorized** [{true}|false] : if true, use a vectorization instead of
+% a for loop
 %
 % Outputs
 % --------
@@ -34,13 +39,16 @@ function [Regimes,unique_regimes]=mygrid(v)
 % - Regimes=mygrid([10,5,3]): 3 chains with 3 regimes on the third one
 %
 % See also:
+if nargin<2
+    vectorized=true;
+end
 
 n=numel(v);
 % first construct the indexes of the intervals
 Regimes=[]; % first to v(1)th interval
 
 for p=1:n
-    Regimes=utils.gridfuncs.build_grid(Regimes,v(p));
+    Regimes=utils.gridfuncs.build_grid(Regimes,v(p),vectorized);
 end
 
 if nargout>1
