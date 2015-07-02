@@ -31,14 +31,19 @@ end
 
 % It is assumed the steady states have been solved and the derivatives
 % evaluated at different orders
-%%
-Pfunc=@utils.kronecker.sum;
+%% shortcuts to functions
+Pfunc_old=@utils.kronecker.sum;
+Pfunc=@utils.kronecker.sum_permutations;
+kron_Q1_Qk_times_A=@utils.kronecker.kron_Q1_Qk_times_A;
+A_times_kron_Q1_Qk=@utils.kronecker.A_times_kron_Q1_Qk;
+A_times_k_kron_B=@utils.kronecker.A_times_k_kron_B;
 
 %% begin
 T=struct();
 % options.solve_order 1
 %--------
 if obj.options.solve_order>=1
+    debug=obj.options.debug;
     pos=obj.locations.before_solve;
     siz=obj.siz.before_solve;
     % collect the sizes
@@ -101,16 +106,26 @@ end
             % pattern (most likely) will not change.
             a0_z=sparse(a0_z);
             a1_z=sparse(a1_z);
+            a0_zz=zeros(siz.nv,siz.nz^2);
+            a1_zz=zeros(siz.nv,siz.nz^2);
             hz=sparse(hz);
-            % third-order moments: no skewed shocks
-            %--------------------------------------
-            % Eu_u_u=sparse(siz.nz^3,siz.nz^3);
+            hzz=sparse(siz.nz,siz.nz^2);
+            p3=utils.gridfuncs.mypermutation(1:3);
+            p3=p3(2:end); % the first one (1,2,3) is included
+            % automatically, so we don't need to add it again
             
             Dzzz=third_order_rhs();
             [T.Tzzz,retcode]=solve_generalized_sylvester(Dzzz,3);
             clear Dzzz
             
             if obj.options.solve_order>3 && ~retcode
+                p4=utils.gridfuncs.mypermutation(1:4);
+                p4=p4(2:end); % the first one (1,2,3,4) is included
+                % automatically, so we don't need to add it again
+                a0_zz=sparse(a0_zz);
+                a1_zz=sparse(a1_zz);
+                a0_zzz=zeros(siz.nv,siz.nz^3);
+                a1_zzz=zeros(siz.nv,siz.nz^3);
                 % fourth-order moments
                 %---------------------
                 % Eu_u_u_u=sparse(siz.nz^4,siz.nz^4);
@@ -147,7 +162,7 @@ end
             function res=dvv_Evz_vz()
                 res=fvv_vx_vx(structural_matrices.dvv{r0,r1},a0_z);
                 res=res+fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu{2};
-                if obj.options.debug
+                if debug
                     tmp1=fvv_vx_vx(structural_matrices.dvv{r0,r1},a1_z)*Eu{2};
                     tmp2=structural_matrices.dvv{r0,r1}*kron(a1_z,a1_z)*Eu{2};
                     max(max(abs(tmp1-tmp2)))
@@ -158,9 +173,6 @@ end
         
         function Dzzz=third_order_rhs()
             Dzzz=preallocate_rhs(3);
-            a0_zz=zeros(siz.nv,siz.nz^2);
-            a1_zz=zeros(siz.nv,siz.nz^2);
-            hzz=zeros(siz.nz,siz.nz^2);
             for r0=1:siz.h
                 a0_z(pos.v.t_0,:)=T.Tz{r0};
                 a0_zz(pos.v.t_0,:)=T.Tzz{r0};
@@ -204,6 +216,112 @@ end
             end
         end
         
+        function Dzzzz=fourth_order_rhs()
+            Dzzzz=preallocate_rhs(4);
+            hzzz=zeros(siz.nz,siz.nz^3);
+            for r0=1:siz.h
+                a0_z(pos.v.t_0,:)=T.Tz{r0};
+                a0_zzz(pos.v.t_0,:)=T.Tzzz{r0};
+                hz(pos.z.pb,:)=T.Tz{r0}(pos.t.pb,:);
+                hzz(pos.z.pb,:)=T.Tzz{r0}(pos.t.pb,:);
+                hzzz(pos.z.pb,:)=T.Tzzz{r0}(pos.t.pb,:);
+                for r1=1:siz.h
+                    a0_zzz(pos.v.bf_plus,:)=...
+                        fvvv_vx_vx_vx(T.Tzzz{r1}(pos.t.bf,:),hz)+...
+                        fvv_vx_vxx_omega_1(T.Tzz{r1}(pos.t.bf,:),hz,hzz)+...
+                        T.Tz{r1}(pos.t.bf,:)*hzzz;
+                    a1_zzz(pos.v.bf_plus,:)=T.Tzzz{r1}(pos.t.bf,:);
+                    
+                    a1_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:);
+                    a0_z(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hz;
+                    a0_zz(pos.v.bf_plus,:)=T.Tz{r1}(pos.t.bf,:)*hzz+T.Tzz{r1}(pos.t.bf,:)*kron(hz,hz);
+                    a1_zz(pos.v.bf_plus,:)=T.Tzz{r1}(pos.t.bf,:);
+                    
+                    Dzzzz(:,:,r0)=Dzzzz(:,:,r0)+...
+                        dvvvv_Evz_vz_vz_vz()+...
+                        dvvv_Evz_vz_vzz()+...
+                        dvv_Evz_vzzz()+...
+                        dvv_Evzz_vzz()+...
+                        others.dbf_plus{rt,rplus}*lambda_bf_XI01();
+                end
+                % precondition
+                Dzzzz(:,:,r0)=-others.Ui(:,:,r0)*Dzzzz(:,:,r0);
+            end
+            
+            function res=dvvvv_Evz_vz_vz_vz()
+                res=...
+                    A_times_k_kron_B(structural_matrices.dvvvv{r0,r1},a0_z,4)+...
+                    A_times_k_kron_B(structural_matrices.dvvvv{r0,r1},a1_z,4)*Eu{4};
+                res=res+structural_matrices.dvvvv{r0,r1}*something();
+                function res=something()
+                    tmp=kron_Q1_Qk_times_A(Eu{2},a1_z,a1_z);%<--tmp=kron(a1_z,a1_z)*Eu{2};
+                    matsizes=[size(a0_z);size(a1_z);size(a1_z);size(a0_z)];
+                    %<--matsizes=[size(a0_z);size(a1_z*u);size(a1_z*u);size(a0_z)];
+                    res=Pfunc(kron(a0_z,kron(tmp,a0_z)),...
+                        matsizes,...
+                        p4{:});
+                end
+            end
+            
+            function res=dvvv_Evz_vz_vzz()
+                res=A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
+                    a0_z,a0_z,a0_zz);
+                res=res+A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
+                    a0_z,a0_z,a1_zz*Eu{2});
+                res=res+A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
+                    a1_z,a1_z,a1_zz)*Eu{4};
+                res=res+A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
+                    kron(a1_z,a1_z)*Eu{2},a0_zz);
+                B=Pfunc(kron(Eu{2},hz),[size(Eu{1});size(Eu{1});size(hz)],[1,3,2]);
+                A=kron_Q1_Qk_times_A(B,a1_z,a1_zz);
+                A=Pfunc(kron(a0_z,A),[size(a0_z);size(a1_z);size(a1_zz)],[2,1,3]);
+                res=res+structural_matrices.dvvv{r0,r1}*A;
+            end
+            
+            function res=dvv_Evz_vzzz()
+                res=A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a0_z,a0_zzz);
+                res=res+A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a1_z,a1_zzz)*(...
+                    Eu{4}+...
+                    Pfunc(utils.kronecker.kronall(Eu{2},hz,hz),...
+                    [size(Eu{1});size(Eu{1});size(hz);size(hz);],...
+                    [1,3,2,4],[1,3,4,2])...
+                    );
+                res=res+A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},...
+                    a0_z,a1_zzz*...
+                    Pfunc(kron(hz,Eu{2}),[size(hz);size(Eu{1});size(Eu{1});],p3{:}));
+                
+%                 uuhzz_o1=0;
+%                 res=res+A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},...
+%                     a1_z,a1_zz)*uuhzz_o1;
+            end
+            
+            function res=dvv_Evzz_vzz()
+                res=A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a0_zz,a0_zz);
+                res=res+structural_matrices.dvv{r0,r1}*...
+                    Pfunc(kron(a0_zz,a1_zz*Eu{2}),[size(a0_zz);size(a1_zz)],[2,1]);
+                res=res+A_times_kron_Q1_Qk(...
+                    structural_matrices.dvv{r0,r1},a1_zz,a1_zz)*(...
+                    Eu{4}+...
+                    Pfunc(utils.kronecker.kronall(hz,Eu{2},hz),...
+                    [size(hz);size(Eu{1});size(Eu{1});size(hz)],...
+                    [2,1,3,4],[2,1,4,3],[1,2,4,3]));
+            end
+            
+            function res=lambda_bf_XI01()
+                    % kron_Q1_Qk_times_A
+                    % A_times_kron_Q1_Qk
+                res=A_times_kron_Q1_Qk(T.Tzzz{r1},hz,hz,hzz);
+                res=res+A_times_kron_Q1_Qk(T.Tzzz{r1},Eu{2},hzz);
+                res=utils.cr.dv_vz_omega(res,siz.nz,2);
+                res=res+utils.cr.dv_vz_omega(A_times_kron_Q1_Qk(T.Tzz{r1},...
+                    hz,hzzz),siz.nz,3);
+                res=res+utils.cr.dv_vz_omega(A_times_kron_Q1_Qk(T.Tzz{r1},...
+                    hzz,hzz),...
+                    siz.nz,4);
+                res=res(pos.t.bf,:);
+            end
+        end
+        
         function D=preallocate_rhs(oo)
             D=zeros(siz.nd,siz.nz^oo,siz.h);
         end
@@ -221,24 +339,22 @@ end
             if accelerate
                 [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
                 nkept=sum(shrink);
-                if obj.options.debug
+                if debug
                     Dtest=D;
                 end
                 D=D(:,shrink,:);
-                if obj.options.debug
+                if debug
                     Dbig=D(:,expand,:);
                     max(abs(Dtest(:)-Dbig(:)))
                 end
             else
-                if obj.options.debug
+                if debug
                     [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
                     D=D(:,shrink,:);
                     D=D(:,expand,:);
                 end
                 nkept=siz.nz^oo;
             end
-            % compute E(kron(u,...,u))
-            E_u_o=Ekron_u_oo();
             
             % expand final result: maybe, maybe not
             %--------------------------------------
@@ -280,25 +396,28 @@ end
                 function ATCzzz=temporary_term()
                     % core terms
                     %-----------
-                    ATCzzz=utils.kronecker.A_times_k_kron_B(AT,hz,oo);
-                    ATCzzz=ATCzzz+AT*E_u_o;
+                    ATCzzz=A_times_k_kron_B(AT,hz,oo);
+                    ATCzzz=ATCzzz+AT*Eu{oo};
                     if oo==3
-                        ATCzzz=ATCzzz+AT*Pfunc(hz,Eu{2});
+                        P1=Pfunc(kron(hz,Eu{2}),[size(hz);size(Eu{2})],[2,1]);
+                        ATCzzz=ATCzzz+AT*P1;
+                        if debug
+                            P0=Pfunc_old(hz,Eu{2});
+                            disp(max(abs(P0(:)-P1(:))))
+                            keyboard
+                        end
+                    elseif oo==4
+                        matsizes=siz.nz*ones(4,2);
+                        % matsizes=[size(Eu{1});size(Eu{1});size(hz);size(hz)];
+                        ATCzzz=ATCzzz+AT*Pfunc(kron(Eu{2},kron(hz,hz)),...
+                            matsizes,...
+                            p4{:});
+                    elseif oo>4
+                        error('fifth order perturbation not yet implemented')
                     end
                     if accelerate
                         ATCzzz=ATCzzz(:,shrink);
                     end
-                end
-            end
-            function E_u_o=Ekron_u_oo()
-                switch oo
-                    case 2
-                        E_u_o=Eu{2};
-                    case 3
-                        % no skewed shocks?
-                        E_u_o=Eu{3};
-                    otherwise
-                        error(['approximation of order ',int2str(oo),' not yet implemented'])
                 end
             end
         end
@@ -319,54 +438,32 @@ end
 
 end
 
-function Y=fvvv_vx_vx_vx(dvvv,vz,tol,new_algo)
-if nargin<4
-    new_algo=true;
-    if nargin<3
-        tol=sqrt(eps);
-    end
+function Y=fvvv_vx_vx_vx(dvvv,vz,tol)
+if nargin<3
+    tol=sqrt(eps);
 end
 [nd]=size(dvvv,1);
-[nv,nz]=size(vz);
+[~,nz]=size(vz);
 
 if max(abs(dvvv(:)))<tol || max(abs(vz(:)))<tol
     Y=zeros(nd,nz^3);
 else
-    if new_algo
-        Y=utils.kronecker.A_times_k_kron_B(dvvv,vz,3);
-    else
-        Y=reshape((reshape(dvvv,nd*nv^2,nv)*vz)',nz*nd*nv,nv);
-        Y=reshape((Y*vz)',nz*nz*nd,nv);
-        Y=permute(reshape(full(Y*vz),nz,nz,nd,nz),[3,2,1,4]);
-        Y=reshape(Y,[nd,nz^3]);
-    end
+    Y=utils.kronecker.A_times_k_kron_B(dvvv,vz,3);
 end
 
 end
 
-function [Y]=fvv_vx_vxx_omega_1(dvv,vz,vzz,tol,new_algo)
-if nargin<5
-    new_algo=true;
-    if nargin<4
-        tol=sqrt(eps);
-    end
+function Y=fvv_vx_vxx_omega_1(dvv,vz,vzz,tol)
+if nargin<4
+    tol=sqrt(eps);
 end
-[nd]=size(dvv,1);
 [~,nz]=size(vz);
-kk=2;ll=3;jj=4;
 if max(abs(dvv(:)))<tol || max(abs(vz(:)))<tol || max(abs(vzz(:)))<tol
+    nd=size(dvv,1);
     Y=zeros(nd,nz^3);
 else
-    if new_algo
-        Y=utils.kronecker.A_times_B_kron_C(dvv,vz,vzz);
-        Y=reshape(Y,[nd,nz,nz,nz]);
-        Y=Y+ipermute(Y,[1,jj,ll,kk])+ipermute(Y,[1,jj,kk,ll]);
-    else
-        Y=reshape((reshape(dvv,nd*nv,nv)*vzz)',nz^2*nd,nv);
-        Y=permute(reshape(full(Y*vz),nz,nz,nd,nz),[ll,1,kk,jj]);
-        Y=Y+ipermute(Y,[1,jj,ll,kk])+ipermute(Y,[1,jj,kk,ll]);
-    end
-    Y=reshape(Y,[nd,nz^3]);
+    Y=utils.kronecker.A_times_B_kron_C(dvv,vz,vzz);
+    Y = utils.cr.dv_vz_omega(Y,nz,1);
 end
 end
 
