@@ -54,12 +54,16 @@ switch index
 end
 
     function ss=isum(varargin)
+        if issparse(dv_vz)
+            dv_vz=full(dv_vz);
+        end
         dv_vz=reshape(dv_vz,[nd,nz*ones(1,layers)]);
         ss=0;
         for ii=1:length(varargin)
             ss=ss+ipermute(dv_vz,[1,varargin{ii}]);
         end
         ss=reshape(ss,[nd,nz^layers]);
+        ss=sparse(ss);
     end
 end
 

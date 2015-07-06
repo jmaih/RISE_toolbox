@@ -13,6 +13,14 @@ function P=sum_permutations(ABCD,matsizes,varargin)
 %
 %   P=sum_permutations(ABCD,matsizes,{order_1,order_2,...,order_n},'grid')
 %
+%   P=sum_permutations(ABCD,matsizes,skip_first,order_1,order_2,...,order_n)
+%
+%   P=sum_permutations(ABCD,matsizes,skip_first,{order_1,order_2,...,order_n})
+%
+%   P=sum_permutations(ABCD,matsizes,skip_first,order_1,order_2,...,order_n,'grid')
+%
+%   P=sum_permutations(ABCD,matsizes,skip_first,{order_1,order_2,...,order_n},'grid')
+%
 % Inputs
 % -------
 %
@@ -21,6 +29,9 @@ function P=sum_permutations(ABCD,matsizes,varargin)
 % - **matsizes** [matrix]: k x 2 matrix of size of the various matrices
 % entering the tensor. Each row represents the size of a matrix and it is
 % assumed that the main(or first) tensor product is ordered [1,2,...,k]
+%
+% - **skip_first** [true|{false}]: if true, the original input matrix is
+% not added to the sum
 %
 % - **order_i** [vector]: permutation of [1,2,...,k]. N.B: all elements
 % 1,2,...,k should be part of the vector and the vector should have exactly
@@ -42,6 +53,12 @@ function P=sum_permutations(ABCD,matsizes,varargin)
 %
 % See also: tensorperm
 
+skip_first=false;
+if islogical(varargin{1})
+    skip_first=varargin{1};
+    varargin=varargin(2:end);
+end
+
 is_grid = ischar(varargin{end});
 
 if is_grid
@@ -55,6 +72,9 @@ else
 end
 
 P=ABCD;
+if skip_first
+    P=0*P;
+end
 
 if is_grid
     [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:},'grid');
