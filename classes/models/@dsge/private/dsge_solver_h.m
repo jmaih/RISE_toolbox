@@ -431,6 +431,7 @@ end
                     [size(a0_z);size(a1_z);size(a1_z);size(a1_zz)],...
                     [2,1,3,4],[2,3,1,4])...
                     );
+                res=dv_vz_omega(res,siz.nz,5);
             end
             
             function res=dvvv_Evz_vz_vzzz()
@@ -455,6 +456,7 @@ end
                     siz.nz,2)),...
                     [size(a0_z);size(a1_z);[siz.nv,siz.nz^3]],[2,1,3])...
                     );
+                res=dv_vz_omega(res,siz.nz,6);
             end
             
             function res=dvvv_Evz_vzz_vzz()
@@ -474,6 +476,7 @@ end
                     [2,3,1,4,5],[2,1,3,4,5]),...
                     [size(a1_z);[siz.nv,siz.nz^2];size(a1_zz)],[1,3,2])...
                     );
+                res=dv_vz_omega(res,siz.nz,7);
             end
             
             function res=dvv_Evz_vzzzz()
@@ -498,6 +501,7 @@ end
                     A_times_kron_Q1_Qk(...
                     A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a1_z,a1_zz),...
                     Eu{2},hzzz),siz.nz,6);
+                res=dv_vz_omega(res,siz.nz,8);
             end
             
             function res=dvv_Evzz_vzzz()
@@ -523,6 +527,7 @@ end
                     Pfunc(...
                     dv_vz_omega(kronall(hz,Eu{2},hzz),siz.nz,5),...
                     [siz.nz*ones(2,2);[siz.nz^2,siz.nz^3]],[2,1,3]);
+                res=dv_vz_omega(res,siz.nz,9);
             end
                         
             function res=lambda_bf_XI01()
@@ -531,7 +536,7 @@ end
                     siz.nz*ones(3,2),[1,3,2],[3,1,2]),hzz)...
                     ),siz.nz,5);
                 res=res+dv_vz_omega(T.Tzzz{r1}(pos.t.bf,:)*...
-                    kron(kron(hz,hz)+Eu{2},hzz),siz.nz,6);
+                    kron(kron(hz,hz)+Eu{2},hzzz),siz.nz,6);
                 res=res+dv_vz_omega(T.Tzzz{r1}(pos.t.bf,:)*...
                     kronall(hz,hz,hzz),siz.nz,7);
                 res=res+dv_vz_omega(T.Tzz{r1}(pos.t.bf,:)*...
