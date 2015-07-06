@@ -65,11 +65,10 @@ jnew=do_cols(2);
         index=zeros(prod(siz),nargs);
         for iarg=1:nargs
             new_order=varargin{iarg};
-            new_old_=old_(:,new_order);
             coefs=compute_factors();
-            tmp=new_old_(:,end);
+            tmp=old_(:,new_order(end));% new_old_=old_(:,new_order); tmp=new_old_(:,end);
             for icol=1:nmat-1
-                tmp=tmp+(new_old_(:,icol)-1)*coefs(icol);
+                tmp=tmp+(old_(:,new_order(icol))-1)*coefs(icol); %tmp=tmp+(new_old_(:,icol)-1)*coefs(icol);
             end
             index(tmp,iarg)=1:numel(tmp);
         end
@@ -87,11 +86,15 @@ jnew=do_cols(2);
             end
             ind(:,end)=x;
             function ind=iterate(y)
-                rest=mod(x-1,y);
-                n=(x-1-rest)/y;
+                [rest,n]=mymod(x-1,y); % <--rest=mod(x-1,y);  n=(x-1-rest)/y;
                 ind=n+1;
                 x=rest+1;
             end
         end
     end
+end
+
+function [rest,n]=mymod(x,y)
+n=floor(x./y);
+rest=x-y.*n;
 end
