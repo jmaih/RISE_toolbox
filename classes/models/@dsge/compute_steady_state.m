@@ -239,7 +239,9 @@ end
             [ss(:,ireg),p_ireg,retcode,r(:,ireg),Jac]=...
                 do_one_regime(y(:,ireg),p_ireg,d{ireg});
             if ~retcode
-                if ~success(r(:,ireg))
+                if success(r(:,ireg))
+                    p(:,ireg)=p_ireg;
+                else
                     if obj.is_linear_model
                         ss0=ss(:,ireg)-Jac\r(:,ireg);
                         [ss(:,ireg),p_ireg,retcode,r(:,ireg)]=do_one_regime(...
@@ -261,7 +263,7 @@ end
                             end
                         end
                         missing=size(ss,1)-numel(vlist);
-                        vlist=[vlist,true(1,missing)];
+                        vlist=[vlist,true(1,missing)]; %#ok<AGROW>
                         [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg);
                     end
                     if ~retcode
