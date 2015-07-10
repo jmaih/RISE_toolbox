@@ -31,10 +31,10 @@ if ~isa(objective,'function_handle')
         if ischar(objective{1})
             objective{1}=str2func(objective{1});
         end
-        if numel(objective)~=2
-            error('when objective function is a cell, it must have have two elements')
+        if numel(objective)<2
+            error('when objective function is a cell, it must have have at least two elements')
         end
-        vargs=objective{2};
+        vargs=objective(2:end);
         objective=objective{1};
     end
 end
