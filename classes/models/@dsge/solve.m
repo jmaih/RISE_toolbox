@@ -64,6 +64,25 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %   - **zeros** : the initial guess is zero
 %   - **random** : the initial guess is random
 %
+% - **solve_linsyst_user_algo** [{''}|cell|char]: user-defined solver for
+% linear systems. It should be possible to call the function as
+% [X,FLAG,RELRES,ITER,RESVEC] = bicgstabl(A,B,TOL,MAXIT,varargin). Hence,
+% the function should accept at least 4 inputs where: 
+%   - **A** : matrix or function handle
+%   - **B** : right-hand side of system to solve
+%   - **TOL** : tolerance level
+%   - **MAXIT** : maximum number of iterations
+% The function must return 5 outputs as in Matlab's tfqmr, bicgstab,
+% bicgstabl, gmres, etc. :  
+%   - **X** : the solution
+%   - **FLAG** : convergence flag
+%   - **RELRES** : relative residual NORM(B-A*X)/NORM(B)
+%   - **ITER** : iteration number
+%   - **RESVEC** : residual vector for various iterations
+% As far as the outputs are concerned, only the two first are relevant for
+% RISE and so the three last can be empty. But they must be returned by the
+% function all the same.
+%
 % - **solver** [{[]}|char|user_defined]: solver for the dsge model. The
 % following are possible:
 %   - **loose_commitment** : RISE automatically uses this when it detects
