@@ -164,7 +164,8 @@ if isempty(obj)
     fpi=fix_point_iterator();
     is_ResolveOnly=utils.miscellaneous.mergestructures(is_ResolveOnly,fpi);
     
-    others=struct('solve_check_stability',true);
+    others=struct('solve_check_stability',true,...
+        'solve_linsyst_user_algo','');
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
