@@ -37,5 +37,12 @@ for ii=1:q
     iter_c=(ii-1)*cb+1:ii*cb;
     C(:,iter_c)=A(:,iter_d)*B;
 end
+% if at least one of the inputs is sparse, return sparse for we created a
+% zeros (instead of sparse) matrix as output in order not to modify the
+% structure of a sparse matrix with unknown nonzeros, which would be slow.
+%--------------------------------------------------------------------------
+if issparse(A) || issparse(B)
+    C=sparse(C);
+end
 
 end
