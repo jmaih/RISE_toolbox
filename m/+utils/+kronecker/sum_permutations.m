@@ -1,25 +1,17 @@
-function P=sum_permutations(ABCD,matsizes,varargin)
+function P=sum_permutations(ABCD,matsizes,options,varargin)
 % sum_permutations -- sums the permutations of a tensor product
 %
 % Syntax
 % -------
 % ::
 %
-%   P=sum_permutations(ABCD,matsizes,order_1,order_2,...,order_n)
+%   P=sum_permutations(ABCD,matsizes,[],order_1,order_2,...,order_n)
 %
-%   P=sum_permutations(ABCD,matsizes,{order_1,order_2,...,order_n})
+%   P=sum_permutations(ABCD,matsizes,[],{order_1,order_2,...,order_n})
 %
-%   P=sum_permutations(ABCD,matsizes,order_1,order_2,...,order_n,'grid')
+%   P=sum_permutations(ABCD,matsizes,options,order_1,order_2,...,order_n)
 %
-%   P=sum_permutations(ABCD,matsizes,{order_1,order_2,...,order_n},'grid')
-%
-%   P=sum_permutations(ABCD,matsizes,skip_first,order_1,order_2,...,order_n)
-%
-%   P=sum_permutations(ABCD,matsizes,skip_first,{order_1,order_2,...,order_n})
-%
-%   P=sum_permutations(ABCD,matsizes,skip_first,order_1,order_2,...,order_n,'grid')
-%
-%   P=sum_permutations(ABCD,matsizes,skip_first,{order_1,order_2,...,order_n},'grid')
+%   P=sum_permutations(ABCD,matsizes,options,{order_1,order_2,...,order_n})
 %
 % Inputs
 % -------
@@ -30,15 +22,16 @@ function P=sum_permutations(ABCD,matsizes,varargin)
 % entering the tensor. Each row represents the size of a matrix and it is
 % assumed that the main(or first) tensor product is ordered [1,2,...,k]
 %
-% - **skip_first** [true|{false}]: if true, the original input matrix is
-% not added to the sum
+% - **options** [empty|struct]: structure with various options such as
+%   - **use_old_algo** [true|{false}]: old and potentially slow algorithm
+%   - **use_grid** [true|{false}]: use grid in the old algorithm:a grid is
+%       used to compute the indexes of the main kronecker product 
+%   - **skip_first** [true|{false}]: if true, the original input matrix is
+%   not added to the sum
 %
 % - **order_i** [vector]: permutation of [1,2,...,k]. N.B: all elements
 % 1,2,...,k should be part of the vector and the vector should have exactly
 % k elements
-%
-% - **grid** [string]: if present, a grid is used to compute the indexes of
-% the main kronecker product
 %
 % Outputs
 % --------
@@ -53,16 +46,19 @@ function P=sum_permutations(ABCD,matsizes,varargin)
 %
 % See also: tensorperm
 
-skip_first=false;
-if islogical(varargin{1})
-    skip_first=varargin{1};
-    varargin=varargin(2:end);
-end
+default_options={
+    'use_old_algo',false,@(x)islogical(x),'use_old_algo must be a logical'
+    'use_grid',false,@(x)islogical(x),'use_old_algo must be a logical'
+    'skip_first',false,@(x)islogical(x),'use_old_algo must be a logical'
+    };
 
-is_grid = ischar(varargin{end});
-
-if is_grid
-    varargin=varargin(1:end-1);
+if isempty(options)
+    options=cell2struct(default_options(:,2),default_options(:,1),1);
+else
+    if ~isstruct(options)
+        error('options must be a structure or empty')
+    end
+    options=utils.miscellaneous.parse_arguments(default_options,options);
 end
 
 if length(varargin)==1 && iscell(varargin{1})
@@ -72,18 +68,28 @@ else
 end
 
 P=ABCD;
-if skip_first
+if options.skip_first
     P=0*P;
 end
 
-if is_grid
-    [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:},'grid');
+if options.use_old_algo
+    if options.use_grid
+        [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:},'grid');
+    else
+        [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:});
+    end
+    
+    for ii=1:size(irows,2)
+        P=P+ABCD(irows(:,ii),jcols(:,ii));
+    end
 else
-    [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:});
-end
-
-for ii=1:size(irows,2)
-    P=P+ABCD(irows(:,ii),jcols(:,ii));
+    for ii=1:numel(orders)
+        P=P+utils.kronecker.permute_tensor(ABCD,matsizes,orders{ii});
+        if ii==1
+            ABCD=[];
+            matsizes=[];
+        end
+    end
 end
 
 end
