@@ -1,15 +1,22 @@
 function R=derivatives_grid(R)
-% H1 line
+% derivatives_grid -- creates a grid of unique permutations of derivatives,
+% with non-increasing elements from left to right
 %
 % Syntax
 % -------
 % ::
 %
+%   R1=derivatives_grid(R0)
+%
 % Inputs
 % -------
 %
+% - **R0** [vector|matrix]: initial permutation of derivatives
+%
 % Outputs
 % --------
+%
+% - **R1** [matrix]: permutation indexes for derivatives of next order
 %
 % More About
 % ------------
@@ -17,9 +24,7 @@ function R=derivatives_grid(R)
 % Examples
 % ---------
 %
-% See also: 
-
-% see also mygrid
+% See also: mygrid 
 
 [rr,cc]=size(R);
 R=mat2cell(R,ones(rr,1),cc);
