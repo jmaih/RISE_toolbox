@@ -49,6 +49,7 @@ nmat=size(matsizes,1);
 rc=prod(matsizes,1);
 
 Ir=speye(rc(1));
+Ic=speye(rc(2));
 
 kron_order=fliplr(1:nmat);% reverse kronecker
 
@@ -75,8 +76,27 @@ switch algo
             res=res+do_one_permutation(varargin{ii});
         end 
     case 2
+        for imat=1:numel(kron_matrices)
+            kron_matrices{imat}=sparse(kron_matrices{imat});
+        end
+        ABC=utils.kronecker.kronall(kron_matrices{:});
+        
+        % do the lead term
+        %------------------
+        if add_lead_term
+            SumABC=ABC;
+        else
+            SumABC=sparse(size(ABC,1),size(ABC,2));
+        end
+        
+        % add the remaining ones
+        %------------------------
+        for ii=1:nterms
+            add_abc(varargin{ii});
+        end 
+        res=sparse(A)*SumABC;
+    case 3
         error('DO NOT USE THIS ALGORITHM EVER, UNLESS A WORKAROUND IS FOUND!!!')
-        Ic=speye(rc(2));
         % It would be so nice if algorithm 2 worked but it does not for reasons I
         % perfectly understand: We cannot factor F(ABC+L1*ABC*R1+...+Ln*ABC*Rn)
         % gather left permutations and store right ones
@@ -96,6 +116,17 @@ switch algo
     otherwise
         error('unknown algorithm')
 end
+
+    function add_abc(in_order)
+        newstyle=true;
+        if newstyle
+            [~,~,Li,Ri]=get_shufflers(in_order);
+            SumABC=SumABC+Li*ABC*Ri;
+        else
+            [re_order_rows,re_order_cols]=get_shufflers(in_order);
+            SumABC=SumABC+ABC(re_order_rows,re_order_cols);
+        end
+    end
 
     function gather_terms(in_order)
         [~,~,lfact,rfact]=get_shufflers(in_order);
@@ -120,7 +151,7 @@ end
     end
 
     function res=do_one_permutation(in_order)
-        [~,re_order_cols,lfact]=get_shufflers(in_order);  
+        [~,re_order_cols,lfact,rfact]=get_shufflers(in_order);  
         % first step: permute rows
         %-------------------------
         % Note that A*lfact is different from A(:,re_order_rows) !!!
@@ -128,7 +159,9 @@ end
 
         % second step: permute columns
         %-----------------------------
-        res=res(:,re_order_cols);
+        % the two options below seem to take about the same time to
+        % compute...
+        res=res(:,re_order_cols);% res=res*rfact;
         
 %         ABC=utils.kronecker.kronall(kron_matrices{:});
 %         Ic=speye(rc(2));
