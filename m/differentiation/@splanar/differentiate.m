@@ -134,7 +134,7 @@ for oo=1:order
     end
     % make sure we have a row vector here!!!
     %----------------------------------------
-    [~,index_]=ismember(proto,B,'rows');
+    [~,index_]=ismember(proto(:,end:-1:1),B,'rows');%[~,index_]=ismember(proto,B,'rows');
     index_=index_(:).';
     d=[d{1:iter}];
     d=d(:);

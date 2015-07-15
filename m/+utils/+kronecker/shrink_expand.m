@@ -46,7 +46,6 @@ function [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
 %
 % See also:
 
-
 if nargin<4
     debug=false;
     if nargin<3
@@ -65,7 +64,10 @@ nbig=size(A,1);
 test2=A(:,end:-1:1);
 % stamp the decreasing rows
 drow=test2(:,1:end-1)-test2(:,2:end);
-keep=~any(drow<0,2);
+
+% definition change to accord with derivatives
+%----------------------------------------------
+keep=all(drow<=0,2);%<--keep=~any(drow<0,2);
 if nargout>1
     nkept=sum(keep);
     
@@ -73,21 +75,21 @@ if nargout>1
     %----------------------------------------------------
     test2=sort(test2,2);
     
-    % stamps
-    expand=nan(1,nbig);
-    
     % separate kept and unkept
     kept=test2(keep,:);
     
-    switch strategy
-        case 1
-            bsxfun_strategy()
-        case 2
-            splanar_strategy()
-        case 3
-            ismember_strategy()
-        otherwise
-            error('strategy not implemented')
+    % stamps
+    try
+        [~,expand]=utils.gridfuncs.ismember(test2,kept);
+    catch
+        switch strategy
+            case 1
+                expand=bsxfun_strategy();
+            case 2
+                expand=splanar_strategy();
+            otherwise
+                error('strategy not implemented')
+        end
     end
     
     if nargout>2
@@ -96,8 +98,8 @@ if nargout>1
         C=speye(nbig);
         C=C(:,keep);
         if debug
-            A=(1:nbig)*C;
-            max(abs(A(:)-find(keep)))
+            A_=(1:nbig)*C;
+            max(abs(A_(:)-find(keep)))
         end
         
         if nargout>3
@@ -106,8 +108,8 @@ if nargout>1
             UC=speye(nkept);
             UC=UC(:,expand);
             if debug
-                A=(1:nkept)*UC;
-                max(abs(A(:)-expand(:)))
+                A_=(1:nkept)*UC;
+                max(abs(A_(:)-expand(:)))
             end
             if nargout>4
                 B=A(keep,:);
@@ -116,48 +118,8 @@ if nargout>1
     end
 end
 
-    function ismember_strategy()
-        try
-            [expand] = myismember(test2,test2(keep,:));
-        catch
-            [~,expand] = ismember(test2,test2(keep,:),'rows');
-        end
-        function [locb] = myismember(A,B)
-            % unique A first
-            [icA] = myunique(); %<---[~,~,icA] = unique(A,'rows','sorted');
-            
-            % Sort the unique elements of B and B, duplicate entries are adjacent
-            [sort_B_B,tags_B_B] = sortrows([B;B]);
-            
-            % Find matching entries
-            d = sort_B_B(1:end-1,:)==sort_B_B(2:end,:);
-            d = all(d,2);
-            ndx1 = tags_B_B(d);
-            
-            % Find locb by using given indices
-            try
-                [~, locb] = builtin('_ismemberhelper',icA,ndx1);
-            catch
-                locb = builtin('_ismemberfirst',icA,ndx1);
-            end
-            if isequal(locb,0)
-                locb=[];
-            end
-            function [indC] = myunique
-                numRows = size(A,1);
-                [sortA,indSortA] = sortrows(A);
-                % groupsSortA indicates the location of non-matching entries.
-                groupsSortA = sortA(1:numRows-1,:) ~= sortA(2:numRows,:);
-                groupsSortA = any(groupsSortA,2);
-                groupsSortA = [true; groupsSortA];
-                groupsSortA = full(groupsSortA);
-                indC = cumsum(groupsSortA);
-                indC(indSortA) = indC;
-            end
-        end
-    end
-
-    function splanar_strategy()
+    function expand=splanar_strategy()
+        expand=zeros(1,nbig);
         proto_permutation=cell2mat(utils.gridfuncs.mypermutation(1:k));
         for ikept=1:nkept
             this=kept(ikept,:);
@@ -169,14 +131,21 @@ end
         end
     end
 
-    function bsxfun_strategy()
+    function expand=bsxfun_strategy()
+        expand=zeros(1,nbig);
         expand(keep)=1:nkept;
         Index=1:nbig;
         Index(keep)=[];
-        for ikept=1:nkept
-            bingo=sum(abs(bsxfun(@minus,test2(Index,:),kept(ikept,:))),2)==0;
-            expand(Index(bingo))=ikept;
-            Index(bingo)=[];
+        if ~isempty(Index)
+            for ikept=1:nkept
+                target=kept(ikept,:);
+                if all(target==target(1))
+                    continue
+                end
+                bingo=sum(abs(bsxfun(@minus,test2(Index,:),target)),2)==0;
+                expand(Index(bingo))=ikept;
+                Index(bingo)=[];
+            end
         end
     end
 end
