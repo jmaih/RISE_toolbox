@@ -118,6 +118,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % which we want to take a log expansion (x_t-x_ss)/x_ss, which approximates
 % log(x_t/x_ss) for x_t/x_ss close to 1.
 %
+% - **solve_automatic_differentiator** [function_handle|@aplanar.diff|{@aplanar_.idff}]:
+% automatic differentiator engine
+%
 % Outputs
 % --------
 %
@@ -183,7 +186,8 @@ if isempty(obj)
     fpi=fix_point_iterator();
     is_ResolveOnly=utils.miscellaneous.mergestructures(is_ResolveOnly,fpi);
     
-    others=struct('solve_check_stability',true);
+    others=struct('solve_check_stability',true,...
+        'solve_automatic_differentiator',@aplanar_.diff);
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
@@ -381,8 +385,10 @@ end
                                     'only up to order ',int2str(max_order)])
                             end
                         end
+                        engine=obj.options.solve_automatic_differentiator;
                         G01=utils.code.evaluate_automatic_derivatives(...
-                            obj.routines.symbolic.probs_times_dynamic,solve_order,...
+                            obj.routines.symbolic.probs_times_dynamic,...
+                            solve_order,engine,...
                             ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                     else
                         if s1==1 && s0==1
@@ -635,17 +641,22 @@ if symbolic_derivatives
     ssfuncs.jac_bgp=obj.routines.static_bgp_derivatives;
 else
     solve_order=1;
-    ssfuncs.jac_static=compute_automatic_derivatives(obj.routines.symbolic.static,solve_order);
-    ssfuncs.jac_bgp=compute_automatic_derivatives(obj.routines.symbolic.static_bgp,solve_order);
+    ssfuncs.jac_static=compute_automatic_derivatives(...
+        obj.routines.symbolic.static,solve_order,...
+        obj.options.solve_automatic_differentiator);
+    ssfuncs.jac_bgp=compute_automatic_derivatives(...
+        obj.routines.symbolic.static_bgp,solve_order,...
+        obj.options.solve_automatic_differentiator);
 end
 end
 
-function func=compute_automatic_derivatives(derivatives,solve_order)
+function func=compute_automatic_derivatives(derivatives,solve_order,differentiator)
 
 func=@engine;
 
     function [D01,retcode]=engine(varargin)
-        D01=utils.code.evaluate_automatic_derivatives(derivatives,solve_order,varargin{:});
+        D01=utils.code.evaluate_automatic_derivatives(derivatives,...
+            solve_order,differentiator,varargin{:});
         good=all(cellfun(@(x)utils.error.valid(x),D01));
         retcode=0;
         D01=D01{1};

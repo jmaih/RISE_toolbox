@@ -1,4 +1,4 @@
-function C=evaluate_automatic_derivatives(funcs,order,varargin)
+function C=evaluate_automatic_derivatives(funcs,order,engine,varargin)
 % H1 line
 %
 % Syntax
@@ -59,4 +59,4 @@ allsymb=[allsymb(:),num2cell(symbvals(:))];
 with_respect_to=allsymb(aloc,:);
 inactive=allsymb(inacloc,:);
 
-C=aplanar.diff(funcs{1},with_respect_to,inactive,order);
+C=engine(funcs{1},with_respect_to,inactive,order);
