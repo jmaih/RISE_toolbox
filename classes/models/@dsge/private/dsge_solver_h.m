@@ -881,13 +881,7 @@ end
 end
 
 function flag=has_non_zeros(varargin)
-tol=sqrt(eps);
-flag=max(abs(varargin{1}(:)))>tol;
-iarg=1;
-while flag && iarg<length(varargin)
-    iarg=iarg+1;
-    flag=max(abs(varargin{iarg}(:)))>tol;
-end
+flag=utils.cr.is_computable(varargin{:});
 end
 
 function Y=fvv_vx_vxx_omega_1(dvv,vz,vzz)
