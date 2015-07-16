@@ -339,6 +339,10 @@ end
         symbolic_type=strcmp(obj.options.solve_derivatives_type,'symbolic');
         if ~symbolic_type
             automatic_type=strcmp(obj.options.solve_derivatives_type,'automatic');
+            if ischar(obj.options.solve_automatic_differentiator)
+                obj.options.solve_automatic_differentiator=...
+                    func2str(obj.options.solve_automatic_differentiator);
+            end
             if ~automatic_type
                 numeric_type=any(strcmp(obj.options.solve_derivatives_type,{'numeric','numerical'}));
                 if ~numeric_type
