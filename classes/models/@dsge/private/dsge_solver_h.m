@@ -768,7 +768,7 @@ end
                 end
                 tmp=cell(1,siz.h);
                 for r0=1:siz.h
-                    tmp{r0}=X(:,:,r0);
+                    tmp{r0}=sparse(X(:,:,r0));
                 end
                 X=tmp;
             end
@@ -978,6 +978,11 @@ if ~retcode
         for rt=1:siz.h
             Tz{rt}(:,siz.np+siz.nb+1)=Tz_sig(:,rt);
         end
+    end
+    % ensure the result is sparse
+    %-----------------------------
+    for rt=1:siz.h
+        Tz{rt}=sparse(Tz{rt});
     end
     others.Ui=UUi;
 end
