@@ -59,6 +59,10 @@ rows_span=reshape(1:rc(1),[1,rows_siz_flip]);
 cols_siz_flip=matsizes(kron_order,2).';
 cols_span=reshape(1:rc(2),[1,cols_siz_flip]);
 
+A=sparse(A);
+for imat=1:numel(kron_matrices)
+        kron_matrices{imat}=sparse(kron_matrices{imat});
+end
 nterms=length(varargin);
 algo=1;
 switch algo 
@@ -76,9 +80,20 @@ switch algo
             res=res+do_one_permutation(varargin{ii});
         end 
     case 2
-        for imat=1:numel(kron_matrices)
-            kron_matrices{imat}=sparse(kron_matrices{imat});
+        ABC=utils.kronecker.kronall(kron_matrices{:});
+        % do the lead term
+        %------------------
+        if add_lead_term
+            res=A*ABC;
+        else
+            res=sparse(size(A,1),rc(2));
         end
+        % add the remaining ones
+        %------------------------
+        for ii=1:nterms
+            res=res+do_one_big_permutation(varargin{ii});
+        end 
+    case 3
         ABC=utils.kronecker.kronall(kron_matrices{:});
         
         % do the lead term
@@ -94,25 +109,28 @@ switch algo
         for ii=1:nterms
             add_abc(varargin{ii});
         end 
-        res=sparse(A)*SumABC;
-    case 3
-        error('DO NOT USE THIS ALGORITHM EVER, UNLESS A WORKAROUND IS FOUND!!!')
-        % It would be so nice if algorithm 2 worked but it does not for reasons I
-        % perfectly understand: We cannot factor F(ABC+L1*ABC*R1+...+Ln*ABC*Rn)
-        % gather left permutations and store right ones
-        %-----------------------------------------------
+        res=A*SumABC;
+    case 4
+        % vectorization strategy
+        %------------------------
+        ABC=utils.kronecker.kronall(kron_matrices{:});
+        ncols=size(ABC,2);
+        [nr,nc]=size(A);
+        % do the lead term
+        %------------------
         if add_lead_term
-            Irall=Ir;
-            Icall=Ic;
+            SumR_ABC_L=kron(speye(ncols),A);
         else
-            Irall=sparse(rc(1),rc(1));
-            Icall=sparse(rc(2),rc(2));
+            SumR_ABC_L=sparse(nr*ncols,nc*ncols);
         end
+        
+        % add the remaining ones
+        %------------------------
         for ii=1:nterms
-            gather_terms(varargin{ii})
-        end
-        res=utils.kronecker.A_times_kron_Q1_Qk(A*Irall,kron_matrices{:})*Icall;
-       
+            [~,~,Li_,Ri_]=get_shufflers(varargin{ii});
+            SumR_ABC_L=SumR_ABC_L+kron(Ri_.',A*Li_);
+        end 
+        res=reshape(SumR_ABC_L*ABC(:),nr,[]);
     otherwise
         error('unknown algorithm')
 end
@@ -126,12 +144,6 @@ end
             [re_order_rows,re_order_cols]=get_shufflers(in_order);
             SumABC=SumABC+ABC(re_order_rows,re_order_cols);
         end
-    end
-
-    function gather_terms(in_order)
-        [~,~,lfact,rfact]=get_shufflers(in_order);
-        Irall=Irall+lfact;
-        Icall=Icall+rfact;
     end
 
     function [re_order_rows,re_order_cols,lfact,rfact]=get_shufflers(in_order)
@@ -150,8 +162,13 @@ end
         end
     end
 
+    function res=do_one_big_permutation(in_order)
+        [re_order_rows,re_order_cols]=get_shufflers(in_order);  
+        res=A*ABC(re_order_rows,re_order_cols);
+    end
+
     function res=do_one_permutation(in_order)
-        [~,re_order_cols,lfact,rfact]=get_shufflers(in_order);  
+        [~,re_order_cols,lfact]=get_shufflers(in_order);  
         % first step: permute rows
         %-------------------------
         % Note that A*lfact is different from A(:,re_order_rows) !!!
