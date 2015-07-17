@@ -164,9 +164,9 @@ classdef ts
             %   - monthly data : e.g. '1990M12'
             % - **data** [numeric] : the format is nobs x nvars x npages,
             %   where:
-            %   - ´nobs´ is the number of observations
-            %   - ´nvars´ is the number of variables
-            %   - ´npages´ is the number of pages (3rd dimension)
+            %   - **nobs** is the number of observations
+            %   - **nvars** is the number of variables
+            %   - **npages** is the number of pages (3rd dimension)
             % - **varnames** [char|cellstr] : names of the variables in the
             %   database
             % - **sorting** [true|{false}]: sort the columns of data
@@ -269,6 +269,12 @@ classdef ts
                         else
                             if numel(vnames)~=nvars
                                 error('number of columns of data should be the same as the number of variables')
+                            end
+                            for ivar=1:nvars
+                                thisname=vnames{ivar};
+                                if ~isvarname(thisname)
+                                    error([thisname,' is not a valid variable name'])
+                                end
                             end
                             if sorting
                                 [vnames,tags]=sort(vnames);
