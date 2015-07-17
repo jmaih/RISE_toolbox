@@ -121,6 +121,12 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - **solve_automatic_differentiator** [function_handle|@aplanar.diff|{@aplanar_.idff}]:
 % automatic differentiator engine
 %
+% - **solve_higher_order_solver** ['dsge_solver_ha'|{'dsge_solver_h'}]: The
+% two solvers only differ in the way they handle memory. The default
+% solver (dsge_solver_h) keeps lots of data in memory while the
+% alternative one (dsge_solver_ha) recomputes some of the variables in
+% order to economize on memory. It is not clear which one performs the best
+%
 % Outputs
 % --------
 %
@@ -187,7 +193,8 @@ if isempty(obj)
     is_ResolveOnly=utils.miscellaneous.mergestructures(is_ResolveOnly,fpi);
     
     others=struct('solve_check_stability',true,...
-        'solve_automatic_differentiator',@aplanar_.diff);
+        'solve_automatic_differentiator',@aplanar_.diff,...
+        'solve_higher_order_solver','dsge_solver_h');
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
@@ -233,7 +240,8 @@ ys=[];
 ss=[];
 nx=sum(obj.exogenous.number);
 xss=zeros(nx,1);
-[the_leads,the_current,the_lags,indices,nind,endo_nbr]=create_indices(obj.lead_lag_incidence.before_solve);
+[the_leads,the_current,the_lags,indices,nind,endo_nbr]=...
+    create_indices(obj.lead_lag_incidence.before_solve);
 structural_matrices=[];
 
 solve_order=obj.options.solve_order;
@@ -280,7 +288,12 @@ if solve_order>0 && ~retcode && resolve_it
                 obj.options.solver='loose_commitment';
             end
         else
-            [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices);
+            if ischar(obj.options.solve_higher_order_solver)
+                obj.options.solve_higher_order_solver=...
+                    str2func(obj.options.solve_higher_order_solver);
+            end
+            [T,eigval,retcode,obj]=...
+                obj.options.solve_higher_order_solver(obj,structural_matrices);
         end
         if ~retcode
             % expand solution to account for loose commitment
