@@ -32,11 +32,16 @@ if ca~=rb*q
 end
 
 C=zeros(ra,q*cb);
+iter_d=1:rb;
+iter_c=1:cb;
 for ii=1:q
-    iter_d=(ii-1)*rb+1:ii*rb;
-    iter_c=(ii-1)*cb+1:ii*cb;
     C(:,iter_c)=A(:,iter_d)*B;
+    if ii<q
+        iter_d=iter_d+rb;
+        iter_c=iter_c+cb;
+    end
 end
+
 % if at least one of the inputs is sparse, return sparse for we created a
 % zeros (instead of sparse) matrix as output in order not to modify the
 % structure of a sparse matrix with unknown nonzeros, which would be slow.
