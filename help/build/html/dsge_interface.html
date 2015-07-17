@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Markov switching DSGE interface &mdash; RISE 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="RISE 1.0.1 documentation" href="index.html" />
+    <link rel="next" title="Markov Switching Dynamic Stochastic General Equilibrium Modeling" href="classes/models/@dsge/dsge.html" />
+    <link rel="prev" title="RISE Capabilities" href="capabilities.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="classes/models/@dsge/dsge.html" title="Markov Switching Dynamic Stochastic General Equilibrium Modeling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="capabilities.html" title="RISE Capabilities"
+             accesskey="P">previous</a> |</li>
+        <li><a href="master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-markov-switching-dsge-interface">
+<h1>The Markov switching DSGE interface<a class="headerlink" href="#the-markov-switching-dsge-interface" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-general-framework">
+<h2>The general framework<a class="headerlink" href="#the-general-framework" title="Permalink to this headline">¶</a></h2>
+<p>The general form of the models is:</p>
+<div class="math">
+<p><img src="_images/math/e7cab7559d57a574ef91ef55af08423255b8dd20.png" alt="E_{t}\sum_{r_{t+1}=1}^{h}\pi _{r_{t},r_{t+1}}\left( I_{t}\right) \tilde{d}_{r_{t}}\left(b_{t+1}
+\left( r_{t+1}\right),b_{t}\left( r_{t}\right),b_{t-1},\varepsilon _{t}, \theta _{r_{t+1}}\right) =0"/></p>
+</div><ul class="simple">
+<li>The switching of the parameters is governed by Markov processes and can be endogenous.</li>
+<li><a class="reference external" href="http://www.kansascityfed.org/publicat/events/research/2010CenBankForecasting/Maih_paper.pdf">Agents can have information about future events</a></li>
+</ul>
+</div>
+<div class="section" id="the-model-file">
+<h2>The model file<a class="headerlink" href="#the-model-file" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="conventions">
+<h3>Conventions<a class="headerlink" href="#conventions" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="variable-declarations">
+<h3>Variable declarations<a class="headerlink" href="#variable-declarations" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="expressions">
+<h3>Expressions<a class="headerlink" href="#expressions" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><dl class="first docutils">
+<dt>parameters and variables</dt>
+<dd><ul class="first last simple">
+<li>inside the model</li>
+<li>outside the model</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">operators</p>
+</li>
+<li><dl class="first docutils">
+<dt>functions</dt>
+<dd><ul class="first last simple">
+<li>built-in functions</li>
+<li>external/user-defined functions</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="model-declaration">
+<h3>model declaration<a class="headerlink" href="#model-declaration" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>model equations</li>
+<li>endogenous transition probabilities</li>
+<li>auxiliary parameters/variables</li>
+<li>inequality restrictions</li>
+</ul>
+</div>
+<div class="section" id="auxiliary-variables">
+<h3>auxiliary variables<a class="headerlink" href="#auxiliary-variables" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="initial-and-terminal-conditions">
+<h3>initial and terminal conditions<a class="headerlink" href="#initial-and-terminal-conditions" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="shocks-on-exogenous-variables">
+<h3>shocks on exogenous variables<a class="headerlink" href="#shocks-on-exogenous-variables" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="other-general-declarations">
+<h3>other general declarations<a class="headerlink" href="#other-general-declarations" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="steady-state">
+<h2>steady state<a class="headerlink" href="#steady-state" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>finding the steady state with the RISE nonlinear solver</li>
+<li>using a steady state file</li>
+<li>using the steady state model</li>
+</ul>
+</div>
+<div class="section" id="getting-information-about-the-model">
+<h2>getting information about the model<a class="headerlink" href="#getting-information-about-the-model" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="deterministic-simulation">
+<h2>deterministic simulation<a class="headerlink" href="#deterministic-simulation" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="stochastic-solution-and-simulation">
+<h2>stochastic solution and simulation<a class="headerlink" href="#stochastic-solution-and-simulation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>computing the stochastic solution</li>
+<li>typology and ordering of variables</li>
+<li>first-order approximation</li>
+<li>second-order approximation</li>
+<li>third-order approximation</li>
+<li>fourth-order approximation</li>
+<li>fifth-order approximation</li>
+</ul>
+</div>
+<div class="section" id="estimation">
+<h2>Estimation<a class="headerlink" href="#estimation" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="forecasting-and-conditional-forecasting">
+<h2>Forecasting and conditional forecasting<a class="headerlink" href="#forecasting-and-conditional-forecasting" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="optimal-policy">
+<h2>Optimal policy<a class="headerlink" href="#optimal-policy" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>optimal simple rules</li>
+<li>Commitment, discretion and loose commitment</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="master_doc.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Markov switching DSGE interface</a><ul>
+<li><a class="reference internal" href="#the-general-framework">The general framework</a></li>
+<li><a class="reference internal" href="#the-model-file">The model file</a><ul>
+<li><a class="reference internal" href="#conventions">Conventions</a></li>
+<li><a class="reference internal" href="#variable-declarations">Variable declarations</a></li>
+<li><a class="reference internal" href="#expressions">Expressions</a></li>
+<li><a class="reference internal" href="#model-declaration">model declaration</a></li>
+<li><a class="reference internal" href="#auxiliary-variables">auxiliary variables</a></li>
+<li><a class="reference internal" href="#initial-and-terminal-conditions">initial and terminal conditions</a></li>
+<li><a class="reference internal" href="#shocks-on-exogenous-variables">shocks on exogenous variables</a></li>
+<li><a class="reference internal" href="#other-general-declarations">other general declarations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#steady-state">steady state</a></li>
+<li><a class="reference internal" href="#getting-information-about-the-model">getting information about the model</a></li>
+<li><a class="reference internal" href="#deterministic-simulation">deterministic simulation</a></li>
+<li><a class="reference internal" href="#stochastic-solution-and-simulation">stochastic solution and simulation</a></li>
+<li><a class="reference internal" href="#estimation">Estimation</a></li>
+<li><a class="reference internal" href="#forecasting-and-conditional-forecasting">Forecasting and conditional forecasting</a></li>
+<li><a class="reference internal" href="#optimal-policy">Optimal policy</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="capabilities.html"
+                        title="previous chapter">RISE Capabilities</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="classes/models/@dsge/dsge.html"
+                        title="next chapter">Markov Switching Dynamic Stochastic General Equilibrium Modeling</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dsge_interface.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="classes/models/@dsge/dsge.html" title="Markov Switching Dynamic Stochastic General Equilibrium Modeling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="capabilities.html" title="RISE Capabilities"
+             >previous</a> |</li>
+        <li><a href="master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Junior Maih.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

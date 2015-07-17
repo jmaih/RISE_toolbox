@@ -1,0 +1,112 @@
+%-------------------   class: C:\Users\jma\Documents\GitHub\RISE_toolbox\classes\time_series\ts   -------------------%
+%
+%   <a href="matlab:help classes\time_series\ts\acos">classes\time_series\ts\acos</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\acosh">classes\time_series\ts\acosh</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\acot">classes\time_series\ts\acot</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\acoth">classes\time_series\ts\acoth</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\aggregate">classes\time_series\ts\aggregate</a>                                                            - H1 line
+%   <a href="matlab:help classes\time_series\ts\allmean">classes\time_series\ts\allmean</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\and">classes\time_series\ts\and</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\apply">classes\time_series\ts\apply</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\asin">classes\time_series\ts\asin</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\asinh">classes\time_series\ts\asinh</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\atan">classes\time_series\ts\atan</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\atanh">classes\time_series\ts\atanh</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\automatic_model_selection">classes\time_series\ts\automatic_model_selection</a>                                            - H1 line
+%   <a href="matlab:help classes\time_series\ts\bar">classes\time_series\ts\bar</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\barh">classes\time_series\ts\barh</a>                                                                 - H1 line
+%   classes\time_series\ts\binary_operation                                                     - (No help available)
+%   <a href="matlab:help classes\time_series\ts\boxplot">classes\time_series\ts\boxplot</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\bsxfun">classes\time_series\ts\bsxfun</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\cat">classes\time_series\ts\cat</a>                                                                  -  concatenates time series along the specified dimension
+%   <a href="matlab:help classes\time_series\ts\collect">classes\time_series\ts\collect</a>                                                              -  - brings together several time series object into a one time series
+%   classes\time_series\ts\comparison                                                           - (No help available)
+%   <a href="matlab:help classes\time_series\ts\corr">classes\time_series\ts\corr</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\corrcoef">classes\time_series\ts\corrcoef</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\cos">classes\time_series\ts\cos</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\cosh">classes\time_series\ts\cosh</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\cot">classes\time_series\ts\cot</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\coth">classes\time_series\ts\coth</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\cov">classes\time_series\ts\cov</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\ctranspose">classes\time_series\ts\ctranspose</a>                                                           - H1 line
+%   <a href="matlab:help classes\time_series\ts\cumprod">classes\time_series\ts\cumprod</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\cumsum">classes\time_series\ts\cumsum</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\decompose_series">classes\time_series\ts\decompose_series</a>                                                     - H1 line
+%   <a href="matlab:help classes\time_series\ts\describe">classes\time_series\ts\describe</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\display">classes\time_series\ts\display</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\double">classes\time_series\ts\double</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\drop">classes\time_series\ts\drop</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\dummy">classes\time_series\ts\dummy</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\eq">classes\time_series\ts\eq</a>                                                                   - H1 line
+%   <a href="matlab:help classes\time_series\ts\exp">classes\time_series\ts\exp</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\expanding">classes\time_series\ts\expanding</a>                                                            - H1 line
+%   <a href="matlab:help classes\time_series\ts\fanchart">classes\time_series\ts\fanchart</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\ge">classes\time_series\ts\ge</a>                                                                   - H1 line
+%   <a href="matlab:help classes\time_series\ts\get">classes\time_series\ts\get</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\gt">classes\time_series\ts\gt</a>                                                                   - H1 line
+%   <a href="matlab:help classes\time_series\ts\head">classes\time_series\ts\head</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\hist">classes\time_series\ts\hist</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\horzcat">classes\time_series\ts\horzcat</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\hpfilter">classes\time_series\ts\hpfilter</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\index">classes\time_series\ts\index</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\interpolate">classes\time_series\ts\interpolate</a>                                                          - H1 line
+%   <a href="matlab:help classes\time_series\ts\intersect">classes\time_series\ts\intersect</a>                                                            - H1 line
+%   <a href="matlab:help classes\time_series\ts\isfinite">classes\time_series\ts\isfinite</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\isinf">classes\time_series\ts\isinf</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\isnan">classes\time_series\ts\isnan</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\jbtest">classes\time_series\ts\jbtest</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\kurtosis">classes\time_series\ts\kurtosis</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\le">classes\time_series\ts\le</a>                                                                   - H1 line
+%   <a href="matlab:help classes\time_series\ts\log">classes\time_series\ts\log</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\lt">classes\time_series\ts\lt</a>                                                                   - H1 line
+%   classes\time_series\ts\main_frame                                                           - (No help available)
+%   <a href="matlab:help classes\time_series\ts\max">classes\time_series\ts\max</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\mean">classes\time_series\ts\mean</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\median">classes\time_series\ts\median</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\min">classes\time_series\ts\min</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\minus">classes\time_series\ts\minus</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\mode">classes\time_series\ts\mode</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\mpower">classes\time_series\ts\mpower</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\mrdivide">classes\time_series\ts\mrdivide</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\mtimes">classes\time_series\ts\mtimes</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\nan">classes\time_series\ts\nan</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\ne">classes\time_series\ts\ne</a>                                                                   - H1 line
+%   <a href="matlab:help classes\time_series\ts\numel">classes\time_series\ts\numel</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\ones">classes\time_series\ts\ones</a>                                                                 -  overloads ones for ts objects
+%   <a href="matlab:help classes\time_series\ts\pages2struct">classes\time_series\ts\pages2struct</a>                                                         - H1 line
+%   <a href="matlab:help classes\time_series\ts\plot">classes\time_series\ts\plot</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\plotyy">classes\time_series\ts\plotyy</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\plus">classes\time_series\ts\plus</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\power">classes\time_series\ts\power</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\prctile">classes\time_series\ts\prctile</a>                                                              -  Percentiles of a time series (ts)
+%   classes\time_series\ts\process_subs                                                         - (No help available)
+%   <a href="matlab:help classes\time_series\ts\quantile">classes\time_series\ts\quantile</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\rand">classes\time_series\ts\rand</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\randn">classes\time_series\ts\randn</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\range">classes\time_series\ts\range</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\rdivide">classes\time_series\ts\rdivide</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\regress">classes\time_series\ts\regress</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\reset_start_date">classes\time_series\ts\reset_start_date</a>                                                     - H1 line
+%   <a href="matlab:help classes\time_series\ts\rolling">classes\time_series\ts\rolling</a>                                                              - H1 line
+%   classes\time_series\ts\set_locations                                                        - (No help available)
+%   <a href="matlab:help classes\time_series\ts\sin">classes\time_series\ts\sin</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\sinh">classes\time_series\ts\sinh</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\skewness">classes\time_series\ts\skewness</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\sort">classes\time_series\ts\sort</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\spectrum">classes\time_series\ts\spectrum</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\std">classes\time_series\ts\std</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\step_dummy">classes\time_series\ts\step_dummy</a>                                                           - H1 line
+%   <a href="matlab:help classes\time_series\ts\subsasgn">classes\time_series\ts\subsasgn</a>                                                             - H1 line
+%   <a href="matlab:help classes\time_series\ts\subsref">classes\time_series\ts\subsref</a>                                                              - H1 line
+%   <a href="matlab:help classes\time_series\ts\sum">classes\time_series\ts\sum</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\tail">classes\time_series\ts\tail</a>                                                                 - H1 line
+%   <a href="matlab:help classes\time_series\ts\times">classes\time_series\ts\times</a>                                                                - H1 line
+%   <a href="matlab:help classes\time_series\ts\transform">classes\time_series\ts\transform</a>                                                            - H1 line
+%   <a href="matlab:help classes\time_series\ts\transpose">classes\time_series\ts\transpose</a>                                                            - H1 line
+%   classes\time_series\ts\ts                                                                   - (No help available)
+%   classes\time_series\ts\ts_roll_or_expand                                                    - (No help available)
+%   <a href="matlab:help classes\time_series\ts\uminus">classes\time_series\ts\uminus</a>                                                               - H1 line
+%   classes\time_series\ts\unary_operation                                                      - (No help available)
+%   <a href="matlab:help classes\time_series\ts\values">classes\time_series\ts\values</a>                                                               - H1 line
+%   <a href="matlab:help classes\time_series\ts\var">classes\time_series\ts\var</a>                                                                  - H1 line
+%   <a href="matlab:help classes\time_series\ts\zeros">classes\time_series\ts\zeros</a>                                                                - H1 line

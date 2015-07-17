@@ -1,0 +1,1727 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Reduced-form VAR modeling &mdash; RISE 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RISE 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Structural VAR modeling" href="../@svar/svar.html" />
+    <link rel="prev" title="Markov Switching Dynamic Stochastic General Equilibrium Modeling" href="../@dsge/dsge.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../@svar/svar.html" title="Structural VAR modeling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../@dsge/dsge.html" title="Markov Switching Dynamic Stochastic General Equilibrium Modeling"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="reduced-form-var-modeling">
+<h1>Reduced-form VAR modeling<a class="headerlink" href="#reduced-form-var-modeling" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="rfvar-methods">
+<h2>rfvar Methods:<a class="headerlink" href="#rfvar-methods" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[ <a class="reference internal" href="#check-identification">check_identification</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#check-optimum">check_optimum</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#draw-parameter">draw_parameter</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#estimate">estimate</a> ]  estimates the parameters of a RISE model</li>
+<li>[ <a class="reference internal" href="#forecast">forecast</a> ]  computes forecasts for rise|dsge|svar|rfvar models</li>
+<li>[ <a class="reference internal" href="#get">get</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#historical-decomposition">historical_decomposition</a> ] Computes historical decompositions of a DSGE model</li>
+<li>[ <a class="reference internal" href="#irf">irf</a> ]  computes impulse responses for a RISE model</li>
+<li>[ <a class="reference internal" href="#isnan">isnan</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#load-parameters">load_parameters</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log-marginal-data-density">log_marginal_data_density</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log-posterior-kernel">log_posterior_kernel</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log-prior-density">log_prior_density</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#msvar-priors">msvar_priors</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#posterior-marginal-and-prior-densities">posterior_marginal_and_prior_densities</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#posterior-simulator">posterior_simulator</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#print-estimation-results">print_estimation_results</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#prior-plots">prior_plots</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#refresh">refresh</a> ]  refresh the options of an old object with a newer version of</li>
+<li>[ <a class="reference internal" href="#report">report</a> ] assigns the elements of interest to a rise_report.report object</li>
+<li>[ <a class="reference internal" href="#rfvar">rfvar</a> ] Reduced-form VAR modeling</li>
+<li>[ <a class="reference internal" href="#set">set</a> ]  sets options for RISE models</li>
+<li>[ <a class="reference internal" href="#set-solution-to-companion">set_solution_to_companion</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#simulate">simulate</a> ]  simulates a RISE model</li>
+<li>[ <a class="reference internal" href="#simulation-diagnostics">simulation_diagnostics</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#solve">solve</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#stoch-simul">stoch_simul</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#structural-form">structural_form</a> ] finds A structural form given the imposed restrictions</li>
+<li>[ <a class="reference internal" href="#template">template</a> ]</li>
+<li>[ <a class="reference internal" href="#theoretical-autocorrelations">theoretical_autocorrelations</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#theoretical-autocovariances">theoretical_autocovariances</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#variance-decomposition">variance_decomposition</a> ]   H1 line</li>
+</ul>
+</div>
+<div class="section" id="rfvar-properties">
+<h2>rfvar Properties:<a class="headerlink" href="#rfvar-properties" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[ <a class="reference internal" href="#identification">identification</a> ] information</li>
+<li>[ <a class="reference internal" href="#structural-shocks">structural_shocks</a> ]   information on structural shocks</li>
+<li>[ <a class="reference internal" href="#nonlinear-restrictions">nonlinear_restrictions</a> ]   information on nonlinear restrictions</li>
+<li>[ <a class="reference internal" href="#constant">constant</a> ]   true if VAR has a constant</li>
+<li>[ <a class="reference internal" href="#nlags">nlags</a> ]   number of lags in the VAR</li>
+<li>[ <a class="reference internal" href="#legend">legend</a> ]   attribute for giving a tag to a specific version of a model</li>
+<li>[ <a class="reference internal" href="#endogenous">endogenous</a> ]   information on endogenous variables (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#exogenous">exogenous</a> ]   information on exogenous variables (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#parameters">parameters</a> ]   information on parameters (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#observables">observables</a> ]   information on observable variables (names, number, types, etc.)</li>
+<li>[ <a class="reference internal" href="#markov-chains">markov_chains</a> ]   information on markov chains, regimes and related items</li>
+<li>[ <a class="reference internal" href="#options">options</a> ]   structure holding information on modifiable settings</li>
+<li>[ <a class="reference internal" href="#estimation">estimation</a> ]   information on estimation: posterior maximization and simulation</li>
+<li>[ <a class="reference internal" href="#solution">solution</a> ]   model solution including steady state, definitions, etc.</li>
+<li>[ <a class="reference internal" href="#filtering">filtering</a> ]   structure holding predicted, updated and smoothed series</li>
+</ul>
+<hr class="docutils" />
+<hr class="docutils" />
+</div>
+<div class="section" id="check-identification">
+<span id="id1"></span><h2>check_identification<a class="headerlink" href="#check-identification" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="syntax">
+<h3>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="more-about">
+<h3>More About<a class="headerlink" href="#more-about" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="check-optimum">
+<span id="id2"></span><h2>check_optimum<a class="headerlink" href="#check-optimum" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id3">
+<h3>Syntax<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id4">
+<h3>Inputs<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id5">
+<h3>Outputs<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id6">
+<h3>More About<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id7">
+<h3>Examples<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/check_optimum is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="constant">
+<span id="id8"></span><h2>constant<a class="headerlink" href="#constant" title="Permalink to this headline">¶</a></h2>
+<p>true if VAR has a constant</p>
+<p>Help for rfvar/constant is inherited from superclass SVAR</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="draw-parameter">
+<span id="id9"></span><h2>draw_parameter<a class="headerlink" href="#draw-parameter" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id10">
+<h3>Syntax<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id11">
+<h3>Inputs<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id12">
+<h3>Outputs<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id13">
+<h3>More About<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id14">
+<h3>Examples<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/draw_parameter is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="endogenous">
+<span id="id15"></span><h2>endogenous<a class="headerlink" href="#endogenous" title="Permalink to this headline">¶</a></h2>
+<p>information on endogenous variables (names, number, types, etc.)</p>
+<p>Help for rfvar/endogenous is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="estimate">
+<span id="id16"></span><h2>estimate<a class="headerlink" href="#estimate" title="Permalink to this headline">¶</a></h2>
+<p><strong>estimate</strong> - estimates the parameters of a RISE model</p>
+<div class="section" id="id17">
+<h3>Syntax<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">obj</span><span class="o">=</span><span class="n">estimate</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="n">obj</span><span class="o">=</span><span class="n">estimate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h3>Inputs<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>obj</strong> [rise|dsge|rfvar|svar]: model object</p>
+</li>
+<li><p class="first"><strong>varargin</strong> additional optional inputs among which the most relevant
+for estimation are:</p>
+</li>
+<li><p class="first"><strong>estim_parallel</strong> [integer|{1}]: Number of starting values</p>
+</li>
+<li><p class="first"><strong>estim_start_from_mode</strong> [true|false|{[]}]: when empty, the user is
+prompted to answer the question as to whether to start estimation from
+a previously found mode or not. If true or false, no question is asked.</p>
+</li>
+<li><p class="first"><strong>estim_start_date</strong> [numeric|char|serial date]: date of the first
+observation to use in the dataset provided for estimation</p>
+</li>
+<li><p class="first"><strong>estim_end_date</strong> [numeric|char|serial date]: date of the last
+observation to use in the dataset provided for estimation</p>
+</li>
+<li><p class="first"><strong>estim_max_trials</strong> [integer|{500}]: When the initial value of the
+log-likelihood is too low, RISE uniformly draws from the prior support
+in search for a better starting point. It will try this for a maximum
+number of <strong>estim_max_trials</strong> times before squeaking with an error.</p>
+</li>
+<li><p class="first"><strong>estim_start_vals</strong> [{[]}|struct]: when not empty, the parameters
+whose names are fields of the structure will see their start values
+updated or overriden by the information in <strong>estim_start_vals</strong>. There
+is no need to provide values to update the start values for the
+estimated parameters.</p>
+</li>
+<li><p class="first"><strong>estim_general_restrictions</strong> [{[]}|function handle]: when not empty,
+the argument should be a function handle that takes as input a
+parameterized RISE object and returns a scalar or vector of numbers
+representing the strength of the violation of the nonlinear
+constraints. Those constraints will be added to the constraints already
+included in a rise/dsge file before being presented to the optimization
+function.</p>
+</li>
+<li><p class="first"><strong>estim_linear_restrictions</strong> [{[]}|cell]: This is most often used in
+the estimation of rfvar or svar models either to impose block
+exogeneity or to impose other forms of linear restrictions. When not
+empty, <strong>estim_linear_restrictions</strong> must be a 2-column cell:
+- Each row of the first column represents a particular linear
+combination of the estimated parameters. Those linear combinations are
+constructed using the <strong>coef</strong> class. Check help for coef.coef for more
+details.
+- Each row of the second column holds the value of the linear
+combination.</p>
+</li>
+<li><p class="first"><strong>estim_blocks</strong> [{[]}|cell]: When not empty, this triggers blockwise
+optimization. For further information on how to set blocks, see help
+for dsge.create_estimation_blocks</p>
+</li>
+<li><p class="first"><strong>estim_priors</strong> [{[]}|struct]: This provides an alternative to
+setting priors inside the rise/dsge model file. Each field of the
+structure must be the name of an estimated parameter. Each field will
+hold a cell array whose structure is described in help
+rise_generic.setup_priors.</p>
+</li>
+<li><p class="first"><strong>estim_penalty</strong> [numeric|{1e+8}]: value of the objective function
+when a problem occurs. Possible problems include:
+- no solution found
+- very low likelihood
+- stochastic singularity
+- problems computing the initial covariance matrix
+- non-positive definite covariance matrices
+- etc.</p>
+</li>
+<li><p class="first"><strong>estim_cond_vars</strong> [char|cellstr]: list of the variables to condition
+on during estimation of a dsge model. This then assumes that the data
+provided for estimation have several pages. The first page is the
+actual data, while the subsequent pages are the expectations data.</p>
+</li>
+<li><p class="first"><strong>optimset</strong> [struct]: identical to matlab&#8217;s optimset</p>
+</li>
+<li><p class="first"><strong>optimizer</strong> [char|function handle|cell]: This can be the name of a
+standard matlab optimizer or RISE optimization routine or a
+user-defined optimization procedure available of the matlab search
+path. If the optimzer is provided as a cell, then the first element of
+the cell is the name of the optimizer or its handle and the remaining
+entries in the cell are additional input arguments to the user-defined
+optimization routine. A user-defined optimization function should have
+the following syntax</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">xfinal</span><span class="p">,</span><span class="n">ffinal</span><span class="p">,</span><span class="n">exitflag</span><span class="p">]</span><span class="o">=</span><span class="n">optimizer</span><span class="p">(</span><span class="n">fh</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">lb</span><span class="p">,</span><span class="n">ub</span><span class="p">,</span><span class="n">options</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>That is, it accepts as inputs:</dt>
+<dd><ul class="first last">
+<li><p class="first"><strong>fh</strong>: the function to optimize</p>
+</li>
+<li><p class="first"><strong>x0</strong>: a vector column of initial values of the parameters</p>
+</li>
+<li><p class="first"><strong>lb</strong>: a vector column of lower bounds</p>
+</li>
+<li><p class="first"><strong>ub</strong>: a vector column of upper bounds</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>options</strong>: a structure of options whose fields will be similar</dt>
+<dd><p class="first last">to matlab&#8217;s optimset</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>varargin</strong>: additional arguments to the user-defined</dt>
+<dd><p class="first last">optimization procedure</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>That is, it provides as outputs:</dt>
+<dd><ul class="first simple">
+<li><strong>xfinal</strong>: the vector of final values</li>
+<li><strong>ffinal</strong>: the value of <strong>fh</strong> at <strong>xfinal</strong></li>
+<li><strong>exitflag</strong>: a flag similar to the ones provided by matlab&#8217;s</li>
+</ul>
+<p class="last">optimization functions.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>hessian_type</strong> [{&#8216;fd&#8217;}|&#8217;opg&#8217;]: The hessian is either computed by
+finite differences (fd) or by outer-product-gradient (opg)</p>
+</li>
+<li><p class="first"><strong>hessian_repair</strong> [{false}|true]: If the Hessian is not positive
+definite, it nevertheless can be repaired and prepared for a potential
+mcmc simulation.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id19">
+<h3>Outputs<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|rfvar|svar]: model object parameterized with the
+mode found and holding additional estimation results and statistics
+that can be found under obj.estimation</li>
+</ul>
+</div>
+<div class="section" id="id20">
+<h3>More About<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>recursive estimation may be done easily by passing a different
+estim_end_date at the beginning of each estimation run.</li>
+</ul>
+</div>
+<div class="section" id="id21">
+<h3>Examples<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/estimate is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="estimation">
+<span id="id22"></span><h2>estimation<a class="headerlink" href="#estimation" title="Permalink to this headline">¶</a></h2>
+<p>information on estimation: posterior maximization and simulation</p>
+<p>Help for rfvar/estimation is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="exogenous">
+<span id="id23"></span><h2>exogenous<a class="headerlink" href="#exogenous" title="Permalink to this headline">¶</a></h2>
+<p>information on exogenous variables (names, number, types, etc.)</p>
+<p>Help for rfvar/exogenous is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="filtering">
+<span id="id24"></span><h2>filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<p>structure holding predicted, updated and smoothed series</p>
+<p>Help for rfvar/filtering is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="forecast">
+<span id="id25"></span><h2>forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h2>
+<p><strong>forecast</strong> - computes forecasts for rise|dsge|svar|rfvar models</p>
+<div class="section" id="id26">
+<h3>Syntax<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">cond_fkst_db</span><span class="o">=</span><span class="n">forecast</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h3>Inputs<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</p>
+</li>
+<li><p class="first"><strong>varargin</strong> : additional inputs coming in pairs. These include but are
+not restricted to:
+- <strong>forecast_to_time_series</strong> [{true}|false]: sets the output to time</p>
+<blockquote>
+<div><p>series format or not</p>
+</div></blockquote>
+<ul>
+<li><p class="first"><strong>forecast_nsteps</strong> [integer|{12}]: number of forecasting steps</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>forecast_start_date</strong> [char|numeric|serial date]: date when the</dt>
+<dd><p class="first last">forecasts start (end of history + 1)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>forecast_conditional_hypothesis</strong> [{jma}|ncp|nas]: in dsge models in</dt>
+<dd><p class="first">which agents have information beyond the current period, this
+option determines the number of periods of shocks need to match the
+restrictions:
+- Hypothesis <strong>jma</strong> assumes that irrespective of how</p>
+<blockquote>
+<div><p>many periods of conditioning information are remaining, agents
+always receive information on the same number of shocks.</p>
+</div></blockquote>
+<ul class="last">
+<li><dl class="first docutils">
+<dt>Hypothesis <strong>ncp</strong> assumes there are as many shocks periods as</dt>
+<dd><p class="first last">the number of the number of conditioning periods</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Hypothesis <strong>nas</strong> assumes there are as many shocks periods as</dt>
+<dd><p class="first last">the number of anticipated steps</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id28">
+<h3>Outputs<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>cond_fkst_db</strong> [struct|matrix]: depending on the value of
+<strong>forecast_to_time_series</strong> the returned output is a structure with
+time series or a cell containing a matrix and the information to
+reconstruct the time series.</li>
+</ul>
+</div>
+<div class="section" id="id29">
+<h3>More About<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>the historical information as well as the conditioning information come
+from the same database. The time series must be organized such that for
+each series, the first page represents the actual data and all
+subsequent pages represent conditional information. If a particular
+condition is &#8220;nan&#8221;, that location is not constrained</li>
+<li>Conditional forecasting for nonlinear models is also supported.
+However, the solving of the implied nonlinear problem may fail if the
+model displays instability</li>
+<li>Both HARD CONDITIONS and SOFT CONDITIONS are implemented but the latter
+are currently disabled in expectation of a better user interface.</li>
+<li>The data may also contain time series for a variable with name
+<strong>regime</strong> in that case, the forecast/simulation paths are computed
+following the information therein. <strong>regime</strong> must be a member of 1:h,
+where h is the maximum number of regimes.</li>
+</ul>
+</div>
+<div class="section" id="id30">
+<h3>Examples<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
+<p>See also: simulate</p>
+<p>Help for rfvar/forecast is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="get">
+<span id="id31"></span><h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id32">
+<h3>Syntax<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id33">
+<h3>Inputs<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id34">
+<h3>Outputs<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id35">
+<h3>More About<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id36">
+<h3>Examples<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/get is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="historical-decomposition">
+<span id="id37"></span><h2>historical_decomposition<a class="headerlink" href="#historical-decomposition" title="Permalink to this headline">¶</a></h2>
+<p><strong>historical_decomposition</strong> Computes historical decompositions of a DSGE model</p>
+<div class="section" id="id38">
+<h3>Syntax<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">Histdec</span><span class="p">,</span><span class="n">obj</span><span class="p">]</span><span class="o">=</span><span class="n">history_dec</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="p">[</span><span class="n">Histdec</span><span class="p">,</span><span class="n">obj</span><span class="p">]</span><span class="o">=</span><span class="n">history_dec</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id39">
+<h3>Inputs<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">obj : [rise|dsge|rfvar|svar] model(s) for which to compute the
+decomposition. obj could be a vector of models</p>
+</li>
+<li><p class="first">varargin : standard optional inputs <strong>coming in pairs</strong>. Among which:
+- <strong>histdec_start_date</strong> : [char|numeric|{&#8216;&#8217;}] : date at which the</p>
+<blockquote>
+<div><p>decomposition starts. If empty, the decomposition starts at he
+beginning of the history of the dataset</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="id40">
+<h3>Outputs<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Histdec : [struct|cell array] structure or cell array of structures
+with the decompositions in each model. The decompositions are given in
+terms of:
+- the exogenous variables
+- <strong>InitialConditions</strong> : the effect of initial conditions
+- <strong>risk</strong> : measure of the effect of non-certainty equivalence
+- <strong>switch</strong> : the effect of switching (which is also a shock!!!)
+- <strong>steady_state</strong> : the contribution of the steady state</li>
+</ul>
+</div>
+<div class="section" id="remarks">
+<h3>Remarks<a class="headerlink" href="#remarks" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>the elements that do not contribute to any of the variables are
+automatically discarded.</li>
+<li><strong>N.B</strong> : a switching model is inherently nonlinear and so, strictly
+speaking, the type of decomposition we do for linear/linearized
+constant-parameter models is not feasible. RISE takes an approximation
+in which the variables, shocks and states matrices across states are
+averaged. The averaging weights are the smoothed probabilities.</li>
+</ul>
+</div>
+<div class="section" id="id41">
+<h3>Examples<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/historical_decomposition is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="identification">
+<span id="id42"></span><h2>identification<a class="headerlink" href="#identification" title="Permalink to this headline">¶</a></h2>
+<p><strong>identification</strong> information</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="irf">
+<span id="id43"></span><h2>irf<a class="headerlink" href="#irf" title="Permalink to this headline">¶</a></h2>
+<p><strong>irf</strong> - computes impulse responses for a RISE model</p>
+<div class="section" id="id44">
+<h3>Syntax<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myirfs</span><span class="o">=</span><span class="n">irf</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="n">myirfs</span><span class="o">=</span><span class="n">irf</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id45">
+<h3>Inputs<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>obj</strong> [rise|dsge|rfvar|svar]: single or vector of RISE models</p>
+</li>
+<li><p class="first"><strong>varargin</strong> : optional options coming in pairs. The notable ones that
+will influence the behavior of the impulse responses are:</p>
+</li>
+<li><p class="first"><strong>irf_shock_list</strong> [char|cellstr|{&#8216;&#8217;}]: list of shocks for which we
+want to compute impulse responses</p>
+</li>
+<li><p class="first"><strong>irf_var_list</strong> [char|cellstr|{&#8216;&#8217;}]: list of the endogenous variables
+we want to report</p>
+</li>
+<li><p class="first"><strong>irf_periods</strong> [integer|{40}]: length of the irfs</p>
+</li>
+<li><p class="first"><strong>irf_shock_sign</strong> [numeric|-1|{1}]: sign or scale of the original
+impulse. If <strong>irf_shock_sign</strong> &gt;0, we get impulse responses to a
+positive shock. If <strong>irf_shock_sign</strong> &lt;0, the responses are negative.
+If If <strong>irf_shock_sign</strong> =0, all the responses are 0.</p>
+</li>
+<li><p class="first"><strong>irf_draws</strong> [integer|{50}]: number of draws used in the simulation
+impulse responses in a nonlinear model. A nonlinear model is defined as
+a model that satisfies at least one of the following criteria
+- solved at an order &gt;1
+- has more than one regime and option <strong>irf_regime_specific</strong> below is</p>
+<blockquote>
+<div><p>set to false</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>irf_type</strong> [{irf}|girf]: type of irfs. If the type is irf, the
+impulse responses are computed directly exploiting the fact that the
+model is linear. If the type is girf, the formula for the generalized
+impulse responses is used: the irf is defined as the expectation of the
+difference of two simulation paths. In the first path the initial
+impulse for the shock of interest is nonzero while it is zero for the
+second path. All other shocks are the same for both paths in a given
+simulation.</p>
+</li>
+<li><p class="first"><strong>irf_regime_specific</strong> [{true}|false]: In a switching model, we may or
+may not want to compute impulse responses specific to each regime.</p>
+</li>
+<li><p class="first"><strong>irf_use_historical_data</strong> [{false}|true]: if true, the data stored in
+option <strong>simul_historical_data</strong> are used as initial conditions. But
+the model has to be nonlinear otherwise the initial conditions are set
+to zero. This option gives the flexibility to set the initial
+conditions for the impulse responses.</p>
+</li>
+<li><p class="first"><strong>irf_to_time_series</strong> [{true}|false]: If true, the output is in the
+form of time series. Else it is in the form of a cell containing the
+information needed to reconstruct the time series.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id46">
+<h3>Outputs<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>myirfs</strong> [{struct}|cell]: Impulse response data</li>
+</ul>
+</div>
+<div class="section" id="id47">
+<h3>More About<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>for linear models or models solved up to first order, the initial
+conditions as well as the steady states are set to 0 in the computation
+of the impulse responses.</li>
+<li>for nonlinear models, the initial conditions is the ergodic mean</li>
+</ul>
+</div>
+<div class="section" id="id48">
+<h3>Examples<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/irf is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="isnan">
+<span id="id49"></span><h2>isnan<a class="headerlink" href="#isnan" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id50">
+<h3>Syntax<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id51">
+<h3>Inputs<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id52">
+<h3>Outputs<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id53">
+<h3>More About<a class="headerlink" href="#id53" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id54">
+<h3>Examples<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/isnan is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="legend">
+<span id="id55"></span><h2>legend<a class="headerlink" href="#legend" title="Permalink to this headline">¶</a></h2>
+<p>attribute for giving a tag to a specific version of a model</p>
+<p>Help for rfvar/legend is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="load-parameters">
+<span id="id56"></span><h2>load_parameters<a class="headerlink" href="#load-parameters" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id57">
+<h3>Syntax<a class="headerlink" href="#id57" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id58">
+<h3>Inputs<a class="headerlink" href="#id58" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id59">
+<h3>Outputs<a class="headerlink" href="#id59" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id60">
+<h3>More About<a class="headerlink" href="#id60" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id61">
+<h3>Examples<a class="headerlink" href="#id61" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/load_parameters is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="log-marginal-data-density">
+<span id="id62"></span><h2>log_marginal_data_density<a class="headerlink" href="#log-marginal-data-density" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id63">
+<h3>Syntax<a class="headerlink" href="#id63" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id64">
+<h3>Inputs<a class="headerlink" href="#id64" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id65">
+<h3>Outputs<a class="headerlink" href="#id65" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id66">
+<h3>More About<a class="headerlink" href="#id66" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id67">
+<h3>Examples<a class="headerlink" href="#id67" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/log_marginal_data_density is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="log-posterior-kernel">
+<span id="id68"></span><h2>log_posterior_kernel<a class="headerlink" href="#log-posterior-kernel" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id69">
+<h3>Syntax<a class="headerlink" href="#id69" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id70">
+<h3>Inputs<a class="headerlink" href="#id70" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id71">
+<h3>Outputs<a class="headerlink" href="#id71" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id72">
+<h3>More About<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id73">
+<h3>Examples<a class="headerlink" href="#id73" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/log_posterior_kernel is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="log-prior-density">
+<span id="id74"></span><h2>log_prior_density<a class="headerlink" href="#log-prior-density" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id75">
+<h3>Syntax<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id76">
+<h3>Inputs<a class="headerlink" href="#id76" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id77">
+<h3>Outputs<a class="headerlink" href="#id77" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id78">
+<h3>More About<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id79">
+<h3>Examples<a class="headerlink" href="#id79" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/log_prior_density is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="markov-chains">
+<span id="id80"></span><h2>markov_chains<a class="headerlink" href="#markov-chains" title="Permalink to this headline">¶</a></h2>
+<p>information on markov chains, regimes and related items</p>
+<p>Help for rfvar/markov_chains is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="msvar-priors">
+<span id="id81"></span><h2>msvar_priors<a class="headerlink" href="#msvar-priors" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id82">
+<h3>Syntax<a class="headerlink" href="#id82" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id83">
+<h3>Inputs<a class="headerlink" href="#id83" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id84">
+<h3>Outputs<a class="headerlink" href="#id84" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id85">
+<h3>More About<a class="headerlink" href="#id85" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id86">
+<h3>Examples<a class="headerlink" href="#id86" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/msvar_priors is inherited from superclass SVAR</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="nlags">
+<span id="id87"></span><h2>nlags<a class="headerlink" href="#nlags" title="Permalink to this headline">¶</a></h2>
+<p>number of lags in the VAR</p>
+<p>Help for rfvar/nlags is inherited from superclass SVAR</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="nonlinear-restrictions">
+<span id="id88"></span><h2>nonlinear_restrictions<a class="headerlink" href="#nonlinear-restrictions" title="Permalink to this headline">¶</a></h2>
+<p>information on nonlinear restrictions</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="observables">
+<span id="id89"></span><h2>observables<a class="headerlink" href="#observables" title="Permalink to this headline">¶</a></h2>
+<p>information on observable variables (names, number, types, etc.)</p>
+<p>Help for rfvar/observables is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="options">
+<span id="id90"></span><h2>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<p>structure holding information on modifiable settings</p>
+<p>Help for rfvar/options is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="parameters">
+<span id="id91"></span><h2>parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>information on parameters (names, number, types, etc.)</p>
+<p>Help for rfvar/parameters is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="posterior-marginal-and-prior-densities">
+<span id="id92"></span><h2>posterior_marginal_and_prior_densities<a class="headerlink" href="#posterior-marginal-and-prior-densities" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id93">
+<h3>Syntax<a class="headerlink" href="#id93" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id94">
+<h3>Inputs<a class="headerlink" href="#id94" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id95">
+<h3>Outputs<a class="headerlink" href="#id95" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id96">
+<h3>More About<a class="headerlink" href="#id96" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id97">
+<h3>Examples<a class="headerlink" href="#id97" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/posterior_marginal_and_prior_densities is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="posterior-simulator">
+<span id="id98"></span><h2>posterior_simulator<a class="headerlink" href="#posterior-simulator" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id99">
+<h3>Syntax<a class="headerlink" href="#id99" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id100">
+<h3>Inputs<a class="headerlink" href="#id100" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id101">
+<h3>Outputs<a class="headerlink" href="#id101" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id102">
+<h3>More About<a class="headerlink" href="#id102" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id103">
+<h3>Examples<a class="headerlink" href="#id103" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/posterior_simulator is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="print-estimation-results">
+<span id="id104"></span><h2>print_estimation_results<a class="headerlink" href="#print-estimation-results" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id105">
+<h3>Syntax<a class="headerlink" href="#id105" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id106">
+<h3>Inputs<a class="headerlink" href="#id106" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id107">
+<h3>Outputs<a class="headerlink" href="#id107" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id108">
+<h3>More About<a class="headerlink" href="#id108" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id109">
+<h3>Examples<a class="headerlink" href="#id109" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/print_estimation_results is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="prior-plots">
+<span id="id110"></span><h2>prior_plots<a class="headerlink" href="#prior-plots" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id111">
+<h3>Syntax<a class="headerlink" href="#id111" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id112">
+<h3>Inputs<a class="headerlink" href="#id112" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id113">
+<h3>Outputs<a class="headerlink" href="#id113" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id114">
+<h3>More About<a class="headerlink" href="#id114" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id115">
+<h3>Examples<a class="headerlink" href="#id115" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/prior_plots is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="refresh">
+<span id="id116"></span><h2>refresh<a class="headerlink" href="#refresh" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>refresh</strong> - refresh the options of an old object with a newer version of</dt>
+<dd>the software</dd>
+</dl>
+<div class="section" id="id117">
+<h3>Syntax<a class="headerlink" href="#id117" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">newobj</span><span class="o">=</span><span class="n">refresh</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id118">
+<h3>Inputs<a class="headerlink" href="#id118" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</li>
+</ul>
+</div>
+<div class="section" id="id119">
+<h3>Outputs<a class="headerlink" href="#id119" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|svar|rfvar]: refreshed model object</li>
+</ul>
+</div>
+<div class="section" id="id120">
+<h3>More About<a class="headerlink" href="#id120" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id121">
+<h3>Examples<a class="headerlink" href="#id121" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/refresh is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="report">
+<span id="id122"></span><h2>report<a class="headerlink" href="#report" title="Permalink to this headline">¶</a></h2>
+<p><strong>REPORT</strong> assigns the elements of interest to a rise_report.report object</p>
+<div class="section" id="id123">
+<h3>Syntax<a class="headerlink" href="#id123" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>::</dt>
+<dd><ul class="first last simple">
+<li>REPORT(rise.empty(0)) : displays the default inputs</li>
+<li>REPORT(obj,destination_root,rep_items) : assigns the reported
+elements in rep_items to destination_root</li>
+<li>REPORT(obj,destination_root,rep_items,varargin) : assigns varargin to
+obj before doing the rest</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="id124">
+<h3>Inputs<a class="headerlink" href="#id124" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>obj : [rise|dsge]</li>
+<li>destination_root : [rise_report.report] : handle for the actual report</li>
+<li>rep_items : [char|cellstr] : list of desired items to report. This list
+can only include : &#8216;endogenous&#8217;, &#8216;exogenous&#8217;, &#8216;observables&#8217;,
+&#8216;parameters&#8217;, &#8216;solution&#8217;, &#8216;estimation&#8217;, &#8216;estimation_statistics&#8217;,
+&#8216;equations&#8217;, &#8216;code&#8217;</li>
+</ul>
+</div>
+<div class="section" id="id125">
+<h3>Outputs<a class="headerlink" href="#id125" title="Permalink to this headline">¶</a></h3>
+<p>none</p>
+</div>
+<div class="section" id="id126">
+<h3>More About<a class="headerlink" href="#id126" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id127">
+<h3>Examples<a class="headerlink" href="#id127" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/report is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="rfvar">
+<span id="id128"></span><h2>rfvar<a class="headerlink" href="#rfvar" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="set">
+<span id="id129"></span><h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
+<p><strong>set</strong> - sets options for RISE models</p>
+<div class="section" id="id130">
+<h3>Syntax<a class="headerlink" href="#id130" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">obj</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id131">
+<h3>Inputs<a class="headerlink" href="#id131" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</li>
+<li><strong>varargin</strong> : valid input arguments coming in pairs.</li>
+</ul>
+</div>
+<div class="section" id="id132">
+<h3>Outputs<a class="headerlink" href="#id132" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>obj</strong> [rise|dsge|svar|rfvar]: model object</li>
+</ul>
+</div>
+<div class="section" id="id133">
+<h3>More About<a class="headerlink" href="#id133" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>one can force a new field into the options by prefixing it with a &#8216;+&#8217;
+sign. Let&#8217;s say yourfield is not part of the options and you would like
+to force it to be in the options because it is going to be used in some
+function or algorithm down the road. Then you can run
+m=set(m,&#8217;+yourfield&#8217;,value). then m will be part of the new options.</li>
+</ul>
+</div>
+<div class="section" id="id134">
+<h3>Examples<a class="headerlink" href="#id134" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/set is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="set-solution-to-companion">
+<span id="id135"></span><h2>set_solution_to_companion<a class="headerlink" href="#set-solution-to-companion" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id136">
+<h3>Syntax<a class="headerlink" href="#id136" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id137">
+<h3>Inputs<a class="headerlink" href="#id137" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id138">
+<h3>Outputs<a class="headerlink" href="#id138" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id139">
+<h3>More About<a class="headerlink" href="#id139" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id140">
+<h3>Examples<a class="headerlink" href="#id140" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/set_solution_to_companion is inherited from superclass SVAR</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="simulate">
+<span id="id141"></span><h2>simulate<a class="headerlink" href="#simulate" title="Permalink to this headline">¶</a></h2>
+<p><strong>simulate</strong> - simulates a RISE model</p>
+<div class="section" id="id142">
+<h3>Syntax<a class="headerlink" href="#id142" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">db</span><span class="p">,</span><span class="n">states</span><span class="p">,</span><span class="n">retcode</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id143">
+<h3>Inputs<a class="headerlink" href="#id143" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>obj</strong> [rfvar|dsge|rise|svar]: model object</p>
+</li>
+<li><p class="first"><strong>varargin</strong> : additional arguments including but not restricted to</p>
+<ul>
+<li><p class="first"><strong>simul_periods</strong> [integer|{100}]: number of simulation periods</p>
+</li>
+<li><p class="first"><strong>simul_burn</strong> [integer|{100}]: number of burn-in periods</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_algo</strong> [[{mt19937ar}| mcg16807|mlfg6331_64|mrg32k3a|</dt>
+<dd><p class="first last">shr3cong|swb2712]]: matlab&#8217;s seeding algorithms</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>simul_seed</strong> [numeric|{0}]: seed of the computations</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_historical_data</strong> [ts|struct|{&#8216;&#8217;}]: historical data from</dt>
+<dd><p class="first last">which the simulations are based. If empty, the simulations start at
+the steady state.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_history_end_date</strong> [char|integer|serial date]: last date of</dt>
+<dd><p class="first last">history</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_regime</strong> [integer|vector|{[]}]: regimes for which the model</dt>
+<dd><p class="first last">is simulated</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_update_shocks_handle</strong> [function handle]: we may want to</dt>
+<dd><p class="first last">update the shocks if some condition on the state of the economy is
+satisfied. For instance, shock monetary policy to keep the interest
+rate at the floor for an extented period of time if we already are
+at the ZLB/ZIF. simul_update_shocks_handle takes as inputs the
+current shocks and the state vector (all the endogenous variables)
+and returns the updated shocks. But for all this to be put into
+motion, the user also has to turn on <strong>simul_do_update_shocks</strong> by
+setting it to true.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_do_update_shocks</strong> [true|{false}]: update the shocks based on</dt>
+<dd><p class="first last"><strong>simul_update_shocks_handle</strong> or not.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>simul_to_time_series</strong> [{true}|false]: if true, the output is a</dt>
+<dd><p class="first last">time series, else a cell array with a matrix and information on
+elements that help reconstruct the time series.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id144">
+<h3>Outputs<a class="headerlink" href="#id144" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>db</strong> [struct|cell array]: if <strong>simul_to_time_series</strong> is true, the
+output is a time series, else a cell array with a matrix and
+information on elements that help reconstruct the time series.</li>
+<li><strong>states</strong> [vector]: history of the regimes over the forecast horizon</li>
+<li><strong>retcode</strong> [integer]: if 0, the simulation went fine. Else something
+got wrong. In that case one can understand the problem by running
+decipher(retcode)</li>
+</ul>
+</div>
+<div class="section" id="id145">
+<h3>More About<a class="headerlink" href="#id145" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>simul_historical_data</strong> contains the historical data as well as
+conditional information over the forecast horizon. It may also include
+as an alternative to <strong>simul_regime</strong>, a time series with name
+<strong>regime</strong>, which indicates the regimes over the forecast horizon.</li>
+</ul>
+</div>
+<div class="section" id="id146">
+<h3>Examples<a class="headerlink" href="#id146" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/simulate is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="simulation-diagnostics">
+<span id="id147"></span><h2>simulation_diagnostics<a class="headerlink" href="#simulation-diagnostics" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id148">
+<h3>Syntax<a class="headerlink" href="#id148" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id149">
+<h3>Inputs<a class="headerlink" href="#id149" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id150">
+<h3>Outputs<a class="headerlink" href="#id150" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id151">
+<h3>More About<a class="headerlink" href="#id151" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id152">
+<h3>Examples<a class="headerlink" href="#id152" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/simulation_diagnostics is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="solution">
+<span id="id153"></span><h2>solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>model solution including steady state, definitions, etc.</p>
+<p>Help for rfvar/solution is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="solve">
+<span id="id154"></span><h2>solve<a class="headerlink" href="#solve" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id155">
+<h3>Syntax<a class="headerlink" href="#id155" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id156">
+<h3>Inputs<a class="headerlink" href="#id156" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id157">
+<h3>Outputs<a class="headerlink" href="#id157" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id158">
+<h3>More About<a class="headerlink" href="#id158" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id159">
+<h3>Examples<a class="headerlink" href="#id159" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="stoch-simul">
+<span id="id160"></span><h2>stoch_simul<a class="headerlink" href="#stoch-simul" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id161">
+<h3>Syntax<a class="headerlink" href="#id161" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id162">
+<h3>Inputs<a class="headerlink" href="#id162" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id163">
+<h3>Outputs<a class="headerlink" href="#id163" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id164">
+<h3>More About<a class="headerlink" href="#id164" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id165">
+<h3>Examples<a class="headerlink" href="#id165" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/stoch_simul is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="structural-form">
+<span id="id166"></span><h2>structural_form<a class="headerlink" href="#structural-form" title="Permalink to this headline">¶</a></h2>
+<p><strong>structural_form</strong> finds A structural form given the imposed restrictions</p>
+<div class="section" id="id167">
+<h3>Syntax<a class="headerlink" href="#id167" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">newobj</span><span class="o">=</span><span class="n">structural_form</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="n">newobj</span><span class="o">=</span><span class="n">structural_form</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">varargin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id168">
+<h3>Inputs<a class="headerlink" href="#id168" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>obj</strong> : [rfvar] : reduced form VAR object</p>
+</li>
+<li><p class="first">varargin : standard optional inputs <strong>coming in pairs</strong>. Among which:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>restrict_lags</strong> : [cell array|{&#8216;&#8217;}] : restrictions on the lag</dt>
+<dd><p class="first">structure. There are two equivalent syntaxes for this:</p>
+<ul class="last simple">
+<li><a class="reference external" href="mailto:{'var_name1&#37;&#52;&#48;var_name2{lag">{'var_name1<span>&#64;</span>var_name2{lag</a>}&#8217;}</li>
+<li>{&#8216;alag(var_name1,var_name2)&#8217;} : here alag should be understood as
+a-lag, where lag is the &#8220;lag&#8221; e.g. a1(infl,unemp) means unemp
+does not enter the infl equation at lag 1.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>restrict_irf_sign</strong> : [cell array|{&#8216;&#8217;}] : sign restrictions on the</dt>
+<dd><p class="first last">impulse responses. The general syntax is
+<a class="reference external" href="mailto:{'var_name{period}&#37;&#52;&#48;shock_name">{'var_name{period}<span>&#64;</span>shock_name</a>&#8216;,&#8217;sign&#8217;} and the default period is
+&#8220;0&#8221; (for contemporaneous). That means
+<a class="reference external" href="mailto:{'var_name{0}&#37;&#52;&#48;shock_name">{'var_name{0}<span>&#64;</span>shock_name</a>&#8216;,&#8217;+&#8217;} and <a class="reference external" href="mailto:{'var_name&#37;&#52;&#48;shock_name">{'var_name<span>&#64;</span>shock_name</a>&#8216;,&#8217;+&#8217;}
+are equivalent</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>restrict_irf_zero</strong> : [cell array|{&#8216;&#8217;}] : zero restrictions on the</dt>
+<dd><p class="first last">impulse responses. The general syntax is
+<a class="reference external" href="mailto:{'var_name{period}&#37;&#52;&#48;shock_name">{'var_name{period}<span>&#64;</span>shock_name</a>&#8216;} and the default period is
+&#8220;0&#8221; (for contemporaneous). That means
+<a class="reference external" href="mailto:{'var_name{0}&#37;&#52;&#48;shock_name">{'var_name{0}<span>&#64;</span>shock_name</a>&#8216;} and <a class="reference external" href="mailto:{'var_name&#37;&#52;&#48;shock_name">{'var_name<span>&#64;</span>shock_name</a>&#8216;}
+are equivalent</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>structural_shocks</strong> : [cell array|{&#8216;&#8217;}] : List of structural</dt>
+<dd><p class="first last">shocks. The shock names can be entered with or without their
+description. For instance :
+- {&#8216;E_PAI&#8217;,&#8217;E_U&#8217;,&#8217;E_MP&#8217;}
+- {&#8216;E_PAI&#8217;,&#8216;&#8220;inflation shock&#8221;&#8217;,&#8217;E_U&#8217;,&#8216;&#8220;unempl shock&#8221;&#8217;,&#8217;E_MP&#8217;}</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>irf_sample_max</strong> <span class="classifier-delimiter">:</span> <span class="classifier">[numeric|{10000}]</span> <span class="classifier-delimiter">:</span> <span class="classifier">maximum number of trials in</span></dt>
+<dd><p class="first last">the drawing of rotation matrices</p>
+</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id169">
+<h3>Outputs<a class="headerlink" href="#id169" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>newobj : [rfvar]: new rfvar object with the drawn structural form</li>
+</ul>
+</div>
+<div class="section" id="id170">
+<h3>More About<a class="headerlink" href="#id170" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>RISE automatically orders the endogenous variables alphabetically and
+tags each equation with one of the endogenous variables. This may be
+useful for understanding the behavior of <strong>restrict_lags</strong> above.</li>
+<li>The Choleski identification scheme is not implemented per se. The user
+has to explicitly enter the zeros in the right places. This gives the
+flexibility in implementing the restrictions. For instance, one could
+imagine a scheme in which choleski restrictions hold only in the long
+run.</li>
+<li>With only zero restrictions, one cannot expect the impulse responses to
+automatically have the correct sign. The rotation imposes zero
+restrictions but not the sign. If you would like to have
+correctly-signed impulse responses there are two choices:
+- explicitly add sign restrictions
+- multiply the impulse responses for the wrongly-signed shock with
+minus.</li>
+<li>If the signs are not explicitly enforced under zeros restrictions,
+in an exercise in which one draws many rotations, some will have
+one sign and some others a diffferent sign. Here, perhaps more than
+elsewhere, it is important to add some sign restrictions to have
+consistent results throughout.</li>
+<li>Many periods can be entered simultaneously. For instance
+&#8216;var_name{0,3,5,10:20,inf}&#64;shock_name&#8217;</li>
+<li>long-run restrictions are denoted by &#8220;inf&#8221;. For instance
+<a class="reference external" href="mailto:'var_name{inf}&#37;&#52;&#48;shock_name">'var_name{inf}<span>&#64;</span>shock_name</a>&#8216;</li>
+<li>Identification for Markov switching VARs is not implemented/supported.</li>
+</ul>
+</div>
+<div class="section" id="id171">
+<h3>Examples<a class="headerlink" href="#id171" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="structural-shocks">
+<span id="id172"></span><h2>structural_shocks<a class="headerlink" href="#structural-shocks" title="Permalink to this headline">¶</a></h2>
+<p>information on structural shocks</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="template">
+<span id="id173"></span><h2>template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="theoretical-autocorrelations">
+<span id="id174"></span><h2>theoretical_autocorrelations<a class="headerlink" href="#theoretical-autocorrelations" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id175">
+<h3>Syntax<a class="headerlink" href="#id175" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id176">
+<h3>Inputs<a class="headerlink" href="#id176" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id177">
+<h3>Outputs<a class="headerlink" href="#id177" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id178">
+<h3>More About<a class="headerlink" href="#id178" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id179">
+<h3>Examples<a class="headerlink" href="#id179" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/theoretical_autocorrelations is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="theoretical-autocovariances">
+<span id="id180"></span><h2>theoretical_autocovariances<a class="headerlink" href="#theoretical-autocovariances" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id181">
+<h3>Syntax<a class="headerlink" href="#id181" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id182">
+<h3>Inputs<a class="headerlink" href="#id182" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id183">
+<h3>Outputs<a class="headerlink" href="#id183" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id184">
+<h3>More About<a class="headerlink" href="#id184" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id185">
+<h3>Examples<a class="headerlink" href="#id185" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/theoretical_autocovariances is inherited from superclass RISE_GENERIC</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="variance-decomposition">
+<span id="id186"></span><h2>variance_decomposition<a class="headerlink" href="#variance-decomposition" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id187">
+<h3>Syntax<a class="headerlink" href="#id187" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id188">
+<h3>Inputs<a class="headerlink" href="#id188" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id189">
+<h3>Outputs<a class="headerlink" href="#id189" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id190">
+<h3>More About<a class="headerlink" href="#id190" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id191">
+<h3>Examples<a class="headerlink" href="#id191" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<p>Help for rfvar/variance_decomposition is inherited from superclass RISE_GENERIC</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Reduced-form VAR modeling</a><ul>
+<li><a class="reference internal" href="#rfvar-methods">rfvar Methods:</a></li>
+<li><a class="reference internal" href="#rfvar-properties">rfvar Properties:</a></li>
+<li><a class="reference internal" href="#check-identification">check_identification</a><ul>
+<li><a class="reference internal" href="#syntax">Syntax</a></li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#more-about">More About</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#check-optimum">check_optimum</a><ul>
+<li><a class="reference internal" href="#id3">Syntax</a></li>
+<li><a class="reference internal" href="#id4">Inputs</a></li>
+<li><a class="reference internal" href="#id5">Outputs</a></li>
+<li><a class="reference internal" href="#id6">More About</a></li>
+<li><a class="reference internal" href="#id7">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#constant">constant</a></li>
+<li><a class="reference internal" href="#draw-parameter">draw_parameter</a><ul>
+<li><a class="reference internal" href="#id10">Syntax</a></li>
+<li><a class="reference internal" href="#id11">Inputs</a></li>
+<li><a class="reference internal" href="#id12">Outputs</a></li>
+<li><a class="reference internal" href="#id13">More About</a></li>
+<li><a class="reference internal" href="#id14">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#endogenous">endogenous</a></li>
+<li><a class="reference internal" href="#estimate">estimate</a><ul>
+<li><a class="reference internal" href="#id17">Syntax</a></li>
+<li><a class="reference internal" href="#id18">Inputs</a></li>
+<li><a class="reference internal" href="#id19">Outputs</a></li>
+<li><a class="reference internal" href="#id20">More About</a></li>
+<li><a class="reference internal" href="#id21">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#estimation">estimation</a></li>
+<li><a class="reference internal" href="#exogenous">exogenous</a></li>
+<li><a class="reference internal" href="#filtering">filtering</a></li>
+<li><a class="reference internal" href="#forecast">forecast</a><ul>
+<li><a class="reference internal" href="#id26">Syntax</a></li>
+<li><a class="reference internal" href="#id27">Inputs</a></li>
+<li><a class="reference internal" href="#id28">Outputs</a></li>
+<li><a class="reference internal" href="#id29">More About</a></li>
+<li><a class="reference internal" href="#id30">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get">get</a><ul>
+<li><a class="reference internal" href="#id32">Syntax</a></li>
+<li><a class="reference internal" href="#id33">Inputs</a></li>
+<li><a class="reference internal" href="#id34">Outputs</a></li>
+<li><a class="reference internal" href="#id35">More About</a></li>
+<li><a class="reference internal" href="#id36">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#historical-decomposition">historical_decomposition</a><ul>
+<li><a class="reference internal" href="#id38">Syntax</a></li>
+<li><a class="reference internal" href="#id39">Inputs</a></li>
+<li><a class="reference internal" href="#id40">Outputs</a></li>
+<li><a class="reference internal" href="#remarks">Remarks</a></li>
+<li><a class="reference internal" href="#id41">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#identification">identification</a></li>
+<li><a class="reference internal" href="#irf">irf</a><ul>
+<li><a class="reference internal" href="#id44">Syntax</a></li>
+<li><a class="reference internal" href="#id45">Inputs</a></li>
+<li><a class="reference internal" href="#id46">Outputs</a></li>
+<li><a class="reference internal" href="#id47">More About</a></li>
+<li><a class="reference internal" href="#id48">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#isnan">isnan</a><ul>
+<li><a class="reference internal" href="#id50">Syntax</a></li>
+<li><a class="reference internal" href="#id51">Inputs</a></li>
+<li><a class="reference internal" href="#id52">Outputs</a></li>
+<li><a class="reference internal" href="#id53">More About</a></li>
+<li><a class="reference internal" href="#id54">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#legend">legend</a></li>
+<li><a class="reference internal" href="#load-parameters">load_parameters</a><ul>
+<li><a class="reference internal" href="#id57">Syntax</a></li>
+<li><a class="reference internal" href="#id58">Inputs</a></li>
+<li><a class="reference internal" href="#id59">Outputs</a></li>
+<li><a class="reference internal" href="#id60">More About</a></li>
+<li><a class="reference internal" href="#id61">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#log-marginal-data-density">log_marginal_data_density</a><ul>
+<li><a class="reference internal" href="#id63">Syntax</a></li>
+<li><a class="reference internal" href="#id64">Inputs</a></li>
+<li><a class="reference internal" href="#id65">Outputs</a></li>
+<li><a class="reference internal" href="#id66">More About</a></li>
+<li><a class="reference internal" href="#id67">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#log-posterior-kernel">log_posterior_kernel</a><ul>
+<li><a class="reference internal" href="#id69">Syntax</a></li>
+<li><a class="reference internal" href="#id70">Inputs</a></li>
+<li><a class="reference internal" href="#id71">Outputs</a></li>
+<li><a class="reference internal" href="#id72">More About</a></li>
+<li><a class="reference internal" href="#id73">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#log-prior-density">log_prior_density</a><ul>
+<li><a class="reference internal" href="#id75">Syntax</a></li>
+<li><a class="reference internal" href="#id76">Inputs</a></li>
+<li><a class="reference internal" href="#id77">Outputs</a></li>
+<li><a class="reference internal" href="#id78">More About</a></li>
+<li><a class="reference internal" href="#id79">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#markov-chains">markov_chains</a></li>
+<li><a class="reference internal" href="#msvar-priors">msvar_priors</a><ul>
+<li><a class="reference internal" href="#id82">Syntax</a></li>
+<li><a class="reference internal" href="#id83">Inputs</a></li>
+<li><a class="reference internal" href="#id84">Outputs</a></li>
+<li><a class="reference internal" href="#id85">More About</a></li>
+<li><a class="reference internal" href="#id86">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nlags">nlags</a></li>
+<li><a class="reference internal" href="#nonlinear-restrictions">nonlinear_restrictions</a></li>
+<li><a class="reference internal" href="#observables">observables</a></li>
+<li><a class="reference internal" href="#options">options</a></li>
+<li><a class="reference internal" href="#parameters">parameters</a></li>
+<li><a class="reference internal" href="#posterior-marginal-and-prior-densities">posterior_marginal_and_prior_densities</a><ul>
+<li><a class="reference internal" href="#id93">Syntax</a></li>
+<li><a class="reference internal" href="#id94">Inputs</a></li>
+<li><a class="reference internal" href="#id95">Outputs</a></li>
+<li><a class="reference internal" href="#id96">More About</a></li>
+<li><a class="reference internal" href="#id97">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#posterior-simulator">posterior_simulator</a><ul>
+<li><a class="reference internal" href="#id99">Syntax</a></li>
+<li><a class="reference internal" href="#id100">Inputs</a></li>
+<li><a class="reference internal" href="#id101">Outputs</a></li>
+<li><a class="reference internal" href="#id102">More About</a></li>
+<li><a class="reference internal" href="#id103">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#print-estimation-results">print_estimation_results</a><ul>
+<li><a class="reference internal" href="#id105">Syntax</a></li>
+<li><a class="reference internal" href="#id106">Inputs</a></li>
+<li><a class="reference internal" href="#id107">Outputs</a></li>
+<li><a class="reference internal" href="#id108">More About</a></li>
+<li><a class="reference internal" href="#id109">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#prior-plots">prior_plots</a><ul>
+<li><a class="reference internal" href="#id111">Syntax</a></li>
+<li><a class="reference internal" href="#id112">Inputs</a></li>
+<li><a class="reference internal" href="#id113">Outputs</a></li>
+<li><a class="reference internal" href="#id114">More About</a></li>
+<li><a class="reference internal" href="#id115">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#refresh">refresh</a><ul>
+<li><a class="reference internal" href="#id117">Syntax</a></li>
+<li><a class="reference internal" href="#id118">Inputs</a></li>
+<li><a class="reference internal" href="#id119">Outputs</a></li>
+<li><a class="reference internal" href="#id120">More About</a></li>
+<li><a class="reference internal" href="#id121">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#report">report</a><ul>
+<li><a class="reference internal" href="#id123">Syntax</a></li>
+<li><a class="reference internal" href="#id124">Inputs</a></li>
+<li><a class="reference internal" href="#id125">Outputs</a></li>
+<li><a class="reference internal" href="#id126">More About</a></li>
+<li><a class="reference internal" href="#id127">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rfvar">rfvar</a></li>
+<li><a class="reference internal" href="#set">set</a><ul>
+<li><a class="reference internal" href="#id130">Syntax</a></li>
+<li><a class="reference internal" href="#id131">Inputs</a></li>
+<li><a class="reference internal" href="#id132">Outputs</a></li>
+<li><a class="reference internal" href="#id133">More About</a></li>
+<li><a class="reference internal" href="#id134">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#set-solution-to-companion">set_solution_to_companion</a><ul>
+<li><a class="reference internal" href="#id136">Syntax</a></li>
+<li><a class="reference internal" href="#id137">Inputs</a></li>
+<li><a class="reference internal" href="#id138">Outputs</a></li>
+<li><a class="reference internal" href="#id139">More About</a></li>
+<li><a class="reference internal" href="#id140">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simulate">simulate</a><ul>
+<li><a class="reference internal" href="#id142">Syntax</a></li>
+<li><a class="reference internal" href="#id143">Inputs</a></li>
+<li><a class="reference internal" href="#id144">Outputs</a></li>
+<li><a class="reference internal" href="#id145">More About</a></li>
+<li><a class="reference internal" href="#id146">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simulation-diagnostics">simulation_diagnostics</a><ul>
+<li><a class="reference internal" href="#id148">Syntax</a></li>
+<li><a class="reference internal" href="#id149">Inputs</a></li>
+<li><a class="reference internal" href="#id150">Outputs</a></li>
+<li><a class="reference internal" href="#id151">More About</a></li>
+<li><a class="reference internal" href="#id152">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#solution">solution</a></li>
+<li><a class="reference internal" href="#solve">solve</a><ul>
+<li><a class="reference internal" href="#id155">Syntax</a></li>
+<li><a class="reference internal" href="#id156">Inputs</a></li>
+<li><a class="reference internal" href="#id157">Outputs</a></li>
+<li><a class="reference internal" href="#id158">More About</a></li>
+<li><a class="reference internal" href="#id159">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stoch-simul">stoch_simul</a><ul>
+<li><a class="reference internal" href="#id161">Syntax</a></li>
+<li><a class="reference internal" href="#id162">Inputs</a></li>
+<li><a class="reference internal" href="#id163">Outputs</a></li>
+<li><a class="reference internal" href="#id164">More About</a></li>
+<li><a class="reference internal" href="#id165">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#structural-form">structural_form</a><ul>
+<li><a class="reference internal" href="#id167">Syntax</a></li>
+<li><a class="reference internal" href="#id168">Inputs</a></li>
+<li><a class="reference internal" href="#id169">Outputs</a></li>
+<li><a class="reference internal" href="#id170">More About</a></li>
+<li><a class="reference internal" href="#id171">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#structural-shocks">structural_shocks</a></li>
+<li><a class="reference internal" href="#template">template</a></li>
+<li><a class="reference internal" href="#theoretical-autocorrelations">theoretical_autocorrelations</a><ul>
+<li><a class="reference internal" href="#id175">Syntax</a></li>
+<li><a class="reference internal" href="#id176">Inputs</a></li>
+<li><a class="reference internal" href="#id177">Outputs</a></li>
+<li><a class="reference internal" href="#id178">More About</a></li>
+<li><a class="reference internal" href="#id179">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#theoretical-autocovariances">theoretical_autocovariances</a><ul>
+<li><a class="reference internal" href="#id181">Syntax</a></li>
+<li><a class="reference internal" href="#id182">Inputs</a></li>
+<li><a class="reference internal" href="#id183">Outputs</a></li>
+<li><a class="reference internal" href="#id184">More About</a></li>
+<li><a class="reference internal" href="#id185">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#variance-decomposition">variance_decomposition</a><ul>
+<li><a class="reference internal" href="#id187">Syntax</a></li>
+<li><a class="reference internal" href="#id188">Inputs</a></li>
+<li><a class="reference internal" href="#id189">Outputs</a></li>
+<li><a class="reference internal" href="#id190">More About</a></li>
+<li><a class="reference internal" href="#id191">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../@dsge/dsge.html"
+                        title="previous chapter">Markov Switching Dynamic Stochastic General Equilibrium Modeling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../@svar/svar.html"
+                        title="next chapter">Structural VAR modeling</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/classes/models/@rfvar/rfvar.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../@svar/svar.html" title="Structural VAR modeling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../@dsge/dsge.html" title="Markov Switching Dynamic Stochastic General Equilibrium Modeling"
+             >previous</a> |</li>
+        <li><a href="../../../master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Junior Maih.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

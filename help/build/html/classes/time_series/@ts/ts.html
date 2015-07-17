@@ -1,0 +1,3309 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Time series &mdash; RISE 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RISE 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Markov Chain Monte Carlo for Bayesian Estimation" href="../../../mcmc.html" />
+    <link rel="prev" title="Structural VAR modeling" href="../../models/@svar/svar.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../mcmc.html" title="Markov Chain Monte Carlo for Bayesian Estimation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../models/@svar/svar.html" title="Structural VAR modeling"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="time-series">
+<h1>Time series<a class="headerlink" href="#time-series" title="Permalink to this headline">¶</a></h1>
+<p>ts Methods:</p>
+<ul class="simple">
+<li>[ <a class="reference internal" href="#acos">acos</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#acosh">acosh</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#acot">acot</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#acoth">acoth</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#aggregate">aggregate</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#allmean">allmean</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#and">and</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#apply">apply</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#asin">asin</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#asinh">asinh</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#atan">atan</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#atanh">atanh</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#automatic-model-selection">automatic_model_selection</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#bar">bar</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#barh">barh</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#boxplot">boxplot</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#bsxfun">bsxfun</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cat">cat</a> ] concatenates time series along the specified dimension</li>
+<li>[ <a class="reference internal" href="#collect">collect</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#corr">corr</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#corrcoef">corrcoef</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cos">cos</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cosh">cosh</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cot">cot</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#coth">coth</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cov">cov</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#ctranspose">ctranspose</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cumprod">cumprod</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#cumsum">cumsum</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#decompose-series">decompose_series</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#describe">describe</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#display">display</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#double">double</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#drop">drop</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#dummy">dummy</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#eq">eq</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#exp">exp</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#expanding">expanding</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#fanchart">fanchart</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#ge">ge</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#get">get</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#gt">gt</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#head">head</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#hist">hist</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#horzcat">horzcat</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#hpfilter">hpfilter</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#index">index</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#interpolate">interpolate</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#intersect">intersect</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#isfinite">isfinite</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#isinf">isinf</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#isnan">isnan</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#jbtest">jbtest</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#kurtosis">kurtosis</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#le">le</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#log">log</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#lt">lt</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#max">max</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#mean">mean</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#median">median</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#min">min</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#minus">minus</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#mode">mode</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#mpower">mpower</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#mrdivide">mrdivide</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#mtimes">mtimes</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#nan">nan</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#ne">ne</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#numel">numel</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#ones">ones</a> ] overloads ones for ts objects</li>
+<li>[ <a class="reference internal" href="#pages2struct">pages2struct</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#plot">plot</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#plotyy">plotyy</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#plus">plus</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#power">power</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#prctile">prctile</a> ] Percentiles of a time series (ts)</li>
+<li>[ <a class="reference internal" href="#quantile">quantile</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#rand">rand</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#randn">randn</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#range">range</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#rdivide">rdivide</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#regress">regress</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#reset-start-date">reset_start_date</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#rolling">rolling</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#sin">sin</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#sinh">sinh</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#skewness">skewness</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#sort">sort</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#spectrum">spectrum</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#std">std</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#step-dummy">step_dummy</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#subsasgn">subsasgn</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#subsref">subsref</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#sum">sum</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#tail">tail</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#times">times</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#transform">transform</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#transpose">transpose</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#ts">ts</a> ] Methods:</li>
+<li>[ <a class="reference internal" href="#uminus">uminus</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#values">values</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#var">var</a> ]   H1 line</li>
+<li>[ <a class="reference internal" href="#zeros">zeros</a> ]   H1 line</li>
+</ul>
+<p>ts  Properties:</p>
+<ul class="simple">
+<li>[ <a class="reference internal" href="#varnames">varnames</a> ]   names of the variables in the database</li>
+<li>[ <a class="reference internal" href="#start">start</a> ] time of the time series</li>
+<li>[ <a class="reference internal" href="#finish">finish</a> ]   end time of the time series</li>
+<li>[ <a class="reference internal" href="#frequency">frequency</a> ] of the time series</li>
+<li>[ <a class="reference internal" href="#numberofobservations">NumberOfObservations</a> ]   number of observations in the time series</li>
+<li>[ <a class="reference internal" href="#numberofpages">NumberOfPages</a> ]   number of pages (third dimension) of the time series</li>
+<li>[ <a class="reference internal" href="#numberofvariables">NumberOfVariables</a> ]   number of variables in the time series</li>
+</ul>
+<hr class="docutils" />
+<hr class="docutils" />
+<div class="section" id="numberofobservations">
+<span id="id1"></span><h2>NumberOfObservations<a class="headerlink" href="#numberofobservations" title="Permalink to this headline">¶</a></h2>
+<p>number of observations in the time series</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="numberofpages">
+<span id="id2"></span><h2>NumberOfPages<a class="headerlink" href="#numberofpages" title="Permalink to this headline">¶</a></h2>
+<p>number of pages (third dimension) of the time series</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="numberofvariables">
+<span id="id3"></span><h2>NumberOfVariables<a class="headerlink" href="#numberofvariables" title="Permalink to this headline">¶</a></h2>
+<p>number of variables in the time series</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="acos">
+<span id="id4"></span><h2>acos<a class="headerlink" href="#acos" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="syntax">
+<h3>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="more-about">
+<h3>More About<a class="headerlink" href="#more-about" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="acosh">
+<span id="id5"></span><h2>acosh<a class="headerlink" href="#acosh" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id6">
+<h3>Syntax<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id7">
+<h3>Inputs<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id8">
+<h3>Outputs<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id9">
+<h3>More About<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id10">
+<h3>Examples<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="acot">
+<span id="id11"></span><h2>acot<a class="headerlink" href="#acot" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id12">
+<h3>Syntax<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id13">
+<h3>Inputs<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id14">
+<h3>Outputs<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id15">
+<h3>More About<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id16">
+<h3>Examples<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="acoth">
+<span id="id17"></span><h2>acoth<a class="headerlink" href="#acoth" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id18">
+<h3>Syntax<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id19">
+<h3>Inputs<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id20">
+<h3>Outputs<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id21">
+<h3>More About<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id22">
+<h3>Examples<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="aggregate">
+<span id="id23"></span><h2>aggregate<a class="headerlink" href="#aggregate" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id24">
+<h3>Syntax<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id25">
+<h3>Inputs<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id26">
+<h3>Outputs<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id27">
+<h3>More About<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id28">
+<h3>Examples<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="allmean">
+<span id="id29"></span><h2>allmean<a class="headerlink" href="#allmean" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id30">
+<h3>Syntax<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id31">
+<h3>Inputs<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id32">
+<h3>Outputs<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id33">
+<h3>More About<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id34">
+<h3>Examples<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="and">
+<span id="id35"></span><h2>and<a class="headerlink" href="#and" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id36">
+<h3>Syntax<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id37">
+<h3>Inputs<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id38">
+<h3>Outputs<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id39">
+<h3>More About<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id40">
+<h3>Examples<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="apply">
+<span id="id41"></span><h2>apply<a class="headerlink" href="#apply" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id42">
+<h3>Syntax<a class="headerlink" href="#id42" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id43">
+<h3>Inputs<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id44">
+<h3>Outputs<a class="headerlink" href="#id44" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id45">
+<h3>More About<a class="headerlink" href="#id45" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id46">
+<h3>Examples<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="asin">
+<span id="id47"></span><h2>asin<a class="headerlink" href="#asin" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id48">
+<h3>Syntax<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id49">
+<h3>Inputs<a class="headerlink" href="#id49" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id50">
+<h3>Outputs<a class="headerlink" href="#id50" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id51">
+<h3>More About<a class="headerlink" href="#id51" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id52">
+<h3>Examples<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="asinh">
+<span id="id53"></span><h2>asinh<a class="headerlink" href="#asinh" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id54">
+<h3>Syntax<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id55">
+<h3>Inputs<a class="headerlink" href="#id55" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id56">
+<h3>Outputs<a class="headerlink" href="#id56" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id57">
+<h3>More About<a class="headerlink" href="#id57" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id58">
+<h3>Examples<a class="headerlink" href="#id58" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="atan">
+<span id="id59"></span><h2>atan<a class="headerlink" href="#atan" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id60">
+<h3>Syntax<a class="headerlink" href="#id60" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id61">
+<h3>Inputs<a class="headerlink" href="#id61" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id62">
+<h3>Outputs<a class="headerlink" href="#id62" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id63">
+<h3>More About<a class="headerlink" href="#id63" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id64">
+<h3>Examples<a class="headerlink" href="#id64" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="atanh">
+<span id="id65"></span><h2>atanh<a class="headerlink" href="#atanh" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id66">
+<h3>Syntax<a class="headerlink" href="#id66" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id67">
+<h3>Inputs<a class="headerlink" href="#id67" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id68">
+<h3>Outputs<a class="headerlink" href="#id68" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id69">
+<h3>More About<a class="headerlink" href="#id69" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id70">
+<h3>Examples<a class="headerlink" href="#id70" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="automatic-model-selection">
+<span id="id71"></span><h2>automatic_model_selection<a class="headerlink" href="#automatic-model-selection" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id72">
+<h3>Syntax<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id73">
+<h3>Inputs<a class="headerlink" href="#id73" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id74">
+<h3>Outputs<a class="headerlink" href="#id74" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id75">
+<h3>More About<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id76">
+<h3>Examples<a class="headerlink" href="#id76" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="bar">
+<span id="id77"></span><h2>bar<a class="headerlink" href="#bar" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id78">
+<h3>Syntax<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id79">
+<h3>Inputs<a class="headerlink" href="#id79" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id80">
+<h3>Outputs<a class="headerlink" href="#id80" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id81">
+<h3>More About<a class="headerlink" href="#id81" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id82">
+<h3>Examples<a class="headerlink" href="#id82" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="barh">
+<span id="id83"></span><h2>barh<a class="headerlink" href="#barh" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id84">
+<h3>Syntax<a class="headerlink" href="#id84" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id85">
+<h3>Inputs<a class="headerlink" href="#id85" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id86">
+<h3>Outputs<a class="headerlink" href="#id86" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id87">
+<h3>More About<a class="headerlink" href="#id87" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id88">
+<h3>Examples<a class="headerlink" href="#id88" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="boxplot">
+<span id="id89"></span><h2>boxplot<a class="headerlink" href="#boxplot" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id90">
+<h3>Syntax<a class="headerlink" href="#id90" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id91">
+<h3>Inputs<a class="headerlink" href="#id91" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id92">
+<h3>Outputs<a class="headerlink" href="#id92" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id93">
+<h3>More About<a class="headerlink" href="#id93" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id94">
+<h3>Examples<a class="headerlink" href="#id94" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="bsxfun">
+<span id="id95"></span><h2>bsxfun<a class="headerlink" href="#bsxfun" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id96">
+<h3>Syntax<a class="headerlink" href="#id96" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id97">
+<h3>Inputs<a class="headerlink" href="#id97" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id98">
+<h3>Outputs<a class="headerlink" href="#id98" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id99">
+<h3>More About<a class="headerlink" href="#id99" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id100">
+<h3>Examples<a class="headerlink" href="#id100" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cat">
+<span id="id101"></span><h2>cat<a class="headerlink" href="#cat" title="Permalink to this headline">¶</a></h2>
+<p><strong>cat</strong> concatenates time series along the specified dimension</p>
+<div class="section" id="id102">
+<h3>Syntax<a class="headerlink" href="#id102" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">db</span><span class="o">=</span><span class="n">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">db1</span><span class="p">,</span><span class="n">db2</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="n">dbn</span><span class="p">)</span>
+<span class="n">db</span><span class="o">=</span><span class="n">cat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">db1</span><span class="p">,</span><span class="n">db2</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="n">dbn</span><span class="p">)</span>
+<span class="n">db</span><span class="o">=</span><span class="n">cat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">db1</span><span class="p">,</span><span class="n">db2</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="n">dbn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id103">
+<h3>Inputs<a class="headerlink" href="#id103" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>dim</strong> [1|2|3] : dimension along which concatenation is done</li>
+<li><strong>db1, db2,...,dbn</strong> [ts] : time series</li>
+</ul>
+</div>
+<div class="section" id="id104">
+<h3>Outputs<a class="headerlink" href="#id104" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>db</strong> [ts] : time series with concatenated series</li>
+</ul>
+</div>
+<div class="section" id="id105">
+<h3>More About<a class="headerlink" href="#id105" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>all times series must be of the same frequency</li>
+<li>Concatenation along the second dimension requires that variables have
+the same number of columns if no names are specified</li>
+<li>if names are specified in the first time series, then names should be
+specified in all of the others as well.</li>
+<li>empty time series are discarded but there should be at least one
+non-empty time series</li>
+</ul>
+</div>
+<div class="section" id="id106">
+<h3>Examples<a class="headerlink" href="#id106" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="collect">
+<span id="id107"></span><h2>collect<a class="headerlink" href="#collect" title="Permalink to this headline">¶</a></h2>
+<p><strong>collect</strong> - brings together several time series object into a one time series</p>
+<div class="section" id="id108">
+<h3>Syntax<a class="headerlink" href="#id108" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">-</span> <span class="n">this</span><span class="o">=</span><span class="n">collect</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="n">vn</span><span class="p">)</span>
+<span class="o">-</span> <span class="n">this</span><span class="o">=</span><span class="n">collect</span><span class="p">(</span><span class="n">Vstruct</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id109">
+<h3>Inputs<a class="headerlink" href="#id109" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>several time series or a structure of time series</li>
+</ul>
+</div>
+<div class="section" id="id110">
+<h3>Outputs<a class="headerlink" href="#id110" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>this</strong> [ts]: a time series with many columns and potentially many
+pages</li>
+</ul>
+</div>
+<div class="section" id="id111">
+<h3>More About<a class="headerlink" href="#id111" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id112">
+<h3>Examples<a class="headerlink" href="#id112" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="corr">
+<span id="id113"></span><h2>corr<a class="headerlink" href="#corr" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id114">
+<h3>Syntax<a class="headerlink" href="#id114" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id115">
+<h3>Inputs<a class="headerlink" href="#id115" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id116">
+<h3>Outputs<a class="headerlink" href="#id116" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id117">
+<h3>More About<a class="headerlink" href="#id117" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id118">
+<h3>Examples<a class="headerlink" href="#id118" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="corrcoef">
+<span id="id119"></span><h2>corrcoef<a class="headerlink" href="#corrcoef" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id120">
+<h3>Syntax<a class="headerlink" href="#id120" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id121">
+<h3>Inputs<a class="headerlink" href="#id121" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id122">
+<h3>Outputs<a class="headerlink" href="#id122" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id123">
+<h3>More About<a class="headerlink" href="#id123" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id124">
+<h3>Examples<a class="headerlink" href="#id124" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cos">
+<span id="id125"></span><h2>cos<a class="headerlink" href="#cos" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id126">
+<h3>Syntax<a class="headerlink" href="#id126" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id127">
+<h3>Inputs<a class="headerlink" href="#id127" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id128">
+<h3>Outputs<a class="headerlink" href="#id128" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id129">
+<h3>More About<a class="headerlink" href="#id129" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id130">
+<h3>Examples<a class="headerlink" href="#id130" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cosh">
+<span id="id131"></span><h2>cosh<a class="headerlink" href="#cosh" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id132">
+<h3>Syntax<a class="headerlink" href="#id132" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id133">
+<h3>Inputs<a class="headerlink" href="#id133" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id134">
+<h3>Outputs<a class="headerlink" href="#id134" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id135">
+<h3>More About<a class="headerlink" href="#id135" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id136">
+<h3>Examples<a class="headerlink" href="#id136" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cot">
+<span id="id137"></span><h2>cot<a class="headerlink" href="#cot" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id138">
+<h3>Syntax<a class="headerlink" href="#id138" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id139">
+<h3>Inputs<a class="headerlink" href="#id139" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id140">
+<h3>Outputs<a class="headerlink" href="#id140" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id141">
+<h3>More About<a class="headerlink" href="#id141" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id142">
+<h3>Examples<a class="headerlink" href="#id142" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="coth">
+<span id="id143"></span><h2>coth<a class="headerlink" href="#coth" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id144">
+<h3>Syntax<a class="headerlink" href="#id144" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id145">
+<h3>Inputs<a class="headerlink" href="#id145" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id146">
+<h3>Outputs<a class="headerlink" href="#id146" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id147">
+<h3>More About<a class="headerlink" href="#id147" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id148">
+<h3>Examples<a class="headerlink" href="#id148" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cov">
+<span id="id149"></span><h2>cov<a class="headerlink" href="#cov" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id150">
+<h3>Syntax<a class="headerlink" href="#id150" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id151">
+<h3>Inputs<a class="headerlink" href="#id151" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id152">
+<h3>Outputs<a class="headerlink" href="#id152" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id153">
+<h3>More About<a class="headerlink" href="#id153" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id154">
+<h3>Examples<a class="headerlink" href="#id154" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="ctranspose">
+<span id="id155"></span><h2>ctranspose<a class="headerlink" href="#ctranspose" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id156">
+<h3>Syntax<a class="headerlink" href="#id156" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id157">
+<h3>Inputs<a class="headerlink" href="#id157" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id158">
+<h3>Outputs<a class="headerlink" href="#id158" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id159">
+<h3>More About<a class="headerlink" href="#id159" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id160">
+<h3>Examples<a class="headerlink" href="#id160" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cumprod">
+<span id="id161"></span><h2>cumprod<a class="headerlink" href="#cumprod" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id162">
+<h3>Syntax<a class="headerlink" href="#id162" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id163">
+<h3>Inputs<a class="headerlink" href="#id163" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id164">
+<h3>Outputs<a class="headerlink" href="#id164" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id165">
+<h3>More About<a class="headerlink" href="#id165" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id166">
+<h3>Examples<a class="headerlink" href="#id166" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="cumsum">
+<span id="id167"></span><h2>cumsum<a class="headerlink" href="#cumsum" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id168">
+<h3>Syntax<a class="headerlink" href="#id168" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id169">
+<h3>Inputs<a class="headerlink" href="#id169" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id170">
+<h3>Outputs<a class="headerlink" href="#id170" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id171">
+<h3>More About<a class="headerlink" href="#id171" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id172">
+<h3>Examples<a class="headerlink" href="#id172" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="decompose-series">
+<span id="id173"></span><h2>decompose_series<a class="headerlink" href="#decompose-series" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id174">
+<h3>Syntax<a class="headerlink" href="#id174" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id175">
+<h3>Inputs<a class="headerlink" href="#id175" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id176">
+<h3>Outputs<a class="headerlink" href="#id176" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id177">
+<h3>More About<a class="headerlink" href="#id177" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id178">
+<h3>Examples<a class="headerlink" href="#id178" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="describe">
+<span id="id179"></span><h2>describe<a class="headerlink" href="#describe" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id180">
+<h3>Syntax<a class="headerlink" href="#id180" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id181">
+<h3>Inputs<a class="headerlink" href="#id181" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id182">
+<h3>Outputs<a class="headerlink" href="#id182" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id183">
+<h3>More About<a class="headerlink" href="#id183" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id184">
+<h3>Examples<a class="headerlink" href="#id184" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="display">
+<span id="id185"></span><h2>display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id186">
+<h3>Syntax<a class="headerlink" href="#id186" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id187">
+<h3>Inputs<a class="headerlink" href="#id187" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id188">
+<h3>Outputs<a class="headerlink" href="#id188" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id189">
+<h3>More About<a class="headerlink" href="#id189" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id190">
+<h3>Examples<a class="headerlink" href="#id190" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="double">
+<span id="id191"></span><h2>double<a class="headerlink" href="#double" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id192">
+<h3>Syntax<a class="headerlink" href="#id192" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id193">
+<h3>Inputs<a class="headerlink" href="#id193" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id194">
+<h3>Outputs<a class="headerlink" href="#id194" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id195">
+<h3>More About<a class="headerlink" href="#id195" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id196">
+<h3>Examples<a class="headerlink" href="#id196" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="drop">
+<span id="id197"></span><h2>drop<a class="headerlink" href="#drop" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id198">
+<h3>Syntax<a class="headerlink" href="#id198" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id199">
+<h3>Inputs<a class="headerlink" href="#id199" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id200">
+<h3>Outputs<a class="headerlink" href="#id200" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id201">
+<h3>More About<a class="headerlink" href="#id201" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id202">
+<h3>Examples<a class="headerlink" href="#id202" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="dummy">
+<span id="id203"></span><h2>dummy<a class="headerlink" href="#dummy" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id204">
+<h3>Syntax<a class="headerlink" href="#id204" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id205">
+<h3>Inputs<a class="headerlink" href="#id205" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id206">
+<h3>Outputs<a class="headerlink" href="#id206" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id207">
+<h3>More About<a class="headerlink" href="#id207" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id208">
+<h3>Examples<a class="headerlink" href="#id208" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="eq">
+<span id="id209"></span><h2>eq<a class="headerlink" href="#eq" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id210">
+<h3>Syntax<a class="headerlink" href="#id210" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id211">
+<h3>Inputs<a class="headerlink" href="#id211" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id212">
+<h3>Outputs<a class="headerlink" href="#id212" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id213">
+<h3>More About<a class="headerlink" href="#id213" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id214">
+<h3>Examples<a class="headerlink" href="#id214" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="exp">
+<span id="id215"></span><h2>exp<a class="headerlink" href="#exp" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id216">
+<h3>Syntax<a class="headerlink" href="#id216" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id217">
+<h3>Inputs<a class="headerlink" href="#id217" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id218">
+<h3>Outputs<a class="headerlink" href="#id218" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id219">
+<h3>More About<a class="headerlink" href="#id219" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id220">
+<h3>Examples<a class="headerlink" href="#id220" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="expanding">
+<span id="id221"></span><h2>expanding<a class="headerlink" href="#expanding" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id222">
+<h3>Syntax<a class="headerlink" href="#id222" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id223">
+<h3>Inputs<a class="headerlink" href="#id223" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id224">
+<h3>Outputs<a class="headerlink" href="#id224" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id225">
+<h3>More About<a class="headerlink" href="#id225" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id226">
+<h3>Examples<a class="headerlink" href="#id226" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="fanchart">
+<span id="id227"></span><h2>fanchart<a class="headerlink" href="#fanchart" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id228">
+<h3>Syntax<a class="headerlink" href="#id228" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id229">
+<h3>Inputs<a class="headerlink" href="#id229" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id230">
+<h3>Outputs<a class="headerlink" href="#id230" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id231">
+<h3>More About<a class="headerlink" href="#id231" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id232">
+<h3>Examples<a class="headerlink" href="#id232" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="finish">
+<span id="id233"></span><h2>finish<a class="headerlink" href="#finish" title="Permalink to this headline">¶</a></h2>
+<p>end time of the time series</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="frequency">
+<span id="id234"></span><h2>frequency<a class="headerlink" href="#frequency" title="Permalink to this headline">¶</a></h2>
+<p><strong>frequency</strong> of the time series</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="ge">
+<span id="id235"></span><h2>ge<a class="headerlink" href="#ge" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id236">
+<h3>Syntax<a class="headerlink" href="#id236" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id237">
+<h3>Inputs<a class="headerlink" href="#id237" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id238">
+<h3>Outputs<a class="headerlink" href="#id238" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id239">
+<h3>More About<a class="headerlink" href="#id239" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id240">
+<h3>Examples<a class="headerlink" href="#id240" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="get">
+<span id="id241"></span><h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id242">
+<h3>Syntax<a class="headerlink" href="#id242" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id243">
+<h3>Inputs<a class="headerlink" href="#id243" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id244">
+<h3>Outputs<a class="headerlink" href="#id244" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id245">
+<h3>More About<a class="headerlink" href="#id245" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id246">
+<h3>Examples<a class="headerlink" href="#id246" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="gt">
+<span id="id247"></span><h2>gt<a class="headerlink" href="#gt" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id248">
+<h3>Syntax<a class="headerlink" href="#id248" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id249">
+<h3>Inputs<a class="headerlink" href="#id249" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id250">
+<h3>Outputs<a class="headerlink" href="#id250" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id251">
+<h3>More About<a class="headerlink" href="#id251" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id252">
+<h3>Examples<a class="headerlink" href="#id252" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="head">
+<span id="id253"></span><h2>head<a class="headerlink" href="#head" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id254">
+<h3>Syntax<a class="headerlink" href="#id254" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id255">
+<h3>Inputs<a class="headerlink" href="#id255" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id256">
+<h3>Outputs<a class="headerlink" href="#id256" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id257">
+<h3>More About<a class="headerlink" href="#id257" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id258">
+<h3>Examples<a class="headerlink" href="#id258" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="hist">
+<span id="id259"></span><h2>hist<a class="headerlink" href="#hist" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id260">
+<h3>Syntax<a class="headerlink" href="#id260" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id261">
+<h3>Inputs<a class="headerlink" href="#id261" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id262">
+<h3>Outputs<a class="headerlink" href="#id262" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id263">
+<h3>More About<a class="headerlink" href="#id263" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id264">
+<h3>Examples<a class="headerlink" href="#id264" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="horzcat">
+<span id="id265"></span><h2>horzcat<a class="headerlink" href="#horzcat" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id266">
+<h3>Syntax<a class="headerlink" href="#id266" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id267">
+<h3>Inputs<a class="headerlink" href="#id267" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id268">
+<h3>Outputs<a class="headerlink" href="#id268" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id269">
+<h3>More About<a class="headerlink" href="#id269" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id270">
+<h3>Examples<a class="headerlink" href="#id270" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="hpfilter">
+<span id="id271"></span><h2>hpfilter<a class="headerlink" href="#hpfilter" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id272">
+<h3>Syntax<a class="headerlink" href="#id272" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id273">
+<h3>Inputs<a class="headerlink" href="#id273" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id274">
+<h3>Outputs<a class="headerlink" href="#id274" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id275">
+<h3>More About<a class="headerlink" href="#id275" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id276">
+<h3>Examples<a class="headerlink" href="#id276" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="index">
+<span id="id277"></span><h2>index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id278">
+<h3>Syntax<a class="headerlink" href="#id278" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id279">
+<h3>Inputs<a class="headerlink" href="#id279" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id280">
+<h3>Outputs<a class="headerlink" href="#id280" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id281">
+<h3>More About<a class="headerlink" href="#id281" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id282">
+<h3>Examples<a class="headerlink" href="#id282" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="interpolate">
+<span id="id283"></span><h2>interpolate<a class="headerlink" href="#interpolate" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id284">
+<h3>Syntax<a class="headerlink" href="#id284" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id285">
+<h3>Inputs<a class="headerlink" href="#id285" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id286">
+<h3>Outputs<a class="headerlink" href="#id286" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id287">
+<h3>More About<a class="headerlink" href="#id287" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id288">
+<h3>Examples<a class="headerlink" href="#id288" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="intersect">
+<span id="id289"></span><h2>intersect<a class="headerlink" href="#intersect" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id290">
+<h3>Syntax<a class="headerlink" href="#id290" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id291">
+<h3>Inputs<a class="headerlink" href="#id291" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id292">
+<h3>Outputs<a class="headerlink" href="#id292" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id293">
+<h3>More About<a class="headerlink" href="#id293" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id294">
+<h3>Examples<a class="headerlink" href="#id294" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="isfinite">
+<span id="id295"></span><h2>isfinite<a class="headerlink" href="#isfinite" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id296">
+<h3>Syntax<a class="headerlink" href="#id296" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id297">
+<h3>Inputs<a class="headerlink" href="#id297" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id298">
+<h3>Outputs<a class="headerlink" href="#id298" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id299">
+<h3>More About<a class="headerlink" href="#id299" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id300">
+<h3>Examples<a class="headerlink" href="#id300" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="isinf">
+<span id="id301"></span><h2>isinf<a class="headerlink" href="#isinf" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id302">
+<h3>Syntax<a class="headerlink" href="#id302" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id303">
+<h3>Inputs<a class="headerlink" href="#id303" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id304">
+<h3>Outputs<a class="headerlink" href="#id304" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id305">
+<h3>More About<a class="headerlink" href="#id305" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id306">
+<h3>Examples<a class="headerlink" href="#id306" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="isnan">
+<span id="id307"></span><h2>isnan<a class="headerlink" href="#isnan" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id308">
+<h3>Syntax<a class="headerlink" href="#id308" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id309">
+<h3>Inputs<a class="headerlink" href="#id309" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id310">
+<h3>Outputs<a class="headerlink" href="#id310" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id311">
+<h3>More About<a class="headerlink" href="#id311" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id312">
+<h3>Examples<a class="headerlink" href="#id312" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="jbtest">
+<span id="id313"></span><h2>jbtest<a class="headerlink" href="#jbtest" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id314">
+<h3>Syntax<a class="headerlink" href="#id314" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id315">
+<h3>Inputs<a class="headerlink" href="#id315" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id316">
+<h3>Outputs<a class="headerlink" href="#id316" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id317">
+<h3>More About<a class="headerlink" href="#id317" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id318">
+<h3>Examples<a class="headerlink" href="#id318" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="kurtosis">
+<span id="id319"></span><h2>kurtosis<a class="headerlink" href="#kurtosis" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id320">
+<h3>Syntax<a class="headerlink" href="#id320" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id321">
+<h3>Inputs<a class="headerlink" href="#id321" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id322">
+<h3>Outputs<a class="headerlink" href="#id322" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id323">
+<h3>More About<a class="headerlink" href="#id323" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id324">
+<h3>Examples<a class="headerlink" href="#id324" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="le">
+<span id="id325"></span><h2>le<a class="headerlink" href="#le" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id326">
+<h3>Syntax<a class="headerlink" href="#id326" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id327">
+<h3>Inputs<a class="headerlink" href="#id327" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id328">
+<h3>Outputs<a class="headerlink" href="#id328" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id329">
+<h3>More About<a class="headerlink" href="#id329" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id330">
+<h3>Examples<a class="headerlink" href="#id330" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="log">
+<span id="id331"></span><h2>log<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id332">
+<h3>Syntax<a class="headerlink" href="#id332" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id333">
+<h3>Inputs<a class="headerlink" href="#id333" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id334">
+<h3>Outputs<a class="headerlink" href="#id334" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id335">
+<h3>More About<a class="headerlink" href="#id335" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id336">
+<h3>Examples<a class="headerlink" href="#id336" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="lt">
+<span id="id337"></span><h2>lt<a class="headerlink" href="#lt" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id338">
+<h3>Syntax<a class="headerlink" href="#id338" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id339">
+<h3>Inputs<a class="headerlink" href="#id339" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id340">
+<h3>Outputs<a class="headerlink" href="#id340" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id341">
+<h3>More About<a class="headerlink" href="#id341" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id342">
+<h3>Examples<a class="headerlink" href="#id342" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="max">
+<span id="id343"></span><h2>max<a class="headerlink" href="#max" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id344">
+<h3>Syntax<a class="headerlink" href="#id344" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id345">
+<h3>Inputs<a class="headerlink" href="#id345" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id346">
+<h3>Outputs<a class="headerlink" href="#id346" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id347">
+<h3>More About<a class="headerlink" href="#id347" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id348">
+<h3>Examples<a class="headerlink" href="#id348" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="mean">
+<span id="id349"></span><h2>mean<a class="headerlink" href="#mean" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id350">
+<h3>Syntax<a class="headerlink" href="#id350" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id351">
+<h3>Inputs<a class="headerlink" href="#id351" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id352">
+<h3>Outputs<a class="headerlink" href="#id352" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id353">
+<h3>More About<a class="headerlink" href="#id353" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id354">
+<h3>Examples<a class="headerlink" href="#id354" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="median">
+<span id="id355"></span><h2>median<a class="headerlink" href="#median" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id356">
+<h3>Syntax<a class="headerlink" href="#id356" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id357">
+<h3>Inputs<a class="headerlink" href="#id357" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id358">
+<h3>Outputs<a class="headerlink" href="#id358" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id359">
+<h3>More About<a class="headerlink" href="#id359" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id360">
+<h3>Examples<a class="headerlink" href="#id360" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="min">
+<span id="id361"></span><h2>min<a class="headerlink" href="#min" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id362">
+<h3>Syntax<a class="headerlink" href="#id362" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id363">
+<h3>Inputs<a class="headerlink" href="#id363" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id364">
+<h3>Outputs<a class="headerlink" href="#id364" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id365">
+<h3>More About<a class="headerlink" href="#id365" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id366">
+<h3>Examples<a class="headerlink" href="#id366" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="minus">
+<span id="id367"></span><h2>minus<a class="headerlink" href="#minus" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id368">
+<h3>Syntax<a class="headerlink" href="#id368" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id369">
+<h3>Inputs<a class="headerlink" href="#id369" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id370">
+<h3>Outputs<a class="headerlink" href="#id370" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id371">
+<h3>More About<a class="headerlink" href="#id371" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id372">
+<h3>Examples<a class="headerlink" href="#id372" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="mode">
+<span id="id373"></span><h2>mode<a class="headerlink" href="#mode" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id374">
+<h3>Syntax<a class="headerlink" href="#id374" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id375">
+<h3>Inputs<a class="headerlink" href="#id375" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id376">
+<h3>Outputs<a class="headerlink" href="#id376" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id377">
+<h3>More About<a class="headerlink" href="#id377" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id378">
+<h3>Examples<a class="headerlink" href="#id378" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="mpower">
+<span id="id379"></span><h2>mpower<a class="headerlink" href="#mpower" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id380">
+<h3>Syntax<a class="headerlink" href="#id380" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id381">
+<h3>Inputs<a class="headerlink" href="#id381" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id382">
+<h3>Outputs<a class="headerlink" href="#id382" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id383">
+<h3>More About<a class="headerlink" href="#id383" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id384">
+<h3>Examples<a class="headerlink" href="#id384" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="mrdivide">
+<span id="id385"></span><h2>mrdivide<a class="headerlink" href="#mrdivide" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id386">
+<h3>Syntax<a class="headerlink" href="#id386" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id387">
+<h3>Inputs<a class="headerlink" href="#id387" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id388">
+<h3>Outputs<a class="headerlink" href="#id388" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id389">
+<h3>More About<a class="headerlink" href="#id389" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id390">
+<h3>Examples<a class="headerlink" href="#id390" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="mtimes">
+<span id="id391"></span><h2>mtimes<a class="headerlink" href="#mtimes" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id392">
+<h3>Syntax<a class="headerlink" href="#id392" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id393">
+<h3>Inputs<a class="headerlink" href="#id393" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id394">
+<h3>Outputs<a class="headerlink" href="#id394" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id395">
+<h3>More About<a class="headerlink" href="#id395" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id396">
+<h3>Examples<a class="headerlink" href="#id396" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="nan">
+<span id="id397"></span><h2>nan<a class="headerlink" href="#nan" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id398">
+<h3>Syntax<a class="headerlink" href="#id398" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id399">
+<h3>Inputs<a class="headerlink" href="#id399" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id400">
+<h3>Outputs<a class="headerlink" href="#id400" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id401">
+<h3>More About<a class="headerlink" href="#id401" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id402">
+<h3>Examples<a class="headerlink" href="#id402" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="ne">
+<span id="id403"></span><h2>ne<a class="headerlink" href="#ne" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id404">
+<h3>Syntax<a class="headerlink" href="#id404" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id405">
+<h3>Inputs<a class="headerlink" href="#id405" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id406">
+<h3>Outputs<a class="headerlink" href="#id406" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id407">
+<h3>More About<a class="headerlink" href="#id407" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id408">
+<h3>Examples<a class="headerlink" href="#id408" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="numel">
+<span id="id409"></span><h2>numel<a class="headerlink" href="#numel" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id410">
+<h3>Syntax<a class="headerlink" href="#id410" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id411">
+<h3>Inputs<a class="headerlink" href="#id411" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id412">
+<h3>Outputs<a class="headerlink" href="#id412" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id413">
+<h3>More About<a class="headerlink" href="#id413" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id414">
+<h3>Examples<a class="headerlink" href="#id414" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="ones">
+<span id="id415"></span><h2>ones<a class="headerlink" href="#ones" title="Permalink to this headline">¶</a></h2>
+<p><strong>ones</strong> overloads ones for ts objects</p>
+<div class="section" id="id416">
+<h3>Syntax<a class="headerlink" href="#id416" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>::</dt>
+<dd>db=ts.ones(start_date,varargin)</dd>
+</dl>
+</div>
+<div class="section" id="id417">
+<h3>Inputs<a class="headerlink" href="#id417" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>start_date</strong> : [numeric|char]: a valid time series (ts) date</li>
+<li>varargin : [numeric]: arguments to matlab&#8217;s <strong>ones</strong> function.</li>
+</ul>
+</div>
+<div class="section" id="id418">
+<h3>Outputs<a class="headerlink" href="#id418" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>db</strong> : [ts]: a time series</li>
+</ul>
+</div>
+<div class="section" id="id419">
+<h3>More About<a class="headerlink" href="#id419" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>this is a static method and so it has to be called with the <strong>ts.</strong>
+prefix</li>
+<li>ts.ones does not allow more than 3 dimensions</li>
+</ul>
+</div>
+<div class="section" id="id420">
+<h3>Examples<a class="headerlink" href="#id420" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>db=ts.ones(1990,10,1)
+db=ts.ones(&#8216;1990&#8217;,10,3)
+db=ts.ones(&#8216;1990Q3&#8217;,10,5,100)</div></blockquote>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="pages2struct">
+<span id="id421"></span><h2>pages2struct<a class="headerlink" href="#pages2struct" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id422">
+<h3>Syntax<a class="headerlink" href="#id422" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id423">
+<h3>Inputs<a class="headerlink" href="#id423" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id424">
+<h3>Outputs<a class="headerlink" href="#id424" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id425">
+<h3>More About<a class="headerlink" href="#id425" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id426">
+<h3>Examples<a class="headerlink" href="#id426" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="plot">
+<span id="id427"></span><h2>plot<a class="headerlink" href="#plot" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id428">
+<h3>Syntax<a class="headerlink" href="#id428" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id429">
+<h3>Inputs<a class="headerlink" href="#id429" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id430">
+<h3>Outputs<a class="headerlink" href="#id430" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id431">
+<h3>More About<a class="headerlink" href="#id431" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id432">
+<h3>Examples<a class="headerlink" href="#id432" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="plotyy">
+<span id="id433"></span><h2>plotyy<a class="headerlink" href="#plotyy" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id434">
+<h3>Syntax<a class="headerlink" href="#id434" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id435">
+<h3>Inputs<a class="headerlink" href="#id435" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id436">
+<h3>Outputs<a class="headerlink" href="#id436" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id437">
+<h3>More About<a class="headerlink" href="#id437" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id438">
+<h3>Examples<a class="headerlink" href="#id438" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="plus">
+<span id="id439"></span><h2>plus<a class="headerlink" href="#plus" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id440">
+<h3>Syntax<a class="headerlink" href="#id440" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id441">
+<h3>Inputs<a class="headerlink" href="#id441" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id442">
+<h3>Outputs<a class="headerlink" href="#id442" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id443">
+<h3>More About<a class="headerlink" href="#id443" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id444">
+<h3>Examples<a class="headerlink" href="#id444" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="power">
+<span id="id445"></span><h2>power<a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id446">
+<h3>Syntax<a class="headerlink" href="#id446" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id447">
+<h3>Inputs<a class="headerlink" href="#id447" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id448">
+<h3>Outputs<a class="headerlink" href="#id448" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id449">
+<h3>More About<a class="headerlink" href="#id449" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id450">
+<h3>Examples<a class="headerlink" href="#id450" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="prctile">
+<span id="id451"></span><h2>prctile<a class="headerlink" href="#prctile" title="Permalink to this headline">¶</a></h2>
+<p><strong>prctile</strong> Percentiles of a time series (ts)</p>
+<div class="section" id="id452">
+<h3>Syntax<a class="headerlink" href="#id452" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">db</span><span class="o">=</span><span class="n">prctile</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id453">
+<h3>Inputs<a class="headerlink" href="#id453" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>db</strong> [ts] : time series with many pages (third dimension). The time
+series may have one or several variables.</li>
+<li><strong>p</strong> [scalar|vector] : scalar or a vector of percent values</li>
+</ul>
+</div>
+<div class="section" id="id454">
+<h3>Outputs<a class="headerlink" href="#id454" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>db</strong> [ts] : time series with as many pages as the length of <strong>p</strong>.</li>
+</ul>
+</div>
+<div class="section" id="id455">
+<h3>More About<a class="headerlink" href="#id455" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id456">
+<h3>Examples<a class="headerlink" href="#id456" title="Permalink to this headline">¶</a></h3>
+<p>test=ts(1990,rand(100,3,200),{&#8216;a&#8217;,&#8217;b&#8217;,&#8217;c&#8217;});
+tmp=prctile(test,[10,50,90])
+plot(tmp(&#8216;a&#8217;))</p>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="quantile">
+<span id="id457"></span><h2>quantile<a class="headerlink" href="#quantile" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id458">
+<h3>Syntax<a class="headerlink" href="#id458" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id459">
+<h3>Inputs<a class="headerlink" href="#id459" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id460">
+<h3>Outputs<a class="headerlink" href="#id460" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id461">
+<h3>More About<a class="headerlink" href="#id461" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id462">
+<h3>Examples<a class="headerlink" href="#id462" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="rand">
+<span id="id463"></span><h2>rand<a class="headerlink" href="#rand" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id464">
+<h3>Syntax<a class="headerlink" href="#id464" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id465">
+<h3>Inputs<a class="headerlink" href="#id465" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id466">
+<h3>Outputs<a class="headerlink" href="#id466" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id467">
+<h3>More About<a class="headerlink" href="#id467" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id468">
+<h3>Examples<a class="headerlink" href="#id468" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="randn">
+<span id="id469"></span><h2>randn<a class="headerlink" href="#randn" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id470">
+<h3>Syntax<a class="headerlink" href="#id470" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id471">
+<h3>Inputs<a class="headerlink" href="#id471" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id472">
+<h3>Outputs<a class="headerlink" href="#id472" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id473">
+<h3>More About<a class="headerlink" href="#id473" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id474">
+<h3>Examples<a class="headerlink" href="#id474" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="range">
+<span id="id475"></span><h2>range<a class="headerlink" href="#range" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id476">
+<h3>Syntax<a class="headerlink" href="#id476" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id477">
+<h3>Inputs<a class="headerlink" href="#id477" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id478">
+<h3>Outputs<a class="headerlink" href="#id478" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id479">
+<h3>More About<a class="headerlink" href="#id479" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id480">
+<h3>Examples<a class="headerlink" href="#id480" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="rdivide">
+<span id="id481"></span><h2>rdivide<a class="headerlink" href="#rdivide" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id482">
+<h3>Syntax<a class="headerlink" href="#id482" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id483">
+<h3>Inputs<a class="headerlink" href="#id483" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id484">
+<h3>Outputs<a class="headerlink" href="#id484" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id485">
+<h3>More About<a class="headerlink" href="#id485" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id486">
+<h3>Examples<a class="headerlink" href="#id486" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="regress">
+<span id="id487"></span><h2>regress<a class="headerlink" href="#regress" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id488">
+<h3>Syntax<a class="headerlink" href="#id488" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id489">
+<h3>Inputs<a class="headerlink" href="#id489" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id490">
+<h3>Outputs<a class="headerlink" href="#id490" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id491">
+<h3>More About<a class="headerlink" href="#id491" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id492">
+<h3>Examples<a class="headerlink" href="#id492" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="reset-start-date">
+<span id="id493"></span><h2>reset_start_date<a class="headerlink" href="#reset-start-date" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id494">
+<h3>Syntax<a class="headerlink" href="#id494" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id495">
+<h3>Inputs<a class="headerlink" href="#id495" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id496">
+<h3>Outputs<a class="headerlink" href="#id496" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id497">
+<h3>More About<a class="headerlink" href="#id497" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id498">
+<h3>Examples<a class="headerlink" href="#id498" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="rolling">
+<span id="id499"></span><h2>rolling<a class="headerlink" href="#rolling" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id500">
+<h3>Syntax<a class="headerlink" href="#id500" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id501">
+<h3>Inputs<a class="headerlink" href="#id501" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id502">
+<h3>Outputs<a class="headerlink" href="#id502" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id503">
+<h3>More About<a class="headerlink" href="#id503" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id504">
+<h3>Examples<a class="headerlink" href="#id504" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="sin">
+<span id="id505"></span><h2>sin<a class="headerlink" href="#sin" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id506">
+<h3>Syntax<a class="headerlink" href="#id506" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id507">
+<h3>Inputs<a class="headerlink" href="#id507" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id508">
+<h3>Outputs<a class="headerlink" href="#id508" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id509">
+<h3>More About<a class="headerlink" href="#id509" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id510">
+<h3>Examples<a class="headerlink" href="#id510" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="sinh">
+<span id="id511"></span><h2>sinh<a class="headerlink" href="#sinh" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id512">
+<h3>Syntax<a class="headerlink" href="#id512" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id513">
+<h3>Inputs<a class="headerlink" href="#id513" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id514">
+<h3>Outputs<a class="headerlink" href="#id514" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id515">
+<h3>More About<a class="headerlink" href="#id515" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id516">
+<h3>Examples<a class="headerlink" href="#id516" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="skewness">
+<span id="id517"></span><h2>skewness<a class="headerlink" href="#skewness" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id518">
+<h3>Syntax<a class="headerlink" href="#id518" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id519">
+<h3>Inputs<a class="headerlink" href="#id519" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id520">
+<h3>Outputs<a class="headerlink" href="#id520" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id521">
+<h3>More About<a class="headerlink" href="#id521" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id522">
+<h3>Examples<a class="headerlink" href="#id522" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="sort">
+<span id="id523"></span><h2>sort<a class="headerlink" href="#sort" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id524">
+<h3>Syntax<a class="headerlink" href="#id524" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id525">
+<h3>Inputs<a class="headerlink" href="#id525" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id526">
+<h3>Outputs<a class="headerlink" href="#id526" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id527">
+<h3>More About<a class="headerlink" href="#id527" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id528">
+<h3>Examples<a class="headerlink" href="#id528" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="spectrum">
+<span id="id529"></span><h2>spectrum<a class="headerlink" href="#spectrum" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id530">
+<h3>Syntax<a class="headerlink" href="#id530" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id531">
+<h3>Inputs<a class="headerlink" href="#id531" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id532">
+<h3>Outputs<a class="headerlink" href="#id532" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id533">
+<h3>More About<a class="headerlink" href="#id533" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id534">
+<h3>Examples<a class="headerlink" href="#id534" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="start">
+<span id="id535"></span><h2>start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h2>
+<p><strong>start</strong> time of the time series</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="std">
+<span id="id536"></span><h2>std<a class="headerlink" href="#std" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id537">
+<h3>Syntax<a class="headerlink" href="#id537" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id538">
+<h3>Inputs<a class="headerlink" href="#id538" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id539">
+<h3>Outputs<a class="headerlink" href="#id539" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id540">
+<h3>More About<a class="headerlink" href="#id540" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id541">
+<h3>Examples<a class="headerlink" href="#id541" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="step-dummy">
+<span id="id542"></span><h2>step_dummy<a class="headerlink" href="#step-dummy" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id543">
+<h3>Syntax<a class="headerlink" href="#id543" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id544">
+<h3>Inputs<a class="headerlink" href="#id544" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id545">
+<h3>Outputs<a class="headerlink" href="#id545" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id546">
+<h3>More About<a class="headerlink" href="#id546" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id547">
+<h3>Examples<a class="headerlink" href="#id547" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="subsasgn">
+<span id="id548"></span><h2>subsasgn<a class="headerlink" href="#subsasgn" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id549">
+<h3>Syntax<a class="headerlink" href="#id549" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id550">
+<h3>Inputs<a class="headerlink" href="#id550" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id551">
+<h3>Outputs<a class="headerlink" href="#id551" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id552">
+<h3>More About<a class="headerlink" href="#id552" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id553">
+<h3>Examples<a class="headerlink" href="#id553" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="subsref">
+<span id="id554"></span><h2>subsref<a class="headerlink" href="#subsref" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id555">
+<h3>Syntax<a class="headerlink" href="#id555" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id556">
+<h3>Inputs<a class="headerlink" href="#id556" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id557">
+<h3>Outputs<a class="headerlink" href="#id557" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id558">
+<h3>More About<a class="headerlink" href="#id558" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id559">
+<h3>Examples<a class="headerlink" href="#id559" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="sum">
+<span id="id560"></span><h2>sum<a class="headerlink" href="#sum" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id561">
+<h3>Syntax<a class="headerlink" href="#id561" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id562">
+<h3>Inputs<a class="headerlink" href="#id562" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id563">
+<h3>Outputs<a class="headerlink" href="#id563" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id564">
+<h3>More About<a class="headerlink" href="#id564" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id565">
+<h3>Examples<a class="headerlink" href="#id565" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="tail">
+<span id="id566"></span><h2>tail<a class="headerlink" href="#tail" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id567">
+<h3>Syntax<a class="headerlink" href="#id567" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id568">
+<h3>Inputs<a class="headerlink" href="#id568" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id569">
+<h3>Outputs<a class="headerlink" href="#id569" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id570">
+<h3>More About<a class="headerlink" href="#id570" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id571">
+<h3>Examples<a class="headerlink" href="#id571" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="times">
+<span id="id572"></span><h2>times<a class="headerlink" href="#times" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id573">
+<h3>Syntax<a class="headerlink" href="#id573" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id574">
+<h3>Inputs<a class="headerlink" href="#id574" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id575">
+<h3>Outputs<a class="headerlink" href="#id575" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id576">
+<h3>More About<a class="headerlink" href="#id576" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id577">
+<h3>Examples<a class="headerlink" href="#id577" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="transform">
+<span id="id578"></span><h2>transform<a class="headerlink" href="#transform" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id579">
+<h3>Syntax<a class="headerlink" href="#id579" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id580">
+<h3>Inputs<a class="headerlink" href="#id580" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id581">
+<h3>Outputs<a class="headerlink" href="#id581" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id582">
+<h3>More About<a class="headerlink" href="#id582" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id583">
+<h3>Examples<a class="headerlink" href="#id583" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="transpose">
+<span id="id584"></span><h2>transpose<a class="headerlink" href="#transpose" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id585">
+<h3>Syntax<a class="headerlink" href="#id585" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id586">
+<h3>Inputs<a class="headerlink" href="#id586" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id587">
+<h3>Outputs<a class="headerlink" href="#id587" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id588">
+<h3>More About<a class="headerlink" href="#id588" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id589">
+<h3>Examples<a class="headerlink" href="#id589" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="ts">
+<span id="id590"></span><h2>ts<a class="headerlink" href="#ts" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="uminus">
+<span id="id591"></span><h2>uminus<a class="headerlink" href="#uminus" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id592">
+<h3>Syntax<a class="headerlink" href="#id592" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id593">
+<h3>Inputs<a class="headerlink" href="#id593" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id594">
+<h3>Outputs<a class="headerlink" href="#id594" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id595">
+<h3>More About<a class="headerlink" href="#id595" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id596">
+<h3>Examples<a class="headerlink" href="#id596" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="values">
+<span id="id597"></span><h2>values<a class="headerlink" href="#values" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id598">
+<h3>Syntax<a class="headerlink" href="#id598" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id599">
+<h3>Inputs<a class="headerlink" href="#id599" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id600">
+<h3>Outputs<a class="headerlink" href="#id600" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id601">
+<h3>More About<a class="headerlink" href="#id601" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id602">
+<h3>Examples<a class="headerlink" href="#id602" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="var">
+<span id="id603"></span><h2>var<a class="headerlink" href="#var" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id604">
+<h3>Syntax<a class="headerlink" href="#id604" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id605">
+<h3>Inputs<a class="headerlink" href="#id605" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id606">
+<h3>Outputs<a class="headerlink" href="#id606" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id607">
+<h3>More About<a class="headerlink" href="#id607" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id608">
+<h3>Examples<a class="headerlink" href="#id608" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="varnames">
+<span id="id609"></span><h2>varnames<a class="headerlink" href="#varnames" title="Permalink to this headline">¶</a></h2>
+<p>names of the variables in the database</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="zeros">
+<span id="id610"></span><h2>zeros<a class="headerlink" href="#zeros" title="Permalink to this headline">¶</a></h2>
+<p>H1 line</p>
+<div class="section" id="id611">
+<h3>Syntax<a class="headerlink" href="#id611" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id612">
+<h3>Inputs<a class="headerlink" href="#id612" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id613">
+<h3>Outputs<a class="headerlink" href="#id613" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id614">
+<h3>More About<a class="headerlink" href="#id614" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id615">
+<h3>Examples<a class="headerlink" href="#id615" title="Permalink to this headline">¶</a></h3>
+<p>See also:</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Time series</a><ul>
+<li><a class="reference internal" href="#numberofobservations">NumberOfObservations</a></li>
+<li><a class="reference internal" href="#numberofpages">NumberOfPages</a></li>
+<li><a class="reference internal" href="#numberofvariables">NumberOfVariables</a></li>
+<li><a class="reference internal" href="#acos">acos</a><ul>
+<li><a class="reference internal" href="#syntax">Syntax</a></li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#more-about">More About</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acosh">acosh</a><ul>
+<li><a class="reference internal" href="#id6">Syntax</a></li>
+<li><a class="reference internal" href="#id7">Inputs</a></li>
+<li><a class="reference internal" href="#id8">Outputs</a></li>
+<li><a class="reference internal" href="#id9">More About</a></li>
+<li><a class="reference internal" href="#id10">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acot">acot</a><ul>
+<li><a class="reference internal" href="#id12">Syntax</a></li>
+<li><a class="reference internal" href="#id13">Inputs</a></li>
+<li><a class="reference internal" href="#id14">Outputs</a></li>
+<li><a class="reference internal" href="#id15">More About</a></li>
+<li><a class="reference internal" href="#id16">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acoth">acoth</a><ul>
+<li><a class="reference internal" href="#id18">Syntax</a></li>
+<li><a class="reference internal" href="#id19">Inputs</a></li>
+<li><a class="reference internal" href="#id20">Outputs</a></li>
+<li><a class="reference internal" href="#id21">More About</a></li>
+<li><a class="reference internal" href="#id22">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aggregate">aggregate</a><ul>
+<li><a class="reference internal" href="#id24">Syntax</a></li>
+<li><a class="reference internal" href="#id25">Inputs</a></li>
+<li><a class="reference internal" href="#id26">Outputs</a></li>
+<li><a class="reference internal" href="#id27">More About</a></li>
+<li><a class="reference internal" href="#id28">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#allmean">allmean</a><ul>
+<li><a class="reference internal" href="#id30">Syntax</a></li>
+<li><a class="reference internal" href="#id31">Inputs</a></li>
+<li><a class="reference internal" href="#id32">Outputs</a></li>
+<li><a class="reference internal" href="#id33">More About</a></li>
+<li><a class="reference internal" href="#id34">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#and">and</a><ul>
+<li><a class="reference internal" href="#id36">Syntax</a></li>
+<li><a class="reference internal" href="#id37">Inputs</a></li>
+<li><a class="reference internal" href="#id38">Outputs</a></li>
+<li><a class="reference internal" href="#id39">More About</a></li>
+<li><a class="reference internal" href="#id40">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#apply">apply</a><ul>
+<li><a class="reference internal" href="#id42">Syntax</a></li>
+<li><a class="reference internal" href="#id43">Inputs</a></li>
+<li><a class="reference internal" href="#id44">Outputs</a></li>
+<li><a class="reference internal" href="#id45">More About</a></li>
+<li><a class="reference internal" href="#id46">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asin">asin</a><ul>
+<li><a class="reference internal" href="#id48">Syntax</a></li>
+<li><a class="reference internal" href="#id49">Inputs</a></li>
+<li><a class="reference internal" href="#id50">Outputs</a></li>
+<li><a class="reference internal" href="#id51">More About</a></li>
+<li><a class="reference internal" href="#id52">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asinh">asinh</a><ul>
+<li><a class="reference internal" href="#id54">Syntax</a></li>
+<li><a class="reference internal" href="#id55">Inputs</a></li>
+<li><a class="reference internal" href="#id56">Outputs</a></li>
+<li><a class="reference internal" href="#id57">More About</a></li>
+<li><a class="reference internal" href="#id58">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#atan">atan</a><ul>
+<li><a class="reference internal" href="#id60">Syntax</a></li>
+<li><a class="reference internal" href="#id61">Inputs</a></li>
+<li><a class="reference internal" href="#id62">Outputs</a></li>
+<li><a class="reference internal" href="#id63">More About</a></li>
+<li><a class="reference internal" href="#id64">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#atanh">atanh</a><ul>
+<li><a class="reference internal" href="#id66">Syntax</a></li>
+<li><a class="reference internal" href="#id67">Inputs</a></li>
+<li><a class="reference internal" href="#id68">Outputs</a></li>
+<li><a class="reference internal" href="#id69">More About</a></li>
+<li><a class="reference internal" href="#id70">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#automatic-model-selection">automatic_model_selection</a><ul>
+<li><a class="reference internal" href="#id72">Syntax</a></li>
+<li><a class="reference internal" href="#id73">Inputs</a></li>
+<li><a class="reference internal" href="#id74">Outputs</a></li>
+<li><a class="reference internal" href="#id75">More About</a></li>
+<li><a class="reference internal" href="#id76">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bar">bar</a><ul>
+<li><a class="reference internal" href="#id78">Syntax</a></li>
+<li><a class="reference internal" href="#id79">Inputs</a></li>
+<li><a class="reference internal" href="#id80">Outputs</a></li>
+<li><a class="reference internal" href="#id81">More About</a></li>
+<li><a class="reference internal" href="#id82">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#barh">barh</a><ul>
+<li><a class="reference internal" href="#id84">Syntax</a></li>
+<li><a class="reference internal" href="#id85">Inputs</a></li>
+<li><a class="reference internal" href="#id86">Outputs</a></li>
+<li><a class="reference internal" href="#id87">More About</a></li>
+<li><a class="reference internal" href="#id88">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boxplot">boxplot</a><ul>
+<li><a class="reference internal" href="#id90">Syntax</a></li>
+<li><a class="reference internal" href="#id91">Inputs</a></li>
+<li><a class="reference internal" href="#id92">Outputs</a></li>
+<li><a class="reference internal" href="#id93">More About</a></li>
+<li><a class="reference internal" href="#id94">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bsxfun">bsxfun</a><ul>
+<li><a class="reference internal" href="#id96">Syntax</a></li>
+<li><a class="reference internal" href="#id97">Inputs</a></li>
+<li><a class="reference internal" href="#id98">Outputs</a></li>
+<li><a class="reference internal" href="#id99">More About</a></li>
+<li><a class="reference internal" href="#id100">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cat">cat</a><ul>
+<li><a class="reference internal" href="#id102">Syntax</a></li>
+<li><a class="reference internal" href="#id103">Inputs</a></li>
+<li><a class="reference internal" href="#id104">Outputs</a></li>
+<li><a class="reference internal" href="#id105">More About</a></li>
+<li><a class="reference internal" href="#id106">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#collect">collect</a><ul>
+<li><a class="reference internal" href="#id108">Syntax</a></li>
+<li><a class="reference internal" href="#id109">Inputs</a></li>
+<li><a class="reference internal" href="#id110">Outputs</a></li>
+<li><a class="reference internal" href="#id111">More About</a></li>
+<li><a class="reference internal" href="#id112">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#corr">corr</a><ul>
+<li><a class="reference internal" href="#id114">Syntax</a></li>
+<li><a class="reference internal" href="#id115">Inputs</a></li>
+<li><a class="reference internal" href="#id116">Outputs</a></li>
+<li><a class="reference internal" href="#id117">More About</a></li>
+<li><a class="reference internal" href="#id118">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#corrcoef">corrcoef</a><ul>
+<li><a class="reference internal" href="#id120">Syntax</a></li>
+<li><a class="reference internal" href="#id121">Inputs</a></li>
+<li><a class="reference internal" href="#id122">Outputs</a></li>
+<li><a class="reference internal" href="#id123">More About</a></li>
+<li><a class="reference internal" href="#id124">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cos">cos</a><ul>
+<li><a class="reference internal" href="#id126">Syntax</a></li>
+<li><a class="reference internal" href="#id127">Inputs</a></li>
+<li><a class="reference internal" href="#id128">Outputs</a></li>
+<li><a class="reference internal" href="#id129">More About</a></li>
+<li><a class="reference internal" href="#id130">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cosh">cosh</a><ul>
+<li><a class="reference internal" href="#id132">Syntax</a></li>
+<li><a class="reference internal" href="#id133">Inputs</a></li>
+<li><a class="reference internal" href="#id134">Outputs</a></li>
+<li><a class="reference internal" href="#id135">More About</a></li>
+<li><a class="reference internal" href="#id136">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cot">cot</a><ul>
+<li><a class="reference internal" href="#id138">Syntax</a></li>
+<li><a class="reference internal" href="#id139">Inputs</a></li>
+<li><a class="reference internal" href="#id140">Outputs</a></li>
+<li><a class="reference internal" href="#id141">More About</a></li>
+<li><a class="reference internal" href="#id142">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#coth">coth</a><ul>
+<li><a class="reference internal" href="#id144">Syntax</a></li>
+<li><a class="reference internal" href="#id145">Inputs</a></li>
+<li><a class="reference internal" href="#id146">Outputs</a></li>
+<li><a class="reference internal" href="#id147">More About</a></li>
+<li><a class="reference internal" href="#id148">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cov">cov</a><ul>
+<li><a class="reference internal" href="#id150">Syntax</a></li>
+<li><a class="reference internal" href="#id151">Inputs</a></li>
+<li><a class="reference internal" href="#id152">Outputs</a></li>
+<li><a class="reference internal" href="#id153">More About</a></li>
+<li><a class="reference internal" href="#id154">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ctranspose">ctranspose</a><ul>
+<li><a class="reference internal" href="#id156">Syntax</a></li>
+<li><a class="reference internal" href="#id157">Inputs</a></li>
+<li><a class="reference internal" href="#id158">Outputs</a></li>
+<li><a class="reference internal" href="#id159">More About</a></li>
+<li><a class="reference internal" href="#id160">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cumprod">cumprod</a><ul>
+<li><a class="reference internal" href="#id162">Syntax</a></li>
+<li><a class="reference internal" href="#id163">Inputs</a></li>
+<li><a class="reference internal" href="#id164">Outputs</a></li>
+<li><a class="reference internal" href="#id165">More About</a></li>
+<li><a class="reference internal" href="#id166">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cumsum">cumsum</a><ul>
+<li><a class="reference internal" href="#id168">Syntax</a></li>
+<li><a class="reference internal" href="#id169">Inputs</a></li>
+<li><a class="reference internal" href="#id170">Outputs</a></li>
+<li><a class="reference internal" href="#id171">More About</a></li>
+<li><a class="reference internal" href="#id172">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#decompose-series">decompose_series</a><ul>
+<li><a class="reference internal" href="#id174">Syntax</a></li>
+<li><a class="reference internal" href="#id175">Inputs</a></li>
+<li><a class="reference internal" href="#id176">Outputs</a></li>
+<li><a class="reference internal" href="#id177">More About</a></li>
+<li><a class="reference internal" href="#id178">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#describe">describe</a><ul>
+<li><a class="reference internal" href="#id180">Syntax</a></li>
+<li><a class="reference internal" href="#id181">Inputs</a></li>
+<li><a class="reference internal" href="#id182">Outputs</a></li>
+<li><a class="reference internal" href="#id183">More About</a></li>
+<li><a class="reference internal" href="#id184">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#display">display</a><ul>
+<li><a class="reference internal" href="#id186">Syntax</a></li>
+<li><a class="reference internal" href="#id187">Inputs</a></li>
+<li><a class="reference internal" href="#id188">Outputs</a></li>
+<li><a class="reference internal" href="#id189">More About</a></li>
+<li><a class="reference internal" href="#id190">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#double">double</a><ul>
+<li><a class="reference internal" href="#id192">Syntax</a></li>
+<li><a class="reference internal" href="#id193">Inputs</a></li>
+<li><a class="reference internal" href="#id194">Outputs</a></li>
+<li><a class="reference internal" href="#id195">More About</a></li>
+<li><a class="reference internal" href="#id196">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#drop">drop</a><ul>
+<li><a class="reference internal" href="#id198">Syntax</a></li>
+<li><a class="reference internal" href="#id199">Inputs</a></li>
+<li><a class="reference internal" href="#id200">Outputs</a></li>
+<li><a class="reference internal" href="#id201">More About</a></li>
+<li><a class="reference internal" href="#id202">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dummy">dummy</a><ul>
+<li><a class="reference internal" href="#id204">Syntax</a></li>
+<li><a class="reference internal" href="#id205">Inputs</a></li>
+<li><a class="reference internal" href="#id206">Outputs</a></li>
+<li><a class="reference internal" href="#id207">More About</a></li>
+<li><a class="reference internal" href="#id208">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#eq">eq</a><ul>
+<li><a class="reference internal" href="#id210">Syntax</a></li>
+<li><a class="reference internal" href="#id211">Inputs</a></li>
+<li><a class="reference internal" href="#id212">Outputs</a></li>
+<li><a class="reference internal" href="#id213">More About</a></li>
+<li><a class="reference internal" href="#id214">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#exp">exp</a><ul>
+<li><a class="reference internal" href="#id216">Syntax</a></li>
+<li><a class="reference internal" href="#id217">Inputs</a></li>
+<li><a class="reference internal" href="#id218">Outputs</a></li>
+<li><a class="reference internal" href="#id219">More About</a></li>
+<li><a class="reference internal" href="#id220">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#expanding">expanding</a><ul>
+<li><a class="reference internal" href="#id222">Syntax</a></li>
+<li><a class="reference internal" href="#id223">Inputs</a></li>
+<li><a class="reference internal" href="#id224">Outputs</a></li>
+<li><a class="reference internal" href="#id225">More About</a></li>
+<li><a class="reference internal" href="#id226">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fanchart">fanchart</a><ul>
+<li><a class="reference internal" href="#id228">Syntax</a></li>
+<li><a class="reference internal" href="#id229">Inputs</a></li>
+<li><a class="reference internal" href="#id230">Outputs</a></li>
+<li><a class="reference internal" href="#id231">More About</a></li>
+<li><a class="reference internal" href="#id232">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#finish">finish</a></li>
+<li><a class="reference internal" href="#frequency">frequency</a></li>
+<li><a class="reference internal" href="#ge">ge</a><ul>
+<li><a class="reference internal" href="#id236">Syntax</a></li>
+<li><a class="reference internal" href="#id237">Inputs</a></li>
+<li><a class="reference internal" href="#id238">Outputs</a></li>
+<li><a class="reference internal" href="#id239">More About</a></li>
+<li><a class="reference internal" href="#id240">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get">get</a><ul>
+<li><a class="reference internal" href="#id242">Syntax</a></li>
+<li><a class="reference internal" href="#id243">Inputs</a></li>
+<li><a class="reference internal" href="#id244">Outputs</a></li>
+<li><a class="reference internal" href="#id245">More About</a></li>
+<li><a class="reference internal" href="#id246">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gt">gt</a><ul>
+<li><a class="reference internal" href="#id248">Syntax</a></li>
+<li><a class="reference internal" href="#id249">Inputs</a></li>
+<li><a class="reference internal" href="#id250">Outputs</a></li>
+<li><a class="reference internal" href="#id251">More About</a></li>
+<li><a class="reference internal" href="#id252">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#head">head</a><ul>
+<li><a class="reference internal" href="#id254">Syntax</a></li>
+<li><a class="reference internal" href="#id255">Inputs</a></li>
+<li><a class="reference internal" href="#id256">Outputs</a></li>
+<li><a class="reference internal" href="#id257">More About</a></li>
+<li><a class="reference internal" href="#id258">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hist">hist</a><ul>
+<li><a class="reference internal" href="#id260">Syntax</a></li>
+<li><a class="reference internal" href="#id261">Inputs</a></li>
+<li><a class="reference internal" href="#id262">Outputs</a></li>
+<li><a class="reference internal" href="#id263">More About</a></li>
+<li><a class="reference internal" href="#id264">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#horzcat">horzcat</a><ul>
+<li><a class="reference internal" href="#id266">Syntax</a></li>
+<li><a class="reference internal" href="#id267">Inputs</a></li>
+<li><a class="reference internal" href="#id268">Outputs</a></li>
+<li><a class="reference internal" href="#id269">More About</a></li>
+<li><a class="reference internal" href="#id270">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hpfilter">hpfilter</a><ul>
+<li><a class="reference internal" href="#id272">Syntax</a></li>
+<li><a class="reference internal" href="#id273">Inputs</a></li>
+<li><a class="reference internal" href="#id274">Outputs</a></li>
+<li><a class="reference internal" href="#id275">More About</a></li>
+<li><a class="reference internal" href="#id276">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#index">index</a><ul>
+<li><a class="reference internal" href="#id278">Syntax</a></li>
+<li><a class="reference internal" href="#id279">Inputs</a></li>
+<li><a class="reference internal" href="#id280">Outputs</a></li>
+<li><a class="reference internal" href="#id281">More About</a></li>
+<li><a class="reference internal" href="#id282">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interpolate">interpolate</a><ul>
+<li><a class="reference internal" href="#id284">Syntax</a></li>
+<li><a class="reference internal" href="#id285">Inputs</a></li>
+<li><a class="reference internal" href="#id286">Outputs</a></li>
+<li><a class="reference internal" href="#id287">More About</a></li>
+<li><a class="reference internal" href="#id288">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#intersect">intersect</a><ul>
+<li><a class="reference internal" href="#id290">Syntax</a></li>
+<li><a class="reference internal" href="#id291">Inputs</a></li>
+<li><a class="reference internal" href="#id292">Outputs</a></li>
+<li><a class="reference internal" href="#id293">More About</a></li>
+<li><a class="reference internal" href="#id294">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#isfinite">isfinite</a><ul>
+<li><a class="reference internal" href="#id296">Syntax</a></li>
+<li><a class="reference internal" href="#id297">Inputs</a></li>
+<li><a class="reference internal" href="#id298">Outputs</a></li>
+<li><a class="reference internal" href="#id299">More About</a></li>
+<li><a class="reference internal" href="#id300">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#isinf">isinf</a><ul>
+<li><a class="reference internal" href="#id302">Syntax</a></li>
+<li><a class="reference internal" href="#id303">Inputs</a></li>
+<li><a class="reference internal" href="#id304">Outputs</a></li>
+<li><a class="reference internal" href="#id305">More About</a></li>
+<li><a class="reference internal" href="#id306">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#isnan">isnan</a><ul>
+<li><a class="reference internal" href="#id308">Syntax</a></li>
+<li><a class="reference internal" href="#id309">Inputs</a></li>
+<li><a class="reference internal" href="#id310">Outputs</a></li>
+<li><a class="reference internal" href="#id311">More About</a></li>
+<li><a class="reference internal" href="#id312">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jbtest">jbtest</a><ul>
+<li><a class="reference internal" href="#id314">Syntax</a></li>
+<li><a class="reference internal" href="#id315">Inputs</a></li>
+<li><a class="reference internal" href="#id316">Outputs</a></li>
+<li><a class="reference internal" href="#id317">More About</a></li>
+<li><a class="reference internal" href="#id318">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#kurtosis">kurtosis</a><ul>
+<li><a class="reference internal" href="#id320">Syntax</a></li>
+<li><a class="reference internal" href="#id321">Inputs</a></li>
+<li><a class="reference internal" href="#id322">Outputs</a></li>
+<li><a class="reference internal" href="#id323">More About</a></li>
+<li><a class="reference internal" href="#id324">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#le">le</a><ul>
+<li><a class="reference internal" href="#id326">Syntax</a></li>
+<li><a class="reference internal" href="#id327">Inputs</a></li>
+<li><a class="reference internal" href="#id328">Outputs</a></li>
+<li><a class="reference internal" href="#id329">More About</a></li>
+<li><a class="reference internal" href="#id330">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#log">log</a><ul>
+<li><a class="reference internal" href="#id332">Syntax</a></li>
+<li><a class="reference internal" href="#id333">Inputs</a></li>
+<li><a class="reference internal" href="#id334">Outputs</a></li>
+<li><a class="reference internal" href="#id335">More About</a></li>
+<li><a class="reference internal" href="#id336">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lt">lt</a><ul>
+<li><a class="reference internal" href="#id338">Syntax</a></li>
+<li><a class="reference internal" href="#id339">Inputs</a></li>
+<li><a class="reference internal" href="#id340">Outputs</a></li>
+<li><a class="reference internal" href="#id341">More About</a></li>
+<li><a class="reference internal" href="#id342">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#max">max</a><ul>
+<li><a class="reference internal" href="#id344">Syntax</a></li>
+<li><a class="reference internal" href="#id345">Inputs</a></li>
+<li><a class="reference internal" href="#id346">Outputs</a></li>
+<li><a class="reference internal" href="#id347">More About</a></li>
+<li><a class="reference internal" href="#id348">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mean">mean</a><ul>
+<li><a class="reference internal" href="#id350">Syntax</a></li>
+<li><a class="reference internal" href="#id351">Inputs</a></li>
+<li><a class="reference internal" href="#id352">Outputs</a></li>
+<li><a class="reference internal" href="#id353">More About</a></li>
+<li><a class="reference internal" href="#id354">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#median">median</a><ul>
+<li><a class="reference internal" href="#id356">Syntax</a></li>
+<li><a class="reference internal" href="#id357">Inputs</a></li>
+<li><a class="reference internal" href="#id358">Outputs</a></li>
+<li><a class="reference internal" href="#id359">More About</a></li>
+<li><a class="reference internal" href="#id360">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#min">min</a><ul>
+<li><a class="reference internal" href="#id362">Syntax</a></li>
+<li><a class="reference internal" href="#id363">Inputs</a></li>
+<li><a class="reference internal" href="#id364">Outputs</a></li>
+<li><a class="reference internal" href="#id365">More About</a></li>
+<li><a class="reference internal" href="#id366">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#minus">minus</a><ul>
+<li><a class="reference internal" href="#id368">Syntax</a></li>
+<li><a class="reference internal" href="#id369">Inputs</a></li>
+<li><a class="reference internal" href="#id370">Outputs</a></li>
+<li><a class="reference internal" href="#id371">More About</a></li>
+<li><a class="reference internal" href="#id372">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mode">mode</a><ul>
+<li><a class="reference internal" href="#id374">Syntax</a></li>
+<li><a class="reference internal" href="#id375">Inputs</a></li>
+<li><a class="reference internal" href="#id376">Outputs</a></li>
+<li><a class="reference internal" href="#id377">More About</a></li>
+<li><a class="reference internal" href="#id378">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mpower">mpower</a><ul>
+<li><a class="reference internal" href="#id380">Syntax</a></li>
+<li><a class="reference internal" href="#id381">Inputs</a></li>
+<li><a class="reference internal" href="#id382">Outputs</a></li>
+<li><a class="reference internal" href="#id383">More About</a></li>
+<li><a class="reference internal" href="#id384">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mrdivide">mrdivide</a><ul>
+<li><a class="reference internal" href="#id386">Syntax</a></li>
+<li><a class="reference internal" href="#id387">Inputs</a></li>
+<li><a class="reference internal" href="#id388">Outputs</a></li>
+<li><a class="reference internal" href="#id389">More About</a></li>
+<li><a class="reference internal" href="#id390">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mtimes">mtimes</a><ul>
+<li><a class="reference internal" href="#id392">Syntax</a></li>
+<li><a class="reference internal" href="#id393">Inputs</a></li>
+<li><a class="reference internal" href="#id394">Outputs</a></li>
+<li><a class="reference internal" href="#id395">More About</a></li>
+<li><a class="reference internal" href="#id396">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nan">nan</a><ul>
+<li><a class="reference internal" href="#id398">Syntax</a></li>
+<li><a class="reference internal" href="#id399">Inputs</a></li>
+<li><a class="reference internal" href="#id400">Outputs</a></li>
+<li><a class="reference internal" href="#id401">More About</a></li>
+<li><a class="reference internal" href="#id402">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ne">ne</a><ul>
+<li><a class="reference internal" href="#id404">Syntax</a></li>
+<li><a class="reference internal" href="#id405">Inputs</a></li>
+<li><a class="reference internal" href="#id406">Outputs</a></li>
+<li><a class="reference internal" href="#id407">More About</a></li>
+<li><a class="reference internal" href="#id408">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numel">numel</a><ul>
+<li><a class="reference internal" href="#id410">Syntax</a></li>
+<li><a class="reference internal" href="#id411">Inputs</a></li>
+<li><a class="reference internal" href="#id412">Outputs</a></li>
+<li><a class="reference internal" href="#id413">More About</a></li>
+<li><a class="reference internal" href="#id414">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ones">ones</a><ul>
+<li><a class="reference internal" href="#id416">Syntax</a></li>
+<li><a class="reference internal" href="#id417">Inputs</a></li>
+<li><a class="reference internal" href="#id418">Outputs</a></li>
+<li><a class="reference internal" href="#id419">More About</a></li>
+<li><a class="reference internal" href="#id420">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pages2struct">pages2struct</a><ul>
+<li><a class="reference internal" href="#id422">Syntax</a></li>
+<li><a class="reference internal" href="#id423">Inputs</a></li>
+<li><a class="reference internal" href="#id424">Outputs</a></li>
+<li><a class="reference internal" href="#id425">More About</a></li>
+<li><a class="reference internal" href="#id426">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plot">plot</a><ul>
+<li><a class="reference internal" href="#id428">Syntax</a></li>
+<li><a class="reference internal" href="#id429">Inputs</a></li>
+<li><a class="reference internal" href="#id430">Outputs</a></li>
+<li><a class="reference internal" href="#id431">More About</a></li>
+<li><a class="reference internal" href="#id432">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plotyy">plotyy</a><ul>
+<li><a class="reference internal" href="#id434">Syntax</a></li>
+<li><a class="reference internal" href="#id435">Inputs</a></li>
+<li><a class="reference internal" href="#id436">Outputs</a></li>
+<li><a class="reference internal" href="#id437">More About</a></li>
+<li><a class="reference internal" href="#id438">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plus">plus</a><ul>
+<li><a class="reference internal" href="#id440">Syntax</a></li>
+<li><a class="reference internal" href="#id441">Inputs</a></li>
+<li><a class="reference internal" href="#id442">Outputs</a></li>
+<li><a class="reference internal" href="#id443">More About</a></li>
+<li><a class="reference internal" href="#id444">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#power">power</a><ul>
+<li><a class="reference internal" href="#id446">Syntax</a></li>
+<li><a class="reference internal" href="#id447">Inputs</a></li>
+<li><a class="reference internal" href="#id448">Outputs</a></li>
+<li><a class="reference internal" href="#id449">More About</a></li>
+<li><a class="reference internal" href="#id450">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#prctile">prctile</a><ul>
+<li><a class="reference internal" href="#id452">Syntax</a></li>
+<li><a class="reference internal" href="#id453">Inputs</a></li>
+<li><a class="reference internal" href="#id454">Outputs</a></li>
+<li><a class="reference internal" href="#id455">More About</a></li>
+<li><a class="reference internal" href="#id456">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quantile">quantile</a><ul>
+<li><a class="reference internal" href="#id458">Syntax</a></li>
+<li><a class="reference internal" href="#id459">Inputs</a></li>
+<li><a class="reference internal" href="#id460">Outputs</a></li>
+<li><a class="reference internal" href="#id461">More About</a></li>
+<li><a class="reference internal" href="#id462">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rand">rand</a><ul>
+<li><a class="reference internal" href="#id464">Syntax</a></li>
+<li><a class="reference internal" href="#id465">Inputs</a></li>
+<li><a class="reference internal" href="#id466">Outputs</a></li>
+<li><a class="reference internal" href="#id467">More About</a></li>
+<li><a class="reference internal" href="#id468">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#randn">randn</a><ul>
+<li><a class="reference internal" href="#id470">Syntax</a></li>
+<li><a class="reference internal" href="#id471">Inputs</a></li>
+<li><a class="reference internal" href="#id472">Outputs</a></li>
+<li><a class="reference internal" href="#id473">More About</a></li>
+<li><a class="reference internal" href="#id474">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#range">range</a><ul>
+<li><a class="reference internal" href="#id476">Syntax</a></li>
+<li><a class="reference internal" href="#id477">Inputs</a></li>
+<li><a class="reference internal" href="#id478">Outputs</a></li>
+<li><a class="reference internal" href="#id479">More About</a></li>
+<li><a class="reference internal" href="#id480">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rdivide">rdivide</a><ul>
+<li><a class="reference internal" href="#id482">Syntax</a></li>
+<li><a class="reference internal" href="#id483">Inputs</a></li>
+<li><a class="reference internal" href="#id484">Outputs</a></li>
+<li><a class="reference internal" href="#id485">More About</a></li>
+<li><a class="reference internal" href="#id486">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regress">regress</a><ul>
+<li><a class="reference internal" href="#id488">Syntax</a></li>
+<li><a class="reference internal" href="#id489">Inputs</a></li>
+<li><a class="reference internal" href="#id490">Outputs</a></li>
+<li><a class="reference internal" href="#id491">More About</a></li>
+<li><a class="reference internal" href="#id492">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reset-start-date">reset_start_date</a><ul>
+<li><a class="reference internal" href="#id494">Syntax</a></li>
+<li><a class="reference internal" href="#id495">Inputs</a></li>
+<li><a class="reference internal" href="#id496">Outputs</a></li>
+<li><a class="reference internal" href="#id497">More About</a></li>
+<li><a class="reference internal" href="#id498">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rolling">rolling</a><ul>
+<li><a class="reference internal" href="#id500">Syntax</a></li>
+<li><a class="reference internal" href="#id501">Inputs</a></li>
+<li><a class="reference internal" href="#id502">Outputs</a></li>
+<li><a class="reference internal" href="#id503">More About</a></li>
+<li><a class="reference internal" href="#id504">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sin">sin</a><ul>
+<li><a class="reference internal" href="#id506">Syntax</a></li>
+<li><a class="reference internal" href="#id507">Inputs</a></li>
+<li><a class="reference internal" href="#id508">Outputs</a></li>
+<li><a class="reference internal" href="#id509">More About</a></li>
+<li><a class="reference internal" href="#id510">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sinh">sinh</a><ul>
+<li><a class="reference internal" href="#id512">Syntax</a></li>
+<li><a class="reference internal" href="#id513">Inputs</a></li>
+<li><a class="reference internal" href="#id514">Outputs</a></li>
+<li><a class="reference internal" href="#id515">More About</a></li>
+<li><a class="reference internal" href="#id516">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#skewness">skewness</a><ul>
+<li><a class="reference internal" href="#id518">Syntax</a></li>
+<li><a class="reference internal" href="#id519">Inputs</a></li>
+<li><a class="reference internal" href="#id520">Outputs</a></li>
+<li><a class="reference internal" href="#id521">More About</a></li>
+<li><a class="reference internal" href="#id522">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sort">sort</a><ul>
+<li><a class="reference internal" href="#id524">Syntax</a></li>
+<li><a class="reference internal" href="#id525">Inputs</a></li>
+<li><a class="reference internal" href="#id526">Outputs</a></li>
+<li><a class="reference internal" href="#id527">More About</a></li>
+<li><a class="reference internal" href="#id528">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#spectrum">spectrum</a><ul>
+<li><a class="reference internal" href="#id530">Syntax</a></li>
+<li><a class="reference internal" href="#id531">Inputs</a></li>
+<li><a class="reference internal" href="#id532">Outputs</a></li>
+<li><a class="reference internal" href="#id533">More About</a></li>
+<li><a class="reference internal" href="#id534">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#start">start</a></li>
+<li><a class="reference internal" href="#std">std</a><ul>
+<li><a class="reference internal" href="#id537">Syntax</a></li>
+<li><a class="reference internal" href="#id538">Inputs</a></li>
+<li><a class="reference internal" href="#id539">Outputs</a></li>
+<li><a class="reference internal" href="#id540">More About</a></li>
+<li><a class="reference internal" href="#id541">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#step-dummy">step_dummy</a><ul>
+<li><a class="reference internal" href="#id543">Syntax</a></li>
+<li><a class="reference internal" href="#id544">Inputs</a></li>
+<li><a class="reference internal" href="#id545">Outputs</a></li>
+<li><a class="reference internal" href="#id546">More About</a></li>
+<li><a class="reference internal" href="#id547">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subsasgn">subsasgn</a><ul>
+<li><a class="reference internal" href="#id549">Syntax</a></li>
+<li><a class="reference internal" href="#id550">Inputs</a></li>
+<li><a class="reference internal" href="#id551">Outputs</a></li>
+<li><a class="reference internal" href="#id552">More About</a></li>
+<li><a class="reference internal" href="#id553">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subsref">subsref</a><ul>
+<li><a class="reference internal" href="#id555">Syntax</a></li>
+<li><a class="reference internal" href="#id556">Inputs</a></li>
+<li><a class="reference internal" href="#id557">Outputs</a></li>
+<li><a class="reference internal" href="#id558">More About</a></li>
+<li><a class="reference internal" href="#id559">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sum">sum</a><ul>
+<li><a class="reference internal" href="#id561">Syntax</a></li>
+<li><a class="reference internal" href="#id562">Inputs</a></li>
+<li><a class="reference internal" href="#id563">Outputs</a></li>
+<li><a class="reference internal" href="#id564">More About</a></li>
+<li><a class="reference internal" href="#id565">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tail">tail</a><ul>
+<li><a class="reference internal" href="#id567">Syntax</a></li>
+<li><a class="reference internal" href="#id568">Inputs</a></li>
+<li><a class="reference internal" href="#id569">Outputs</a></li>
+<li><a class="reference internal" href="#id570">More About</a></li>
+<li><a class="reference internal" href="#id571">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#times">times</a><ul>
+<li><a class="reference internal" href="#id573">Syntax</a></li>
+<li><a class="reference internal" href="#id574">Inputs</a></li>
+<li><a class="reference internal" href="#id575">Outputs</a></li>
+<li><a class="reference internal" href="#id576">More About</a></li>
+<li><a class="reference internal" href="#id577">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transform">transform</a><ul>
+<li><a class="reference internal" href="#id579">Syntax</a></li>
+<li><a class="reference internal" href="#id580">Inputs</a></li>
+<li><a class="reference internal" href="#id581">Outputs</a></li>
+<li><a class="reference internal" href="#id582">More About</a></li>
+<li><a class="reference internal" href="#id583">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transpose">transpose</a><ul>
+<li><a class="reference internal" href="#id585">Syntax</a></li>
+<li><a class="reference internal" href="#id586">Inputs</a></li>
+<li><a class="reference internal" href="#id587">Outputs</a></li>
+<li><a class="reference internal" href="#id588">More About</a></li>
+<li><a class="reference internal" href="#id589">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ts">ts</a></li>
+<li><a class="reference internal" href="#uminus">uminus</a><ul>
+<li><a class="reference internal" href="#id592">Syntax</a></li>
+<li><a class="reference internal" href="#id593">Inputs</a></li>
+<li><a class="reference internal" href="#id594">Outputs</a></li>
+<li><a class="reference internal" href="#id595">More About</a></li>
+<li><a class="reference internal" href="#id596">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#values">values</a><ul>
+<li><a class="reference internal" href="#id598">Syntax</a></li>
+<li><a class="reference internal" href="#id599">Inputs</a></li>
+<li><a class="reference internal" href="#id600">Outputs</a></li>
+<li><a class="reference internal" href="#id601">More About</a></li>
+<li><a class="reference internal" href="#id602">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#var">var</a><ul>
+<li><a class="reference internal" href="#id604">Syntax</a></li>
+<li><a class="reference internal" href="#id605">Inputs</a></li>
+<li><a class="reference internal" href="#id606">Outputs</a></li>
+<li><a class="reference internal" href="#id607">More About</a></li>
+<li><a class="reference internal" href="#id608">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#varnames">varnames</a></li>
+<li><a class="reference internal" href="#zeros">zeros</a><ul>
+<li><a class="reference internal" href="#id611">Syntax</a></li>
+<li><a class="reference internal" href="#id612">Inputs</a></li>
+<li><a class="reference internal" href="#id613">Outputs</a></li>
+<li><a class="reference internal" href="#id614">More About</a></li>
+<li><a class="reference internal" href="#id615">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../models/@svar/svar.html"
+                        title="previous chapter">Structural VAR modeling</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../../mcmc.html"
+                        title="next chapter">Markov Chain Monte Carlo for Bayesian Estimation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/classes/time_series/@ts/ts.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../mcmc.html" title="Markov Chain Monte Carlo for Bayesian Estimation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../models/@svar/svar.html" title="Structural VAR modeling"
+             >previous</a> |</li>
+        <li><a href="../../../master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Junior Maih.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

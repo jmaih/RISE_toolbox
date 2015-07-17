@@ -1,0 +1,40 @@
+# all files directories
+doc/*
+development/*
+doctrees/*
+help/build/html/_sources/*
+trash/*
+junk/*
+
+# files with extensions
+*.asv
+*.bat
+*.bak
+*.log
+#*old*
+*.aux
+*.out
+*.toc
+*.js
+*.tex
+
+# files including patterns
+*- Copy*
+
+# python stuff
+*.idx
+*.py
+*.rst
+*.css
+*.doctree
+*.pickle
+*.buildinfo
+*.cls
+*.sty
+*.ist
+Makefile
+
+!/examples/VariousModels/KaijiTutorial/Tutorial.pdf
+!/doc/svar.pdf
+!old_versions
+

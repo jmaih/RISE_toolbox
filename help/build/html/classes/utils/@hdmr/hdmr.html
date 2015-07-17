@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>High dimensional model representation &mdash; RISE 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="RISE 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Contributing to RISE" href="../../../contributing.html" />
+    <link rel="prev" title="Monte Carlo Filtering" href="../@mcf/mcf.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../contributing.html" title="Contributing to RISE"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../@mcf/mcf.html" title="Monte Carlo Filtering"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="high-dimensional-model-representation">
+<h1>High dimensional model representation<a class="headerlink" href="#high-dimensional-model-representation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="hdmr-methods">
+<h2>hdmr Methods:<a class="headerlink" href="#hdmr-methods" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[ <a class="reference internal" href="#estimate">estimate</a> ]</li>
+<li>[ <a class="reference internal" href="#first-order-effect">first_order_effect</a> ]</li>
+<li>[ <a class="reference internal" href="#hdmr">hdmr</a> ]   objective is either : f and theta or a function that will</li>
+<li>[ <a class="reference internal" href="#metamodel">metamodel</a> ]</li>
+<li>[ <a class="reference internal" href="#plot-fit">plot_fit</a> ]</li>
+<li>[ <a class="reference internal" href="#polynomial-evaluation">polynomial_evaluation</a> ]   later on, the function that normalizes could come in here so that the</li>
+<li>[ <a class="reference internal" href="#polynomial-integration">polynomial_integration</a> ]   polynomial is of the form a0+a1*x+...+ar*x^r</li>
+<li>[ <a class="reference internal" href="#polynomial-multiplication">polynomial_multiplication</a> ]   each polynomial is of the form a0+a1*x+...+ar*x^r</li>
+</ul>
+</div>
+<div class="section" id="hdmr-properties">
+<h2>hdmr Properties:<a class="headerlink" href="#hdmr-properties" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[ <a href="#id30"><span class="problematic" id="id31">N_</span></a> ]</li>
+<li>[ <a class="reference internal" href="#nobs">Nobs</a> ]</li>
+<li>[ <a href="#id32"><span class="problematic" id="id33">n_</span></a> ]</li>
+<li>[ <a class="reference internal" href="#output-nbr">output_nbr</a> ]</li>
+<li>[ <a class="reference internal" href="#theta">theta</a> ]</li>
+<li>[ <a class="reference internal" href="#theta-low">theta_low</a> ]</li>
+<li>[ <a class="reference internal" href="#theta-high">theta_high</a> ]</li>
+<li>[ <a class="reference internal" href="#g">g</a> ]</li>
+<li>[ <a class="reference internal" href="#x">x</a> ]</li>
+<li>[ <a class="reference internal" href="#expansion-order">expansion_order</a> ]</li>
+<li>[ <a class="reference internal" href="#pol-max-order">pol_max_order</a> ]</li>
+<li>[ <a class="reference internal" href="#poly-coefs">poly_coefs</a> ]</li>
+<li>[ <a class="reference internal" href="#indices">Indices</a> ]</li>
+<li>[ <a class="reference internal" href="#coefficients">coefficients</a> ]</li>
+<li>[ <a class="reference internal" href="#aggregate">aggregate</a> ]</li>
+<li>[ <a class="reference internal" href="#f0">f0</a> ]</li>
+<li>[ <a class="reference internal" href="#d">D</a> ]</li>
+<li>[ <a class="reference internal" href="#sample-percentage">sample_percentage</a> ]</li>
+<li>[ <a class="reference internal" href="#optimal">optimal</a> ]</li>
+<li>[ <a class="reference internal" href="#param-names">param_names</a> ]</li>
+</ul>
+<hr class="docutils" />
+<hr class="docutils" />
+</div>
+<div class="section" id="d">
+<span id="id1"></span><h2>D<a class="headerlink" href="#d" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="indices">
+<span id="id2"></span><h2>Indices<a class="headerlink" href="#indices" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="n">
+<span id="id3"></span><h2>N<a class="headerlink" href="#n" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="nobs">
+<span id="id4"></span><h2>Nobs<a class="headerlink" href="#nobs" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="aggregate">
+<span id="id5"></span><h2>aggregate<a class="headerlink" href="#aggregate" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="coefficients">
+<span id="id6"></span><h2>coefficients<a class="headerlink" href="#coefficients" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="estimate">
+<span id="id7"></span><h2>estimate<a class="headerlink" href="#estimate" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="expansion-order">
+<span id="id8"></span><h2>expansion_order<a class="headerlink" href="#expansion-order" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="f0">
+<span id="id9"></span><h2>f0<a class="headerlink" href="#f0" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="first-order-effect">
+<span id="id10"></span><h2>first_order_effect<a class="headerlink" href="#first-order-effect" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="g">
+<span id="id11"></span><h2>g<a class="headerlink" href="#g" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="hdmr">
+<span id="id12"></span><h2>hdmr<a class="headerlink" href="#hdmr" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="metamodel">
+<span id="id13"></span><h2>metamodel<a class="headerlink" href="#metamodel" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="id14">
+<span id="id15"></span><h2>n<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="optimal">
+<span id="id16"></span><h2>optimal<a class="headerlink" href="#optimal" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="output-nbr">
+<span id="id17"></span><h2>output_nbr<a class="headerlink" href="#output-nbr" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="param-names">
+<span id="id18"></span><h2>param_names<a class="headerlink" href="#param-names" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="plot-fit">
+<span id="id19"></span><h2>plot_fit<a class="headerlink" href="#plot-fit" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="pol-max-order">
+<span id="id20"></span><h2>pol_max_order<a class="headerlink" href="#pol-max-order" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="poly-coefs">
+<span id="id21"></span><h2>poly_coefs<a class="headerlink" href="#poly-coefs" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="polynomial-evaluation">
+<span id="id22"></span><h2>polynomial_evaluation<a class="headerlink" href="#polynomial-evaluation" title="Permalink to this headline">¶</a></h2>
+<p>later on, the function that normalizes could come in here so that the
+normalization is done according to the hdmr_type of polynomial chosen.</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="polynomial-integration">
+<span id="id23"></span><h2>polynomial_integration<a class="headerlink" href="#polynomial-integration" title="Permalink to this headline">¶</a></h2>
+<p>polynomial is of the form a0+a1*x+...+ar*x^r
+the integral is then a0*x+a1/2*x^2+...+ar/(r+1)*x^(r+1)</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="polynomial-multiplication">
+<span id="id24"></span><h2>polynomial_multiplication<a class="headerlink" href="#polynomial-multiplication" title="Permalink to this headline">¶</a></h2>
+<p>each polynomial is of the form a0+a1*x+...+ar*x^r</p>
+<hr class="docutils" />
+</div>
+<div class="section" id="sample-percentage">
+<span id="id25"></span><h2>sample_percentage<a class="headerlink" href="#sample-percentage" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="theta">
+<span id="id26"></span><h2>theta<a class="headerlink" href="#theta" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="theta-high">
+<span id="id27"></span><h2>theta_high<a class="headerlink" href="#theta-high" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="theta-low">
+<span id="id28"></span><h2>theta_low<a class="headerlink" href="#theta-low" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+<hr class="docutils" />
+</div>
+<div class="section" id="x">
+<span id="id29"></span><h2>x<a class="headerlink" href="#x" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>~~ no help found</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../master_doc.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">High dimensional model representation</a><ul>
+<li><a class="reference internal" href="#hdmr-methods">hdmr Methods:</a></li>
+<li><a class="reference internal" href="#hdmr-properties">hdmr Properties:</a></li>
+<li><a class="reference internal" href="#d">D</a></li>
+<li><a class="reference internal" href="#indices">Indices</a></li>
+<li><a class="reference internal" href="#n">N</a></li>
+<li><a class="reference internal" href="#nobs">Nobs</a></li>
+<li><a class="reference internal" href="#aggregate">aggregate</a></li>
+<li><a class="reference internal" href="#coefficients">coefficients</a></li>
+<li><a class="reference internal" href="#estimate">estimate</a></li>
+<li><a class="reference internal" href="#expansion-order">expansion_order</a></li>
+<li><a class="reference internal" href="#f0">f0</a></li>
+<li><a class="reference internal" href="#first-order-effect">first_order_effect</a></li>
+<li><a class="reference internal" href="#g">g</a></li>
+<li><a class="reference internal" href="#hdmr">hdmr</a></li>
+<li><a class="reference internal" href="#metamodel">metamodel</a></li>
+<li><a class="reference internal" href="#id14">n</a></li>
+<li><a class="reference internal" href="#optimal">optimal</a></li>
+<li><a class="reference internal" href="#output-nbr">output_nbr</a></li>
+<li><a class="reference internal" href="#param-names">param_names</a></li>
+<li><a class="reference internal" href="#plot-fit">plot_fit</a></li>
+<li><a class="reference internal" href="#pol-max-order">pol_max_order</a></li>
+<li><a class="reference internal" href="#poly-coefs">poly_coefs</a></li>
+<li><a class="reference internal" href="#polynomial-evaluation">polynomial_evaluation</a></li>
+<li><a class="reference internal" href="#polynomial-integration">polynomial_integration</a></li>
+<li><a class="reference internal" href="#polynomial-multiplication">polynomial_multiplication</a></li>
+<li><a class="reference internal" href="#sample-percentage">sample_percentage</a></li>
+<li><a class="reference internal" href="#theta">theta</a></li>
+<li><a class="reference internal" href="#theta-high">theta_high</a></li>
+<li><a class="reference internal" href="#theta-low">theta_low</a></li>
+<li><a class="reference internal" href="#x">x</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../@mcf/mcf.html"
+                        title="previous chapter">Monte Carlo Filtering</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../../contributing.html"
+                        title="next chapter">Contributing to RISE</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/classes/utils/@hdmr/hdmr.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../contributing.html" title="Contributing to RISE"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../@mcf/mcf.html" title="Monte Carlo Filtering"
+             >previous</a> |</li>
+        <li><a href="../../../master_doc.html">RISE 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Junior Maih.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

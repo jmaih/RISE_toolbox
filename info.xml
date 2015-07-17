@@ -1,0 +1,56 @@
+
+<productinfo
+
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+  xsi:noNamespaceSchemaLocation="http://www.mathworks.com/namespace/info/v1/info.xsd">
+
+<?xml-stylesheet type="text/xsl" href="http://www.mathworks.com/namespace/info/v1/info.xsl"?>
+
+         
+
+  <matlabrelease>R2014b</matlabrelease>
+
+  <name>RISE</name>
+
+  <type>toolbox</type>
+
+  <icon>$toolbox/matlab/icons/matlabicon.gif</icon>
+
+  <help_location>help</help_location>
+
+         
+
+  <list>
+
+               
+
+    <listitem>
+
+      <label>RISE Launch Bay</label>
+
+      <callback>rise_startup()</callback>
+
+      <icon>$toolbox/matlab/icons/greenarrowicon.gif</icon>
+
+    </listitem>
+
+                
+
+    <listitem>
+
+      <label>RISE Web Site</label>
+
+      <callback>web http://github.com/jmaih/RISE_toolbox -browser;</callback>
+
+      <icon>$toolbox/matlab/icons/webicon.gif</icon>
+
+    </listitem>
+
+            
+
+  </list>
+
+          
+
+</productinfo>
