@@ -31,5 +31,9 @@ if rb*q~=ca
     error('matrices sizes inconsistent')
 end
 
-C=reshape(reshape(A,ra*q,rb)*B,ra,cb*q);
+C=reshape(A,ra*q,rb)*B;
+
+C=reshape(C,ra,cb*q);
+
+% C=reshape(reshape(A,ra*q,rb)*B,ra,cb*q);
 end
