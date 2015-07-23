@@ -179,7 +179,7 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 if isempty(obj)
     is_SetupChangeAndResolve=struct(...
         'solve_function_mode','explicit',... %['explicit','disc','vectorized'] see dsge.set
-        'solve_derivatives_type','symbolic');%...%['symbolic','numerical','automatic']
+        'solve_derivatives_type','symbolic'); %['symbolic','numerical','automatic']
     
     is_ResolveOnly=struct('solver',[],...
         'solve_order',1,...
@@ -350,6 +350,7 @@ end
         % evaluate first-order derivatives
         %---------------------------------
         symbolic_type=strcmp(obj.options.solve_derivatives_type,'symbolic');
+        automatic_type=false;
         if ~symbolic_type
             automatic_type=strcmp(obj.options.solve_derivatives_type,'automatic');
             if ischar(obj.options.solve_automatic_differentiator)
@@ -426,10 +427,6 @@ end
                         % use the derivatives Gi to build dv, dvv, dvvv, ...
                         %---------------------------------------------------
                         for io=1:solve_order
-                            if ~symbolic_type
-                                [nr,nc]=size(G01{io});
-                                G01{io}=sparse(reshape(G01{io},nr,nc));
-                            end
                             structural_matrices.(['d',xxx(1:io)]){s0,s1}=G01{io};%
                         end
                     else
@@ -667,7 +664,8 @@ else
 end
 end
 
-function func=compute_automatic_derivatives(derivatives,solve_order,differentiator)
+function func=compute_automatic_derivatives(derivatives,solve_order,...
+    differentiator)
 
 func=@engine;
 
