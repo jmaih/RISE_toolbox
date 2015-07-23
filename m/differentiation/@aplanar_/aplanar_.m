@@ -757,7 +757,11 @@ classdef aplanar_
         end
     end
     methods(Static)
-        function C=diff(func,active,inactive,order)
+        function C=diff(func,active,inactive,order,tall_and_thin)
+            if nargin<5
+                tall_and_thin=false;
+            end
+            short_and_wide=~tall_and_thin;
             n=numel(func);
             nv=size(active,1);
             recorder=struct('iter',{},'ncells',{},'info',{});
@@ -850,7 +854,13 @@ classdef aplanar_
             C=cell(1,order);
             for io=1:order
                 info=cell2mat(recorder(io).info(1:recorder(io).iter));
-                C{io}=sparse(info(:,1),info(:,2),info(:,3),n,nv^io);
+                if short_and_wide
+                    % store normally
+                    C{io}=sparse(info(:,1),info(:,2),info(:,3),n,nv^io);
+                else
+                    % store and as transpose to save on memory
+                    C{io}=sparse(info(:,2),info(:,1),info(:,3),nv^io,n);
+                end
             end
             
             function pos=record_derivatives(array,d,pos)

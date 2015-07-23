@@ -773,12 +773,21 @@ classdef aplanar
         end
     end
     methods(Static)
-        function C=diff(func,active,inactive,order)
+        function C=diff(func,active,inactive,order,tall_and_thin)
+            if nargin<5
+                tall_and_thin=false;
+            end
+            short_and_wide=~tall_and_thin;
             n=numel(func);
-            C=cell(1,order);
+            proto_rows=cell(1,order);
             nv=size(active,1);
-            for ii=1:order
-                C{ii}=zeros([n,nv*ones(1,ii)]);
+            recorder=struct('iter',{},'ncells',{},'info',{});
+            ncells=1000;
+            for io=1:order
+                proto_rows{io}=zeros([1,nv*ones(1,io)]);% C{ii}=zeros([n,nv*ones(1,ii)]);
+                recorder(io).iter=0;
+                recorder(io).ncells=ncells;
+                recorder(io).info=cell(ncells,1);
             end
             silent=true;
             xxx=repmat('x',1,order);
@@ -825,10 +834,39 @@ classdef aplanar
                 if ~isempty(pos_active)
                     for io=1:order
                         further=repmat({pos_active},1,io);
-                        C{io}(ifunc,further{:})=redesign(obj.(['d',xxx(1:io)]));
+                        tmp=proto_rows{io};
+                        tmp(1,further{:})=redesign(obj.(['d',xxx(1:io)]));
+                        tmp=reshape(tmp,1,[]);
+                        nice=find(tmp);
+                        record_these_derivatives(ifunc,nice,tmp(nice))
                     end
                 end
             end
+            % now create output matrices
+            %----------------------------
+            C=cell(1,order);
+            for io=1:order
+                info=cell2mat(recorder(io).info(1:recorder(io).iter));
+                if short_and_wide
+                    % store normally
+                    C{io}=sparse(info(:,1),info(:,2),info(:,3),n,nv^io);
+                else
+                    % store and as transpose to save on memory
+                    C{io}=sparse(info(:,2),info(:,1),info(:,3),nv^io,n);
+                end
+            end
+            
+            function record_these_derivatives(ifunc,pos,d)
+                iter=recorder(io).iter+1;
+                recorder(io).iter=recorder(io).iter+1;
+                if iter>=recorder(io).ncells
+                    recorder(io).ncells=recorder(io).ncells+ncells;
+                    recorder(io).info{end+ncells}={};
+                end
+                npos=numel(pos);
+                recorder(io).info{iter}=[ifunc(ones(npos,1)),pos(:),d(:)];
+            end
+            
             function C=redesign(C)
                 % assigns symmetric values to their location for orders
                 % greater than 1
