@@ -1,15 +1,25 @@
 function C=evaluate_automatic_derivatives(funcs,order,engine,varargin)
-% H1 line
+% evaluate_automatic_derivatives -- automatic differentiation
 %
 % Syntax
 % -------
 % ::
 %
+%   C=evaluate_automatic_derivatives(funcs,order,tall_and_thin,engine,varargin)
+%
 % Inputs
 % -------
 %
+% - **funcs** [cell array]: functions to differentiate
+%
+% - **order** [integer]: order of differentiation
+%
+% - **engine** [@aplanar|@aplanar_]:
+%
 % Outputs
 % --------
+%
+% - **C** [cell array]: derivatives
 %
 % More About
 % ------------
@@ -18,7 +28,6 @@ function C=evaluate_automatic_derivatives(funcs,order,engine,varargin)
 % ---------
 %
 % See also: 
-
 
 input_list=parser.input_list();
 ninput=numel(input_list);
