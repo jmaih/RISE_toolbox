@@ -207,9 +207,12 @@ end
                 end
                 endo_names=get(obj,'endo_list');
                 % re-order and trim
-                endo_names=endo_names(grand_state(iov));
+                endo_names=endo_names(new_order);
+                trim_ordered_grand_state=grand_state(new_order);
+                endo_names=endo_names(trim_ordered_grand_state);
                 present_a0=false(1,endo_nbr);% this is the updated endo_nbr
                 for iii=1:numel(endo_names)
+                    name=endo_names{iii};
                     if isfield(kf_user_init{1},name)
                         if ~isempty(kf_user_init{1}.(name))
                             % we allow this to be empty if we just have the
