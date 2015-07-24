@@ -227,7 +227,6 @@ ff=@my_one_step;
         if nargin<4
             det_shocks=[];
         end
-        y0=struct('y',y0);
         shocks=zeros(exo_nbr,horizon);
         shocks(~is_det_shock,:)=reshape(stoch_shocks,nstoch,horizon);
         if ~isempty(det_shocks)
@@ -239,11 +238,12 @@ ff=@my_one_step;
             if all(shocks==0) && order==1
                 % quick exit if possible
                 %------------------------
-                y_yss=y0.y-ss{rt};
+                y_yss=y0-ss{rt};
                 y1.y=ss{rt}+T{1,rt}(:,1:nx)*y_yss(xloc)+T{1,rt}(:,nx+1)*sig;
             else
                 % if shocks and/or higher orders, do it the hard way
                 %----------------------------------------------------
+                y0=struct('y',y0);
                 y1=utils.forecast.one_step_engine(T(:,rt),y0,ss{rt},xloc,sig,...
                     shocks,order);
             end
@@ -255,6 +255,7 @@ ff=@my_one_step;
         else
             % if restrictions, this is unavoidable
             %--------------------------------------
+            y0=struct('y',y0);
             [varargout{1:nout}]=utils.forecast.one_step_fbs(T(:,rt),y0,...
                 ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
         end
