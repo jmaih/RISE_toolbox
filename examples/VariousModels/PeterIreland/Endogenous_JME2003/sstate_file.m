@@ -55,6 +55,9 @@ if nargin==1
     %----------------------------------------------------------------------
     y={'X','A','E','Z','V','MU','PAI','R','Q','LAMBDA','XI','C','M','Y',...
         'K','I','H','W','D','N','LC','LI','LM','LPI','LR'};
+    % flags on the calculation
+    %--------------------------
+    newp=struct('unique',true,'imposed',true,'initial_guess',false);
 else
     % no parameters to update
     %-------------------------
