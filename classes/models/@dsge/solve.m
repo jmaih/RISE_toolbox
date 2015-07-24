@@ -27,9 +27,6 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
 % derivatives
 %
-% - **solve_disable_theta** [true|{false}]: option for nullifying the
-% effect of future switching parameters on the solution
-%
 % - **solve_order** [integer|{1}]: order of approximation
 %
 % - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
