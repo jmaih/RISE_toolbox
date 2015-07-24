@@ -34,6 +34,9 @@ function [init,retcode]=filter_initialization(obj,varargin)%T,R,steadystate,risk
 %   - **kf_presample** [{0}|integer]: Number of observations to discard
 %       before computing the likelihood.
 %
+%   - **kf_filtering_level** [0|1|2|{3}]: 0: Likelihood only, 1: 0+filtered
+%   series, 2: 1+ updated series, 3: 2+ smoothed series
+%
 %   - **kf_user_init** [{[]}|cell]: User-defined initialization. When not
 %   empty, it can take three forms. {a0}, {a0,cov_a0}, {a0,cov_a0,PAI00}
 %   where a0 is the initial state vector with the same order as the rows of
@@ -147,14 +150,14 @@ end
         obs_id=iov(obs_id);
         % If possible, trim solution for Minimum state filtering 
         %---------------------------------------------------------
-        [grand_state]=Minimum_state_variable_filtration();
+        [grand_order_var_state]=Minimum_state_variable_filtration();
         
         Qfunc=prepare_transition_routine(obj);
-        Qfunc=small_memo(Qfunc,iov,grand_state);
+        Qfunc=small_memo(Qfunc,iov,grand_order_var_state);
         % load the restrictions if any:
         %------------------------------
         sep_compl=complementarity_memoizer(obj);
-        sep_compl=small_memo(sep_compl,iov,grand_state);
+        sep_compl=small_memo(sep_compl,iov,grand_order_var_state);
         
         % find the anticipated shocks
         anticipated_shocks=[];
@@ -211,8 +214,7 @@ end
                 endo_names=get(obj,'endo_list');
                 % re-order and trim
                 endo_names=endo_names(new_order);
-                trim_ordered_grand_state=grand_state(new_order);
-                endo_names=endo_names(trim_ordered_grand_state);
+                endo_names=endo_names(grand_order_var_state);
                 present_a0=false(1,endo_nbr);% this is the updated endo_nbr
                 for iii=1:numel(endo_names)
                     name=endo_names{iii};
@@ -274,48 +276,50 @@ end
             end
         end
         
-        function [grand_state]=Minimum_state_variable_filtration()
-            grand_state=true(1,endo_nbr);
+        function [grand_order_var_state]=Minimum_state_variable_filtration()
+            grand_order_var_state=true(1,endo_nbr);
             if obj.options.kf_filtering_level==0
-                grand_state=false(1,endo_nbr);
+                grand_order_var_state=false(1,endo_nbr);
+                grand_order_var_state(state_vars_location)=true;
+                grand_order_var_state(obs_id)=true;
+                % the variables affecting the transition probabilities need
+                % to be re-ordered before locating them in grand_state
                 affect_trans_probs=obj.endogenous.is_affect_trans_probs;
-                grand_state(state_vars_location)=true;
-                grand_state(obs_id)=true;
-                grand_state(affect_trans_probs)=true;
+                grand_order_var_state(affect_trans_probs(new_order))=true;
                 for ii=1:obj.options.solve_order
                     for reg=1:h
-                        T{ii,reg}=T{ii,reg}(grand_state,:);
+                        T{ii,reg}=T{ii,reg}(grand_order_var_state,:);
                         if ii==1
-                            steady_state{reg}=steady_state{reg}(grand_state);
+                            steady_state{reg}=steady_state{reg}(grand_order_var_state);
                         end
                     end
                 end
-                csgs=cumsum(grand_state);
+                csgs=cumsum(grand_order_var_state);
                 state_vars_location=csgs(state_vars_location);
                 obs_id=csgs(obs_id);
                 
                 % update the number of endogenous
                 %--------------------------------
-                endo_nbr=sum(grand_state);
+                endo_nbr=sum(grand_order_var_state);
             end
         end
     end
 
 end
 
-function ffunc=small_memo(gfunc,iov,grand_state)
-% sum functions are written to accept the endogenous variables in the order
-% of obj.endogenous.name. This function makes it possible to have the
-% variables in the inv_order_var order and still apply the functions of
-% interest.
+function ffunc=small_memo(gfunc,iov,grand_order_var_state)
+% some functions are written to accept the endogenous variables in the
+% order of obj.endogenous.name. This function makes it possible to have the
+% variables in the inv_order_var (alphabetical) order and still apply the
+% functions of interest.
 if isempty(gfunc)
     ffunc=gfunc;
 else
     if nargin<2
-        grand_state=[];
+        grand_order_var_state=[];
     end
-    if isempty(grand_state)
-        grand_state=1:numel(iov);
+    if isempty(grand_order_var_state)
+        grand_order_var_state=1:numel(iov);
     end
     nx=numel(iov);
     ffunc=@do_it;
@@ -326,7 +330,7 @@ end
         % which case it is augmented with shocks at the end.
         x=zeros(nx,1);
         nxy=min(nx,numel(y));
-        x(grand_state)=y(1:nxy,1);
+        x(grand_order_var_state)=y(1:nxy,1);
         [varargout{1:nargout}]=gfunc(x(iov));
     end
 end
