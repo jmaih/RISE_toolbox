@@ -176,6 +176,8 @@ end
             % separate deterministic from stochastic shocks:
             % full is needed since the results are stored as sparse and we
             % are reshaping things in 3 dimensions
+            % results are stored as sparse and so reshaping in
+            % multidimensional requires full-ing
             %------------------------------------------------
             Te{rt}=reshape(full(Tx{rt}(:,nstates+2:end)),...
                 [endo_nbr,exo_nbr,horizon]);
