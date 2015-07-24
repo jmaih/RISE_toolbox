@@ -170,9 +170,12 @@ end
         Te=Tx;Te_det=Tx;Tsig=Tx;
         for rt=1:h
             Tsig{rt}=Tx{rt}(:,nstates+1);
-            % separate deterministic from stochastic shocks
+            % separate deterministic from stochastic shocks:
+            % full is needed since the results are stored as sparse and we
+            % are reshaping things in 3 dimensions
             %------------------------------------------------
-            Te{rt}=reshape(Tx{rt}(:,nstates+2:end),[endo_nbr,exo_nbr,horizon]);
+            Te{rt}=reshape(full(Tx{rt}(:,nstates+2:end)),...
+                [endo_nbr,exo_nbr,horizon]);
             Te_det{rt}=Te{rt}(:,is_det_shock,:);
             Te{rt}(:,is_det_shock,:)=[];
             % impact of endogenous state variables
