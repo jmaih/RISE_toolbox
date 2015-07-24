@@ -230,14 +230,16 @@ end
         retcode=0;
         ss=y;
         r=y;
-        nregs=obj.is_unique_steady_state*(1-number_of_regimes)+number_of_regimes;
+        nregs=obj.is_unique_steady_state*(1-number_of_regimes)+...
+            number_of_regimes;
         for ireg=1:nregs
+            p_ireg=p(:,ireg);
+            [ss_1,p_ireg,retcode,r_1,Jac]=do_one_regime(y(:,ireg),p_ireg,...
+                d{ireg});
             if retcode
                 return
             end
-            p_ireg=p(:,ireg);
-            [ss(:,ireg),p_ireg,retcode,r(:,ireg),Jac]=...
-                do_one_regime(y(:,ireg),p_ireg,d{ireg});
+            ss(:,ireg)=ss_1;r(:,ireg)=r_1;
             if ~retcode
                 if success(r(:,ireg))
                     p(:,ireg)=p_ireg;
@@ -247,12 +249,11 @@ end
                         [ss(:,ireg),p_ireg,retcode,r(:,ireg)]=do_one_regime(...
                             ss0,p_ireg,d{ireg});
                     else
+                        vlist=~obj.auxiliary_variables.model;
                         if obj.is_initial_guess_steady_state
                             feasible_steady_state_file=false;
                             feasible_steady_state_model=false;
-                            vlist=~obj.auxiliary_variables.model;
                         else
-                            vlist=~obj.auxiliary_variables.model;
                             % instruments may come from ssmodel or ssfile
                             %---------------------------------------------
                             if feasible_steady_state_model
@@ -264,7 +265,13 @@ end
                         end
                         missing=size(ss,1)-numel(vlist);
                         vlist=[vlist,true(1,missing)]; %#ok<AGROW>
-                        [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg);
+                        if any(vlist)
+                            % this can only be done if there are non-solved
+                            % variables
+                            [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg);
+                        else
+                            % we simply return with the retcode
+                        end
                     end
                     if ~retcode
                         if success(r(:,ireg))
