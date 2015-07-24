@@ -49,7 +49,7 @@ function [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
 if nargin<4
     debug=false;
     if nargin<3
-        strategy=3;
+        strategy=2;
     end
 end
 
