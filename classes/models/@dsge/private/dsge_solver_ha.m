@@ -732,28 +732,10 @@ end
             
             % expand final result: maybe, maybe not
             %--------------------------------------
-            if isempty(obj.options.solve_linsyst_user_algo)
-                [X,retcode]=transpose_free_quasi_minimum_residual(@afun,D(:),... % right hand side
-                    [],... %x0 initial guess
-                    obj.options.fix_point_TolFun,... % tolerance level
-                    obj.options.fix_point_maxiter,... % maximum number of iterations
-                    obj.options.fix_point_verbose);
-            else
-                [linsolver,vargs]=utils.code.user_function_to_rise_function(...
-                    obj.options.solve_linsyst_user_algo);
-                [X,flag,relres,iter,resvec] = linsolver(@afun,D(:),...
-                    obj.options.fix_point_TolFun,...
-                    obj.options.fix_point_maxiter,vargs{:}); %#ok<ASGLU>
-                if flag==0
-                    retcode=0;
-                elseif flag==1
-                    % maximum number of iterations reached
-                    retcode=201;
-                else
-                    % Nans in solution or no solution
-                    retcode=202;
-                end
-            end
+           
+            x0=[];
+            [X,retcode]=utils.optim.linear_systems_solver(@afun,D(:),x0,obj.options);
+            
             if ~retcode
                 if accelerate
                     X=reshape(X,[siz.nd,nkept,siz.h]);

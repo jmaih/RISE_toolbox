@@ -86,13 +86,9 @@ if kron_method
     %---------
     delta=G\W(:);
 else
-%    delta=tfqmr(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),...
-%        options.fix_point_TolFun);
-	[delta,retcode]=transpose_free_quasi_minimum_residual(@(x)find_newton_step(x,LPLUS,LMINUS),-W(:),... 
-			[],... %x0 initial guess
-			options.fix_point_TolFun,... % tolerance level
-			options.fix_point_maxiter,... % maximum number of iterations
-			options.fix_point_verbose);
+    delta0=[];
+    [delta,retcode]=utils.optim.linear_systems_solver(...
+        @(x)find_newton_step(x,LPLUS,LMINUS),-W(:),delta0,options);
 end
 
 T1=T0+reshape(delta,[n,n,h]);
