@@ -1,4 +1,4 @@
-function C=A_times_kron_B_I(A,B,q)
+function C=A_times_kron_B_I(A,B,q,use_reshape)
 % H1 line
 %
 % Syntax
@@ -25,15 +25,39 @@ function C=A_times_kron_B_I(A,B,q)
 % B=rand(rb,cb);A=rand(ra,ca);
 % max(max(abs(A_times_kron_B_I(A,B,q)-A*kron(B,eye(q)))))
 
+if nargin<4
+    use_reshape=true;
+end
+
+% sparse inputs
+%---------------
+A=sparse(A);
+B=sparse(B);
+
 [rb,cb]=size(B);
 [ra,ca]=size(A);
 if rb*q~=ca
     error('matrices sizes inconsistent')
 end
 
-C=reshape(A,ra*q,rb)*B;
+if use_reshape
+    C=reshape(A,ra*q,rb);
+    C=C*B;
+    C=reshape(C,ra,cb*q);
+    % C=reshape(reshape(A,ra*q,rb)*B,ra,cb*q);
+else
+    C=A_times_kronBI();
+end
 
-C=reshape(C,ra,cb*q);
+% output is automatically sparse
+%--------------------------------
 
-% C=reshape(reshape(A,ra*q,rb)*B,ra,cb*q);
+    function C=A_times_kronBI()
+        C=zeros(ra,cb*q);
+        picka=0:q:(rb-1)*q;
+        pickc=0:q:(cb-1)*q;
+        for iq=q:-1:1
+            C(:,pickc+iq)=A(:,picka+iq)*B;
+        end
+    end
 end

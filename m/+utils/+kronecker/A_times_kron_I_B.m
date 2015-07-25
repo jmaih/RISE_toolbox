@@ -1,4 +1,4 @@
-function C=A_times_kron_I_B(A,B,q)
+function C=A_times_kron_I_B(A,B,q,loop_backward)
 % H1 line
 %
 % Syntax
@@ -25,6 +25,15 @@ function C=A_times_kron_I_B(A,B,q)
 % B=rand(rb,cb);A=rand(ra,ca);
 % max(max(abs(A_times_kron_I_B(A,B,q)-A*kron(eye(q),B))))
 
+if nargin<4
+    loop_backward=false;
+end
+
+% sparse inputs
+%---------------
+A=sparse(A);
+B=sparse(B);
+
 [rb,cb]=size(B);
 [ra,ca]=size(A);
 if ca~=rb*q
@@ -32,22 +41,33 @@ if ca~=rb*q
 end
 
 C=zeros(ra,q*cb);
-iter_d=1:rb;
-iter_c=1:cb;
-for ii=1:q
-    C(:,iter_c)=A(:,iter_d)*B;
-    if ii<q
-        iter_d=iter_d+rb;
-        iter_c=iter_c+cb;
+
+if loop_backward
+    % no evidence that looping backward is faster
+    %--------------------------------------------
+    iter_d=(1:rb)+(q-1)*rb;
+    iter_c=(1:cb)+(q-1)*cb;
+    for ii=q:-1:1
+        C(:,iter_c)=A(:,iter_d)*B;
+        if ii>1
+            iter_d=iter_d-rb;
+            iter_c=iter_c-cb;
+        end
+    end
+else
+    iter_d=1:rb;
+    iter_c=1:cb;
+    for ii=1:q
+        C(:,iter_c)=A(:,iter_d)*B;
+        if ii<q
+            iter_d=iter_d+rb;
+            iter_c=iter_c+cb;
+        end
     end
 end
 
-% if at least one of the inputs is sparse, return sparse for we created a
-% zeros (instead of sparse) matrix as output in order not to modify the
-% structure of a sparse matrix with unknown nonzeros, which would be slow.
-%--------------------------------------------------------------------------
-if issparse(A) || issparse(B)
-    C=sparse(C);
-end
+% sparse output
+%--------------
+C=sparse(C);
 
 end
