@@ -40,12 +40,4 @@ for icol=1:q
     C(:,iterc)=utils.kronecker.A_times_kron_B_I(A(:,itera),B,r);%A(:,itera)*kron(B,eye(r))
 end
 
-% if at least one of the inputs is sparse, return sparse for we created a
-% zeros (instead of sparse) matrix as output in order not to modify the
-% structure of a sparse matrix with unknown nonzeros, which would be slow.
-%--------------------------------------------------------------------------
-if issparse(A) || issparse(B)
-    C=sparse(C);
-end
-
 end
