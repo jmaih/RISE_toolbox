@@ -47,6 +47,15 @@ kronall=@utils.kronecker.kronall;
 
 %% begin
 T=struct();
+
+% initial condition for linear solvers
+%-------------------------------------
+x0_equal_D=false;
+
+% pre-computation of the Czz, Czzz, Czzzz, Czzzzz terms
+%------------------------------------------------------
+precompute_czzzzz=false;
+
 % options.solve_order 1
 %--------
 if obj.options.solve_order>=1
@@ -83,7 +92,7 @@ end
     function [T,retcode]=solve_higher_orders(T,others,accelerate)
         
         % higher-order moments
-        %----------------------        
+        %----------------------
         [Eu{1:obj.options.solve_order}]=u_higher_order_moments(siz);
         
         a0_z=sparse(siz.nv,siz.nz);
@@ -107,18 +116,24 @@ end
             end
         end
         
+%         tic
         Dzz=second_order_rhs();
+        Czz=cell(1,siz.h);
         [T.Tzz,retcode]=solve_generalized_sylvester(Dzz,2);
-        clear Dzz
+        clear Dzz Czz
+%         fprintf(1,'Order 2 done in %0.4f seconds \n\n',toc);
         
         if obj.options.solve_order>2 && ~retcode
             a0_zz=repmat({sparse(siz.nv,siz.nz^2)},siz.h,siz.h);
             a1_zz=repmat({sparse(siz.nv,siz.nz^2)},1,siz.h);
             hzz=repmat({sparse(siz.nz,siz.nz^2)},1,siz.h);
             
+%             tic
             Dzzz=third_order_rhs();
+            Czzz=cell(1,siz.h);
             [T.Tzzz,retcode]=solve_generalized_sylvester(Dzzz,3);
-            clear Dzzz
+            clear Dzzz Czzz
+%             fprintf(1,'Order 3 done in %0.4f seconds \n\n',toc);
             
             if obj.options.solve_order>3 && ~retcode
                 a0_zzz=repmat({sparse(siz.nv,siz.nz^3)},siz.h,siz.h);
@@ -126,17 +141,23 @@ end
                 hzzz=repmat({sparse(siz.nz,siz.nz^3)},1,siz.h);
                 Dzzzz=fourth_order_rhs();
                 
+%                 tic
+                Czzzz=cell(1,siz.h);
                 [T.Tzzzz,retcode]=solve_generalized_sylvester(Dzzzz,4);
-                clear Dzzzz
+                clear Dzzzz Czzzz
+%                 fprintf(1,'Order 4 done in %0.4f seconds \n\n',toc);
                 
                 if obj.options.solve_order>4 && ~retcode
                     hzzzz=repmat({sparse(siz.nz,siz.nz^4)},1,siz.h);
                     a0_zzzz=sparse(siz.nv,siz.nz^4);
                     a1_zzzz=sparse(siz.nv,siz.nz^4);
                     Dzzzzz=fifth_order_rhs();
-
+                    
+%                     tic
+                    Czzzzz=cell(1,siz.h);
                     [T.Tzzzzz,retcode]=solve_generalized_sylvester(Dzzzzz,5);
                     clear Dzzzzz
+%                     fprintf(1,'Order 5 done in %0.4f seconds \n\n',toc);
                     
                     if obj.options.solve_order>5
                         error('perturbations of order greater than 5 not implemented');
@@ -183,7 +204,7 @@ end
                     if r0==1
                         a1_zz{r1}(pos.v.bf_plus,:)=T.Tzz{r1}(pos.t.bf,:);
                     end
-
+                    
                     Dzzz(:,:,r0)=Dzzz(:,:,r0)+dvvv_Evz_vz_vz();
                     
                     Dzzz(:,:,r0)=Dzzz(:,:,r0)+dvv_Evz_vzz();
@@ -289,7 +310,7 @@ end
                 matsizes=[ones(2,1)*[siz.nv,siz.nz];siz.nz(ones(2))];
                 res0=A_times_sum_perms(...
                     structural_matrices.dvvv{r0,r1}*kron(speye(siz.nv^2),a1_zz{r1}),... A_times_kron_I_B(structural_matrices.dvvv{r0,r1},a1_zz{r1},siz.nv^2)
-                    {a0_z{r0,r1},... 
+                    {a0_z{r0,r1},...
                     kron(a1_z{r1},speye(siz.nz))*Eu{2},hz{r0}},... kron_A_I_times_B(a1_z{r1},Eu{2},siz.nz)
                     matsizes,true,...
                     [1,2,4,3],[2,1,3,4],[2,1,4,3]);
@@ -359,7 +380,7 @@ end
                 
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1},a1_zz{r1})*Eu{4};
-                    
+                
                 res=res+A_times_sum_perms(...
                     A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1},a1_zz{r1}),...
@@ -562,7 +583,7 @@ end
                     [1,2,4,3],[2,1,4,3],[2,1,3,4]);
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},a0_z{r0,r1},tmp); clear tmp
-                    
+                
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},a0_z{r0,r1},...
                     kron(a1_zz{r1}*Eu{2},a0_zz{r0,r1})+...
@@ -646,7 +667,7 @@ end
                 
                 res=dv_vz_omega(res,siz.nz,9);
             end
-                        
+            
             function res=lambda_bf_XI01()
                 res=dv_vz_omega(A_times_kron_Q1_Qk(...
                     T.Tzzzz{r1}(pos.t.bf,:),hz{r0},hz{r0},hz{r0},hzz{r0}),...
@@ -711,28 +732,14 @@ end
             
             % expand final result: maybe, maybe not
             %--------------------------------------
-            if isempty(obj.options.solve_linsyst_user_algo)
-                [X,retcode]=transpose_free_quasi_minimum_residual(@afun,D(:),... % right hand side
-                    [],... %x0 initial guess
-                    obj.options.fix_point_TolFun,... % tolerance level
-                    obj.options.fix_point_maxiter,... % maximum number of iterations
-                    obj.options.fix_point_verbose);
+            if x0_equal_D
+                x0=D(:);
             else
-                [linsolver,vargs]=utils.code.user_function_to_rise_function(...
-                    obj.options.solve_linsyst_user_algo);
-                [X,flag,relres,iter,resvec] = linsolver(@afun,D(:),...
-                    obj.options.fix_point_TolFun,...
-                    obj.options.fix_point_maxiter,vargs{:}); %#ok<ASGLU>
-                if flag==0
-                    retcode=0;
-                elseif flag==1
-                    % maximum number of iterations reached
-                    retcode=201;
-                else
-                    % Nans in solution or no solution
-                    retcode=202;
-                end
+                x0=[];
             end
+            
+            [X,retcode]=utils.optim.linear_systems_solver(@afun,D(:),x0,obj.options);
+                
             if ~retcode
                 if accelerate
                     X=reshape(X,[siz.nd,nkept,siz.h]);
@@ -762,77 +769,82 @@ end
                     ATC_plus_T(:,:,r00)=ATCzzz+tau(:,:,r00);
                 end
                 ATC_plus_T=ATC_plus_T(:);
-                function ATCzzz=temporary_term()
+                function ATC=temporary_term()
                     % core terms
                     %-----------
                     AT=sparse(AT);
-                    ATCzzz=A_times_k_kron_B(AT,hz{r00},oo);
-                    if mod(oo,2)==0
-                        % only even powers are nonzero for normally
-                        % distributed shocks
-                        ATCzzz=ATCzzz+AT*Eu{oo};
-                    end
-                    if oo==3
+                    if oo==2
+                        if precompute_czzzzz
+                            if isempty(Czz{r00})
+                                Czz{r00}=kron(hz{r00},hz{r00})+Eu{oo};
+                            end
+                            ATC=AT*Czz{r00};
+                        else
+                            ATC=A_times_k_kron_B(AT,hz{r00},oo)+AT*Eu{oo};
+                        end
+                    elseif oo==3
                         matsizes=siz.nz*ones(3,2);
-                        AT_P1=A_times_sum_perms(AT,{hz{r00},Eu{2}},matsizes,true,[2,1,3],[2,3,1]);
-                        ATCzzz=ATCzzz+AT_P1;
-                        if debug
-                            P1=Pfunc(kron(hz{r00},Eu{2}),matsizes,[2,1,3],[2,3,1]);
-                            test=dv_vz_omega(A_times_kron_Q1_Qk(AT,hz{r00},Eu{2}),siz.nz,...
-                                [2,1,3],[2,3,1]);
-                            test2=AT*P1;
-                            disp('Pfunc vs dv_vz_omega')
-                            disp(max(max(abs(test-test2))))
-                            disp('A_times_sum_perms vs dv_vz_omega')
-                            disp(max(max(abs(AT_P1-test2))))
+                        perms3={[2,1,3],[2,3,1]};
+                        if precompute_czzzzz
+                            if isempty(Czzz{r00})
+                                Czzz{r00}=Pfunc(kron(hz{r00},Eu{2}),...
+                                    matsizes,perms3{:})+...
+                                    kronall(hz{r00},hz{r00},hz{r00});
+                            end
+                            ATC=AT*Czzz{r00};
+                        else
+                            ATC=A_times_k_kron_B(AT,hz{r00},oo);
+                            ATC=ATC+A_times_sum_perms(AT,{hz{r00},Eu{2}},...
+                                matsizes,true,perms3{:});
                         end
                     elseif oo==4
                         matsizes=siz.nz*ones(4,2);
-                        AT_P1=A_times_sum_perms(AT,{hz{r00},hz{r00},Eu{2}},...
-                            matsizes,true,[1,3,2,4],[1,3,4,2],[3,1,4,2],...
-                            [3,4,1,2],[3,1,2,4]);
-                        ATCzzz=ATCzzz+AT_P1;
-                        if debug
-                            % the following seems faster on smaller models
-                            % and also potentially more accurate
-                            %---------------------------------------------
-                            P1=Pfunc(kronall(hz{r00},hz{r00},Eu{2}),...
-                            matsizes,[1,3,2,4],[1,3,4,2],[3,1,4,2],...
-                            [3,4,1,2],[3,1,2,4]);
-                            test=AT*P1;
-                            disp('A_times_sum_perms vs Pfunc')
-                            disp(max(max(abs(AT_P1-test))))
+                        % the following seems faster on smaller models
+                        % and also potentially more accurate. Since we are
+                        % to compute it several times, let's store it to
+                        % save time instead of doing the alternative
+                        %--------------------------------------------------
+                        perms4={[1,3,2,4],[1,3,4,2],[3,1,4,2],[3,4,1,2],...
+                            [3,1,2,4]};
+                        if precompute_czzzzz
+                            if isempty(Czzzz{r00})
+                                Czzzz{r00}=kronall(hz{r00},hz{r00},hz{r00},hz{r00})+...
+                                    Pfunc(kronall(hz{r00},hz{r00},Eu{2}),...
+                                    matsizes,perms4{:})+Eu{oo};
+                            end
+                            ATC=AT*Czzzz{r00};
+                        else
+                            ATC=A_times_k_kron_B(AT,hz{r00},oo)+AT*Eu{oo};
+                            ATC=ATC+A_times_sum_perms(AT,{hz{r00},hz{r00},Eu{2}},...
+                                matsizes,true,perms4{:});
                         end
                     elseif oo==5
                         matsizes=siz.nz*ones(5,2);
-                        AT_P1=A_times_sum_perms(AT,{hz{r00},hz{r00},hz{r00},Eu{2}},...
-                            matsizes,true,[1,2,4,3,5],[1,2,4,5,3],[1,4,2,5,3],...
-                            [1,4,5,2,3],[4,1,5,2,3],[4,5,1,2,3],[4,1,2,5,3],...
-                            [4,1,2,3,5],[1,4,2,3,5]);
-                        AT_P2=A_times_sum_perms(AT,{hz{r00},Eu{4}},...
-                            matsizes,true,[2,1,3,4,5],...
-                            [2,3,1,4,5],[2,3,4,1,5],[2,3,4,5,1]);
-                        ATCzzz=ATCzzz+AT_P1+AT_P2;
-                        if debug
-                            % the following seems faster on smaller models
-                            % and also potentially more accurate
-                            %---------------------------------------------
-                            test=AT*(...
-                            Pfunc(kronall(hz{r00},hz{r00},hz{r00},Eu{2}),...
-                            matsizes,[1,2,4,3,5],[1,2,4,5,3],[1,4,2,5,3],...
-                            [1,4,5,2,3],[4,1,5,2,3],[4,5,1,2,3],[4,1,2,5,3],...
-                            [4,1,2,3,5],[1,4,2,3,5])+...
-                            Pfunc(kron(hz{r00},Eu{4}),matsizes,[2,1,3,4,5],...
-                            [2,3,1,4,5],[2,3,4,1,5],[2,3,4,5,1])...
-                            );
-                            disp('A_times_sum_perms vs Pfunc')
-                            disp(max(max(abs(AT_P1+AT_P2-test))))
+                        perms51={[1,2,4,3,5],[1,2,4,5,3],[1,4,2,5,3],...
+                            [1,4,5,2,3],[4,1,5,2,3],[4,5,1,2,3],...
+                            [4,1,2,5,3],[4,1,2,3,5],[1,4,2,3,5]};
+                        perms52={[2,1,3,4,5],[2,3,1,4,5],[2,3,4,1,5],...
+                            [2,3,4,5,1]};
+                        if precompute_czzzzz
+                            if isempty(Czzzzz{r00})
+                                Czzzzz{r00}=Pfunc(kronall(hz{r00},hz{r00},hz{r00},Eu{2}),...
+                                    matsizes,perms51{:})+...
+                                    Pfunc(kron(hz{r00},Eu{4}),matsizes,perms52{:})+...
+                                    kronall(hz{r00},hz{r00},hz{r00},hz{r00},hz{r00});
+                            end
+                            ATC=AT*Czzzzz{r00};
+                        else
+                            ATC=A_times_k_kron_B(AT,hz{r00},oo);
+                            ATC=ATC+A_times_sum_perms(AT,{hz{r00},hz{r00},hz{r00},Eu{2}},...
+                                matsizes,true,perms51{:});
+                            ATC=ATC+A_times_sum_perms(AT,{hz{r00},Eu{4}},...
+                                matsizes,true,perms52{:});
                         end
                     elseif oo>5
                         error('perturbations implemented only up to order 5')
                     end
                     if accelerate
-                        ATCzzz=ATCzzz(:,shrink);
+                        ATC=ATC(:,shrink);
                     end
                 end
             end
