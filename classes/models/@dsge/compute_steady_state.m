@@ -159,7 +159,7 @@ end
 
 [ss,r,retcode]=run_one_pass(y);
 
-if ~retcode;
+if ~retcode
     if isempty(obj.is_stationary_model)
         obj.is_stationary_model=true;
     end
