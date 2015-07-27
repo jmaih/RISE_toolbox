@@ -297,7 +297,7 @@ if kf_filtering_level
             if io==1
                 % collect the Te and Te_det instead of recomputing them
                 %-------------------------------------------------------
-                Te_all=reshape(init.T{io,st}(:,nstates+2:end),...
+                Te_all=reshape(full(init.T{io,st}(:,nstates+2:end)),...
                     [m_orig+nshocks,exo_nbr,horizon]);
                 init.Te{st}=Te_all(:,~is_det_shock,:);
                 init.Te_det{st}=Te_all(:,is_det_shock,:);
