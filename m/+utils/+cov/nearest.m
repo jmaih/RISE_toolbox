@@ -42,7 +42,7 @@ if any(oldD<too_low)
     end
     D=max(oldD,too_low);
     
-    vcov = V*diag(max(D,sqrt(eps)))*V';
+    vcov = V*diag(D)*V';
     
     if debug && max(abs(D-oldD))>1e-6
         warning('Covariance matrix altered')
