@@ -17,7 +17,7 @@ function C=A_times_kron_B_I(A,B,q,use_reshape)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % computes C=A*kron(B,Iq)
 
