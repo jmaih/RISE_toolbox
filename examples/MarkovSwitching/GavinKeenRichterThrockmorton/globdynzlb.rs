@@ -84,7 +84,7 @@ steady_state_model(imposed) %,unique
 	R = zlb_flag*1+(1-zlb_flag)*RTAYLOR;	
 	PAI = BETA*R;
 	W = (PSI*Z/(RK^alpha*(1-alpha)^(1-alpha)*alpha^alpha))^(1/(1-alpha));
-	i_over_y = delta/Z*(alpha/(1-alpha)*W/RK)^(1-alpha);
+	i_over_y = delta/Z*(alpha/(1-alpha)*W/RK)^(1-alpha);%xx_ssmdef_1
 	c_over_y = (1-g_over_y-i_over_y);
 	n_over_y = ((1-alpha)/alpha*RK/W)^alpha/Z;
 	Y = (W/(chi*n_over_y^eta*c_over_y^sigma))^(1/(eta+sigma)); 
