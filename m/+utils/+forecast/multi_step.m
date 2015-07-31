@@ -286,6 +286,7 @@ else
                     end
                     state_list(state_list==rt)=[];
                     rt=nan;
+                    y1=[];
                 else
                     [y1,~,retcode,shocks_t1]=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
