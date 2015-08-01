@@ -757,11 +757,7 @@ classdef aplanar_
         end
     end
     methods(Static)
-        function C=diff(func,active,inactive,order,tall_and_thin)
-            if nargin<5
-                tall_and_thin=false;
-            end
-            short_and_wide=~tall_and_thin;
+        function C=diff(func,active,inactive,order)
             n=numel(func);
             nv=size(active,1);
             recorder=struct('iter',{},'ncells',{},'info',{});
@@ -830,11 +826,6 @@ classdef aplanar_
                             prototype=cell2mat(utils.gridfuncs.mypermutation(1:io));
                             contract=utils.kronecker.shrink_expand(nwrt,io);
                             
-%                             raw=utils.gridfuncs.mygrid(nwrt*ones(1,io));
-%                             disp('max(max(raw(contract,:)-footprint))')
-%                             max(max(raw(contract,:)-footprint))
-%                             old_derivs=derivs;
-                            
                             derivs=derivs(contract);
                             good=find(derivs);
                             derivs=derivs(good);
@@ -851,15 +842,26 @@ classdef aplanar_
             end
             % now create output matrices
             %----------------------------
+            ss=memory;
+            max_bytes=ss.MaxPossibleArrayBytes/8;
+            % MemAvailableAllArrays = MaxPossibleArrayBytes so we divide by
+            % 8 above to be economical...
             C=cell(1,order);
             for io=1:order
                 info=cell2mat(recorder(io).info(1:recorder(io).iter));
+                % minimum storage requirements: number of rows irrelevant
+                % 8 * nzmax + 8 * (nzmax + ncols + 1)
+                nzmax_=size(info,1);
+                ncols=nv^io;
+                mem_req=8*nzmax_+8*(nzmax_+ncols+1);
+                short_and_wide=mem_req<max_bytes;
+                tall_and_thin=~short_and_wide;
                 if short_and_wide
                     % store normally
                     C{io}=sparse(info(:,1),info(:,2),info(:,3),n,nv^io);
-                else
+                elseif tall_and_thin
                     % store and as transpose to save on memory
-                    C{io}=sparse(info(:,2),info(:,1),info(:,3),nv^io,n);
+                    C{io}=tsparse(info(:,1),info(:,2),info(:,3),n,nv^io);
                 end
             end
             
