@@ -31,7 +31,9 @@ end
 
 % sparse inputs
 %---------------
-A=sparse(A);
+if ~isa(A,'tsparse')
+    A=sparse(A);
+end
 B=sparse(B);
 
 [rb,cb]=size(B);
