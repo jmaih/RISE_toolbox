@@ -38,9 +38,6 @@ classdef chib_jeliazkov
         end
         function log_mdd=conclude(obj,varargin)
             obj.CJ=obj.CJ/obj.sample_size;
-            % now sample J parameter vectors from the proposal density. I don't think I
-            % will save those draws... but perhaps I should put a seed to the random
-            % number generator such that I get the same results.
             J=obj.sample_size;
             CS=transpose(chol(obj.vcov_mode));
             f0=obj.log_post_mode;

@@ -5,7 +5,7 @@ function x=truncated_mv_normal_rnd(mu,SIG,lb,ub,Nsim,method,seed)
 % x=truncated_mv_normal_rnd(mu,SIG,lb,ub,Nsim,'gibbs')
 % x=truncated_mv_normal_rnd(mu,SIG,lb,ub,Nsim,method,seed)
 if nargin<7 || isempty(seed)
-    seed=100*sum(clock);
+    seed=[];
     if nargin<6
         method='gibbs';
         if nargin<5
@@ -20,10 +20,10 @@ elseif nargin >7
     error([mfilename,'::DontKnowHowToIdentifyThis'],...
         'Number of arguments cannot be greater than 7')
 end
-defaultStream = RandStream.getGlobalStream;
-savedState = defaultStream.State;
-s = RandStream.create('mt19937ar','seed',seed);
-RandStream.setGlobalStream(s);
+
+if ~isempty(seed)
+    rng(seed)
+end
 
 switch lower(method)
     case {'fast','ghk'}
@@ -33,8 +33,6 @@ switch lower(method)
     otherwise
         x=GewekeHajivassiliouKeane(mu,SIG,lb,ub,Nsim);
 end
-
-defaultStream.State = savedState;
 
 end
 

@@ -21,7 +21,7 @@ classdef bee %< handle
         MaxIter=1000;
         MaxTime=3600;
         MaxFunEvals=inf;
-        rand_seed=100*sum(clock);
+        rand_seed=[]
         penalty=1e+8;
         verbose=10;
         % optimizer-specific properties
@@ -195,11 +195,8 @@ if n0
 end
 missing=obj.MaxNodes-n0;
 % set and record the seed before we start drawing anything
-s = RandStream.create('mt19937ar','seed',obj.rand_seed);
-try
-    RandStream.setGlobalStream(s);
-catch %#ok<CTCH>
-    RandStream.setDefaultStream(s); 
+if ~isempty(obj.rand_seed)
+    rng(obj.rand_seed)
 end
 
 [obj.xx(:,n0+1:end),obj.ff(n0+1:end),...

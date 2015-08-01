@@ -89,7 +89,6 @@ if rem(nn,2)
     error('arguments must come in pairs')
 end
 
-update_random_number_stream=false;
 if isempty(obj.options)
     set_all_options()
 end
@@ -117,16 +116,6 @@ else
     end
 end
 
-if update_random_number_stream
-    % random number generation control
-    s = RandStream.create(obj.options.simul_algo,'seed',obj.options.simul_seed);
-    stream_methods=methods('RandStream');
-    if ismember('setGlobalStream',stream_methods)
-        RandStream.setGlobalStream(s);
-    else
-        RandStream.setDefaultStream(s);  
-    end
-end
     function set_one_at_a_time()
         if strcmp(propname,'filters')
             obj.filtering=propval;
@@ -251,17 +240,6 @@ end
                 % in data... I do that during estimation, I guess but I can do
                 % that upfront too. Don't know what is best.
                 propval=ts.collect(propval);
-            elseif strcmp(propname,'simul_algo')
-                if ~ismember(propval,...
-                        {'mt19937ar','mcg16807','mlfg6331_64','mrg32k3a','shr3cong','swb2712'})
-                    error([mfilename,':: simul_algo must be a member of ''mt19937ar'',''mcg16807'',''mlfg6331_64'',''mrg32k3a'',''shr3cong'',''swb2712'''])
-                end
-                update_random_number_stream=true;
-            elseif strcmp(propname,'simul_seed')
-                if ~isnumeric(propval)
-                    error([mfilename,':: simul_seed must must be a numerical scalar'])
-                end
-                update_random_number_stream=true;
             elseif strcmp(propname,'estim_general_restrictions')&& ~isa(propval,'function_handle')
                 if isempty(propval)
                     absorbed=true;
@@ -298,7 +276,6 @@ end
         end
         
         % Create the main options
-        update_random_number_stream=true;
         % shocks are allowed to be anticipated.
         rows=4;cols=3;
         if isa(obj,'dsge') % isfield(obj,'filename') does not work!!!
