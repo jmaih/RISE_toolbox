@@ -317,24 +317,23 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         for jj=1:size(x_plus,2);
             x_a=x_plus(:,jj)-a_plus;
             P_plus=P_plus+w(jj)*(x_a*x_a.');
-            if store_filters>2 % store smoothed
-                if jj<=2*m
+            if store_filters>2 && jj<=2*m
                     C_t_tp1=C_t_tp1+w(jj)*(xtt(:,jj)-a{splus})*x_a.';
                     % the remaining increments are zeros since the first
                     % parenthesis in these cases is a{splus}-a{splus}
-                end
-                if jj==2*(m+nshocks)
-                    % Compute smoothing gain and store for later use...
-                    SG{splus}(:,:,t)=C_t_tp1*pinv(P_plus);
-                end
             end
         end
         a{splus}=a_plus;
-        % the symmetrization step could have been saved but we want to give
-        % a chance to the covariance matrix of forecast errors to be
-        % well-behaved.
+        % the symmetrization/projection step could have been avoided but we
+        % want to give a chance to the covariance matrix of forecast errors
+        % to be well-behaved.
         %------------------------------------------------------------------
-        P{splus}=utils.cov.symmetrize(P_plus);%<--P{splus}=P_plus;
+        P_plus=utils.cov.project(P_plus);
+        P{splus}=P_plus;
+        if store_filters>2
+            % Compute smoothing gain and store for later use...
+            SG{splus}(:,:,t)=C_t_tp1/P_plus;% SG{splus}(:,:,t)=C_t_tp1*pinv(P_plus);
+        end
     end
     
     if store_filters>0
