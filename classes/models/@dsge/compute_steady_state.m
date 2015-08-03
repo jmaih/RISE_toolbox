@@ -268,7 +268,7 @@ end
                         if any(vlist)
                             % this can only be done if there are non-solved
                             % variables
-                            [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg);
+                            [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg,ss(vlist,ireg));
                         else
                             % we simply return with the retcode
                         end
@@ -300,9 +300,11 @@ end
             r=r(:,ones(1,number_of_regimes));
         end
         
-        function [ss,resids,retcode]=optimizer_over_vlist(vlist,ireg)
+        function [ss,resids,retcode]=optimizer_over_vlist(vlist,ireg,ssc0)
+            if nargin<3
+                ssc0=zeros(nv,1);
+            end
             nv=sum(vlist);
-            ssc0=zeros(nv,1);
             % check that we do not get problems starting at zero
             %---------------------------------------------------
             [~,~,~,rcode]=concentrated_residuals(ssc0);
