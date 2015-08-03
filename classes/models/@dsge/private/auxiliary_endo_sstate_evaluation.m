@@ -55,7 +55,7 @@ if obj.is_optimal_policy_model
     wx=vals(end,:);
     vals(end,:)=[];
     
-    multvals=vals'\wx';
+    multvals=vals.'\wx.';
     
     y(obj.endogenous.is_lagrange_multiplier)=multvals;
 end
