@@ -22,7 +22,7 @@ function [modelBlock,dic,jac_toc]=optimal_policy_system(Utility,constraints,dic)
 
 
 [Policy_equations,sstate_Policy_equations,Policy_vars,...
-    discount_name,discount]=policy_warmup(Utility);
+    discount_name,discount]=policy_warmup(Utility,dic.add_welfare);
 
 % select only the equations that are constraints, leaving aside all others
 %--------------------------------------------------------------------------
@@ -352,12 +352,13 @@ jac_toc=toc;
 
 end
 
-function [Policy_equations,sstate_Policy_equations,Policy_vars,discount_name,discount]=policy_warmup(Utility)
+function [Policy_equations,sstate_Policy_equations,Policy_vars,...
+    discount_name,discount]=policy_warmup(Utility,add_welfare)
 % welfare does not behave well in the system. It tends to create a
 % near-nonstationarity, inducing numerical inaccuracies. In particular, the
 % associated multiplier is close to a unit root, owing to the discount
 % factor...
-numberOfAdditionalEquations=1;
+numberOfAdditionalEquations=1+add_welfare;
 
 % prepare the discount
 %----------------------
@@ -374,11 +375,13 @@ discount_name='discount___';
 %------------------------
 Policy_equations={
     nan,sprintf('UTIL=%s',cell2mat(Utility{1,1}(1,:))),'Utility'
-    nan,sprintf('WELF=UTIL+%s*WELF{+1};',discount_name),'Welfare'
+    nan,sprintf('WELF=(1-(%s))*UTIL+%s*WELF{+1};',...
+    discount_name,discount_name),'Welfare'
     };
 sstate_Policy_equations={
     nan,sprintf('UTIL=%s',cell2mat(Utility{1,1}(1,:))),'Utility'
-    nan,sprintf('WELF=1/(1-(%s))*UTIL;',discount),'Welfare'
+    nan,'WELF=UTIL;','Welfare'
+%     nan,sprintf('WELF=1/(1-(%s))*UTIL;',discount),'Welfare'
     };
 Policy_vars={'UTIL','WELF'};
 
