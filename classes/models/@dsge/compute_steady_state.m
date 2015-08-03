@@ -268,7 +268,8 @@ end
                         if any(vlist)
                             % this can only be done if there are non-solved
                             % variables
-                            [ss(:,ireg),r(:,ireg),retcode]=optimizer_over_vlist(vlist,ireg,ss(vlist,ireg));
+                            [ss(:,ireg),r(:,ireg),retcode]=...
+                                optimizer_over_vlist(vlist,ireg,ss(vlist,ireg));
                         else
                             % we simply return with the retcode
                         end
