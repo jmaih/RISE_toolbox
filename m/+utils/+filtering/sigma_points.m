@@ -6,9 +6,9 @@ if isempty(scale)
     get_scale();
 end
 retcode=0;
-check=any(isnan(P(:)))||any(abs(P(:)>1e+5));
+check=any(isnan(P(:)))||any(~isfinite(P(:)));% check=any(isnan(P(:)))||any(abs(P(:)>1e+5));%
 if ~check
-    [Pstar,check]=chol(utils.cov.nearest(P),'lower');
+    [Pstar,check]=chol(utils.cov.project(P),'lower');
 end
 if check
     x=[];
