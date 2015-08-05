@@ -1,4 +1,4 @@
-function [F,X]=multivariate_kernel_density(X0,N,kernel,id,findex,xindex,F,X,Hi_dHi)
+function [F,X]=multivariate_kernel_density(X0,N,kernel,id,findex,xindex,F,X,Hi_dHiOvern)
 % multivariate_kernel_density -- multivariate kernel density estimation
 %
 % Syntax
@@ -53,8 +53,8 @@ function [F,X]=multivariate_kernel_density(X0,N,kernel,id,findex,xindex,F,X,Hi_d
 % - **X** [empty|cell]: each cell contains a 1 x N vector of coordinates
 % for the observations in each dimension
 %
-% - **Hi_dHi** [cell]: placeholder for the inverse of the bandwith matrix
-% and the determinant of the same inverse.
+% - **Hi_dHiOvern** [cell]: placeholder for the inverse of the bandwith matrix
+% and the determinant of the same inverse divided by n.
 %
 % Outputs
 % --------
@@ -101,7 +101,7 @@ matlab_plot_ready=true;
 kernel_types={'cosine','epanechnikov','normal','triangular','triweight',...
     'uniform'};
 if nargin<9
-    Hi_dHi=[];
+    Hi_dHiOvern=[];
     if nargin<8
         X=[];
         if nargin<7
@@ -143,19 +143,19 @@ for ii=1:N(id)
         end
     else
         [F,X]=multivariate_kernel_density(X0,N,kernel,id+1,findex,xindex,...
-            F,X,Hi_dHi);
+            F,X,Hi_dHiOvern);
     end
 end
 
     function populate()
-        if isempty(Hi_dHi)
+        if isempty(Hi_dHiOvern)
             %     h0=1;
             %     H=h0*eye(d);
             %     H=n^(-1/(d+4))*cov(X0.')^-.5;
             H=n^(-1/(d+4))*cov(X0{1}.')^.5;
-            dHi=1/det(H);
+            dHi_n=1/det(H)*1/n;
             Hi=inv(H);
-            Hi_dHi={Hi,dHi};
+            Hi_dHiOvern={Hi,dHi_n};
         end
         if isempty(X),X=cell(1,d); end
         if isempty(F)
@@ -181,9 +181,9 @@ end
     function f=mvkd()
         xx_h=xindex(:,ones(1,n))-X0{1};
 %         xx_h=bsxfun(@minus,xindex(:),X0{1});
-        xx_h=Hi_dHi{1}*xx_h;
+        xx_h=Hi_dHiOvern{1}*xx_h;
         %(1/n)*(1/det(H))*sum()
-        f=1/n*Hi_dHi{2}*sum(kappa(xx_h));
+        f=Hi_dHiOvern{2}*sum(kappa(xx_h));
         function k=kappa(u)
             nstar=cleanup();
             switch kernel
