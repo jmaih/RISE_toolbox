@@ -238,9 +238,9 @@ end
                 d{ireg});
             if retcode
                 return
-            end
-            ss(:,ireg)=ss_1;r(:,ireg)=r_1;
-            if ~retcode
+            else
+                ss(:,ireg)=ss_1;
+                r(:,ireg)=r_1;
                 if success(r(:,ireg))
                     p(:,ireg)=p_ireg;
                 else
