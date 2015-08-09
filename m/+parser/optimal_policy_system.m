@@ -290,6 +290,8 @@ jac_toc=toc;
         %------------------------------------------------
         ndigits=size(num2str(neqtns),2);
         ooo=repmat('0',1,ndigits-1);
+        xxxxx_=parser.listing('name','xxxxx_');
+        xxxxx_=xxxxx_(1,ones(1,neqtns));
         for ieqtn_=1:neqtns
             this_digit=sprintf('%s%0.0f',ooo,ieqtn_);
             
@@ -299,7 +301,8 @@ jac_toc=toc;
             
             % add to the list of endogenous
             %-------------------------------
-            dic.endogenous(end+1)=parser.listing('name',mult_name);
+            xxxxx_(ieqtn_).name=mult_name;
+            xxxxx_(ieqtn_).current_name=mult_name;
             
             % create arguments for splanar
             %------------------------------
@@ -307,6 +310,7 @@ jac_toc=toc;
             MULT_LEAD(ieqtn_).func=sprintf('%s_XLEAD_1',mult_name);
             MULT_LAG(ieqtn_).func=sprintf('%s_XLAG_1',mult_name);
         end
+        dic.endogenous=[dic.endogenous,xxxxx_];
         dic.auxiliary_variables.model=[dic.auxiliary_variables.model,mult_names];
     end
 
