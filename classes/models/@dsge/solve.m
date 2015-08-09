@@ -644,20 +644,28 @@ function ssfuncs=recreate_steady_state_functions(obj)
 % initialize this here
 ssfuncs=struct();
 
+is_potentially_bgp=isempty(obj.is_stationary_model)||~obj.is_stationary_model;
+
 symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
 ssfuncs.static=obj.routines.static;
-ssfuncs.static_bgp=obj.routines.static_bgp;
+if is_potentially_bgp
+    ssfuncs.static_bgp=obj.routines.static_bgp;
+end
 if symbolic_derivatives
     ssfuncs.jac_static=obj.routines.static_derivatives;
-    ssfuncs.jac_bgp=obj.routines.static_bgp_derivatives;
+    if is_potentially_bgp
+        ssfuncs.jac_bgp=obj.routines.static_bgp_derivatives;
+    end
 else
     solve_order=1;
     ssfuncs.jac_static=compute_automatic_derivatives(...
         obj.routines.symbolic.static,solve_order,...
         obj.options.solve_automatic_differentiator);
-    ssfuncs.jac_bgp=compute_automatic_derivatives(...
-        obj.routines.symbolic.static_bgp,solve_order,...
-        obj.options.solve_automatic_differentiator);
+    if is_potentially_bgp
+        ssfuncs.jac_bgp=compute_automatic_derivatives(...
+            obj.routines.symbolic.static_bgp,solve_order,...
+            obj.options.solve_automatic_differentiator);
+    end
 end
 end
 

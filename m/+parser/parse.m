@@ -14,6 +14,8 @@ function dictionary=parse(FileName,varargin)
 % extensions rs, rz or dsge
 %
 % - **varargin** []: pairwise arguments with possiblities as follows:
+%   - **parameter_differentiation** [true|{false}]: compute or not
+%   parameter derivatives
 %   - **definitions_in_param_differentiation** [true|{false}]: insert or
 %   not definitions in equations before differentiating with respect to
 %   parameters  
@@ -32,6 +34,8 @@ function dictionary=parse(FileName,varargin)
 %   the rise file. In case of a cell, the cell should be a k x 2 cell,
 %   where the first column collects the conditional parsing names and the
 %   second column the values.
+%   - **stationary_model** [{empty}|true|false]: decides whether the model
+%   is stationary in which case, the Balance growth path is not computed.
 %
 % Outputs
 % --------
@@ -57,7 +61,9 @@ DefaultOptions=...
     'rise_save_macro',false,...
     'max_deriv_order',2,'definitions_inserted',false,...
     'parse_debug',false,...
-    'add_welfare',false);
+    'add_welfare',false,...
+    'parameter_differentiation',false,...
+    'stationary_model',[]);
 DefaultOptions=utils.miscellaneous.mergestructures(DefaultOptions,...
     parser.preparse());
 if nargin<1
@@ -86,6 +92,9 @@ dictionary = parser.initialize_dictionary();
 dictionary.definitions_inserted=DefaultOptions.definitions_inserted;
 dictionary.parse_debug=DefaultOptions.parse_debug;
 dictionary.add_welfare=DefaultOptions.add_welfare;
+parameter_differentiation=DefaultOptions.parameter_differentiation;
+dictionary.is_stationary_model=DefaultOptions.stationary_model;
+is_bgp_model=isempty(dictionary.is_stationary_model)||~dictionary.is_stationary_model;
 %% set various blocks
 
 % first output: the dictionary.filename
@@ -412,35 +421,38 @@ bgp_incidence=zeros(2*orig_endo_nbr,3);
 bgp_incidence(:,2)=1:2*orig_endo_nbr;
 wrt=dynamic_differentiation_list(bgp_incidence,0);
 
-routines.static_bgp=utils.code.code2func(static.shadow_BGP_model);
-[routines.static_bgp_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
-    differentiate_system(...
-    routines.static_bgp,...
-    dictionary.input_list,wrt,1);
-routines.symbolic.static_bgp={original_funcs,wrt};
-disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+if is_bgp_model
+    routines.static_bgp=utils.code.code2func(static.shadow_BGP_model);
+    [routines.static_bgp_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
+        differentiate_system(...
+        routines.static_bgp,...
+        dictionary.input_list,wrt,1);
+    routines.symbolic.static_bgp={original_funcs,wrt};
+    disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
+        sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+end
 
 % dynamic model wrt param
 %------------------------
-param_nbr = numel(dictionary.parameters);
-wrt=dynamic_differentiation_list([],0,1:param_nbr);
-ppdd=@(x)x;%dynamic.shadow_model;
-if ~dictionary.definitions_inserted
-    if DefaultOptions.definitions_in_param_differentiation
-        ppdd=@(x)parser.replace_definitions(x,shadow_definitions);
-    else
-        disp([mfilename,':: definitions not taken into account in the computation of derivatives wrt parameters'])
+if parameter_differentiation
+    param_nbr = numel(dictionary.parameters);
+    wrt=dynamic_differentiation_list([],0,1:param_nbr);
+    ppdd=@(x)x;%dynamic.shadow_model;
+    if ~dictionary.definitions_inserted
+        if DefaultOptions.definitions_in_param_differentiation
+            ppdd=@(x)parser.replace_definitions(x,shadow_definitions);
+        else
+            disp([mfilename,':: definitions not taken into account in the computation of derivatives wrt parameters'])
+        end
     end
+    [routines.parameter_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
+        differentiate_system(...
+        ppdd(dynamic.shadow_model),...
+        dictionary.input_list,wrt,1);
+    routines.symbolic.parameters={original_funcs,wrt};
+    disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
+        sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
 end
-[routines.parameter_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
-    differentiate_system(...
-    ppdd(dynamic.shadow_model),...
-    dictionary.input_list,wrt,1);
-routines.symbolic.parameters={original_funcs,wrt};
-disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
-
 %% optimal policy and optimal simple rules routines
 %-----------------------------------------
 if is_model_with_planner_objective
