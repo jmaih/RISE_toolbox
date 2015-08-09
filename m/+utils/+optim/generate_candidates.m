@@ -45,9 +45,8 @@ funevals=funevals+sum(fcount);
         fcount=0;
         while invalid
             if iter>=MaxIter
-                warning([mfilename,':: could not generate a valid candidate after ',...
+                error([mfilename,':: could not generate a valid candidate after ',...
                     int2str(MaxIter*max_trials),' attempts. Exiting with the best vector'])
-                break
             end
             [xi,fi,violi]=draw_and_evaluate_vector();
             iter2=0;
