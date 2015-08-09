@@ -739,12 +739,14 @@ guy_is_planar=false(1,n);
 for iarg=1:n
     guy_is_planar(iarg)=strcmp(class(varargin{iarg}),'splanar');
     if isempty(obj) && guy_is_planar(iarg)
-        obj=varargin{iarg}.prototype;obj.prototype=obj;
+        obj=varargin{iarg}.prototype;
+        obj.prototype=obj;
     end
 end
 for iarg=find(~guy_is_planar)
     tmp=varargout{iarg};
-    varargout{iarg}=obj; varargout{iarg}.func=tmp;
+    varargout{iarg}=obj; 
+    varargout{iarg}.func=tmp;
 end
 end
 
