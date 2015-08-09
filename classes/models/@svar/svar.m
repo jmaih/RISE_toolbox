@@ -18,7 +18,6 @@ classdef svar < rise_generic
     % log_prior_density -   H1 line
     % msvar_priors -   H1 line
     % posterior_marginal_and_prior_densities -   H1 line
-    % posterior_simulator -   H1 line
     % print_estimation_results -   H1 line
     % prior_plots -   H1 line
     % refresh -  refresh the options of an old object with a newer version of
@@ -26,7 +25,6 @@ classdef svar < rise_generic
     % set -  sets options for RISE models
     % set_solution_to_companion -   H1 line
     % simulate -  simulates a RISE model
-    % simulation_diagnostics -   H1 line
     % solve -   H1 line
     % stoch_simul -   H1 line
     % svar - Structural VAR modeling

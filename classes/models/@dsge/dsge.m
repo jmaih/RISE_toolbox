@@ -26,7 +26,6 @@ classdef dsge < rise_generic
     % log_prior_density -   H1 line
     % monte_carlo_filtering -   H1 line
     % posterior_marginal_and_prior_densities -   H1 line
-    % posterior_simulator -   H1 line
     % print_estimation_results -   H1 line
     % print_solution -  print the solution of a model or vector of models
     % prior_plots -   H1 line
@@ -37,7 +36,6 @@ classdef dsge < rise_generic
     % set_solution_to_companion -   H1 line
     % simulate -  simulates a RISE model
     % simulate_nonlinear -   H1 line
-    % simulation_diagnostics -   H1 line
     % solve -   H1 line
     % solve_alternatives -   H1 line
     % stoch_simul -   H1 line

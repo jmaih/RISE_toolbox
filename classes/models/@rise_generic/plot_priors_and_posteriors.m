@@ -61,7 +61,7 @@ if isempty(simulation_folder)
     simulation_folder=obj.folders_paths.simulations;
 end
 
-% do posterior densitities
+% do posterior densities
 %---------------------------
 post_dens=plot_posteriors(obj,simulation_folder,parlist);
 

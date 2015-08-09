@@ -19,7 +19,6 @@ classdef rfvar < svar
     % log_prior_density -   H1 line
     % msvar_priors -   H1 line
     % posterior_marginal_and_prior_densities -   H1 line
-    % posterior_simulator -   H1 line
     % print_estimation_results -   H1 line
     % prior_plots -   H1 line
     % refresh -  refresh the options of an old object with a newer version of
@@ -28,7 +27,6 @@ classdef rfvar < svar
     % set -  sets options for RISE models
     % set_solution_to_companion -   H1 line
     % simulate -  simulates a RISE model
-    % simulation_diagnostics -   H1 line
     % solve -   H1 line
     % stoch_simul -   H1 line
     % structural_form - finds A structural form given the imposed restrictions
@@ -92,8 +90,6 @@ classdef rfvar < svar
     methods(Access=protected,Hidden=true)
         varargout=update_estimated_parameter_names(varargin)
         varargout=find_posterior_mode(varargin)
-        varargout=update_posterior_simulation_initial_conditions(varargin)
-        varargout=initialize_posterior_simulation(varargin)
     end
     methods(Static)
         function r=template()
