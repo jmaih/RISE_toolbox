@@ -94,15 +94,15 @@ if neat %nargout==1
     1,'unknown');
 else
     status='unknown';
-    loc=find(strcmp(x,{dict.endogenous.name}),1,'first');
+    loc=find(strcmp(x,dict.endogenous_list),1,'first');
     if ~isempty(loc)
         status='y'; %(1)
     else
-        loc=find(strcmp(x,{dict.exogenous.name}),1,'first');
+        loc=find(strcmp(x,dict.exogenous_list),1,'first');
         if ~isempty(loc)
             status='x'; %(2)
         else
-            loc=find(strcmp(x,{dict.parameters.name}),1,'first');
+            loc=find(strcmp(x,dict.parameters_list),1,'first');
             if ~isempty(loc)
                 status='param'; %(3)
             else

@@ -79,6 +79,10 @@ end
         % lag of the variable in the list and then create auxiliary
         % equations when the parsing of the model is done.
         
+        % store this useful information separately
+        %-----------------------------------------
+        reset_lists();
+        
         iline_=cell_info{1};
         rawline_=cell_info{2};
         file_name_=cell_info{3};
@@ -371,6 +375,21 @@ end
                     if mcp_flag
                         mcp_flag=false;
                     end
+                end
+            end
+            % make sure the list is up to date for status determination
+            %-----------------------------------------------------------
+            reset_lists()
+        end
+        function reset_lists()
+            do_one_list('endogenous')
+            do_one_list('parameters')
+            do_one_list('exogenous')
+            function do_one_list(type_)
+                fake_name=[type_,'_list'];
+                if ~isfield(dictionary,fake_name)||...
+                        numel(dictionary.(fake_name))~=numel(dictionary.(type_))
+                    dictionary.(fake_name)={dictionary.(type_).name};
                 end
             end
         end
