@@ -405,6 +405,10 @@ classdef splanar
             % sqrt - overloads sqrt for splanar
             obj=do_univariate(a,'sqrt');
         end
+        function obj=steady_state(a)
+            % sqrt - overloads sqrt for splanar
+            obj=do_univariate(a,'steady_state');
+        end
         function obj=tan(a)
             % tan - overloads tan for splanar
             obj=do_univariate(a,'tan');
@@ -553,7 +557,8 @@ classdef splanar
                         else
                             d=d_args{1}/x.args{2};
                         end
-                    case {'lt','gt','le','ge','eq','ne','or','and','sign'}
+                    case {'lt','gt','le','ge','eq','ne','or','and','sign',...
+                            'steady_state'}
                         % derivatives are zero
                         d=x.prototype; d.prototype=d; d.func=0;
                     case 'if_then_else'

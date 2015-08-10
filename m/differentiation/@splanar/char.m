@@ -73,7 +73,8 @@ else
         c=[args{1},'+',args{2}];
     elseif long||any(strcmp(the_func,{'abs','acos','acosh','asin','asinh','atan','atanh','cos',...
             'cosh','cot','erf','exp','log','log10','sign','sin','sinh',...
-            'tan','if_elseif','if_then_else','normcdf','normpdf','max','min','sqrt'}))
+            'tan','if_elseif','if_then_else','normcdf','normpdf','max',...
+            'min','sqrt','steady_state'}))
         c=cell2mat(strcat(args,','));
         c=[the_func,'(',c(1:end-1),')'];
 % % % % % % 		if any(strcmp(the_func,{'if_elseif','if_then_else'}))
