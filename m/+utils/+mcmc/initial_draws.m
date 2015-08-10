@@ -1,4 +1,4 @@
-function [pop,funevals,log_I_init,covar]=initial_draws(logf,lb,ub,N,penalty,mu)
+function [pop,funevals,log_I_init,covar]=initial_draws(logf,lb,ub,N,penalty,mu,max_attempts)
 % initial_draws -- initial draws for populations mcmc algorithms
 %
 % Syntax
@@ -14,31 +14,34 @@ function [pop,funevals,log_I_init,covar]=initial_draws(logf,lb,ub,N,penalty,mu)
 % Inputs
 % -------
 %
-% - **logf** [function handle]: objective to MINIMIZE  
+% - **logf** [function handle]: objective to MINIMIZE
 %
-% - **lb** [vector]: lower bound  
+% - **lb** [vector]: lower bound
 %
-% - **ub** [vector]: upper bound  
+% - **ub** [vector]: upper bound
 %
-% - **N** [integer]: number of parameters to draws  
+% - **N** [integer]: number of parameters to draws
 %
-% - **penalty** [numeric|{1e+8}]:  
+% - **penalty** [numeric|{1e+8}]:
 %
-% - **mu** [vector]: start draws  
+% - **mu** [vector]: start draws
+%
+% - **max_attempts** [integer|{50}]: maximum number of attempts for each
+% parameter vector.
 %
 % Outputs
 % --------
 %
-% - **pop** [struct]: initial draws, each with fields  
+% - **pop** [struct]: initial draws, each with fields
 %   - **f** [numeric]: value of fitness
-%   - **x** [vector]: parameters  
+%   - **x** [vector]: parameters
 %
-% - **funevals** [integer]: number of function evaluations  
+% - **funevals** [integer]: number of function evaluations
 %
 % - **log_I_init** [0]: initial value of the log marginal data density for
 % a multivariate uniform distribution
 %
-% - **covar** [matrix]: variance-covariance matrix of the drawn parameters  
+% - **covar** [matrix]: variance-covariance matrix of the drawn parameters
 %
 % More About
 % ------------
@@ -48,11 +51,17 @@ function [pop,funevals,log_I_init,covar]=initial_draws(logf,lb,ub,N,penalty,mu)
 %
 % See also:
 
-if nargin<6
-    mu=[];
-    if nargin<5
-        penalty=[];
+if nargin<7
+    max_attempts=[];
+    if nargin<6
+        mu=[];
+        if nargin<5
+            penalty=[];
+        end
     end
+end
+if isempty(max_attempts)
+    max_attempts=50;
 end
 if isempty(penalty)
     penalty=1e+8;
@@ -71,20 +80,28 @@ ub_minus_lb=ub-lb;
 theta=[mu,nan(d,N-n0)];
 pop=cell(1,N);
 funevals=zeros(1,N);
-for idraw=1:N
+pool=gcp('nocreate');
+NumWorkers=0;
+if ~isempty(pool)
+    NumWorkers=pool.NumWorkers;
+end
+parfor (idraw=1:N,NumWorkers>1)
     iter=0;
     invalid=true;
-    while invalid && iter < maxiter
+    % parfor thinks this is a broadcast variable
+    %--------------------------------------------
+    local_logf=logf;
+    while invalid && iter < max_attempts
         iter=iter+1;
         if iter>1 || ~isnan(theta(:,idraw))
             theta(:,idraw)=lb+ub_minus_lb.*rand(d,1);
         end
-        fx=logf(theta(:,idraw));
+        fx=local_logf(theta(:,idraw));
         funevals=funevals+1;
         invalid=utils.mcmc.is_violation(fx,penalty);
     end
     if invalid
-        error(['no valid parameter after ',int2str(maxiter),' attempts'])
+        error(['no valid parameter after ',int2str(max_attempts),' attempts'])
     end
     pop{idraw}=struct('f',fx,'x',theta(:,idraw));
 end
