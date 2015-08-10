@@ -413,6 +413,9 @@ classdef aplanar_
         function obj = sqrt(g)
             obj=g^0.5;
         end
+        function obj = steady_state(g)
+            obj=zero_derivatives(@steady_state,g);
+        end
         function obj = tan(g)
             obj = sin(g)/cos(g);
         end
