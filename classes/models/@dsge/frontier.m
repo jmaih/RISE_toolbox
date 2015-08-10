@@ -39,6 +39,11 @@ function f=frontier(obj,lambda_name,lambda_vals,simul)
 %
 % See also:
 
+if isempty(obj)
+    f=struct();
+    return
+end
+
 if nargin<4
     simul=false;
 end
@@ -50,8 +55,6 @@ if numel(lambda_vals)==2
 end
 
 is_linear=obj.options.solve_order==1 && obj.markov_chains.regimes_number;
-
-simul_seed=obj.options.simul_seed;
 
 if ~isempty(simul)
     if ~islogical(simul)
@@ -105,7 +108,6 @@ end
         function [V,retcode]=simulated_variances()
             % use the same seed at the beginning of each simulation
             %-------------------------------------------------------
-            rng(simul_seed)
             [db,~,retcode]=simulate(obj,...
                 'parameters',{lambda_name,val});
             if retcode
