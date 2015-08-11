@@ -74,11 +74,8 @@ good_locs=[];
 
 objective=@(x)variance_engine(x);
 sd=nan(n,nvals);
-pool = gcp('nocreate');
-nworkers=0;
-if ~isempty(pool)
-    nworkers=pool.NumWorkers;
-end
+
+nworkers=get_number_of_workers();
 parfor(ival=1:nvals,nworkers)
     [V,retcode]=objective(lambda_vals(ival));
     if ~retcode
@@ -96,6 +93,22 @@ f.simul_periods__=0;
 if simul
     f.simul_periods__=obj.options.simul_periods;
 end
+
+    function n=get_number_of_workers()
+        v=ver;
+        Names={v.Name};
+        v=v(strcmp(Names,'MATLAB'));
+        v=str2double(v.Version);
+        n=0;
+        if v>8.1
+            pool = gcp('nocreate');
+            if ~isempty(pool)
+                n=pool.NumWorkers;
+            end
+        else
+            n=matlabpool('size'); %#ok<DPOOL>
+        end
+    end
 
     function [V,retcode]=variance_engine(val)
         if simul
