@@ -182,6 +182,12 @@ dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities
 %% Now we can re-order the original (and augmented) endogenous
 [~,tags]=sort({dictionary.endogenous.name});
 dictionary.endogenous=dictionary.endogenous(tags);
+% also renew the endogenous quick list for status determination under
+% shadowization, where the precise locations now matter!!!
+%----------------------------------------------------------------------
+dictionary.endogenous_list={dictionary.endogenous.name};
+% no need to renew the parameters and the exogenous since new ones have not
+% been created
 
 %% Now we re-write the model and update leads and lags
 % at the same time, construct the incidence and occurrence matrices
