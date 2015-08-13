@@ -85,7 +85,7 @@ NumWorkers=0;
 if ~isempty(pool)
     NumWorkers=pool.NumWorkers;
 end
-parfor (idraw=1:N,NumWorkers>1)
+parfor (idraw=1:N,NumWorkers)
     iter=0;
     invalid=true;
     % parfor thinks this is a broadcast variable
@@ -93,7 +93,7 @@ parfor (idraw=1:N,NumWorkers>1)
     local_logf=logf;
     while invalid && iter < max_attempts
         iter=iter+1;
-        if iter>1 || ~isnan(theta(:,idraw))
+        if iter>1 || ~any(isnan(theta(:,idraw)))
             theta(:,idraw)=lb+ub_minus_lb.*rand(d,1);
         end
         fx=local_logf(theta(:,idraw));
