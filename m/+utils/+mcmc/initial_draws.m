@@ -1,4 +1,4 @@
-function [pop,funevals,log_I_init,covar]=initial_draws(logf,lb,ub,N,penalty,mu,max_attempts)
+function [pop,funevals,log_I_init,covar,NumWorkers]=initial_draws(logf,lb,ub,N,penalty,mu,max_attempts)
 % initial_draws -- initial draws for populations mcmc algorithms
 %
 % Syntax
@@ -42,6 +42,9 @@ function [pop,funevals,log_I_init,covar]=initial_draws(logf,lb,ub,N,penalty,mu,m
 % a multivariate uniform distribution
 %
 % - **covar** [matrix]: variance-covariance matrix of the drawn parameters
+%
+% - **NumWorkers** [integer]: number of workers available for parallel
+% processing.
 %
 % More About
 % ------------
@@ -97,7 +100,7 @@ parfor (idraw=1:N,NumWorkers)
             theta(:,idraw)=lb+ub_minus_lb.*rand(d,1);
         end
         fx=local_logf(theta(:,idraw));
-        funevals=funevals+1;
+        funevals(idraw)=funevals(idraw)+1;
         invalid=utils.mcmc.is_violation(fx,penalty);
     end
     if invalid
