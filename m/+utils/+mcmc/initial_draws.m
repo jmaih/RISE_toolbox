@@ -83,11 +83,9 @@ ub_minus_lb=ub-lb;
 theta=[mu,nan(d,N-n0)];
 pop=cell(1,N);
 funevals=zeros(1,N);
-pool=gcp('nocreate');
-NumWorkers=0;
-if ~isempty(pool)
-    NumWorkers=pool.NumWorkers;
-end
+
+NumWorkers=utils.parallel.get_number_of_workers();
+
 parfor (idraw=1:N,NumWorkers)
     iter=0;
     invalid=true;
