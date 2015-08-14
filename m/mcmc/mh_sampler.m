@@ -106,6 +106,9 @@ if nargin<6
     SIG=[];
     if nargin<5
         mu=[];
+        if nargin<4
+            options=struct();
+        end
     end
 end
 
