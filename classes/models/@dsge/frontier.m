@@ -26,7 +26,18 @@ function f=frontier(obj,lambda_name,lambda_vals,simul)
 % --------
 %
 % - **f** [struct]: standard deviations of all variables in the model for
-% each value of lambda_name
+% each value of lambda_name and some further information about the
+% simulation process under a substructure with name **stats__**. The fields
+% of the sub-structure are:
+%   - **lambda** [vector]: discretized values of lambda 
+%   - **ngrid** [scalar]: number of grid points 
+%   - **simul_periods** [integer]: number of simulations. If strictly
+%   positive, then simulation is used for computing the moments of the
+%   process
+%   - **retcode** [vector]: information on how successful each run in the
+%   grid is. if retcode=0, there is no problem. If retcode different from
+%   zero, then the information can be retrieved by running
+%   decipher(retcode)
 %
 % More About
 % ------------
@@ -76,9 +87,10 @@ objective=@(x)variance_engine(x);
 sd=nan(n,nvals);
 
 nworkers=utils.parallel.get_number_of_workers();
+retcode=zeros(1,nvals);
 parfor(ival=1:nvals,nworkers)
-    [V,retcode]=objective(lambda_vals(ival));
-    if ~retcode
+    [V,retcode(ival)]=objective(lambda_vals(ival));
+    if ~retcode(ival)
         sd(:,ival)=sqrt(diag(V));
     end
 end
@@ -87,11 +99,10 @@ f=struct();
 for iname=1:n
     f.(names{iname})=sd(iname,:);
 end
-f.lambda__=lambda_vals;
-f.ngrid__=nvals;
-f.simul_periods__=0;
+f.stats__=struct('lambda',lambda_vals,'ngrid',nvals,'simul_periods',0,...
+    'retcode',retcode);
 if simul
-    f.simul_periods__=obj.options.simul_periods;
+    f.stats__.simul_periods__=obj.options.simul_periods;
 end
 
     function [V,retcode]=variance_engine(val)
@@ -105,8 +116,7 @@ end
         function [V,retcode]=simulated_variances()
             % use the same seed at the beginning of each simulation
             %-------------------------------------------------------
-            [db,~,retcode]=simulate(obj,...
-                'parameters',{lambda_name,val});
+            [db,~,retcode]=simulate(obj,'parameters',{lambda_name,val});
             if retcode
                 V=[];
             else
