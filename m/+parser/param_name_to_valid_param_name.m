@@ -1,15 +1,26 @@
 function [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
-% H1 line
+% param_name_to_valid_param_name -- change the parameter names from
+% name(chain,state) to name_chain_state 
 %
 % Syntax
 % -------
 % ::
 %
+%   [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
+%
 % Inputs
 % -------
 %
+% - **pname** [char|cellstring]: names of the parameter names to change
+%
 % Outputs
 % --------
+%
+% - **pname_out** [char|cellstring]: names of the changed parameter names
+%
+% - **capture_errors** [cellstring]: list of invalid parameter names. If
+% this output is not requested, an error is issued for the very first
+% offending parameter name.
 %
 % More About
 % ------------
@@ -18,9 +29,6 @@ function [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
 % ---------
 %
 % See also: 
-
-
-% change the parameter names from name(chain,state) to name_chain_state
 
 pname_out=parser.valid_names_in_text(pname);
 

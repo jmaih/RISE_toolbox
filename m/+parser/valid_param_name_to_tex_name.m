@@ -1,15 +1,24 @@
 function pname=valid_param_name_to_tex_name(pname,chain_names)
-% H1 line
+% valid_param_name_to_tex_name change the parameter names from
+% name_chain_state to name(chain,state) 
 %
 % Syntax
 % -------
 % ::
 %
+%   pname=valid_param_name_to_tex_name(pname,chain_names)
+%
 % Inputs
 % -------
 %
+% - **pname** [char|cellstring: names of the parameters to change
+%
+% - **chain_names** [cellstring]: names of the markov chains
+%
 % Outputs
 % --------
+%
+% - **pname** [char|cellstring]: names of the changed parameters
 %
 % More About
 % ------------
