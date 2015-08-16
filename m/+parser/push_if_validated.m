@@ -25,7 +25,9 @@ end
 long_message=~isempty(name_file_line);
 if ~testfunc(val)
     if long_message
-        error(['wrong specification of ',type,' value for ',name_file_line{1},' in ',name_file_line{2},' at line(s) ',name_file_line{3}])
+        error(['wrong specification of ',type,' value for ',...
+            name_file_line{1},' in ',name_file_line{2},' at line(s) ',...
+            name_file_line{3}])
     else
         error(['wrong specification of ',type])
     end
