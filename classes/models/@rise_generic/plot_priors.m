@@ -89,6 +89,9 @@ pnames=parlist;
 tex_names={obj.estimation.priors(plocs).tex_name};
 
 distr={obj.estimation.priors(plocs).prior_distrib};
+% replace the dirichlet with the beta
+%-------------------------------------
+distr=strrep(distr,'dirichlet','beta');
 % recollect the densities
 for idistr=1:numel(distr)
     distr{idistr}=distributions.(distr{idistr});

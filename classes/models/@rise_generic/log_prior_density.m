@@ -44,18 +44,35 @@ lnprior=0;
 retcode=0;
 if ~isempty(param)
     if isnumeric(param)
+        % do the uncorrelated guys
+        %--------------------------
         for kk=1:numel(obj.estim_distributions)
             loc=obj.estim_distrib_locations{kk};
-            ld=obj.estim_distributions{kk}(param(loc),obj.estim_hyperparams(loc,1),obj.estim_hyperparams(loc,2));
+            a=obj.estim_hyperparams(loc,1);
+            b=obj.estim_hyperparams(loc,2);
+            ld=obj.estim_distributions{kk}(param(loc),a,b);
             if obj.options.debug
                 disp(functions(obj.estim_distributions{kk}))
                 disp([{'param val','a','b','log-prior'}
-                    num2cell([param(loc),obj.estim_hyperparams(loc,1),obj.estim_hyperparams(loc,2),ld])])
+                    num2cell([param(loc),a,b,ld])])
             end
             lnprior=lnprior+sum(ld);
             if (isnan(lnprior)||isinf(lnprior)||~isreal(lnprior))
                 retcode=307;
                 break
+            end
+        end
+        % do the dirichlet guys
+        %-----------------------
+        if ~retcode && ~isempty(obj.estim_dirichlet)
+            ndirich=numel(obj.estim_dirichlet);
+            for id=1:ndirich
+                loc=obj.estim_dirichlet(id).location;
+                lnprior=lnprior+obj.estim_dirichlet(id).lpdfn(param(loc));
+                if (isnan(lnprior)||isinf(lnprior)||~isreal(lnprior))
+                    retcode=307;
+                    break
+                end
             end
         end
     elseif ischar(param) % This should be moved elsewhere to avoid recomputing the covariance...

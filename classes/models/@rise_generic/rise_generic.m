@@ -73,6 +73,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         estim_distrib_locations={}
         estim_distributions={}
         estim_hyperparams=[]
+		estim_dirichlet=[]
         estimation_restrictions
         estimation_under_way=false;
         general_restrictions_data

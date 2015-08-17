@@ -52,14 +52,26 @@ if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
                 draw=xmode+transpose(cc)*randn(n,1);
             case 'prior'
                 distribs={obj.estimation.priors.prior_distrib};
+                % replace the dirichlet with the beta
+                %-------------------------------------
+                distribs=strrep(distribs,'dirichlet','beta');
                 udistrib=unique(distribs);
                 draw=nan(numel(distribs),1);
                 for idist=1:numel(udistrib)
+                    % the dirichlets are drawn separately
+                    %-------------------------------------
+                    if strcmp(udistrib{idist},'dirichlet')
+                        continue
+                    end
                     loc=strcmp(udistrib{idist},distribs);
                     a=vertcat(obj.estimation.priors(loc).a);
                     b=vertcat(obj.estimation.priors(loc).b);
                     [~,~,~,rndfn]=distributions.(udistrib{idist});
                     draw(loc)=rndfn(a,b);
+                end
+                for id=1:numel(obj.estim_dirichlet)
+                    loc=obj.estim_dirichlet(id).location;
+                    draw(loc)=obj.estim_dirichlet(id).rndfn(1);
                 end
         end
         draw=utils.optim.recenter(draw,lb,ub);

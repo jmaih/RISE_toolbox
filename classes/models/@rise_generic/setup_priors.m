@@ -58,22 +58,111 @@ if ~isempty(fieldnames(MyPriors))
         error_control=[fields(:),error_control];
     end
     
+    [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(fields,...
+        MyPriors,error_control);
     % linking estimated parameters to parameters
     %-------------------------------------------
-    obj.estimation_restrictions=parameters_links(obj,fields);
-    
-    for est_id=1:numel(fields)
-        tmp=MyPriors.(fields{est_id});
+    obj.estimation_restrictions=parameters_links(obj,estnames);
+    new_dirichlet=utils.distrib.dirichlet_shortcuts();
+    est_id=0;
+    while est_id<numel(estnames)
+        est_id=est_id+1;
         if error_control_flag
             name_file_line=error_control(est_id,:);
         end
+        if is_dirichlet(est_id)
+            % find the corresponding dirichlet and do all its elements and
+            % increment est_id. Take the first dirichlet, use it and
+            % destroy it.
+           do_the_dirichlet()
+        else
+            do_one_typical()
+        end
+    end
+    
+    % for efficiency, this should be done at estimation time?...
+    if ~isempty(priors)
+        % load the distributions
+        tmp={priors.prior_distrib};
+        if ~isempty(tmp)
+            effective_distributions=unique(tmp);
+            distr_locs=cell(1,numel(effective_distributions));
+            for ii=1:numel(effective_distributions)
+                distr_locs{ii}=find(strcmp(effective_distributions{ii},tmp));
+                % get the handle on the distributions but not for the
+                % dirichlet: they need to be processed separately.
+                if ~strcmp(effective_distributions{ii},'dirichlet')
+                    lndens=distributions.(effective_distributions{ii})();
+                    effective_distributions{ii}=lndens;
+                end
+            end
+            obj.estim_hyperparams=[[priors.a]',[priors.b]'];
+            obj.estim_distributions=effective_distributions;
+            obj.estim_distrib_locations=distr_locs;
+        end
+        obj.estim_dirichlet=new_dirichlet;
+    end
+    
+    warning(warnstate)
+    
+    obj.estimation=orderfields(...
+        struct('endogenous_priors',[],'priors',{priors},...
+        'posterior_maximization',struct(...
+        'estim_start_time',[],'estim_end_time',[],...
+        'log_lik',[],'log_post',[],'log_prior',[],'log_endog_prior',[],...
+        'active_inequalities_number',0,'hessian',[],'vcov',[],'mode',[],...
+        'mode_stdev',[],'funevals',[],...
+        'log_marginal_data_density_laplace',[]...
+        ),...
+        'posterior_simulation',[])...
+        );
+end
+
+    function do_the_dirichlet()
+        d1=dirichlet(1);
+         est_id=est_id-1;
+         prior_trunc=obj.options.prior_trunc;
+         for ii_=1:d1.n_1
+             fildname=d1.names{ii_};
+             [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
+             if isempty(position)
+                 error([fildname,' is not recognized as a parameter'])
+             end
+             [~,~,icdfn]=distributions.beta();
+             bounds=[icdfn(prior_trunc,d1.a(ii_),d1.b(ii_)),...
+                 icdfn(1-prior_trunc,d1.a(ii_),d1.b(ii_))];
+             est_id=est_id+1;
+             priors(est_id)=struct('name',pname,'chain',chain,'state',state,...
+                 'start',d1.moments.mean(ii_),'lower_quantile',nan,...
+                 'upper_quantile',nan,'prior_mean',d1.moments.mean(ii_),...
+                 'prior_stdev',d1.moments.sd(ii_),...
+                 'prior_distrib','dirichlet',...
+                 'prior_prob',1,'lower_bound',bounds(1),...
+                 'upper_bound',bounds(2),...
+                 'tex_name',param_tex_names{position},'id',est_id,...
+                 'prior_trunc',prior_trunc,'a',d1.a(ii_),'b',d1.b(ii_));
+             
+             priors(est_id)=format_estimated_parameter_names(priors(est_id),param_tex_names{position});
+             
+             disp([' parameter: ',upper(pname),', density:',upper('dirichlet'),...
+                 ', hyperparameters: [',num2str(d1.a(ii_)),' ',num2str(d1.b(ii_)),'],',...
+                 'convergence ',num2str(0)])
+         end
+         new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(dirichlet(1).a,...
+             dirichlet(1).location);
+        dirichlet=dirichlet(2:end);
+    end
+
+    function do_one_typical()
+        fildname=estnames{est_id};
+        tmp=MyPriors.(fildname);
         n_entries=numel(tmp);
         if ~iscell(tmp)||numel(tmp)<3
             error('all fields of the prior structure should be cell arrays with at least 3 elements')
         end
-        [position,~,pname,chain,state]=decompose_parameter_name(obj,fields{est_id},est_id==1);
+        [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
         if isempty(position)
-            error([fields{est_id},' is not recognized as a parameter'])
+            error([fildname,' is not recognized as a parameter'])
         end
         start=parser.push_if_validated(tmp{1},@(x)isfinite(x),'start value',name_file_line);
         lq=nan;    uq=nan;     pmean=nan;    pstdev=nan;    prior_prob=1;
@@ -121,48 +210,90 @@ if ~isempty(fieldnames(MyPriors))
         %--------------------------------
         priors=prior_setting_engine(priors,block,est_id,obj.options.prior_trunc);
     end
-    
-    % for efficiency, this should be done at estimation time?...
-    if ~isempty(priors)
-        % load the distributions
-        tmp={priors.prior_distrib};
-        if ~isempty(tmp)
-            effective_distributions=unique(tmp);
-            distr_locs=cell(1,numel(effective_distributions));
-            for ii=1:numel(effective_distributions)
-                distr_locs{ii}=find(strcmp(effective_distributions{ii},tmp));
-                % get the handle on the distributions
-                lndens=distributions.(effective_distributions{ii})();
-                effective_distributions{ii}=lndens;
-            end
-            obj.estim_hyperparams=[[priors.a]',[priors.b]'];
-            obj.estim_distributions=effective_distributions;
-            obj.estim_distrib_locations=distr_locs;
-        end
-    end
-    
-    warning(warnstate)
-    
-    obj.estimation=orderfields(...
-        struct('endogenous_priors',[],'priors',{priors},...
-        'posterior_maximization',struct(...
-        'estim_start_time',[],'estim_end_time',[],...
-        'log_lik',[],'log_post',[],'log_prior',[],'log_endog_prior',[],...
-        'active_inequalities_number',0,'hessian',[],'vcov',[],'mode',[],...
-        'mode_stdev',[],'funevals',[],...
-        'log_marginal_data_density_laplace',[]...
-        ),...
-        'posterior_simulation',[])...
-        );
+
 end
 
     function block=format_estimated_parameter_names(block,par_tex_name)
         block.tex_name=par_tex_name;
         if ~strcmp(block.chain,'const')
-            RegimeState=['(',block.chain,',',sprintf('%0.0f',block.state),')'];
+            RegimeState_tex=['(',block.chain,',',sprintf('%0.0f',block.state),')'];
+            RegimeState=['_',block.chain,'_',sprintf('%0.0f',block.state)];
             block.name=[block.name,RegimeState];
-            block.tex_name=strcat(block.tex_name,' ',RegimeState);
+            block.tex_name=strcat(block.tex_name,' ',RegimeState_tex);
         end
+    end
+    
+function [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(...
+    fields,MyPriors,error_control)
+    
+    is_dirichlet=strncmp(fields,'dirichlet',9);
+    fields=fields(:).';
+    dirichlet=struct('a',{},'b',{},'moments',{},'n_1',{},...
+        'pointers',{},'location',{},'names',{});
+    ndirich=sum(is_dirichlet);
+    if ndirich
+        error_control_flag=~isempty(error_control);
+        name_count=0;
+        n=1000;
+        estnames=cell(1,n);
+        if error_control_flag
+            tmp=error_control;
+            ncols=size(tmp,2);
+            error_control=cell(n,ncols);
+        end
+        dirich_count=0;
+        for icol=1:numel(fields)
+            dname=fields{icol};
+            if is_dirichlet(icol)
+                dirich_count=dirich_count+1;
+                vals=MyPriors.(dname);
+                s02=vals{1}.^2;
+                vals=reshape(vals(2:end),2,[]);
+                pnames=vals(1,:);
+                m_main=cell2mat(vals(2,:));
+                m0=1-sum(m_main);
+                a_sum=m0*(1-m0)/s02-1;
+                if a_sum<=0
+                    error(['dirichlet # ',int2str(dirich_count),...
+                        ' appears to have a too big standard deviation'])
+                end
+                m=[m_main(:);m0];
+                a=a_sum*m;
+                [dirichlet(dirich_count).a,dirichlet(dirich_count).b,...
+                    dirichlet(dirich_count).moments,...
+                    dirichlet(dirich_count).fval,...
+                    dirichlet(dirich_count).space]=distributions.dirichlet(a);
+                dirichlet(dirich_count).pointers=1:numel(pnames);
+                dirichlet(dirich_count).n_1=numel(m)-1;
+                dirichlet(dirich_count).names=pnames;
+            else
+                pnames={dname};
+            end
+            n_names=numel(pnames);
+            if name_count+n_names>=n
+                estnames{n+100}={};
+                n=n+100;
+            end
+            pos=name_count+(1:n_names);
+            if error_control_flag
+                item=tmp(icol*ones(1,n_names),:);
+                if is_dirichlet(icol)
+                    item(:,1)=pnames(:);
+                end
+                error_control(pos,:)=item;
+            end
+            estnames(pos)=pnames;
+            name_count=pos(end);
+            if is_dirichlet(icol)
+                dirichlet(dirich_count).location=pos;
+            end
+        end
+        estnames=estnames(1:name_count);
+        error_control=error_control(1:name_count,:);
+        is_dirichlet=false(1,name_count);
+        is_dirichlet([dirichlet.location])=true;
+    else
+        estnames=fields;
     end
 end
 
