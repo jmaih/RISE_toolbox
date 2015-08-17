@@ -40,6 +40,7 @@ is_dirichlet=false(nlisting,1);
 error_control=cell(nlisting,2);
 ncount=0;
 current_names={};
+push_if_validated=@parser.push_if_validated;
 for ii=1:nlisting
     capture_parameterization_engine(listing(ii,:));
 end
@@ -95,7 +96,8 @@ block.error_control=error_control;
             % I do not expect this to happen at this stage
             return
         end
-        error_control(ii,:)={file_name_,iline_};
+        name_file_line={[],file_name_,iline_};
+        error_control(ii,:)=name_file_line(2:end);
         [tokk,rawline_]=strtok(rawline_,[PARAM_DELIMITERS,'(']);
         param_location=find(strcmp(tokk,parameter_names));
         if isempty(param_location)
@@ -144,6 +146,7 @@ block.error_control=error_control;
         % for the rest, just count the number of commas to separate items
         %----------------------------------------------------------------
         % the semicolon was removed above
+        name_file_line{1}=old_tex_name;
         if is_dirichlet(ii)
             process_dirichlet()
         else
@@ -198,9 +201,10 @@ block.error_control=error_control;
             rawline_=regexprep(rawline_,'(\w+)\((\w+),(\d+)\)','$1_$2_$3');
             odd=true;
             while ~isempty(rawline_)
-                [tokk,rawline_]=strtok(rawline_,PARAM_DELIMITERS);
+                [tokk,rawline_]=strtok(rawline_,PARAM_DELIMITERS); %#ok<STTOK>
                 if odd
-                    dd=push_if_validated(str2double(tokk),'dirichlet');
+                    dd=push_if_validated(str2double(tokk),[],'dirichlet',...
+                        name_file_line);
                 else
                     dd=tokk;
                     check_affiliation(tokk)
@@ -221,7 +225,8 @@ block.error_control=error_control;
                     ' in ',file_name_,' at line(s) ',iline_])
             else
                 if ncom==1
-                    start_=push_if_validated(eval(rawline_(commas(1)+1:end)),'start');
+                    start_=push_if_validated(eval(rawline_(commas(1)+1:end)),...
+                        [],'start',name_file_line);
                     PP.(par_name)=[PP.(par_name),{start_}];
                 else
                     if ncom<3
@@ -229,16 +234,20 @@ block.error_control=error_control;
                             ' in ',file_name_,' at line(s) ',iline_])
                     end
                     is_estimated(ii)=true;
-                    start_=push_if_validated(eval(rawline_(commas(1)+1:commas(2)-1)),'start');
+                    start_=push_if_validated(eval(rawline_(commas(1)+1:commas(2)-1)),...
+                        [],'start',name_file_line);
                     PP.(par_name)=[PP.(par_name),{start_}];
                     lowqtlOrMean=eval(rawline_(commas(2)+1:commas(3)-1));
-                    lowqtlOrMean=push_if_validated(lowqtlOrMean,'lower quantile or mean');
+                    lowqtlOrMean=push_if_validated(lowqtlOrMean,[],...
+                        'lower quantile or mean',name_file_line);
                     PP.(par_name)=[PP.(par_name),{lowqtlOrMean}];
                     if ncom==3
-                        upperQtlOrStdev=push_if_validated(eval(rawline_(commas(3)+1:end)),'upper quantile or standard deviation');
+                        upperQtlOrStdev=push_if_validated(eval(rawline_(commas(3)+1:end)),...
+                            [],'upper quantile or standard deviation',name_file_line);
                         PP.(par_name)=[PP.(par_name),{upperQtlOrStdev}];
                     else
-                        upperQtlOrStdev=push_if_validated(eval(rawline_(commas(3)+1:commas(4)-1)),'upper quantile or standard deviation');
+                        upperQtlOrStdev=push_if_validated(eval(rawline_(commas(3)+1:commas(4)-1)),...
+                            [],'upper quantile or standard deviation',name_file_line);
                         PP.(par_name)=[PP.(par_name),{upperQtlOrStdev}];
                         if ncom==4
                             distribution_prob=rawline_(commas(4)+1:end);
@@ -247,14 +256,16 @@ block.error_control=error_control;
                             distribution_prob=rawline_(commas(4)+1:commas(5)-1);
                             PP.(par_name)=[PP.(par_name),{distribution_prob}];
                             if ncom==5
-                                lb=push_if_validated(eval(rawline_(commas(5)+1:end)),'lower bound');
+                                lb=push_if_validated(eval(rawline_(commas(5)+1:end)),...
+                                    [],'lower bound',name_file_line);
                                 PP.(par_name)=[PP.(par_name),{lb}];
                             else
-                                lb=push_if_validated(eval(rawline_(commas(5)+1:commas(6)-1)),'lower bound');
+                                lb=push_if_validated(eval(rawline_(commas(5)+1:commas(6)-1)),...
+                                    [],'lower bound',name_file_line);
                                 PP.(par_name)=[PP.(par_name),{lb}];
                                 if ncom==6
                                     ub=eval(rawline_(commas(6)+1:end));
-                                    ub=push_if_validated(ub,'upper bound');
+                                    ub=push_if_validated(ub,[],'upper bound',name_file_line);
                                     PP.(par_name)=[PP.(par_name),{ub}];
                                 else
                                     error(['too many commas prevent parsing in ',old_tex_name,' in ',file_name_,' at line(s) ',iline_])
@@ -264,12 +275,6 @@ block.error_control=error_control;
                     end
                 end
             end
-        end
-        function dd=push_if_validated(val,type)
-            if isnan(val)
-                error(['wrong specification of ',type,' value for ',old_tex_name,' in ',file_name_,' at line(s) ',iline_])
-            end
-            dd=val;
         end
     end
 end
