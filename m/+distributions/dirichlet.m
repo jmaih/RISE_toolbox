@@ -1,4 +1,60 @@
 function varargout=dirichlet(varargin)
+% dirichlet -- dirichlet distribution
+%
+% Syntax
+% -------
+% ::
+%
+%   [lpdfn,cdfn,icdfn,rndfn,m2h,h2m]=dirichlet()
+%
+%   [a,b,moments,fval,space]=dirichlet(a)
+%
+%   [a,b,moments,fval,space]=dirichlet(a,[],[],d)
+%
+% Inputs
+% -------
+%
+% - **a** [k x 1 vector]: of hyperparameters for the distribution
+%
+% - **d** [scalar|{1}]: truncation parameter for the sum of the means. More
+% explicitly, d=1-sum(xj), where xj are fixed (non-estimated) parameters.
+% The idea is to compute a dirichlet with a subset of variables xi so that
+% sum(xi)+sum(xj)=1
+%
+% Outputs
+% --------
+%
+% - **a** [k x 1 vector]: of hyperparameters for the distribution
+%
+% - **b** [k x 1 vector]: of hyperparameters for the marginal distributions
+%
+% - **moments** [struct]: with fields
+%   - **mean** [vector]: means of the distribution
+%   - **sd** [vector]: standard deviations of the distribution
+%
+% - **fval** [scalar]: convergence for the search of hyperparameters
+%
+% - **space** [k x 1 vector]: space of the hyperparameters
+%
+% - **lpdfn** [function_handle]: log probability density
+%
+% - **cdfn** [empty]: cumulative distribution function
+%
+% - **icdfn** [empty]: inverse cumulative distribution function
+%
+% - **rndfn** [function_handle]: for random draws
+%
+% - **m2h** [function_handle]: moments to hyperparameters
+%
+% - **h2m** [function_handle]: hyperparameters to moments
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 hyperparameter_mode=nargin>0;
 if hyperparameter_mode
