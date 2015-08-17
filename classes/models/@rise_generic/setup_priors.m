@@ -17,7 +17,7 @@ function obj=setup_priors(obj,MyPriors,error_control)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % different ways of setting priors outside the model file
 % P.pname={start_value,lower_bound,upper_bound};
@@ -31,7 +31,7 @@ function obj=setup_priors(obj,MyPriors,error_control)
 % distribution can be any of the following: beta_pdf, cauchy_pdf,
 % gamma_pdf, inv_gamma_pdf, laplace_pdf, left_triang_pdf, logistic_pdf,
 % lognormal_pdf, normal_pdf, pareto_pdf, right_triang_pdf, uniform_pdf,
-% weibull_pdf 
+% weibull_pdf
 
 if nargin<3
     error_control=[];
@@ -74,7 +74,7 @@ if ~isempty(fieldnames(MyPriors))
             % find the corresponding dirichlet and do all its elements and
             % increment est_id. Take the first dirichlet, use it and
             % destroy it.
-           do_the_dirichlet()
+            do_the_dirichlet()
         else
             do_one_typical()
         end
@@ -120,36 +120,36 @@ end
 
     function do_the_dirichlet()
         d1=dirichlet(1);
-         est_id=est_id-1;
-         prior_trunc=obj.options.prior_trunc;
-         for ii_=1:d1.n_1
-             fildname=d1.names{ii_};
-             [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
-             if isempty(position)
-                 error([fildname,' is not recognized as a parameter'])
-             end
-             [~,~,icdfn]=distributions.beta();
-             bounds=[icdfn(prior_trunc,d1.a(ii_),d1.b(ii_)),...
-                 icdfn(1-prior_trunc,d1.a(ii_),d1.b(ii_))];
-             est_id=est_id+1;
-             priors(est_id)=struct('name',pname,'chain',chain,'state',state,...
-                 'start',d1.moments.mean(ii_),'lower_quantile',nan,...
-                 'upper_quantile',nan,'prior_mean',d1.moments.mean(ii_),...
-                 'prior_stdev',d1.moments.sd(ii_),...
-                 'prior_distrib','dirichlet',...
-                 'prior_prob',1,'lower_bound',bounds(1),...
-                 'upper_bound',bounds(2),...
-                 'tex_name',param_tex_names{position},'id',est_id,...
-                 'prior_trunc',prior_trunc,'a',d1.a(ii_),'b',d1.b(ii_));
-             
-             priors(est_id)=format_estimated_parameter_names(priors(est_id),param_tex_names{position});
-             
-             disp([' parameter: ',upper(pname),', density:',upper('dirichlet'),...
-                 ', hyperparameters: [',num2str(d1.a(ii_)),' ',num2str(d1.b(ii_)),'],',...
-                 'convergence ',num2str(0)])
-         end
-         new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(dirichlet(1).a,...
-             dirichlet(1).location);
+        est_id=est_id-1;
+        prior_trunc=obj.options.prior_trunc;
+        for ii_=1:d1.n_1
+            fildname=d1.names{ii_};
+            [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
+            if isempty(position)
+                error([fildname,' is not recognized as a parameter'])
+            end
+            [~,~,icdfn]=distributions.beta();
+            bounds=[icdfn(prior_trunc,d1.a(ii_),d1.b(ii_)),...
+                icdfn(1-prior_trunc,d1.a(ii_),d1.b(ii_))];
+            est_id=est_id+1;
+            priors(est_id)=struct('name',pname,'chain',chain,'state',state,...
+                'start',d1.moments.mean(ii_),'lower_quantile',nan,...
+                'upper_quantile',nan,'prior_mean',d1.moments.mean(ii_),...
+                'prior_stdev',d1.moments.sd(ii_),...
+                'prior_distrib','dirichlet',...
+                'prior_prob',1,'lower_bound',bounds(1),...
+                'upper_bound',bounds(2),...
+                'tex_name',param_tex_names{position},'id',est_id,...
+                'prior_trunc',prior_trunc,'a',d1.a(ii_),'b',d1.b(ii_));
+            
+            priors(est_id)=format_estimated_parameter_names(priors(est_id),param_tex_names{position});
+            
+            disp([' parameter: ',upper(pname),', density:',upper('dirichlet'),...
+                ', hyperparameters: [',num2str(d1.a(ii_)),' ',num2str(d1.b(ii_)),'],',...
+                'convergence ',num2str(0)])
+        end
+        new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(dirichlet(1).a,...
+            dirichlet(1).location);
         dirichlet=dirichlet(2:end);
     end
 
@@ -213,88 +213,88 @@ end
 
 end
 
-    function block=format_estimated_parameter_names(block,par_tex_name)
-        block.tex_name=par_tex_name;
-        if ~strcmp(block.chain,'const')
-            RegimeState_tex=['(',block.chain,',',sprintf('%0.0f',block.state),')'];
-            RegimeState=['_',block.chain,'_',sprintf('%0.0f',block.state)];
-            block.name=[block.name,RegimeState];
-            block.tex_name=strcat(block.tex_name,' ',RegimeState_tex);
-        end
-    end
-    
+function block=format_estimated_parameter_names(block,par_tex_name)
+block.tex_name=par_tex_name;
+if ~strcmp(block.chain,'const')
+    RegimeState_tex=['(',block.chain,',',sprintf('%0.0f',block.state),')'];
+    RegimeState=['_',block.chain,'_',sprintf('%0.0f',block.state)];
+    block.name=[block.name,RegimeState];
+    block.tex_name=strcat(block.tex_name,' ',RegimeState_tex);
+end
+end
+
 function [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(...
     fields,MyPriors,error_control)
-    
-    is_dirichlet=strncmp(fields,'dirichlet',9);
-    fields=fields(:).';
-    dirichlet=struct('a',{},'b',{},'moments',{},'n_1',{},...
-        'pointers',{},'location',{},'names',{});
-    ndirich=sum(is_dirichlet);
-    if ndirich
-        error_control_flag=~isempty(error_control);
-        name_count=0;
-        n=1000;
-        estnames=cell(1,n);
-        if error_control_flag
-            tmp=error_control;
-            ncols=size(tmp,2);
-            error_control=cell(n,ncols);
-        end
-        dirich_count=0;
-        for icol=1:numel(fields)
-            dname=fields{icol};
-            if is_dirichlet(icol)
-                dirich_count=dirich_count+1;
-                vals=MyPriors.(dname);
-                s02=vals{1}.^2;
-                vals=reshape(vals(2:end),2,[]);
-                pnames=vals(1,:);
-                m_main=cell2mat(vals(2,:));
-                m0=1-sum(m_main);
-                a_sum=m0*(1-m0)/s02-1;
-                if a_sum<=0
-                    error(['dirichlet # ',int2str(dirich_count),...
-                        ' appears to have a too big standard deviation'])
-                end
-                m=[m_main(:);m0];
-                a=a_sum*m;
-                [dirichlet(dirich_count).a,dirichlet(dirich_count).b,...
-                    dirichlet(dirich_count).moments,...
-                    dirichlet(dirich_count).fval,...
-                    dirichlet(dirich_count).space]=distributions.dirichlet(a);
-                dirichlet(dirich_count).pointers=1:numel(pnames);
-                dirichlet(dirich_count).n_1=numel(m)-1;
-                dirichlet(dirich_count).names=pnames;
-            else
-                pnames={dname};
-            end
-            n_names=numel(pnames);
-            if name_count+n_names>=n
-                estnames{n+100}={};
-                n=n+100;
-            end
-            pos=name_count+(1:n_names);
-            if error_control_flag
-                item=tmp(icol*ones(1,n_names),:);
-                if is_dirichlet(icol)
-                    item(:,1)=pnames(:);
-                end
-                error_control(pos,:)=item;
-            end
-            estnames(pos)=pnames;
-            name_count=pos(end);
-            if is_dirichlet(icol)
-                dirichlet(dirich_count).location=pos;
-            end
-        end
-        estnames=estnames(1:name_count);
-        error_control=error_control(1:name_count,:);
-        is_dirichlet=false(1,name_count);
-        is_dirichlet([dirichlet.location])=true;
-    else
-        estnames=fields;
+
+is_dirichlet=strncmp(fields,'dirichlet',9);
+fields=fields(:).';
+dirichlet=struct('a',{},'b',{},'moments',{},'n_1',{},...
+    'pointers',{},'location',{},'names',{});
+ndirich=sum(is_dirichlet);
+if ndirich
+    error_control_flag=~isempty(error_control);
+    name_count=0;
+    n=1000;
+    estnames=cell(1,n);
+    if error_control_flag
+        tmp=error_control;
+        ncols=size(tmp,2);
+        error_control=cell(n,ncols);
     end
+    dirich_count=0;
+    for icol=1:numel(fields)
+        dname=fields{icol};
+        if is_dirichlet(icol)
+            dirich_count=dirich_count+1;
+            vals=MyPriors.(dname);
+            s02=vals{1}.^2;
+            vals=reshape(vals(2:end),2,[]);
+            pnames=vals(1,:);
+            m_main=cell2mat(vals(2,:));
+            m0=1-sum(m_main);
+            a_sum=m0*(1-m0)/s02-1;
+            if a_sum<=0
+                error(['dirichlet # ',int2str(dirich_count),...
+                    ' appears to have a too big standard deviation'])
+            end
+            m=[m_main(:);m0];
+            a=a_sum*m;
+            [dirichlet(dirich_count).a,dirichlet(dirich_count).b,...
+                dirichlet(dirich_count).moments,...
+                dirichlet(dirich_count).fval,...
+                dirichlet(dirich_count).space]=distributions.dirichlet(a);
+            dirichlet(dirich_count).pointers=1:numel(pnames);
+            dirichlet(dirich_count).n_1=numel(m)-1;
+            dirichlet(dirich_count).names=pnames;
+        else
+            pnames={dname};
+        end
+        n_names=numel(pnames);
+        if name_count+n_names>=n
+            estnames{n+100}={};
+            n=n+100;
+        end
+        pos=name_count+(1:n_names);
+        if error_control_flag
+            item=tmp(icol*ones(1,n_names),:);
+            if is_dirichlet(icol)
+                item(:,1)=pnames(:);
+            end
+            error_control(pos,:)=item;
+        end
+        estnames(pos)=pnames;
+        name_count=pos(end);
+        if is_dirichlet(icol)
+            dirichlet(dirich_count).location=pos;
+        end
+    end
+    estnames=estnames(1:name_count);
+    error_control=error_control(1:name_count,:);
+    is_dirichlet=false(1,name_count);
+    is_dirichlet([dirichlet.location])=true;
+else
+    estnames=fields;
+end
 end
 
 function prior=prior_setting_engine(prior,parray,id,prior_trunc)
