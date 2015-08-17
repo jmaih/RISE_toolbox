@@ -210,7 +210,6 @@ end
         %--------------------------------
         priors=prior_setting_engine(priors,block,est_id,obj.options.prior_trunc);
     end
-
 end
 
 function block=format_estimated_parameter_names(block,par_tex_name)
