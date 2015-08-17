@@ -5,7 +5,8 @@ if hyperparameter_mode
     [m,s]=hyperparameters_2_moments(varargin{:});
     a=varargin{1};
     moments=struct('mean',m,'sd',s);
-    b=nan(size(a));
+    % Let b be the complementary to the marginal
+    b=sum(a)-a;
     fval=0;
     [~,space]=hyperparameters(a);
     varargout={a,b,moments,fval,space};
