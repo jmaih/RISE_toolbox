@@ -304,12 +304,6 @@ function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,nonlc
 [x,f,viol_strength,funevals]=utils.optim.generate_candidates(objective,lb,ub,n,nonlcon,penalty,varargin{:});
 trial=zeros(1,n);
 fit=utils.optim.compute_fitness(f);
-for ii=1:n
-    v=viol_strength{ii};
-    v=v(v>0);
-    viol_strength{ii}=sum(v);
-end
-viol_strength=cell2mat(viol_strength);
 end
 
 function obj=generate_mutant(obj,ii)

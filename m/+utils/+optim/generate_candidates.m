@@ -1,15 +1,43 @@
-function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,restrictions,penalty,varargin)
-% H1 line
+function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,...
+    restrictions,penalty,varargin)
+% generate_candidates -- generate candidates for optimization
 %
 % Syntax
 % -------
 % ::
 %
+%   [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,...
+%       restrictions,penalty,varargin)
+%   
 % Inputs
 % -------
 %
+% - **objective** [function_handle]: objective to minimize
+%
+% - **lb** [vector]: lower bound of the search space
+%
+% - **ub** [vector]: upper bound of the search space
+%
+% - **n** [integer]: number of candidates to generate
+%
+% - **restrictions** [empty|function_handle]: function evaluating the
+% violations
+%
+% - **penalty** [numeric]: value functions exceeding this value in
+% absolute value are assigned this value 
+%
+% - **varargin** []: additional input arguments for the objective function
+%
 % Outputs
 % --------
+%
+% - **x** [d x n matrix]: parameter vectors
+%
+% - **f** [row vector]: value function for each parameter vector
+%
+% - **viol** [row vector]: violation penalty for each parameter vector
+%
+% - **funevals** [integer]: number of function evaluations
 %
 % More About
 % ------------
@@ -26,7 +54,7 @@ npar=size(lb,1);
 x=nan(npar,n);
 f=nan(1,n);
 fcount=nan(1,n);
-viol=cell(1,n);
+viol=zeros(1,n);
 MaxIter=50;
 max_trials=50;
 funevals=0;
@@ -35,7 +63,7 @@ success=nargout(objective)>=2;
 msg='';
 the_loop=@loop_body;
 for ii=1:n
-    [x(:,ii),f(ii),viol{ii},fcount(ii)]=the_loop(ii);
+    [x(:,ii),f(ii),viol(ii),fcount(ii)]=the_loop(ii);
 end
 funevals=funevals+sum(fcount);
 
@@ -50,10 +78,10 @@ funevals=funevals+sum(fcount);
             end
             [xi,fi,violi]=draw_and_evaluate_vector();
             iter2=0;
-            while iter2<max_trials && sum(violi)>0
+            while iter2<max_trials && violi>0
                 iter2=iter2+1;
                 [c,fc,violc]=draw_and_evaluate_vector();
-                if sum(violc)<sum(violi)
+                if violc<violi
                     xi=c;
                     fi=fc;
                     violi=violc;
@@ -78,11 +106,7 @@ funevals=funevals+sum(fcount);
         else
             fc=objective(c,varargin{:});
         end
-        viol=restrictions(c);
-        viol=viol(viol>0);
-        if isempty(viol)
-            viol=0;
-        end
+        viol=utils.estim.penalize_violations(restrictions(c));
     end
 
 end
