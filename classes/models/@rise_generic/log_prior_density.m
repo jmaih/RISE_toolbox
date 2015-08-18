@@ -47,6 +47,10 @@ if ~isempty(param)
         % do the uncorrelated guys
         %--------------------------
         for kk=1:numel(obj.estim_distributions)
+            if ischar(obj.estim_distributions{kk})
+                % that is the dirichlet,skip it
+                continue
+            end
             loc=obj.estim_distrib_locations{kk};
             a=obj.estim_hyperparams(loc,1);
             b=obj.estim_hyperparams(loc,2);
