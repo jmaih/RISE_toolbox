@@ -292,7 +292,9 @@ if ndirich
         end
     end
     estnames=estnames(1:name_count);
-    error_control=error_control(1:name_count,:);
+    if error_control_flag
+        error_control=error_control(1:name_count,:);
+    end
     is_dirichlet=false(1,name_count);
     is_dirichlet([dirichlet.location])=true;
 else
