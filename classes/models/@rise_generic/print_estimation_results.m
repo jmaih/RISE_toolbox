@@ -96,10 +96,7 @@ for kk=1:numel(obj)
         t2=obj(kk).estimation.posterior_maximization.estim_end_time;
         t1=obj(kk).estimation.posterior_maximization.estim_start_time;
         estimation_time=etime(t2,t1);
-        hrs=floor(estimation_time/3600);
-        secs=estimation_time-hrs*3600;
-        mins=floor(secs/60);
-        secs=secs-mins*60;
+		[~,hrs,mins,secs] = utils.estim.sec2hms(estimation_time);
         reprints=[reprints;{sprintf('\n %11s %s %10s %s %11s %s\n',...
             'start time:',datestr(t1),...
             'end time :',datestr(t2),...
