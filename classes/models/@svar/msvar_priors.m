@@ -183,53 +183,7 @@ obj=setup_priors(obj,MyPriors);
         %-------------------------
         [transprob_names]=vartools.select_parameter_type(estim_names,'trans_probs'); 
         markov_chains=obj.construction_data.markov_chains;
-        if ~isempty(markov_chains)
-            chain_names=(markov_chains.name);
-            for ip=1:numel(transprob_names)
-                pname=transprob_names{ip};
-                underscores=find(pname=='_');
-                cname=pname(1:underscores(1)-1);
-                cloc= strcmp(cname,chain_names);
-                state=str2double(pname(underscores(2)+1:underscores(3)-1));
-                duration=markov_chains(cloc).states_expected_duration;
-                h=numel(duration);
-                d=real(duration(state));
-                abar=imag(duration(state));
-                qii=1-1/d;
-                a=qii*(h-1)*abar/(1-qii);
-                a0=a+(h-1)*abar;
-                if h==2
-                    m=1-qii;
-                    sd=sqrt(abar*(a0-abar)/(a0^2*(a0+1)));
-                    if use_priors
-                        p.(pname)={m,m,sd,'beta_pdf'};
-                    else
-                        p.(pname)={m,0,1};
-                    end
-                else
-                    if use_priors
-                        error('please remind junior.maih@gmail.com to implement the dirichlet')
-                        hyperparams=abar(ones(1,h));
-                        hyperparams(state)=a;
-                        % find all the parameters belonging to this dirichlet and
-                        % set them as a package. The diagonal elements will be
-                        % computed as 1-sum(qij)
-                        %--------------------------------------------------------
-                        p.something=dirichlet(hyperparams);
-                    else
-                        m=abar/a0;
-                        p.(pname)={m,0,1};
-                    end
-                end
-            end
-        end
-        % put back in the original order
-        %-------------------------------
-        pp=struct();
-        for iname=1:numel(estim_names)
-            pp.(estim_names{iname})=p.(estim_names{iname});
-        end
-        p=pp; clear pp
+        p=transition_probabilities_priors(p,markov_chains,transprob_names);
     end
 
     function [m,sd]=set_var_prior(eqtn,vn,lag)
@@ -259,6 +213,67 @@ obj=setup_priors(obj,MyPriors);
                 % p.v_prior = nvar + 1; p.S_prior = eye(nvar);
             otherwise
                 error(['unknown prior type "',prior_type,'"'])
+        end
+    end
+end
+
+function p=transition_probabilities_priors(p,markov_chains,transprob_names)
+if isempty(markov_chains)
+    return
+end
+chain_names={markov_chains.name};
+dirich_count=0;
+for ichain=1:numel(chain_names)
+    chain=chain_names{ichain};
+    if strcmp(chain,'const')
+        continue
+    end
+    duration=markov_chains(ichain).states_expected_duration;
+    h=numel(duration);
+    if h==2
+        do_beta()
+    else
+        do_dirichlet
+    end
+end
+    function do_beta()
+        for state=1:h
+            [~,m,abar,a0]=compute_hyperparameters(state);
+            sd=sqrt(abar*(a0-abar)/(a0^2*(a0+1)));
+            ipar=1*(h==2)+2*(h==1);
+            pname=get_chain_param_name(state,ipar);
+            p.(pname)={m,m,sd,'beta_pdf'};
+        end
+    end
+
+    function do_dirichlet()
+        for state=1:h
+            [sd,mij]=compute_hyperparameters(state);
+            parray={sd};
+            for ipar=1:h
+                if ipar==state
+                    continue
+                end
+                pname=get_chain_param_name(state,ipar);
+                parray=[parray,{pname,mij}]; %#ok<AGROW>
+            end
+            dirich_count=dirich_count+1;
+            p.(sprintf('dirichlet_%0.0f',dirich_count))=parray;
+        end
+    end
+    function [sd,mij,abar,a0]=compute_hyperparameters(state)
+        d=real(duration(state));
+        abar=imag(duration(state));
+        qii=1-1/d;
+        a=qii/(1-qii)*(h-1)*abar;
+        a0=a+(h-1)*abar;
+        mij=abar/a0;
+        sd=sqrt(a*(a0-a)/(a0^2*(a0+1)));
+    end
+    function name=get_chain_param_name(state,ipar)
+        name=sprintf('%s_tp_%0.0f_%0.0f',chain,state,ipar);
+        if ~ismember(name,transprob_names)
+            error([name,' was not found in the list of transition probabilities to estimate'])
         end
     end
 end
