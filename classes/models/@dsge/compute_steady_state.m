@@ -276,13 +276,7 @@ end
                     end
                     if ~retcode
                         if success(r(:,ireg))
-                            if nregs<number_of_regimes
-                                if feasible_steady_state_model
-                                    p(is_param_changed_in_ssmodel,2:number_of_regimes)=p(is_param_changed_in_ssmodel,1)*ones(1,number_of_regimes-1);
-                                elseif feasible_steady_state_file
-                                    p(is_param_changed_in_ssfile,2:number_of_regimes)=p(is_param_changed_in_ssfile,1)*ones(1,number_of_regimes-1);
-                                end
-                            else
+                            if nregs==number_of_regimes
                                 p(:,ireg)=p_ireg;
                             end
                         else
@@ -299,6 +293,11 @@ end
         if number_of_regimes>1 && nregs<number_of_regimes
             ss=ss(:,ones(1,number_of_regimes));
             r=r(:,ones(1,number_of_regimes));
+            if feasible_steady_state_model
+                p(is_param_changed_in_ssmodel,2:number_of_regimes)=p(is_param_changed_in_ssmodel,1)*ones(1,number_of_regimes-1);
+            elseif feasible_steady_state_file
+                p(is_param_changed_in_ssfile,2:number_of_regimes)=p(is_param_changed_in_ssfile,1)*ones(1,number_of_regimes-1);
+            end
         end
         
         function [ss,resids,retcode]=optimizer_over_vlist(vlist,ireg,ssc0)
