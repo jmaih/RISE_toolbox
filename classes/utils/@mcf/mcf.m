@@ -152,8 +152,8 @@ classdef mcf < handle
                     if isa(procedure_,'function_handle')
                         try
                             ntest=5;
-                            test=procedure_(obj.lb,obj.ub,nstest);
-                            assert(size(test)==[obj.nparam,ntest])
+                            test=procedure_(obj.lb,obj.ub,ntest);
+                            assert(isequal(size(test),[obj.nparam,ntest]))
                         catch ME
                             error('A user-defined sampling procedure should accept 3 arguments which are lb, ub, nsim')
                         end
@@ -211,9 +211,9 @@ classdef mcf < handle
                 legend_={'cdf behavior','cdf non-behavior','max dist.'};
             end
         end
-        function hdl=correlation_patterns_plot(obj,names,type,cutoff)
+        function hdl=correlation_patterns_plot(obj,names,type,pval_cutoff)
             if nargin<4
-                cutoff=[];
+                pval_cutoff=[];
                 if nargin<3
                     type=[];
                     if nargin<2
@@ -221,7 +221,7 @@ classdef mcf < handle
                     end
                 end
             end
-            if isempty(cutoff),cutoff=.5;end
+            if isempty(pval_cutoff),pval_cutoff=.05;end
             if isempty(names),names=obj.parameter_names;end
             names_id=locate_variables(names,obj.parameter_names);
             if isempty(type),type='behave'; end
@@ -237,11 +237,14 @@ classdef mcf < handle
                     data=obj.samples(names_id,:);
             end
             npar=size(data,1);
-            corrmat=corr(data.');
-            
-            pax=nan(npar,npar);
+            %---------------------------
+            [corrmat,Pval]=corr(data.');
+            hotties=Pval<=pval_cutoff;
             corrmat=tril(corrmat,-1);
-            hotties=abs(corrmat)>abs(cutoff);
+            hotties(corrmat==0)=false;
+%             [paired_names,~,pvalvec]=pairwise(names,corrmat,Pval);
+            %----------------------------
+            pax=nan(npar,npar);
             pax(hotties)=corrmat(hotties);
             
             titel=sprintf('%s :: Correlation patterns in the %s sample',mfilename,type);
@@ -299,36 +302,38 @@ classdef mcf < handle
             if isempty(pval_cutoff),pval_cutoff=.05;end
             if isempty(names),names=obj.parameter_names;end
             names_id=locate_variables(names,obj.parameter_names);
-            if isempty(type),type='behave'; end
-            if ~any(strcmp(type,{'behave','non-behave',''}))
-                error('type must be one of the following: behave, non-behave, ''''')
-            end
+            alternative=isempty(type);
             if isempty(titel)
                 titel=sprintf('%s :: scatter plot of the data in %s the sample',mfilename,type);
             end
             data=obj.samples(names_id,:);
-            switch type
-                case 'behave'
-                    select=obj.is_behaved;
-                case 'non-behave'
-                    select=~obj.is_behaved;
-                otherwise
-                    select=true(1,size(data,2));
-            end
-            alternative=~all(select==true);
-            [corrmat,Pval]=corr(data.');
-            tmp=tril(Pval,-1);
-            % detect significant correlations
-            [rr,cc]=find(tmp<=pval_cutoff & tmp>0);
-            if isempty(rr)
-                warning(sprintf('no significant correlations found at %0.4f percent',100*pval_cutoff)) %#ok<SPWRN>
+            if alternative
+                select=obj.is_behaved;
             else
+                switch type
+                    case 'behave'
+                        select=obj.is_behaved;
+                    case 'non-behave'
+                        select=~obj.is_behaved;
+                    otherwise
+                        error('expecting type to be "behave" or "non-behave"')
+                end
+            end
                 names=names(:);
-                paired_names=cellfun(@(x)x(~isspace(x)),strcat(names(rr),'@',names(cc)),'uniformOutput',false);
-                
+            % get all the correlations in the select sample and detect the
+            % significant ones
+            %-------------------------------------------------------------
+            [corrmat,Pval]=corr(data(:,select).');
+            [paired_names,~,pvalvec]=pairwise(names,corrmat,Pval);
+            good=pvalvec<=pval_cutoff;
+            if any(good)
+                paired_names=paired_names(good);
                 fig_handles=utils.plot.multiple(@(xname)do_one_scatter(xname),...
                     paired_names,titel,graph_nrows,graph_ncols,...
                     'FontSize',11,'FontWeight','normal');
+            else
+                warning(sprintf('no significant correlations found at %0.4f percent',100*pval_cutoff)) %#ok<SPWRN>
+                fig_handles=[];
             end
             
             function [texname,legend_]=do_one_scatter(xname)
@@ -385,15 +390,19 @@ classdef mcf < handle
         end
         function get_draws(obj)
             if ~obj.is_sampled
-                switch obj.procedure
-                    case 'uniform'
-                        LB=obj.lb(:,ones(obj.nsim,1));
-                        UB=obj.ub(:,ones(obj.nsim,1));
-                        obj.samples=LB+(UB-LB).*rand(obj.nparam,obj.nsim);
-                    case {'latin_hypercube','sobol','halton'}
-                        obj.samples=quasi_monte_carlo.(obj.procedure)(obj.lb,obj.ub,obj.nsim);
-                    otherwise
-                        obj.samples=obj.procedure(obj.lb,obj.ub,obj.nsim);
+                if ischar(obj.procedure)
+                    switch obj.procedure
+                        case 'uniform'
+                            LB=obj.lb(:,ones(obj.nsim,1));
+                            UB=obj.ub(:,ones(obj.nsim,1));
+                            obj.samples=LB+(UB-LB).*rand(obj.nparam,obj.nsim);
+                        case {'latin_hypercube','sobol','halton'}
+                            obj.samples=quasi_monte_carlo.(obj.procedure)(obj.lb,obj.ub,obj.nsim);
+                        otherwise
+                            error('unknown sampling procedure')
+                    end
+                else
+                    obj.samples=obj.procedure(obj.lb,obj.ub,obj.nsim);
                 end
             end
         end
@@ -424,4 +433,36 @@ classdef mcf < handle
             %----------------
         end
     end
+end
+
+function varargout=pairwise(varargin)
+nin=nargin;
+nout=nargout;
+if nout>nin
+    error('# output arguments cannot exceed # input arguments')
+end
+pnames=varargin{1}(:);
+if ~iscellstr(pnames)
+    error('first input argument must be a cellstr')
+end
+varargout=cell(1,nout);
+n=numel(pnames);
+m=sum(1:n-1);
+varargout(2:end)=repmat({zeros(m,1)},1,nout-1);
+cnames=cell(m,1);
+offset=0;
+start=n-1;
+for ii=1:n-1
+    cnames(offset+(1:start))=strcat(pnames{ii},'@',pnames(ii+1:end));
+    for iout=2:nout
+        varargout{iout}(offset+(1:start))=varargin{iout}(ii+1:end,ii);
+    end
+    % hold ground
+    %------------
+    offset=offset+start;
+    % next round
+    %-----------
+    start=start-1;
+end
+varargout{1}=cellfun(@(x)x(~isspace(x)),cnames,'uniformOutput',false);
 end
