@@ -58,8 +58,14 @@ viol=zeros(1,n);
 MaxIter=50;
 max_trials=50;
 funevals=0;
-% can we get 4 outputs?
-success=nargout(objective)>=2;
+% can we get 2 outputs?
+success=false;
+try %#ok<TRYNC>
+    c=lb+(ub-lb).*rand(npar,1);
+    [~,junk]=objective(c,varargin{:}); %#ok<NASGU>
+    success=true;
+end
+% success=nargout(objective)>=2;
 msg='';
 the_loop=@loop_body;
 for ii=1:n
