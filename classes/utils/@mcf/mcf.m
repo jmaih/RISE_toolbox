@@ -1,27 +1,15 @@
 classdef mcf < handle
-    % mcf Monte Carlo Filtering
+    % MCF Create a Monte Carlo Filtering
     %
     % mcf Methods:
     % ---------------
     %
-    % addlistener - Add listener for event.
-    % cdf -
-    % cdf_plot -
-    % correlation_patterns_plot -
-    % delete - Delete a handle object.
-    % eq -  == (EQ)   Test handle equality.
-    % findobj - Find objects matching specified conditions.
-    % findprop - Find property of MATLAB handle object.
-    % ge -  >= (GE)   Greater than or equal relation for handles.
-    % gt -  > (GT)   Greater than relation for handles.
-    % isvalid - Test handle validity.
-    % kolmogorov_smirnov_test -   tests the equality of two distributions using their CDFs
-    % le -  <= (LE)   Less than or equal relation for handles.
-    % lt -  < (LT)   Less than relation for handles.
-    % mcf -   Example:
-    % ne -  ~= (NE)   Not equal relation for handles.
-    % notify - Notify listeners of event.
-    % scatter -
+    % cdf - cumulative distribution function
+    % cdf_plot - plot of cdf
+    % correlation_patterns_plot - plot of correlation patterns
+    % kolmogorov_smirnov_test - test of equality of distributions
+    % mcf - creates an mcf object
+    % scatter - scatter plot of the data
     %
     % mcf Properties:
     % ------------------
@@ -31,15 +19,19 @@ classdef mcf < handle
     % nsim -   number of simulations
     % procedure -   sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
     % parameter_names -   names of the parameters
-    % samples -
-    % is_behaved -
-    % nparam -
-    % is_sampled -
-    % check_behavior -
-    % number_of_outputs -
-    % user_outputs -
-    % known_procedures -
+    % samples - parameter draws
+    % is_behaved - boolean flag for behaved parameter vectors
+    % nparam - number of parameters
+    % is_sampled - true if draws are available
+    % check_behavior - checks whether the vectors should be true or false
+    % number_of_outputs - number of outputs to check_behavior
+    % user_outputs - sampled additional outputs
+    % known_procedures - known sampling procedures
     properties
+        graph_nrows=3
+        graph_ncols=3
+    end
+    properties(SetAccess=protected)
         % lower bounds for the parameters
         lb
         % upper bounds for the parameters
@@ -50,23 +42,91 @@ classdef mcf < handle
         procedure
         % names of the parameters
         parameter_names
-    end
-    properties(SetAccess=protected)
+        % sampled draws
         samples
+        % Boolean vector describing the draws
         is_behaved
+        % number of parameters
         nparam
-        is_sampled = false
-        check_behavior
+        % number of output of the behavior function
         number_of_outputs
+        % user requested additional outputs
         user_outputs
     end
+    properties(SetAccess=protected,Hidden)
+        is_sampled = false
+        check_behavior
+    end
     properties(Constant)
+        % Default sampling procedures
         known_procedures={'uniform','latin_hypercube','sobol','halton'}
     end
     methods
         function obj=mcf(check_behavior,nsim_or_draws,lb,ub,names,procedure_)
-            % Example:
-            %   test=mcf({@(x)sum(x>0)==sum(x<=0),1},20000,-ones(10,1),ones(10,1))
+            % MCF -- Monte Carlo Filtering
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   obj=MCF(check_behavior,nsim_or_draws)
+            %
+            %   obj=MCF(check_behavior,nsim_or_draws,lb)
+            %
+            %   obj=MCF(check_behavior,nsim_or_draws,lb,ub)
+            %
+            %   obj=MCF(check_behavior,nsim_or_draws,lb,ub,names)
+            %
+            %   obj=MCF(check_behavior,nsim_or_draws,lb,ub,names,procedure_)
+            %
+            % Inputs
+            % -------
+            %
+            % - **check_behavior** [function_handle|cell|vector]: (i) when
+            % it is a function handle, the function takes as input a vector
+            % of parameters and returns in its first output a boolean that
+            % is true if the paramter satisfies the behavior and false
+            % otherwise. The procedure is going to check the number of
+            % output arguments that the function returns and collect all
+            % those extra output arguments while sampling. (ii) when it is
+            % a cell, it should be a two-element cell such that the first
+            % element is the function handle and the second is the number
+            % of outputs desired by the user. (iii) if it is a vector, all
+            % elements are either 0 or 1 or boolean, describing whether
+            % each parameter vector checks the behavior or not.
+            %
+            % - **nsim_or_draws** [integer|matrix]: When it is an integer,
+            % nsim_or_draws is the number of draws to sample. When it is a
+            % matrix, it is the draws. No further sampling will be
+            % performed.
+            %
+            % - **lb** [empty|vector]: lower bound of the search space
+            %
+            % - **ub** [empty|vector]: upper bound of the search space
+            %
+            % - **names** [empty|char|cellstr]: names of the parameters. If
+            % empty, the names are created as p_i, where "i" is the order
+            % of the parameter in the list.
+            %
+            % - **procedure_** [{'uniform'}|'latin_hypercube'|'sobol'|...
+            % 'halton'|user-defined]: when it is user-defined, it should be
+            % a function handle, and should take 3 inputs(lb, ub, nsim) and
+            % return a parameter draw.
+            %
+            % Outputs
+            % --------
+            %
+            % - **obj** [mcf object]: containing, among other things, the
+            % samples, a flag determining their behavior.
+            % 
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
+
             if nargin
                 if nargin<6
                     procedure_=[];
@@ -86,13 +146,22 @@ classdef mcf < handle
                 % objective function
                 %--------------------
                 nout=[];
+                check_behave_error='check_behavior must be a function handle, a vector of zeros and ones, or a vector of logicals';
                 if iscell(check_behavior)
                     nout=check_behavior{2};
                     check_behavior=check_behavior{1};
                     assert(nout>0 && isfinite(nout) && ceil(nout)==floor(nout),'wrong specification of the number of output arguments')
                 end
-                if ~isa(check_behavior,'function_handle')
-                    error('first argument must be a function handle')
+                if isnumeric(check_behavior)
+                    if all(check_behavior==1|check_behavior==0)
+                        check_behavior=logical(check_behavior);
+                    else
+                        error(check_behave_error)
+                    end
+                end
+                is_already_checked=islogical(check_behavior);
+                if ~is_already_checked && ~isa(check_behavior,'function_handle')
+                    error(check_behave_error)
                 end
                 if isempty(nout)
                     obj.number_of_outputs=nargout(check_behavior);
@@ -115,7 +184,18 @@ classdef mcf < handle
                     [obj.nparam,obj.nsim]=size(nsim_or_draws);
                     obj.samples=nsim_or_draws;
                     obj.is_sampled=true;
+                    obj.nsim=size(nsim_or_draws,2);
                 end
+                
+                if is_already_checked && obj.is_sampled
+                    if obj.nsim~=numel(check_behavior)
+                        error('number of elements in check_behavior does not match the sample size')
+                    end
+                    obj.is_behaved=check_behavior(:).';
+                    obj.check_behavior=[];
+                else
+                end
+                
                 % lower and upper bounds on the parameters
                 %-----------------------------------------
                 if ~obj.is_sampled
@@ -171,6 +251,35 @@ classdef mcf < handle
             estimate(obj);
         end
         function d=cdf(obj,pname)
+            % cdf -- Cumulative distribution function
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   d=cdf(obj,pname)
+            %
+            % Inputs
+            % -------
+            %
+            % - **obj** [mcf object]: 
+            %
+            % - **pname** [char]: name of the parameter which one wants
+            % the cdf for.
+            %
+            % Outputs
+            % --------
+            %
+            % - **d** [struct]: with fields lb, ub, x, f_behave,
+            % f_non_behave, x_good, x_bad
+            % 
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
             d=struct();
             p_id=strcmp(pname,obj.parameter_names);
             if ~any(p_id)
@@ -183,21 +292,49 @@ classdef mcf < handle
             [d.f_behave,d.x]=distributions.empirical_cdf(d.x_good,d.lb,d.ub);
             [d.f_non_behave]=distributions.empirical_cdf(d.x_bad,d.lb,d.ub);
         end
-        function fig_handles=cdf_plot(obj,pnames,graph_nrows,graph_ncols,titel)
-            if nargin<5
+        function hdl=cdf_plot(obj,pnames,titel)
+            % cdf_plot -- plot of the cdfs
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   hdl=cdf_plot(obj)
+            %
+            %   hdl=cdf_plot(obj,pnames)
+            %
+            %   hdl=cdf_plot(obj,pnames,titel)
+            %
+            % Inputs
+            % -------
+            %
+            % - **obj** [mcf object]: 
+            %
+            % - **pnames** [empty|char|cellstr]: names of the parameters of
+            % interest
+            %
+            % - **titel** [empty|char]: title of the figures 
+            %
+            % Outputs
+            % --------
+            %
+            % - **hdl** [vector]: handles to the plotted figures
+            % 
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
+            if nargin<3
                 titel=sprintf('%s :: Comparison of distributions',mfilename);
-                if nargin<4
-                    graph_ncols=3;
-                    if nargin<3
-                        graph_nrows=3;
-                        if nargin<2
-                            pnames=obj.parameter_names;
-                        end
-                    end
+                if nargin<2
+                    pnames=obj.parameter_names;
                 end
             end
-            fig_handles=utils.plot.multiple(@(xname)one_subplot(xname),...
-                pnames,titel,graph_nrows,graph_ncols,...
+            hdl=utils.plot.multiple(@(xname)one_subplot(xname),...
+                pnames,titel,obj.graph_nrows,obj.graph_ncols,...
                 'FontSize',11,'FontWeight','normal');
             function [texname,legend_]=one_subplot(xname)
                 % x-axis is the range (lb:ub)
@@ -212,6 +349,48 @@ classdef mcf < handle
             end
         end
         function hdl=correlation_patterns_plot(obj,names,type,pval_cutoff)
+            % correlation_patterns_plot -- plot of correlation patterns
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   hdl=correlation_patterns_plot(obj)
+            %
+            %   hdl=correlation_patterns_plot(obj,names)
+            %
+            %   hdl=correlation_patterns_plot(obj,names,type)
+            %
+            %   hdl=correlation_patterns_plot(obj,names,type,pval_cutoff)
+            %
+            % Inputs
+            % -------
+            %
+            % - **obj** [mcf object]: 
+            %
+            % - **names** [empty|char|cellstr]: names of the parameters of
+            % interest
+            %
+            % - **type** [empty|'behave'|'non-behave']: if empty, all the
+            % sample is considered. If 'behave' only the behavior sample is
+            % considered. If 'non-behave', only the non-behavior sample is
+            % considered.
+            %
+            % - **pval_cutoff** [numeric|{0.05}]: cutoff for significant
+            % correlations
+            %
+            % Outputs
+            % --------
+            %
+            % - **hdl** [vector]: handles to the plotted figures
+            % 
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
             if nargin<4
                 pval_cutoff=[];
                 if nargin<3
@@ -224,8 +403,8 @@ classdef mcf < handle
             if isempty(pval_cutoff),pval_cutoff=.05;end
             if isempty(names),names=obj.parameter_names;end
             names_id=locate_variables(names,obj.parameter_names);
-            if isempty(type),type='behave'; end
-            if ~any(strcmp(type,{'behave','non-behave',''}))
+            if isempty(type),type=''; end
+            if ~any(strcmp(type,{'behave','non-behave'}))
                 error('type must be one of the following: behave, non-behave, ''''')
             end
             switch type
@@ -242,7 +421,6 @@ classdef mcf < handle
             hotties=Pval<=pval_cutoff;
             corrmat=tril(corrmat,-1);
             hotties(corrmat==0)=false;
-%             [paired_names,~,pvalvec]=pairwise(names,corrmat,Pval);
             %----------------------------
             pax=nan(npar,npar);
             pax(hotties)=corrmat(hotties);
@@ -280,21 +458,61 @@ classdef mcf < handle
             set(tmp,'xgrid','on')
             set(tmp,'ygrid','on')
         end
-        function fig_handles=scatter(obj,names,type,pval_cutoff,graph_nrows,graph_ncols,titel)
-            if nargin<7
+        function hdl=scatter(obj,names,type,pval_cutoff,titel)
+            % scatter -- scatter plot of the data
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   hdl=scatter(obj)
+            %
+            %   hdl=scatter(obj,names)
+            %
+            %   hdl=scatter(obj,names,type)
+            %
+            %   hdl=scatter(obj,names,type,pval_cutoff)
+            %
+            %   hdl=scatter(obj,names,type,pval_cutoff,titel)
+            %
+            % Inputs
+            % -------
+            %
+            % - **obj** [mcf object]: 
+            %
+            % - **names** [empty|char|cellstr]: names of the parameters of
+            % interest
+            %
+            % - **type** [empty|'behave'|'non-behave']: if empty, all the
+            % sample is considered. If 'behave' only the behavior sample is
+            % considered. If 'non-behave', only the non-behavior sample is
+            % considered.
+            %
+            % - **pval_cutoff** [numeric|{0.05}]: cutoff for significant
+            % correlations
+            %
+            % - **titel** [empty|char]: title of the figures 
+            %
+            % Outputs
+            % --------
+            %
+            % - **hdl** [vector]: handles to the plotted figures
+            % 
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
+            if nargin<5
                 titel=[];
-                if nargin<6
-                    graph_ncols=3;
-                    if nargin<5
-                        graph_nrows=3;
-                        if nargin<4
-                            pval_cutoff=[];
-                            if nargin<3
-                                type=[];
-                                if nargin<2
-                                    names=[];
-                                end
-                            end
+                if nargin<4
+                    pval_cutoff=[];
+                    if nargin<3
+                        type=[];
+                        if nargin<2
+                            names=[];
                         end
                     end
                 end
@@ -328,12 +546,12 @@ classdef mcf < handle
             good=pvalvec<=pval_cutoff;
             if any(good)
                 paired_names=paired_names(good);
-                fig_handles=utils.plot.multiple(@(xname)do_one_scatter(xname),...
-                    paired_names,titel,graph_nrows,graph_ncols,...
+                hdl=utils.plot.multiple(@(xname)do_one_scatter(xname),...
+                    paired_names,titel,obj.graph_nrows,obj.graph_ncols,...
                     'FontSize',11,'FontWeight','normal');
             else
                 warning(sprintf('no significant correlations found at %0.4f percent',100*pval_cutoff)) %#ok<SPWRN>
-                fig_handles=[];
+                hdl=[];
             end
             
             function [texname,legend_]=do_one_scatter(xname)
@@ -367,26 +585,42 @@ classdef mcf < handle
             %-------------------------
             obj.get_draws();
             
-            % initialize the waitbar
-            %-----------------------
-            x=struct('name','monte carlo filtering',...
-                'message','initializing');
-            utils.plot.waitbar('init',x)
-            % outputs
-            %----------
-            obj.is_behaved=false(1,obj.nsim);
-            nout=obj.number_of_outputs;
-            output=cell(1,nout);
-            obj.user_outputs=cell(obj.number_of_outputs,obj.nsim);
-            for isim=1:obj.nsim
-                draw=obj.samples(:,isim);
-                [output{1:nout}]=obj.check_behavior(draw);
-                obj.is_behaved(isim)=output{1};
-                obj.user_outputs(:,isim)=output(:);
-                utils.plot.waitbar('update',isim/obj.nsim)
+            if isempty(obj.is_behaved)
+                % outputs
+                %----------
+                nout=obj.number_of_outputs;
+                user_outputs_=cell(obj.number_of_outputs,obj.nsim);
+                % embarassingly parallel
+                %-----------------------
+                NumWorkers=utils.parallel.get_number_of_workers();
+                % initialize the waitbar
+                %-----------------------
+                if NumWorkers==0
+                    x=struct('name','monte carlo filtering','message',...
+                        'initializing');
+                    utils.plot.waitbar('init',x)
+                end
+                samples_=obj.samples;
+                obj.samples=[];
+                check_behavior_=obj.check_behavior;
+                nsim_=obj.nsim;
+                parfor (isim=1:obj.nsim,NumWorkers)
+                    draw=samples_(:,isim);
+                    output=cell(1,nout);
+                    [output{1:nout}]=check_behavior_(draw); %#ok<PFBNS>
+                    user_outputs_(:,isim)=output(:);
+                    if NumWorkers==0
+                        utils.plot.waitbar('update',isim/nsim_)
+                    end
+                end
+                obj.samples=samples_;
+                obj.is_behaved=cell2mat(user_outputs_(1,:));
+                obj.user_outputs=user_outputs_;
+                if NumWorkers==0
+                    utils.plot.waitbar('close')
+                end
             end
-            utils.plot.waitbar('close')
-            disp([num2str(100*sum(obj.is_behaved)/obj.nsim),' percent of the prior support is consistent with the behavior'])
+            disp([num2str(100*sum(obj.is_behaved)/obj.nsim),' percent of the support is consistent with the behavior'])
         end
         function get_draws(obj)
             if ~obj.is_sampled
