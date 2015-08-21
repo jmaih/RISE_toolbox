@@ -58,7 +58,8 @@ classdef mcf < handle
         check_behavior
     end
     properties(Constant)
-        % Default sampling procedures
+        % Default sampling procedures: 'uniform', 'latin_hypercube',
+        % 'sobol', 'halton'  
         known_procedures={'uniform','latin_hypercube','sobol','halton'}
     end
     methods
@@ -216,12 +217,10 @@ classdef mcf < handle
                     obj.ub=ub;
                     obj.nparam=nrows;
                 end
-                % parameter names
-                %----------------
-                if isempty(names)
-                    names=strcat({'p_'},cellstr(num2str((1:obj.nparam)')));
-                    names=cellfun(@(x)x(~isspace(x)),names,'uniformOutput',false);
-                end
+                % create parameter names if empty!!!
+                %-----------------------------------
+                names=utils.char.create_names(names,'p',obj.nparam);
+                
                 if ischar(names),names=cellstr(names);end
                 if ~iscellstr(names),error('names should be char or cellstr'),end
                 if numel(names)~=obj.nparam
