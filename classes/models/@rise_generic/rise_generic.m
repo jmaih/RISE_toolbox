@@ -109,7 +109,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=irf(varargin)
         varargout=isnan(varargin)
         varargout=load_parameters(varargin)
-        varargout=log_marginal_data_density(varargin)
         varargout=log_posterior_kernel(varargin)
         varargout=log_prior_density(varargin)
         varargout=mode_curvature(varargin)
@@ -140,9 +139,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
                 %  mssvar dsge-var dsge-kulish star stvar stochvol
                 error(['"',model_type,'" model class not yet implemented'])
             end
-            %             % model type
-            %             %-----------
-            %             obj.model_class=model_type;
             % further declarations
             %----------------------
             obj=do_names(obj,endogen,'endogenous');
