@@ -117,7 +117,7 @@ classdef svar < rise_generic
             if isempty(obj)
                 [varargout{1:nout}]=estimate@rise_generic(obj);
             else
-                [varargout{1:nout}]=estimate@rise_generic(obj);
+                [varargout{1:nout}]=estimate@rise_generic(obj,varargin{:});
             end
         end
         function obj=set(obj,varargin)
