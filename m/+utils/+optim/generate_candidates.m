@@ -62,7 +62,7 @@ funevals=0;
 success=false;
 try %#ok<TRYNC>
     c=lb+(ub-lb).*rand(npar,1);
-    [~,junk]=objective(c,varargin{:}); %#ok<NASGU>
+    [~,~]=objective(c,varargin{:}); 
     success=true;
 end
 % success=nargout(objective)>=2;
@@ -83,22 +83,23 @@ funevals=funevals+sum(fcount);
                     int2str(MaxIter*max_trials),' attempts. Exiting with the best vector'])
             end
             [xi,fi,violi]=draw_and_evaluate_vector();
+            fcount=fcount+1;
             iter2=0;
-            while iter2<max_trials && violi>0
+            while iter2<max_trials && (violi>0||~isempty(msg))
                 iter2=iter2+1;
                 [c,fc,violc]=draw_and_evaluate_vector();
+                fcount=fcount+1;
                 if violc<violi
                     xi=c;
                     fi=fc;
                     violi=violc;
                 end
             end
-            fcount=fcount+1;
             if fi<penalty
                 invalid=false;
             else
-                fprintf(1,'%5s %3.0d/%3.0d %8s %5.0d %8s %s \n',...
-                    'warrior #',ii,n,'iter',iter,'pb',msg);
+                fprintf(1,'%5s %3.0d/%3.0d %8s %5.0d %8s %5.0d %8s %s \n',...
+                    'warrior #',ii,n,'iter',iter,'interm runs',iter2,'pb',msg);
             end
             iter=iter+1;
         end
