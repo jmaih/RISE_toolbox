@@ -105,9 +105,14 @@ else
     draw=tmp.Params(:,choice);
 end
 
-draw={pnames,draw};
+% The user may want to set the parameters directly himself and do it is a
+% good idea to untransform the parameters for him
+x=unstransform_estimates(obj,draw{2});
+draw={pnames,x};
 if nargout>1
-    obj=set(obj,'parameters',draw);
+    % assignin estimates will be faster than calling
+    % obj=set(obj,'parameters',draw); 
+    obj=assign_estimates(obj,x);
 end
 
 function choice=pick_one_randomly(N)

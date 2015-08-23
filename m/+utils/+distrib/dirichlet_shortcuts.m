@@ -1,4 +1,4 @@
-function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
+function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
 % dirichlet_shortcuts -- memoizer for some dirichlet routines
 %
 % Syntax
@@ -10,6 +10,8 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 %   d=dirichlet_shortcuts(a,location)
 %
 %   d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
+%
+%   d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
 %
 % Inputs
 % -------
@@ -35,6 +37,10 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 %   draws of the dirichlet distribution
 %   - **location** [vector]: location of the parameters of interest in the
 %   vector of estimated parameters
+%   - **ax_diag** [numeric]: un-normalized weight of the diagonal term. Not
+%   to be confused with the hyperparameters of the distribution. This term
+%   is such that the off-diagonal terms of the transition matrix are
+%   calculated as si/(ax_diag+sum(si))
 %
 % More About
 % ------------
@@ -45,12 +51,25 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 % See also: 
 
 if nargin==0
-    d=struct('lpdfn',{},'rndfn',{},'location',{});
+    d=struct('lpdfn',{},'rndfn',{},'location',{},'ax_diag',{});
 else
-    if nargin<4
+    if nargin<5
+        ax_diag=[];
+        if nargin<4
+            rndfn=[];
+        end
+    end
+    if isempty(ax_diag)
+        h=numel(a); 
+        % Get the un-normalized weight of the diagonal term. But here we
+        % use the default settings for p_ii_min and a_ij_max
+        ax_diag=utils.distrib.dirichlet_diag_weight(h);% p_ii_min,a_ij_max
+    end
+    if isempty(rndfn)
         [lpdfn,~,~,rndfn]=distributions.dirichlet();
     end
-    d=struct('lpdfn',@logdensity,'rndfn',@dirich_draw,'location',location);
+    d=struct('lpdfn',@logdensity,'rndfn',@dirich_draw,'location',location,...
+        'ax_diag',ax_diag);
 end
 
     function lpdf=logdensity(x)

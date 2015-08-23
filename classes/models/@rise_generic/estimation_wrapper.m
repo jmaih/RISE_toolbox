@@ -165,6 +165,11 @@ end
         %-------------------------------
         x=linear_restricts.a_func(xtilde);
         
+        % untransform in the presence of dirichlet right here and right
+        % now. Otherwise there will be a wrong prior evaluation and further
+        % problems down the road
+        %------------------------------------------------------------------
+        x=unstransform_estimates(obj(1),x);
         fval=estim_penalty*ones(1,nobj);
         
         % general restrictions are sometimes infeasible. Rather than

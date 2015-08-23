@@ -36,6 +36,13 @@ function obj=setup_priors(obj,MyPriors,error_control)
 if nargin<3
     error_control=[];
 end
+dirichlet_p_ii_min=[];
+dirichlet_a_ij_max=[];
+if iscell(MyPriors) 
+    dirichlet_p_ii_min=MyPriors{2};
+    dirichlet_a_ij_max=MyPriors{3};
+    MyPriors=MyPriors{1};
+end
 warnstate=warning('query','all');
 warning('off','optim:fmincon:SwitchingToMediumScale')% %
 warning('off','optimlib:fmincon:WillRunDiffAlg')
@@ -59,7 +66,7 @@ if ~isempty(fieldnames(MyPriors))
     end
     
     [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(fields,...
-        MyPriors,error_control);
+        MyPriors,dirichlet_p_ii_min,dirichlet_a_ij_max,error_control);
     % linking estimated parameters to parameters
     %-------------------------------------------
     obj.estimation_restrictions=parameters_links(obj,estnames);
@@ -122,18 +129,23 @@ end
         d1=dirichlet(1);
         est_id=est_id-1;
         prior_trunc=obj.options.prior_trunc;
+        % Now transform start values
+        %----------------------------
+        a_start=utils.distrib.dirichlet_transform(d1.moments.mean(1:end-1),...
+            d1.ax_diag);
         for ii_=1:d1.n_1
             fildname=d1.names{ii_};
             [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
             if isempty(position)
                 error([fildname,' is not recognized as a parameter'])
             end
-            [~,~,icdfn]=distributions.beta();
-            bounds=[icdfn(prior_trunc,d1.a(ii_),d1.b(ii_)),...
-                icdfn(1-prior_trunc,d1.a(ii_),d1.b(ii_))];
+            % N.B: This are the bounds for the inverse of the Dirichlet,
+            % not the Dirichlet itself, which will undergo transformations
+            %--------------------------------------------------------------
+            bounds=[prior_trunc,1-prior_trunc];
             est_id=est_id+1;
             est_struct=struct('name',pname,'chain',chain,'state',state,...
-                'start',d1.moments.mean(ii_),'lower_quantile',nan,...
+                'start',a_start(ii_),'lower_quantile',nan,...
                 'upper_quantile',nan,'prior_mean',d1.moments.mean(ii_),...
                 'prior_stdev',d1.moments.sd(ii_),...
                 'prior_distrib','dirichlet',...
@@ -153,7 +165,7 @@ end
                 'convergence ',num2str(0)])
         end
         new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(dirichlet(1).a,...
-            dirichlet(1).location);
+            dirichlet(1).location,[],[],dirichlet(1).ax_diag);
         dirichlet=dirichlet(2:end);
     end
 
@@ -227,12 +239,12 @@ end
 end
 
 function [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(...
-    fields,MyPriors,error_control)
+    fields,MyPriors,p_ii_min,a_ij_max,error_control)
 
 is_dirichlet=strncmp(fields,'dirichlet',9);
 fields=fields(:).';
 dirichlet=struct('a',{},'b',{},'moments',{},'n_1',{},...
-    'pointers',{},'location',{},'names',{});
+    'pointers',{},'location',{},'names',{},'ax_diag',{});
 ndirich=sum(is_dirichlet);
 if ndirich
     error_control_flag=~isempty(error_control);
@@ -261,14 +273,18 @@ if ndirich
                     ' appears to have a too big standard deviation'])
             end
             m=[m_main(:);m0];
+            h=numel(m);
             a=a_sum*m;
             [dirichlet(dirich_count).a,dirichlet(dirich_count).b,...
                 dirichlet(dirich_count).moments,...
                 dirichlet(dirich_count).fval,...
                 dirichlet(dirich_count).space]=distributions.dirichlet(a);
             dirichlet(dirich_count).pointers=1:numel(pnames);
-            dirichlet(dirich_count).n_1=numel(m)-1;
+            dirichlet(dirich_count).n_1=h-1;
             dirichlet(dirich_count).names=pnames;
+            % Un-normalized weight of the diagonal term.
+            dirichlet(dirich_count).ax_diag=...
+                utils.distrib.dirichlet_diag_weight(h,p_ii_min,a_ij_max);%
         else
             pnames={dname};
         end
