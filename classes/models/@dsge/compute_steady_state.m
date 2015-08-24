@@ -140,9 +140,10 @@ if is_initial_guess_steady_state && any(is_param_changed_in_ssmodel)
     error(errmsg)
 end
 
+trying_stationarity=true;
 if isempty(obj.is_stationary_model)
     if ~is_initial_guess_steady_state && ...
-            (~isempty(steady_state_file)||~isempty(steady_state_model))
+            (~isempty(steady_state_file)||~isempty(steady_state_model.code))
         obj.is_stationary_model=true;
     end
 end
@@ -155,6 +156,7 @@ elseif ~isempty(obj.is_stationary_model) && ~obj.is_stationary_model
     static_model=obj.steady_state_funcs.static_bgp;
     static_model_jacobian=obj.steady_state_funcs.jac_bgp;
     y=ss_bgp;
+    trying_stationarity=false;
 end
 
 [ss,r,retcode]=run_one_pass(y);
@@ -167,6 +169,7 @@ else
     if isempty(obj.is_stationary_model)
         % stationarity failed above. Now investigate nonstationarity
         %------------------------------------------------------------
+        trying_stationarity=false;
         static_model=obj.steady_state_funcs.static_bgp;
         static_model_jacobian=obj.steady_state_funcs.jac_bgp;
         y=ss_bgp;
@@ -245,7 +248,14 @@ end
                     p(:,ireg)=p_ireg;
                 else
                     if obj.is_linear_model
-                        ss0=ss(:,ireg)-Jac\r(:,ireg);
+                        if trying_stationarity
+                            % Jac is expected to be well conditioned
+                            ss0=ss(:,ireg)-Jac\r(:,ireg);
+                        else
+                            % Jac is expected to be NOT well conditioned as
+                            % the system is not uniquely identified.
+                            ss0=ss(:,ireg)-pinv(full(Jac))*r(:,ireg);
+                        end
                         [ss(:,ireg),p_ireg,retcode,r(:,ireg)]=do_one_regime(...
                             ss0,p_ireg,d{ireg});
                     else
