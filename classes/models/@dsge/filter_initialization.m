@@ -203,7 +203,7 @@ end
         a0=[];
         if ~retcode
             a0=ss_star;
-            if any(Tsig_star)
+            if any(abs(Tsig_star)>1e-9)
                 Ix=eye(endo_nbr);
                 Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;
                 a0=a0+Ix\Tsig_star;
