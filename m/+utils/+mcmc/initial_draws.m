@@ -94,7 +94,7 @@ parfor (idraw=1:N,NumWorkers)
     local_logf=logf;
     while invalid && iter < max_attempts
         iter=iter+1;
-        if iter>1 || ~any(isnan(theta(:,idraw)))
+        if iter>1 || any(isnan(theta(:,idraw)))
             theta(:,idraw)=lb+ub_minus_lb.*rand(d,1);
         end
         fx=local_logf(theta(:,idraw));
