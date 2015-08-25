@@ -1,15 +1,34 @@
 function [draw,obj]=draw_parameter(obj,simulation_folder)
-% H1 line
+% draw_parameter - random parameter draws for RISE model objects. 
 %
 % Syntax
 % -------
 % ::
 %
+%   [draw,obj]=draw_parameter(obj,simulation_folder)
+%
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge|rfvar|svar]: RISE model object
+%
+% - **simulation_folder** [char|struct]:
+%   - char(1): simulation folder : the stored elements should be structures
+%   with fields:
+%       - **x** : new form
+%       - **Params** : legacy
+%   - char(2): ['mode'|'prior']: draw from the prior distribution or from a
+%   multivariate normal distribution around the mode.
+%
 % Outputs
 % --------
+%
+% - **draw** [cell]: the first entry is the names of the estimated
+% parameters and the second is a vector of drawn parameters. The whole cell
+% can be pushed in to a model as obj=set(obj,'parameters',draw).
+%
+% - **obj** [rise|dsge|rfvar|svar]: RISE model object in which the drawn
+% parameter has been pushed.
 %
 % More About
 % ------------
@@ -19,8 +38,6 @@ function [draw,obj]=draw_parameter(obj,simulation_folder)
 %
 % See also: 
 
-% outputed are the draw and the rise object in which the draw has been
-% pushed.
 if isempty(obj)
     draw=struct();
     return
@@ -76,33 +93,44 @@ if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
         end
         draw=utils.optim.recenter(draw,lb,ub);
 else
-    is_saved_to_disk=ischar(simulation_folder) && ~strcmp(simulation_folder,'mode');
+    is_saved_to_disk=ischar(simulation_folder);
     if is_saved_to_disk
         W = what(simulation_folder);
         W=W.mat;
-        locs=find(strncmp('chain_',W,6));
-        if isempty(locs)
+        if isempty(W)
             error([mfilename,':: no simulations found'])
         end
-        W=strrep(W(locs),'.mat','');
+        % check for legacy
+        %------------------
+        locs=find(strncmp('chain_',W,6));
+        is_legacy=~isempty(locs);
+        if is_legacy
+            W=W(locs);
+        end
+        %--------------------------
+        W=strrep(W,'.mat','');
+        N=numel(W);
+        choice=pick_one_randomly(N);
+        this_matrix=W{choice};
+        tmp=load([simulation_folder,filesep,this_matrix]);
+        if is_legacy
+            choice=pick_one_randomly(size(tmp.Params,2));
+            draw=tmp.Params(:,choice);
+        else
+            if ~isfield(tmp,'x')
+                error('wrong format for the stored objects to draw from')
+            end
+            nn=numel(tmp);
+            id=pick_one_randomly(nn);
+            draw=tmp.(id).x;
+        end
     elseif isstruct(simulation_folder)
-        W=fieldnames(simulation_folder);
+        N=numel(simulation_folder);
+        choice=pick_one_randomly(N);
+        draw=simulation_folder(choice).x;
     else
         error('wrong specification of input')
     end
-    % select the mat file to draw from with equal probability
-    %--------------------------------------------------------
-    choice=pick_one_randomly(numel(W));
-    this_matrix=W{choice};
-    if is_saved_to_disk
-        tmp=load([simulation_folder,filesep,this_matrix]);
-    else
-        tmp=simulation_folder.(this_matrix);
-    end
-    % now select the parameter vector
-    %--------------------------------
-    choice=pick_one_randomly(size(tmp.Params,2));
-    draw=tmp.Params(:,choice);
 end
 
 % The user may want to set the parameters directly himself and do it is a
