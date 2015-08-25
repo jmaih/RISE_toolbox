@@ -14,13 +14,13 @@ function pdata=plot_posteriors(obj,simulation_folder,parlist)
 %
 % - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **simulation_folder** [[]|char|struct]: location of the simulations. If
+% - **simulation_folder** [empty|char|struct]: location of the simulations. If
 % empty, it is assumed that the simulations are saved to disc and are
 % located in the address found in obj.folders_paths.simulations. If it is a
 % "char", this corresponds to the location of the simulation. Otherwise, if
 % it is a struct, then it has to be the output of posterior_simulator.m
 %
-% - **parlist** [[]|char|cellstr]: list of the parameters for which one
+% - **parlist** [empty|char|cellstr]: list of the parameters for which one
 % wants to plot the posteriors
 %
 % Outputs
@@ -64,15 +64,9 @@ is_saved_to_disk=ischar(simulation_folder);
 if is_saved_to_disk
     W = what(simulation_folder);
     W=W.mat;
-    locs=find(strncmp('chain_',W,6));
-    if isempty(locs)
-        error([mfilename,':: no simulations found'])
-    end
     W=strrep(W(locs),'.mat','');
-elseif isstruct(simulation_folder)
-    W=fieldnames(simulation_folder);
-else
-    error('wrong specification of input')
+elseif ~isstruct(simulation_folder)
+    error('wrong specification of simulation_folder')
 end
 number_of_matrices=numel(W);
 
@@ -90,32 +84,33 @@ is_posterior_max=isfield(obj.estimation.posterior_maximization,'mode');
 post_mode_sim=[];
 f_post_mode_sim=-inf;
 if is_posterior_max
-    post_mode=obj.estimation.posterior_maximization.mode(vlocs);
-%     f_post_mode=obj.estimation.posterior_maximization.log_post;
+    post_mode=obj.estimation.posterior_maximization.mode(vlocs); 
 end
 
 % create the data
 %----------------
 npar=numel(vnames);
 pdata_=struct();
+% potential candidate for parallelization
 for ipar=1:npar
     all_vals=[];
     for m=1:number_of_matrices
         if is_saved_to_disk
             tmp=load([simulation_folder,filesep,W{m}]);
         else
-            tmp=simulation_folder.(W{m});
+            tmp=simulation_folder;
         end
         if ipar==1
             % try and locate the sampling posterior mode
-            fm=-tmp.minus_logpost_params;
+            fm=-[tmp.f];
             best=find(fm==max(fm),1,'first');
             if fm(best)>f_post_mode_sim
-                post_mode_sim=tmp.Params(vlocs,best);
+                post_mode_sim=tmp(best).x(vlocs);
                 f_post_mode_sim=fm(best);
             end
         end
-        all_vals=[all_vals;tmp.Params(vlocs(ipar),:).']; %#ok<AGROW>
+		Params=[tmp.x];
+        all_vals=[all_vals;Params(vlocs(ipar),:).']; %#ok<AGROW>
     end
     tex_name=prior_dens.(vnames{ipar}).tex_name;
     pdata_.(vnames{ipar})=do_one_post(ipar);

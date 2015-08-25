@@ -15,13 +15,13 @@ function ppdata=plot_priors_and_posteriors(obj,simulation_folder,parlist)
 %
 % - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **simulation_folder** [[]|char|struct]: location of the simulations. If
+% - **simulation_folder** [empty|char|struct]: location of the simulations. If
 % empty, it is assumed that the simulations are saved to disc and are
 % located in the address found in obj.folders_paths.simulations. If it is a
 % "char", this corresponds to the location of the simulation. Otherwise, if
 % it is a struct, then it has to be the output of posterior_simulator.m
 %
-% - **parlist** [[]|char|cellstr]: list of the parameters for which one
+% - **parlist** [empty|char|cellstr]: list of the parameters for which one
 % wants to plot the priors and the posteriors
 %
 % Outputs
