@@ -203,10 +203,10 @@ end
         a0=[];
         if ~retcode
             a0=ss_star;
-            if any(abs(Tsig_star)>1e-9)
+            if any(abs(Tsig_star)>1e-7)
                 Ix=eye(endo_nbr);
                 Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;
-                a0=a0+Ix\Tsig_star;
+                a0=a0+pinv(Ix)*Tsig_star;
             end
             if a0_given
                 % correct the previous entries.
@@ -253,6 +253,12 @@ end
                 P0(present_a0,present_a0)=kf_user_init{2};
             end
             if ~retcode
+                if ~all(isfinite(a0))
+                    retcode=3002;
+                end
+                if ~all(isfinite(P0(:)))
+                    retcode=30002;
+                end
                 P0=repmat({P0},1,h);
                 a0=repmat({a0},1,h);
             end

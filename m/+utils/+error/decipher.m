@@ -66,6 +66,10 @@ switch code
         msg='Maximum number of iterations reached in Lyapunov solution';
     case 302
         msg='Nans in Lyapunov solution';
+    case 3002
+        msg='Nans or Inf in initial conditions for the state vector';
+    case 30002
+        msg='Nans or Inf in initial covariance matrix';
     case 303
         msg='Explosion limit reached in Lyapunov solution';
     case 304
