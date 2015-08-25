@@ -15,8 +15,8 @@ function [draw,obj]=draw_parameter(obj,simulation_folder)
 % - **simulation_folder** [char|struct]:
 %   - char(1): simulation folder : the stored elements should be structures
 %   with fields:
-%       - **x** : new form
-%       - **Params** : legacy
+%       - **x** : parameter vectors
+%       - **f** : value of minus(log posterior kernel)
 %   - char(2): ['mode'|'prior']: draw from the prior distribution or from a
 %   multivariate normal distribution around the mode.
 %
