@@ -227,14 +227,19 @@ for t = 1:T
     
     % update of transition matrix
     %-----------------------------
-    [Qtt,retcode]=Qfunc(x_hat{1});
-    if retcode
-        return
+    if h>1
+        [Qtt,retcode]=Qfunc(x_hat{1});
+        if retcode
+            return
+        end
+        
+        % forecast of probabilities
+        %---------------------------
+        pi_tt1 = Qtt'*pi_tt;
+    else
+        Qtt=1;
+        pi_tt1 =1;
     end
-    
-    % forecast of probabilities
-    %---------------------------
-    pi_tt1 = Qtt'*pi_tt;
     
     for rt1 = 1:h
         

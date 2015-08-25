@@ -1,26 +1,77 @@
-function [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
-    syst,data_y,U,z,options)%syst,data_info,state_trend,init,options
+function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell_estim_K(...
+    syst,data_y,U,z,options,impose_conditions)
 
-
-% H1 line
+% crs_linear_filter_update_cell_estim_K -- filter with update of K. gain
 %
 % Syntax
 % -------
 % ::
 %
+%   [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell_estim_K(...
+%    syst,y,U,z,options)
+%
 % Inputs
 % -------
+%
+% - **syst** [struct]: structure containing:
+%
+%       - **PAI00** [vector]: initial probability distributions of regimes
+%
+%       - **a** [cell]: initial conditions in each regime
+%
+%       - **Qfunc** [function handle]: transition matrix generator
+%
+%       - **ff** [function handle]: ft=ff(rt,xt,et), where rt is the
+%       regime, xt is the vector of state variables and et the vector of
+%       shocks 
+%
+%       - **P** [cell]: initial covariance matrix of the states in each
+%       regime 
+%
+%       - **H** [cell]: Measurement error covariance matrices in each regime
+%
+%       - **SIGeta** [cell]: Covariance matrix of structural shocks.
+%
+% - **y** [matrix]: ny x T x npages matrix of data
+%
+% - **U** [[]|matrix]: ndx x T matrix of exogenous data
+%
+% - **z** [function handle|logical|vector]: linear connection of the
+% observables to the state.
+%
+% - **include_in_likelihood** [logical]: selector of increments to include
+% in the likelihood calculation
+%
+% - **options** [struct]: structure with various options
 %
 % Outputs
 % --------
 %
+% - **loglik** [scalar]: log likelihood
+%
+% - **Incr** [vector]: increments of elements going into the likelihood
+%
+% - **retcode** [{0}|integer]: flag for problems. 
+%
+% - **Filters** [struct]: Filtered, updated and smoothed variables
+%
 % More About
 % ------------
+%
+% - The filter checks for violations of constraints and uses the
+% information in the database to reset the offending variables to their
+% values in the database. When this occurs, the Kalman gain is recomputed
+% so that the traditional updating equation holds.
+%
+% - This strategy is adopted so as to permit the use of the efficient
+% smoothing algorithm of Durbin and Koopman instead of the classical
+% smoothing algorithm which requires multiple inversions of a potentially
+% singular covariance matrix.
 %
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 
 % this filter assumes a state space of the form
@@ -29,6 +80,11 @@ function [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filte
 % where c_t{st} and d_t{st} are, possibly time-varying, deterministic terms
 % the covariance matrices can be time-varying
 
+cutoff=-sqrt(eps);
+
+if nargin<6
+    impose_conditions=false;
+end
 % data
 %-----
 obs_id=syst.obs_id;
@@ -41,12 +97,13 @@ first=syst.start;
 %---------------
 ff=syst.ff;
 T=syst.Tx;
+Tbig=syst.T;
 R=syst.Te;
 H=syst.H;
 Qfunc=syst.Qfunc;
 sep_compl=syst.sep_compl;
-% cond_shocks_id=syst.anticipated_shocks;
-% ss=syst.steady_state;
+cond_shocks_id=syst.anticipated_shocks;
+ss=syst.steady_state;
 xlocs=syst.state_vars_location;
 
 % initial conditions
@@ -69,7 +126,7 @@ PAI=transpose(Q)*PAItt;
 
 % matrices' sizes
 %----------------
-[p0,smpl]=size(data_y);
+[p0,smpl,npages]=size(data_y);
 h=numel(T);
 [~,exo_nbr,horizon]=size(R{1});
 shocks=zeros(exo_nbr,horizon);
@@ -84,6 +141,8 @@ if tmax_u
         [a{splus}]=ff(splus,a{splus},shocks,Ut);
     end
 end
+
+myshocks=cell(1,h);
 
 h_last=0;
 if ~isempty(H{1})
@@ -102,7 +161,7 @@ if store_filters
     nsteps=options.kf_nsteps;
     if store_filters>2
         R_store=struct();
-     end
+    end
 else
     % do not do multi-step forecasting during estimation
     nsteps=1;
@@ -138,19 +197,31 @@ v=cell(1,h);
 % This also changes size but we need to assess whether we reach the steady state fast or not
 K=zeros(m,p0,h); % <---K=cell(1,h);
 
+% this will be useful for multi-step forecasting
+%------------------------------------------------
+expected_shocks=cell(1,h);
+
 % no problem
 %-----------
 retcode=0;
 is_steady=false;
 
-% disp(['do not forget to test whether it is possible to reach the steady ',...
-%     'state with markov switching'])
+% update the options for conditional forecasting
+%------------------------------------------------
+options.PAI=1;
+options.states=ones(horizon,1);
+options.Qfunc=Qfunc;
+options.y=[];
+options.burn=0;
+options.k_future=horizon-1;
+% forecast all the way...
+options.nsteps=horizon;
 
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
     [p,occur,obsOccur,no_more_missing]=z(t);
-    y=data_y(occur,t);
+    y=data_y(occur,t,1);
     
     likt=0;
     for st=1:h
@@ -193,8 +264,15 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         end
         % state update (att=a+K*v)
         %-------------------------
-        a{st}=a{st}+K(:,occur,st)*v{st};
-        
+        if impose_conditions
+            [a{st},K(:,occur,st),retcode,myshocks{st}]=state_update_without_test(a{st},K(:,occur,st),v{st},st);
+        else
+            [a{st},K(:,occur,st),retcode,myshocks{st}]=state_update_with_test(a{st},K(:,occur,st),v{st},st);
+            % <--- a{st}=a{st}+K(:,occur,st)*v{st};
+        end
+        if retcode
+            return
+        end
         f01=(twopi_p_dF(st)*exp(v{st}'*iF{st}*v{st}))^(-0.5);
         PAI01y(st)=PAI(st)*f01;
         likt=likt+PAI01y(st);
@@ -235,9 +313,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         PAI=Q'*PAItt;
     end
     
-    % state and state covariance prediction (this is next period and so,
-    % the exogenous variables should be picked for period t+1
-    %--------------------------------------------------------------------
+    % state and state covariance prediction
+    %--------------------------------------
     if t+1<=tmax_u
         Ut=U(:,t+1);
     else
@@ -248,6 +325,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if ~is_steady
             P{splus}=zeros(m);
         end
+        expected_shocks{splus}=shocks;
         for st=1:h
             if h==1
                 pai_st_splus=1;
@@ -255,11 +333,21 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 pai_st_splus=Q(st,splus)*PAItt(st)/PAI(splus);
             end
             a{splus}=a{splus}+pai_st_splus*att{st};
+            % forecast with the expected shocks we had from the
+            % updating step
+            %---------------------------------------------------
+            expected_shocks{splus}=expected_shocks{splus}+...
+                pai_st_splus*myshocks{st}(:,1:horizon);
+            if st==h
+                % remove the first period since the shocks were
+                % expected already from the period before...
+                expected_shocks{splus}=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
+            end
             if ~is_steady
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},shocks,Ut);
+        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks{splus},Ut);
         if retcode
             return
         end
@@ -341,6 +429,141 @@ if store_filters>2 % store smoothed
     end
 end
 
+    function y0=simul_initial_conditions(a_filt,start_iter)
+        if nargin<2
+            start_iter=horizon;
+        end
+        af=nan(m,1,horizon+1);
+        af(:,1,1)=a_filt;
+        % add conditional information: It is important at this point that
+        % only the variables with conditional information be non-nan!!!!!
+        %-----------------------------------------------------------------
+        af(obs_id,1,1+(1:start_iter))=data_y(:,t,1:start_iter);
+        % compute a conditional forecast
+        y0=struct('y',af);
+        options.shocks=shocks;
+        % all shocks can be used in the update (first period)
+        %----------------------------------------------------
+        options.shocks(:,1)=nan;
+        % beyond the first period, only the shocks with long reach can
+        % be used
+        options.shocks(cond_shocks_id,1:start_iter)=nan;
+    end
+
+    function [a_update,K,retcode,myshocks]=state_update_without_test(a_filt,K,v,st)
+        retcode=0;
+        lgcobs=last_good_future_information(t);
+        if lgcobs==0
+            % compute the simple update: expected shocks are zero
+            %-----------------------------------------------------
+            atmp=a_filt+K*v;
+            myshocks=shocks;
+            is_redo_K=false;
+        else
+            is_redo_K=true;
+            % compute the conditional update
+            %-------------------------------------------------------------
+            y0=simul_initial_conditions(a_filt);
+            options_=options;
+            options_.nsteps=lgcobs+1;
+            options_.shocks(:,options_.nsteps+1:end)=0;
+            [fsteps,~,retcode,~,myshocks]=utils.forecast.multi_step(y0,...
+                ss(st),Tbig(st),xlocs,options_);
+            atmp=fsteps(:,1);
+        end
+        a_update=atmp;
+        if is_redo_K
+            K=recompute_kalman_gain(a_update,a_filt,v);
+        end
+        function lgcobs=last_good_future_information(t)
+            expected_data=squeeze(data_y(:,t,2:min(horizon,npages)));
+            good_obs=any(~isnan(expected_data),1);
+            lgcobs=length(good_obs);
+            while ~isempty(good_obs)
+                if good_obs(end)
+                    break
+                else
+                    good_obs(end)=[];
+                    lgcobs=lgcobs-1;
+                end
+            end
+        end
+    end
+
+    function [a_update,K,retcode,myshocks_]=state_update_with_test(a_filt,K,v,st)
+        retcode=0;
+        % compute the update
+        %--------------------
+        atmp=a_filt+K*v;
+        % compute one-step forecast from the update and check whether we
+        % can expect violations
+        %----------------------------------------------------------------
+        atmp_ss=atmp-ss{st};
+        a_expect=ss{st}+T{st}*atmp_ss(xlocs);
+        violations=~isempty(sep_compl) && any(sep_compl(a_expect)<cutoff);
+        % if we can expect violations, inform the state that constraints
+        % will be binding
+        %----------------------------------------------------------------
+        start_iter=1;
+        if options.debug
+            old_update=atmp(:,ones(1,horizon));
+            old_update(:,2:end)=nan;
+        end
+        % initialize the shocks
+        %------------------------
+        myshocks_=shocks;
+        is_redo_K=false;
+        while start_iter<horizon && violations
+            is_redo_K=true;
+            start_iter=start_iter+1;
+            y0=simul_initial_conditions(a_filt,start_iter);
+            [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
+            if retcode
+                a_update=[];
+                return
+            end
+            for iter=1:options.nsteps
+                violations=any(sep_compl(fsteps(:,iter))<cutoff);
+                if violations
+                    break
+                end
+            end
+            if start_iter==horizon
+                % if we have come so far, then there is no violation in the
+                % last step. But there could be some in the future step
+                f__=fsteps(:,end)-ss{st};
+                a_expect=ss{st}+T{st}*f__(xlocs);
+                violations=any(sep_compl(a_expect)<cutoff);
+            end
+            if ~violations
+                atmp=fsteps(:,1);
+            end
+            if options.debug
+                old_update(:,start_iter)=fsteps(:,1);
+            end
+        end
+        % make sure we have the correct size since there may be more shocks
+        % resulting from forecasting multi-periods
+        %------------------------------------------------------------------
+        myshocks_=myshocks_(:,1:horizon);
+        if options.debug && start_iter>1
+            keyboard
+        end
+        if violations
+            retcode=701;
+        end
+        a_update=atmp;
+        if is_redo_K
+            if options.debug
+                Kold=K;
+            end
+            K=recompute_kalman_gain(a_update,a_filt,v);
+            if options.debug
+                keyboard
+            end
+        end
+    end
+
     function T=resquare(T)
         tmp=zeros(m);
         tmp(:,xlocs)=T;
@@ -359,12 +582,16 @@ end
             end
         end
     end
+
     function store_predictions()
         Filters.PAI(:,t+1)=PAI;
         Filters.Q(:,:,t+1)=Q;
         for splus_=1:h
             Filters.a{splus_}(:,1,t+1)=a{splus_};
             Filters.P{splus_}(:,:,t+1)=P{splus_};
+            % remove the first period since the shocks were
+            % expected already from the period before...
+            shocks_splus=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
             for istep_=2:nsteps
                 % this assumes that we stay in the same state and we know
                 % we will stay. The more general case where we can jump to
@@ -375,7 +602,9 @@ end
                     Utplus=[];
                 end
                 [Filters.a{splus_}(:,istep_,t+1),~,rcode]=ff(splus_,...
-                    Filters.a{splus_}(:,istep_-1,t+1),shocks,Utplus);
+                    Filters.a{splus_}(:,istep_-1,t+1),shocks_splus,Utplus);
+                % update the shocks
+                shocks_splus=[shocks_splus(:,2:end),shocks(:,1)];
                 if rcode
                     % do not exit completely...
                     break
@@ -383,4 +612,9 @@ end
             end
         end
     end
+
+end
+
+function K=recompute_kalman_gain(a_update,a_filt,v)
+K=(a_update-a_filt)*pinv(v);
 end

@@ -244,14 +244,14 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     att=a;
     Ptt=P;
     
-    [Q,retcode]=Qfunc(att{1});
-    if retcode
-        return
-    end
-    
-    % Probabilities predictions
-    %--------------------------
     if h>1
+        [Q,retcode]=Qfunc(att{1});
+        if retcode
+            return
+        end
+        
+        % Probabilities predictions
+        %--------------------------
         PAI=Q'*PAItt;
     end
     
