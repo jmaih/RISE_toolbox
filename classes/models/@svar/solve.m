@@ -54,15 +54,21 @@ if ~retcode
             % constant is at the end according to vartools.set_y_and_x 
             %---------------------------------------------------------
             constant=obj.solution.c{istate}(:,end);
-            LEFT=eye(endo_nbr);
-            if isfield(obj.solution,'a0')
-                LEFT=obj.solution.a0{istate};
+            if any(abs(constant)>1e-7)
+                LEFT=eye(endo_nbr);
+                if isfield(obj.solution,'a0')
+                    LEFT=obj.solution.a0{istate};
+                end
+                for ilag=1:obj.nlags
+                    lag_name=sprintf('a%0.0f',ilag);
+                    LEFT=LEFT-obj.solution.(lag_name){istate};
+                end
+                steady_state{istate}=pinv(LEFT)*constant;
+                if any(isnan(steady_state{istate}))
+                    retcode=1;
+                    break
+                end
             end
-            for ilag=1:obj.nlags
-                lag_name=sprintf('a%0.0f',ilag);
-                LEFT=LEFT-obj.solution.(lag_name){istate};
-            end
-            steady_state{istate}=LEFT\constant;
         end
     end
     obj.solution.ss=steady_state;
