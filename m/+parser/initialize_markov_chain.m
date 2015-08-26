@@ -37,7 +37,8 @@ if nargin==0
     return
 end
 
-assert(isvarname(name) && ~any(name=='_'),'bad name for markov chain');
+assert(isvarname(name) && ~any(name=='_'),...
+    'The name for a markov chain must be a valid variable name and not contain any "_"');
 
 [is_endogenous,param_list,param_list_tex,is_switching,duration]=...
     utils.miscellaneous.parse_arguments(pnames_defaults,varargin{:});
