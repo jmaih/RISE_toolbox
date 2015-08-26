@@ -172,14 +172,8 @@ classdef coef
                 end
                 function reformat_parameter_name()
                     if ~ischar(vv)% %eqtn,var_pos,lag,chain_name,state
-                        eqtn=vv{1};
-                        var_pos=vv{2};
-                        if ischar(var_pos)
-                            var_pos=find(strcmp(var_pos,endo_names));
-                            if isempty(var_pos)
-                                error([var_pos,' is not recognized as a variable name'])
-                            end
-                        end
+                        eqtn=find_variable_position(vv{1});
+                        var_pos=find_variable_position(vv{2});
                         lag=vv{3};
                         pname=sprintf('a%0.0f_%0.0f_%0.0f',...
                             lag,eqtn,var_pos);
@@ -191,6 +185,20 @@ classdef coef
                         vv=pname;
                     end
                     vv=parser.param_name_to_valid_param_name(vv);
+                    function loc=find_variable_position(str)
+                        loc=str;
+                        if ischar(str)
+                            loc=find(strcmp(str,endo_names));
+                            if isempty(str)
+                                error([str,' is not recognized as a variable name'])
+                            end
+                        end
+                        if loc>numel(endo_names)
+                            disp(vv)
+                            error(['One of the indexes in the name above ',...
+                                'exceeds the number of endogenous variables'])
+                        end
+                    end
                 end
             end
             function [param_names,governing_chain,parameter_values,...
