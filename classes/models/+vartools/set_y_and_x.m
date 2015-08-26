@@ -20,6 +20,9 @@ function [y,x,n,T]=set_y_and_x(datay,datax,nlags,constant)
 % See also: 
 
 [n,smpl]=size(datay);
+if ~all(isfinite(datay(:)))
+    error('estimation data for VARs must be free of NaNs and Inf')
+end
 if constant
     datax=[datax;ones(1,smpl)];
 end
