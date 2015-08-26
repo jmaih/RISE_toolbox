@@ -117,7 +117,7 @@ markov_chains_=mc(:)'; % for some reason I need this to be a row vector
                 prev=co(ico);
             end
         else
-            something=regexp(plist,[cp,'\w*'],'match');
+            something=regexp(plist,['(?<!\w+)',cp,'\w*'],'match');
             thisList=union(thisList,[something{:}]);
         end
     end
