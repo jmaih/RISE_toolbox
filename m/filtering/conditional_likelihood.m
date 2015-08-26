@@ -1,4 +1,4 @@
-function [lik,v_iF_v]=conditional_likelihood(v,iF,dF,pp)
+function [loglik,v_iF_v,lik]=conditional_likelihood(v,iF,dF,pp)
 % H1 line
 %
 % Syntax
@@ -20,5 +20,8 @@ function [lik,v_iF_v]=conditional_likelihood(v,iF,dF,pp)
 % See also: 
 
 v_iF_v=v'*iF*v;
-lik=(2*pi)^(-.5*pp)*dF^(-.5)*exp(-.5*v_iF_v);
+loglik=-.5*(pp*log(2*pi)+log(dF)+v_iF_v);
+if nargout>2
+    lik=exp(loglik);
+end
 end
