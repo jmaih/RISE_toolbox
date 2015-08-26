@@ -240,7 +240,7 @@ end
         for state=1:h
             [~,m,abar,a0]=compute_hyperparameters(state);
             sd=sqrt(abar*(a0-abar)/(a0^2*(a0+1)));
-            ipar=1*(h==2)+2*(h==1);
+            ipar=1*(state==2)+2*(state==1);
             pname=get_chain_param_name(state,ipar);
             p.(pname)={m,m,sd,'beta_pdf'};
         end
