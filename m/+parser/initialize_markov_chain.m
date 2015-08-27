@@ -38,7 +38,8 @@ if nargin==0
 end
 
 assert(isvarname(name) && ~any(name=='_'),...
-    'The name for a markov chain must be a valid variable name and not contain any "_"');
+    ['The name for a markov chain must be a valid variable name and not ',...
+    ' contain any "_". ',name,' is not valid']);
 
 [is_endogenous,param_list,param_list_tex,is_switching,duration]=...
     utils.miscellaneous.parse_arguments(pnames_defaults,varargin{:});
