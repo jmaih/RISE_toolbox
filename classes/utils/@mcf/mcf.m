@@ -161,8 +161,12 @@ classdef mcf < handle
                     end
                 end
                 is_already_checked=islogical(check_behavior);
-                if ~is_already_checked && ~isa(check_behavior,'function_handle')
-                    error(check_behave_error)
+                if is_already_checked
+                    nout=0;
+                else
+                    if ~isa(check_behavior,'function_handle')
+                        error(check_behave_error)
+                    end
                 end
                 if isempty(nout)
                     obj.number_of_outputs=nargout(check_behavior);
@@ -199,7 +203,13 @@ classdef mcf < handle
                 
                 % lower and upper bounds on the parameters
                 %-----------------------------------------
-                if ~obj.is_sampled
+                if obj.is_sampled
+                    if isempty(lb)||isempty(ub)
+                        lb=min(obj.samples,[],2);
+                        ub=max(obj.samples,[],2);
+                    end
+                    nrows=numel(lb);
+                else
                     if isempty(lb)||isempty(ub)
                         error('no samples provided and so lb and ub must be given')
                     end
@@ -213,10 +223,10 @@ classdef mcf < handle
                     if any(ub<lb)
                         error('ub cannot be lower than lb')
                     end
-                    obj.lb=lb;
-                    obj.ub=ub;
-                    obj.nparam=nrows;
                 end
+                obj.nparam=nrows;
+                obj.lb=lb;
+                obj.ub=ub;
                 % create parameter names if empty!!!
                 %-----------------------------------
                 names=utils.char.create_names(names,'p',obj.nparam);
@@ -343,7 +353,7 @@ classdef mcf < handle
                 plot(d.x,[d.f_behave,d.f_non_behave],...
                     [xn,xn],[d.f_behave(largest),d.f_non_behave(largest)],'linewidth',2);
                 axis([d.lb,d.ub,0,1])
-                texname=[xname,' (Dn=',num2str(Dn),', P-value=',num2str(pValue),')'];
+                texname={xname;[' (Dn=',num2str(Dn),', P-value=',num2str(pValue),')']};
                 legend_={'cdf behavior','cdf non-behavior','max dist.'};
             end
         end
