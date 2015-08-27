@@ -266,7 +266,20 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 obj=setup_linear_restrictions(obj);
 obj=setup_general_restrictions(obj);
 
-[x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,ub); %#ok<ASGLU>
+% shorten everything in the presence of linear restrictions
+%-----------------------------------------------------------
+[x0,lbub_short]=shorten_under_linear_restrictions(obj,x0,[lb,ub]);
+
+lb_short=lbub_short(:,1);
+ub_short=lbub_short(:,2);
+
+[x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb_short,ub_short); %#ok<ASGLU>
+
+% extend the output but not the short hessian
+%---------------------------------------------
+linear_restricts=obj(1).linear_restrictions_data;
+x1 = linear_restricts.a_func(x1);
+x0 = linear_restricts.a_func(x0); %#ok<NASGU>
 
 numberOfActiveInequalities=numel(viol);
 
@@ -305,8 +318,8 @@ for ii=1:nobj
     
     % Marginal data density and other variable outputs that can be calculated separately
     %-----------------------------------------------------------------------------------
-    post_max=generic_tools.posterior_maximization_variable_quantities(post_max,H,...
-        obj(ii).options.estim_optimizer_hessian);
+    post_max=generic_tools.posterior_maximization_variable_quantities(...
+        post_max,linear_restricts.a_func,obj(ii).options.estim_optimizer_hessian);
     
     obj(ii).estimation.posterior_maximization=post_max;
     

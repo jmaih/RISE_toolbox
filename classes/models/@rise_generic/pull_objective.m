@@ -1,4 +1,4 @@
-function [ff,lb,ub]=pull_objective(obj,varargin)
+function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
 % pull_objective -- pulls the objective function to optimize
 %
 % Syntax
@@ -24,6 +24,11 @@ function [ff,lb,ub]=pull_objective(obj,varargin)
 % - **lb** [d x 1 vector]: lower bound of the parameters to optimize
 %
 % - **ub** [d x 1 vector]: upper bound of the parameters to optimize
+%
+% - **x0** [d x 1 vector]: posterior mode if available
+%
+% - **vcov** [d x d matrix]: covariance matrix at the posterior mode if
+% available.
 %
 % More About
 % ------------
@@ -51,8 +56,19 @@ if isempty(obj)
     ff=struct();
     return
 end
+% if the prior is set, the following should available even if the model has
+% not been estimated yet.
 lb=[obj.estimation.priors.lower_bound]';
 ub=[obj.estimation.priors.upper_bound]';
+x0=obj.estimation.posterior_maximization.mode;
+vcov=obj.estimation.posterior_maximization.vcov;
+
+% shorten everything in the presence of linear restrictions
+%-----------------------------------------------------------
+[x0,vcov,lbub_short]=shorten_under_linear_restrictions(obj,x0,{vcov},[lb,ub]);
+
+lb=lbub_short(:,1);
+ub=lbub_short(:,2);
 
 % try to avoid unnecessary computations like storing filters and so on
 %----------------------------------------------------------------------

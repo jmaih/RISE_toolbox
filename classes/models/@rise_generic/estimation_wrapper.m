@@ -71,7 +71,6 @@ if isempty(obj(1).linear_restrictions_data)
     obj=setup_general_restrictions(obj);
 end
 
-linear_restricts=obj(1).linear_restrictions_data;
 nobj=numel(obj);
 ngenrest=0;
 c=cell(1,nobj);
@@ -96,30 +95,16 @@ estim_blocks=obj(1).options.estim_blocks;
 if ~isempty(estim_blocks)
     estim_blocks=create_estimation_blocks(obj(1),estim_blocks);
 end
-lb_short=linear_restricts.a2tilde_func(lb);
-ub_short=linear_restricts.a2tilde_func(ub);
-npar_short=size(lb_short,1);
-bad=lb_short>ub_short;
-if any(bad)
-    tmp=lb_short;
-    lb_short(bad)=ub_short(bad);
-    ub_short(bad)=tmp(bad);
-end
 
 violLast=[];
 xLast=[];
 viol=[];
-if isempty(x0)
-    x0=lb_short+(ub_short-lb_short).*rand(npar_short,1);
-else
-    x0=linear_restricts.a2tilde_func(x0);
-end
 switch action
     case 'estimate'
         PROBLEM_=struct('objective',@fh_wrapper,...
             'x0',x0,...
-            'lb',lb_short,...
-            'ub',ub_short,...
+            'lb',lb,...
+            'ub',ub,...
             'nonlcon',@nonlcon_with_gradient,... % the nonlinear constraints restrictions take the same inputs as fh_wrapper
             'options',obj(1).options.optimset,...
             'estim_optimizer_hessian',obj(1).options.estim_optimizer_hessian,...
@@ -136,21 +121,6 @@ switch action
     otherwise
         error(['unknown type of action ',action])
 end
-% extend the output
-%-------------------
-x1 = linear_restricts.a_func(x1);
-if ~isempty(H)
-    % the second arguments indicates that it is a covariance term
-    d=numel(x1);
-    npages=size(H,3);
-    Htmp=nan(d,d,npages);
-    for ipage=1:npages
-        if ~any(isnan(vec(H(:,:,ipage))))
-            Htmp(:,:,ipage) = linear_restricts.a_func(H(:,:,ipage),true);
-        end
-    end
-    H=Htmp; clear Htmp
-end
 
     function [minus_log_post,retcode]=fh_wrapper(xtilde)
         % this function returns the minimax if there are many objects
@@ -161,15 +131,11 @@ end
         % contains crucial information going forward. In particular, it contains
         % information about whether the model is stationary or not.
         
-        % expand x before doing anything
-        %-------------------------------
-        x=linear_restricts.a_func(xtilde);
-        
         % untransform in the presence of dirichlet right here and right
         % now. Otherwise there will be a wrong prior evaluation and further
         % problems down the road
         %------------------------------------------------------------------
-        x=unstransform_estimates(obj(1),x);
+        x=unstransform_estimates(obj(1),xtilde);
         fval=estim_penalty*ones(1,nobj);
         
         % general restrictions are sometimes infeasible. Rather than
@@ -244,9 +210,9 @@ end
 
     function [viol,grad]=nonlcon_with_gradient(xtilde)
         grad=[];
-        % expand x before doing anything
-        %-------------------------------
-        x=linear_restricts.a_func(xtilde);
+        % unstransform xtilde into x before doing anything
+        %--------------------------------------------------
+        x=unstransform_estimates(obj(1),xtilde);
         viol=mynonlinear_constraints(x,obj);
     end
 end

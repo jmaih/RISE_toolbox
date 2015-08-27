@@ -222,7 +222,7 @@ end
                     end
                     post_max=obj.estimation.posterior_maximization;
                     post_max=generic_tools.posterior_maximization_variable_quantities(...
-                        post_max,post_max.hessian,propval);
+                        post_max,obj.linear_restrictions_data.a_func,propval);
                     obj.estimation.posterior_maximization=post_max;
                 end
             elseif strcmp(propname,'optimset')

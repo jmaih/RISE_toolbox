@@ -35,6 +35,11 @@ if isempty(obj)
     return
 end
 
+linear_restricts=obj(1).linear_restrictions_data;
+% expand x before doing anything
+%-------------------------------
+x=linear_restricts.a_func(x);
+
 % the transformations occur in setup_priors in function do_the_dirichlet
 %------------------------------------------------------------------------
 % Now we undo them

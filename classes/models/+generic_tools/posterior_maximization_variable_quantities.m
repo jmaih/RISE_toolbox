@@ -1,4 +1,5 @@
-function post_max=posterior_maximization_variable_quantities(post_max,H,flag)
+function post_max=posterior_maximization_variable_quantities(post_max,...
+    a_func,flag)
 % posterior_maximization_variable_quantities -- recomputes the quantities
 % that depend of the Hessian
 %
@@ -16,8 +17,8 @@ function post_max=posterior_maximization_variable_quantities(post_max,H,flag)
 % - **post_max** [struct]: more specifically the content of
 % obj.estimation.posterior_maximization
 %
-% - **H** [d x d x k array]: Array of hessians. Each page represents a
-% hessian.
+% - **a_func** [function_handle]: function that inflates x and Vx under
+% linear restrictions.
 %
 % - **flag** [{true}|false|numeric]: indicator for the type of hessian to
 % use. If true, the hessian returned by the optimizer is used. If false,
@@ -42,7 +43,7 @@ function post_max=posterior_maximization_variable_quantities(post_max,H,flag)
 
 % flag = true --> optimizer hessian
 % flag = false --> numerical hessian
-if nargin<2
+if nargin<3
     flag=true;
 end
 if islogical(flag)
@@ -51,6 +52,8 @@ end
 if flag==0
     flag=2;
 end
+
+H=post_max.hessian;
 
 pages=1:size(H,3);
 if isempty(pages)
@@ -68,13 +71,21 @@ else
     H=H(:,:,2);
 end
 
+% compute marginal data density based on the short hessian
+%----------------------------------------------------------
 d=size(H,1);
 Hinv=H\eye(d);
-SD=sqrt(diag(Hinv));
-post_max.mode_stdev=SD; %
 post_max.log_marginal_data_density_laplace=...
     utils.marginal_data_density.laplace(post_max.log_post,Hinv);
-post_max.vcov=Hinv; %
+
+% inflate the covariance under linear restrictions
+%--------------------------------------------------
+post_max.vcov=a_func(Hinv,true); %
+
+% compute the standard deviations based on the inflated covariance
+%------------------------------------------------------------------
+SD=sqrt(diag(post_max.vcov));
+post_max.mode_stdev=SD; %
 
     function flag=is_valid_hessian(H)
         flag=~any(isnan(vec(H)));

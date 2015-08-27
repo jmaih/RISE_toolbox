@@ -172,6 +172,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=re_order_output_rows(varargin)
         varargout=set_simulation_initial_conditions(varargin)
         varargout=unstransform_estimates(varargin)
+        varargout=shorten_under_linear_restrictions(varargin)
     end
     methods(Hidden=true)
         varargout=assign_estimates(varargin)
