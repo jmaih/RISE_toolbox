@@ -51,32 +51,29 @@ if isempty(simulation_folder)
 end
 
 pnames={obj.estimation.priors.name};
+need_untransform=true;
 if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
-    % this case might not work well if we have markov chains with more
-    % than 2 states. the recenter function is not enough in that case.
-    % One also needs to find a way to make sure that all the drawn
-    % elements in the dirichlet parameters, say, sum to 1. Also, the
-    % use of the recenter function in this case might be called into
-    % question since only the parameters that fall outside their
-    % boundaries are "recentered"
-    n=numel(obj.estimation.priors);
-    lb=vertcat(obj.estimation.priors.lower_bound);
-    ub=vertcat(obj.estimation.priors.upper_bound);
     switch simulation_folder
         case 'mode'
-            [cc,pp]=chol(obj.estimation.posterior_maximization.vcov);
+            lb=vertcat(obj.estimation.priors.lower_bound);
+            ub=vertcat(obj.estimation.priors.upper_bound);
+            xmode=obj.estimation.posterior_maximization.mode;
+            % Draw from the short side and then untransform. The dirichlet
+            % distributions should be fine.
+            [xmode,vcov,lbub_short]=shorten_under_linear_restrictions(obj,...
+                xmode,{obj.estimation.posterior_maximization.vcov},[lb,ub]);
+            [cc,pp]=chol(vcov);
             if pp
                 error([mfilename,':: covariance matrix of estimated parameters not positive definite'])
             end
-            xmode=obj.estimation.posterior_maximization.mode;
+            n=numel(xmode);
             draw=xmode+transpose(cc)*randn(n,1);
+            draw=utils.optim.recenter(draw,lbub_short(:,1),lbub_short(:,2));
         case 'prior'
+            need_untransform=false;
             distribs={obj.estimation.priors.prior_distrib};
-            % replace the dirichlet with the beta
-            %-------------------------------------
-            distribs=strrep(distribs,'dirichlet','beta');
             udistrib=unique(distribs);
-            draw=nan(numel(distribs),1);
+            x=nan(numel(distribs),1);
             for idist=1:numel(udistrib)
                 % the dirichlets are drawn separately
                 %-------------------------------------
@@ -87,14 +84,13 @@ if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
                 a=vertcat(obj.estimation.priors(loc).a);
                 b=vertcat(obj.estimation.priors(loc).b);
                 [~,~,~,rndfn]=distributions.(udistrib{idist});
-                draw(loc)=rndfn(a,b);
+                x(loc)=rndfn(a,b);
             end
             for id=1:numel(obj.estim_dirichlet)
                 loc=obj.estim_dirichlet(id).location;
-                draw(loc)=obj.estim_dirichlet(id).rndfn(1);
+                x(loc)=obj.estim_dirichlet(id).rndfn(1);
             end
     end
-    draw=utils.optim.recenter(draw,lb,ub);
 else
     is_saved_to_disk=ischar(simulation_folder);
     if is_saved_to_disk
@@ -123,9 +119,12 @@ else
     end
 end
 
-% The user may want to set the parameters directly himself and do it is a
-% good idea to untransform the parameters for him
-x=unstransform_estimates(obj,draw);
+if need_untransform
+    % The user may want to set the parameters directly himself and do it is a
+    % good idea to untransform the parameters for him
+    x=unstransform_estimates(obj,draw);
+end
+
 draw={pnames,x};
 if nargout>1
     % assignin estimates will be faster than calling
