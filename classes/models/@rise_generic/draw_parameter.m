@@ -73,7 +73,7 @@ if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
             need_untransform=false;
             distribs={obj.estimation.priors.prior_distrib};
             udistrib=unique(distribs);
-            x=nan(numel(distribs),1);
+            draw=nan(numel(distribs),1);
             for idist=1:numel(udistrib)
                 % the dirichlets are drawn separately
                 %-------------------------------------
@@ -84,11 +84,11 @@ if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
                 a=vertcat(obj.estimation.priors(loc).a);
                 b=vertcat(obj.estimation.priors(loc).b);
                 [~,~,~,rndfn]=distributions.(udistrib{idist});
-                x(loc)=rndfn(a,b);
+                draw(loc)=rndfn(a,b);
             end
             for id=1:numel(obj.estim_dirichlet)
                 loc=obj.estim_dirichlet(id).location;
-                x(loc)=obj.estim_dirichlet(id).rndfn(1);
+                draw(loc)=obj.estim_dirichlet(id).rndfn(1);
             end
     end
 else
@@ -123,6 +123,10 @@ if need_untransform
     % The user may want to set the parameters directly himself and do it is a
     % good idea to untransform the parameters for him
     x=unstransform_estimates(obj,draw);
+else
+    % we need to apply linear restrictions if necessary otherwise the
+    % linear restrictions are not enforced for the prior.
+    x=back_and_forth(draw);
 end
 
 draw={pnames,x};
@@ -132,4 +136,8 @@ if nargout>1
     obj=assign_estimates(obj,x);
 end
 
+    function x=back_and_forth(draw)
+        draw=obj(1).linear_restrictions_data.a2tilde_func(draw);
+        x=obj(1).linear_restrictions_data.a_func(draw);
+    end
 end
