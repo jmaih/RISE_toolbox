@@ -125,7 +125,7 @@ end
 
 % The user may want to set the parameters directly himself and do it is a
 % good idea to untransform the parameters for him
-x=unstransform_estimates(obj,draw{2});
+x=unstransform_estimates(obj,draw);
 draw={pnames,x};
 if nargout>1
     % assignin estimates will be faster than calling
