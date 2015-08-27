@@ -128,7 +128,6 @@ end
 
     function [Incr,ut,prob_udate,prob_filt]=msvar_likelihood(B,SIG)
         ut=cell(1,h);
-        %         fst=cell(1,h);
         Incr=nan(T,1);
         pf=nan(h,1);
         prob_udate=zeros(h,T);
@@ -140,7 +139,7 @@ end
         
         iSIG=SIG;
         detSIG=SIG;
-        for st=1:h
+        for st=h:-1:1 % reverse the order of computation
             [~,p] = chol(SIG{st});
             if p~=0
                 retcode=305;
@@ -149,17 +148,16 @@ end
             ds=det(SIG{st});
             iSIG{st}=SIG{st}\eye(n);
             detSIG{st}=((2*pi)^n*ds)^(-0.5);
-        end
-        % compute the density conditional on the regime (st)
-        %---------------------------------------------------
-        for st=1:h
+            
+            % compute the density conditional on the regime (st)
+            %---------------------------------------------------
             ut{st}=y-B{st}*x;
         end
         
         for t=1:T
             % aggregate/integrate the densities
             %----------------------------------
-            for st=1:h
+            for st=h:-1:1 % reverse the order of computation
                 ust=ut{st}(:,t);
                 fst=detSIG{st}*exp(-0.5*ust'*iSIG{st}*ust);
                 pf(st)=prob_filt(st,t)*fst;
