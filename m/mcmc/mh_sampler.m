@@ -92,8 +92,8 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'use_true_moments',false,@(x)isscalar(x) && islogical(x),'use_true_moments should be a logical scalar'
     'logproppdf',[],@(x)isa(x,'function_handle'),'logproppdf must be a function handle'
     'MaxTime',inf,@(x)num_fin(x) && x>0,'MaxTime must be a positive scalar'
+    'adapt_covariance',false,@(x)isscalar(x) && islogical(x),'adapt_covariance should be a logical scalar'
 %     'delay_rejection',true,@(x)isscalar(x) && islogical(x),'delay_rejection should be a logical scalar'
-%     'adapt_covariance',false,@(x)isscalar(x) && islogical(x),'adapt_covariance should be a logical scalar'
     };
 
 
@@ -183,8 +183,13 @@ if isempty(mu)
     mu=.5*(ub+lb);
 end
 
+% covariance adaptations
+%-------------------------
+adapt_covariance=options.adapt_covariance;
+
 if isempty(SIG)
     SIG=1e-4*eye(d);%SIG=covar;
+    adapt_covariance=true;
 end
 mu=mu(:,ones(1,nchain));
 SIG=SIG(:,:,ones(1,nchain));
@@ -332,12 +337,14 @@ do_results()
     end
 
     function moments_updating()
-        for ichain=1:nchain
-            [mu(:,ichain),SIG(:,:,ichain)]=utils.moments.recursive(...
-                mu(:,ichain),SIG(:,:,ichain),stud(ichain).x,obj.iterations);
-            [mu_algo(:,ichain),SIG_algo(:,:,ichain)]=utils.mcmc.update_moments(...
-                mu_algo(:,ichain),SIG_algo(:,:,ichain),stud(ichain).x,obj.iterations,...
-                options.rwm_exp);
+        if adapt_covariance
+            for ichain=1:nchain
+                [mu(:,ichain),SIG(:,:,ichain)]=utils.moments.recursive(...
+                    mu(:,ichain),SIG(:,:,ichain),stud(ichain).x,obj.iterations);
+                [mu_algo(:,ichain),SIG_algo(:,:,ichain)]=utils.mcmc.update_moments(...
+                    mu_algo(:,ichain),SIG_algo(:,:,ichain),stud(ichain).x,obj.iterations,...
+                    options.rwm_exp);
+            end
         end
     end
 
