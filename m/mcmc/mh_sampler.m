@@ -44,6 +44,8 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
 %   - **logproppdf** [function_handle|{[]}]: used when the proposal is not
 %   symmetric
 %   - **MaxTime** [numeric|{inf}]: maximum simulation time.
+%   - **adapt_covariance** [true|{false}]: If true, the covariance matrix
+%   is updated with the sampled draws.
 %
 % - **mu** [d x 1 vector]: initial condition for the sampler
 %
