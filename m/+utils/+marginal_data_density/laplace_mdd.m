@@ -1,13 +1,13 @@
-function log_mdd=laplace(log_post,Hinv)
+function log_mdd=laplace_mdd(log_post,Hinv)
 
-% laplace -- computes the log marginal data density using the laplace
+% LAPLACE_MDD -- computes the log marginal data density using the laplace
 % approximation
 %
 % Syntax
 % -------
 % ::
 %
-%   log_mdd=laplace(log_post,Hinv)
+%   log_mdd=LAPLACE_MDD(log_post,Hinv)
 %
 % Inputs
 % -------

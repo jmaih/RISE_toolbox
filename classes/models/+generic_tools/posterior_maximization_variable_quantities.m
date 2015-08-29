@@ -76,7 +76,7 @@ end
 d=size(H,1);
 Hinv=H\eye(d);
 post_max.log_marginal_data_density_laplace=...
-    utils.marginal_data_density.laplace(post_max.log_post,Hinv);
+    utils.marginal_data_density.laplace_mdd(post_max.log_post,Hinv);
 
 % inflate the covariance under linear restrictions
 %--------------------------------------------------
