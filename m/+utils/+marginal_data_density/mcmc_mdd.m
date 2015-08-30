@@ -37,12 +37,15 @@ function [log_mdd,qLswz,Lswz] = mcmc_mdd(theta_draws,lb,ub,options)
 %   - **center_at_mean** [{false}|true]: if true, the distribution is
 %   centered at the mean. Else, it is centered at the mode, which should be
 %   the maximum of the log posterior kernel in theta_draws
-%   - **algorithm** [{mhm}|swz|mueller|bridge]: 
+%   - **algorithm** [{mhm}|swz|mueller|bridge|is|ris|cj]: 
 %       - **mhm** is the modified harmonic mean
 %       - **swz** is the Sims, Waggoner and Zha (2008) algorithm
 %       - **mueller** is the unpublished Mueller algorithm (see Liu,
 %       Waggoner and Zha 2011). 
 %       - **bridge** is the Meng and Wong (1996) algorithm. 
+%       - **is** is the Importance sampling algorithm. 
+%       - **ris** is the reciprocal importance sampling algorithm. 
+%       - **cj** is the Chib and Jeliazkov (2001) algorithm. 
 %   - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities for
 %   the modified harmonic mean 
 %   - **L** [{[]}|integer]: number of elliptical draws (active if swz is
@@ -75,7 +78,7 @@ function [log_mdd,qLswz,Lswz] = mcmc_mdd(theta_draws,lb,ub,options)
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
-algorithms={'mhm','swz','mueller','bridge','is','ris'};
+algorithms={'mhm','swz','mueller','bridge','is','ris','cj'};
 defaults={ % arg_names -- defaults -- checks -- error_msg
     'swz_pvalue',90,@(x)num_fin(x) && x>=0 && x<=100,'swz_pvalue (???) must be in [0,100]'
     'center_at_mean',false,@(x)isscalar(x) && islogical(x),'center_at_mean should be a logical scalar'
@@ -183,7 +186,42 @@ switch algorithm
         log_mdd=do_importance_sampling();
     case 'ris'
         log_mdd=do_reciprocal_importance_sampling();
+    case 'cj'
+        log_mdd=do_chib_jeliazkov_2001();
 end
+
+    function log_mdd=do_chib_jeliazkov_2001()
+        % Posterior kernel at the mode
+        %--------------------------------------------------
+        numerator=LogPost_M(best_loc);
+        
+        % weighting-function density for the M original draws
+        %-----------------------------------------------------
+        Logq_M=old_draws_in_weighting_function('CJ');
+        
+        % log posterior kernel of the IID draws
+        %---------------------------------------
+        [LogPost_L]=iid_draws('CJ');
+        
+        % acceptance probability for the IID draws relative to the
+        % posterior mode 
+        %-----------------------------------------------------------------
+        alpha=zeros(1,L);
+        for idraw=1:L
+            logr=LogPost_L(idraw)-numerator;
+            alpha(idraw)=exp(min(0,logr));
+        end
+        
+        % approximate log posterior at the mode
+        %--------------------------------------
+        big=max(Logq_M);
+        top=exp(Logq_M-big);
+        lp_thet_y=big+log(mean(top))-log(mean(alpha));
+        
+        % finally compute the marginal data density
+        %------------------------------------------
+        log_mdd=numerator-lp_thet_y;
+    end
 
     function log_mdd=do_reciprocal_importance_sampling()
         % Sylvia Frühwirth-Schnatter (2004): "Estimating marginal
@@ -465,12 +503,17 @@ end
             tic
         end
         LogPost_L=zeros(1,L);
-        Logq_L=zeros(1,L);
+        eval_weighting=nargout>1;
+        if eval_weighting
+            Logq_L=zeros(1,L);
+        end
         for idraw=1:L
             v=Shat*randn(d,1);
             draw=recenter(x_bar+v);
             LogPost_L(idraw)=thecoef*log_post_kern(draw);
-            Logq_L(idraw)=normal_weighting(v);
+            if eval_weighting
+                Logq_L(idraw)=normal_weighting(v);
+            end
         end
         if debug
             fprintf('Done in %0.4d seconds\n\n',toc);
