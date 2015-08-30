@@ -1,17 +1,17 @@
-function [log_mdd,qLswz,Lswz] = mcmc_mdd(theta_draws,lb,ub,options)
+function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 % MCMC_MDD -- computes various types of log marginal data density
 %
 % Syntax
 % -------
 % ::
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws)
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws,lb)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb)
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws,lb,ub)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub)
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws,lb,ub,options)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub,options)
 %
 % Inputs
 % -------
@@ -46,27 +46,23 @@ function [log_mdd,qLswz,Lswz] = mcmc_mdd(theta_draws,lb,ub,options)
 %       - **is** is the Importance sampling algorithm. 
 %       - **ris** is the reciprocal importance sampling algorithm. 
 %       - **cj** is the Chib and Jeliazkov (2001) algorithm. 
-%   - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities for
-%   the modified harmonic mean 
-%   - **L** [{[]}|integer]: number of elliptical draws (active if swz is
-%   true) 
-%   - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
-%   bound in the SWZ algorithm
+%   - **L** [{[]}|integer]: number of IID draws
 %   - **maximization** [{false}|true]: Informs the procedure about whether
 %   we have a maximization or a minimization problem.
 %   - **debug** [{false}|true]: print useful information during estimation.
+%   - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities
+%   for the MHM algorithm 
+%   - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
+%   bound in the SWZ algorithm
+%   - **bridge_TolFun** [numeric|{sqrt(eps)}]: convergence criterion in the
+%   BRIDGE algorithm
 %
 % Outputs
 % --------
 %
 % - **log_mdd** [numeric]: log marginal data density
 %
-% - **qLswz** [numeric]: with an estimate of the fraction of iid draws from
-% the elliptical distribution such that the posterior kernel values at
-% these draws are greater than Lswz. (empty if swz is false)
-%
-% - **Lswz** [numeric]: such that swz_pvalue percent of the posterior draws have a
-% log posterior kernel values greater then Lswz. (empty if swz is false)
+% - **extras** [empty|struct]: further output from specific algorithms
 %
 % More About
 % ------------
@@ -80,15 +76,15 @@ num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
 algorithms={'mhm','swz','mueller','bridge','is','ris','cj'};
 defaults={ % arg_names -- defaults -- checks -- error_msg
-    'swz_pvalue',90,@(x)num_fin(x) && x>=0 && x<=100,'swz_pvalue (???) must be in [0,100]'
-    'center_at_mean',false,@(x)isscalar(x) && islogical(x),'center_at_mean should be a logical scalar'
     'log_post_kern',[],@(x)isa(x,'function_handle'),'log_posterior_kern should be a function handle'
-    'L',500,@(x)num_fin_int(x),'L (# of IID draws) should be an integer'
-    'mhm_tau',(.1:.1:.9),@(x)isempty(x)||(all(x>0) && all(x<1)),'mhm_tau (truncation probabilities of MHM) must all be in (0,1)'
-    'maximization',false,@(x)isscalar(x) && islogical(x),'maximization should be a logical scalar'
+    'center_at_mean',false,@(x)isscalar(x) && islogical(x),'center_at_mean should be a logical scalar'
     'algorithm','mhm',@(x)any(strcmp(x,algorithms)),['algorithm must be one of ',cell2mat(strcat(algorithms,'|'))]
+    'L',500,@(x)num_fin_int(x),'L (# of IID draws) should be an integer'
+    'maximization',false,@(x)isscalar(x) && islogical(x),'maximization should be a logical scalar'
     'debug',false,@(x)isscalar(x) && islogical(x),'debug should be a logical scalar'
-    'bridge_maxiter',1000,@(x)num_fin_int(x),'bridge_maxiter number of bridge iterations'
+    'mhm_tau',(.1:.1:.9),@(x)isempty(x)||(all(x>0) && all(x<1)),'mhm_tau (truncation probabilities of MHM) must all be in (0,1)'
+    'swz_pvalue',90,@(x)num_fin(x) && x>=0 && x<=100,'swz_pvalue (???) must be in [0,100]'
+    'bridge_TolFun',sqrt(eps),@(x)num_fin(x) && x>0,'bridge_TolFun (tolerance level) should be a positive scalar'
     };
 
 if nargin<4
@@ -119,7 +115,7 @@ algorithm=options.algorithm;
 
 debug=options.debug;
 
-bridge_maxiter=options.bridge_maxiter;
+bridge_TolFun=options.bridge_TolFun;
 
 is_need_log_posterior_kernel=~strcmp(algorithm,'mhm');
 
@@ -171,11 +167,11 @@ recenter=@(x)utils.optim.recenter(x,lb,ub,3);
 Shat = chol(SigmaMode,'lower');
 
 NumWorkers=utils.parallel.get_number_of_workers();
-Lswz=[];qLswz=[];
+extras=[];
 L = options.L;
 switch algorithm
     case 'swz'
-        [log_mdd,Lswz,qLswz]=do_sims_waggoner_zha_2008();
+        log_mdd=do_sims_waggoner_zha_2008();
     case 'mhm'
         log_mdd=do_modified_harmonic_mean();
     case 'mueller'
@@ -189,6 +185,9 @@ switch algorithm
     case 'cj'
         log_mdd=do_chib_jeliazkov_2001();
 end
+
+% Methods
+%----------
 
     function log_mdd=do_chib_jeliazkov_2001()
         % Posterior kernel at the mode
@@ -211,6 +210,8 @@ end
             logr=LogPost_L(idraw)-numerator;
             alpha(idraw)=exp(min(0,logr));
         end
+        
+        extras=struct('cj_alpha',alpha);
         
         % approximate log posterior at the mode
         %--------------------------------------
@@ -243,7 +244,7 @@ end
         log_mdd = ratiomax+log(mean(exp(ratio-ratiomax)));
     end
 
-    function log_mdd=do_bridge_1996()
+    function [log_mdd,lmdd]=do_bridge_1996()
         % Xiao-Li Meng and Wing Hung Wong (1996): " Simulating Ratios of
         % Normalizing Constants via a Simple Identity: A Theoretical
         % Exploration". Statistica Sinica, 6, 831–860.
@@ -261,16 +262,28 @@ end
         % 3- for a number of iterations, update an initial guess for the
         % log MDD
         %----------------------------------------------------------------
-        lmdd=zeros(bridge_maxiter,1);
-        for iter=2:bridge_maxiter
+        max_iter=1000;
+        lmdd=zeros(max_iter,1);
+        conv=inf(max_iter,1);
+        iter=1;
+        while conv(iter)>bridge_TolFun
+            iter=iter+1;
+            if iter==max_iter
+                lmdd(iter+1000)=0;
+                conv(iter+1000)=inf;
+                max_iter=max_iter+1000;
+            end
             lmdd(iter)=do_one_iteration(lmdd(iter-1));
             if debug
                 fprintf(1,'BRIDGE: iter #: %0.0f, lmdd: %0.4f\n',...
                     iter,lmdd(iter));
             end
+            conv(iter)=abs(lmdd(iter)-lmdd(iter-1));
         end
         
-        log_mdd=lmdd(end);
+        extras=struct('bridge_lmdd',lmdd(1:iter),'bridge_conv',conv(1:iter));
+
+        log_mdd=lmdd(iter);
         
         function lmdd=do_one_iteration(lmdd)
             % numerator
@@ -309,7 +322,7 @@ end
         end
     end
 
-    function [log_mdd,Lswz,qLswz]=do_sims_waggoner_zha_2008()
+    function log_mdd=do_sims_waggoner_zha_2008()
         swz_pvalue=options.swz_pvalue;
         % step 1: compute the r(s)
         % ------------------------
@@ -325,6 +338,7 @@ end
         bv_av=bb^v-aa^v;
         
         [~,~,Lswz,qLswz]=elliptical_distribution_log_posterior_kernel_and_bounds();
+        extras=struct('swz_L',Lswz,'swz_qL',qLswz);
         
         % step 4: Log values of the elliptical distribution at the posterior draws
         % -------------------------------------------------------------------------
@@ -420,10 +434,14 @@ end
             tic
             fzero_options=optimset('Display','iter');
         end
+        next=0;
+        max_iter=1000;
+        record=zeros(max_iter,1);
         log_mdd=fzero(@hfunc,0,fzero_options);
         if debug
             fprintf('Done in %0.4d seconds\n',toc);
         end
+        extras=struct('mueller_convergence',record(1:next));
         
         log_mdd=thecoef*log_mdd;
         
@@ -439,6 +457,12 @@ end
             good=right<0;
             right=sum(1-exp(right(good)))/M;
             h=left-right;
+            next=next+1;
+            if next==max_iter
+                record(next+1000)=0;
+                max_iter=max_iter+1000;
+            end
+            record(next)=h;
         end
     end
 
@@ -470,6 +494,8 @@ end
         log_mhm=max(facilitator-log(post_tmn));
     end
 
+% Utility functions
+%--------------------
     function [x_bar,Sigma_bar,Sigma_i,det_Sigma]=moments()
         if debug
             fprintf('MDD: Now computing moments from %0.0d draws...',M);

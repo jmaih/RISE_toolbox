@@ -5,13 +5,13 @@ function varargout = mcmc_mdd(varargin)
 % -------
 % ::
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws)
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws,lb)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb)
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws,lb,ub)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub)
 %
-%   [log_mdd,qLswz,Lswz] = MCMC_MDD(theta_draws,lb,ub,options)
+%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub,options)
 %
 % Inputs
 % -------
@@ -46,27 +46,23 @@ function varargout = mcmc_mdd(varargin)
 %       - **is** is the Importance sampling algorithm. 
 %       - **ris** is the reciprocal importance sampling algorithm. 
 %       - **cj** is the Chib and Jeliazkov (2001) algorithm. 
-%   - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities for
-%   the modified harmonic mean 
-%   - **L** [{[]}|integer]: number of elliptical draws (active if swz is
-%   true) 
-%   - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
-%   bound in the SWZ algorithm
+%   - **L** [{[]}|integer]: number of IID draws
 %   - **maximization** [{false}|true]: Informs the procedure about whether
 %   we have a maximization or a minimization problem.
 %   - **debug** [{false}|true]: print useful information during estimation.
+%   - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities
+%   for the MHM algorithm 
+%   - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
+%   bound in the SWZ algorithm
+%   - **bridge_TolFun** [numeric|{sqrt(eps)}]: convergence criterion in the
+%   BRIDGE algorithm
 %
 % Outputs
 % --------
 %
 % - **log_mdd** [numeric]: log marginal data density
 %
-% - **qLswz** [numeric]: with an estimate of the fraction of iid draws from
-% the elliptical distribution such that the posterior kernel values at
-% these draws are greater than Lswz. (empty if swz is false)
-%
-% - **Lswz** [numeric]: such that swz_pvalue percent of the posterior draws have a
-% log posterior kernel values greater then Lswz. (empty if swz is false)
+% - **extras** [empty|struct]: further output from specific algorithms
 %
 % More About
 % ------------
