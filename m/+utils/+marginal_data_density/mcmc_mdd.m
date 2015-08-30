@@ -279,6 +279,10 @@ end
                     iter,lmdd(iter));
             end
             conv(iter)=abs(lmdd(iter)-lmdd(iter-1));
+            if iter==2
+                % use a reasonable number at the start
+                conv(iter-1)=conv(iter);
+            end
         end
         
         extras=struct('bridge_lmdd',lmdd(1:iter),'bridge_conv',conv(1:iter));
