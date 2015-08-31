@@ -31,12 +31,19 @@ Names={v.Name};
 v=v(strcmp(Names,'MATLAB'));
 v=str2double(v.Version);
 n=0;
+success=false;
 if v>8.1
-    pool = gcp('nocreate');
-    if ~isempty(pool)
-        n=pool.NumWorkers;
+    try %#ok<TRYNC>
+        pool = gcp('nocreate');
+        if ~isempty(pool)
+            n=pool.NumWorkers;
+        end
+        success=true;
     end
-else
-    n=matlabpool('size'); %#ok<DPOOL>
+end
+if ~success
+    try %#ok<TRYNC>
+        n=matlabpool('size'); %#ok<DPOOL>
+    end
 end
 end
