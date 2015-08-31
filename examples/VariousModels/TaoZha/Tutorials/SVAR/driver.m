@@ -74,11 +74,14 @@ Results=mh_sampler(objective,lb,ub,mcmc_options,x0,SIG);
 %% Marginal data density
 % pick yours: 'bridge','mhm','mueller','swz','is','ris','cj'
 
-[log_mdd(ichoice),extras{ichoice}] = mcmc_mdd(Results.pop,lb,ub,...
-    struct('log_post_kern',objective,... % function to MINIMIZE
+log_mdd = mcmc_mdd(Results.pop,lb,ub,...
+    struct('log_post_kern',objective,... % function to MINIMIZE !!!
     'algorithm','swz',... % MDD algorithm
     'L',500 ... % Number of IID draws
 ));
+
+%% Impulse responses
+myirfs=irf(mest);
 
 %% Out-of sample forecasts at the mode
 
@@ -89,16 +92,3 @@ ndraws=200;
 plot_cf=true;
 [fkst,bands,hdl]=do_conditional_forecasts(mest,db,Results.pop,ndraws,plot_cf);
 
-%% Impulse responses
-myirfs=irf(mest);
-
-for ishock=1:numel(mest.exogenous.name)
-    shock_name=mest.exogenous.name{ishock};
-    figure('name',['IRF to a ',shock_name,' shock'])
-    for ivar=1:numel(varlist)
-        vname=varlist{ivar};
-        subplot(3,1,ivar)
-        plot(myirfs.(shock_name).(vname),'linewidth',2)
-        title(vname)
-    end
-end
