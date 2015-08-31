@@ -1,4 +1,4 @@
-function [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands)
+function [fkst,bands,hdl]=do_conditional_forecasts(m,db,draws,ndraws,cbands,do_plot)
 % do_conditional_forecasts -- do conditional forecast for a SVAR model.
 %
 % Syntax
@@ -10,6 +10,8 @@ function [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands)
 %   [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws)
 %
 %   [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands)
+%
+%   [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands,do_plot)
 %
 % Inputs
 % -------
@@ -25,12 +27,16 @@ function [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands)
 %
 % - **cbands** [empty|{[10,20,50,80,90]}]: 
 %
+% - **do_plot** [empty|true|{false}]: plot the conditional forecasts
+%
 % Outputs
 % --------
 %
 % - **fkst** [struct]: all forecasts for all parameter draws
 %
 % - **bands** [struct]: confidence bands for all variables.
+%
+% - **hdl** [empty|handle]: handle to the figure
 %
 % More About
 % ------------
@@ -40,10 +46,13 @@ function [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands)
 %
 % See also:
 
-if nargin<5
-    cbands=[];
-    if nargin<4
-        ndraws=[];
+if nargin<6
+    do_plot=[];
+    if nargin<5
+        cbands=[];
+        if nargin<4
+            ndraws=[];
+        end
     end
 end
 if isempty(cbands)
@@ -51,6 +60,9 @@ if isempty(cbands)
 end
 if isempty(ndraws)
     ndraws=200;
+end
+if isempty(do_plot)
+    do_plot=false;
 end
 
 % Generate conditions on ygap
@@ -125,4 +137,21 @@ for ivar=2:numel(model_vars)
         double(bands.(model_vars{ivar})));
 end
 
+
+hdl=[];
+
+if do_plot
+    figure('name','Conditional forecasts on ygap');
+    for ivar=1:m.endogenous.number
+        subplot(m.endogenous.number,1,ivar)
+        vname=m.endogenous.name{ivar};
+        plot(bands.(vname),'linewidth',2)
+        title(vname)
+        if ivar==3
+            leg=legend(get(bands.(vname),'varnames'));
+            set(leg,'interp','none','Orientation','horizontal',...
+                'location','SouthOutside')
+        end
+    end
+end
 end

@@ -54,11 +54,8 @@ end
 m=svar(tpl,'data',db,'estim_linear_restrictions',restrictions);
 
 %% find posterior mode
-profile off
-profile on
+
 mest=estimate(m,'estim_start_date','1960Q1');
-profile off
-profile viewer
 
 %% Markov chain Monte Carlo
 % Note that because of the linear restrictions, not all parameters are
@@ -75,23 +72,22 @@ mcmc_options=struct('burnin',ndraws_burnin,'N',ndraws_mcmc,'thin',1);
 Results=mh_sampler(objective,lb,ub,mcmc_options,x0,SIG);
 
 %% Marginal data density
-clc
-mdd_algorithms={'bridge','mhm','mueller','swz','is','ris','cj'};
-nalgos=numel(mdd_algorithms);
-log_mdd=zeros(1,nalgos);
-extras=cell(1,nalgos);
-howlong=zeros(1,nalgos);
-for ichoice=1:nalgos
-    tic
-    [log_mdd(ichoice),extras{ichoice}] = mcmc_mdd(Results.pop,lb,ub,...
-        struct('log_post_kern',objective,...
-        'algorithm',mdd_algorithms{ichoice},...
-        'L',500,'debug',true));
-    howlong(ichoice)=toc;
-    fprintf(1,'log MDD(%s): %0.4f time: %0.4f seconds\n',...
-        mdd_algorithms{ichoice},log_mdd(ichoice),...
-        howlong(ichoice));
-end
+% pick yours: 'bridge','mhm','mueller','swz','is','ris','cj'
+
+[log_mdd(ichoice),extras{ichoice}] = mcmc_mdd(Results.pop,lb,ub,...
+    struct('log_post_kern',objective,... % function to MINIMIZE
+    'algorithm','swz',... % MDD algorithm
+    'L',500 ... % Number of IID draws
+));
+
+%% Out-of sample forecasts at the mode
+
+mycast=forecast(mest);
+
+%% Conditional forecast on ygap: parameter uncertainty only...
+ndraws=200;
+plot_cf=true;
+[fkst,bands,hdl]=do_conditional_forecasts(mest,db,Results.pop,ndraws,plot_cf);
 
 %% Impulse responses
 myirfs=irf(mest);
@@ -104,26 +100,5 @@ for ishock=1:numel(mest.exogenous.name)
         subplot(3,1,ivar)
         plot(myirfs.(shock_name).(vname),'linewidth',2)
         title(vname)
-    end
-end
-%% Out-of sample forecasts
-
-mycast=forecast(mest);
-
-%% Conditional forecast on ygap: parameter uncertainty only...
-ndraws=200;
-[fkst,bands]=do_conditional_forecasts(mest,db,Results.pop,ndraws);
-
-%%
-figure('name','Conditional forecasts on ygap');
-for ivar=1:mest.endogenous.number
-    subplot(mest.endogenous.number,1,ivar)
-    vname=mest.endogenous.name{ivar};
-    plot(bands.(vname),'linewidth',2)
-    title(vname)
-    if ivar==3
-        leg=legend(get(bands.(vname),'varnames'));
-        set(leg,'interp','none','Orientation','horizontal',...
-            'location','SouthOutside')
     end
 end
