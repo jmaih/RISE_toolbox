@@ -79,7 +79,7 @@ end
 nobs=get(db.ygap,'NumberOfObservations');
 tmp=double(db.ygap);
 tmp=cat(3,tmp,nan(nobs,1,nconds));
-tmp(end,1,2:end)=ygap;
+tmp(end,1,2:end)=100*ygap;
 db.ygap=ts(db.ygap.start,tmp);
 
 % push the new dataset into the model, essentially replacing the old

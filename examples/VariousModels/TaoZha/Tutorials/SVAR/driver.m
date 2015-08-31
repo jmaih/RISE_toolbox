@@ -53,7 +53,7 @@ end
 %--------------------------------------------------------------------
 m=svar(tpl,'data',db,'estim_linear_restrictions',restrictions);
 
-%% find posterior mode
+%% Find posterior mode
 
 mest=estimate(m,'estim_start_date','1960Q1');
 
@@ -90,5 +90,6 @@ mycast=forecast(mest);
 %% Conditional forecast on ygap: parameter uncertainty only...
 ndraws=200;
 plot_cf=true;
-[fkst,bands,hdl]=do_conditional_forecasts(mest,db,Results.pop,ndraws,plot_cf);
+cbands=[10,20,50,80,90];
+[fkst,bands,hdl]=do_conditional_forecasts(mest,db,Results.pop,ndraws,cbands,plot_cf);
 
