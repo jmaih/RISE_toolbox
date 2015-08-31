@@ -4,12 +4,12 @@ home()
 %% Choose a model type: see cell "create the structural VAR model" below
 model_type=2;
 
-%% create dataset
+%% Create dataset
 do_plot=true;
 
 [db,varlist]=create_dataset(do_plot);
 
-%% create the structural VAR model
+%% Create the structural VAR model
 close()
 
 % first we create a template structure

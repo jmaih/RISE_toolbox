@@ -51,7 +51,7 @@ start_date=sprintf('%0.0dQ%0.0d',yrBin,qmBin);
 
 % create the data as a page
 %---------------------------
-db=ts(start_date,rawdb.xdd,varlist);
+db=ts(start_date,100*rawdb.xdd,varlist);
 
 % separate the various variables
 %-------------------------------
