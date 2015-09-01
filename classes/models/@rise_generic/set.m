@@ -270,9 +270,13 @@ end
         method_list=[method_list(:)','load_data'];%;'load_functions'
         myoptions=struct();
         for imeth=1:numel(method_list)
+            this_options=dum_obj.(method_list{imeth});
+%             clc
+%             disp(['--------------------',method_list{imeth},'----------------------'])
+%             disp(this_options)
+%             keyboard
             myoptions=utils.miscellaneous.mergestructures(myoptions,...
-                dum_obj.(method_list{imeth})...
-                );
+                this_options);
         end
         
         % Create the main options

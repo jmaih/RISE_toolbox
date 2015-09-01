@@ -29,7 +29,7 @@ if nobj==0
     return
 end
 
-if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
+if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
     % the following is hard-coded
     %----------------------------
     compute_hessian=false;

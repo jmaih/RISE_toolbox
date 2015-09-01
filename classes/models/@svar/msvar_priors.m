@@ -21,22 +21,14 @@ function obj=msvar_priors(obj,estim_names)
 
 
 if isempty(obj)
-    obj=struct('vp_mnst_overall_tightness',3,...1
-        'vp_mnst_relative_tightness_lags',1,...
-        'vp_mnst_relative_tightness_constant',0.1,...
-        'vp_mnst_tightness_on_lag_decay',0.5,...1.2
-        'vp_mnst_unit_root_vars','all',... % {'all'},'none',cellarray={'v1','v5','v10'}
-        'vp_mnst_stationary_var_mean',0.5,... % unit root = 1
-        'vp_natconj_normwish_variance',10,...
-        'vp_analytical_post_mode',true,... % compute the posterior mode analytically if possible
-        'vp_gls_ar1_processes',true,... % use the covariance formed by the ar1 processes when forming the posterior mode( else use the covariance of the OLS)
-        'vp_prior_type','minnesota'); % {minnesota},none,normal_wishart,indep_normal_wishart,jeffrey(diffuse) 
+    obj=struct(); 
     return
 end
 s=quick_ar1_processes();
 obj.miscellaneous.constant_var.sigma_=diag(s.^2);
+priors_hyperparams=obj.construction_data.priors_hyperparams;
 
-prior_type=obj.options.vp_prior_type;
+prior_type=priors_hyperparams.vp_prior_type;
 use_priors=~strcmp(prior_type,'none');
 if ~use_priors
     % use the minnesota to build the uniform... for now
@@ -46,15 +38,15 @@ end
 nvar=numel(s);
 if strcmp(prior_type,'minnesota')
     W_mnst=eye(nvar);
-    W_mnst(W_mnst==0)=obj.options.vp_mnst_relative_tightness_lags;
-        theta=obj.options.vp_mnst_overall_tightness;
-        phi=obj.options.vp_mnst_tightness_on_lag_decay;
+    W_mnst(W_mnst==0)=priors_hyperparams.vp_mnst_relative_tightness_lags;
+        theta=priors_hyperparams.vp_mnst_overall_tightness;
+        phi=priors_hyperparams.vp_mnst_tightness_on_lag_decay;
         if ~(0<=phi && phi<=1)
             error('thightness on lag decay expected to be between 0 and 1')
         end
-        lam_3=1/obj.options.vp_mnst_relative_tightness_constant;
+        lam_3=1/priors_hyperparams.vp_mnst_relative_tightness_constant;
         is_unit_root=true(1,nvar);
-        unit_root_vars=obj.options.vp_mnst_unit_root_vars;
+        unit_root_vars=priors_hyperparams.vp_mnst_unit_root_vars;
         if ischar(unit_root_vars)
             unit_root_vars=cellstr(unit_root_vars);
         end
@@ -198,7 +190,7 @@ obj=setup_priors(obj,MyPriors);
                         if is_unit_root(vn)
                             m=1;
                         else
-                            m=obj.options.vp_mnst_stationary_var_mean;
+                            m=priors_hyperparams.vp_mnst_stationary_var_mean;
                         end
                     end
                     % standard deviation
@@ -208,7 +200,7 @@ obj=setup_priors(obj,MyPriors);
                     sd=lam_3*s(eqtn);
                 end
             case {'normal_wishart','indep_normal_wishart'}
-                sd = sqrt(obj.options.vp_natconj_normwish_variance);
+                sd = sqrt(priors_hyperparams.vp_natconj_normwish_variance);
                 % Maybe allow the user to specify their own matrix here
                 % p.v_prior = nvar + 1; p.S_prior = eye(nvar);
             otherwise

@@ -79,6 +79,10 @@ classdef svar < rise_generic
                 obj=set(obj,varargin{:});
                 return
             end
+            r=varargin{1};
+            % make sure you do not mess with the prior hyperparameters
+            %---------------------------------------------------------
+            svar.check_template(r)
             out=vartools.preliminaries(varargin{:});
             obj=rise_generic.reset(obj,out.endogenous,out.exogenous,...
                 out.observables,out.markov_chains);
@@ -115,7 +119,18 @@ classdef svar < rise_generic
             nout=nargout;
             varargout=cell(1,nout);
             if isempty(obj)
-                [varargout{1:nout}]=estimate@rise_generic(obj);
+                est_opts=estimate@rise_generic(obj);
+                % option for computing the posterior mode analytically if possible
+                est_opts.estim_analytical_post_mode=true;
+                if nout
+                    if nout~=1
+                        error('number of output arguments can only be 1 in this case')
+                    end
+                    varargout=cell(1,1);
+                    varargout{1}=est_opts;
+                else
+                    disp(est_opts)
+                end
             else
                 [varargout{1:nout}]=estimate@rise_generic(obj,varargin{:});
             end
@@ -127,7 +142,7 @@ classdef svar < rise_generic
                 obj=set@rise_generic(obj,varargin{:});
                 % combine with specific elements if necessary
             else
-                very_special={'vp_prior_type','estim_linear_restrictions','data'};
+                very_special={'estim_linear_restrictions','data'};
                 redo_priors=false;
                 for iobj=1:numel(obj)
                     vargs=varargin;
@@ -192,6 +207,55 @@ classdef svar < rise_generic
         end
     end
     methods(Static,Access=private)
+        function out=check_template(r)
+            initiate=nargin==0;
+            if initiate
+                r=struct('endogenous',{{}});
+            end
+            num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+            mycellstr=@(x)(numel(cellstr(x))==1 && ismember(cellstr(x),{'all','none'}))||...
+                all(ismember(x,r.endogenous));
+            prior_types={'minnesota','none','normal_wishart',...
+                'indep_normal_wishart','jeffrey','diffuse'};
+            mydefaults={
+                'vp_mnst_overall_tightness',3,@(x)num_fin(x) && x>0,...
+                'vp_mnst_overall_tightness must be postive and finite'
+                
+                'vp_mnst_relative_tightness_lags',1,@(x)num_fin(x) && x>0,...
+                'vp_mnst_relative_tightness_lags must be postive and finite'
+                
+                'vp_mnst_relative_tightness_constant',0.1,@(x)num_fin(x) && x>0,...
+                'vp_mnst_relative_tightness_lags must be postive and finite'
+                
+                'vp_mnst_tightness_on_lag_decay',0.5,@(x)num_fin(x) && x>0,...
+                'vp_mnst_relative_tightness_lags must be postive and finite'
+                
+                'vp_mnst_unit_root_vars','all',@(x)mycellstr(x),...
+                'vp_mnst_unit_root_vars must be "all", "none", a char or a cellstr'
+                
+                'vp_mnst_stationary_var_mean',0.5,@(x)num_fin(x) && x>=0 && x<1,...
+                'vp_mnst_stationary_var_mean must be in [0,1)'
+                
+                'vp_natconj_normwish_variance',10,@(x)num_fin(x) && x>0,...
+                'vp_natconj_normwish_variance must be postive and finite'
+                
+                % use the covariance formed by the ar1 processes when forming the posterior mode( else use the covariance of the OLS)
+                'vp_gls_ar1_processes',true,@(x)islogical(x),...
+                'vp_gls_ar1_processes must be a logical' 
+                
+                'vp_prior_type','minnesota',@(x)ismember(x,prior_types),...
+                ['vp_prior_type must be one of ',cell2mat(strcat(prior_types,'|'))]
+                };
+            if initiate
+                flag=cell2struct(mydefaults(:,2),mydefaults(:,1),1);
+            else
+                flag=r;
+                flag.priors_hyperparams=utils.miscellaneous.parse_arguments(mydefaults,r.priors_hyperparams);
+            end
+            if nargout
+                out=flag;
+            end
+        end
         varargout=decompose_parameter(varargin)
         varargout=reformat_restriction(varargin)
     end
@@ -207,12 +271,16 @@ classdef svar < rise_generic
     end
     methods(Static)
         function r=template()
+            priors=svar.check_template();            
             r=struct('model_class','svar',...
                 'constant',true,'nlags',4,...
                 'endogenous',{{}},...
                 'block_exogenous',{{}},...
-                'observables',{{}});
-            r.markov_chains=struct('name',{},'states_expected_duration',{},'controled_parameters',{});%,'transition_matrix',{}
+                'observables',{{}},...
+                'priors_hyperparams',priors);
+            r.markov_chains=struct('name',{},...
+                'states_expected_duration',{},...
+                'controled_parameters',{});
         end
     end
 end
