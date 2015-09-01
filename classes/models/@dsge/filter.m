@@ -1,15 +1,29 @@
 function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
-% H1 line
+% FILTER -- filtering of DSGE models
 %
 % Syntax
 % -------
 % ::
 %
+%   [obj,LogLik,Incr,retcode]=filter(obj,varargin)
+%
 % Inputs
 % -------
 %
+% - **obj** [rise|dsge]: model object
+%
+% - **varargin** []: pairwise options
+%
 % Outputs
 % --------
+%
+% - **obj** [rise|dsge]: model object with the filters
+%
+% - **LogLik** [numeric]: log likelihood
+%
+% - **Incr** [vector]: contributions to the likelihood for each time t
+%
+% - **retcode** [integer]: 0 if no problem encountered
 %
 % More About
 % ------------
@@ -17,7 +31,7 @@ function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
 % Examples
 % ---------
 %
-% See also:
+% See also: svar/filter
 
 
 if isempty(obj)
@@ -160,6 +174,7 @@ if obj.options.kf_filtering_level && ~retcode
         'smoothed_regime_probabilities'};
     obj.filtering=struct();
     iov=obj.inv_order_var;
+    expectation=@utils.filtering.expectation;
     for ifield=1:size(Fields,2)
         main_field=Fields{1,ifield};
         alias=Fields{2,ifield};
@@ -261,15 +276,6 @@ ff=@my_one_step;
         end
         varargout{1}=varargout{1}.y;
     end
-end
-
-function E=expectation(probs,vals)
-E=0;
-for istate=1:numel(vals)
-    % E=E+squeeze(bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate}));
-    E=E+bsxfun(@times,permute(probs(istate,:),[3,1,2]),vals{istate});
-end
-% E=squeeze(sum(bsxfun(@times,permute(probs,[3,1,2]),vals),2));
 end
 
 function init=re_inflator(init,kf_filtering_level)

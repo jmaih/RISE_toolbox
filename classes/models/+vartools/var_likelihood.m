@@ -17,7 +17,7 @@ function [LogLik,Incr,retcode,obj]=var_likelihood(params,obj)%
 % Examples
 % ---------
 %
-% See also: 
+% See also: store_probabilities save_filters
 
 
 if isempty(obj)
@@ -76,17 +76,27 @@ else
     
     % negative of likelihood: will be taken inside estimate
     %------------------------------------------------------
-% % % %     LogLik=-LogLik;
+    % % % %     LogLik=-LogLik;
     
     if ~obj.estimation_under_way
         start_date=obs2date(obj.options.estim_start_date,nlags+1);
         regime_names=obj.markov_chains.regime_names;
         filtering=struct();
-        filtering.filtered_probabilities=store_prob(prob_filt);
-        filtering.updated_probabilities=store_prob(prob_update);
-        filtering.smoothed_probabilities=store_prob(msvar_smoother());
+        prob_smooth=[];
+        % regimes filtration
+        %---------------------
+        regime_filtration()
+        % state filtration
+        %------------------
+        state_filtration()
+        
+        % shocks and storage
+        %--------------------
         exo_names=obj.exogenous.name(~obj.exogenous.is_observed);
         filtering.smoothed_shocks=store_item(exo_names,ut);
+        Expected_smoothed_shocks=utils.filtering.expectation(prob_smooth,ut,true);
+        filtering.Expected_smoothed_shocks=store_item(exo_names,...
+            {Expected_smoothed_shocks});
         obj=set(obj,'filters',filtering);
     end
     
@@ -95,21 +105,81 @@ else
     end
 end
 
-    function out=store_prob(item)
-        out=struct();
-        for st=1:h
-            out.(regime_names{st})=ts(start_date,item(st,:)');
+    function regime_filtration()
+        filtering.filtered_regime_probabilities=store_prob(prob_filt);
+        filtering.updated_regime_probabilities=store_prob(prob_update);
+        prob_smooth=msvar_smoother();
+        filtering.smoothed_regime_probabilities=store_prob(prob_smooth);
+        function out=store_prob(item)
+            out=struct();
+            for st=1:h
+                out.(regime_names{st})=ts(start_date,item(st,:)');
+            end
         end
     end
+
+    function state_filtration()
+        nstates=numel(obj.markov_chains.state_names);
+        nobs=size(prob_update,2);
+        filt=zeros(nstates,nobs+1);
+        updated=zeros(nstates,nobs);
+        smooth=zeros(nstates,nobs);
+        iter=0;
+        regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
+        state_names=obj.markov_chains.state_names;
+        nstates=numel(state_names);
+        check_states=cell(1,nstates);
+        for ic=1:obj.markov_chains.chains_number
+            chain_name=obj.markov_chains.chain_names{ic};
+            max_states=max(regimes(:,ic));
+            for istate=1:max_states
+                iter=iter+1;
+                check_states{iter}=sprintf('%s_%0.0d',chain_name,istate);
+                this_regimes=find(regimes(:,ic)==istate);
+                for ireg=1:numel(this_regimes)
+                    filt(iter,:)=filt(iter,:)+prob_filt(this_regimes(ireg),:);
+                    updated(iter,:)=updated(iter,:)+prob_update(this_regimes(ireg),:);
+                    smooth(iter,:)=smooth(iter,:)+prob_smooth(this_regimes(ireg),:);
+                end
+            end
+        end
+        
+%         disp('Any differences?'),disp(check_states),disp(state_names)
+%         keyboard
+        
+        start_date=get(filtering.filtered_regime_probabilities.regime_1,'start');
+        filtering.filtered_state_probabilities=...
+            store_state_probabilities(filt.');
+        filtering.updated_state_probabilities=...
+            store_state_probabilities(updated.');
+        filtering.smoothed_state_probabilities=...
+            store_state_probabilities(smooth.');
+        function out=store_state_probabilities(datta)
+            for ivar=1:nstates
+                if ivar==1
+                    out.(check_states{ivar})=ts(start_date,datta(:,ivar));
+                else
+                    out.(check_states{ivar})=...
+                        reset_data(out.(check_states{ivar-1}),datta(:,ivar));
+                end
+            end
+        end
+    end
+
     function out=store_item(names,item)
         out=struct();
         t0=size(item{1},2);
-        datta=nan(t0,h);
+        hbar=min(h,numel(item));
+        datta=nan(t0,hbar);
         for ix=1:numel(names)
-            for st=1:h
+            for st=1:hbar
                 datta(:,st)=item{st}(ix,:)';
             end
-            out.(names{ix})=ts(start_date,datta,regime_names);
+            if hbar==h
+                out.(names{ix})=ts(start_date,datta,regime_names);
+            else
+                out.(names{ix})=ts(start_date,datta);
+            end
         end
     end
 

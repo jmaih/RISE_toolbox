@@ -111,6 +111,7 @@ classdef svar < rise_generic
                 obj.param_template,obj.parameters.name,...
                 obj.markov_chains.regimes_number);
         end
+        varargout=filter(varargin)
         varargout=solve(varargin)
         varargout=set_solution_to_companion(varargin)
     end
