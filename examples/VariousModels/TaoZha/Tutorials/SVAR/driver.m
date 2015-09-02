@@ -91,7 +91,7 @@ tic
 log_mdd = mcmc_mdd(Results.pop,lb,ub,...
     struct('log_post_kern',objective,... % function to MINIMIZE !!!
     'algorithm','swz',... % MDD algorithm
-    'L',2000 ... % Number of IID draws
+    'L',2000 ... % Number of i.i.d. draws of the proposal density function
 ));
 minutes_MDD_Took = toc/60;
 
