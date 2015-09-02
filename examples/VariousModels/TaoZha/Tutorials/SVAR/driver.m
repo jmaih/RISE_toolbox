@@ -2,7 +2,7 @@
 close all
 home()
 %% Choose a model type: see cell "create the structural VAR model" below
-model_type=0;
+model_type=5;
 
 %% Create dataset
 do_plot=true;
@@ -19,7 +19,10 @@ tpl=svar.template();
 
 % we update the fields of the structure
 % --------------------------------------
-tpl.endogenous=varlist;
+% tpl.endogenous=varlist;
+tpl.endogenous={'FFR','"Feds Funds Rate"',...
+    'pi','"Inflation"',...
+    'ygap','"Output gap"'};
 tpl.nlags=2;
 
 % create restrictions on parameters as well as markov chains
@@ -61,6 +64,13 @@ m=svar(tpl,'data',db,'estim_linear_restrictions',restrictions);
 
 mest=estimate(m,'estim_start_date','1960Q1');
 
+%% Printing out A0hat, A1hat, and A2hat in a form compatible with Zha''s original Matlab code
+
+output_in_original_zha_matlab_code(mest,scale)
+
+% uncomment this if you want to capture output
+% [A0hat,A1hat,A2hat]=output_in_original_zha_matlab_code(mest,scale)
+
 %% Markov chain Monte Carlo
 % Note that because of the linear restrictions, not all parameters are
 % estimated. Hence, the effective number of estimated parameters is smaller
@@ -77,19 +87,29 @@ Results=mh_sampler(objective,lb,ub,mcmc_options,x0,SIG);
 
 %% Marginal data density
 % pick yours: 'bridge','mhm','mueller','swz','is','ris','cj'
-
+tic
 log_mdd = mcmc_mdd(Results.pop,lb,ub,...
     struct('log_post_kern',objective,... % function to MINIMIZE !!!
     'algorithm','swz',... % MDD algorithm
-    'L',500 ... % Number of IID draws
+    'L',2000 ... % Number of IID draws
 ));
+minutes_MDD_Took = toc/60;
+
+laplace_approx=mest.estimation.posterior_maximization.log_marginal_data_density_laplace;
+disp(['log(MDD): Laplace Approximation: ',num2str(laplace_approx)])
+disp(['log(MDD): Sims-Waggoner-Zha Approximation: ',num2str(log_mdd)])
+disp([' Minutes Sims-Waggoner-Zha Approximation took: ',num2str(minutes_MDD_Took)])
 
 %% Impulse responses
 myirfs=irf(mest);
 
+do_plot_irfs(myirfs,mest);
+
 %% Out-of sample forecasts at the mode
 
 mycast=forecast(mest);
+
+do_plot_unconditional_forecasts(mycast,mest)
 
 %% Conditional forecast on ygap
 % conditional information
@@ -104,5 +124,20 @@ myoptions=struct('cbands',[10,20,50,80,90],'do_plot',true,'nsteps',20,...
 
 % do it
 %-------
+tic
 [fkst,bands,hdl]=do_conditional_forecasts(mest,db,cond_db,Results.pop,myoptions);
+fprintf('\n\n Computing conditional forecasts took %0.4f minutes\n\n',toc/60);
+%% Median conditional forecasts
+% we take advantage of the fact that in the bands above we specified 50 in
+% the bands above 
+%--------------------------------------------------------------------------
+figure('name','Median Conditional Forecasts');
+nvars=mest.endogenous.number;
+for ivar=1:nvars
+    thisname=mest.endogenous.name{ivar};
+    subplot(nvars,1,ivar)
+    plot(bands.(thisname)('ci_50'),'linewidth',2)
+    title(mest.endogenous.tex_name{ivar})
+end
+
 
