@@ -87,6 +87,7 @@ function [Yf,CYfMean,Emean,CYf,E,retcode]=forecast_engine(Y0,H,G,EndogenousCondi
 %
 % See also: 
 
+do_compatibility=false;
 
 if nargin<9
     method='ghk';
@@ -181,7 +182,7 @@ if nargout>1
                 E=format_shock_output(E);
                 
                 % Decide whether to perform a compatibility test
-                if isequal(rlow,rhigh)&& ~isempty(rlow)
+                if do_compatibility && isequal(rlow,rhigh)&& ~isempty(rlow)
                     GuerreroPena(SS,rstar,UU,RM2i,Hypothesis)
                 end
             end
