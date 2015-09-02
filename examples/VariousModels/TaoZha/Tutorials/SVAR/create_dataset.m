@@ -61,6 +61,8 @@ qmBin  = 3;      % begining quarter or month
 % names of the variables
 %------------------------
 varlist    = {'FFR'              ,'pi'         ,'ygap'};
+% RISE uses "" for the description of the model variables
+%--------------------------------------------------------
 varlist_tex= {'"Feds Funds Rate"','"Inflation"','"Output gap"'};
 
 rawdb=load('dataraw_allvars.mat');
