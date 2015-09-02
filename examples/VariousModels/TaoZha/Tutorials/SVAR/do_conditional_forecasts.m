@@ -1,17 +1,16 @@
-function [fkst,bands,hdl]=do_conditional_forecasts(m,db,draws,ndraws,cbands,do_plot)
+function [fkst,bands,hdl]=do_conditional_forecasts(m,db,conddb,draws,options)
+
 % do_conditional_forecasts -- do conditional forecast for a SVAR model.
 %
 % Syntax
 % -------
 % ::
 %
-%   [fkst,bands]=do_conditional_forecasts(m,db,draws)
+%   [fkst,bands]=do_conditional_forecasts(m,db,conddb)
 %
-%   [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws)
+%   [fkst,bands]=do_conditional_forecasts(m,db,conddb,draws)
 %
-%   [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands)
-%
-%   [fkst,bands]=do_conditional_forecasts(m,db,draws,ndraws,cbands,do_plot)
+%   [fkst,bands]=do_conditional_forecasts(m,db,conddb,draws,options)
 %
 % Inputs
 % -------
@@ -20,14 +19,19 @@ function [fkst,bands,hdl]=do_conditional_forecasts(m,db,draws,ndraws,cbands,do_p
 %
 % - **db** [struct|ts]: time series (historical database) 
 %
+% - **conddb** [struct|ts]: time series (database with conditional information) 
+%
 % - **draws** [struct]: draws from the sampler (structure with fields "x"
 % and "f".
 %
-% - **ndraws** [empty|{200}]: number of parameter draws 
-%
-% - **cbands** [empty|{[10,20,50,80,90]}]: 
-%
-% - **do_plot** [empty|true|{false}]: plot the conditional forecasts
+% - **options** [empty|struct]: structure with possibly some of the
+% following fields
+%   - **ndraws** [empty|{200}]: number of parameter draws 
+%   - **cbands** [empty|{[10,20,50,80,90]}]: 
+%   - **do_plot** [empty|true|{false}]: plot the conditional forecasts
+%   - **param_uncertainty** [empty|{true}|false]: parameter uncertainty
+%   - **shock_uncertainty** [empty|true|{false}]: shock uncertainty
+%   - **nsteps** [empty|12]: number of forecast steps
 %
 % Outputs
 % --------
@@ -46,41 +50,74 @@ function [fkst,bands,hdl]=do_conditional_forecasts(m,db,draws,ndraws,cbands,do_p
 %
 % See also:
 
-if nargin<6
-    do_plot=[];
-    if nargin<5
-        cbands=[];
-        if nargin<4
-            ndraws=[];
-        end
+if nargin<5
+    options=[];
+    if nargin<4
+        draws=[];
     end
 end
-if isempty(cbands)
-    cbands=[10,20,50,80,90];
+if isempty(options)
+    options=struct();
 end
-if isempty(ndraws)
-    ndraws=200;
-end
-if isempty(do_plot)
-    do_plot=false;
-end
+defaults={
+    'cbands',[10,20,50,80,90],@(x)isempty(x)||all(x>0 & x<100),'all elements in cbands must be in [0,100]'
+    'do_plot',true,@(x)islogical(x),'do_plot should be true or false'
+    'param_uncertainty',true,@(x)islogical(x),'param_uncertainty should be true or false'
+    'shock_uncertainty',true,@(x)islogical(x),'shock_uncertainty should be true or false'
+    'ndraws',200,@(x)isscalar(x) && isreal(x) && (floor(x)==ceil(x)) && x>0,'ndraws should be a positive integer'
+    'nsteps',12,@(x)isscalar(x) && isreal(x) && (floor(x)==ceil(x)) && x>0,'nsteps should be a positive integer'
+    };
+options=parse_arguments(defaults,options);
 
-% Generate conditions on ygap
-%-----------------------------
-nconds=14;
-ygap=zeros(nconds,1);
-ygap(1)=-0.025; % assumed value
-for icond=2:nconds
-    ygap(icond)=ygap(icond-1)+0.005;
+cbands=options.cbands;
+ndraws=options.ndraws;
+do_plot=options.do_plot;
+if isempty(draws)
+    param_uncertainty=false;
+else
+    param_uncertainty=options.param_uncertainty;
 end
+shock_uncertainty=options.shock_uncertainty;
 
-% add those conditions as additional pages to the database
-%---------------------------------------------------------
-nobs=get(db.ygap,'NumberOfObservations');
-tmp=double(db.ygap);
-tmp=cat(3,tmp,nan(nobs,1,nconds));
-tmp(end,1,2:end)=100*ygap;
-db.ygap=ts(db.ygap.start,tmp);
+% Format conditioning information
+%-----------------------------------
+db=pages2struct(db);
+conddb=pages2struct(conddb);
+condvarnames=fieldnames(conddb);
+for ivar=1:numel(condvarnames)
+    vname=condvarnames{ivar};
+    if isfield(db,vname)
+        db.(vname)=cat(1,db.(vname),conddb.(vname));
+    else
+        db.(vname)=conddb.(vname);
+    end
+end
+endo_vars=condvarnames(ismember(condvarnames,m.endogenous.name));
+exo_vars=condvarnames(ismember(condvarnames,m.exogenous.name));
+if ~isempty(condvarnames-endo_vars-exo_vars)
+    disp(condvarnames-endo_vars-exo_vars)
+    error('the variables above are not recognized as endogenous or exogenous')
+end
+% Now we fold the data for the conditioning variables : historical
+% information on the first page 
+%---------------------------------------------------------------------
+history_end_date=m.options.estim_end_date;
+alias=date2serial(history_end_date);
+allvarnames=fieldnames(db);
+for ivar=1:numel(allvarnames)
+    vname=allvarnames{ivar};
+    if ismember(vname,condvarnames)
+        nail=find(db.(vname).date_numbers==alias);
+        vals=double(db.(vname));
+        histdata=vals(1:nail);
+        conddata=vals(nail+1:end);
+        nhist=numel(histdata);
+        ncond=numel(conddata);
+        vals=cat(3,histdata,nan(nhist,1,ncond));
+        vals(end,1,2:end)=conddata;
+        db.(vname)=ts(db.(vname).start,vals);
+    end
+end
 
 % push the new dataset into the model, essentially replacing the old
 % databse
@@ -91,17 +128,21 @@ m=set(m,'data',db);
 % exercise
 %-----------------------------------------------------------------------
 m=set(m,...
-    'simul_history_end_date',db.ygap.finish,...
-    'forecast_cond_endo_vars','ygap',...
-    'forecast_nsteps',12,...
+    'simul_history_end_date',history_end_date,...
+    'forecast_cond_endo_vars',endo_vars,...
+    'forecast_cond_exo_vars',exo_vars,...
+    'forecast_nsteps',options.nsteps,...
     'forecast_to_time_series',false,...
+    'forecast_shock_uncertainty',shock_uncertainty,...
     'simul_regime',1);
 
 % loop over parameters and generate forecasts
 %---------------------------------------------
 for idraw=1:ndraws
-    % push the draw inside the model, rather than getting out first
-    [~,m]=draw_parameter(m,draws);
+    if param_uncertainty
+        % push the draw inside the model, rather than getting out first
+        [~,m]=draw_parameter(m,draws);
+    end
     % compute a forecast
     mycast=forecast(m);
     if idraw==1
@@ -136,7 +177,6 @@ for ivar=2:numel(model_vars)
     bands.(model_vars{ivar})=reset_data(prototype,...
         double(bands.(model_vars{ivar})));
 end
-
 
 hdl=[];
 

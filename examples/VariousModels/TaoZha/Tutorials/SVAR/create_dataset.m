@@ -1,4 +1,4 @@
-function [db,varlist,fh]=create_dataset(do_plot)
+function [db,varlist,fh]=create_dataset(scale,do_plot)
 % create_dataset -- creates time series for all SVAR models
 %
 % Syntax
@@ -7,10 +7,14 @@ function [db,varlist,fh]=create_dataset(do_plot)
 %
 %   [db,varlist,fh]=create_dataset()
 %
-%   [db,varlist,fh]=create_dataset(do_plot)
+%   [db,varlist,fh]=create_dataset(scale)
+%
+%   [db,varlist,fh]=create_dataset(scale,do_plot)
 %
 % Inputs
 % -------
+%
+% - **scale** [empty|numeric|{1}]: factor by which to multiply the data
 %
 % - **do_plot** [empty|true|{false}]: if true, the data are plotted.
 %
@@ -33,8 +37,20 @@ function [db,varlist,fh]=create_dataset(do_plot)
 %
 % See also: 
 
-if nargin==0
+if nargin<2
     do_plot=false;
+    if nargin<1
+        scale=1;
+    end
+end
+if isempty(do_plot)
+    do_plot=false;
+end
+if isempty(scale)
+    scale=1;
+end
+if scale<=0
+    error('scale must be strictly positive')
 end
 
 yrBin  = 1954;   % beginning year
@@ -51,7 +67,7 @@ start_date=sprintf('%0.0dQ%0.0d',yrBin,qmBin);
 
 % create the data as a page
 %---------------------------
-db=ts(start_date,100*rawdb.xdd,varlist);
+db=ts(start_date,scale*rawdb.xdd,varlist);
 
 % separate the various variables
 %-------------------------------

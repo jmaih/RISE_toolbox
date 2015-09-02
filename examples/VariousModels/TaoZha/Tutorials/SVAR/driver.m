@@ -2,12 +2,13 @@
 close all
 home()
 %% Choose a model type: see cell "create the structural VAR model" below
-model_type=2;
+model_type=0;
 
 %% Create dataset
 do_plot=true;
+scale=100;
 
-[db,varlist]=create_dataset(do_plot);
+[db,varlist]=create_dataset(scale,do_plot);
 
 %% Create the structural VAR model
 close()
@@ -45,8 +46,11 @@ switch model_type
         % Both coefficients and variances in monetary policy equation
         % change with two independent Markov processes 
         [restrictions,tpl]=create_restrictions_and_markov_chains5(tpl);
+    case 6
+        % Only variances in ALL three equations switch
+        [restrictions,tpl]=create_restrictions_and_markov_chains6(tpl);
     otherwise
-        error('the coded model types are 0, 1, 2, 3, 4 and 5')
+        error('the coded model types are 0, 1, 2, 3, 4 and 6')
 end
 
 % finally we create a svar object by pushing the structure into svar
@@ -87,9 +91,18 @@ myirfs=irf(mest);
 
 mycast=forecast(mest);
 
-%% Conditional forecast on ygap: parameter uncertainty only...
-ndraws=200;
-plot_cf=true;
-cbands=[10,20,50,80,90];
-[fkst,bands,hdl]=do_conditional_forecasts(mest,db,Results.pop,ndraws,cbands,plot_cf);
+%% Conditional forecast on ygap
+% conditional information
+%-------------------------
+ygap=scale*(-0.025:0.005:8*0.005).';
+cond_db=struct('ygap',ts('2015Q3',ygap));
+
+% options for the exercise
+%--------------------------
+myoptions=struct('cbands',[10,20,50,80,90],'do_plot',true,'nsteps',20,...
+    'param_uncertainty',false,'shock_uncertainty',true,'ndraws',200);
+
+% do it
+%-------
+[fkst,bands,hdl]=do_conditional_forecasts(mest,db,cond_db,Results.pop,myoptions);
 
