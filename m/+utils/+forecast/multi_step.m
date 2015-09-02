@@ -67,6 +67,11 @@ if unique_state
     end
 end
 %-------------------------------------
+if options.random
+    NumberOfSimulations=1;
+else
+    NumberOfSimulations=0;
+end
 if condforkst
     myshocks=[];
     if options.burn
@@ -181,7 +186,6 @@ else
             ss_=ss_+(eye(n)-H)\risk;
         end
         Y0=bsxfun(@minus,y0.y,ss_);
-        NumberOfSimulations=0;
         EndogenousConditions=recreate_conditions(bsxfun(@minus,y_conditions,ss_));
         if ~isempty(shocks)
             shocks_=shocks;
@@ -194,9 +198,13 @@ else
         else
             ShocksConditions=[];
         end
-        [~,CYfMean,myshocks,~,~,retcode]=utils.forecast.conditional.forecast_engine(...
+        [~,CYfMean,myshocks,CYf,E,retcode]=utils.forecast.conditional.forecast_engine(...
             Y0,H,G,EndogenousConditions,ShocksConditions,options.nsteps,...
             NumberOfSimulations,forecast_conditional_hypothesis);
+        if options.random
+            CYfMean=CYf;
+            myshocks=E;
+        end
         % skip the initial conditions and add the mean
         if retcode
             sims=[];
@@ -315,15 +323,23 @@ else
     end
 end
 
-function c=recreate_conditions(c)
+function c=recreate_conditions(c,hard)
+if nargin<2
+    hard=true;
+end
 % remove the possibly singleton dimension
 c=c(:,:);
 % keep only the good rows
 good=any(~isnan(c),2);
 rest_id=find(good);
 c=c(good,:);% <---c=permute(c(good,:),[2,1]);
-lb=-inf(size(c));
-ub=inf(size(c));
+if hard
+    lb=c;
+    ub=c;
+else
+    lb=-inf(size(c));
+    ub=inf(size(c));
+end
 lbub=struct('LB',lb,'UB',ub);
 OMG =[];
 c={c,OMG,lbub,rest_id};
