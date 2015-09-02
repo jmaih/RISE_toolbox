@@ -24,7 +24,8 @@ function [db,varlist,fh]=create_dataset(scale,do_plot)
 % - **db** [struct]: structure with fields as the names of the endogenous
 % variables.
 %
-% - **varlist** [cellstr]: list of the endogenous variables
+% - **varlist** [cellstr]: list of the endogenous variables and their
+% description
 %
 % - **fh** [empty|handle]: if **do_plot** is set to true, **fh** is the
 % handle to the plotted figure. Else, it is empty
@@ -59,7 +60,8 @@ qmBin  = 3;      % begining quarter or month
 
 % names of the variables
 %------------------------
-varlist   = {'FFR','pi','ygap'};
+varlist    = {'FFR'              ,'pi'         ,'ygap'};
+varlist_tex= {'"Feds Funds Rate"','"Inflation"','"Output gap"'};
 
 rawdb=load('dataraw_allvars.mat');
 
@@ -80,8 +82,15 @@ if do_plot
         vname=varlist{iplot};
         subplot(3,1,iplot)
         plot(db.(vname),'linewidth',2)
-        title(vname)
+        mytitle=strrep([varlist_tex{iplot},'(',vname,')'],'"','');
+        title(mytitle)
     end
 end
+
+% format the names for the output
+%--------------------------------
+varlist=[varlist
+    varlist_tex];
+varlist=varlist(:).';
 
 end

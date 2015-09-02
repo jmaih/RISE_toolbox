@@ -2,7 +2,7 @@
 close all
 home()
 %% Choose a model type: see cell "create the structural VAR model" below
-model_type=5;
+model_type=6;
 
 %% Create dataset
 do_plot=true;
@@ -19,10 +19,7 @@ tpl=svar.template();
 
 % we update the fields of the structure
 % --------------------------------------
-% tpl.endogenous=varlist;
-tpl.endogenous={'FFR','"Feds Funds Rate"',...
-    'pi','"Inflation"',...
-    'ygap','"Output gap"'};
+tpl.endogenous=varlist;
 tpl.nlags=2;
 
 % create restrictions on parameters as well as markov chains
@@ -104,6 +101,10 @@ disp([' Minutes Sims-Waggoner-Zha Approximation took: ',num2str(minutes_MDD_Took
 myirfs=irf(mest);
 
 do_plot_irfs(myirfs,mest);
+
+%% do smoothed probabilities
+
+do_plot_smoothed_probabilities(mest)
 
 %% Out-of sample forecasts at the mode
 
