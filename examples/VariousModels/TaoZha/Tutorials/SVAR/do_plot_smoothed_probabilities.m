@@ -30,7 +30,7 @@ end
     function [tex_name,legend_]=plot_regime(name)
         tex_name=name;
         legend_=[];
-        plot(smooth_state_probs.(name),'linewidth',2)
+        plot(smooth_regime_probs.(name),'linewidth',2)
     end
 
     function [tex_name,legend_]=plot_state(name)

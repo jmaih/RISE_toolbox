@@ -2,7 +2,7 @@
 close all
 home()
 %% Choose a model type: see cell "create the structural VAR model" below
-model_type=6;
+model_type=5;
 
 %% Create dataset
 do_plot=true;
