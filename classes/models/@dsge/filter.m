@@ -250,7 +250,7 @@ ff=@my_one_step;
         end
         nout=nargout;
         if isempty(compl)
-            if all(shocks==0) && order==1
+            if all(shocks(:)==0) && order==1
                 % quick exit if possible
                 %------------------------
                 y_yss=y0-ss{rt};
