@@ -74,7 +74,11 @@ while ~isempty(varargin)
         else
             for ivar=1:db_i.NumberOfVariables
                 offset=offset+1;
-                celldata{offset}=db_i(db_i.varnames{ivar});
+                % calling subsref from within a method does not work. I has
+                % to be done explicitly using the functional form
+                % celldata{offset}=db_i(db_i.varnames{ivar});
+                S=struct('type','()','subs',{db_i.varnames(ivar)});
+                celldata{offset}=subsref(db_i,S);
             end
         end
     elseif isa(db_i,'struct')
