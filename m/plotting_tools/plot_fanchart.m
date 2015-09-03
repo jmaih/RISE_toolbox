@@ -17,7 +17,7 @@ function hh=plot_fanchart(data,MainColor,nticks)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if nargin<3
     nticks=[];
@@ -46,9 +46,11 @@ pp=plot_specs(data.date_numbers,nticks);
 set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels) %...
 %     'ylim',[ymin,ymax])
 
-hh=gca();
 
 grid on
+if nargout
+    hh=gca();
+end
 
 end
 

@@ -23,10 +23,12 @@ out=struct();
 nvar=this.NumberOfVariables;
 if nvar>1
     vnames=this.varnames;
-    for ivar=1:nvar
-        out.(vnames{ivar})=fanchart(this(vnames{ivar}),ci);
+    if ~isempty(vnames{1})
+        for ivar=1:nvar
+            out.(vnames{ivar})=fanchart(this(vnames{ivar}),ci);
+        end
+        return
     end
-    return
 end
 ci=sort(ci(:));
 datax=squeeze(double(this));
