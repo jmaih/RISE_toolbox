@@ -23,10 +23,12 @@ out=struct();
 nvar=this.NumberOfVariables;
 if nvar>1
     vnames=this.varnames;
-    for ivar=1:nvar
-        S=struct('type','()','subs',{vnames(ivar)});
-        obj=subsref(this,S);%<--obj=this(vnames{ivar});
-        out.(vnames{ivar})=fanchart(obj,ci);
+    if ~isempty(vnames{1})
+        for ivar=1:nvar
+            S=struct('type','()','subs',{vnames(ivar)});
+            obj=subsref(this,S);%<--obj=this(vnames{ivar});
+            out.(vnames{ivar})=fanchart(obj,ci);
+        end
     end
     return
 end
