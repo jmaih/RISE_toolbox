@@ -56,12 +56,21 @@ if isempty(obj)
     ff=struct();
     return
 end
+
+if ~isempty(varargin)
+    obj=set(obj,varargin{:});
+end
 % if the prior is set, the following should available even if the model has
 % not been estimated yet.
 lb=[obj.estimation.priors.lower_bound]';
 ub=[obj.estimation.priors.upper_bound]';
 x0=obj.estimation.posterior_maximization.mode;
 vcov=obj.estimation.posterior_maximization.vcov;
+
+% same as in estimate lines 266-267
+%-----------------------------------
+obj=setup_linear_restrictions(obj);
+obj=setup_general_restrictions(obj);
 
 % shorten everything in the presence of linear restrictions
 %-----------------------------------------------------------
