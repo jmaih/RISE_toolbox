@@ -24,7 +24,9 @@ nvar=this.NumberOfVariables;
 if nvar>1
     vnames=this.varnames;
     for ivar=1:nvar
-        out.(vnames{ivar})=fanchart(this(vnames{ivar}),ci);
+        S=struct('type','()','subs',{vnames(ivar)});
+        obj=subsref(this,S);%<--obj=this(vnames{ivar});
+        out.(vnames{ivar})=fanchart(obj,ci);
     end
     return
 end
