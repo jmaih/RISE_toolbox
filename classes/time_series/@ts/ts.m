@@ -408,11 +408,13 @@ classdef ts
     methods(Static)
         varargout=collect(varargin)
         varargout=dummy(varargin)
+        varargout=fold(varargin)
         varargout=nan(varargin)
         varargout=ones(varargin)
         varargout=rand(varargin)
         varargout=randn(varargin)
         varargout=step_dummy(varargin)
+        varargout=unfold(varargin)
         varargout=zeros(varargin)
     end
     methods(Static,Hidden=true)
