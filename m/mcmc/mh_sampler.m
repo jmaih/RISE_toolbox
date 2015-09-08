@@ -75,7 +75,7 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
 % Examples
 % ---------
 %
-% See also:	CONSTANT_BVAR_SAMPLER
+% See also:	CONSTANT_BVAR_SAMPLER, RRF_SAMPLER
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
