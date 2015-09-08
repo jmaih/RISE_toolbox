@@ -37,26 +37,22 @@ function varargout=pull_objective(obj,varargin)
 % More About
 % ------------
 %
-% - The function can be used for :
-%   - optimization,
-%   - gradient computation,
-%   - hessian computation,
-%   - posterior simulation
-%
-% - Using this function is potentially costly, one could alternatively
-% simply use log_posterior_kernel. However, if there are restrictions, they
-% will not be enforced. Nevertheless it is an interesting proposition that
-% should be investigated further.
+% - In the presence of a constant-parameter BVAR, if
+% vp_analytical_post_mode is set to true, only the constant_bvar_sampler
+% can be used.
 %
 % Examples
 % ---------
 %
-% See also:
+% See also: RISE_GENERIC/PULL_OBJECTIVE
 
 nout=nargout;
 if isempty(obj)
-    varargout=cell(1,nout);
-    varargout{1}=struct();
+    [varargout{1:nout}]=pull_objective@svar(obj,varargin{:});
+    % use analytical posterior whenever possible. Normally this should have
+    % been used in some estimation method but I do not want to write a
+    % specialized one just for the sake of this one element.
+    varargout{1}.vp_analytical_post_mode=true;
     return
 end
 
