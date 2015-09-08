@@ -1,13 +1,17 @@
 function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
-% pull_objective -- pulls the objective function to optimize
+% PULL_OBJECTIVE -- pulls the objective function to optimize
 %
 % Syntax
 % -------
 % ::
 %
-%   [ff,lb,ub]=pull_objective(obj)
+%   [ff,lb,ub]=PULL_OBJECTIVE(obj)
 %
-%   [ff,lb,ub]=pull_objective(obj,varargin)
+%   [ff,lb,ub]=PULL_OBJECTIVE(obj,varargin)
+%
+%   [ff,lb,ub,x0]=PULL_OBJECTIVE(obj,varargin)
+%
+%   [ff,lb,ub,x0,vcov]=PULL_OBJECTIVE(obj,varargin)
 %
 % Inputs
 % -------
@@ -34,10 +38,10 @@ function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
 % ------------
 %
 % - The function can be used for :
-%   - optimization, 
-%   - gradient computation, 
-%   - hessian computation, 
-%   - posterior simulation 
+%   - optimization,
+%   - gradient computation,
+%   - hessian computation,
+%   - posterior simulation
 %
 % - Using this function is potentially costly, one could alternatively
 % simply use log_posterior_kernel. However, if there are restrictions, they
@@ -47,7 +51,7 @@ function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if isempty(obj)
     if nargout>1
