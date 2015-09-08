@@ -121,8 +121,6 @@ end
             obj.filtering=propval;
         elseif strcmp(propname,'tex_name')
             set_tex_names()
-        elseif any(strcmpi(propname,{'priors','estim_priors'}))
-            obj=setup_priors(obj,propval);
         elseif strcmpi(propname,'parameters')
             % propval is either a struct or a cell of the form {names,paramvector}
             obj=setup_calibration(obj,propval);
@@ -278,6 +276,9 @@ end
             myoptions=utils.miscellaneous.mergestructures(myoptions,...
                 this_options);
         end
+		if ~isa(obj,'dsge')
+			myoptions=rmfield(myoptions,'estim_priors');
+		end
         
         % Create the main options
         % shocks are allowed to be anticipated.

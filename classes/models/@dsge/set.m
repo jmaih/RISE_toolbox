@@ -67,32 +67,34 @@ is_setup_change=false;
 shock_horizon_id=[];
 use_disc_id=[];
 nn=length(varargin);
+is_discard=false(1,nn);
 for ii=1:2:nn
     this_option=varargin{ii};
     if strcmp(this_option,'solve_shock_horizon')
         if obj.is_dsge_var_model
             error('Not possible to set "solve_shock_horizon" in a dsge-var model')
         end
-        if nn>ii
-            shock_horizon_id=[ii,ii+1];
-        else
-            shock_horizon_id=ii;
-        end
+        shock_horizon_id=[ii,ii+1];
+        is_discard([ii,ii+1])=true;
     elseif strcmp(this_option,'solve_function_mode')
         use_disc_id=[ii,ii+1];
+    elseif any(strcmpi(this_option,{'priors','estim_priors'}))
+        obj=setup_priors(obj,varargin{ii+1});
+        is_discard([ii,ii+1])=true;
     end
     is_setup_change=is_setup_change||...
         any(strcmp(this_option,change_setup_and_resolve));
-    
     is_resolve=is_resolve||is_setup_change||...
         any(strcmp(this_option,resolve_only));
 end
 solve_shock_horizon=varargin(shock_horizon_id);
 solve_function_mode=varargin(use_disc_id);
-varargin(shock_horizon_id)=[];
+varargin(is_discard)=[];
 % do not remove the disc property since that option has to be visible
 % unlike the shocks horizon. varargin(use_disc_id)=[];
-obj=set@rise_generic(obj,varargin{:});
+if ~isempty(varargin)
+    obj=set@rise_generic(obj,varargin{:});
+end
 
 nobj=numel(obj);
 % do this one at a time
