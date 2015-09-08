@@ -1,23 +1,62 @@
-function [Results,accept_rate,start] = constant_bvar_sampler(start,options)
-% H1 line
+function [Results,start] = constant_bvar_sampler(start,options)
+% CONSTANT_BVAR_SAMPLER -- Sampler for constant-parameter BVARs with or
+% without parameter restrictions
 %
 % Syntax
 % -------
 % ::
 %
+%   [Results]=CONSTANT_BVAR_SAMPLER(start)
+%
+%   [Results]=CONSTANT_BVAR_SAMPLER(start,options)
+%
 % Inputs
 % -------
+%
+% - **start** [struct]: structure containing the fields of interest for
+% posterior sampling:
+%   - **prior_type** ['diffuse'|'jeffrey'|'minnesota'|'normal_wishart'|...
+%       'indep_normal_wishart']: type of prior
+%   - **Y** [matrix]: Left-hand side
+%   - **X** [matrix]: right-hand side
+%   - **nobs** [numeric]: number of observations
+%   - **K** [numeric]: number of parameters per equation
+%   - **a_func** [function_handle]: function that inflates x and Vx under
+%       linear restrictions.
+%   - **a2tilde** [struct]:
+%       - **prior** []:
+%       - **ols** []:
+%       - **post** []:
+%   - **na2** [numeric]: number of unrestricted parameters
+%   - **estimafy** [function_handle]: computes posterior and ols
+%   - **a2tilde_func** [function_handle]: shortens the vector of parameters
+%   to estimate
+%
+% - **options** [struct]:
+%   - **burnin** [integer|{0}]: number of burn-in initial simulations
+%   - **N** [integer|{20000}]: number of simulations
+%   - **thin** [integer|{1}]: number of thinning simulations. 1 means we
+%   keep every draw, 2 means we keep every second, 3 every third, etc.
+%   - **MaxTime** [numeric|{inf}]: maximum simulation time.
 %
 % Outputs
 % --------
 %
+% - **Results** [struct]:
+%   - **pop** [1 x N struct]: fields are "x" for the parameter vector
+%   and "f" for the value of the parameter vector
+%   - **m** [vector]: mean of the parameter draws
+%   - **SIG** [matrix]: covariance of the parameter draws
+%
+% - **start** [struct]: see above
+% 
 % More About
 % ------------
 %
 % Examples
 % ---------
 %
-% See also:
+% See also: MH_SAMPLER
 
 if nargin<2
     options=[];
@@ -32,7 +71,6 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'burnin',0,@(x)num_fin_int(x),'burnin should be an integer in [0,inf)'
     'N',20000,@(x)num_fin_int(x) && x>0 ,'N should be a strictly positive integer'
     'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
-    'nchain',1,@(x)num_fin_int(x) && x>0,'nchain(# chains) should be a strictly positive integer'
     'MaxTime',inf,@(x)num_fin(x) && x>0,'MaxTime must be a positive scalar'
     };
 if nargin==0
@@ -55,16 +93,14 @@ a2tilde_func=start.a2tilde_func ;
 
 options=utils.miscellaneous.parse_arguments(defaults,options);
 
-MaxTime=options.MaxTime;
-nchain=options.nchain;
 burnin=options.burnin;
 thin=options.thin;
 N=options.N;
 
 % Put the replicates dimension second.
-[npar,nchain] = size(start.x0);
+npar = size(start.x0,1);
 
-smpl = zeros(npar,N,nchain);
+smpl = zeros(npar,N);
 
 % redo this in case the user makes a mistake like giving the negative of
 % the log posterior instead of the log posterior directly.
@@ -77,14 +113,12 @@ obj.start_time=clock;
 obj.MaxTime=options.MaxTime;
 obj.MaxFunEvals=inf;
 
-accept_rate = 1;
 idraw=-burnin;
 total_draws=N*thin+burnin;
 obj.MaxIter=total_draws;
 utils.optim.manual_stopping();
 stopflag=utils.optim.check_convergence(obj);
-wtbh=waitbar(0,'please wait...','Name','MH sampling');
-accept_ratio=[];
+wtbh=waitbar(0,'please wait...','Name','Constant BVAR sampling');
 while isempty(stopflag)
     idraw=idraw+1;
     obj.iterations=idraw+burnin;
@@ -92,13 +126,7 @@ while isempty(stopflag)
     
     start.x0 = x1; % preserves x's shape.
     if idraw>0 && mod(idraw,thin)==0; % burnin and thin
-        smpl(:,idraw/thin,:) = start.x0;
-    end
-    % display progress
-    %------------------
-    if mod(obj.iterations,100)==0
-        fprintf(1,'iter # %0.0f, Acceptance rate %0.4f, thinning factor %0.0f\n',...
-            obj.iterations,accept_rate,thin);
+        smpl(:,idraw/thin) = start.x0;
     end
     stopflag=utils.optim.check_convergence(obj);
     waitbar_updating()
@@ -109,22 +137,16 @@ delete(wtbh)
 %--------------
 Results=struct();
 Results.pop=struct('f',nan,'x',nan);
-Results.pop=Results.pop(ones(1,nchain),ones(1,N));
+Results.pop=Results.pop(1,ones(1,N));
 for isample=1:N
-    for ichain=1:nchain
-        Results.pop(ichain,isample).x=smpl(:,isample,ichain);
-    end
+    Results.pop(isample).x=smpl(:,isample);
 end
 Results.m=mean(smpl,2);
+Results.SIG=cov(smpl.');
 
     function waitbar_updating()
         x=obj.iterations/total_draws;
-        waitbar(x,wtbh,...
-            {
-            sprintf('bestf %s',num2str(bestf))
-            sprintf('acceptance rate %s',num2str(100*accept_ratio))
-            }...
-            )
+        waitbar(x,wtbh)
     end
 
     function x1=one_constant_var_posterior_draw()
