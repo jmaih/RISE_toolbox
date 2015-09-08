@@ -1,17 +1,17 @@
 function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
-% mh_sampler -- Metropolis Hastings sampler
+% MH_SAMPLER -- Metropolis Hastings sampler
 %
 % Syntax
 % -------
 % ::
 %
-%   [Results]=mh_sampler(logf,lb,ub)
+%   [Results]=MH_SAMPLER(logf,lb,ub)
 %
-%   [Results]=mh_sampler(logf,lb,ub,options)
+%   [Results]=MH_SAMPLER(logf,lb,ub,options)
 %
-%   [Results]=mh_sampler(logf,lb,ub,options,mu)
+%   [Results]=MH_SAMPLER(logf,lb,ub,options,mu)
 %
-%   [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
+%   [Results]=MH_SAMPLER(logf,lb,ub,options,mu,SIG)
 %
 % Inputs
 % -------
@@ -75,7 +75,7 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
 % Examples
 % ---------
 %
-% See also:
+% See also:	CONSTANT_BVAR_SAMPLER
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
