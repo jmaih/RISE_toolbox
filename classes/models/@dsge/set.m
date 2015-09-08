@@ -92,9 +92,11 @@ solve_function_mode=varargin(use_disc_id);
 varargin(is_discard)=[];
 % do not remove the disc property since that option has to be visible
 % unlike the shocks horizon. varargin(use_disc_id)=[];
-if ~isempty(varargin)
-    obj=set@rise_generic(obj,varargin{:});
-end
+
+% do the following even if varargin isempty, it could well be the
+% initialization phase
+%--------------------------------------------------------------------------
+obj=set@rise_generic(obj,varargin{:});
 
 nobj=numel(obj);
 % do this one at a time
