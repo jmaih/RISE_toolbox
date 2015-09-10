@@ -1,4 +1,4 @@
-function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
+function [ff,lb,ub,x0,vcov,obj]=pull_objective(obj,varargin)
 % PULL_OBJECTIVE -- pulls the objective function to optimize
 %
 % Syntax
@@ -12,6 +12,8 @@ function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
 %   [ff,lb,ub,x0]=PULL_OBJECTIVE(obj,varargin)
 %
 %   [ff,lb,ub,x0,vcov]=PULL_OBJECTIVE(obj,varargin)
+%
+%   [ff,lb,ub,x0,vcov,obj]=PULL_OBJECTIVE(obj,varargin)
 %
 % Inputs
 % -------
@@ -34,6 +36,8 @@ function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
 % - **vcov** [d x d matrix]: covariance matrix at the posterior mode if
 % available.
 %
+% - **obj** [rise|dsge|svar|rfvar]: updated model object
+%
 % More About
 % ------------
 %
@@ -42,6 +46,9 @@ function [ff,lb,ub,x0,vcov]=pull_objective(obj,varargin)
 %   - gradient computation,
 %   - hessian computation,
 %   - posterior simulation
+%
+% - The updated object should be used for doing various exercises (irfs,
+% simulations, etc.) if the posterior mode is not computed.
 %
 % - Using this function is potentially costly, one could alternatively
 % simply use log_posterior_kernel. However, if there are restrictions, they
