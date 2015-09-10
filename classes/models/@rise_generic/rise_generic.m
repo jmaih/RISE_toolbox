@@ -92,6 +92,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     methods(Abstract, Hidden = true)
         % methods that must be implemented by the subclasses
         varargout=conclude_estimation(varargin)
+        varargout=problem_reduction(varargin)
     end
     methods
         function obj=rise_generic(varargin)
@@ -108,6 +109,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=historical_decomposition(varargin)
         varargout=irf(varargin)
         varargout=isnan(varargin)
+        varargout=is_stable_system(varargin)
         varargout=load_parameters(varargin)
         varargout=log_posterior_kernel(varargin)
         varargout=log_prior_density(varargin)

@@ -129,9 +129,6 @@ classdef dsge < rise_generic
         % name of the rs/rz/dsge file read
         filename='';
     end
-    methods(Hidden)
-        varargout=conclude_estimation(varargin)
-    end
     methods
         varargout=bvar_dsge(varargin)
         varargout=check_derivatives(varargin)
@@ -144,7 +141,6 @@ classdef dsge < rise_generic
         % the treatment of the two functions below is not satisfactory under multiple
         % regimes. This is something to address
         varargout=forecast_real_time(varargin)
-        varargout=is_stable_system(varargin)
         varargout=monte_carlo_filtering(varargin)
         varargout=resid(varargin)
         varargout=simulate_nonlinear(varargin)
@@ -317,11 +313,13 @@ classdef dsge < rise_generic
     end
     methods(Hidden=true)
         varargout=assign_estimates(varargin)
+        varargout=conclude_estimation(varargin) % abstract method
         varargout=do_not_anticipate_future_shocks(varargin)
         varargout=filter_initialization(varargin)
         varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
         varargout=load_data(varargin)
+        varargout=problem_reduction(varargin)
         varargout=set_z_eplus_horizon(varargin)
     end
 end

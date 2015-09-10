@@ -265,8 +265,9 @@ classdef svar < rise_generic
     end
     methods(Hidden=true)
         varargout=simulation_engine(varargin)
-        varargout=conclude_estimation(varargin)
+        varargout=conclude_estimation(varargin) % abstract method
         varargout=load_solution(varargin)
+        varargout=problem_reduction(varargin) % abstract method
     end
     methods(Access=protected,Hidden=true)
     end
