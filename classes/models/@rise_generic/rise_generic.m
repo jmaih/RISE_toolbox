@@ -170,7 +170,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=find_posterior_mode(varargin)
         varargout=get_estimated_parameter_names(varargin)
         varargout=update_estimated_parameter_names(varargin)
-        varargout=prepare_transition_routine(varargin)
         varargout=re_order_output_rows(varargin)
         varargout=set_simulation_initial_conditions(varargin)
         varargout=unstransform_estimates(varargin)
@@ -179,6 +178,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     methods(Hidden=true)
         varargout=assign_estimates(varargin)
         varargout=load_data(varargin)
+        varargout=prepare_transition_routine(varargin)
     end
 end
 

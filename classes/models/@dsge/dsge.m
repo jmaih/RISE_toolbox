@@ -309,7 +309,6 @@ classdef dsge < rise_generic
     end
     methods(Access=protected,Hidden=true)
         varargout=re_order_output_rows(varargin)
-        varargout=prepare_transition_routine(varargin)
     end
     methods(Hidden=true)
         varargout=assign_estimates(varargin)
@@ -319,6 +318,7 @@ classdef dsge < rise_generic
         varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
         varargout=load_data(varargin)
+        varargout=prepare_transition_routine(varargin)
         varargout=problem_reduction(varargin)
         varargout=set_z_eplus_horizon(varargin)
     end
