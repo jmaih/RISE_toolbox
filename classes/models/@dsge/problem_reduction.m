@@ -1,4 +1,37 @@
 function [T_red,Q_red,n,h_red]=problem_reduction(obj)
+% PROBLEM_REDUCTION - prepares the solution for checking Mean Square
+% Stability of the system
+%
+% Syntax
+% -------
+% ::
+%
+%   [T,Q,n,h]=problem_reduction(obj)
+%
+% Inputs
+% -------
+%
+% - **obj** [dsge|rise]: solved model object
+%
+% Outputs
+% --------
+%
+% - **T** [1 x h cell]: Companion form for different regimes. Each cell
+% contains an n x n matrix
+%
+% - **Q** [h x h matrix]: Transition matrix
+%
+% - **n** [integer]: number of endogenous variable
+%
+% - **h** [integer]: number of regimes
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: SVAR/PROBLEM_REDUCTION
 
 T=obj.solution.Tz;
 Q=obj.solution.transition_matrices.Q;
