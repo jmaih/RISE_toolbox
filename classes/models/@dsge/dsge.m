@@ -133,6 +133,7 @@ classdef dsge < rise_generic
         varargout=bvar_dsge(varargin)
         varargout=check_derivatives(varargin)
         varargout=create_state_list(varargin)
+        varargout=estimate(varargin)
         varargout=filter(varargin)
         varargout=frontier(varargin)
         varargout=print_solution(varargin)
