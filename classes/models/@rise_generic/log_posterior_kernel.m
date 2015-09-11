@@ -50,9 +50,6 @@ if ~retcode
             end
         end
     end
-    % [LogLik,Incr,retcode,obj]=likelihood_dsge_var(params,obj,kf_filtering_level)
-    % [LogLik,Incr,retcode,obj]=likelihood_markov_switching_dsge(params,obj,kf_filtering_level)
-    % [LogLik,Incr,retcode,obj]=likelihood_optimal_simple_rule(params,obj,kf_filtering_level)
 end
 if obj.options.debug
     disp(['log_lik ',num2str(log_lik)])
