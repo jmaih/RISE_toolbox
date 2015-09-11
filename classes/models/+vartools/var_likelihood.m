@@ -20,7 +20,7 @@ function varargout=var_likelihood(params,obj,choice)%
 %
 % See also: store_probabilities save_filters
 if nargin<3
-    choice='debug';
+    choice='new';
 end
 nout=nargout;
 switch choice
