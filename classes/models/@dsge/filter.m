@@ -5,14 +5,15 @@ function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
 % -------
 % ::
 %
-%   [obj,LogLik,Incr,retcode]=filter(obj,varargin)
+%   [obj,LogLik,Incr,retcode]=FILTER(obj,varargin)
 %
 % Inputs
 % -------
 %
 % - **obj** [rise|dsge]: model object
 %
-% - **varargin** []: pairwise options
+% - **varargin** []: pairwise options. Those options are drawn from
+% dsge/filter_initialization
 %
 % Outputs
 % --------
@@ -31,14 +32,14 @@ function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
 % Examples
 % ---------
 %
-% See also: svar/filter
+% See also: SVAR/FILTER, DSGE/FILTER_INITIALIZATION
 
 
 if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
-    obj=filter_initialization(obj);
+    obj=struct();
     return
 end
 

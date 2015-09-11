@@ -1,29 +1,19 @@
-function [init,retcode]=filter_initialization(obj,varargin)%T,R,steadystate,risk,transition_function,options
-% filter_initialization - Initial conditions for filtering
+function [init,retcode]=filter_initialization(obj,varargin)
+% FILTER_INITIALIZATION - Initial conditions for filtering
 %
 % Syntax
 % -------
 % ::
 %
-%   [init,retcode]=filter_initialization(obj)
+%   [init,retcode]=FILTER_INITIALIZATION(obj)
 %
 % Inputs
 % -------
 %
-% - **T** [cell]: n x n elements representing the autoregressive part of the
-%   first-order approximation of the model
+% - **obj** [rise|dsge]: model object
 %
-% - **R** [cell]: n x ne elements representing the shock impact of the
-%   first-order approximation of the model
-%
-% - **steadystate** [cell]: steady state of the model
-%
-% - **risk** [cell]: impact on the perturbation coefficient
-%
-% - **transition_function** [function handle]: function generating a
-%   transition matrix for a given vector of endogenous
-%
-% - **options** [struct]: options with the most relevant beeing:
+% - **varargin** [name,value]: valid pairwise options with the most
+% relevant beeing: 
 %
 %   - **kf_ergodic** [{true}|false]: initialization at the ergodic
 %       distribution
@@ -54,7 +44,7 @@ function [init,retcode]=filter_initialization(obj,varargin)%T,R,steadystate,risk
 % Outputs
 % --------
 %
-% - **init** [struct]: initial condition of the Kalman filter
+% - **init** [struct]: initial conditions of the filter
 %
 % - **retcode** [scalar]: 0 if there is no problem
 %
@@ -68,7 +58,7 @@ function [init,retcode]=filter_initialization(obj,varargin)%T,R,steadystate,risk
 % Examples
 % ---------
 %
-% See also: 
+% See also: DSGE/FILTER
 
 
 % diffuse initialization for all elements in the state vector including

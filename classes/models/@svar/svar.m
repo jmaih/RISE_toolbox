@@ -116,26 +116,7 @@ classdef svar < rise_generic
         varargout=set_solution_to_companion(varargin)
     end
     methods(Sealed)
-        function varargout=estimate(obj,varargin)
-            nout=nargout;
-            varargout=cell(1,nout);
-            if isempty(obj)
-                est_opts=estimate@rise_generic(obj);
-                % option for computing the posterior mode analytically if possible
-                est_opts.estim_analytical_post_mode=true;
-                if nout
-                    if nout~=1
-                        error('number of output arguments can only be 1 in this case')
-                    end
-                    varargout=cell(1,1);
-                    varargout{1}=est_opts;
-                else
-                    disp(est_opts)
-                end
-            else
-                [varargout{1:nout}]=estimate@rise_generic(obj,varargin{:});
-            end
-        end
+        varargout=estimate(varargin)
         function obj=set(obj,varargin)
             nn=length(varargin);
             % override the rise_generic set method

@@ -1,37 +1,59 @@
 function obj=setup_priors(obj,MyPriors,error_control)
-% H1 line
+% SETUP_PRIORS -- format the priors for the estimation of models in RISE.
 %
 % Syntax
 % -------
 % ::
 %
+%   obj=SETUP_PRIORS(obj,MyPriors)
+%
+%   obj=SETUP_PRIORS(obj,MyPriors,error_control)
+%
 % Inputs
 % -------
+%
+% - **obj** [rise|dsge|svar|rfvar]: model object. This function is not
+% meant to be called directly by the user. But it shows how to write the
+% priors when those are not written inside the model file.
+%
+% - **MyPriors** [struct]: Each field of the structure is one of the
+% following alternatives
+%   - Maximum likelihood or uniform priors
+%       P.pname={start_value,lower_bound,upper_bound};
+%   - Bayesian prior using mean and standard deviation
+%       P.pname={start_value,prior_mean,prior_stdev,'distribution'};
+%   - Same as above except for adding a hard lower bound
+%       P.pname={start_value,prior_mean,prior_stdev,'distribution',lower_bound};
+%   - Same as above except for adding a hard upper bound
+%       P.pname={start_value,prior_mean,prior_stdev,'distribution',lower_bound,upper_bound};
+%   - Bayesian prior using quantiles of the distribution
+%       P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)'};
+%   - Same as above except for adding a hard lower bound
+%       P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound};
+%   - Same as above except for adding a hard upper bound
+%       P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound,upper_bound};
+%
+% - **error_control** [empty|cell]: element constructed by RISE for
+% controling the syntax used in the model file.
 %
 % Outputs
 % --------
 %
+% - **obj** [rise|dsge|svar|rfvar]: updated model object. 
+%
 % More About
 % ------------
+%
+% - This function is also indirectly used for svar and rfvar objects.
 %
 % Examples
 % ---------
 %
-% See also:
-
-% different ways of setting priors outside the model file
-% P.pname={start_value,lower_bound,upper_bound};
-% P.pname={start_value,prior_mean,prior_stdev,'distribution'};
-% P.pname={start_value,prior_mean,prior_stdev,'distribution',lower_bound};
-% P.pname={start_value,prior_mean,prior_stdev,'distribution',lower_bound,upper_bound};
-% P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)'};
-% P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound};
-% P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound,upper_bound};
+% - Possible distributions include: beta, cauchy, gamma, inv_gamma, laplace,
+% left_triang, logistic, lognormal, normal, pareto, right_triang,
+% uniform, weibull
 %
-% distribution can be any of the following: beta_pdf, cauchy_pdf,
-% gamma_pdf, inv_gamma_pdf, laplace_pdf, left_triang_pdf, logistic_pdf,
-% lognormal_pdf, normal_pdf, pareto_pdf, right_triang_pdf, uniform_pdf,
-% weibull_pdf
+% See also: RISE_GENERIC/ESTIMATE, DSGE/ESTIMATE
 
 if nargin<3
     error_control=[];

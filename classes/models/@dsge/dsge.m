@@ -133,19 +133,19 @@ classdef dsge < rise_generic
         varargout=bvar_dsge(varargin)
         varargout=check_derivatives(varargin)
         varargout=create_state_list(varargin)
-        varargout=estimate(varargin)
+        varargout=estimate(varargin) % re-signed...
         varargout=filter(varargin)
+        varargout=filter_initialization(varargin)
+        varargout=forecast_real_time(varargin)
         varargout=frontier(varargin)
+        varargout=monte_carlo_filtering(varargin)
+        varargout=pull_objective(varargin)
         varargout=print_solution(varargin)
+        varargout=resid(varargin)
+        varargout=set_solution_to_companion(varargin)
+        varargout=simulate_nonlinear(varargin)
         varargout=solve(varargin)
         varargout=solve_alternatives(varargin)
-        % the treatment of the two functions below is not satisfactory under multiple
-        % regimes. This is something to address
-        varargout=forecast_real_time(varargin)
-        varargout=monte_carlo_filtering(varargin)
-        varargout=resid(varargin)
-        varargout=simulate_nonlinear(varargin)
-        varargout=set_solution_to_companion(varargin)
         % constructor
         %------------
         function obj=dsge(model_filename,varargin)
@@ -315,7 +315,6 @@ classdef dsge < rise_generic
         varargout=assign_estimates(varargin)
         varargout=conclude_estimation(varargin) % abstract method
         varargout=do_not_anticipate_future_shocks(varargin)
-        varargout=filter_initialization(varargin)
         varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
         varargout=load_data(varargin)

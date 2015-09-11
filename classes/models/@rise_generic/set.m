@@ -276,9 +276,6 @@ end
             myoptions=utils.miscellaneous.mergestructures(myoptions,...
                 this_options);
         end
-		if ~isa(obj,'dsge')
-			myoptions=rmfield(myoptions,'estim_priors');
-		end
         
         % Create the main options
         % shocks are allowed to be anticipated.

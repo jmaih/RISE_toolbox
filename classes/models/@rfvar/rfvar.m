@@ -96,8 +96,6 @@ classdef rfvar < svar
         function r=template()
             r=svar.template();
             r.model_class='rfvar';
-            %             r.irf_sign_restrictions=[];
-            %             r.irf_zero_restrictions=[];
         end
     end
 end

@@ -1,50 +1,17 @@
 function varargout=pull_objective(obj,varargin)
 % PULL_OBJECTIVE -- pulls the objective function to optimize
 %
-% Syntax
-% -------
-% ::
-%
-%   [ff,lb,ub]=PULL_OBJECTIVE(obj)
-%
-%   [ff,lb,ub]=PULL_OBJECTIVE(obj,varargin)
-%
-%   [ff,lb,ub,x0]=PULL_OBJECTIVE(obj,varargin)
-%
-%   [ff,lb,ub,x0,vcov]=PULL_OBJECTIVE(obj,varargin)
-%
-% Inputs
-% -------
-%
-% - **obj** [rise|dsge|svar|rfvar]: initial model object
-%
-% - **varargin** [pairwise addional inputs]: usual RISE arguments
-%
-% Outputs
-% --------
-%
-% - **ff** [function handle]: for computing "minus log posterior kernel"
-%
-% - **lb** [d x 1 vector]: lower bound of the parameters to optimize
-%
-% - **ub** [d x 1 vector]: upper bound of the parameters to optimize
-%
-% - **x0** [d x 1 vector]: posterior mode if available
-%
-% - **vcov** [d x d matrix]: covariance matrix at the posterior mode if
-% available.
-%
 % More About
 % ------------
 %
-% - In the presence of a constant-parameter BVAR, if
-% vp_analytical_post_mode is set to true, only the constant_bvar_sampler
-% can be used.
+% - PULL_OBJECTIVE is the same as RISE_GENERIC/PULL_OBJECTIVE except for
+% the fact that constant-parameter RFVAR models sometimes have analytical
+% solutions. In that case the posterior has a known solution. Hence the
+% simulation exercise is greatly simplified. In the constant-parameter
+% case then, option **vp_analytical_post_mode** can be set to true or false
+% with the former being the default.
 %
-% Examples
-% ---------
-%
-% See also: RISE_GENERIC/PULL_OBJECTIVE
+% See also: RISE_GENERIC/PULL_OBJECTIVE, DSGE/PULL_OBJECTIVE
 
 nout=nargout;
 if isempty(obj)

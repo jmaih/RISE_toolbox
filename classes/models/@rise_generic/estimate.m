@@ -1,12 +1,12 @@
 function obj=estimate(obj,varargin)
-% estimate - estimates the parameters of a RISE model
+% ESTIMATE - estimates the parameters of a RISE model
 %
 % Syntax
 % -------
 % ::
 %
-%   obj=estimate(obj)
-%   obj=estimate(obj,varargin)
+%   obj=ESTIMATE(obj)
+%   obj=ESTIMATE(obj,varargin)
 %
 % Inputs
 % -------
@@ -73,12 +73,6 @@ function obj=estimate(obj,varargin)
 % - **estim_blocks** [{[]}|cell]: When not empty, this triggers blockwise
 %   optimization. For further information on how to set blocks, see help
 %   for dsge.create_estimation_blocks
-%
-% - **estim_priors** [{[]}|struct]: This provides an alternative to
-%   setting priors inside the rise/dsge model file. Each field of the
-%   structure must be the name of an estimated parameter. Each field will
-%   hold a cell array whose structure is described in help
-%   rise_generic.setup_priors.
 %
 % - **estim_penalty** [numeric|{1e+8}]: value of the objective function
 %   when a problem occurs. Possible problems include:
@@ -165,7 +159,6 @@ if nobj==0
         'estim_general_restrictions',[],... % holds a function that takes as input the model object and returns the
         'estim_linear_restrictions',[],...
         'estim_blocks',[],...
-        'estim_priors',[],...
         'estim_penalty',1e+8,...
         'estim_penalty_factor',10,...
         'estim_optimizer_hessian',false);
