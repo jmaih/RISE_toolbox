@@ -1,24 +1,18 @@
-function [LogLik,Incr,retcode,obj]=var_likelihood(params,obj)%
-% H1 line
-%
-% Syntax
-% -------
-% ::
-%
-% Inputs
-% -------
-%
-% Outputs
-% --------
+function [LogLik,Incr,retcode,obj]=var_likelihood_direct(params,obj)%
+% VAR_LIKELIHOOD_DIRECT - computes the likelihood of rfvar and svar
+% models.
 %
 % More About
 % ------------
 %
+% - This function is the same as VARTOOLS/VAR_LIKELIHOOD_STRETCH except
+% that is does apply a special treatment to low levels of likelihood that
+% tend to quickly go to infinity because of exponentiation.
+%
 % Examples
 % ---------
 %
-% See also: store_probabilities save_filters
-
+% See also: VARTOOLS/VAR_LIKELIHOOD, VARTOOLS/VAR_LIKELIHOOD_STRETCH
 
 if isempty(obj)
     LogLik=struct();

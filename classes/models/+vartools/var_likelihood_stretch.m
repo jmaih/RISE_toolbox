@@ -1,24 +1,42 @@
-function [LogLik,Incr,retcode,obj]=var_likelihood(params,obj)%
-% H1 line
+function [LogLik,Incr,retcode,obj]=var_likelihood_stretch(params,obj)%
+% VAR_LIKELIHOOD_STRETCH - computes the likelihood of rfvar and svar
+% models.
 %
 % Syntax
 % -------
 % ::
+%   [LogLik,Incr,retcode,obj]=VAR_LIKELIHOOD_STRETCH(params,obj)
 %
 % Inputs
 % -------
 %
+% - **params** [empty|vector]: parameter vector under estimation
+%
+% - **obj** [rfvar|svar]: model object
+%
 % Outputs
 % --------
+%
+% - **LogLik** [numeric]: log of the likelihood
+%
+% - **Incr** [vector]: contributions of each period/iteration to the
+% likelihood
+%
+% - **retcode** [numeric]: 0 if no problem
+%
+% - **obj** [svar|rfvar]: model object possibly updated with the solution
+% of the model and the filters (shocks and probabilities).
 %
 % More About
 % ------------
 %
+% - For numerical reasons, this function STRETCHES the exponential function
+% in order to avoid early truncations for low levels of the likelihood.
+%
 % Examples
 % ---------
 %
-% See also: store_probabilities save_filters
-
+% See also: VARTOOLS/VAR_LIKELIHOOD, VARTOOLS/VAR_LIKELIHOOD_DIRECT
 
 if isempty(obj)
     LogLik=struct();

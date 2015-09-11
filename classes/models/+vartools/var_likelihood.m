@@ -1,24 +1,19 @@
-function varargout=var_likelihood(params,obj)%
-% H1 line
-%
-% Syntax
-% -------
-% ::
-%   [LogLik,Incr,retcode,obj]=var_likelihood(params,obj,choice)
-%
-% Inputs
-% -------
-%
-% Outputs
-% --------
+function varargout=var_likelihood(params,obj)
+% var_likelihood -- computes the likelihood of a VAR model.
 %
 % More About
 % ------------
 %
+% - This function has he same inputs and outpus as
+% VARTOOLS/VAR_LIKELIHOOD_STRETCH and VARTOOLS/VAR_LIKELIHOOD_DIRECT . It
+% calls one of the function or both, depending on option
+%   - **estim_likelihood_exp_mode** ['direct'|'debug'|{'stretch'}]:
+%
 % Examples
 % ---------
 %
-% See also: store_probabilities save_filters
+% See also: VARTOOLS/VAR_LIKELIHOOD_STRETCH, VARTOOLS/VAR_LIKELIHOOD_DIRECT
+
 nout=nargout;
 if nargin==0
     varargout=cell(1,nout);
