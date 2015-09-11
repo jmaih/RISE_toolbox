@@ -60,6 +60,11 @@ if ~obj.data_are_loaded
     obj=obj.load_data;
 end
 
+% ensure the filters are computed. It is assumed that this function will
+% never be used under estimation unlike its dsge counterpart.
+%--------------------------------------------------------------------------
+obj.estimation_under_way=false;
+
 [LogLik,Incr,retcode,obj]=vartools.var_likelihood([],obj);
 
 end
