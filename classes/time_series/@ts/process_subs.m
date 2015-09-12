@@ -61,7 +61,10 @@ switch nsubs
             end
             subs1=cellfun(@(x)x(~isspace(x)),subs1,'uniformOutput',false);
             % if starts with a digit: date
-            date_style=~isvarname(subs1{1});
+            date_style=false;
+            if ~isempty(subs1)
+                date_style=~isvarname(subs1{1});
+            end
             if date_style
                 ss=char2serial(subs1);
                 freq=serial2frequency(ss); 

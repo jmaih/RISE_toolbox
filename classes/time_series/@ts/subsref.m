@@ -87,6 +87,8 @@ switch s(1).type
         if any(isnan(varloc))
             datta=datta(rows_dates,:,pages);
             this=ts(date_numbers(:),datta,obj.varnames);
+        elseif isempty(varloc)
+            this=ts.empty(0);
         else
             datta=datta(rows_dates,varloc,pages);
             this=ts(date_numbers(:),datta,obj.varnames(varloc));
