@@ -264,10 +264,7 @@ ff=@my_one_step;
                     shocks,order);
             end
             outputs={y1,false(1,exo_nbr),0,shocks};
-            varargout=cell(1,nout);
-            for iarg=1:nout
-                varargout{iarg}=outputs{iarg};
-            end
+            varargout=outputs(1:nout);
         else
             % if restrictions, this is unavoidable
             %--------------------------------------
