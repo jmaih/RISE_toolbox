@@ -151,24 +151,20 @@ end
         d1=dirichlet(1);
         est_id=est_id-1;
         prior_trunc=obj.options.prior_trunc;
-        % Now transform start values
-        %----------------------------
-        a_start=utils.distrib.dirichlet_transform(d1.moments.mean(1:end-1),...
-            d1.ax_diag);
         for ii_=1:d1.n_1
             fildname=d1.names{ii_};
             [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
             if isempty(position)
                 error([fildname,' is not recognized as a parameter'])
             end
-            % N.B: This are the bounds for the inverse of the Dirichlet,
-            % not the Dirichlet itself, which will undergo transformations
-            %--------------------------------------------------------------
+            % We set 0 and 1 as lower and upper bounds
+            %------------------------------------------
             bounds=[prior_trunc,1-prior_trunc];
             est_id=est_id+1;
+            mean_i=d1.moments.mean(ii_);
             est_struct=struct('name',pname,'chain',chain,'state',state,...
-                'start',a_start(ii_),'lower_quantile',nan,...
-                'upper_quantile',nan,'prior_mean',d1.moments.mean(ii_),...
+                'start',mean_i,'lower_quantile',nan,...
+                'upper_quantile',nan,'prior_mean',mean_i,...
                 'prior_stdev',d1.moments.sd(ii_),...
                 'prior_distrib','dirichlet',...
                 'prior_prob',1,'lower_bound',bounds(1),...
