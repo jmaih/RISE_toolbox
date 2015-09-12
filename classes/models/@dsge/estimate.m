@@ -17,7 +17,7 @@ function obj=estimate(obj,varargin)
 if isempty(obj)
     obj=estimate@rise_generic(obj,varargin{:});
     obj=utils.miscellaneous.mergestructures(obj,...
-        struct(obj,'estim_priors',[]));
+        struct('estim_priors',[]));
 else
     % Initially set the filtering/smoothing flag to false (during estimation).
     % This is especially important given that the objective function could be
