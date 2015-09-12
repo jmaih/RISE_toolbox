@@ -58,17 +58,17 @@ if ischar(simulation_folder) && ismember(simulation_folder,{'mode','prior'})
             lb=vertcat(obj.estimation.priors.lower_bound);
             ub=vertcat(obj.estimation.priors.upper_bound);
             xmode=obj.estimation.posterior_maximization.mode;
+            vcov=obj.estimation.posterior_maximization.vcov;
             % Draw from the short side and then untransform. The dirichlet
             % distributions should be fine.
-            [xmode,vcov,lbub_short]=shorten_under_linear_restrictions(obj,...
-                xmode,{obj.estimation.posterior_maximization.vcov},[lb,ub]);
+            [obj,xmode,lb_short,ub_short,vcov]=transform_parameters(obj,xmode,lb,ub,vcov);
             [cc,pp]=chol(vcov);
             if pp
                 error([mfilename,':: covariance matrix of estimated parameters not positive definite'])
             end
             n=numel(xmode);
             draw=xmode+transpose(cc)*randn(n,1);
-            draw=utils.optim.recenter(draw,lbub_short(:,1),lbub_short(:,2));
+            draw=utils.optim.recenter(draw,lb_short,ub_short);
         case 'prior'
             need_untransform=false;
             distribs={obj.estimation.priors.prior_distrib};
@@ -122,7 +122,7 @@ end
 if need_untransform
     % The user may want to set the parameters directly himself and do it is a
     % good idea to untransform the parameters for him
-    x=unstransform_estimates(obj,draw);
+    x=unstransform_parameters(obj,draw);
 else
     % we need to apply linear restrictions if necessary otherwise the
     % linear restrictions are not enforced for the prior.

@@ -1,11 +1,11 @@
-function x=unstransform_estimates(obj,x)
-% unstransform_estimates -- sets the transformed parameters back normal
+function x=unstransform_parameters(obj,x)
+% UNTRANSFORM_PARAMETERS -- sets the transformed parameters back normal
 %
 % Syntax
 % -------
 % ::
 %
-%   x=unstransform_estimates(obj,x)
+%   x=UNTRANSFORM_PARAMETERS(obj,x)
 %
 % Inputs
 % -------
@@ -25,7 +25,7 @@ function x=unstransform_estimates(obj,x)
 % Examples
 % ---------
 %
-% See also: 
+% See also: TRANSFORM_PARAMETERS
 
 if isempty(obj)
     if nargout>1

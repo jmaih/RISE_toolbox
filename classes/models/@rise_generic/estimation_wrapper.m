@@ -135,7 +135,7 @@ end
         % now. Otherwise there will be a wrong prior evaluation and further
         % problems down the road
         %------------------------------------------------------------------
-        x=unstransform_estimates(obj(1),xtilde);
+        x=unstransform_parameters(obj(1),xtilde);
         fval=estim_penalty*ones(1,nobj);
         
         % general restrictions are sometimes infeasible. Rather than
@@ -212,7 +212,7 @@ end
         grad=[];
         % unstransform xtilde into x before doing anything
         %--------------------------------------------------
-        x=unstransform_estimates(obj(1),xtilde);
+        x=unstransform_parameters(obj(1),xtilde);
         viol=mynonlinear_constraints(x,obj);
     end
 end

@@ -249,16 +249,12 @@ x0=x0(:);
 lb=[obj(1).estimation.priors.lower_bound]; lb=lb(:);
 ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 
-obj=setup_linear_restrictions(obj);
-obj=setup_general_restrictions(obj);
+% transform initial conditions
+%-----------------------------
+[obj,x0,lb_short,ub_short]=transform_parameters(obj,x0,lb,ub);
 
-% shorten everything in the presence of linear restrictions
-%-----------------------------------------------------------
-[x0,lbub_short]=shorten_under_linear_restrictions(obj,x0,[lb,ub]);
-
-lb_short=lbub_short(:,1);
-ub_short=lbub_short(:,2);
-
+% do posterior maximization
+%--------------------------
 [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb_short,ub_short); %#ok<ASGLU>
 
 % extend the output but not the short hessian
