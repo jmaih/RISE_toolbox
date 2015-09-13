@@ -78,15 +78,11 @@ if condforkst
         error('conditional forecasting and burn-in not allowed')
     end
     model_is_linear=size(T,1)==1;
-    if unique_state
-        if model_is_linear
-            % apply standard tools
-            standard_conditional_forecasting_tools();
-        else
-            % apply nonlinear tools
-            nonlinear_conditional_forecasting_tools();
-        end
+    if model_is_linear
+        % apply standard tools
+        standard_conditional_forecasting_tools();
     else
+        % apply nonlinear tools
         if all_known_states
             % apply nonlinear tools
             nonlinear_conditional_forecasting_tools();
@@ -117,9 +113,6 @@ else
             ncols_shocks=size(shocks_,2);
             ncols_ct=size(ct,2);
         end
-%         ncp=max(ncols_ct,ncols_shocks);
-%         ncsp = utils.forecast.conditional.number_of_conditioning_shocks_periods(...
-%             forecast_conditional_hypothesis,ncp,nap);
         needed_shocks=options.nsteps+options.k_future;
         missing_shocks=max(0,needed_shocks-ncols_shocks);%<--missing_shocks=max(0,ncsp-ncols_shocks);
         % set shocks beyond the shocks availability to zero.
@@ -173,44 +166,23 @@ else
     end
 
     function standard_conditional_forecasting_tools()
-        rt=states(1);
-        % re-build the square matrix
-        %----------------------------
-        n=size(T{rt},1);
-        H=zeros(n);
-        H(:,state_vars_location)=T{rt}(:,1:nsv);
-        risk=T{rt}(:,nsv+1);
-        G=reshape(T{rt}(:,nsv+2:end),[n,nx,options.k_future+1]);
-        ss_=ss{rt};
-        if any(risk)
-            ss_=ss_+(eye(n)-H)\risk;
-        end
-        Y0=bsxfun(@minus,y0.y,ss_);
-        EndogenousConditions=recreate_conditions(bsxfun(@minus,y_conditions,ss_));
-        if ~isempty(shocks)
-            shocks_=shocks;
-            % chop the shocks before sending them forward if the assumption
-            % is nas
-            if strcmpi(forecast_conditional_hypothesis,'nas')
-                shocks_=shocks_(:,1:options.k_future+1);
-            end
-            ShocksConditions=recreate_conditions(shocks_);
+        model=struct('T',{T},'sstate',{ss},'state_cols',state_vars_location,...
+            'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
+        opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
+        if h==1||~(isempty(states)||any(isnan(states)))
+            [shocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
+                y0.ycond,y0.econd,opt,states);
         else
-            ShocksConditions=[];
-        end
-        [~,CYfMean,myshocks,CYf,E,retcode]=utils.forecast.conditional.forecast_engine(...
-            Y0,H,G,EndogenousConditions,ShocksConditions,options.nsteps,...
-            NumberOfSimulations,forecast_conditional_hypothesis);
-        if options.random
-            CYfMean=CYf;
-            myshocks=E;
+            [shocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
+                y0.ycond,y0.econd,opt,states);
         end
         % skip the initial conditions and add the mean
         if retcode
             sims=[];
         else
-            sims=bsxfun(@plus,CYfMean(:,2:end),ss_);
+            sims=cfkst;
         end
+        keyboard
     end
 
     function shocks=condition_on_shocks_only(shocks)

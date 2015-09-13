@@ -31,6 +31,12 @@ Initcond.y.y=Initcond.y.y(new_order,:,:);% [variables,ncols,1+n_conditions]
 
 iov(new_order)=1:numel(new_order);
 
+% re-order conditions accordingly
+%---------------------------------
+if ~isempty(Initcond.y.ycond.pos)
+    Initcond.y.ycond.pos=iov(Initcond.y.ycond.pos);
+end
+
 % adjust the transition and complementarity functions according to the
 % order_var: they will be fed with order_var, but they expect the
 % alphabetical order and so the order_var they are fed with has to be

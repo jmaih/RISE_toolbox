@@ -23,18 +23,6 @@ function cond_fkst_db=forecast(obj,varargin)
 %   - **forecast_start_date** [char|numeric|serial date]: date when the
 %       forecasts start (end of history + 1)
 %
-%   - **forecast_conditional_hypothesis** [{jma}|ncp|nas]: in dsge models in
-%       which agents have information beyond the current period, this
-%       option determines the number of periods of shocks need to match the
-%       restrictions:
-%       - Hypothesis **jma** assumes that irrespective of how
-%           many periods of conditioning information are remaining, agents
-%           always receive information on the same number of shocks.
-%       - Hypothesis **ncp** assumes there are as many shocks periods as
-%           the number of the number of conditioning periods
-%       - Hypothesis **nas** assumes there are as many shocks periods as
-%           the number of anticipated steps
-%
 %   - **forecast_cond_endo_vars** [{''},char|cellstr]: names of conditional
 %   endogenous variables to be used either in forecasting or in estimation
 %
@@ -60,32 +48,44 @@ function cond_fkst_db=forecast(obj,varargin)
 %   each series, the first page represents the actual data and all
 %   subsequent pages represent conditional information. If a particular
 %   condition is "nan", that location is not constrained
+%
 % - Conditional forecasting for nonlinear models is also supported.
 %   However, the solving of the implied nonlinear problem may fail if the
 %   model displays instability
-% - Both HARD CONDITIONS and SOFT CONDITIONS are implemented but the latter
-%   are currently disabled in expectation of a better user interface.
+%
+% - Both HARD CONDITIONS and SOFT CONDITIONS are implemented. In order to
+% do soft conditions, the variables one wishes to condition on must have
+% lower and upper bounds represented by the presence of variables with
+% names "lower_CONDNAME" and "upper_CONDNAME", where CONDNAME is the name
+% of a particular variable we want to condition on.
+%
 % - The data may also contain time series for a variable with name
 %   **regime** in that case, the forecast/simulation paths are computed
 %   following the information therein. **regime** must be a member of 1:h,
 %   where h is the maximum number of regimes.
 %
+% - Further options for conditional forecasting can be found in
+% RSCF.FORECAST
+%
 % Examples
 % ---------
 %
-% See also: simulate
+% See also: RISE_GENERIC/SIMULATE, RSCF.FORECAST
 
 if isempty(obj)
     if nargout>1
         error([mfilename,':: number of output arguments cannot exceed 1 when the object is empty'])
     end
-    cond_fkst_db=struct('forecast_conditional_hypothesis',0,...
-        'forecast_start_date','',...
+    cond_fkst_db=struct('forecast_start_date','',...
         'forecast_shock_uncertainty',false,...
         'forecast_nsteps',12,...
         'forecast_cond_endo_vars','',...
         'forecast_cond_exo_vars','',...
         'forecast_to_time_series',true);
+    cond_fkst_db=utils.miscellaneous.mergestructures(cond_fkst_db,...
+        utils.forecast.rscond.forecast());
+    % the following option is set elsewhere
+    cond_fkst_db=rmfield(cond_fkst_db,'debug');
     return
 end
 %% pass the options
