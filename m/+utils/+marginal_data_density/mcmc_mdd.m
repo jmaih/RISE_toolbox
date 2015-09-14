@@ -46,6 +46,10 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %       - **is** is the Importance sampling algorithm. 
 %       - **ris** is the reciprocal importance sampling algorithm. 
 %       - **cj** is the Chib and Jeliazkov (2001) algorithm. 
+%       - **laplace** is the laplace approximation 
+%       - **laplace_mcmc** is the laplace approximation using the
+%       covariance of the mcmc draws rather than the one obtain from
+%       computing and inverting the numerical hessian.
 %   - **L** [{[]}|integer]: number of IID draws
 %   - **maximization** [{false}|true]: Informs the procedure about whether
 %   we have a maximization or a minimization problem.
@@ -74,7 +78,7 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
-algorithms={'mhm','swz','mueller','bridge','is','ris','cj'};
+algorithms={'mhm','swz','mueller','bridge','is','ris','cj','laplace','laplace_mcmc'};
 defaults={ % arg_names -- defaults -- checks -- error_msg
     'log_post_kern',[],@(x)isa(x,'function_handle'),'log_posterior_kern should be a function handle'
     'center_at_mean',false,@(x)isscalar(x) && islogical(x),'center_at_mean should be a logical scalar'
@@ -184,10 +188,30 @@ switch algorithm
         log_mdd=do_reciprocal_importance_sampling();
     case 'cj'
         log_mdd=do_chib_jeliazkov_2001();
+    case 'laplace'
+        log_mdd=do_laplace();
+    case 'laplace_mcmc'
+        log_mdd=do_laplace_mcmc();
 end
 
 % Methods
 %----------
+
+    function log_mdd=do_laplace()
+        H=utils.hessian.finite_differences(log_post_kern,theta_mode.x);
+        if maximization
+            H=-H;
+        end
+        Hinv=H\eye(size(H,1));
+        log_mdd=utils.marginal_data_density.laplace_mdd(...
+            LogPost_M(best_loc),Hinv);
+    end
+
+    function log_mdd=do_laplace_mcmc()
+        Hinv=cov(theta_draws.');
+        log_mdd=utils.marginal_data_density.laplace_mdd(...
+            LogPost_M(best_loc),Hinv);
+    end
 
     function log_mdd=do_chib_jeliazkov_2001()
         % Posterior kernel at the mode
