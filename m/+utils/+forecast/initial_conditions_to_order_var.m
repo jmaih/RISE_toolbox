@@ -33,7 +33,7 @@ iov(new_order)=1:numel(new_order);
 
 % re-order conditions accordingly
 %---------------------------------
-if ~isempty(Initcond.y.ycond.pos)
+if isfield(Initcond.y.ycond,'pos') && ~isempty(Initcond.y.ycond.pos)
     Initcond.y.ycond.pos=iov(Initcond.y.ycond.pos);
 end
 
