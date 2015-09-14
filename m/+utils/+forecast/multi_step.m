@@ -170,19 +170,20 @@ else
             'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
         opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
         if h==1||~(isempty(states)||any(isnan(states)))
-            [shocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
+            [myshocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
                 y0.ycond,y0.econd,opt,states);
         else
-            [shocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
+            [myshocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
                 y0.ycond,y0.econd,opt,states);
         end
         % skip the initial conditions and add the mean
         if retcode
             sims=[];
         else
-            sims=cfkst;
+            % remove one period of history as it will be added back later
+            % on
+            sims=cfkst(:,2:end,:);
         end
-        keyboard
     end
 
     function shocks=condition_on_shocks_only(shocks)
