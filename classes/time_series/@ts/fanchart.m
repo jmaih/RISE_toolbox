@@ -29,8 +29,8 @@ if nvar>1
             obj=subsref(this,S);%<--obj=this(vnames{ivar});
             out.(vnames{ivar})=fanchart(obj,ci);
         end
+        return
     end
-    return
 end
 ci=sort(ci(:));
 datax=squeeze(double(this));
