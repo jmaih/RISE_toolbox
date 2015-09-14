@@ -20,6 +20,6 @@ function y=re_order_output_rows(obj,y)
 % See also: 
 
 
-y=reshape(y(obj.inv_order_var,:),size(y));
+y=reshape(y(obj.inv_order_var,:,:),size(y));
 
 end
