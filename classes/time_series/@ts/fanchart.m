@@ -32,7 +32,12 @@ if nvar>1
         return
     end
 end
+if any(ci<0)
+    error('confidence bands cannot be negative')
+end
 ci=sort(ci(:));
+large=ci>=1;
+ci(large)=ci(large)/100;
 datax=squeeze(double(this));
 probs = 0.5*(1+[-ci,ci]);
 probs=[flipud(probs(:,1));probs(:,2)];
