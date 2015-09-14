@@ -159,9 +159,10 @@ end
 % add initial conditions: (only the actual data on the first page)
 % ONLY IF THERE WAS NO BURN-IN
 %---------------------------------------------------------------
+[nr,nc,np]=size(y);
 if Initcond.burn==0
     % we include history
-    y=[y0(1).y(:,:,1),y];
+    y=cat(2,y0(1).y(:,:,ones(np,1)),y);
     y0cols=size(y0(1).y,2);
 else
     % then we start after the end of history
@@ -170,13 +171,13 @@ end
 
 % recompose the output if we have a dsge-var
 %-------------------------------------------
+smply=size(y,2);
 if do_dsge_var
     endo_nbr=obj.endogenous.number;
     max_rows=obj.observables.number(1);
     relevant=obj.inv_order_var(obj.observables.state_id);
-    ncols=size(y,2);
     yold=y;
-    y=zeros(endo_nbr,ncols)+1i;
+    y=zeros(endo_nbr,smply)+1i;
     y(relevant,:)=yold(1:max_rows,:);
 end
 
@@ -186,19 +187,20 @@ y=re_order_output_rows(obj,y);
 
 start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
 
-smpl_states=numel(states);
+nrs=size(states,1);
+states=reshape(states,[nrs,1,np]);
+smpl_states=size(states,1);
 [states_,markov_chains]=regimes2states(states);
-smply=size(y,2);
-[exo_nbr,smplx]=size(myshocks);
-myshocks=[zeros(exo_nbr,y0cols),myshocks];
+[exo_nbr,smplx,np]=size(myshocks);
+myshocks=cat(2,zeros(exo_nbr,y0cols,np),myshocks);
 smplx=smplx+y0cols;
 vnames=[obj.endogenous.name,obj.exogenous.name,'regime',markov_chains];
 endo_nbr=obj.endogenous.number;
 smpl=max(smplx,smply);
-yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains));
-yy(1:smply,1:endo_nbr)=y(1:endo_nbr,:)';
-yy(1:smplx,endo_nbr+(1:exo_nbr))=myshocks';
-yy(y0cols+1:smply,endo_nbr+exo_nbr+1:end)=[states,states_];
+yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains),np);
+yy(1:smply,1:endo_nbr,:)=permute(y(1:endo_nbr,:,:),[2,1,3]);
+yy(1:smplx,endo_nbr+(1:exo_nbr),:)=permute(myshocks,[2,1,3]);
+yy(y0cols+1:smply,endo_nbr+exo_nbr+1:end,:)=cat(2,states,states_);
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
@@ -221,13 +223,17 @@ end
         markov_chains=regimes_tables(1,2:end);
         nchains=numel(markov_chains);
         reg_table=cell2mat(regimes_tables(2:end,2:end));
-        states=nan(smpl_states,nchains);
+        states=nan(smpl_states,nchains,np);
         
-        max_reg=max(regimes_history);
-        for ireg=1:max_reg
-            pos=regimes_history==ireg;
-            n=sum(pos);
-            states(pos,:)=reg_table(ireg*ones(n,1),:);
+        for ip=1:np
+            % there is only one column and so the following should also
+            % work max_reg=max(regimes_history(:,ip));
+            max_reg=max(regimes_history(:,1,ip));
+            for ireg=1:max_reg
+                pos=regimes_history(:,ip)==ireg;
+                n=sum(pos);
+                states(pos,:,ip)=reg_table(ireg*ones(n,1),:);
+            end
         end
     end
 end
