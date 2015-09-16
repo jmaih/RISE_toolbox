@@ -27,12 +27,20 @@ function [P,retcode,good]=doubling_solve(A,B,C,options)
 %
 % See also: 
 
+thresh=@(x)isscalar(x) && isreal(x) && x>0 && ceil(x)==floor(x);
+defaults={
+    'lyapunov_double_stationary',false,@(x)islogical(x),...
+    'lyapunov_double_stationary must be true or false'
+    
+    'lyapunov_double_stationary_threshold',5000,@(x)thresh(x),...
+    'lyapunov_double_stationary_threshold must be a positive integer'
+    };
 if nargin==0
 	if nargout>1
 		error([mfilename,':: number of output arguments cannot exceed 1 if there are no inputs'])
 	end
-	P=struct('lyapunov_double_stationary',false,...
-        'lyapunov_double_stationary_threshold',5000);
+    P=cell2struct(defaults(:,2),defaults(:,1),1);
+    retcode=defaults;
 	return
 end
 
@@ -47,7 +55,18 @@ if isempty(A),A=B';end
 
 if isempty(options)
     options=doubling_solve();
+else
+    for itype=1:size(defaults,1)
+        name=defaults{itype,1};
+        if ~isfield(options,name)
+            options.(name)=defaults{itype,2};
+        end
+    end
 end
+[lyapunov_double_stationary,lyapunov_double_stationary_threshold]=...
+    parse_arguments(defaults,...
+    'lyapunov_double_stationary',options.lyapunov_double_stationary,...
+    'lyapunov_double_stationary_threshold',options.lyapunov_double_stationary_threshold);
 
 P0=C;
 symmetric=isequal(A,B');
@@ -59,7 +78,7 @@ end
 [P,~,retcode]=fix_point_iterator(@iterator,P0,options);
 
 if retcode
-    if options.lyapunov_double_stationary
+    if lyapunov_double_stationary
         do_stationary_variables_only()
     end
 else
@@ -70,7 +89,7 @@ end
         % select the stationary guys and proceed: Looks like we can concentrate
         % on the variances, so take the diagonal. Seems to save time
         %----------------------------------------------------------------------
-        good=diag(P)<options.lyapunov_double_stationary_threshold;
+        good=diag(P)<lyapunov_double_stationary_threshold;
         if any(good)
             P20=P(good,good);
             Gl=Gl(good,good);
