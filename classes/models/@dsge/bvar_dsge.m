@@ -57,7 +57,7 @@ end
 if obj.markov_chains.regimes_number>1
     error([mfilename,':: dsge-var for markov switching not implemented yet'])
 end
-if max(obj.exogenous.shock_horizon)>1
+if max(obj.exogenous.shock_horizon(:))>0
     error([mfilename,':: dsge-var with anticipations not implemented yet'])
 end
 

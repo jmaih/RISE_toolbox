@@ -57,7 +57,7 @@ if obj.options.solve_order>=1
     %------------------
     siz.h=size(structural_matrices.dv,2);
     siz.nT=siz.ns+siz.np+siz.nb+siz.nf;
-    shock_horizon=max(obj.exogenous.shock_horizon);
+    shock_horizon=max(obj.exogenous.shock_horizon(:));
     siz.nz=siz.np+siz.nb+1+siz.ne*(1+shock_horizon);
     siz.nd=size(structural_matrices.dv{1,1},1); % number of equations
     if siz.ne

@@ -82,7 +82,7 @@ endo_nbr=obj.endogenous.number;
 exo_nbr=sum(obj.exogenous.number);
 horizon=1;
 if isa(obj,'dsge')
-    horizon=max(obj.exogenous.shock_horizon)+1;
+    horizon=max(obj.exogenous.shock_horizon(:))+1;
 end
 nregs=obj.markov_chains.regimes_number;
 

@@ -122,7 +122,7 @@ end
         det_exo_nbr=obj.exogenous.number(2);
         exo_nbr=stoch_exo_nbr+det_exo_nbr;
         is_det_shock=obj.exogenous.is_observed;
-        horizon=max(obj.exogenous.shock_horizon)+1;
+        horizon=max(obj.exogenous.shock_horizon(:))+1;
         h=obj.markov_chains.regimes_number;
         % covariance matrix of stochastic shocks
         %----------------------------------------
@@ -152,7 +152,7 @@ end
         % find the anticipated shocks
         anticipated_shocks=[];
         if ~isempty(sep_compl)
-            anticipated_shocks=obj.exogenous.shock_horizon>0;
+            anticipated_shocks=any(obj.exogenous.shock_horizon>0,1);
         end
         
         % consider only the first-order solution for the inialization of

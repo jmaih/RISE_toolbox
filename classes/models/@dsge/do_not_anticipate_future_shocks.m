@@ -30,7 +30,7 @@ function obj=do_not_anticipate_future_shocks(obj)
 %
 % See also: 
 
-kmax=max(obj.exogenous.shock_horizon);
+kmax=max(obj.exogenous.shock_horizon(:));
 % deterministic variables can also be anticipated...
 if kmax>0 && ~obj.options.irf_anticipate
     solve_order=obj.options.solve_order;

@@ -35,7 +35,7 @@ if data_provided %simulation_available ||
      
     % information on the conditional variables
     %------------------------------------------
-    kmax=max(obj.exogenous.shock_horizon);
+    kmax=max(obj.exogenous.shock_horizon(:));
     if kmax
         if obj.data.npages<kmax+2
             warning('the anticipation horizon of agents will be reduced since it exceeds the number of advance information')

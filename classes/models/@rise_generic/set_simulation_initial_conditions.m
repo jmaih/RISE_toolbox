@@ -56,7 +56,7 @@ do_dsge_var=false;
 if isa(obj,'svar')
     nlags=obj.nlags;
 elseif isa(obj,'dsge')
-    k_future=max(obj.exogenous.shock_horizon);
+    k_future=max(obj.exogenous.shock_horizon(:));
     simul_sig=obj.options.simul_sig;
     simul_pruned=obj.options.simul_pruned;
     if isempty(obj.options.simul_order);

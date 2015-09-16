@@ -50,7 +50,7 @@ if isempty(orders)
     orders=1:m.options.solve_order;
 end
 orders=sort(orders);
-shock_horizon=max(m.exogenous.shock_horizon);
+shock_horizon=max(m.exogenous.shock_horizon(:));
 exo_list=get(m,'exo_list');
 % "predetermined" and then "both" variables
 %-------------------------------------------

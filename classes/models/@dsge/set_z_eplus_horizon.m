@@ -22,7 +22,7 @@ function obj=set_z_eplus_horizon(obj)
 % get the shock horizon for all the shocks
 %------------------------------------------
 shock_horizon=obj.exogenous.shock_horizon;
-kmax=max(obj.exogenous.shock_horizon);
+kmax=max(obj.exogenous.shock_horizon(:));
 
 % deterministic variables can also be anticipated...
 if kmax>0

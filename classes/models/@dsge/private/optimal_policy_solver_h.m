@@ -37,7 +37,7 @@ end
 gam=structural_matrices.planner.commitment{1};
 beta=structural_matrices.planner.discount{1};
 Q=structural_matrices.transition_matrices.Qinit;
-shock_horizon=max(obj.exogenous.shock_horizon);
+shock_horizon=max(obj.exogenous.shock_horizon(:));
 
 h=size(Q,1);
 

@@ -27,7 +27,7 @@ end
 if obj.markov_chains.regimes_number>1
     error([mfilename,':: OSR for markov switching not implemented yet'])
 end
-if max(obj.exogenous.shock_horizon)>1
+if max(obj.exogenous.shock_horizon(:))>1
     error([mfilename,':: OSR with anticipations not implemented yet'])
 end
 %% this important output is not created yet
