@@ -84,8 +84,8 @@ if isempty(obj)
         'forecast_to_time_series',true);
     cond_fkst_db=utils.miscellaneous.mergestructures(cond_fkst_db,...
         utils.forecast.rscond.forecast());
-    % the following option is set elsewhere
-    cond_fkst_db=rmfield(cond_fkst_db,'debug');
+    % the following options are set elsewhere
+    cond_fkst_db=rmfield(cond_fkst_db,{'debug','simul_shock_uncertainty'});
     return
 end
 %% pass the options

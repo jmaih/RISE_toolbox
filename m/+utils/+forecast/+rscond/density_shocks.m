@@ -1,13 +1,13 @@
 function [shocks,retcode]=density_shocks(R,mu_lb_ub,nshocks,OMG,options)
 % Both gibbs and ghk algorithms seem to work fine regardless of whether
-% there is shock forecast_conditional_sampling_uncertainty or not. But then again, only when the default
+% there is shock simul_shock_uncertainty or not. But then again, only when the default
 % algorithm, which does not trim the R (shock impact) matrix is employed.
 
 [~,defaults]=utils.forecast.rscond.tmvnrnd();
 defaults=[defaults
     {
-    'forecast_conditional_sampling_uncertainty',false,@(x)islogical(x),...
-    'forecast_conditional_sampling_uncertainty must be a logical'
+    'simul_shock_uncertainty',false,@(x)islogical(x),...
+    'simul_shock_uncertainty must be a logical'
     }
     ];
 
@@ -33,8 +33,8 @@ if isempty(options)
 end
 
 options=parse_arguments(defaults,options);
-forecast_conditional_sampling_uncertainty=options.forecast_conditional_sampling_uncertainty;
-options=rmfield(options,'forecast_conditional_sampling_uncertainty');
+simul_shock_uncertainty=options.simul_shock_uncertainty;
+options=rmfield(options,'simul_shock_uncertainty');
 
 if isempty(OMG)
     OMG=R*R.';
@@ -53,7 +53,7 @@ else
     M2_gam2=hard_conditions(x);
     
     shocks=M2_gam2;
-    if forecast_conditional_sampling_uncertainty
+    if simul_shock_uncertainty
         n1=size(M1,2);
         gam1=randn(n1,options.forecast_conditional_sampling_ndraws);
         shocks=M1*gam1+shocks;

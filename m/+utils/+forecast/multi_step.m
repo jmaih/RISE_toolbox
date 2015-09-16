@@ -67,11 +67,6 @@ if unique_state
     end
 end
 %-------------------------------------
-if options.random
-    NumberOfSimulations=1;
-else
-    NumberOfSimulations=0;
-end
 if condforkst
     myshocks=[];
     if options.burn

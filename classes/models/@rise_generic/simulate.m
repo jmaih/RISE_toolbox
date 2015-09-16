@@ -16,7 +16,10 @@ function [db,states,retcode] = simulate(obj,varargin)
 %
 %   - **simul_periods** [integer|{100}]: number of simulation periods
 %
-%   - **simul_burn** [integer|{100}]: number of burn-in periods
+%   - **simul_burn** [integer|{100}]: number of burn-in periods. This
+%   should not be confused with forecast_conditional_sampling_burnin, which
+%   is used in the sampling from the truncated multivariate normal
+%   distribution.
 %
 %   - **simul_historical_data** [ts|struct|{''}]: historical data from
 %       which the simulations are based. If empty, the simulations start at

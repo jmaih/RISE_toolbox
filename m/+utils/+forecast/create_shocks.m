@@ -24,7 +24,7 @@ function [shocks]=create_shocks(nx,shock_id,det_vars,options)
 % later period horizon_hit>0. In principle horizon_hit can differ from the
 % number of periods agents can see into the future. 
 
-random=options.random;
+random=options.simul_shock_uncertainty;
 % stochastic shocks
 %------------------
 shocks_span=options.nsteps+options.k_future+options.burn;
