@@ -20,11 +20,17 @@ function obj=set(obj,varargin)
 %           names as fields. Only the shock names whose value is to change
 %           have to be listed. In this case, different shocks can have
 %           different horizons k. The default is k=0 i.e. agents don't
-%           see into the future
+%           see into the future. The value of the fields is one of the
+%           following:
+%           - k 
+%           - {k,chainName_state}
+%           - {chainName_state,k}
 %       - for the cell case, the cell should have two columns. The first
 %           column includes the names of the shocks whose horizon is to
-%           change. The second column includes the horizon for each shock
-%           name on the left.
+%           change. The second column is one of the following: 
+%           - the horizon for the shock 
+%           - {horizon,chainName_state}
+%           - {chainName_state,horizon}
 %   - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
 %       - in the **amateur** or **explicit** mode the functions are kept in
 %           cell arrays of anonymous functions and evaluated using for
@@ -170,12 +176,13 @@ end
     end
 
     function this=set_shock_horizon(this)
-        
+        chain_names=this.markov_chains.chain_names;
+        regimes=cell2mat(this.markov_chains.regimes(2:end,2:end));
         % this has to be done one at a time
         %-----------------------------------
         if isa(value,'double') && numel(value)==1
             value=round(abs(value));
-            this.exogenous.shock_horizon(~this.exogenous.is_observed)=value;
+            this.exogenous.shock_horizon(:,~this.exogenous.is_observed)=value;
         elseif isstruct(value)
             fields=fieldnames(value);
             shock_locs=locate_variables(fields,this.exogenous.name);
@@ -186,11 +193,42 @@ end
             end
             for ifield=1:numel(fields)
                 shock=fields{ifield};
-                v=round(abs(value.(shock)));
-                this.exogenous.shock_horizon(shock_locs(ifield))=v;
+                process_regime_horizon(value.(shock),shock_locs(ifield));
             end
         else
             error('value must be a scalar or a structure')
+        end
+        function process_regime_horizon(vin,shockpos)
+            if isa(vin,'double') && numel(vin)==1
+                this.exogenous.shock_horizon(:,shockpos)=vin;
+            elseif isa(vin,'cell') && size(vin,2)==2
+                nrows=size(vin,1);
+                for irow=1:nrows
+                    if ischar(vin{irow,1})
+                        chain_state=vin{irow,1};
+                    elseif ischar(vin{irow,2})
+                        chain_state=vin{irow,2};
+                    end
+                    if isa(vin{irow,1},'double')
+                        v=vin{irow,1};
+                    elseif isa(vin{irow,2},'double')
+                        v=vin{irow,2};
+                    end
+                    chain_state1=regexprep(chain_state,'(\w+)\((\d+)\)','$1_$2');
+                    if ~ismember(chain_state1,this.markov_chains.state_names)
+                        error([chain_state,' is not recognized as a state'])
+                    end
+                    unders=find(chain_state1=='_');
+                    cn=chain_state1(1:unders-1);
+                    state=str2double(chain_state1(unders+1:end));
+                    chainloc=strcmp(cn,chain_names);
+                    state_pos= regimes(:,chainloc)==state;
+                    this.exogenous.shock_horizon(state_pos,shockpos)=v;
+                end
+            else
+                disp(vin)
+                error('wrong format for the shock horizon')
+            end
         end
     end
 end

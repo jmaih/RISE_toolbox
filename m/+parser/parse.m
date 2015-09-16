@@ -577,7 +577,8 @@ dictionary.exogenous.tex_name={exogenous.tex_name};
 dictionary.exogenous.is_observed=sparse(ismember(dictionary.exogenous.name,{dictionary.observables.name}));
 dictionary.exogenous.number=full([sum(~dictionary.exogenous.is_observed),sum(dictionary.exogenous.is_observed)]);
 dictionary.exogenous.is_in_use=sparse([exogenous.is_in_use]);
-dictionary.exogenous.shock_horizon=sparse(1,sum(dictionary.exogenous.number));%double(~dictionary.exogenous.is_observed);
+dictionary.exogenous.shock_horizon=sparse(dictionary.markov_chains.regimes_number,...
+    sum(dictionary.exogenous.number));%double(~dictionary.exogenous.is_observed);
 clear exogenous
 
 observables=dictionary.observables;
