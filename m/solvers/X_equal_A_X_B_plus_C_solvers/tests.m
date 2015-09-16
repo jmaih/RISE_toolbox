@@ -15,10 +15,8 @@ tic,X=sandwich_solve(T,T',Q);t(1)=toc;
 profile off
 profile viewer
 %%
-tic,[P,retcode_ds]=doubling_solve(T,T',Q,solve_options.MaxIter,...
-    solve_options.TolFun,solve_options.verbose);t(2)=toc;
-tic,[L,retcode_lyap]=lyapunov_equation(T,Q,solve_options.MaxIter,...
-    solve_options.TolFun);t(3)=toc;
+tic,[P,retcode_ds]=doubling_solve(T,T',Q,solve_options);t(2)=toc;
+tic,[L,retcode_lyap]=lyapunov_equation(T,Q,solve_options);t(3)=toc;
 tic,[V,retcode_tad]=sandwich_a_la_tadonki(T,T',Q,solve_options);t(4)=toc;
 
 disp(['sandwich_solve ',num2str(max(max(abs(X-T*X*T'-Q))))])

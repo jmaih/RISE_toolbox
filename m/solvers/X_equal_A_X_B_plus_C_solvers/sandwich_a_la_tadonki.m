@@ -54,7 +54,7 @@ V=reshape(V,size(A));
 
 % check whether the result should be symmetrized
 if isequal(A,B') && isequal(C,C')
-    V=symmetrize(V);
+    V=utils.cov.symmetrize(V);
 end
 
 function out=I_kron_A_B_V(v,A,B)
