@@ -156,7 +156,7 @@ end
                 if isol==1
                     npges=size(R{isol},2)/exo_nbr_;
                 end
-                R{isol}=reshape(R{isol},[endo_nbr_,exo_nbr_,npges]);
+                R{isol}=reshape(full(R{isol}),[endo_nbr_,exo_nbr_,npges]);
             end
         end
         T=Tz;
