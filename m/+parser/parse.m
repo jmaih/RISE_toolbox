@@ -16,6 +16,7 @@ function dictionary=parse(FileName,varargin)
 % - **varargin** []: pairwise arguments with possiblities as follows:
 %   - **parameter_differentiation** [true|{false}]: compute or not
 %   parameter derivatives
+%   - **definitions_inserted** [true|{false}]: substitute definitions  
 %   - **definitions_in_param_differentiation** [true|{false}]: insert or
 %   not definitions in equations before differentiating with respect to
 %   parameters  
