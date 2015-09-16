@@ -17,7 +17,7 @@ function xout=listing(varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % LISTING parses the arguments of a parameter or a variable
 myscalar=@(x)isa(x,'double') && isscalar(x) && floor(x)==ceil(x);
@@ -35,17 +35,14 @@ default_xout={
     'max_lead',0,@(x)myscalar(x) && x>=0% all variables and parameters
     'max_lag',0,@(x)myscalar(x) && x<=0% all variables and parameters
     'state_id',nan,@(x)myscalar(x) && x>=0% all observables
-	'is_auxiliary',false,@(x)islogical(x)% all endogenous
+    'is_auxiliary',false,@(x)islogical(x)% all endogenous
     };
-    ff=default_xout(:,1).';
-    nff=numel(ff);
-    xout0=cell(1,nff);
-[xout0{1:nff}]=parse_arguments(default_xout,varargin{:});
 
-xout=struct();
-for ifield=1:nff
-    xout.(ff{ifield})=xout0{ifield};
+in_opt=struct();
+for ivar=1:2:length(varargin)
+    in_opt.(varargin{ivar})=varargin{ivar+1};
 end
+xout=parse_arguments(default_xout,in_opt);
 
 if nargin
     if isempty(xout.name)
