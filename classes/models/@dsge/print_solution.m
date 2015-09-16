@@ -82,7 +82,7 @@ end
 defaults={
     'file2save2',[],@(x)ischar(x)
     };
-[file2save2]=utils.miscellaneous.parse_arguments(defaults,'file2save2',file2save2);
+[file2save2]=parse_arguments(defaults,'file2save2',file2save2);
 
 nobj=numel(obj);
 outcell0=cell(0,1);
@@ -113,7 +113,7 @@ defaults={
     'orders',1:obj.options.solve_order,@(x)all(ismember(x,1:obj.options.solve_order))
     };
 [varlist,compact_form,precision,equation_format,orders]=...
-    utils.miscellaneous.parse_arguments(defaults,...
+    parse_arguments(defaults,...
     'varlist',varlist,'compact_form',compact_form,'precision',precision,...
     'equation_format',equation_format,'orders',orders);
 

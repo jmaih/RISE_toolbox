@@ -42,7 +42,7 @@ assert(isvarname(name) && ~any(name=='_'),...
     ' contain any "_". ',name,' is not valid']);
 
 [is_endogenous,param_list,param_list_tex,is_switching,duration]=...
-    utils.miscellaneous.parse_arguments(pnames_defaults,varargin{:});
+    parse_arguments(pnames_defaults,varargin{:});
 
 if ~isempty(param_list) && isempty(param_list_tex)
     param_list_tex=param_list;

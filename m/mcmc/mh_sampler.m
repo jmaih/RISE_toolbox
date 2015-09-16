@@ -132,7 +132,7 @@ if ~isequal(size(ub),[d,ncols])
     error('size ub does not match size lb')
 end
 
-options=utils.miscellaneous.parse_arguments(defaults,options);
+options=parse_arguments(defaults,options);
 
 if ischar(logf)
     logf=str2func(logf);

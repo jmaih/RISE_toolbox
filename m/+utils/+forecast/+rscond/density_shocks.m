@@ -32,7 +32,7 @@ if isempty(options)
     options=struct();
 end
 
-options=utils.miscellaneous.parse_arguments(defaults,options);
+options=parse_arguments(defaults,options);
 forecast_conditional_sampling_uncertainty=options.forecast_conditional_sampling_uncertainty;
 options=rmfield(options,'forecast_conditional_sampling_uncertainty');
 

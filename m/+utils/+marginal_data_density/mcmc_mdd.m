@@ -109,7 +109,7 @@ if isempty(options)
     options=struct();
 end
 
-options=utils.miscellaneous.parse_arguments(defaults,options);
+options=parse_arguments(defaults,options);
 
 center_at_mean=options.center_at_mean;
 

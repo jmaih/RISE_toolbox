@@ -62,7 +62,7 @@ else
     if ~isstruct(options)
         error('options must be a structure or empty')
     end
-    options=utils.miscellaneous.parse_arguments(default_options,options);
+    options=parse_arguments(default_options,options);
 end
 
 nz=size(vz,2);

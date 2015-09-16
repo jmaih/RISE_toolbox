@@ -57,7 +57,7 @@ defaults={
     'diagonly',false,@(x)islogical(x)
     };
 
-[tol,diagonly]=utils.miscellaneous.parse_arguments(defaults,...
+[tol,diagonly]=parse_arguments(defaults,...
     'tol',options.tol,'diagonly',options.diagonly);
 
 if ischar(Objective)

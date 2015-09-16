@@ -50,7 +50,7 @@ if isempty(options)
     options=struct();
 end
 
-options=utils.miscellaneous.parse_arguments(defaults,options);
+options=parse_arguments(defaults,options);
 % Trim the data to have a length of nsteps by chopping or adding nans
 %--------------------------------------------------------------------
 [conddatay,ry,cy]=allocate(ycond);

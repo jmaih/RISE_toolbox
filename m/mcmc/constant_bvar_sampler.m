@@ -91,7 +91,7 @@ estimafy=start.estimafy; % computes posterior variance
 a2tilde_func=start.a2tilde_func ;
 %---------------------------------------------
 
-options=utils.miscellaneous.parse_arguments(defaults,options);
+options=parse_arguments(defaults,options);
 
 burnin=options.burnin;
 thin=options.thin;

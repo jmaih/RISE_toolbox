@@ -63,7 +63,7 @@ Defaults={
     };
 
 [deriv,args,asfunc,long,optimize]=...
-    utils.miscellaneous.parse_arguments(Defaults,'deriv',deriv,'args',args,'asfunc',asfunc,'long',long,'optimize',optimize);
+    parse_arguments(Defaults,'deriv',deriv,'args',args,'asfunc',asfunc,'long',long,'optimize',optimize);
 
 nderivs=numel(deriv);
 

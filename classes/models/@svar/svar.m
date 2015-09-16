@@ -232,7 +232,7 @@ classdef svar < rise_generic
                 flag=cell2struct(mydefaults(:,2),mydefaults(:,1),1);
             else
                 flag=r;
-                flag.priors_hyperparams=utils.miscellaneous.parse_arguments(mydefaults,r.priors_hyperparams);
+                flag.priors_hyperparams=parse_arguments(mydefaults,r.priors_hyperparams);
             end
             if nargout
                 out=flag;

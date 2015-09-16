@@ -40,7 +40,7 @@ default_xout={
     ff=default_xout(:,1).';
     nff=numel(ff);
     xout0=cell(1,nff);
-[xout0{1:nff}]=utils.miscellaneous.parse_arguments(default_xout,varargin{:});
+[xout0{1:nff}]=parse_arguments(default_xout,varargin{:});
 
 xout=struct();
 for ifield=1:nff

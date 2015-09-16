@@ -39,7 +39,7 @@ if isempty(options)
     options=struct();
 end
 
-options=utils.miscellaneous.parse_arguments(defaults,options);
+options=parse_arguments(defaults,options);
 
 forecast_conditional_sampling_max_rejection_attempts=options.forecast_conditional_sampling_max_rejection_attempts;
 
