@@ -1,19 +1,40 @@
 function varargout=parse_arguments(args,varargin)
-% parse_arguments -- arguments parser
+% PARSE_ARGUMENTS -- arguments parser
 %
 % Syntax
 % -------
 % ::
 %
-%   varargout=parse_arguments(args,varargin)
+%   varargout=PARSE_ARGUMENTS(args,varargin)
 %
-%   struct=parse_arguments(args,struct)
+%   struct=PARSE_ARGUMENTS(args,struct)
+%
+%   struct=PARSE_ARGUMENTS(args,struct,'-hopover')
 %
 % Inputs
 % -------
 %
+% - **args** [n x 3 or n x 4 cell]:
+%   - column 1: arguments' names
+%   - column 2: defaults values for the arguments
+%   - column 3: function handle checking the value of the arguments
+%   - column 4: message to be issued in case of error
+%
+% - **varargin** []: pairwise arguments. Each first argument is a char and
+% the second is a value to be parsed for correctness
+%
+% - **struct** [struct]: structure with the options to parse
+%
+% - **'-hopover'** []: if present, the options that are not found in args
+% are skipped. Else an error is issued
+%
 % Outputs
 % --------
+%
+% - **varargout** [list|struct]: if the second input argument is a struct,
+% a struct is return in varargout. Else a list is return. In both cases,
+% only the elements relating to the function of interest (i.e. the elements
+% in **args**) are returned.
 %
 % More About
 % ------------
@@ -34,7 +55,14 @@ if size(args,2)==4
     error_msg=args(:,end).';
     assert(iscellstr(error_msg),'fourth column of first input must be a cellstr')
 end
+hopover=ischar(varargin{end})&& strcmp(deblank(varargin{end}),'-hopover');
+if hopover
+    varargin(end)=[];
+end
 struct_style=length(varargin)==1 && isstruct(varargin{1});
+if hopover && ~struct_style
+    error('hopover can only be used with structures')
+end
 nout=nargout;
 nargs=numel(arg_names);
 if struct_style
@@ -56,8 +84,13 @@ end
 assert(iscellstr(arg_names),'first column of first input must be a cellstr')
 for iprop=1:numel(prop_names)
     prop_loc=strcmp(prop_names{iprop},arg_names);
-    assert(any(prop_loc),...
-        sprintf('%s is not a valid property',prop_names{iprop}))
+    if ~any(prop_loc)
+        if hopover
+            continue
+        else
+            error(sprintf('%s is not a valid property',prop_names{iprop})) %#ok<SPERR>
+        end
+    end
     value=prop_vals{iprop};
     if isempty(value) && ~struct_style
         continue
