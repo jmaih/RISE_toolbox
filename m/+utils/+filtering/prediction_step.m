@@ -65,7 +65,7 @@ Rt=R;
 if ~reduced
     reduced=reduced||(~ExpandedFlag && all(isnan(MUt(:))));
     if ~reduced
-        [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
+        [Tt,Rt,bt,~,Record]=utils.forecast.rscond.state_matrices(T,R,MUt,OMGt,DPHI,DT,Record,ExpandedFlag);
     end
 end
 
