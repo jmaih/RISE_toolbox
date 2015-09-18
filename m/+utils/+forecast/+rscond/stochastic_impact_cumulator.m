@@ -1,42 +1,69 @@
-function [M,ufkst,states,PAI]=stochastic_impact_cumulator(model,y0,nsteps,y_pos,e_pos,states)
-% cumulated_impacts -- creates impact matrix for contemporaneous and future
-% shocks
+function [M,ufkst,states,PAI,TT]=stochastic_impact_cumulator(model,y0,nsteps,...
+    y_pos,e_pos,states)
+% STOCHASTIC_IMPACT_CUMULATOR -- creates impact matrix for contemporaneous
+% and future shocks
 %
 % Syntax
 % -------
 % ::
 %
-%   [M,ufkst,states]=stochastic_impact_cumulator(model,y0,nsteps,y_pos,e_pos,states)
+%   M=STOCHASTIC_IMPACT_CUMULATOR(model,y0,nsteps)
+%
+%   M=STOCHASTIC_IMPACT_CUMULATOR(model,y0,nsteps,y_pos)
+%
+%   M=STOCHASTIC_IMPACT_CUMULATOR(model,y0,nsteps,y_pos,e_pos)
+%
+%   M=STOCHASTIC_IMPACT_CUMULATOR(model,y0,nsteps,y_pos,e_pos,states)
+%
+%   [M,ufkst,states]=STOCHASTIC_IMPACT_CUMULATOR(...)
 %
 % Inputs
 % -------
 %
-% - **T** [{}]:
+% - **model** [struct]:
+%   - **T** [1 x h cell]: solution of the model,
+%   T{regime}=[Ty,Tsig,Te_0,...Te_k]
+%   - **sstate** [1 x h cell]: steady state in each regime
+%   - **state_cols** [vector|{1:ny}]: location of state endogenous
+%   variables in y0 (see below).
+%   - **k** [scalar]: anticipation horizon (Beyond the current period)
+%   - **Qfunc** [empty|function_handle]: endogenous transition matrix
 %
-% - **sstate** [{}]:
+% - **y0** [ny x 1 vector]: initial conditions
 %
-% - **y0** [{}]:
+% - **nsteps** [integer]: number of forecast steps
 %
-% - **states** [{}]:
+% - **y_pos** [vector]: location of restricted endogenous variables.
 %
-% - **state_cols** [{}]:
+% - **e_pos** [vector]: location of restricted shocks
 %
-% - **k** [{}]:
-%
-% - **Qfunc** [{}]:
-%
-% - **nsteps** [{}]:
-%
-% - **y_pos** [{}]:
-%
-% - **e_pos** [{}]:
+% - **states** [empty|nsteps x 1 vector]: states visited for each forecast
+% step.
 %
 % Outputs
 % --------
 %
-% - **M** [{}]:
+% - **M** [struct]:
+%   - **R** [matrix]: convoluted restrictions of shocks stemming from the
+%   restrictions on endogenous variables
+%   - **ufkst** [matrix]: unconditional forecasts for the restricted
+%   endogenous variables (Excluding the initial conditions!!!).
+%   - **const** [vector]: impact of the constant (steady state + risk) for
+%   the restricted endogenous variables.
+%   - **S** [matrix]: direct restrictions on shocks
+%   - **nshocks** [integer]: number of shocks
+%   - **ny** [integer]: number of endogenous variables
 %
-% - **ufkst** [{}]:
+% - **ufkst** [ny x (nsteps+1) matrix]: Unconditional forecasts mean (with
+% initial condition at the beginning!!!)
+%
+% - **states** [nsteps x 1 vector]: regimes visited for each forecast step.
+%
+% - **PAI** [h x nsteps matrix]: choice probabilities of regimes for each
+% step
+%
+% - **TT** [matrix]: convolution of autoregressive terms for the
+% restrictions
 %
 % More About
 % ------------
@@ -79,7 +106,6 @@ if nargin<6
     end
 end
 
-% is_stochastic=isempty(states)||any(isnan(states));
 if isempty(states)
     states=nan(nsteps,1);
 end
@@ -88,12 +114,15 @@ if numel(states)~=nsteps
 end
 
 T=model.T;
+[ny,nz]=size(T{1});
 sstate=model.sstate;
 state_cols=model.state_cols;
+if isempty(state_cols)
+    state_cols=1:ny;
+end
 k=model.k;
 Qfunc=model.Qfunc;
 
-[ny,nz]=size(T{1});
 h=size(T,2);
 nx=numel(state_cols);
 nshocks=(nz-(nx+1))/(k+1);
@@ -105,8 +134,13 @@ ProtoR{2}=y0;
 ncols=1+1+(k+nsteps)*nshocks;
 nconds=numel(y_pos);
 R=zeros(nconds*nsteps,ncols);
+is_convolute=nargout>4;
+if is_convolute
+    TT=zeros(nconds*nsteps,ny);
+    Tconv=eye(ny);
+end
 ufkst=y0(:,ones(1,nsteps+1));
-PAI=zeros(h,nsteps+1);
+PAI=zeros(h,nsteps);
 for jstep=1:nsteps
     % pick the state
     %----------------
@@ -117,6 +151,11 @@ for jstep=1:nsteps
     % origin
     %--------
     ProtoR{2}=Ty{st}*ProtoR{2};
+    % convolution of autoregressive terms
+    %-------------------------------------
+    if is_convolute
+        convolute()
+    end
     % shocks
     %--------
     iter=2;
@@ -144,7 +183,7 @@ for jstep=1:nsteps
 end
 
 % create rows for the shocks
-%---------------------------------
+%-----------------------------
 S=do_shocks_conditions();
 
 % format output
@@ -152,6 +191,11 @@ S=do_shocks_conditions();
 R=sparse(R);
 M=struct('R',R(:,3:end),'ufkst',R(:,2),'const',R(:,1),'S',S,...
     'nshocks',nshocks,'ny',ny);
+
+    function convolute()
+        Tconv=Ty{st}*Tconv;
+        TT((jstep-1)*nconds+1:jstep*nconds,:)=Tconv(y_pos,:);
+    end
 
     function reg=pick_a_regime()
         if isnan(states(jstep))
