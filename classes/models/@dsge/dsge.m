@@ -141,6 +141,7 @@ classdef dsge < rise_generic
         varargout=monte_carlo_filtering(varargin)
         varargout=pull_objective(varargin)
         varargout=print_solution(varargin)
+        varargout=refresh(varargin)
         varargout=resid(varargin)
         varargout=set_solution_to_companion(varargin)
         varargout=simulate_nonlinear(varargin)
