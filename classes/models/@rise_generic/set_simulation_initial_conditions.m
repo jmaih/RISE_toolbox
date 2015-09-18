@@ -131,7 +131,8 @@ end
 shock_structure=false(exo_nbr,k_future);
 if k_future
     for iexo=1:exo_nbr
-        shock_structure(iexo,1:obj.exogenous.shock_horizon(iexo))=true;
+		maxlength=max(obj.exogenous.shock_horizon(:,iexo));
+        shock_structure(iexo,1:maxlength)=true;
     end
 end
 shock_structure=[false(exo_nbr,1),shock_structure];
