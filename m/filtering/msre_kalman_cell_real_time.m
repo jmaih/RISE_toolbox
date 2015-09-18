@@ -466,7 +466,7 @@ end
         MUt_splus_old=[MUt_splus(:)
             shocks_(:)];
         ExpandedFlag=false; 
-        [Tt,Rt,bt,~,Record]=utils.forecast.conditional.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
+        [Tt,Rt,bt,~,Record]=utils.forecast.rscond.state_matrices(T,R,MUt_splus_old,OMGt,DPHI,DT,Record,ExpandedFlag);
         
         RR=Rt*Rt';
         P=Tt*Ptt*transpose(Tt)+RR;
