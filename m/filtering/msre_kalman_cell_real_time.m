@@ -119,12 +119,11 @@ DT=cell(1,h);
 % Conditon on all the existing shocks and nan the relevant ones where
 % necessary
 for st=1:h
-    [DPHI{st},DT{st}]=utils.forecast.conditional.build_shock_restrictions(...
+    [DPHI{st},DT{st}]=utils.filtering.build_shock_restrictions(...
         T{st},R{st},...
         restr_y_id_in_state,1:exo_nbr,... restr_z_id_in_state
-        ncp,... data availability
-        horizon,... horizon +or-1
-        hypothesis);
+        ncp);% ... data availability
+        
     if st==1
         nc=size(DT{st},2);
         nshocks=ncp*exo_nbr;%<--nshocs=ncp*numel(restr_z_id_in_state);
