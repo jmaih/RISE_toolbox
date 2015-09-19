@@ -122,7 +122,8 @@ end
         det_exo_nbr=obj.exogenous.number(2);
         exo_nbr=stoch_exo_nbr+det_exo_nbr;
         is_det_shock=obj.exogenous.is_observed;
-        horizon=max(obj.exogenous.shock_horizon(:))+1;
+        k=max(obj.exogenous.shock_horizon,[],2);
+        horizon=max(k)+1;
         h=obj.markov_chains.regimes_number;
         % covariance matrix of stochastic shocks
         %----------------------------------------
@@ -259,7 +260,8 @@ end
             'new_order',new_order,'state_vars_location',state_vars_location,...
             'Qfunc',Qfunc,'anticipated_shocks',anticipated_shocks,...
             'sep_compl',sep_compl,'H',{obj.solution.H},'obs_id',obs_id,...
-            'SIGeta',{SIGeta},'is_det_shock',is_det_shock,'horizon',horizon);
+            'SIGeta',{SIGeta},'is_det_shock',is_det_shock,'horizon',horizon,...
+            'k',k);
         function [Tx_star,Tsig_star,Te_star,ss_star]=aggregate()
             Tx_star=0;
             Te_star=0;
