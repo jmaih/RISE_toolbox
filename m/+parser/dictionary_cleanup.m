@@ -1,25 +1,22 @@
-function dictionary=dictionary_cleanup(dictionary,dynamic,static,old_endo_names,logical_incidence)
-dictionary=cleanup_endogenous(dictionary,old_endo_names,logical_incidence);
+function dictionary=dictionary_cleanup(dictionary,dynamic,static,...
+    old_endo_names,logical_incidence)
+cleanup_endogenous(old_endo_names,logical_incidence);
 
-dictionary=cleanup_exogenous(dictionary);
+cleanup_exogenous();
 
-dictionary=cleanup_observables(dictionary);
+cleanup_observables();
 
-% parameters and model types
-%----------------------------
-dictionary=cleanup_model_types(dictionary);
+cleanup_model_types();
 
-dictionary=cleanup_parameters(dictionary);
+cleanup_parameters();
 
-% equations
-%----------
-dictionary=cleanup_equations(dictionary,dynamic,static);
+cleanup_equations(dynamic,static);
 
-dictionary=cleanup_definitions(dictionary);
+cleanup_definitions();
 
 dictionary=orderfields(dictionary);
 
-    function dictionary=cleanup_endogenous(dictionary,old_endo_names,logical_incidence)
+    function cleanup_endogenous(old_endo_names,logical_incidence)
         dictionary.endogenous=parser.greekify(dictionary.endogenous);
         endogenous=dictionary.endogenous;
         dictionary.endogenous=struct();
@@ -56,7 +53,7 @@ dictionary=orderfields(dictionary);
         end
     end
 
-    function dictionary=cleanup_exogenous(dictionary)
+    function cleanup_exogenous()
         dictionary.exogenous=parser.greekify(dictionary.exogenous);
         exogenous=dictionary.exogenous;
         dictionary.exogenous=struct();
@@ -69,7 +66,7 @@ dictionary=orderfields(dictionary);
             sum(dictionary.exogenous.number));
     end
 
-    function dictionary=cleanup_observables(dictionary)
+    function cleanup_observables()
         observables=dictionary.observables;
         dictionary.observables=struct();
         dictionary.observables.name={observables.name};
@@ -87,7 +84,7 @@ dictionary=orderfields(dictionary);
         dictionary.observables.number=full([sum(dictionary.observables.is_endogenous),sum(~dictionary.observables.is_endogenous)]);
     end
 
-    function dictionary=cleanup_model_types(dictionary)
+    function cleanup_model_types()
         dictionary.is_purely_forward_looking_model=false;
         dictionary.is_purely_backward_looking_model=false;
         dictionary.is_hybrid_model=any(dictionary.lead_lag_incidence.before_solve(:,1)) && any(dictionary.lead_lag_incidence.before_solve(:,3));
@@ -100,7 +97,7 @@ dictionary=orderfields(dictionary);
         end
     end
 
-    function dictionary=cleanup_parameters(dictionary)
+    function cleanup_parameters()
         dictionary.parameters=parser.greekify(dictionary.parameters);
         parameters=dictionary.parameters;
         dictionary.parameters=struct();
@@ -119,7 +116,7 @@ dictionary=orderfields(dictionary);
         dictionary.parameters.governing_chain=[parameters.governing_chain];
     end
 
-    function dictionary=cleanup_equations(dictionary,dynamic,static)
+    function cleanup_equations(dynamic,static)
         dictionary.equations.dynamic=dynamic.model;
         dictionary.equations.shadow_dynamic=dynamic.shadow_model;
         dictionary.equations.static=static.model;
@@ -131,7 +128,7 @@ dictionary=orderfields(dictionary);
         dictionary.is_initial_guess_steady_state=static.is_initial_guess_steady_state;
     end
 
-    function dictionary=cleanup_definitions(dictionary)
+    function cleanup_definitions()
         definitions=dictionary.definitions;
         dictionary.definitions=struct();
         dictionary.definitions.name={definitions.name};
