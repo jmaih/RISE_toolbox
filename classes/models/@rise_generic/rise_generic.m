@@ -162,9 +162,11 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=setup_calibration(varargin)
         varargout=setup_linear_restrictions(varargin)
         varargout=setup_general_restrictions(varargin)
+        varargout=setup_parameter_restrictions(varargin)
     end
     methods(Access=protected,Hidden=true)
         varargout=complementarity_memoizer(varargin)
+        varargout=derive_auxiliary_parameters(varargin)
         varargout=do_names(varargin)
         varargout=estimation_wrapper(varargin)
         varargout=find_posterior_mode(varargin)

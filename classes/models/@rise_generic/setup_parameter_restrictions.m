@@ -1,4 +1,4 @@
-function obj=setup_identification(obj,RestrictionsBlock)
+function obj=setup_parameter_restrictions(obj,RestrictionsBlock)
 % H1 line
 %
 % Syntax

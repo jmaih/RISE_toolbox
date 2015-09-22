@@ -50,7 +50,7 @@ obj=setup_priors(obj,ParameterizationArray.Priors,ParameterizationArray.error_co
  
 % identification restrictions
 %----------------------------
-obj=setup_identification(obj,Param_rest_block);
+obj=setup_parameter_restrictions(obj,Param_rest_block);
 
 % check that all the parameters in the model are in use
 %------------------------------------------------------
