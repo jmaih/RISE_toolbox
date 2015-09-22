@@ -166,12 +166,13 @@ dictionary.chain_names={dictionary.markov_chains.name};
 %% Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
 
-[Model_block,is_deficient_eqtns]=do_model();
+[Model_block,dictionary,blocks]=parser.parse_model(dictionary,blocks);
 
 %% optimal policy and optimal simple rule block
 
-[Model_block,PlannerObjective_block,is_model_with_planner_objective,jac_toc_]=...
-            do_optimal_policy_or_optimal_simple_rule(Model_block);
+[dictionary,blocks,Model_block,PlannerObjective_block,jac_toc_]=...
+            parser.parse_optimal_policy(Model_block,dictionary,blocks);        
+        
 if ~isempty(jac_toc_)
     disp([mfilename,':: First-order conditions of optimal policy :',sprintf('%0.4f',jac_toc_),' seconds'])
 end
@@ -200,10 +201,11 @@ orig_endo_nbr=numel(dictionary.endogenous);
 %% Steady state Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
 % the steady state model block
-[static,SteadyStateModel_block,auxiliary_steady_state_equations]=do_steady_state();
+[static,SteadyStateModel_block,auxiliary_steady_state_equations,dictionary,blocks]=...
+            parser.parse_steady_state(dictionary,blocks);
 %% exogenous definitions block
 
-do_exogenous_definitions();
+[dictionary,blocks]=parser.parse_exogenous_definitions(dictionary,blocks);
 
 %% parameterization block
 
@@ -462,7 +464,7 @@ if parameter_differentiation
 end
 %% optimal policy and optimal simple rules routines
 %-----------------------------------------
-if is_model_with_planner_objective
+if dictionary.is_model_with_planner_objective
     planner_shadow_model=strrep(strrep(dictionary.planner_system.shadow_model,'discount-',''),'commitment-','');
     
     if dictionary.is_optimal_policy_model
@@ -650,76 +652,8 @@ dictionary.definitions.shadow_dynamic=dictionary.definitions.shadow_dynamic(:);
 dictionary.definitions.number=numel(definitions);
 clear definitions static dynamic
 dictionary.routines=routines;
-
 dictionary=orderfields(dictionary);
 
-    function [Model_block,PlannerObjective_block,...
-            is_model_with_planner_objective,jac_toc_]=...
-            do_optimal_policy_or_optimal_simple_rule(Model_block)
-        
-        current_block_id=find(strcmp('planner_objective',{blocks.name}));
-        
-        [dictionary,PlannerObjective_block,is_model_with_planner_objective]=...
-            parser.planner_objective(dictionary,blocks(current_block_id).listing);
-        
-        % remove item from block
-        blocks(current_block_id)=[];
-        
-        jac_toc_=[];
-        dictionary.is_optimal_simple_rule_model=...
-            ~is_deficient_eqtns && is_model_with_planner_objective;
-        
-        dictionary.is_optimal_policy_model=...
-            is_model_with_planner_objective && is_deficient_eqtns;
-        
-        if dictionary.is_optimal_policy_model|| dictionary.is_optimal_simple_rule_model
-            [Model_block,dictionary,jac_toc_]=parser.optimal_policy_system(...
-                PlannerObjective_block,Model_block,dictionary);
-        end
-    end
-
-    function [Model_block,is_deficient_eqtns]=do_model()
-        current_block_id=find(strcmp('model',{blocks.name}));
-        more_string='';
-        if dictionary.definitions_inserted
-            more_string='(& possibly definitions insertions)';
-        end
-        if dictionary.parse_debug
-            profile off
-            profile on
-        else
-            tic
-        end
-        [Model_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'model');
-        if dictionary.parse_debug
-            profile off
-            profile viewer
-            keyboard
-        else
-            disp([mfilename,':: Model parsing ',more_string,'. ',sprintf('%0.4f',toc),' seconds'])
-        end
-        
-        if isempty(Model_block)
-            error([mfilename,':: no model declared'])
-        end
-        % remove item from block
-        blocks(current_block_id)=[];
-        
-        % make auxiliary equations out of the list of endogenous variables
-        [dictionary,Model_block]=...
-            parser.create_auxiliary_equations(dictionary,Model_block);
-        
-        % Then modify the system for hybrid expectations
-        %------------------------------------------------
-        [Model_block,dictionary]=parser.hybrid_expectator(Model_block,dictionary);
-
-        neqtns=sum(strcmp(Model_block(:,end),'normal'));
-        nendo=numel(dictionary.endogenous);
-        if nendo<neqtns
-            error('More equations than the number of endogenous variables')
-        end
-        is_deficient_eqtns=neqtns<nendo;
-    end
 
     function do_incidence_matrix()
         
@@ -774,52 +708,6 @@ dictionary=orderfields(dictionary);
         Occurrence=Occurrence(equation_type==1,:,:);
     end
 
-    function [static,SteadyStateModel_block,auxiliary_steady_state_equations]=do_steady_state()
-        static=struct('is_imposed_steady_state',false,...
-            'is_unique_steady_state',false,...
-            'is_initial_guess_steady_state',false);
-        current_block_id=find(strcmp('steady_state_model',{blocks.name}));
-        if dictionary.parse_debug
-            profile off
-            profile on
-        else
-            tic
-        end
-        [SteadyStateModel_block,dictionary,static]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'steady_state_model',static);
-        if dictionary.parse_debug
-            profile off
-            profile viewer
-            keyboard
-        else
-            disp([mfilename,':: Steady State Model parsing . ',sprintf('%0.4f',toc),' seconds'])
-        end
-        
-        % get list of endogenous defined in the steady state: do this
-        % everytime there is an auxiliary variable
-        %----------------------------------------------------
-        nsstate=size(SteadyStateModel_block,1);
-        sstate_model_aux_vars=cell(1,nsstate);
-        iter=0;
-        for irow_=1:nsstate
-            vname=SteadyStateModel_block{irow_,1}{1,1};
-            if any(strcmp(vname,{dictionary.endogenous.name}))
-                iter=iter+1;
-                sstate_model_aux_vars{iter}=vname;
-            end
-        end
-        dictionary.auxiliary_variables.ssmodel_solved=sstate_model_aux_vars(1:iter);
-        
-        % remove item from block
-        blocks(current_block_id)=[];
-                
-        auxiliary_steady_state_equations=dictionary.auxiliary_equations;
-        for irow_=1:size(auxiliary_steady_state_equations,1)
-            tmp_=auxiliary_steady_state_equations{irow_,1}(1,:);
-            tmp_{2}=strrep(tmp_{2},'-','=');
-            auxiliary_steady_state_equations{irow_,1}(1,:)=tmp_;
-        end
-    end
-
     function do_parameter_restrictions()
         
         current_block_id=find(strcmp('parameter_restrictions',{blocks.name}));
@@ -841,46 +729,6 @@ dictionary=orderfields(dictionary);
         
         % remove item from block
         blocks(current_block_id)=[];
-    end
-
-    function do_exogenous_definitions()
-        % this block needs a special treatment as the information provided here
-        % will only be used when building the dataset for estimation and/or during
-        % forecasting.
-        current_block_id=find(strcmp('exogenous_definition',{blocks.name}));
-        if dictionary.parse_debug
-            profile off
-            profile on
-        else
-            tic
-        end
-        [ExogenousDefinition_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'exogenous_definition');
-        if dictionary.parse_debug
-            profile off
-            profile viewer
-            keyboard
-        else
-            disp([mfilename,':: exogenous definitions block parsing . ',sprintf('%0.4f',toc),' seconds'])
-        end
-        
-        % remove item from block
-        blocks(current_block_id)=[];
-        % the equations have been validated, now rebuild them and keep a list of
-        % the variables defined
-        DefinedExoList=cell(1,0);%{}
-        for iii=1:size(ExogenousDefinition_block,1)
-            DefinedExoList=[DefinedExoList,ExogenousDefinition_block{iii,1}(1,1)];
-            eq_i_='';
-            for jjj=1:size(ExogenousDefinition_block{iii,1},2)
-                eq_i_=[eq_i_,ExogenousDefinition_block{iii,1}{1,jjj}];
-                if ~isempty(ExogenousDefinition_block{iii,1}{2,jjj}) && ExogenousDefinition_block{iii}{2,jjj}~=0
-                    eq_i_=[eq_i_,'{',sprintf('%0.0f',ExogenousDefinition_block{iii,1}{2,jjj}),'}'];
-                end
-            end
-            ExogenousDefinition_block{iii,1}=eq_i_;
-        end
-        % assign information to dictionary
-        dictionary.exogenous_equations=struct('name',DefinedExoList,'equation',transpose(ExogenousDefinition_block(:,1)));
     end
 end
 

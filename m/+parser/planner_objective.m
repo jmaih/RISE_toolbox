@@ -1,4 +1,4 @@
-function [dictionary,PlannerObjective_block,is_model_with_planner_objective]=planner_objective(dictionary,listing)
+function [dictionary,PlannerObjective_block]=planner_objective(dictionary,listing)
 % H1 line
 %
 % Syntax
@@ -20,11 +20,11 @@ function [dictionary,PlannerObjective_block,is_model_with_planner_objective]=pla
 % See also: 
 
 
-is_model_with_planner_objective=~isempty(listing);
+dictionary.is_model_with_planner_objective=~isempty(listing);
 PlannerObjective_block=cell(0,1);
 
 dictionary.planner_system=[];
-if ~is_model_with_planner_objective
+if ~dictionary.is_model_with_planner_objective
     return
 end
 
