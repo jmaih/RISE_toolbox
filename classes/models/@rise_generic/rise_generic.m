@@ -80,8 +80,10 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         linear_restrictions_data
         list_of_issues
         miscellaneous=struct() % will hold elements that are not classified
+        number_of_restrictions
         parameter_values
         routines=struct()
+        online_routines
     end
     
     methods(Abstract)
@@ -165,6 +167,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=setup_parameter_restrictions(varargin)
     end
     methods(Access=protected,Hidden=true)
+        varargout=add_to_routines(varargin)
         varargout=complementarity_memoizer(varargin)
         varargout=derive_auxiliary_parameters(varargin)
         varargout=do_names(varargin)

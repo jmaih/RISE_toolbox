@@ -62,7 +62,6 @@ classdef dsge < rise_generic
     % solution -   model solution including steady state, definitions, etc.
     % filtering -   structure holding predicted, updated and smoothed series
     properties (Hidden = true)
-        online_routines
     end
     properties (SetAccess = private, Hidden = true)
         auxiliary_variables % variables for which the user does not need to solve for the steady state
@@ -83,7 +82,6 @@ classdef dsge < rise_generic
         lead_lag_incidence
         measurement_errors_restrictions
         model_derivatives
-        number_of_restrictions
         planner_system
         raw_file
         rawfile_triggers

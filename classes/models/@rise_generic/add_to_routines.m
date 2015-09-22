@@ -10,14 +10,14 @@ function obj=add_to_routines(obj,varargin)
 % Inputs
 % -------
 %
-% - **obj** [rise|dsge]: model object
+% - **obj** [rise|dsge|svar|rfvar]: model object
 %
 % - **varargin** : arguments coming in pairs
 %
 % Outputs
 % --------
 %
-% - **obj** [rise|dsge]: model object
+% - **obj** [rise|dsge|svar|rfvar]: model object
 %
 % More About
 % ------------
