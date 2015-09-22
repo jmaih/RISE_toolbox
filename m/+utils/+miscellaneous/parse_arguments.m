@@ -55,7 +55,9 @@ if size(args,2)==4
     error_msg=args(:,end).';
     assert(iscellstr(error_msg),'fourth column of first input must be a cellstr')
 end
-hopover=ischar(varargin{end})&& strcmp(deblank(varargin{end}),'-hopover');
+hopover=~isempty(varargin) &&...
+    ischar(varargin{end})&& ...
+    strcmp(deblank(varargin{end}),'-hopover');
 if hopover
     varargin(end)=[];
 end
