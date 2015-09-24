@@ -63,13 +63,10 @@ if isfield(obj(1).routines,'nonlinear_restrictions')
     nconst=obj(1).number_of_restrictions.nonlinear;
 end
 
-if isempty(obj(1).linear_restrictions_data)
-    % the model has not been estimated for the posterior mode yet. In
-    % that case load the restrictions
-    %-----------------------------------------------------------------
-    obj=setup_linear_restrictions(obj);
-    obj=setup_general_restrictions(obj);
-end
+% the model has not been estimated for the posterior mode yet. In
+% that case load the restrictions
+%-----------------------------------------------------------------
+obj=setup_restrictions(obj);
 
 nobj=numel(obj);
 ngenrest=0;

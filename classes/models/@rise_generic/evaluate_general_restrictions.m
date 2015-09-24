@@ -1,11 +1,11 @@
-function g=evaluate_nonlinear_restrictions(obj)
-% evaluate_nonlinear_restrictions - evaluates general restrictions 
+function g=evaluate_general_restrictions(obj)
+% EVALUATE_GENERAL_RESTRICTIONS - evaluates general restrictions 
 %
 % Syntax
 % -------
 % ::
 %
-%   g=evaluate_nonlinear_restrictions(obj)
+%   g=EVALUATE_GENERAL_RESTRICTIONS(obj)
 %
 % Inputs
 % -------
@@ -35,9 +35,6 @@ else
     g=cell(1,nobj);
     for iobj=1:nobj
         if ~isempty(obj(iobj).options.estim_general_restrictions)
-            if isempty(obj(iobj).general_restrictions_data)
-                obj(iobj)=setup_general_restrictions(obj(iobj));
-            end
             % take the absolute value: the violations are the non-zero
             % elements
             %-------------------------------------------------------------

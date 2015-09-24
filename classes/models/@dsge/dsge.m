@@ -228,13 +228,15 @@ classdef dsge < rise_generic
                 end
             end
             
+                obj.options.estim_nonlinear_restrictions=...
+                    dictionary.Param_rest_block;
+            
             % parameters and estimated parameters and more ...:
             % format_parameters depends on the value of the prior
             % truncation which is stored in the options... and cannot be
             % changed after the model is read. yet another reason to
             % separate the reading of the model with everything else
-            obj=format_parameters(obj,dictionary.Parameterization_block,...
-                dictionary.Param_rest_block);
+            obj=format_parameters(obj,dictionary.Parameterization_block);
             
             % Then load the functions/routines: some routines may be
             % created inside format_parameters

@@ -78,12 +78,14 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         estimation_under_way=false;
         general_restrictions_data
         linear_restrictions_data
+        nonlinear_restrictions_data
         list_of_issues
         miscellaneous=struct() % will hold elements that are not classified
         number_of_restrictions
         parameter_values
         routines=struct()
-        online_routines
+        online_routines=struct()
+        restrictions_are_absorbed=false
     end
     
     methods(Abstract)
@@ -103,7 +105,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
             end
         end
         varargout=draw_parameter(varargin)
-        varargout=evaluate_nonlinear_restrictions(varargin)
+        varargout=evaluate_general_restrictions(varargin)
         varargout=estimate(varargin)
         varargout=forecast(varargin)
         varargout=get(varargin)
@@ -162,9 +164,9 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=parameters_links(varargin)
         varargout=setup_priors(varargin)
         varargout=setup_calibration(varargin)
-        varargout=setup_linear_restrictions(varargin)
         varargout=setup_general_restrictions(varargin)
-        varargout=setup_parameter_restrictions(varargin)
+        varargout=setup_linear_restrictions(varargin)
+        varargout=setup_nonlinear_restrictions(varargin)
     end
     methods(Access=protected,Hidden=true)
         varargout=add_to_routines(varargin)
@@ -184,6 +186,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=assign_estimates(varargin)
         varargout=load_data(varargin)
         varargout=prepare_transition_routine(varargin)
+        varargout=setup_restrictions(varargin)
     end
 end
 

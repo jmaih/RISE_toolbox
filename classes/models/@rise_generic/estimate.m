@@ -70,6 +70,15 @@ function obj=estimate(obj,varargin)
 %   - Each row of the second column holds the value of the linear
 %   combination.
 %
+% - **estim_nonlinear_restrictions** [{[]}|cell]: When not
+%   empty, **estim_nonlinear_restrictions** must be a k x 1 cell, with each
+%   row representing a particular restriction on the parameters. e.g. for a
+%   switching model, one can have alpha(zlb,1)>alpha(zlb,2), which can also
+%   be written as alpha_zlb_1>alpha_zlb_2.
+%   The restrictions can also be equality restrictions. In this case,
+%   however, it is assumed that the parameters entering the lhs of
+%   restrictions are not estimated. e.g. alpha(zlb,1)=3*cos(alpha(zlb,2))+1.
+%
 % - **estim_blocks** [{[]}|cell]: When not empty, this triggers blockwise
 %   optimization. For further information on how to set blocks, see help
 %   for dsge.create_estimation_blocks
@@ -158,6 +167,7 @@ if nobj==0
         'estim_start_vals',[],...
         'estim_general_restrictions',[],... % holds a function that takes as input the model object and returns the
         'estim_linear_restrictions',[],...
+        'estim_nonlinear_restrictions',[],...
         'estim_blocks',[],...
         'estim_penalty',1e+8,...
         'estim_penalty_factor',10,...

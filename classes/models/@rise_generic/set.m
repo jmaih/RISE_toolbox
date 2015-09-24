@@ -101,6 +101,7 @@ elseif nn==1
     %------------------------------------------
     error('something should be implemented here. Please send a reminder to junior.maih@gmail.com')
 else
+    do_reset_restrictions=false;
     options_fields=fieldnames(obj.options);
     for ii=1:2:nn
         propname=varargin{ii};
@@ -113,6 +114,9 @@ else
             error([propname,' is not a valid variable name'])
         end
         set_one_at_a_time();
+    end
+    if do_reset_restrictions
+        obj.restrictions_are_absorbed=false;
     end
 end
 
@@ -238,16 +242,11 @@ end
                 % in data... I do that during estimation, I guess but I can do
                 % that upfront too. Don't know what is best.
                 propval=ts.collect(propval);
-            elseif strcmp(propname,'estim_general_restrictions')&& ~isa(propval,'function_handle')
-                if isempty(propval)
-                    absorbed=true;
-                else
-                    if ischar(propval)
-                        propval=str2func(propval);
-                    elseif iscell(propval) && ischar(propval{1})
-                        propval{1}=str2func(propval{1});
-                    end
-                end
+            elseif any(strcmp(propname,...
+                    {'estim_linear_restrictions',...
+                    'estim_nonlinear_restrictions',...
+                    'estim_general_restrictions'}))
+                do_reset_restrictions=true;
             end
 
             if ~absorbed

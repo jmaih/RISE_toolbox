@@ -1,4 +1,4 @@
-function obj=format_parameters(obj,ParameterizationArray,Param_rest_block)
+function obj=format_parameters(obj,ParameterizationArray)
 % H1 line
 %
 % Syntax
@@ -48,10 +48,6 @@ obj=setup_priors(obj,ParameterizationArray.Priors,ParameterizationArray.error_co
 %--------------------------------
  obj=setup_measurement_errors(obj);
  
-% identification restrictions
-%----------------------------
-obj=setup_parameter_restrictions(obj,Param_rest_block);
-
 % check that all the parameters in the model are in use
 %------------------------------------------------------
 not_in_use=param_names(~obj.parameters.is_in_use);

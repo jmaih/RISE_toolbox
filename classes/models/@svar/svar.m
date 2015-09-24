@@ -167,14 +167,6 @@ classdef svar < rise_generic
                                 obj(iobj).options.data.NumberOfObservations==0
                             return
                         end
-                        % get the names of the estimated parameters from
-                        % the information in obj.estim_param_template: the
-                        % transition probabilities are automatically
-                        % estimated.
-                        %--------------------------------------------------
-                        estim_names=create_estimated_parameters_list(obj);
-                        
-                        obj.estimation_restrictions=parameters_links(obj,estim_names);
                         
                         % load the data
                         %--------------
@@ -182,6 +174,7 @@ classdef svar < rise_generic
                         if retcode
                             error(issue)
                         end
+						% msvar_priors calls setup_priors, which does parameter_links
                         obj=msvar_priors(obj,estim_names);
                     end
                 end

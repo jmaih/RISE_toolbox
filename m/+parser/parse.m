@@ -592,12 +592,12 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         current_block_id=find(strcmp('parameter_restrictions',{blocks.name}));
         
         [Param_rest_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'parameter_restrictions');
+        
+        dictionary.Param_rest_block=struct('original',...
+            {blocks(current_block_id).listing(:,2)},...
+            'parsed',{Param_rest_block(:,1)});
         % remove item from block
         blocks(current_block_id)=[];
-        
-        % remove the columns with information about the maxLead and maxLag: the
-        % capture of parameterization does not require it and might even crash
-        dictionary.Param_rest_block=Param_rest_block(:,1);
     end
 
     function do_parameterization()

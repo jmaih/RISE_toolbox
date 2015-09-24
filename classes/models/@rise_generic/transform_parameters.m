@@ -65,8 +65,7 @@ if nargin<5
 end
 % set up restrictions
 %---------------------
-obj=setup_linear_restrictions(obj);
-obj=setup_general_restrictions(obj);
+obj=setup_restrictions(obj);
 
 linear_restricts=obj.linear_restrictions_data;
 
