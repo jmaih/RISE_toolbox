@@ -435,12 +435,8 @@ end
         end
         af=nan(m,1,horizon+1);
         af(:,1,1)=a_filt;
-        % add conditional information: It is important at this point that
-        % only the variables with conditional information be non-nan!!!!!
-        %-----------------------------------------------------------------
+        % add conditional information
         af(obs_id,1,1+(1:start_iter))=data_y(:,t,1:start_iter);
-        % compute a conditional forecast
-        y0=struct('y',af);
         options.shocks=shocks;
         % all shocks can be used in the update (first period)
         %----------------------------------------------------
@@ -448,6 +444,9 @@ end
         % beyond the first period, only the shocks with long reach can
         % be used
         options.shocks(cond_shocks_id,1:start_iter)=nan;
+        % compute a conditional forecast
+        y0=struct('y',af,'ycond',af(:,:,ones(3,1)),...
+            'econd',options.shocks(:,:,ones(3,1)));
     end
 
     function [a_update,K,retcode,myshocks]=state_update_without_test(a_filt,K,v,st)
