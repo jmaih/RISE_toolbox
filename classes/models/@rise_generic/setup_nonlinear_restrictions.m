@@ -30,6 +30,7 @@ isnonlin=@(x)any(x=='<')||any(x=='>');
 isnonlin_not_allowed=@(x)~isempty(strfind(x,'=='));
 
 param_names=obj.parameters.name;
+governing_chain=obj.parameters.governing_chain;
 chain_names=obj.markov_chains.small_markov_chain_info.chain_names;
 regimes=cell2mat(obj.markov_chains.small_markov_chain_info.regimes(2:end,2:end));
 % par_nbr=sum(obj.parameters.number);
@@ -84,18 +85,20 @@ obj=add_to_routines(obj,'derived_parameters',derived_parameters,...
             [~,aloc,col]=do_conversion(pname_lhs,cn,statepos);
             eqtn={aloc,col(:).',str2func(['@(M)',rhs])};
         end
-        % check inequalities then create anonymous functions
-        %---------------------------------------------------
         function [c,aloc,col]=do_conversion(pname,cn,statepos)
             aloc=locate_variables(pname,param_names);
             if isempty(cn)
                 cn='const';
                 statepos='1';
             end
+            if ~strcmp(chain_names(governing_chain(aloc)),cn)
+                error(['parameter "',pname,'" is not controled by markov chain "',cn,'"'])
+            end
             c_id= strcmp(cn,chain_names);
             col=find(regimes(:,c_id)==str2double(statepos));
-            % check that pname is indeed controled by cn and that the
-            % number of states does not exceed what it should.
+            if isempty(col)
+                error(['wrong state number for parameter "',pname,'"'])
+            end
             c=['M(',int2str(aloc),',',int2str(col(1)),')'];
         end
         function c2m=cell2matize(list)
