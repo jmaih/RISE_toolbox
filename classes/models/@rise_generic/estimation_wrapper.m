@@ -156,7 +156,7 @@ end
             if ngenrest
                 % add a penalty for the restrictions violation
                 %----------------------------------------------
-                g=evaluate_nonlinear_restrictions(obj);
+                g=evaluate_general_restrictions(obj);
                 for mo=1:nobj
                     if ~isempty(g{mo})
                         this_pen=utils.estim.penalize_violations(g{mo},max(abs(fval(mo)),c{mo}));

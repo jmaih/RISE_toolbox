@@ -93,11 +93,11 @@ function obj=estimate(obj,varargin)
 %   - etc.
 %
 % - **estim_penalty_factor** [numeric|{10}]: when general nonlinear
-% restrictions are present, RISE uses an estimation strategy in which the
-% objective function is penalized as
-% f_final=fval+estim_penalty_factor*sum(max(0,g)^2) where g is a vector of
-% the values of the restrictions, which are expected to be of the form
-% g(x)<=0. See **estim_general_restrictions** above.
+%   restrictions are present, RISE uses an estimation strategy in which the
+%   objective function is penalized as
+%   f_final=fval+estim_penalty_factor*sum(max(0,g)^2) where g is a vector
+%   of the values of the restrictions, which are expected to be of the form
+%   g(x)<=0. See **estim_general_restrictions** above. 
 %
 % - **optimset** [struct]: identical to matlab's optimset
 %
@@ -287,7 +287,7 @@ for ii=1:nobj
     [log_post,log_lik,log_prior,~,~,obj(ii)]=conclude_estimation(obj(ii),x1);
     % compute the penalties for the restrictions violations
     %-------------------------------------------------------
-    g=evaluate_nonlinear_restrictions(obj(ii));
+    g=evaluate_general_restrictions(obj(ii));
     nonlin_penalty=utils.estim.penalize_violations(g{1},obj(ii).options.estim_penalty_factor);
     
     post_max=obj(ii).estimation.posterior_maximization;
