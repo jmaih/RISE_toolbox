@@ -171,7 +171,6 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     methods(Access=protected,Hidden=true)
         varargout=add_to_routines(varargin)
         varargout=complementarity_memoizer(varargin)
-        varargout=derive_auxiliary_parameters(varargin)
         varargout=do_names(varargin)
         varargout=estimation_wrapper(varargin)
         varargout=find_posterior_mode(varargin)

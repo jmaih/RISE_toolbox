@@ -11,7 +11,7 @@ function obj=assign_estimates(obj,params)
 % Inputs
 % -------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [rise|dsge|svar|rfvar]: model object
 %
 % - **params** [vector]: values of parameters estimated or under estimation
 % or under posterior simulation
@@ -27,7 +27,7 @@ function obj=assign_estimates(obj,params)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 % this is the routine called during estimation for assigning new estimates
 % to the model
@@ -37,8 +37,24 @@ if isempty(obj)
 end
 
 if ~isempty(params)
-    % this is general enough and includes measurement errors
     ids=obj.estimation_restrictions(:,1);
     inflate=obj.estimation_restrictions(:,2);
-    obj.parameter_values(ids)=params(inflate);
+    % this is general enough and includes measurement errors
+    M=obj.parameter_values;
+    % push estimates
+    %---------------
+    M(ids)=params(inflate);
+    % add the derived parameters
+    %----------------------------
+    if ~isempty(obj.routines.derived_parameters)
+        linrest=obj.routines.derived_parameters;
+        for irest=1:size(linrest,1)
+            row=linrest{irest,1};
+            cols=linrest{irest,2};
+            M(row,cols)=linrest{irest,3}(M);
+        end
+    end
+    % write back to the object
+    %--------------------------
+    obj.parameter_values=M;
 end
