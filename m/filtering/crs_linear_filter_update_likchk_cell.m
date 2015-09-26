@@ -290,7 +290,10 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             if h==1
                 pai_st_splus=1;
             else
-                pai_st_splus=Q(st,splus)*PAItt(st)/PAI(splus);
+                pai_st_splus=Q(st,splus)*PAItt(st);
+                if pai_st_splus>0
+                    pai_st_splus=pai_st_splus/PAI(splus);
+                end
             end
             a{splus}=a{splus}+pai_st_splus*att{st};
             % forecast with the expected shocks we had from the
@@ -404,8 +407,10 @@ end
         % be used
         options.shocks(cond_shocks_id,1:start_iter)=nan;
         % compute a conditional forecast
-        y0=struct('y',af,'ycond',af(:,:,ones(3,1)),...
-            'econd',options.shocks(:,:,ones(3,1)));
+        ycond=reshape(data_y(:,t,1:start_iter),p,[]);
+        ycond=struct('data',ycond(:,:,ones(3,1)),'pos',obs_id);
+        econd=struct('data',options.shocks(:,:,ones(3,1)),'pos',1:exo_nbr);
+        y0=struct('y',af,'ycond',ycond,'econd',econd);
     end
 
     function [a_update,retcode,myshocks]=state_update_without_test(a_filt,Kv,st)
@@ -475,12 +480,15 @@ end
             while start_iter<horizon && violations
                 start_iter=start_iter+1;
                 y0=simul_initial_conditions(a_filt,start_iter);
-                [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
+                myoptions=options;
+                myoptions.nsteps=start_iter;
+                myoptions.states=options.states(1:start_iter);
+                [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,myoptions);
                 if retcode
                     a_update=[];
                     return
                 end
-                for iter=1:options.nsteps
+                for iter=1:myoptions.nsteps
                     violations=any(sep_compl(fsteps(:,iter))<cutoff);
                     if violations
                         break

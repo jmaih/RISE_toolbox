@@ -330,7 +330,10 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             if h==1
                 pai_st_splus=1;
             else
-                pai_st_splus=Q(st,splus)*PAItt(st)/PAI(splus);
+                pai_st_splus=Q(st,splus)*PAItt(st);
+                if pai_st_splus>0
+                    pai_st_splus=pai_st_splus/PAI(splus);
+                end
             end
             a{splus}=a{splus}+pai_st_splus*att{st};
             % forecast with the expected shocks we had from the
@@ -445,8 +448,10 @@ end
         % be used
         options.shocks(cond_shocks_id,1:start_iter)=nan;
         % compute a conditional forecast
-        y0=struct('y',af,'ycond',af(:,:,ones(3,1)),...
-            'econd',options.shocks(:,:,ones(3,1)));
+        ycond=reshape(data_y(:,t,1:start_iter),p,[]);
+        ycond=struct('data',ycond(:,:,ones(3,1)),'pos',obs_id);
+        econd=struct('data',options.shocks(:,:,ones(3,1)),'pos',1:exo_nbr);
+        y0=struct('y',af,'ycond',ycond,'econd',econd);
     end
 
     function [a_update,K,retcode,myshocks]=state_update_without_test(a_filt,K,v,st)
@@ -489,77 +494,77 @@ end
         end
     end
 
-    function [a_update,K,retcode,myshocks_]=state_update_with_test(a_filt,K,v,st)
+    function [a_update,retcode,myshocks_,violations]=state_update_with_test(a_filt,Kv,st)
         retcode=0;
         % compute the update
         %--------------------
-        atmp=a_filt+K*v;
+        atmp=a_filt+Kv;
         % compute one-step forecast from the update and check whether we
         % can expect violations
         %----------------------------------------------------------------
         atmp_ss=atmp-ss{st};
         a_expect=ss{st}+T{st}*atmp_ss(xlocs);
         violations=~isempty(sep_compl) && any(sep_compl(a_expect)<cutoff);
-        % if we can expect violations, inform the state that constraints
-        % will be binding
-        %----------------------------------------------------------------
-        start_iter=1;
-        if options.debug
-            old_update=atmp(:,ones(1,horizon));
-            old_update(:,2:end)=nan;
-        end
         % initialize the shocks
         %------------------------
         myshocks_=shocks;
-        is_redo_K=false;
-        while start_iter<horizon && violations
-            is_redo_K=true;
-            start_iter=start_iter+1;
-            y0=simul_initial_conditions(a_filt,start_iter);
-            [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,options);
-            if retcode
-                a_update=[];
-                return
+        
+        a_update=atmp;
+        if has_fire(st) && violations
+            do_anticipation()
+        end
+        
+        function do_anticipation()
+            % if we can expect violations, inform the state that constraints
+            % will be binding
+            %----------------------------------------------------------------
+            if options.debug
+                old_update=atmp(:,ones(1,horizon));
+                old_update(:,2:end)=nan;
             end
-            for iter=1:options.nsteps
-                violations=any(sep_compl(fsteps(:,iter))<cutoff);
-                if violations
-                    break
+            start_iter=1;
+            while start_iter<horizon && violations
+                start_iter=start_iter+1;
+                y0=simul_initial_conditions(a_filt,start_iter);
+                myoptions=options;
+                myoptions.nsteps=start_iter;
+                myoptions.states=options.states(1:start_iter);
+                [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,myoptions);
+                if retcode
+                    a_update=[];
+                    return
+                end
+                for iter=1:myoptions.nsteps
+                    violations=any(sep_compl(fsteps(:,iter))<cutoff);
+                    if violations
+                        break
+                    end
+                end
+                if start_iter==horizon
+                    % if we have come so far, then there is no violation in the
+                    % last step. But there could be some in the future step
+                    f__=fsteps(:,end)-ss{st};
+                    a_expect=ss{st}+T{st}*f__(xlocs);
+                    violations=any(sep_compl(a_expect)<cutoff);
+                end
+                if ~violations
+                    atmp=fsteps(:,1);
+                end
+                if options.debug
+                    old_update(:,start_iter)=fsteps(:,1);
                 end
             end
-            if start_iter==horizon
-                % if we have come so far, then there is no violation in the
-                % last step. But there could be some in the future step
-                f__=fsteps(:,end)-ss{st};
-                a_expect=ss{st}+T{st}*f__(xlocs);
-                violations=any(sep_compl(a_expect)<cutoff);
-            end
-            if ~violations
-                atmp=fsteps(:,1);
-            end
-            if options.debug
-                old_update(:,start_iter)=fsteps(:,1);
-            end
-        end
-        % make sure we have the correct size since there may be more shocks
-        % resulting from forecasting multi-periods
-        %------------------------------------------------------------------
-        myshocks_=myshocks_(:,1:horizon);
-        if options.debug && start_iter>1
-            keyboard
-        end
-        if violations
-            retcode=701;
-        end
-        a_update=atmp;
-        if is_redo_K
-            if options.debug
-                Kold=K;
-            end
-            K=recompute_kalman_gain(a_update,a_filt,v);
-            if options.debug
+            % make sure we have the correct size since there may be more shocks
+            % resulting from forecasting multi-periods
+            %------------------------------------------------------------------
+            myshocks_=myshocks_(:,1:horizon);
+            if options.debug && start_iter>1
                 keyboard
             end
+            if violations
+                retcode=701;
+            end
+            a_update=atmp;
         end
     end
 
