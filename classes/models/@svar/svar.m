@@ -247,7 +247,65 @@ classdef svar < rise_generic
     end
     methods(Static)
         function r=template()
-            priors=svar.check_template();            
+            % TEMPLATE - creates a template for SVAR models
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   r=svar.template()
+            %
+            % Inputs
+            % -------
+            %
+            % none
+            %
+            % Outputs
+            % --------
+            %
+            % - **r** [struct]: structure that can be modified by the user
+            % before creating the SVAR system.
+            %   - **model_class** [char|{'svar'}]: class of the model
+            %   - **constant** [false|{true}]: decides whether or not the
+            %   model includes a constant term.
+            %   - **nlags** [integer|{4}]: number of lags
+            %   - **endogenous** [cellstr|{}]: place holder of endogenous
+            %   variables. The names are entered as a cellstr but they can
+            %   also contain the description of the variables, in which
+            %   case each model variable name is followed by its
+            %   description in double quotes. e.g. {'C','"Consumption"'}.
+            %   The names can also be entered as two-column cell array, in
+            %   which case the first column is the model variable names and
+            %   the second column is their description.
+            %   - **block_exogenous** [cellstr|{}]: list of variables that
+            %   are block exogenous
+            %   - **observables** [cellstr|{}]: list of deterministic
+            %   variables other than the constant term
+            %   - **priors_hyperparams** [struct]:
+            %       - **vp_mnst_overall_tightness** [numeric|{3}]:
+            %       - **vp_mnst_relative_tightness_lags** [numeric|{1}]:
+            %       - **vp_mnst_relative_tightness_constant** [|{0.1}]:
+            %       - **vp_mnst_tightness_on_lag_decay** [|{0.5}]:
+            %       - **vp_mnst_unit_root_vars** [char|cellstr|'none'|{'all'}]:
+            %       - **vp_mnst_stationary_var_mean** [numeric|{0.5}]:
+            %       - **vp_natconj_normwish_variance** [numeric|{10}]:
+            %       - **vp_gls_ar1_processes** [false|{true}]:
+            %       - **vp_prior_type** ['none' | 'normal_wishart' |
+            %       'indep_normal_wishart' | 'jeffrey' | 'diffuse' |
+            %       {'minnesota'}] : type of prior
+            %   - **markov_chains** [struct]:
+            %       - **name** [char|{}]:
+            %       - **states_expected_duration** [row vector|{}]:
+            %       - **controled_parameters** [cellstr|{}]:
+            %
+            % More About
+            % ------------
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
+            priors=svar.check_template();
             r=struct('model_class','svar',...
                 'constant',true,'nlags',4,...
                 'endogenous',{{}},...
