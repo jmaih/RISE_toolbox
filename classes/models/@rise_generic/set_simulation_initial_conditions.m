@@ -41,8 +41,6 @@ function Initcond=set_simulation_initial_conditions(obj)
 %
 % See also: 
 
-
-
 % complementarity: do it here so as to keep the memory light
 %-----------------------------------------------------------
 [sep_compl,complementarity]=complementarity_memoizer(obj);
@@ -87,11 +85,10 @@ y0(1).y=vec(ss(:,ones(1,nlags)));
 exo_nbr=sum(obj.exogenous.number);
 simul_history_end_date=0;
 simul_historical_data=obj.options.simul_historical_data;
-shocks=[];
-states=[];
 
 is_conditional_forecasting=false;
-if ~isempty(simul_historical_data)
+has_data=~isempty(simul_historical_data);
+if has_data
     % no burn-in with historical data
     %----------------------------------
     obj.options.simul_burn=0;
@@ -105,15 +102,15 @@ if ~isempty(simul_historical_data)
     if isempty(simul_history_end_date)
         simul_history_end_date=simul_historical_data.finish;
     end
-    
-    % set the endogenous variables
-    %-----------------------------
-     set_endogenous_variables()
-        
-    % now load shocks
-    %----------------
-    set_shocks_and_states()
 end
+
+% set the endogenous variables
+%-----------------------------
+set_endogenous_variables()
+
+% now load shocks
+%----------------
+set_shocks_and_states()
 
 Qfunc=prepare_transition_routine(obj);
 
@@ -140,7 +137,6 @@ shock_structure=[false(exo_nbr,1),shock_structure];
 % load the options for utils.forecast.rscond.forecast
 Initcond=utils.miscellaneous.reselect_options(obj.options,@utils.forecast.rscond.forecast);
 % then modify or add some more
-Initcond.y=y0;
 Initcond.PAI=PAI;
 Initcond.simul_history_end_date=simul_history_end_date;
 Initcond.simul_sig=simul_sig;
@@ -164,107 +160,72 @@ else
     which_shocks=true(1,exo_nbr);
     which_shocks(obj.exogenous.is_observed)=false;
     shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
+    y0.econd.data=shocks(:,:,ones(1,3));
 end
-if isempty(states)
-    states=nan(Initcond.nsteps+Initcond.burn,1);
+if isempty(y0.rcond.data)
+    y0.rcond.data=nan(Initcond.nsteps+Initcond.burn,1);
 end
 simul_regime=obj.options.simul_regime;
-if all(isnan(states)) && ~isempty(simul_regime)
+if all(isnan(y0.rcond.data)) && ~isempty(simul_regime)
     nregs=numel(simul_regime);
     if nregs==1
-        states(:)=simul_regime;
+        y0.rcond.data(:)=simul_regime;
     else
-        nregs=min(nregs,numel(states));
-        states(1:nregs)=simul_regime(1:nregs);
-        % extend the last regime
-        %------------------------
-        states(nregs+1:end)=states(nregs);
+        nregs=min(nregs,numel(y0.rcond.data));
+        y0.rcond.data(1:nregs)=simul_regime(1:nregs);
     end
 end
-
-%-----------------------------------------
-Initcond.states=states;
-Initcond.shocks=shocks;
+Initcond.y=y0;
 
     function set_shocks_and_states()
-        shock_names=obj.exogenous.name;
         conditional_shocks=obj.options.forecast_cond_exo_vars;
-        simul_periods=obj.options.simul_periods;
-        states=nan(1,simul_periods);
-        shocks=nan(exo_nbr,simul_periods+k_future);
-        
-            shock_pos=[];
-        if isempty(conditional_shocks)
-            is_conditional_forecasting=size(y0(1).y,3)>1;
-        else
-            is_conditional_forecasting=true;
-            if ischar(conditional_shocks)
-                conditional_shocks=cellstr(conditional_shocks);
-            end
-            regime_pos=find(strcmp('regime',conditional_shocks));
-            if ~isempty(regime_pos)
-                conditional_shocks(regime_pos)=[];
-            end
-            if ~isempty(conditional_shocks)
-                shock_pos=locate_variables(conditional_shocks,shock_names);
-            end
-            if ~isempty(regime_pos)
-                conditional_shocks=[conditional_shocks(:).','regime'];
-            end
-            % the length/number of pages of the dataset depends on the
-            % horizon of the shocks but for the moment, we consider all pages
-            pages=[];
-            verdier=utils.time_series.data_request(simul_historical_data,...
-                conditional_shocks,date2serial(simul_history_end_date),...
-                [],pages);
-            % remove first page (shocks of the past!!!)
-            %-------------------------------------------
-            % squeeze does not work well with singleton dimensions...
-            verdier=permute(verdier(:,:,2:end),[1,3,2]); % <-- squeeze(verdier(:,:,2:end));
-            npages=size(verdier,2);
-            % now chop until the forecast horizon
-            %--------------------------------------
-            ncols=min(simul_periods,npages);
-            if ~isempty(regime_pos)
-                states(1:ncols)=verdier(end,1:ncols);
-                verdier(end,:)=[];
-            end
-            ncols=min(simul_periods+k_future,npages);
-            shocks(shock_pos,1:ncols)=verdier(:,1:ncols);
-        end
         if ~is_conditional_forecasting
-            states=[];
-            shocks=[];
+            is_conditional_forecasting=~isempty(conditional_shocks);
         end
+        if is_conditional_forecasting
+            shock_pos=locate_variables(conditional_shocks,obj.exogenous.name);
+        else
+            % conditional on all shocks for stochastic simulation, etc.
+            shock_pos=1:sum(obj.exogenous.number);
+        end
+        % shocks
+        %---------
         datae=build_cond_data(conditional_shocks);
-        shock_pos=locate_variables(conditional_shocks,obj.exogenous.name);
         y0(1).econd=struct('data',datae,'pos',shock_pos);
+        
+        % regimes: silence the error
+        %----------------------------
+        datar=build_cond_data('regime',true);
+        y0(1).rcond=struct('data',datar,'pos',nan);
     end
 
     function set_endogenous_variables()
-        if do_dsge_var
-            endo_names=obj.observables.name(:);
-        else
-            endo_names=obj.endogenous.name(:);
-        end
-        endo_names=endo_names(:,ones(1,nlags));
-        for ilag=2:nlags
-            endo_names(:,ilag)=strcat(endo_names(:,ilag),sprintf('{-%0.0f}',ilag-1));
-        end
-        endo_names=endo_names(:).';
-
-        y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
-            simul_history_end_date,y0(1).y);
-        % keep first page only: conditions are separate
-        %-----------------------------------------------
-        y0(1).y=y0(1).y(:,:,1);
         
-        % past regimes for the computation of initial regime probabilities
-        %-----------------------------------------------------------------
-        PAI_lag=utils.forecast.load_start_values(obj.markov_chains.regime_names,...
-            simul_historical_data,simul_history_end_date,nan(size(PAI)));
-        if all(~isnan(PAI_lag))
-            PAI=transpose(obj.solution.transition_matrices.Q)*PAI_lag;
+        if has_data
+            if do_dsge_var
+                endo_names=obj.observables.name(:);
+            else
+                endo_names=obj.endogenous.name(:);
+            end
+            endo_names=endo_names(:,ones(1,nlags));
+            for ilag=2:nlags
+                endo_names(:,ilag)=strcat(endo_names(:,ilag),sprintf('{-%0.0f}',ilag-1));
+            end
+            endo_names=endo_names(:).';
+            
+            y0(1).y=utils.forecast.load_start_values(endo_names,...
+                simul_historical_data,simul_history_end_date,y0(1).y);
+            % keep first page only: conditions are separate
+            %-----------------------------------------------
+            y0(1).y=y0(1).y(:,:,1);
+            
+            % past regimes for the computation of initial regime probabilities
+            %-----------------------------------------------------------------
+            PAI_lag=utils.forecast.load_start_values(obj.markov_chains.regime_names,...
+                simul_historical_data,simul_history_end_date,nan(size(PAI)));
+            if all(~isnan(PAI_lag))
+                PAI=transpose(obj.solution.transition_matrices.Q)*PAI_lag;
+            end
         end
 
         conditional_vars=obj.options.forecast_cond_endo_vars;
@@ -272,38 +233,51 @@ Initcond.shocks=shocks;
         y_pos=strcmp(conditional_vars,obj.observables.name);
         y_pos=obj.observables.state_id(y_pos);
         y0(1).ycond=struct('data',datay,'pos',y_pos);
+        is_conditional_forecasting=~isempty(datay);
     end
 
-    function datax=build_cond_data(names)
+    function datax=build_cond_data(names,silent)
+        if nargin<2
+            silent=false;
+        end
         if isempty(names)
             names={};
         elseif ischar(names)
             names=cellstr(names);
         end
-        nspan=simul_historical_data.NumberOfPages-1;
         nx=numel(names);
-        datax=nan(nx,nspan,3);
-        for ivar=1:nx
-            vname=names{ivar};
-            di=get_data(vname);
-            % always hard if not stated otherwise
-            %------------------------------------
-            datax(ivar,:,1)=di;
-            datax(ivar,:,2)=di;
-            datax(ivar,:,3)=di;
-            % and possibly soft if possible
-            %-------------------------------
-            apply_soft(['lower_',vname],2)
-            apply_soft(['upper_',vname],3)
-            % should the user put -inf or inf themselves? most def but I
-            % don't believe that if they put a number they will put
-            % anything else than finite...
-            % - Another interesting case if what happens if the user only
-            % puts either the lower bound or just the upper bound.
-            % - According to this specification, there is no conditionning
-            % on a variable if the user does not give a central tendency.
-            % - We have to revisit the role of nan central tendency vs nan
-            % bounds...
+        if has_data
+            nspan=simul_historical_data.NumberOfPages-1;
+            datax=nan(nx,nspan,3);
+            for ivar=1:nx
+                vname=names{ivar};
+                if silent && ~any(strcmp(vname,simul_historical_data.varnames));
+                    di=nan(1,nspan);
+                else
+                    di=get_data(vname);
+                end
+                % always hard if not stated otherwise
+                %------------------------------------
+                datax(ivar,:,1)=di;
+                datax(ivar,:,2)=di;
+                datax(ivar,:,3)=di;
+                % and possibly soft if possible
+                %-------------------------------
+                apply_soft(['lower_',vname],2)
+                apply_soft(['upper_',vname],3)
+                % should the user put -inf or inf themselves? most def but I
+                % don't believe that if they put a number they will put
+                % anything else than finite...
+                % - Another interesting case if what happens if the user only
+                % puts either the lower bound or just the upper bound.
+                % - According to this specification, there is no conditionning
+                % on a variable if the user does not give a central tendency.
+                % - We have to revisit the role of nan central tendency vs nan
+                % bounds...
+            end
+        else
+            nspan=0;
+            datax=nan(nx,nspan,3);
         end
         function apply_soft(vname,pos)
             low=any(strcmp(vname,simul_historical_data.varnames));

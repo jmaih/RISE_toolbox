@@ -1,4 +1,4 @@
-function [sims,states,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_location,options)
+function [sims,regimes,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_location,options)
 % H1 line
 %
 % Syntax
@@ -23,26 +23,22 @@ function [sims,states,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_locatio
 endo_nbr=size(y0.y,1);
 PAI=options.PAI;
 Qfunc=options.Qfunc;
-states=options.states(:);
-shocks=options.shocks;
+regimes=y0.rcond.data(:);
+shocks=y0.econd.data;
 cond_shocks_id=[];
 if options.k_future
     if isfield(options,'shock_structure')
         cond_shocks_id=any(options.shock_structure,2);
     else
-        cond_shocks_id=any(isnan(shocks(:,2:end)),2);
+        cond_shocks_id=any(isnan(shocks(:,2:end,1)),2);
     end
 end
 
 simul_update_shocks_handle=options.simul_update_shocks_handle;
 simul_do_update_shocks=options.simul_do_update_shocks;
 forecast_conditional_hypothesis=options.forecast_conditional_hypothesis;
-options=rmfield(options,{'states','shocks','PAI','Qfunc','y'});
-y_conditions=[];
-if size(y0.y,3)>1
-    y_conditions=y0.y(:,:,2:end);
-    y0.y=y0.y(:,:,1);
-end
+options=rmfield(options,{'PAI','Qfunc','y'});
+
 h=size(T,2);
 Qt=[];
 retcode=0;
@@ -54,16 +50,22 @@ sims=nan(endo_nbr,options.nsteps);
 nsv=numel(state_vars_location);
 nx=(size(T{1,1},2)-nsv-1)/(options.k_future+1); %<---size(shocks,1);
 
-condforkst=~isempty(y_conditions);
+condforkst=~isempty(y0.ycond.data)||...
+    any(isnan(shocks(:)))||any(isinf(shocks(:)))||...
+    max(max(abs(shocks(:,:,1)-shocks(:,:,2))>1e-19))||...
+    max(max(abs(shocks(:,:,1)-shocks(:,:,3))>1e-19))||...
+    max(max(abs(shocks(:,:,2)-shocks(:,:,3))>1e-19))||...
+    options.forecast_conditional_sampling_ndraws>1;
+
 %-------------------------------------
-all_known_states=~any(isnan(states));
-unique_state=numel(PAI)==1||(all_known_states && all(states==states(1)));
+all_known_states=~any(isnan(regimes));
+unique_state=numel(PAI)==1||(all_known_states && all(regimes==regimes(1)));
 % model_is_linear=size(T,1)==1;
 if unique_state
-    if isnan(states(1))
+    if isnan(regimes(1))
         % no states were provided. Uniqueness in this case implies that
         % we have only one state
-        states(:)=1;
+        regimes(:)=1;
     end
 end
 %-------------------------------------
@@ -87,7 +89,7 @@ if condforkst
     end
 else
     % condition on shocks only
-    shocks__=condition_on_shocks_only(shocks);
+    shocks__=condition_on_shocks_only(shocks(:,:,1));
     myshocks=shocks__(:,options.burn+1:end);
  end
 
@@ -164,12 +166,12 @@ else
         model=struct('T',{T},'sstate',{ss},'state_cols',state_vars_location,...
             'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
         opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
-        if h==1||~(isempty(states)||any(isnan(states)))
-            [myshocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
-                y0.ycond,y0.econd,opt,states);
+        if h==1||~(isempty(regimes)||any(isnan(regimes)))
+            [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
+                y0.ycond,y0.econd,opt,regimes);
         else
-            [myshocks,states,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
-                y0.ycond,y0.econd,opt,states);
+            [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
+                y0.ycond,y0.econd,opt,regimes);
         end
         % skip the initial conditions and add the mean
         if retcode
@@ -202,14 +204,14 @@ else
                 %------------------------------------------------------
                 [Q,retcode]=Qfunc(y00.y);
                 if ~retcode
-                    rt=states(t);
+                    rt=regimes(t);
                     if isnan(rt)
                         % the state is not known
                         if t==1
                             % draw from initial distribution
                         else
                             % draw conditional on yesterday's state
-                            PAI=Q(states(t-1),:);
+                            PAI=Q(regimes(t-1),:);
                         end
                         if do_Qt
                             if t==1
@@ -234,8 +236,8 @@ else
                     if isempty(y1)
                         error('I could not find a feasible path')
                     end
-                    if isnan(states(t))
-                        states(t)=rt;
+                    if isnan(regimes(t))
+                        regimes(t)=rt;
                     end
                     
                     if t>options.burn
@@ -246,7 +248,7 @@ else
                 end
             end
         end
-        states=states(options.burn+1:end);
+        regimes=regimes(options.burn+1:end);
         function one_step()
             cp=rebuild_cp();
             if isnan(rt)
@@ -257,8 +259,8 @@ else
                 options.simul_sig,shocks_t,options.simul_order);
             if ~isempty(options.complementarity) && ~options.complementarity(y1.y)
                 if options.simul_honor_constraints_through_switch
-                    if ~isnan(states(t))
-                        error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',states(t))) %#ok<SPERR>
+                    if ~isnan(regimes(t))
+                        error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',regimes(t))) %#ok<SPERR>
                     end
                     state_list(state_list==rt)=[];
                     rt=nan;
