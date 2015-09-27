@@ -55,7 +55,8 @@ obj=add_to_routines(obj,'derived_parameters',derived_parameters,...
         convert_the_guy=@do_conversion; %#ok<NASGU>
         is_linear_restriction=true(1,n_restr);
         for irow=1:n_restr
-            eqtn=RestrictionsBlock{irow};
+            eqtn=parser.param_name_to_param_texname(RestrictionsBlock{irow},...
+                chain_names);
             if isnonlin_not_allowed(eqtn)
                 disp(eqtn)
                 error('== not allowed in nonlinear restrictions')
