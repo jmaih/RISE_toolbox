@@ -220,7 +220,7 @@ myirfs=format_irf_output(myirfs);
             irf_draws=1;
         end
         if ~obj.options.irf_use_historical_data
-            Initcond.shocks=0*Initcond.shocks;
+            y0.econd.data=0*y0.econd.data;
         end
         irf_shock_uncertainty=irf_draws>1;
         number_of_threads=h;
@@ -233,7 +233,7 @@ myirfs=format_irf_output(myirfs);
         further_options={
             'nsimul',irf_draws
             'impulse',1*irf_shock_sign
-            'random',irf_shock_uncertainty
+            'simul_shock_uncertainty',irf_shock_uncertainty
             'girf',girf
             };
         for irow=1:size(further_options,1)
@@ -262,7 +262,7 @@ myirfs=format_irf_output(myirfs);
         for istate=1:number_of_threads
             if ~retcode
                 if h==1||number_of_threads==h
-                    Initcond.states(:,1)=istate;
+                    y0.rcond.data(:,1)=istate;
                 end
                 [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
                     state_vars_location,which_shocks,det_shocks,Initcond);
