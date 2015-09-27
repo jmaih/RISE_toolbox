@@ -175,7 +175,7 @@ classdef svar < rise_generic
                             error(issue)
                         end
 						% msvar_priors calls setup_priors, which does parameter_links
-                        obj=msvar_priors(obj,estim_names);
+                        obj=msvar_priors(obj);
                     end
                 end
             end

@@ -23,7 +23,10 @@ RestrictionsBlock=obj.options.estim_nonlinear_restrictions;
 if isstruct(RestrictionsBlock)
     RestrictionsBlock=RestrictionsBlock.original;
 end
-RestrictionsBlock=cellfun(@(x)x(~isspace(x)),RestrictionsBlock,'uniformOutput',false);
+if ~isempty(RestrictionsBlock)
+    RestrictionsBlock=cellfun(@(x)x(~isspace(x)),...
+        RestrictionsBlock,'uniformOutput',false);
+end
 
 n_restr=size(RestrictionsBlock,1);
 isnonlin=@(x)any(x=='<')||any(x=='>');
@@ -33,8 +36,6 @@ param_names=obj.parameters.name;
 governing_chain=obj.parameters.governing_chain;
 chain_names=obj.markov_chains.small_markov_chain_info.chain_names;
 regimes=cell2mat(obj.markov_chains.small_markov_chain_info.regimes(2:end,2:end));
-% par_nbr=sum(obj.parameters.number);
-% reg_nbr=size(regimes,1);
 derived_parameters=[];
 
 bend_it_like_a_chiquita();

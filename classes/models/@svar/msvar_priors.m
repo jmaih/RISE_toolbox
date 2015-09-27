@@ -1,4 +1,4 @@
-function obj=msvar_priors(obj,estim_names)
+function obj=msvar_priors(obj)
 % H1 line
 %
 % Syntax
@@ -24,6 +24,7 @@ if isempty(obj)
     obj=struct(); 
     return
 end
+estim_names=create_estimated_parameters_list(obj);
 s=quick_ar1_processes();
 obj.miscellaneous.constant_var.sigma_=diag(s.^2);
 priors_hyperparams=obj.construction_data.priors_hyperparams;

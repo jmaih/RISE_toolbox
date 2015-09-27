@@ -255,6 +255,9 @@ Initcond.shocks=shocks;
 
         y0(1).y=utils.forecast.load_start_values(endo_names,simul_historical_data,...
             simul_history_end_date,y0(1).y);
+        % keep first page only: conditions are separate
+        %-----------------------------------------------
+        y0(1).y=y0(1).y(:,:,1);
         
         % past regimes for the computation of initial regime probabilities
         %-----------------------------------------------------------------
@@ -269,21 +272,6 @@ Initcond.shocks=shocks;
         y_pos=strcmp(conditional_vars,obj.observables.name);
         y_pos=obj.observables.state_id(y_pos);
         y0(1).ycond=struct('data',datay,'pos',y_pos);
-        % x it future values of variables not declared as conditioning
-        %------------------------------------------------------------------
-        if size(y0(1).y,3)>1
-            is_cond_var=ismember(obj.endogenous.name,conditional_vars);
-            y0(1).y(~is_cond_var,:,2:end)=nan;
-            % start trimming from the back
-            %-----------------------------
-            while size(y0(1).y,3)>1
-                last=y0(1).y(:,:,end);
-                if any(~isnan(last(:)))
-                    break
-                end
-                y0(1).y(:,:,end)=[];
-            end
-        end
     end
 
     function datax=build_cond_data(names)
