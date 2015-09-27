@@ -1,12 +1,12 @@
-function [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
-% param_name_to_valid_param_name -- change the parameter names from
+function [pname_out,capture_errors]=param_texname_to_param_name(pname)
+% PARAM_TEXNAME_TO_PARAM_NAME -- change the parameter names from
 % name(chain,state) to name_chain_state 
 %
 % Syntax
 % -------
 % ::
 %
-%   [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
+%   [pname_out,capture_errors]=PARAM_TEXNAME_TO_PARAM_NAME(pname)
 %
 % Inputs
 % -------
@@ -28,7 +28,7 @@ function [pname_out,capture_errors]=param_name_to_valid_param_name(pname)
 % Examples
 % ---------
 %
-% See also: 
+% See also: PARSER.PARAM_NAME_TO_PARAM_TEXNAME
 
 pname_out=parser.valid_names_in_text(pname);
 

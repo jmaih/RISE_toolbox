@@ -38,7 +38,7 @@ if ~isempty(the_mode_file)
     % turn the official names into valid names. Since the mode file is a
     % structure, it has to be the case that it only includes valid names
     %---------------------------------------------------------------------
-    param_names=parser.param_name_to_valid_param_name(param_names);
+    param_names=parser.param_texname_to_param_name(param_names);
     re_started_names=fieldnames(the_mode_file);
     for irestart=1:numel(re_started_names)
         loc=find(strcmp(re_started_names{irestart},param_names));

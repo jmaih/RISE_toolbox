@@ -75,7 +75,7 @@ number_of_matrices=numel(W);
 prior_dens=plot_priors(obj,parlist);
 vnames=fieldnames(prior_dens);
 % locate those names
-allpnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+allpnames=cellfun(@(x)parser.param_texname_to_param_name(x),...
     {obj.estimation.priors.name},'uniformOutput',false);
 vlocs=locate_variables(vnames,allpnames);
 N=numel(prior_dens.(vnames{1}).x_prior);

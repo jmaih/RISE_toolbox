@@ -141,7 +141,7 @@ end
         param_names={obj.estimation.priors.name};
         Reply=struct();
         for iname=1:numel(param_names)
-            valid_name=parser.param_name_to_valid_param_name(param_names{iname});
+            valid_name=parser.param_texname_to_param_name(param_names{iname});
             Reply.(valid_name)=xparam(iname);
         end
     end

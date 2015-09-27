@@ -52,7 +52,7 @@ all_estim_chains={obj.estimation.priors.chain};
 param_names={obj.estimation.priors.name};
 % transform the names from name(chain,state) to the name_chain_state
 %-------------------------------------------------------------------
-param_names=parser.param_name_to_valid_param_name(param_names);
+param_names=parser.param_texname_to_param_name(param_names);
 npar=numel(param_names);
 
 nblks=numel(blocks);
@@ -87,7 +87,7 @@ else
             % make valid names since we now know we have cell arrays of
             % strings
             %-----------------------------------------------------------
-            chains=parser.param_name_to_valid_param_name(chains);
+            chains=parser.param_texname_to_param_name(chains);
             for ic=1:numel(chains)
                 if ismember(chains{ic},chain_names)
                     if continue_flag
@@ -123,7 +123,7 @@ else
         ontheline(discard)=[];
     end
     if ~isempty(ontheline)
-        disp(parser.valid_param_name_to_tex_name(param_names(ontheline)))
+        disp(parser.param_name_to_param_texname(param_names(ontheline)))
         error('those parameters were not assigned a block')
     end
     blocks=reblocks;

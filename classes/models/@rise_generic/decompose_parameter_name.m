@@ -38,7 +38,7 @@ if ~isempty(position)
     chain='const';
     chain_id=find(strcmp(chain,chain_names));
 else
-    ptex=parser.valid_param_name_to_tex_name(pname,chain_names);
+    ptex=parser.param_name_to_param_texname(pname,chain_names);
     left_par=strfind(ptex,'(');
     right_par=strfind(ptex,')');
     comma=strfind(ptex,',');

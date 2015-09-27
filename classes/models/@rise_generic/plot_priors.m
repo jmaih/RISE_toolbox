@@ -65,7 +65,7 @@ end
 
 %----------------------------------------
 N=obj.options.prior_discretize^2;
-allpnames=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+allpnames=cellfun(@(x)parser.param_texname_to_param_name(x),...
     {obj.estimation.priors.name},'uniformOutput',false);
 if nargin<2
     parlist=[];
@@ -76,7 +76,7 @@ else
     if ischar(parlist)
         parlist=cellstr(parlist);
     end
-    parlist=cellfun(@(x)parser.param_name_to_valid_param_name(x),...
+    parlist=cellfun(@(x)parser.param_texname_to_param_name(x),...
         parlist,'uniformOutput',false);
 end
 plocs=locate_variables(parlist,allpnames);

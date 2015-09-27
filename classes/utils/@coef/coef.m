@@ -101,7 +101,7 @@ classdef coef
             [param_names,governing_chain,parameter_values,chain_names,...
                 grand_chains_to_small,regimes,endo_names]=...
                 main_object_environment();
-            est_list=parser.param_name_to_valid_param_name(est_list);
+            est_list=parser.param_texname_to_param_name(est_list);
             nest=numel(est_list);
             nrest=numel(obj);
             if ~isequal(size(r),[nrest,1])
@@ -184,7 +184,7 @@ classdef coef
                         end
                         vv=pname;
                     end
-                    vv=parser.param_name_to_valid_param_name(vv);
+                    vv=parser.param_texname_to_param_name(vv);
                     function loc=find_variable_position(str)
                         loc=str;
                         if ischar(str)

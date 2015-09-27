@@ -123,7 +123,7 @@ block.error_control=error_control;
             end
             par_name=[par_name,rawline_(1:right_par)];
             check_affiliation(par_name)
-            par_name=parser.param_name_to_valid_param_name(par_name);
+            par_name=parser.param_texname_to_param_name(par_name);
             rawline_=rawline_(right_par+1:end);
         end
         % check that the parameter is not listed twice in the same state
@@ -133,7 +133,7 @@ block.error_control=error_control;
             group='group';
         else
             group='';
-            old_tex_name=parser.valid_param_name_to_tex_name(par_name,markov_chain_names);
+            old_tex_name=parser.param_name_to_param_texname(par_name,markov_chain_names);
         end
         if ismember(par_name,current_names)
             error([mfilename,':: parameter ',group,' ',old_tex_name,...
@@ -153,7 +153,7 @@ block.error_control=error_control;
             process_normal()
         end
         function check_affiliation(par_name)
-            par_name=parser.valid_param_name_to_tex_name(par_name,...
+            par_name=parser.param_name_to_param_texname(par_name,...
                 markov_chain_names);
             left_par=strfind(par_name,'(');
             right_par__=strfind(par_name,')');
