@@ -1,4 +1,4 @@
-function x=dirichlet_untransform(a,a_ii)
+function x=dirichlet_untransform(aj,sum_aij)
 % dirichlet_untransform -- sets the transformed dirichlet parameters back
 % to probabilities
 %
@@ -6,15 +6,15 @@ function x=dirichlet_untransform(a,a_ii)
 % -------
 % ::
 %
-%   x=dirichlet_untransform(a,a_ii)
+%   x=dirichlet_untransform(aj,sum_aij)
 %
 % Inputs
 % -------
 %
-% - **a** [k-1 x 1 vector]: un-normalized "weights" of the off-diagonal
+% - **aj** [k-1 x 1 vector]: un-normalized "weights" of the off-diagonal
 % elements
 %
-% - **a_ii** [scalar]: un-normalized "weight" of the excluded element.
+% - **sum_aij** [scalar]: sum of "weights" including the "diagonal" element.
 %
 % Outputs
 % --------
@@ -30,5 +30,6 @@ function x=dirichlet_untransform(a,a_ii)
 %
 % See also: 
 
-x=a/(a_ii+sum(a));
+x=aj/sum_aij;
+
 end

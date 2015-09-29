@@ -122,7 +122,7 @@ do_covariance()
                 di=obj.estim_dirichlet(id);
                 pos=di.location;
                 x0(pos)=utils.distrib.dirichlet_transform(x0(pos),...
-                    di.ax_diag);
+                    di.sum_aij);
             end
             % Apply possible linear restrictions
             %-----------------------------------

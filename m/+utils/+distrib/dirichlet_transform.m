@@ -1,4 +1,4 @@
-function a=dirichlet_transform(x,a_ii)
+function aj=dirichlet_transform(x,sum_aij)
 % dirichlet_transform -- transforms the parameter of the dirichlet for
 % estimation.
 %
@@ -6,7 +6,7 @@ function a=dirichlet_transform(x,a_ii)
 % -------
 % ::
 %
-%   a=dirichlet_transform(x,a_ii)
+%   aj=dirichlet_transform(x,sum_aij)
 %
 % Inputs
 % -------
@@ -14,12 +14,12 @@ function a=dirichlet_transform(x,a_ii)
 % - **x** [k-1 x 1 vector]: vector of probabilities excluding the
 % "diagonal" element
 %
-% - **a_ii** [scalar]: un-normalized "weight" of the excluded element.
+% - **sum_aij** [scalar]: sum of the weights including the "diagonal" element.
 %
 % Outputs
 % --------
 %
-% - **a** [k-1 x 1 vector]: un-normalized "weights" of the off-diagonal
+% - **aj** [k-1 x 1 vector]: un-normalized "weights" of the off-diagonal
 % elements
 %
 % More About
@@ -30,14 +30,6 @@ function a=dirichlet_transform(x,a_ii)
 %
 % See also: 
 
-% it is assumed that the diagonal element is not part of the vector but can
-% be retrieved as
-x_i=1-sum(x);
-
-sum_aj=a_ii/x_i-a_ii;
-
-sum_a=a_ii+sum_aj;
-
-a=sum_a*x;
+aj=sum_aij*x;
 
 end

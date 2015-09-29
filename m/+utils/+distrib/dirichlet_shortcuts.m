@@ -1,4 +1,4 @@
-function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
+function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,sum_aij)
 % dirichlet_shortcuts -- memoizer for some dirichlet routines
 %
 % Syntax
@@ -11,7 +11,7 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
 %
 %   d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 %
-%   d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
+%   d=dirichlet_shortcuts(a,location,lpdfn,rndfn,sum_aij)
 %
 % Inputs
 % -------
@@ -27,6 +27,8 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
 % - **rndfn** [function_handle]: function handle for random draws of the
 % dirichlet distribution
 %
+% - **sum_aij** [numeric]: sum of the weights including the diagonal term
+%
 % Outputs
 % --------
 %
@@ -37,10 +39,7 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
 %   draws of the dirichlet distribution
 %   - **location** [vector]: location of the parameters of interest in the
 %   vector of estimated parameters
-%   - **ax_diag** [numeric]: un-normalized weight of the diagonal term. Not
-%   to be confused with the hyperparameters of the distribution. This term
-%   is such that the off-diagonal terms of the transition matrix are
-%   calculated as si/(ax_diag+sum(si))
+%   - **sum_aij** [numeric]: sum of the weights including the diagonal term
 %
 % More About
 % ------------
@@ -51,25 +50,25 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,ax_diag)
 % See also: 
 
 if nargin==0
-    d=struct('lpdfn',{},'rndfn',{},'location',{},'ax_diag',{});
+    d=struct('lpdfn',{},'rndfn',{},'location',{},'sum_aij',{});
 else
     if nargin<5
-        ax_diag=[];
+        sum_aij=[];
         if nargin<4
             rndfn=[];
         end
     end
-    if isempty(ax_diag)
+    if isempty(sum_aij)
         h=numel(a); 
         % Get the un-normalized weight of the diagonal term. But here we
         % use the default settings for p_ii_min and a_ij_max
-        ax_diag=utils.distrib.dirichlet_diag_weight(h);% p_ii_min,a_ij_max
+        sum_aij=utils.distrib.dirichlet_sum_weights(h);
     end
     if isempty(rndfn)
         [lpdfn,~,~,rndfn]=distributions.dirichlet();
     end
     d=struct('lpdfn',@logdensity,'rndfn',@dirich_draw,'location',location,...
-        'ax_diag',ax_diag);
+        'sum_aij',sum_aij);
 end
 
     function lpdf=logdensity(x)

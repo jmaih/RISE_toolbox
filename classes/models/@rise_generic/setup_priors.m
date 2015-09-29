@@ -58,13 +58,7 @@ function obj=setup_priors(obj,MyPriors,error_control)
 if nargin<3
     error_control=[];
 end
-dirichlet_p_ii_min=[];
-dirichlet_a_ij_max=[];
-if iscell(MyPriors) 
-    dirichlet_p_ii_min=MyPriors{2};
-    dirichlet_a_ij_max=MyPriors{3};
-    MyPriors=MyPriors{1};
-end
+
 warnstate=warning('query','all');
 warning('off','optim:fmincon:SwitchingToMediumScale')% %
 warning('off','optimlib:fmincon:WillRunDiffAlg')
@@ -88,7 +82,7 @@ if ~isempty(fieldnames(MyPriors))
     end
     
     [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(fields,...
-        MyPriors,dirichlet_p_ii_min,dirichlet_a_ij_max,error_control);
+        MyPriors,error_control);
     % linking estimated parameters to parameters
     %-------------------------------------------
     obj.estimation_restrictions=parameters_links(obj,estnames);
@@ -183,7 +177,7 @@ end
                 'convergence ',num2str(0)])
         end
         new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(dirichlet(1).a,...
-            dirichlet(1).location,[],[],dirichlet(1).ax_diag);
+            dirichlet(1).location,[],[],dirichlet(1).s);
         dirichlet=dirichlet(2:end);
     end
 
@@ -257,12 +251,12 @@ end
 end
 
 function [estnames,is_dirichlet,dirichlet,error_control]=parameter_list(...
-    fields,MyPriors,p_ii_min,a_ij_max,error_control)
+    fields,MyPriors,error_control)
 
 is_dirichlet=strncmp(fields,'dirichlet',9);
 fields=fields(:).';
 dirichlet=struct('a',{},'b',{},'moments',{},'n_1',{},...
-    'pointers',{},'location',{},'names',{},'ax_diag',{});
+    'pointers',{},'location',{},'names',{},'s',{});
 ndirich=sum(is_dirichlet);
 if ndirich
     error_control_flag=~isempty(error_control);
@@ -301,8 +295,7 @@ if ndirich
             dirichlet(dirich_count).n_1=h-1;
             dirichlet(dirich_count).names=pnames;
             % Un-normalized weight of the diagonal term.
-            dirichlet(dirich_count).ax_diag=...
-                utils.distrib.dirichlet_diag_weight(h,p_ii_min,a_ij_max);%
+            dirichlet(dirich_count).s=utils.distrib.dirichlet_sum_weights(h);
         else
             pnames={dname};
         end

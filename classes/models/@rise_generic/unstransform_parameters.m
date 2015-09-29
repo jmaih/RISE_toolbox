@@ -45,8 +45,8 @@ x=linear_restricts.a_func(x);
 % Now we undo them
 for id=1:numel(obj.estim_dirichlet)
     pos=obj.estim_dirichlet(id).location;
-    ax_diag=obj.estim_dirichlet(id).ax_diag;
-    x(pos)=utils.distrib.dirichlet_untransform(x(pos),ax_diag);
+    sum_aij=obj.estim_dirichlet(id).sum_aij;
+    x(pos)=utils.distrib.dirichlet_untransform(x(pos),sum_aij);
 end
 
 end
