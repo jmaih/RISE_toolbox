@@ -62,21 +62,22 @@ for ishock=1:exo_nbr
                         if isimul==1
                             path2=path1;
                         end
-                        options2=options;
+                        y02=y0;
                         % set to 0(new_impulse) the location
                         % corresponding to the impulse
                         %------------------------------------------
-                        options2.shocks=utils.forecast.replace_impulse(options.shocks,shock_id,options.k_future+1,new_impulse);
+                        shocks=utils.forecast.replace_impulse(shocks,shock_id,...
+                            options.k_future+1,new_impulse);
                         % set to 0 the location corresponding to the
                         % inherited shocks
                         %------------------------------------------
-                        options2.shocks(inherited_shocks)=0;
-                        options2.states=states1;
+                        shocks(inherited_shocks)=0;
+                        y02.econd.data=shocks(:,:,ones(3,1));
+                        y02.rcond.data=states1;
                         % ensure that the shocks are not updated in the
                         % alternative scenario
                         %-----------------------------------------------
-                        options2.simul_do_update_shocks=false;
-                        [sim2,~,retcode]=utils.forecast.multi_step(y0,ss,T,state_vars_location,options2);
+                        [sim2,~,retcode]=utils.forecast.multi_step(y02,ss,T,state_vars_location,options);
                         if ~retcode
                             path2(:,nlags+1:end)=sim2;
                             path1=path1-path2;
