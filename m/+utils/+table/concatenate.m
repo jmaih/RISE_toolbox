@@ -39,7 +39,7 @@ end
 B=cell(2,0);
 [span,nargs]=size(data);
 for icol=1:nargs
-    A=data{1,icol};
+    A=parser.any2str(data{1,icol});
     for jrow=2:span
         add_on=data{jrow,icol};
         if iscellstr(add_on)
