@@ -103,18 +103,9 @@ do_covariance()
     end
 
     function do_initial_conditions()
-        % zero restrictions on dirichlet should work as well as nonlinear
-        % restrictions. Other linear restrictions may not work. For
-        % instance xdirich+xj=b ==>ad/sum(ad)+xj=b. In this case the
-        % restriction that will be enforced (because of the prior dirichlet
-        % transformation is ad+xj=b; But then having estimated ad, the
-        % recomputed xdirich will not satisfy the restriction. For things
-        % to work, the restrictions should be transformed into
-        % ad+sum(ad)*xj=sum(ad)*b. The problem is that at the moment
-        % sum(ad) is not known in advance... perhaps it should. If that
-        % were the case, then the rule is to multiply every atom in the
-        % equation by sum(ad), except for the current element being
-        % transformed.
+        % Here the dirichlet are unweighted i.e. xj-->xj*s. In order to
+        % remain consistent with linear restrictions, the coefficients on
+        % the dirichlet have to be divided by s.
         if ~isempty(x0)
             % transform the dirichlet
             %------------------------

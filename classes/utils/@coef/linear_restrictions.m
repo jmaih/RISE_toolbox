@@ -20,6 +20,26 @@ R=sparse(nrest,nest);
 for iobj=1:nrest
     process_object(obj(iobj),iobj);
 end
+
+% Now, locate and re-scale the dirichlet columns. This has to be done
+% before any further processing of R
+%--------------------------------------------------------------------------
+correct_dirichlet()
+
+    function correct_dirichlet()
+        % Because the dirichlet will be unweighted i.e. xj-->xj*s. In order to
+        % remain consistent with linear restrictions, the coefficients on the
+        % dirichlet have to be divided by s. For that we use the location
+        % information
+        for id=1:numel(self.estim_dirichlet)
+            di=self.estim_dirichlet(id);
+            locs=di.location;
+            h=numel(locs)+1;
+            s=utils.distrib.dirichlet_sum_weights(h);
+            R(:,locs)=R(:,locs)/s;
+        end
+    end
+
     function idval=process_object(this,restr_id)
         idval=[];
         if isa(this,'double')
@@ -58,8 +78,8 @@ end
             end
         end
         if nargin>1 && ~isempty(idval)
-            % separate the elements to go to the left from those
-            % that go to the right
+            % separate the elements to go to the left from those that go to
+            % the right
             rhs=imag(idval)==0;
             idval_lhs=idval(~rhs);
             idval_rhs=idval(rhs);
