@@ -395,10 +395,6 @@ end
         if nargin<2
             start_iter=horizon;
         end
-        af=nan(m,1,horizon+1);
-        af(:,1,1)=a_filt;
-        % add conditional information
-        af(obs_id,1,1+(1:start_iter))=data_y(:,t,1:start_iter);
         options.shocks=shocks;
         % all shocks can be used in the update (first period)
         %----------------------------------------------------
@@ -410,7 +406,8 @@ end
         ycond=reshape(data_y(:,t,1:start_iter),p,[]);
         ycond=struct('data',ycond(:,:,ones(3,1)),'pos',obs_id);
         econd=struct('data',options.shocks(:,:,ones(3,1)),'pos',1:exo_nbr);
-        y0=struct('y',af,'ycond',ycond,'econd',econd);
+        rcond=struct('data',ones(start_iter,1),'pos',nan);
+        y0=struct('y',a_filt,'ycond',ycond,'econd',econd,'rcond',rcond);
     end
 
     function [a_update,retcode,myshocks]=state_update_without_test(a_filt,Kv,st)
