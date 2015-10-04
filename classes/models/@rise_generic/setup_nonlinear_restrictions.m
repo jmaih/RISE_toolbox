@@ -1,5 +1,5 @@
 function obj=setup_nonlinear_restrictions(obj)
-% H1 line
+% setup_nonlinear_restrictions - sets nonlinear restrictions
 %
 % Syntax
 % -------
@@ -13,6 +13,26 @@ function obj=setup_nonlinear_restrictions(obj)
 %
 % More About
 % ------------
+%
+% - uses estim_nonlinear_restrictions, which should be a cell array. Each
+% item of the array is a string of the form
+%   - 'f(p1,p2,...,pn)>=h(p1,p2,...,pn)' 
+%   - 'f(p1,p2,...,pn)>h(p1,p2,...,pn)' 
+%   - 'f(p1,p2,...,pn)<=h(p1,p2,...,pn)' 
+%   - 'f(p1,p2,...,pn)<h(p1,p2,...,pn)' 
+%   - 'pj=h(p1,p2,...,pn)' 
+%
+% - In some cases, the explicit name for some parameter pj is not known in
+% advance. In that case the name has to be formed explicitly as follows:
+%   - pj=coef(eqtn,vbl,lag)
+%   - pj=coef(eqtn,vbl,lag,chain,state)
+%
+% - In the statements above,
+%   - eqtn [digits|variable name]
+%   - vbl [digits|variable name]
+%   - lag [digits]
+%   - chain [char]
+%   - state [digits]
 %
 % Examples
 % ---------
@@ -37,6 +57,7 @@ governing_chain=obj.parameters.governing_chain;
 chain_names=obj.markov_chains.small_markov_chain_info.chain_names;
 regimes=cell2mat(obj.markov_chains.small_markov_chain_info.regimes(2:end,2:end));
 derived_parameters=[];
+endo_names=obj.endogenous.name;
 
 bend_it_like_a_chiquita();
 
@@ -51,16 +72,24 @@ obj=add_to_routines(obj,'derived_parameters',derived_parameters,...
     'nonlinear_restrictions',nonlinear_restrictions);
 
     function bend_it_like_a_chiquita()
-        [expr,replace]=regexp_setup();
-        convert_the_guy=@do_conversion; %#ok<NASGU>
+        [expr1,repl1,convcoef]=regexp_setup1(endo_names); %#ok<NASGU>
+        [expr,replace,convert_the_guy]=regexp_setup2(param_names,...
+            governing_chain,chain_names,regimes);
         is_linear_restriction=true(1,n_restr);
         for irow=1:n_restr
-            eqtn=parser.param_name_to_param_texname(RestrictionsBlock{irow},...
+            % remove any coef(...), turning it into "pname" or
+            % "pname(chain,state)"
+            %---------------------------------------------------
+            eqtn=regexprep(RestrictionsBlock{irow},expr1,repl1);
+            % change pname_chain_state into pname(chain,state)
+            %-------------------------------------------------
+            eqtn=parser.param_name_to_param_texname(eqtn,...
                 chain_names);
             if isnonlin_not_allowed(eqtn)
                 disp(eqtn)
                 error('== not allowed in nonlinear restrictions')
             elseif isnonlin(eqtn)
+                % change pname or pname(chain,state) into M(i,j)
                 RestrictionsBlock{irow}=regexprep(eqtn,expr,replace);
                 is_linear_restriction(irow)=false;
             else
@@ -84,39 +113,85 @@ obj=add_to_routines(obj,'derived_parameters',derived_parameters,...
                 statepos=lhs(comma+1:rightpar-1);
                 pname_lhs=lhs(1:leftpar-1);
             end
-            [~,aloc,col]=do_conversion(pname_lhs,cn,statepos);
+            [~,aloc,col]=convert_the_guy(pname_lhs,cn,statepos);
             eqtn={aloc,col(:).',str2func(['@(M)',rhs])};
         end
-        function [c,aloc,col]=do_conversion(pname,cn,statepos)
-            aloc=locate_variables(pname,param_names);
-            if isempty(cn)
-                cn='const';
-                statepos='1';
+    end
+end
+
+function [expr,replace,convcoef]=regexp_setup1(endo_names)
+% let nc = no capture
+replace='${convcoef($1,$2,$3,$4,$5)}';
+nc1='(?:coef\()';
+eqtn_='(\w+)'; %1
+nc2='(?:,)?';
+vbl='(\w+)?'; %2
+nc3='(?:,)?';
+lag='(\d+)?'; %3
+nc4='(?:,)?';
+chain='(\w+)?'; %4
+nc5='(?:,)?';
+state='(\d+)?'; %5
+nc6='(?:\))';
+expr=[nc1,eqtn_,nc2,vbl,nc3,lag,nc4,chain,nc5,state,nc6];
+convcoef=@coef_converter;
+    function out=coef_converter(eqtn_,vbl,lag,chain,state)
+        lag=str2double(lag);
+        if isempty(vbl)
+            out=eqtn_;
+            if ~isvarname(out)
+                error('nonlinear restriction badly specified')
             end
-            if ~strcmp(chain_names(governing_chain(aloc)),cn)
-                error(['parameter "',pname,'" is not controled by markov chain "',cn,'"'])
+        else
+            if isnan(lag)
+                error('nonlinear restriction badly specified')
             end
-            c_id= strcmp(cn,chain_names);
-            col=find(regimes(:,c_id)==str2double(statepos));
-            if isempty(col)
-                error(['wrong state number for parameter "',pname,'"'])
+            % don't go it all the way. Because then we create
+            % pname_chain_state. What we actually want is
+            % pname(chain,state).
+                vv={eqtn_,vbl,lag};
+            out=coef.create_parameter_name(vv,endo_names);
+            if ~isempty(chain)
+                if isempty(state)
+                    error('nonlinear restriction badly specified')
+                end
+                out=[out,'(',chain,',',state,')'];
             end
-            c=['M(',int2str(aloc),',',int2str(col(1)),')'];
         end
-        function c2m=cell2matize(list)
-            c2m=cell2mat(strcat(list,'|'));
-            c2m=['(',c2m(1:end-1),')'];
+    end
+end
+
+function [expr,replace,convert_the_guy]=regexp_setup2(param_names,...
+    governing_chain,chain_names,regimes)
+% parse expressions such as "pname", "pname(chain,state)"
+pnames=cell2matize(param_names);
+nc1='(?:\()?'; % group if exist but do not capture
+opt_cnames=[cell2matize(chain_names-'const'),'?'];
+nc2='(?:,)?';
+nc3='(?:\))?'; % group if exist but do not capture
+opt_digits='(\d+)?';% capture if exist
+expr=[pnames,nc1,opt_cnames,nc2,opt_digits,nc3];
+replace='${convert_the_guy($1,$2,$3)}';
+convert_the_guy=@do_conversion;
+    function [c,aloc,col]=do_conversion(pname,cn,statepos)
+        aloc=locate_variables(pname,param_names);
+        if isempty(cn)
+            cn='const';
+            statepos='1';
         end
-        function [expr,replace]=regexp_setup()
-            capt_pnames=cell2matize(param_names);
-            noleft_par='(?:\()?'; % group if exist but do not capture
-            noright_par='(?:\))?'; % group if exist but do not capture
-            opt_cnames=[cell2matize(chain_names-'const'),'?'];
-            opt_comma=',?';
-            opt_digits='(\d+)?';% capture if exist
-            expr=[capt_pnames,noleft_par,opt_cnames,opt_comma,opt_digits,noright_par];
-            replace='${convert_the_guy($1,$2,$3)}';
+        if ~strcmp(chain_names(governing_chain(aloc)),cn)
+            error(['parameter "',pname,'" is not controled by markov chain "',cn,'"'])
         end
+        c_id= strcmp(cn,chain_names);
+        col=find(regimes(:,c_id)==str2double(statepos));
+        if isempty(col)
+            error(['wrong state number for parameter "',pname,'"'])
+        end
+        c=['M(',int2str(aloc),',',int2str(col(1)),')'];
+    end
+    function c2m=cell2matize(list)
+        c2m=cell2mat(strcat(list,'|'));
+        c2m=['(',c2m(1:end-1),')'];
     end
 end
 

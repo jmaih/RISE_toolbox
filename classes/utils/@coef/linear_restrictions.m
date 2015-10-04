@@ -88,7 +88,7 @@ correct_dirichlet()
         end
     end
     function [id,parval,vv]=column_location(vv)
-        reformat_parameter_name();
+        vv=coef.create_parameter_name(vv,endo_names);
         id=find(strcmp(vv,est_list));
         parval=nan;
         if isempty(id)
@@ -98,36 +98,6 @@ correct_dirichlet()
                 param_names,governing_chain,chain_names,...
                 grand_chains_to_small,regimes);
             parval=parameter_values(vv_pos,vv_regime_states{1}(1));
-        end
-        function reformat_parameter_name()
-            if ~ischar(vv)% %eqtn,var_pos,lag,chain_name,state
-                eqtn=find_variable_position(vv{1});
-                var_pos=find_variable_position(vv{2});
-                lag=vv{3};
-                pname=sprintf('a%0.0f_%0.0f_%0.0f',...
-                    lag,eqtn,var_pos);
-                if numel(vv)>3
-                    chain_name=vv{4};
-                    state=vv{5};
-                    pname=sprintf('%s(%s,%0.0f)',pname,chain_name,state);
-                end
-                vv=pname;
-            end
-            vv=parser.param_texname_to_param_name(vv);
-            function loc=find_variable_position(str)
-                loc=str;
-                if ischar(str)
-                    loc=find(strcmp(str,endo_names));
-                    if isempty(str)
-                        error([str,' is not recognized as a variable name'])
-                    end
-                end
-                if loc>numel(endo_names)
-                    disp(vv)
-                    error(['One of the indexes in the name above ',...
-                        'exceeds the number of endogenous variables'])
-                end
-            end
         end
     end
     function [param_names,governing_chain,parameter_values,...

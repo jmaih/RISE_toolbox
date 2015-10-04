@@ -70,4 +70,7 @@ classdef coef
     methods(Static)
         varargout=block_exogenous(varargin)
     end
+    methods(Static,Hidden)
+        varargout=create_parameter_name(varargin)
+    end
 end
