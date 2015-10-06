@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,tpl]=create_lin_restrictions_and_markov_chains1(tpl)
+function [lin_restr,nonlin_restr,tpl]=create_restrictions_and_markov_chains1(tpl)
 % create_lin_restrictions_and_markov_chains1 -- creates restrictions and
 % markov chains for the SVAR model in which coefficients are switching
 % across all equations (synchronized case)
@@ -105,7 +105,7 @@ for istate=1:numberOfStates
         ]; %#ok<AGROW>
     nonlin_restr=[nonlin_restr
         {
-		['coef(ygap,FFR,0,syncoef,',int2str(istate),')<0']
+		['coef(ygap,FFR,0,syncoef,',int2str(istate),')>=0']
         }
         ]; %#ok<AGROW>
 end

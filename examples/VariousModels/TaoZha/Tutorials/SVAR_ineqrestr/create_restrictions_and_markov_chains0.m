@@ -76,6 +76,6 @@ lin_restr={
 nonlin_restr={
     % third equation or "ygap" equation
     %-----------------------------------
-    'coef(ygap,FFR,0)<0'
+    'coef(ygap,FFR,0)>=0'
     };
 end
