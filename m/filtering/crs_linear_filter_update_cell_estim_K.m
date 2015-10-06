@@ -446,7 +446,8 @@ end
         % compute a conditional forecast
         ycond=reshape(data_y(:,t,1:start_iter),p,[]);
         ycond=struct('data',ycond(:,:,ones(3,1)),'pos',obs_id);
-        econd=struct('data',options.shocks(:,:,ones(3,1)),'pos',1:exo_nbr);
+        econd=[options.shocks,zeros(exo_nbr,start_iter-1)];
+        econd=struct('data',econd(:,:,ones(3,1)),'pos',1:exo_nbr);
         rcond=struct('data',ones(start_iter,1),'pos',nan);
         y0=struct('y',a_filt,'ycond',ycond,'econd',econd,'rcond',rcond);
     end

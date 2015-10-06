@@ -51,10 +51,15 @@ if isempty(options)
 end
 
 options=parse_arguments(defaults,options);
+% stack R and S
+%-----------------
+RS=[M.R;M.S];
+rs_cols=size(RS,2);
+
 % Trim the data to have a length of nsteps by chopping or adding nans
 %--------------------------------------------------------------------
 [conddatay,ry,cy]=allocate(ycond);
-[conddatae,~,ce]=allocate(econd);
+[conddatae,~,ce]=allocate(econd,true);
 
 % Demean the conditions in 3 pages: central,lb,ub
 %-------------------------------------------------
@@ -64,10 +69,6 @@ yhat=reshape(yhat,[],3);
 %----------------------------------------
 ehat=reshape(conddatae,[],3);
 yhats=[yhat;ehat]; % central,lb,ub
-
-% stack R and S
-%-----------------
-RS=[M.R;M.S];
 
 % remove the bad rows: rows with 3 nan
 %--------------------------------------
@@ -102,16 +103,19 @@ switch hypo
 %         end
     case {'DEFAULT','JMA'}
         % no chopping
-        maxcols=inf;
+        maxcols=rs_cols;
     otherwise
         error([mfilename,':: Unknown option for the anticipation forecast_conditional_hypothesis'])
 end
 
-rs_cols=min(size(RS,2),maxcols);
+rs_cols=min(rs_cols,maxcols);
 
 RS=RS(:,1:rs_cols);
 
-    function [A,r,c]=allocate(xcond)
+    function [A,r,c]=allocate(xcond,isshock)
+        if nargin<2
+            isshock=false;
+        end
         if size(xcond.data,3)==1
             % hard conditions: lower-bound equals upper bound equals mean
             %------------------------------------------------------------
@@ -121,7 +125,6 @@ RS=RS(:,1:rs_cols);
         if pages~=3
             error('wrong number of pages')
         end
-        nhard=min(nsteps,c);
         if options.debug
             if c>nsteps
                 % no problem
@@ -134,8 +137,22 @@ RS=RS(:,1:rs_cols);
                 disp('As many conditioning periods as the forecast horizon')
             end
         end
-        cutoff=min(nhard,nsteps);
-        A=nan(r,nsteps,3);
-        A(:,1:cutoff,:)=xcond.data(:,1:cutoff,:);
+        if isshock
+            A=xcond.data;
+            missing=rs_cols-r*c;
+            cplus=missing/r;
+            if missing>0
+                % add nans
+                A=cat(2,A,nan(r,cplus,3));
+            elseif missing<0
+                % remove extra columns
+                A=A(:,1:c+cplus,:);
+            end
+        else
+            nhard=min(nsteps,c);
+            cutoff=min(nhard,nsteps);
+            A=nan(r,nsteps,3);
+            A(:,1:cutoff,:)=xcond.data(:,1:cutoff,:);
+        end
     end
 end
