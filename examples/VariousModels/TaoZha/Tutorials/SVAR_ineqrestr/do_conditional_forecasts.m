@@ -59,6 +59,8 @@ end
 if isempty(options)
     options=struct();
 end
+regime_check=@(x)isempty(x)||...
+    (isscalar(x) && isreal(x) && (floor(x)==ceil(x)) && x>0);
 defaults={
     'cbands',[10,20,50,80,90],@(x)isempty(x)||all(x>0 & x<100),'all elements in cbands must be in [0,100]'
     'do_plot',true,@(x)islogical(x),'do_plot should be true or false'
@@ -66,6 +68,7 @@ defaults={
     'shock_uncertainty',true,@(x)islogical(x),'shock_uncertainty should be true or false'
     'ndraws',200,@(x)isscalar(x) && isreal(x) && (floor(x)==ceil(x)) && x>0,'ndraws should be a positive integer'
     'nsteps',12,@(x)isscalar(x) && isreal(x) && (floor(x)==ceil(x)) && x>0,'nsteps should be a positive integer'
+    'simul_regime',[],@(x)regime_check(x),'simul_regime should be empty or a positive integer'
     };
 options=parse_arguments(defaults,options);
 
@@ -78,6 +81,7 @@ else
     param_uncertainty=options.param_uncertainty;
 end
 shock_uncertainty=options.shock_uncertainty;
+simul_regime=options.simul_regime;
 
 % Format conditioning information
 %-----------------------------------
@@ -134,7 +138,7 @@ m=set(m,...
     'forecast_nsteps',options.nsteps,...
     'forecast_to_time_series',false,...
     'forecast_shock_uncertainty',shock_uncertainty,...
-    'simul_regime',1);
+    'simul_regime',simul_regime);
 
 % loop over parameters and generate forecasts
 %---------------------------------------------
