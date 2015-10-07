@@ -122,7 +122,8 @@ cond_db=struct('ygap',ts('2015Q3',ygap));
 % options for the exercise
 %--------------------------
 myoptions=struct('cbands',[10,20,50,80,90],'do_plot',true,'nsteps',20,...
-    'param_uncertainty',false,'shock_uncertainty',true,'ndraws',200);
+    'param_uncertainty',false,'shock_uncertainty',true,'ndraws',200,...
+    'simul_regime',[]);
 
 % do it
 %-------
