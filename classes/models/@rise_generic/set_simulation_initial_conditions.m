@@ -172,7 +172,7 @@ else
     y0.rcond.data=rcond_data;
 end
 simul_regime=obj.options.simul_regime;
-if all(isnan(y0.rcond.data(:))) && ~isempty(simul_regime)
+if ~isempty(simul_regime)
     nregs=numel(simul_regime);
     if nregs==1
         y0.rcond.data(:)=simul_regime;
