@@ -139,14 +139,16 @@ RS=RS(:,1:rs_cols);
         end
         if isshock
             A=xcond.data;
-            missing=rs_cols-r*c;
-            cplus=missing/r;
-            if missing>0
-                % add nans
-                A=cat(2,A,nan(r,cplus,3));
-            elseif missing<0
-                % remove extra columns
-                A=A(:,1:c+cplus,:);
+            if r>0
+                missing=rs_cols-r*c;
+                cplus=missing/r;
+                if missing>0
+                    % add nans
+                    A=cat(2,A,nan(r,cplus,3));
+                elseif missing<0
+                    % remove extra columns
+                    A=A(:,1:c+cplus,:);
+                end
             end
         else
             nhard=min(nsteps,c);

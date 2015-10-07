@@ -23,7 +23,8 @@ function [sims,regimes,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_locati
 endo_nbr=size(y0.y,1);
 PAI=options.PAI;
 Qfunc=options.Qfunc;
-regimes=y0.rcond.data(:);
+% use first page only as it is the most relevant
+regimes=vec(y0.rcond.data(:,:,1));
 shocks=y0.econd.data;
 cond_shocks_id=[];
 if options.k_future

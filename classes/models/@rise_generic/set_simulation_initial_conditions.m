@@ -162,17 +162,24 @@ else
     shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond);
     y0.econd.data=shocks(:,:,ones(1,3));
 end
+ncond_regimes=Initcond.nsteps+Initcond.burn;
+rcond_data=nan(1,ncond_regimes,3);
 if isempty(y0.rcond.data)
-    y0.rcond.data=nan(Initcond.nsteps+Initcond.burn,1);
+    y0.rcond.data=rcond_data;
+else
+    cutoff=min(ncond_regimes,size(y0.rcond.data,2));
+    rcond_data(:,1:cutoff,:)=y0.rcond.data(:,1:cutoff,:);
+    y0.rcond.data=rcond_data;
 end
 simul_regime=obj.options.simul_regime;
-if all(isnan(y0.rcond.data)) && ~isempty(simul_regime)
+if all(isnan(y0.rcond.data(:))) && ~isempty(simul_regime)
     nregs=numel(simul_regime);
     if nregs==1
         y0.rcond.data(:)=simul_regime;
     else
-        nregs=min(nregs,numel(y0.rcond.data));
-        y0.rcond.data(1:nregs)=simul_regime(1:nregs);
+        nregs=min(nregs,size(y0.rcond.data,2));
+        y0.rcond.data(1,1:nregs,1)=simul_regime(1:nregs);
+        y0.rcond.data=y0.rcond.data(:,:,ones(1,3));
     end
 end
 Initcond.y=y0;
