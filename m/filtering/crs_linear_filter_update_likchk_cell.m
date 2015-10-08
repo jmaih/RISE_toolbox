@@ -286,7 +286,6 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if ~is_steady
             P{splus}=zeros(m);
         end
-        expected_shocks{splus}=shocks;
         for st=1:h
             if h==1
                 pai_st_splus=1;
@@ -297,22 +296,11 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 end
             end
             a{splus}=a{splus}+pai_st_splus*att{st};
-            % forecast with the expected shocks we had from the
-            % updating step
-            %---------------------------------------------------
-            expected_shocks{splus}=expected_shocks{splus}+...
-                pai_st_splus*myshocks{st}(:,1:horizon);
-            if st==h
-                % remove the first period since the shocks were
-                % expected already from the period before...
-                expected_shocks{splus}=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
-            end
             if ~is_steady
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-%         [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks{splus},Ut);
-        [a{splus},is_active_shock,retcode]=compute_onestep(a{splus},splus);
+        [a{splus},expected_shocks{splus},is_active_shock,retcode]=compute_onestep(a{splus},splus);
         if retcode
             return
         end
@@ -452,7 +440,7 @@ end
         end
     end
 
-    function [a1,is_active_shock,retcode]=compute_onestep(a0,st)
+    function [a1,myshocks_,is_active_shock,retcode]=compute_onestep(a0,st)
         % compute one-step forecast from the update and check whether we
         % can expect violations
         %----------------------------------------------------------------
@@ -462,6 +450,7 @@ end
         
         retcode=0;
         a1=atmp;
+        myshocks_=shocks;
         % initialize default of is_active_shock
         is_active_shock=any(abs(shocks)>sqrt(eps),1);
         if has_fire(st) && violations
