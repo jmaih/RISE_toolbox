@@ -446,15 +446,17 @@ end
         %----------------------------------------------------------------
         a0_ss=a0-ss{st};
         a1=ss{st}+T{st}*a0_ss(xlocs);
-        violations=~isempty(sep_compl) && any(sep_compl(a1)<cutoff);
+        a1_ss=a1-ss{st};
+        a2=ss{st}+T{st}*a1_ss(xlocs);
+        violations=~isempty(sep_compl) && ...
+            (any(sep_compl(a1)<cutoff)||any(sep_compl(a2)<cutoff));
         
         retcode=0;
-        a1=atmp;
         myshocks_=shocks;
         % initialize default of is_active_shock
         is_active_shock=any(abs(shocks)>sqrt(eps),1);
         if has_fire(st) && violations
-            nsteps__=1;
+            nsteps__=2;
             match_first_page=false;
             [a1,myshocks_,retcode]=do_anticipation(a0,nsteps__,match_first_page);
             is_active_shock=any(abs(myshocks_)>sqrt(eps),1);
@@ -493,7 +495,7 @@ end
                     break
                 end
             end
-            if nsteps==horizon
+            if ~is_viol
                 % if we have come so far, then there is no violation in the
                 % last step. But there could be some in the future step
                 f__=fsteps(:,end)-ss{st};
