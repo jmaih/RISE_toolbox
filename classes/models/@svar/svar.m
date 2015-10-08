@@ -82,7 +82,7 @@ classdef svar < rise_generic
             r=varargin{1};
             % make sure you do not mess with the prior hyperparameters
             %---------------------------------------------------------
-            svar.check_template(r)
+            svar.check_template(r,class(obj))
             out=vartools.preliminaries(varargin{:});
             obj=rise_generic.reset(obj,out.endogenous,out.exogenous,...
                 out.observables,out.markov_chains);
@@ -182,7 +182,7 @@ classdef svar < rise_generic
         end
     end
     methods(Static,Access=private)
-        function out=check_template(r)
+        function out=check_template(r,model_class)
             initiate=nargin==0;
             if initiate
                 r=struct('endogenous',{{}});
@@ -224,6 +224,10 @@ classdef svar < rise_generic
             if initiate
                 flag=cell2struct(mydefaults(:,2),mydefaults(:,1),1);
             else
+                if ~strcmp(r.model_class,model_class)
+                    error(['model object''s class (',model_class,') ',...
+                        'different from template class (',r.model_class,')'])
+                end
                 flag=r;
                 flag.priors_hyperparams=parse_arguments(mydefaults,r.priors_hyperparams);
             end

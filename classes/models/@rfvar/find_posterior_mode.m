@@ -30,6 +30,7 @@ if nobj==0
 end
 
 if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
+    priors_hyperparams=obj.construction_data.priors_hyperparams;
     % the following is hard-coded
     %----------------------------
     compute_hessian=false;
@@ -95,8 +96,8 @@ if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
     
     a2Aprime=@(x)transform_to_matrix_form(obj.linear_restrictions_data.a_func(x));
     
-    if any(strcmp(obj.options.vp_prior_type,{'normal_wishart','indep_normal_wishart'}))
-        if strcmp(obj.options.vp_prior_type,'normal_wishart')
+    if any(strcmp(priors_hyperparams.vp_prior_type,{'normal_wishart','indep_normal_wishart'}))
+        if strcmp(priors_hyperparams.vp_prior_type,'normal_wishart')
             % we invert and then apply the function:probably the simplest thing
             % to do
             %------------------------------------------------------------------
@@ -121,7 +122,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
         'nobs',nobs,...
         'X',transpose(bigx),...
         'Y',transpose(bigy),...
-        'prior_type',obj.options.vp_prior_type,...
+        'prior_type',priors_hyperparams.vp_prior_type,...
         'SIGMA',a2tilde_ols.SIGMA,...
         'x0',x1,...
         'f0',f1,...
@@ -148,9 +149,9 @@ end
         % gls
         %----
         iSIGU=1;
-        switch obj.options.vp_prior_type
+        switch priors_hyperparams.vp_prior_type
             case {'minnesota','indep_normal_wishart'}
-                if obj.options.vp_gls_ar1_processes
+                if priors_hyperparams.vp_gls_ar1_processes
                     iSIGU=diag(1./diag(obj.miscellaneous.constant_var.sigma_));
                 else
                     results=vartools.ols(bigy,bigx,0,false);
@@ -191,7 +192,7 @@ end
 % %             % fishy business : we use different variances for the computation
 % %             % of the mean and for posterior simulation
 % %             %------------------------------------------------------------------
-% %             if strcmp(obj.options.vp_prior_type,'jeffrey')
+% %             if strcmp(priors_hyperparams.vp_prior_type,'jeffrey')
 % %                 results=vartools.ols(bigy,bigx,0,false);
 % %                 iSIGU_fishy=results.SIGols\eye(obj.endogenous.number);%
 % %                 post.V=inv(X'*kron(eye(smpl),iSIGU_fishy)*X);
