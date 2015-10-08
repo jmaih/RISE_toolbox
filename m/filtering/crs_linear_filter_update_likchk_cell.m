@@ -88,6 +88,7 @@ shocks=zeros(exo_nbr,horizon);
 %----------------------------------------------
 tmax_u=size(U,2)*(size(U,1)>0);
 if tmax_u
+    error('deterministic variables currently disabled')
     % update the state (a_{1|0} with the deterministic variables
     %------------------------------------------------------------
     Ut=U(:,0+1);
@@ -310,7 +311,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks{splus},Ut);
+%         [a{splus},is_active_shock,retcode]=ff(splus,a{splus},expected_shocks{splus},Ut);
+        [a{splus},is_active_shock,retcode]=compute_onestep(a{splus},splus);
         if retcode
             return
         end
@@ -390,27 +392,6 @@ if store_filters>2 % store smoothed
         end
     end
 end
-
-    function y0=simul_initial_conditions(a_filt,start_iter)
-        if nargin<2
-            start_iter=horizon;
-        end
-        options.shocks=shocks;
-        % all shocks can be used in the update (first period)
-        %----------------------------------------------------
-        options.shocks(:,1)=nan;
-        % beyond the first period, only the shocks with long reach can
-        % be used
-        options.shocks(cond_shocks_id,1:start_iter)=nan;
-        % compute a conditional forecast
-        ycond=reshape(data_y(:,t,1:start_iter),p,[]);
-        ycond=struct('data',ycond(:,:,ones(3,1)),'pos',obs_id);
-        econd=[options.shocks,zeros(exo_nbr,start_iter-1)];
-        econd=struct('data',econd(:,:,ones(3,1)),'pos',1:exo_nbr);
-        rcond=struct('data',ones(start_iter,1),'pos',nan);
-        y0=struct('y',a_filt,'ycond',ycond,'econd',econd,'rcond',rcond);
-    end
-
     function [a_update,retcode,myshocks]=state_update_without_test(a_filt,Kv,st)
         retcode=0;
         lgcobs=last_good_future_information(t);
@@ -422,7 +403,8 @@ end
         else
             % compute the conditional update
             %-------------------------------------------------------------
-            y0=simul_initial_conditions(a_filt);
+            y0=crs_filter_simul_init(a_filt,shocks,cond_shocks_id,...
+            data_y,t,p,obs_id,true);
             options_=options;
             options_.nsteps=lgcobs+1;
             options_.shocks(:,options_.nsteps+1:end)=0;
@@ -447,7 +429,6 @@ end
     end
 
     function [a_update,retcode,myshocks_,violations]=state_update_with_test(a_filt,Kv,st)
-        retcode=0;
         % compute the update
         %--------------------
         atmp=a_filt+Kv;
@@ -461,62 +442,94 @@ end
         %------------------------
         myshocks_=shocks;
         
+        retcode=0;
         a_update=atmp;
         if has_fire(st) && violations
-            do_anticipation()
+            nsteps__=2;
+            match_first_page=true;
+            [a_update,myshocks_,retcode]=do_anticipation(a_filt,nsteps__,...
+                match_first_page);
         end
+    end
+
+    function [a1,is_active_shock,retcode]=compute_onestep(a0,st)
+        % compute one-step forecast from the update and check whether we
+        % can expect violations
+        %----------------------------------------------------------------
+        a0_ss=a0-ss{st};
+        a1=ss{st}+T{st}*a0_ss(xlocs);
+        violations=~isempty(sep_compl) && any(sep_compl(a1)<cutoff);
         
-        function do_anticipation()
-            % if we can expect violations, inform the state that constraints
-            % will be binding
-            %----------------------------------------------------------------
+        retcode=0;
+        a1=atmp;
+        % initialize default of is_active_shock
+        is_active_shock=any(abs(shocks)>sqrt(eps),1);
+        if has_fire(st) && violations
+            nsteps__=1;
+            match_first_page=false;
+            [a1,myshocks_,retcode]=do_anticipation(a0,nsteps__,match_first_page);
+            is_active_shock=any(abs(myshocks_)>sqrt(eps),1);
+        end
+    end
+
+    function [a1,myshocks_,retcode]=do_anticipation(a0,nsteps,match_first_page)
+        retcode=0;
+        a1=[];
+        myshocks_=[];
+        if options.debug
+            record_forecasts=nan*a0;
+            record_forecasts=record_forecasts(:,ones(1,horizon),ones(1,horizon));
+        end
+        % if we can expect violations, inform the state that constraints
+        % will be binding
+        %----------------------------------------------------------------
+        is_viol=true;
+        layers=0;
+        nsteps=nsteps-1;
+        while nsteps<horizon && is_viol
+            nsteps=nsteps+1;
+            layers=layers+1;
+            y0=crs_filter_simul_init(a0,shocks,cond_shocks_id,data_y,t,p,...
+                obs_id,match_first_page,nsteps);
+            myoptions=options;
+            myoptions.nsteps=nsteps;
+            myoptions.states=options.states(1:nsteps);
+            [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,myoptions);
+            if retcode
+                return
+            end
+            for iter=1:myoptions.nsteps
+                is_viol=any(sep_compl(fsteps(:,iter))<cutoff);
+                if is_viol
+                    break
+                end
+            end
+            if nsteps==horizon
+                % if we have come so far, then there is no violation in the
+                % last step. But there could be some in the future step
+                f__=fsteps(:,end)-ss{st};
+                a_extra=ss{st}+T{st}*f__(xlocs);
+                is_viol=any(sep_compl(a_extra)<cutoff);
+            end
+            if ~is_viol
+                a1=fsteps(:,1);
+            end
             if options.debug
-                old_update=atmp(:,ones(1,horizon));
-                old_update(:,2:end)=nan;
-            end
-            start_iter=1;
-            while start_iter<horizon && violations
-                start_iter=start_iter+1;
-                y0=simul_initial_conditions(a_filt,start_iter);
-                myoptions=options;
-                myoptions.nsteps=start_iter;
-                myoptions.states=options.states(1:start_iter);
-                [fsteps,~,retcode,~,myshocks_]=utils.forecast.multi_step(y0,ss(st),Tbig(st),xlocs,myoptions);
-                if retcode
-                    a_update=[];
-                    return
-                end
-                for iter=1:myoptions.nsteps
-                    violations=any(sep_compl(fsteps(:,iter))<cutoff);
-                    if violations
-                        break
-                    end
-                end
-                if start_iter==horizon
-                    % if we have come so far, then there is no violation in the
-                    % last step. But there could be some in the future step
-                    f__=fsteps(:,end)-ss{st};
-                    a_expect=ss{st}+T{st}*f__(xlocs);
-                    violations=any(sep_compl(a_expect)<cutoff);
-                end
-                if ~violations
-                    atmp=fsteps(:,1);
-                end
-                if options.debug
-                    old_update(:,start_iter)=fsteps(:,1);
+                record_forecasts(:,:,layers)=[fsteps,nan(nrows,horizon-nsteps)];
+                if nsteps==horizon
+                    record_forecasts=record_forecasts(:,:,1:layers);
                 end
             end
-            % make sure we have the correct size since there may be more shocks
-            % resulting from forecasting multi-periods
-            %------------------------------------------------------------------
-            myshocks_=myshocks_(:,1:horizon);
-            if options.debug && start_iter>1
-                keyboard
-            end
-            if violations
-                retcode=701;
-            end
-            a_update=atmp;
+        end
+        % make sure we have the correct size since there may be more shocks
+        % resulting from forecasting multi-periods
+        %------------------------------------------------------------------
+        myshocks_=myshocks_(:,1:horizon);
+        if options.debug && nsteps>1
+            keyboard
+        end
+        if is_viol
+            retcode=701;
         end
     end
 
@@ -563,5 +576,4 @@ end
             end
         end
     end
-
 end
