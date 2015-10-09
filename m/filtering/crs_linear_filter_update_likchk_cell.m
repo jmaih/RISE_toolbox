@@ -440,23 +440,30 @@ end
         end
     end
 
-    function [a1,myshocks_,is_active_shock,retcode]=compute_onestep(a0,st)
+    function [a1,myshocks_,is_active_shock,retcode]=compute_onestep(a0,st,...
+            check_second_too)
+        if nargin<3
+            check_second_too=false;
+        end
         % compute one-step forecast from the update and check whether we
         % can expect violations
         %----------------------------------------------------------------
         a0_ss=a0-ss{st};
         a1=ss{st}+T{st}*a0_ss(xlocs);
-        a1_ss=a1-ss{st};
-        a2=ss{st}+T{st}*a1_ss(xlocs);
-        violations=~isempty(sep_compl) && ...
-            (any(sep_compl(a1)<cutoff)||any(sep_compl(a2)<cutoff));
+        violations=~isempty(sep_compl) && any(sep_compl(a1)<cutoff);
+        if check_second_too
+            a1_ss=a1-ss{st};
+            a2=ss{st}+T{st}*a1_ss(xlocs);
+            violations=violations||...
+                (~isempty(sep_compl) && any(sep_compl(a2)<cutoff));
+        end
         
         retcode=0;
         myshocks_=shocks;
         % initialize default of is_active_shock
         is_active_shock=any(abs(shocks)>sqrt(eps),1);
         if has_fire(st) && violations
-            nsteps__=2;
+            nsteps__=1+check_second_too;
             match_first_page=false;
             [a1,myshocks_,retcode]=do_anticipation(a0,nsteps__,match_first_page);
             is_active_shock=any(abs(myshocks_)>sqrt(eps),1);
