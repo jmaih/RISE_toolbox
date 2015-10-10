@@ -1,4 +1,4 @@
-function mvcb=multivariate_chebyshev_box(y,gam,c)
+function [mvcb,my]=multivariate_chebyshev_box(y,gam,c)
 % multivariate_chebyshev_box - constructs chebyshev boxes for
 % multivariate-multiperiods densities
 %
@@ -23,7 +23,9 @@ function mvcb=multivariate_chebyshev_box(y,gam,c)
 % Outputs
 % --------
 %
-% - **mvcb** [numeric] : 2 x T x G x numel(gam) array of boxes
+% - **mvcb** [2 x T x G x numel(gam)] :  array of boxes
+%
+% - **my** [1 x T x G] :  mean across simulations
 %
 % More About
 % ------------
@@ -43,6 +45,7 @@ end
 N=numel(c);
 [~,tag]=sort(c);
 y=y(tag,:,:);
+my=mean(y,1);
 
 if ~issorted(gam)
     error('gam must be sorted')

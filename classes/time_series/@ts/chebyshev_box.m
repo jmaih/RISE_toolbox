@@ -1,4 +1,4 @@
-function [mvcb,gam_]=chebyshev_box(this,gam)
+function [mvcb,gam_,my]=chebyshev_box(this,gam)
 % chebyshev_box - constructs chebyshev boxes for multivariate-multiperiods
 % densities
 %
@@ -24,6 +24,8 @@ function [mvcb,gam_]=chebyshev_box(this,gam)
 %
 % - **gam_** [scalar|vector] : sorted percentile(s)
 %
+% - **my** [ts] : mean across simulations
+%
 % More About
 % ------------
 %
@@ -35,13 +37,14 @@ function [mvcb,gam_]=chebyshev_box(this,gam)
 Y=double(this);
 Y=permute(Y,[3,1,2]);
 gam_=sort(gam);
-mvcb=utils.forecast.kolsrud.multivariate_chebyshev_box(Y,gam_);
+[mvcb,my]=utils.forecast.kolsrud.multivariate_chebyshev_box(Y,gam_);
 % fourth dimension is the number of gam(s)
 mvcb_=permute(mvcb,[2,3,1,4]);
 mvcb=struct();
 varnames=get(this,'varnames');
 start=get(this,'start');
 G=get(this,'NumberOfVariables');
+my=ts(start,permute(my,[2,3,1]),varnames);
 for g=1:G
     newdata=squeeze(mvcb_(:,g,:,:));
     if g==1
