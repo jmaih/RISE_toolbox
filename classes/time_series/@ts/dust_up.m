@@ -1,8 +1,4 @@
 function this=dust_up(this,crit)
-if nargin<2
-    crit=sqrt(eps);
-end
-
 % dust_up - sets insignificant digits to zero
 %
 % Syntax
@@ -32,6 +28,11 @@ end
 % ---------
 %
 % See also: 
+
+if nargin<2
+    crit=sqrt(eps);
+end
+
 this.data(abs(this.data)<crit)=0;
 
 end
