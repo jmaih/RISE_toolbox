@@ -164,7 +164,8 @@ end
 function [expr,replace,convert_the_guy]=regexp_setup2(param_names,...
     governing_chain,chain_names,regimes)
 % parse expressions such as "pname", "pname(chain,state)"
-pnames=cell2matize(param_names);
+% negative lookahead
+pnames=[cell2matize(param_names),'(?!\w+)'];
 nc1='(?:\()?'; % group if exist but do not capture
 opt_cnames=[cell2matize(chain_names-'const'),'?'];
 nc2='(?:,)?';
