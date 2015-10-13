@@ -6,4 +6,3 @@ Y=randn(N,T,G);
 c=utils.forecast.kolsrud.chebyshev_distance(Y);
 mvcb=utils.forecast.kolsrud.multivariate_chebyshev_box(Y,0.68);
 size(mvcb)
-make time series
