@@ -29,6 +29,8 @@ function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_likchk_cell(...
 % where c_t{st} and d_t{st} are, possibly time-varying, deterministic terms
 % the covariance matrices can be time-varying
 
+is_recompute_K=false;
+
 cutoff=-sqrt(eps);
 
 if nargin<6
@@ -222,9 +224,9 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         % state update (att=a+K*v)
         %-------------------------
         if impose_conditions
-            [a{st},retcode,myshocks{st}]=state_update_without_test(a{st},K(:,occur,st)*v{st},st);
+            [a{st},retcode,myshocks{st},K(:,occur,st)]=state_update_without_test(a{st},K(:,occur,st),v{st},st);
         else
-            [a{st},retcode,myshocks{st}]=state_update_with_test(a{st},K(:,occur,st)*v{st},st);
+            [a{st},retcode,myshocks{st},K(:,occur,st)]=state_update_with_test(a{st},K(:,occur,st),v{st},st);
             % <--- a{st}=a{st}+K(:,occur,st)*v{st};
         end
         if retcode
@@ -380,13 +382,13 @@ if store_filters>2 % store smoothed
         end
     end
 end
-    function [a_update,retcode,myshocks]=state_update_without_test(a_filt,Kv,st)
+    function [a_update,retcode,myshocks,K]=state_update_without_test(a_filt,K,v,st)
         retcode=0;
         lgcobs=last_good_future_information(t);
         if lgcobs==0
             % compute the simple update: expected shocks are zero
             %-----------------------------------------------------
-            atmp=a_filt+Kv;
+            atmp=a_filt+K*v;
             myshocks=shocks;
         else
             % compute the conditional update
@@ -399,6 +401,9 @@ end
             [fsteps,~,retcode,~,myshocks]=utils.forecast.multi_step(y0,...
                 ss(st),Tbig(st),xlocs,options_);
             atmp=fsteps(:,1);
+            if is_recompute_K
+                K=recompute_kalman_gain(atmp,a_filt,v);
+            end
         end
         a_update=atmp;
         function lgcobs=last_good_future_information(t)
@@ -416,10 +421,10 @@ end
         end
     end
 
-    function [a_update,retcode,myshocks_,violations]=state_update_with_test(a_filt,Kv,st)
+    function [a_update,retcode,myshocks_,K,violations]=state_update_with_test(a_filt,K,v,st)
         % compute the update
         %--------------------
-        atmp=a_filt+Kv;
+        atmp=a_filt+K*v;
         % compute one-step forecast from the update and check whether we
         % can expect violations
         %----------------------------------------------------------------
@@ -437,6 +442,9 @@ end
             match_first_page=true;
             [a_update,myshocks_,retcode]=do_anticipation(a_filt,nsteps__,...
                 match_first_page);
+            if is_recompute_K
+                K=recompute_kalman_gain(a_update,a_filt,v);
+            end
         end
     end
 
@@ -574,4 +582,8 @@ end
             end
         end
     end
+end
+
+function K=recompute_kalman_gain(a_update,a_filt,v)
+K=(a_update-a_filt)*pinv(v);
 end
