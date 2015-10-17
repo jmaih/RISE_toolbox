@@ -30,6 +30,8 @@ function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_likchk_cell(...
 % the covariance matrices can be time-varying
 
 is_recompute_K=false;
+quick_collapse=true;
+check_shock_viol=false; % check the violation of the shocks sign
 
 cutoff=-sqrt(eps);
 
@@ -157,6 +159,7 @@ K=zeros(m,p0,h); % <---K=cell(1,h);
 % this will be useful for multi-step forecasting
 %------------------------------------------------
 expected_shocks=cell(1,h);
+a_expect=cell(1,h);
 
 % no problem
 %-----------
@@ -224,9 +227,9 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         % state update (att=a+K*v)
         %-------------------------
         if impose_conditions
-            [a{st},retcode,myshocks{st},K(:,occur,st)]=state_update_without_test(a{st},K(:,occur,st),v{st},st);
+            [a{st},a_expect{st},retcode,myshocks{st},K(:,occur,st)]=state_update_without_test(a{st},K(:,occur,st),v{st},st);
         else
-            [a{st},retcode,myshocks{st},K(:,occur,st)]=state_update_with_test(a{st},K(:,occur,st),v{st},st);
+            [a{st},a_expect{st},retcode,myshocks{st},K(:,occur,st)]=state_update_with_test(a{st},K(:,occur,st),v{st},st);
             % <--- a{st}=a{st}+K(:,occur,st)*v{st};
         end
         if retcode
@@ -288,6 +291,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if ~is_steady
             P{splus}=zeros(m);
         end
+        shk=0;
         for st=1:h
             if h==1
                 pai_st_splus=1;
@@ -297,14 +301,25 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
                     pai_st_splus=pai_st_splus/PAI(splus);
                 end
             end
-            a{splus}=a{splus}+pai_st_splus*att{st};
+            if quick_collapse
+                a{splus}=a{splus}+pai_st_splus*a_expect{st}(:,1);
+                shk=shk+pai_st_splus*myshocks{st};
+            else
+                a{splus}=a{splus}+pai_st_splus*att{st};
+            end
             if ~is_steady
                 P{splus}=P{splus}+pai_st_splus*Ptt{st};
             end
         end
-        [a{splus},expected_shocks{splus},is_active_shock,retcode]=compute_onestep(a{splus},splus);
-        if retcode
-            return
+        if quick_collapse
+            retcode=0;
+            expected_shocks{splus}=[shk(:,2:end),zeros(exo_nbr,1)];
+            is_active_shock=any(abs(expected_shocks{splus})>sqrt(eps),1);
+        else
+            [a{splus},expected_shocks{splus},is_active_shock,retcode]=compute_onestep(a{splus},splus);
+            if retcode
+                return
+            end
         end
         Rt{splus}=R{splus};
         if ~is_steady
@@ -382,7 +397,7 @@ if store_filters>2 % store smoothed
         end
     end
 end
-    function [a_update,retcode,myshocks,K]=state_update_without_test(a_filt,K,v,st)
+    function [a_update,a_expect,retcode,myshocks,K]=state_update_without_test(a_filt,K,v,st)
         retcode=0;
         lgcobs=last_good_future_information(t);
         if lgcobs==0
@@ -390,17 +405,20 @@ end
             %-----------------------------------------------------
             atmp=a_filt+K*v;
             myshocks=shocks;
+            atmp_ss=atmp-ss{st};
+            a_expect=ss{st}+T{st}*atmp_ss(xlocs);
         else
             % compute the conditional update
             %-------------------------------------------------------------
             y0=crs_filter_simul_init(a_filt,shocks,cond_shocks_id,...
-            data_y,t,p,obs_id,true);
+                data_y,t,p,obs_id,true);
             options_=options;
             options_.nsteps=lgcobs+1;
             options_.shocks(:,options_.nsteps+1:end)=0;
             [fsteps,~,retcode,~,myshocks]=utils.forecast.multi_step(y0,...
                 ss(st),Tbig(st),xlocs,options_);
             atmp=fsteps(:,1);
+            a_expect=fsteps(:,2);
             if is_recompute_K
                 K=recompute_kalman_gain(atmp,a_filt,v);
             end
@@ -421,7 +439,7 @@ end
         end
     end
 
-    function [a_update,retcode,myshocks_,K,violations]=state_update_with_test(a_filt,K,v,st)
+    function [a_update,fkst,retcode,myshocks_,K,violations]=state_update_with_test(a_filt,K,v,st)
         % compute the update
         %--------------------
         atmp=a_filt+K*v;
@@ -429,8 +447,8 @@ end
         % can expect violations
         %----------------------------------------------------------------
         atmp_ss=atmp-ss{st};
-        a_expect=ss{st}+T{st}*atmp_ss(xlocs);
-        violations=~isempty(sep_compl) && any(sep_compl(a_expect)<cutoff);
+        a_expect_=ss{st}+T{st}*atmp_ss(xlocs);
+        violations=~isempty(sep_compl) && any(sep_compl(a_expect_)<cutoff);
         % initialize the shocks
         %------------------------
         myshocks_=shocks;
@@ -440,11 +458,27 @@ end
         if has_fire(st) && violations
             nsteps__=2;
             match_first_page=true;
-            [a_update,myshocks_,retcode]=do_anticipation(a_filt,nsteps__,...
+            [a_update,a_expect_,myshocks_,retcode]=do_anticipation(a_filt,nsteps__,...
                 match_first_page);
             if is_recompute_K
                 K=recompute_kalman_gain(a_update,a_filt,v);
             end
+        end
+        if retcode
+            fkst=[];
+        else
+            fkst=roll_forward(a_update,[myshocks_(:,2:end),zeros(exo_nbr,1)],nsteps,st);
+        end
+    end
+
+    function fkst=roll_forward(a0,shocks,nsteps,st)
+        fkst=a0(:,ones(nsteps,1));
+        for istep=1:nsteps
+            a0_ss=a0-ss{st};
+            a0=ss{st}+T{st}*a0_ss(xlocs);
+            a0=a0+R{st}(:,:)*shocks(:);
+            fkst(:,istep)=a0;
+            shocks=[shocks(:,2:end),zeros(exo_nbr,1)];
         end
     end
 
@@ -473,14 +507,16 @@ end
         if has_fire(st) && violations
             nsteps__=1+check_second_too;
             match_first_page=false;
-            [a1,myshocks_,retcode]=do_anticipation(a0,nsteps__,match_first_page);
+            [a1,~,myshocks_,retcode]=do_anticipation(a0,nsteps__,match_first_page);
             is_active_shock=any(abs(myshocks_)>sqrt(eps),1);
         end
     end
 
-    function [a1,myshocks_,retcode]=do_anticipation(a0,nsteps,match_first_page)
+    function [a1,a_expect,myshocks_,retcode]=do_anticipation(a0,nsteps,match_first_page)
+        check_first_shock=match_first_page;
         retcode=0;
         a1=[];
+        a_expect=[];
         myshocks_=[];
         if options.debug
             record_forecasts=nan*a0;
@@ -492,6 +528,11 @@ end
         is_viol=true;
         layers=0;
         nsteps=nsteps-1;
+        if check_first_shock
+            start_shocks=1;
+        else
+            start_shocks=2;
+        end
         while nsteps<horizon && is_viol
             nsteps=nsteps+1;
             layers=layers+1;
@@ -504,21 +545,32 @@ end
             if retcode
                 return
             end
-            for iter=1:myoptions.nsteps
-                is_viol=any(sep_compl(fsteps(:,iter))<cutoff);
-                if is_viol
-                    break
+            is_viol=false;
+            if check_shock_viol
+                is_viol=any(vec(myshocks_(cond_shocks_id,start_shocks:end))<cutoff);
+            end
+            if ~is_viol
+                for iter=1:myoptions.nsteps
+                    is_viol=any(sep_compl(fsteps(:,iter))<cutoff);
+                    if is_viol
+                        break
+                    end
+                end
+                if ~is_viol
+                    % if we have come so far, then there is no violation in the
+                    % last step. But there could be some in the future step
+                    f__=fsteps(:,end)-ss{st};
+                    a_extra=ss{st}+T{st}*f__(xlocs);
+                    is_viol=any(sep_compl(a_extra)<cutoff);
                 end
             end
             if ~is_viol
-                % if we have come so far, then there is no violation in the
-                % last step. But there could be some in the future step
-                f__=fsteps(:,end)-ss{st};
-                a_extra=ss{st}+T{st}*f__(xlocs);
-                is_viol=any(sep_compl(a_extra)<cutoff);
-            end
-            if ~is_viol
                 a1=fsteps(:,1);
+                if nsteps>1
+                    a_expect=fsteps(:,2);
+                else
+                    a_expect=a_extra;
+                end
             end
             if options.debug
                 record_forecasts(:,:,layers)=[fsteps,nan(nrows,horizon-nsteps)];
@@ -557,8 +609,13 @@ end
         Filters.PAI(:,t+1)=PAI;
         Filters.Q(:,:,t+1)=Q;
         for splus_=1:h
-            Filters.a{splus_}(:,1,t+1)=a{splus_};
-            Filters.P{splus_}(:,:,t+1)=P{splus_};
+            if quick_collapse
+                Filters.a{splus_}(:,1:nsteps,t+1)=a_expect{splus_};
+                continue
+            else
+                Filters.a{splus_}(:,1,t+1)=a{splus_};
+                Filters.P{splus_}(:,:,t+1)=P{splus_};
+            end
             % remove the first period since the shocks were
             % expected already from the period before...
             shocks_splus=[expected_shocks{splus}(:,2:horizon),shocks(:,1)];
