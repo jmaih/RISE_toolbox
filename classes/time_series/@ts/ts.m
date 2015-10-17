@@ -273,7 +273,7 @@ classdef ts
                             for ivar=1:nvars
                                 thisname=vnames{ivar};
                                 if ~isvarname(thisname)
-                                    error([thisname,' is not a valid variable name'])
+                                    warning([thisname,' is not a valid variable name'])
                                 end
                             end
                             if sorting
