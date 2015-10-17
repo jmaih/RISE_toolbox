@@ -89,6 +89,8 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'mhm_tau',(.1:.1:.9),@(x)isempty(x)||(all(x>0) && all(x<1)),'mhm_tau (truncation probabilities of MHM) must all be in (0,1)'
     'swz_pvalue',90,@(x)num_fin(x) && x>=0 && x<=100,'swz_pvalue (???) must be in [0,100]'
     'bridge_TolFun',sqrt(eps),@(x)num_fin(x) && x>0,'bridge_TolFun (tolerance level) should be a positive scalar'
+    'bridge_fix_point',true,@(x)isscalar(x) && islogical(x),'bridge_fix_point should be a logical scalar'
+    'bridge_initialize_is',false,@(x)isscalar(x) && islogical(x),'bridge_initialize_is should be a logical scalar'
     };
 
 if nargin<4
@@ -120,6 +122,10 @@ algorithm=options.algorithm;
 debug=options.debug;
 
 bridge_TolFun=options.bridge_TolFun;
+
+bridge_fix_point=options.bridge_fix_point;
+
+bridge_initialize_is=options.bridge_initialize_is;
 
 is_need_log_posterior_kernel=~strcmp(algorithm,'mhm');
 
@@ -258,17 +264,19 @@ end
         log_mdd = -1*(ratiomax+log(mean(exp(ratio-ratiomax))));
     end
 
-    function log_mdd=do_importance_sampling()
+    function log_mdd=do_importance_sampling(LogPost_L,Logq_L)
         % Sylvia Frühwirth-Schnatter (2004): "Estimating marginal
         % likelihoods for mixture and Markov switching models using bridge
         % sampling techniques". Econometrics Journal 7(1) pp 143--167
-        [LogPost_L,Logq_L]=iid_draws('IS');
+        if nargin<2
+            [LogPost_L,Logq_L]=iid_draws('IS');
+        end
         ratio = LogPost_L-Logq_L;
         ratiomax=max(ratio);
         log_mdd = ratiomax+log(mean(exp(ratio-ratiomax)));
     end
 
-    function [log_mdd,lmdd]=do_bridge_1996()
+    function log_mdd=do_bridge_1996()
         % Xiao-Li Meng and Wing Hung Wong (1996): " Simulating Ratios of
         % Normalizing Constants via a Simple Identity: A Theoretical
         % Exploration". Statistica Sinica, 6, 831–860.
@@ -283,35 +291,110 @@ end
         %----------------------------------------------------------
         Logq_M=old_draws_in_weighting_function('BRIDGE');
         
-        % 3- for a number of iterations, update an initial guess for the
-        % log MDD
-        %----------------------------------------------------------------
-        max_iter=1000;
-        lmdd=zeros(max_iter,1);
-        conv=inf(max_iter,1);
-        iter=1;
-        while conv(iter)>bridge_TolFun
-            iter=iter+1;
-            if iter==max_iter
-                lmdd(iter+1000)=0;
-                conv(iter+1000)=inf;
-                max_iter=max_iter+1000;
+        lmdd0=0;
+        if bridge_initialize_is
+            lmdd0=do_importance_sampling(LogPost_L,Logq_L);
+        end
+        
+        if bridge_fix_point
+            [log_mdd,lmdd,conv]=fix_point_strategy(lmdd0);
+        else
+            [log_mdd,lmdd,conv]=iterative_strategy(lmdd0);
+        end
+        extras=struct('bridge_lmdd',lmdd,'bridge_conv',conv);
+
+        function [log_mdd,lmdd,conv]=iterative_strategy(lmdd0)
+            % 3- for a number of iterations, update an initial guess for the
+            % log MDD
+            %----------------------------------------------------------------
+            max_iter=1000;
+            lmdd=zeros(max_iter,1);
+            lmdd(1)=lmdd0;
+            conv=inf(max_iter,1);
+            iter=1;
+            while conv(iter)>bridge_TolFun
+                iter=iter+1;
+                if iter==max_iter
+                    lmdd(iter+1000)=0;
+                    conv(iter+1000)=inf;
+                    max_iter=max_iter+1000;
+                end
+                lmdd(iter)=do_one_iteration(lmdd(iter-1));
+                conv(iter)=abs(lmdd(iter)-lmdd(iter-1));
+                if debug
+                    fprintf(1,'BRIDGE: iter #: %0.0f, lmdd: %0.4f, lmdd: %0.4f\n',...
+                        iter,lmdd(iter),conv(iter));
+                end
+                if iter==2
+                    % use a reasonable number at the start
+                    conv(iter-1)=conv(iter);
+                end
             end
-            lmdd(iter)=do_one_iteration(lmdd(iter-1));
+            log_mdd=lmdd(iter);
+            lmdd=lmdd(1:iter);
+            conv=conv(1:iter);
+        end
+        
+        function [log_mdd,lmdd,conv]=fix_point_strategy(lmdd0)
+            fzero_options=optimset('Display','none');
             if debug
-                fprintf(1,'BRIDGE: iter #: %0.0f, lmdd: %0.4f\n',...
-                    iter,lmdd(iter));
+                fprintf('BRIDGE: Now bisecting...');
+                tic
+                fzero_options=optimset('Display','iter');
             end
-            conv(iter)=abs(lmdd(iter)-lmdd(iter-1));
-            if iter==2
-                % use a reasonable number at the start
-                conv(iter-1)=conv(iter);
+            next=0;
+            max_iter=1000;
+            conv=zeros(max_iter,1);
+            lmdd=zeros(max_iter,1);
+            
+            log_mdd=fzero(@one_right_hand_side,lmdd0,fzero_options);
+            if debug
+                fprintf('Done in %0.4d seconds\n',toc);
+            end
+            conv=conv(1:next);
+            lmdd=lmdd(1:next);
+            
+            function rhs=one_right_hand_side(lmdd_iter)
+                % numerator
+                %-----------
+                rq=alpha_times_p_or_q(Logq_L,LogPost_L-lmdd_iter,2);
+                
+                % denominator
+                %-------------
+                rmc=alpha_times_p_or_q(Logq_M,LogPost_M-lmdd_iter,1);
+                
+                % numerator minus denominator
+                %----------------------------
+                max_rq=max(rq);
+                max_rmc=max(rmc);
+                
+                rhs=max_rq+log(mean(exp(rq-max_rq)))-...
+                    (max_rmc+log(mean(exp(rmc-max_rmc))));
+                next=next+1;
+                if next==max_iter
+                    conv(next+1000)=0;
+                    lmdd(next+1000)=0;
+                    max_iter=max_iter+1000;
+                end
+                conv(next)=rhs;
+                lmdd(next)=lmdd_iter;
             end
         end
         
-        extras=struct('bridge_lmdd',lmdd(1:iter),'bridge_conv',conv(1:iter));
-
-        log_mdd=lmdd(iter);
+        function a_p=alpha_times_p_or_q(f1,f2,stud)
+            biggest=max([f1;f2],[],1);
+            f1=f1-biggest;
+            f2=f2-biggest;
+            if stud==1
+                a_p=f1;
+            else
+                a_p=f2;
+            end
+            a_p=a_p-log(...
+                exp(log(L)+f1)+...
+                exp(log(M)+f2)...
+                );
+        end
         
         function lmdd=do_one_iteration(lmdd)
             % numerator
@@ -332,21 +415,6 @@ end
             lmdd=lmdd+...
                 max_rq+log(mean(exp(max(rq-max_rq,-1e15))))-...
                 (max_rmc+log(mean(exp(max(rmc-max_rmc,-1e15)))));
-            
-            function a_p=alpha_times_p_or_q(f1,f2,stud)
-                biggest=max([f1;f2],[],1);
-                f1=f1-biggest;
-                f2=f2-biggest;
-                if stud==1
-                    a_p=f1;
-                else
-                    a_p=f2;
-                end
-                a_p=a_p-log(...
-                    exp(log(L)+f1)+...
-                    exp(log(M)+f2)...
-                    );
-            end
         end
     end
 
