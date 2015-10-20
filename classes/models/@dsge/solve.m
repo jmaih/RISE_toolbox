@@ -124,6 +124,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % alternative one (dsge_solver_ha) recomputes some of the variables in
 % order to economize on memory. It is not clear which one performs the best
 %
+% - **solve_occbin** [true|{false}]: Solves the occasionally binding
+% constraints model ala Kulish (2013) or Guerrieri and Iacoviello(2015). It
+% is then assumed that the transition matrix is diagonal.
+%
 % Outputs
 % --------
 %
@@ -191,7 +195,8 @@ if isempty(obj)
     
     others=struct('solve_check_stability',true,...
         'solve_automatic_differentiator',@aplanar_.diff,...
-        'solve_higher_order_solver','dsge_solver_h');
+        'solve_higher_order_solver','dsge_solver_h',...
+        'solve_occbin',false);
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
