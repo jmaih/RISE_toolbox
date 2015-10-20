@@ -32,6 +32,7 @@ function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_likchk_cell(...
 is_recompute_K=false;
 quick_collapse=true;
 check_shock_viol=false; % check the violation of the shocks sign
+check_is_violation_in_period_2=true;
 
 cutoff=-sqrt(eps);
 
@@ -189,8 +190,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         % forecast of observables: already include information about the
         % trend and or the steady state from initialization
         %------------------------------------------------------------------
-        is_violation(t,st)=~isempty(sep_compl) && any(sep_compl(a{st})<cutoff);
         yf=a{st}(obsOccur); %<-- yf=Z*a{st};
+        ast_old=a{st};
         
         % forecast errors and variance
         %-----------------------------
@@ -235,6 +236,12 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if retcode
             return
         end
+        if check_is_violation_in_period_2
+            aviol=a_expect{st};
+        else
+            aviol=ast_old;
+        end
+        is_violation(t,st)=~isempty(sep_compl) && any(sep_compl(aviol)<cutoff);
         if is_violation(t,st)
             f01=0;
         else
