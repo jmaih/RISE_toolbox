@@ -49,7 +49,8 @@ hc=nrout>0 && obj.options.simul_honor_constraints;
 simul_honor_constraints_through_switch=obj.markov_chains.regimes_number>1 &&...
     obj.options.simul_honor_constraints_through_switch;
 if hc && ~(simul_honor_constraints_through_switch||...
-        any(obj.exogenous.shock_horizon(:)>0))
+        any(obj.exogenous.shock_horizon(:)>0)||...
+        ~isempty(obj.options.solve_occbin))
     error('restrictions detected but no anticipatory or switching behavior to satisfy them')
 end
 clear obj

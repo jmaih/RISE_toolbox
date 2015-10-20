@@ -198,33 +198,37 @@ myirfs=format_irf_output(myirfs);
         %-----------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
        
-        % initial conditions
-        %-------------------
-        Initcond=set_simulation_initial_conditions(obj);
-        
         h=obj.markov_chains.regimes_number;
         
-        Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
-        
-        if solve_order==1 % first-order solution ||isa(obj,'rfvar')
-            % kill the steady state and the initial conditions
-            for ireg=1:h
-                steady_state{ireg}=0*steady_state{ireg};
-            end
-            Initcond.y.y=0*Initcond.y.y;
-        end
-        y0=Initcond.y;
+        % initial conditions
+        %-------------------
                    
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
         if ~girf
             irf_draws=1;
         end
-        if ~obj.options.irf_use_historical_data
-            y0.econd.data=0*y0.econd.data;
-        end
         irf_shock_uncertainty=irf_draws>1;
+        
+        obj.options.simul_shock_uncertainty=irf_shock_uncertainty;
+        
+        Initcond=set_simulation_initial_conditions(obj);
+        
+        Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
+        
+%         if solve_order==1 && ...
+%                 ~obj.options.simul_honor_constraints % first-order solution ||isa(obj,'rfvar')
+%             % kill the steady state and the initial conditions
+%             for ireg=1:h
+%                 steady_state{ireg}=0*steady_state{ireg};
+%             end
+%             Initcond.y.y=0*Initcond.y.y;
+%         end
+        y0=Initcond.y;
+%         if ~obj.options.irf_use_historical_data
+%             y0.econd.data=0*y0.econd.data;
+%         end
         number_of_threads=h;
-        if ~irf_regime_specific
+        if ~irf_regime_specific||~isempty(obj.options.solve_occbin)
             number_of_threads=1;
         end
         
@@ -264,8 +268,14 @@ myirfs=format_irf_output(myirfs);
                 if h==1||number_of_threads==h
                     y0.rcond.data(:,1)=istate;
                 end
-                [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
-                    state_vars_location,which_shocks,det_shocks,Initcond);
+                if isempty(obj.options.solve_occbin)
+                    [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
+                        state_vars_location,which_shocks,det_shocks,Initcond);
+                else
+                    [xxxx,retcode]=utils.forecast.irf_occbin(y0,T,steady_state,...
+                        state_vars_location,which_shocks,det_shocks,...
+                        Initcond,obj.options);
+                end
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end

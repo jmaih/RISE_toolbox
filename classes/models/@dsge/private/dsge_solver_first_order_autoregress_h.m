@@ -60,7 +60,7 @@ dp_0=dp_0(:,1)';
 db_0=db_0(:,1)';
 df_0=df_0(:,1)';
 
-if options.solve_occbin && ~all(abs(diag(Q)-1)<1e-10)
+if ~isempty(options.solve_occbin) && ~all(abs(diag(Q)-1)<1e-10)
     error('transition matrix must be diagonal for the occbin solution')
 end
 if isempty(options.solver)
@@ -115,9 +115,10 @@ switch model_class
                 dbf_plus_row=reconfigure_aplus();
                 [Tz_pb,eigval,retcode]=dsge_solver_first_order_autoregress_1(...
                     dbf_plus_row,ds_0,dp_0,db_0,df_0,dpb_minus,siz_adj,options);
-                if options.solve_occbin
-                    [Gplus01,A0,Aminus]=full_state_matrices(siz_adj,dbf_plus,d0,dpb_minus,T0);
-                    options.occbin=struct('Gplus01',Gplus01,'A0',A0,'Aminus',Aminus);
+                if ~isempty(options.solve_occbin)
+                    [options.occbin.Gplus01,options.occbin.A0,...
+                        options.occbin.Aminus]=full_state_matrices(siz_adj,...
+                        dbf_plus,d0,dpb_minus,T0);
                 end
             case {'mfi','mfi_full','mnk','mnk_full','mn','mn_full','fwz'}
                 [Tz_pb,~,retcode]=fix_point_iterator(iterate_func,T0,options);

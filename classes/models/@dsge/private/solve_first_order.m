@@ -20,9 +20,16 @@ if ~retcode
     UUi=zeros(siz.nd,siz.nT,siz.h);
     others.dbf_plus=cell(siz.h);
     Tz_e_rt=cell(1,siz.h);
+    de_0=zeros(size(dv{1,1}(:,pos.v.e_0)));
+    de_0=de_0(:,:,ones(1,siz.h));
     for rt=1:siz.h
-        de_0_rt=0;
         for rplus=1:siz.h
+            % provision for shock impacts
+            %----------------------------
+            de_0(:,:,rt)=de_0(:,:,rt)+dv{rt,rplus}(:,pos.v.e_0);
+            if ~options.occbin.do_it(rplus)
+                continue
+            end
             ds_0=dv{rt,rplus}(:,pos.v.s_0);
             dp_0=dv{rt,rplus}(:,pos.v.p_0);
             db_0=dv{rt,rplus}(:,pos.v.b_0);
@@ -39,17 +46,25 @@ if ~retcode
             
             % provision for shock impacts
             %----------------------------
-            de_0=dv{rt,rplus}(:,pos.v.e_0);
             others.dbf_plus{rt,rplus}=dv{rt,rplus}(:,pos.v.bf_plus);
             UUi(:,:,rt)=UUi(:,:,rt)+A0_0_1;
             UUi(:,pos.t.pb,rt)=UUi(:,pos.t.pb,rt)+others.dbf_plus{rt,rplus}*Tz_pb(pos.t.bf,:,rplus);
-            de_0_rt=de_0_rt+de_0;
         end
         % shock impacts (current)
         %------------------------
+        if ~options.occbin.do_it(rt)
+            continue
+        end
         UUi(:,:,rt)=UUi(:,:,rt)\eye(siz.nT);
-        Tz_e_rt{rt}=-UUi(:,:,rt)*de_0_rt;
+        Tz_e_rt{rt}=-UUi(:,:,rt)*de_0(:,:,rt);
         Tz{rt}=[Tz_pb(:,:,rt),Tz_sig(:,rt),Tz_e_rt{rt}];
+    end
+    
+    if ~isempty(options.solve_occbin)
+        options.occbin.B=de_0;
+        if k_future
+            error('Occbin-type models not solved with anticipated events')
+        end
     end
     
     % shock impacts (future)
@@ -71,7 +86,12 @@ if ~retcode
     % first we augment dt_t with the user_resid so that the first-order
     % approximation recoups the zero-th order approximation.
     dt_t=dt_t+structural_matrices.user_resids;
-    Tz_sig=solve_perturbation_impact(Tz_sig,A0sig,others.dbf_plus,dt_t);
+    if isempty(options.solve_occbin)
+        Tz_sig=solve_perturbation_impact(Tz_sig,A0sig,others.dbf_plus,dt_t);
+    else
+        Tz_sig=zeros(size(dt_t));
+        options.occbin.c=dt_t;
+    end
     if any(Tz_sig(:))
         for rt=1:siz.h
             Tz{rt}(:,siz.np+siz.nb+1)=Tz_sig(:,rt);
@@ -80,7 +100,15 @@ if ~retcode
     % ensure the result is sparse
     %-----------------------------
     for rt=1:siz.h
-        Tz{rt}=sparse(Tz{rt});
+        if ~isempty(Tz{rt})
+            Tz_proto=Tz{rt};
+            Tz{rt}=sparse(Tz_proto);
+        end
+    end
+    for rt=1:siz.h
+        if ~options.occbin.do_it(rt)
+            Tz{rt}=nan(size(Tz_proto));
+        end
     end
     others.Ui=UUi;
 end

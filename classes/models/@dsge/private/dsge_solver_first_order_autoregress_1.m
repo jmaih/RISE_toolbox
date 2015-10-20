@@ -34,10 +34,10 @@ if ~all_same % a diagonal transition matrix with entirely different regimes
     % solve one at a time
     retcode=0;
     nvars=siz.ns+siz.np+siz.nb+siz.nf;
-    Tz_pb=zeros(nvars,siz.np+siz.nb,nregs);
+    Tz_pb=nan(nvars,siz.np+siz.nb,nregs);
     eigval=cell(1,nregs);
     for ireg=1:nregs
-        if ~retcode
+        if ~retcode && options.occbin.do_it(ireg)
             [Tsol,eigval{ireg},retcode]=dsge_solver_first_order_autoregress_1(...
                 dbf_plus(ireg),ds_0(ireg),dp_0(ireg),db_0(ireg),df_0(ireg),...
                 dpb_minus(ireg),siz,options);

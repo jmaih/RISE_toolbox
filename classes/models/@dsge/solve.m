@@ -124,9 +124,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % alternative one (dsge_solver_ha) recomputes some of the variables in
 % order to economize on memory. It is not clear which one performs the best
 %
-% - **solve_occbin** [true|{false}]: Solves the occasionally binding
-% constraints model ala Kulish (2013) or Guerrieri and Iacoviello(2015). It
-% is then assumed that the transition matrix is diagonal.
+% - **solve_occbin** [integer|{empty}]: Solves the occasionally
+% binding constraints model ala Kulish (2013) or Guerrieri and
+% Iacoviello(2015). It is then assumed that the transition matrix is
+% diagonal. if not empty, the value entered is the reference regime.
 %
 % Outputs
 % --------
@@ -196,7 +197,7 @@ if isempty(obj)
     others=struct('solve_check_stability',true,...
         'solve_automatic_differentiator',@aplanar_.diff,...
         'solve_higher_order_solver','dsge_solver_h',...
-        'solve_occbin',false);
+        'solve_occbin',[]);
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
@@ -246,16 +247,21 @@ xss=zeros(nx,1);
     create_indices(obj.lead_lag_incidence.before_solve);
 structural_matrices=[];
 
+if ~isempty(obj.options.solve_occbin)
+    obj.options.solve_order=1;
+    obj.options.irf_type='irf';
+end
 solve_order=obj.options.solve_order;
 params=obj.parameter_values;
 resolve_it=check_whether_to_resolve();
 h=obj.markov_chains.small_markov_chain_info.regimes_number;
 
-
 % solve zeroth order or steady state ... and measurement errors
 %--------------------------------------------------------------
 retcode=solve_zeroth_order();
 if solve_order>0 && ~retcode && resolve_it
+    obj.options.occbin.do_it=do_occbin(obj.options.solve_occbin,...
+        obj.markov_chains.regimes_number);
     % the parameters may have changed during the computation of the zeroth
     % order or steady state. That is why they are reloaded here
     params=obj.parameter_values;
@@ -689,4 +695,16 @@ func=@engine;
             retcode=2; % nans in jacobian
         end
     end
+end
+
+
+function do_it=do_occbin(occbin,nregs)
+do_it=@(x)true;
+if ~isempty(occbin)
+    if ~ismember(occbin,1:nregs)
+        error('solve_occbin cannot exceed the number of regimes')
+    end
+    do_it=@(x)x==occbin;
+end
+
 end
