@@ -228,7 +228,7 @@ myirfs=format_irf_output(myirfs);
 %             y0.econd.data=0*y0.econd.data;
 %         end
         number_of_threads=h;
-        if ~irf_regime_specific||~isempty(obj.options.solve_occbin)
+        if ~irf_regime_specific||isfield(Initcond,'occbin')
             number_of_threads=1;
         end
         
@@ -268,14 +268,8 @@ myirfs=format_irf_output(myirfs);
                 if h==1||number_of_threads==h
                     y0.rcond.data(:,1)=istate;
                 end
-                if isempty(obj.options.solve_occbin)
                     [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
                         state_vars_location,which_shocks,det_shocks,Initcond);
-                else
-                    [xxxx,retcode]=utils.forecast.irf_occbin(y0,T,steady_state,...
-                        state_vars_location,which_shocks,det_shocks,...
-                        Initcond,obj.options);
-                end
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end
