@@ -248,7 +248,7 @@ xss=zeros(nx,1);
 structural_matrices=[];
 
 if ~isempty(obj.options.solve_occbin)
-    obj.options.solve_order=1;
+    obj.options.solve_order=min(obj.options.solve_order,1);
     obj.options.irf_type='irf';
 end
 solve_order=obj.options.solve_order;
@@ -259,9 +259,7 @@ h=obj.markov_chains.small_markov_chain_info.regimes_number;
 % solve zeroth order or steady state ... and measurement errors
 %--------------------------------------------------------------
 retcode=solve_zeroth_order();
-if solve_order>0 && ~retcode && resolve_it
-    obj.options.occbin.do_it=do_occbin(obj.options.solve_occbin,...
-        obj.markov_chains.regimes_number);
+if ~retcode
     % the parameters may have changed during the computation of the zeroth
     % order or steady state. That is why they are reloaded here
     params=obj.parameter_values;
@@ -272,6 +270,10 @@ if solve_order>0 && ~retcode && resolve_it
     % do them at once, instead of calling the same functions several times
     %---------------------------------------------------------------------
     retcode=evaluate_all_derivatives();
+end
+if solve_order>0 && ~retcode && resolve_it
+    obj.options.occbin.do_it=do_occbin(obj.options.solve_occbin,...
+        obj.markov_chains.regimes_number);
     if ~retcode
         loose_com_col=[];
         is_loose_commit=false;

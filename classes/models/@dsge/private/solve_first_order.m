@@ -1,4 +1,3 @@
-
 function [Tz,others,eigval,retcode,options]=solve_first_order(structural_matrices,others,siz,pos,options,k_future)
 dv=structural_matrices.dv;
 Q=structural_matrices.transition_matrices.Q;
