@@ -150,7 +150,7 @@ Initcond.simul_update_shocks_handle=obj.options.simul_update_shocks_handle;
 Initcond.simul_do_update_shocks=obj.options.simul_do_update_shocks;
 Initcond.shock_structure=shock_structure;
 Initcond.sep_compl=sep_compl;
-if ~isempty(obj.options.solve_occbin)
+if isfield(obj.options,'solve_occbin') && ~isempty(obj.options.solve_occbin)
     Initcond.occbin=obj.options.occbin;
     Initcond.solve_occbin=obj.options.solve_occbin;
 end

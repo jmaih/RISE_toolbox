@@ -186,7 +186,7 @@ regimes=regimes(options.burn+1:end);
     end
 
     function shocks=condition_on_shocks_only(shocks)
-        if ~isempty(options.occbin)
+        if isfield(options,'occbin') && ~isempty(options.occbin)
             do_occbin_sim()
             return
         end
@@ -296,7 +296,7 @@ regimes=regimes(options.burn+1:end);
             end
         end
         function do_occbin_sim()
-            [sims,regimes,retcode]=irf_occbin(y0,T,ss,state_vars_location,...
+            [sims,regimes,retcode]=simul_occbin(y0,T,ss,state_vars_location,...
                 options,shocks);
             sims=sims(:,options.burn+1:end);
         end
@@ -325,7 +325,7 @@ OMG =[];
 c={c,OMG,lbub,rest_id};
 end
 
-function [sim1,regimes,retcode]=irf_occbin(y0,T,ss,state_vars_location,...
+function [sim1,regimes,retcode]=simul_occbin(y0,T,ss,state_vars_location,...
     options,shocks)
 
 use_pinv=false;
@@ -370,8 +370,7 @@ bigt=0;
 Ht0=[];
 Gt0=[];
 kt0=[];
-regimes0=other_state*ones(span,1);
-regimes0(end)=ref_state;
+
 % initialize with nans in order to see if/when simulation breaks down
 sim1=nan(endo_nbr,span);
 regimes=ref_state*ones(span,1);
@@ -389,16 +388,15 @@ do_one_occbin_path()
         %------------------------------
         Tfunc=@(t)T{ref_state};
         is_viol=forecaster(y0.y,Tfunc);
-        if is_viol
-            bigt=1;
-            last_step=1;
-            % accelerate things by preparing the longest possible stretch
-            %-------------------------------------------------------------
-            if is_accelerated
-                [Ht0,Gt0,kt0]=resolve_occbin(span-1);
-            end
-        else
+        if ~is_viol
             return
+        end
+        bigt=1;
+        last_step=1;
+        % accelerate things by preparing the longest possible stretch
+        %-------------------------------------------------------------
+        if is_accelerated
+            [Ht0,Gt0,kt0]=resolve_occbin(span-1);
         end
         
         % make assumption about the duration of the violation and retry
