@@ -50,7 +50,7 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %       - **laplace_mcmc** is the laplace approximation using the
 %       covariance of the mcmc draws rather than the one obtain from
 %       computing and inverting the numerical hessian.
-%   - **L** [{[]}|integer]: number of IID draws
+%   - **L** [{500}|integer|struct]: number of IID draws or IID draws
 %   - **maximization** [{false}|true]: Informs the procedure about whether
 %   we have a maximization or a minimization problem.
 %   - **debug** [{false}|true]: print useful information during estimation.
@@ -66,7 +66,9 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %
 % - **log_mdd** [numeric]: log marginal data density
 %
-% - **extras** [empty|struct]: further output from specific algorithms
+% - **extras** [empty|struct]: further output from specific algorithms,
+% which will include the iid draws as they can be re-use in some other
+% algorithm.
 %
 % More About
 % ------------
@@ -83,7 +85,7 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'log_post_kern',[],@(x)isa(x,'function_handle'),'log_posterior_kern should be a function handle'
     'center_at_mean',false,@(x)isscalar(x) && islogical(x),'center_at_mean should be a logical scalar'
     'algorithm','mhm',@(x)any(strcmp(x,algorithms)),['algorithm must be one of ',cell2mat(strcat(algorithms,'|'))]
-    'L',500,@(x)num_fin_int(x),'L (# of IID draws) should be an integer'
+    'L',500,@(x)num_fin_int(x)||isstruct(x),'L (# of IID draws) should be an integer or a structure containing draws'
     'maximization',false,@(x)isscalar(x) && islogical(x),'maximization should be a logical scalar'
     'debug',false,@(x)isscalar(x) && islogical(x),'debug should be a logical scalar'
     'mhm_tau',(.1:.1:.9),@(x)isempty(x)||(all(x>0) && all(x<1)),'mhm_tau (truncation probabilities of MHM) must all be in (0,1)'
@@ -179,6 +181,11 @@ Shat = chol(SigmaMode,'lower');
 NumWorkers=utils.parallel.get_number_of_workers();
 extras=[];
 L = options.L;
+iid_draws_=[];
+if isstruct(L)
+    iid_draws_=L;
+    L=numel(L);
+end
 switch algorithm
     case 'swz'
         log_mdd=do_sims_waggoner_zha_2008();
@@ -199,6 +206,8 @@ switch algorithm
     case 'laplace_mcmc'
         log_mdd=do_laplace_mcmc();
 end
+
+extras.iid_draws=iid_draws_;
 
 % Methods
 %----------
@@ -624,19 +633,28 @@ end
             fprintf('%s: Now evaluating %0.0d IID draws...',caller,L);
             tic
         end
-        LogPost_L=zeros(1,L);
         eval_weighting=nargout>1;
         if eval_weighting
             Logq_L=zeros(1,L);
         end
+        is_drawn=~isempty(iid_draws_);
         for idraw=1:L
-            v=Shat*randn(d,1);
-            draw=recenter(x_bar+v);
-            LogPost_L(idraw)=thecoef*log_post_kern(draw);
+            if ~is_drawn
+                if idraw==1
+                    iid_draws_=struct();
+                end
+                v=Shat*randn(d,1);
+                draw=recenter(x_bar+v);
+                iid_draws_(idraw).x=draw;
+                iid_draws_(idraw).f=log_post_kern(draw);
+%                 LogPost_L(idraw)=thecoef*log_post_kern(draw);
+            end
             if eval_weighting
+                v=iid_draws_(idraw).x-x_bar;
                 Logq_L(idraw)=normal_weighting(v);
             end
         end
+        LogPost_L=thecoef*[iid_draws_.f];
         if debug
             fprintf('Done in %0.4d seconds\n\n',toc);
         end
