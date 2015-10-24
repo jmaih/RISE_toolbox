@@ -647,7 +647,6 @@ extras.iid_draws=iid_draws_;
                 draw=recenter(x_bar+v);
                 iid_draws_(idraw).x=draw;
                 iid_draws_(idraw).f=log_post_kern(draw);
-%                 LogPost_L(idraw)=thecoef*log_post_kern(draw);
             end
             if eval_weighting
                 v=iid_draws_(idraw).x-x_bar;
