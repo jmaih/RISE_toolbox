@@ -165,9 +165,9 @@ function [expr,replace,convert_the_guy]=regexp_setup2(param_names,...
     governing_chain,chain_names,regimes)
 % parse expressions such as "pname", "pname(chain,state)"
 % negative lookahead
-pnames=[cell2matize(param_names),'(?!\w+)'];
+pnames=[parser.cell2matize(param_names),'(?!\w+)'];
 nc1='(?:\()?'; % group if exist but do not capture
-opt_cnames=[cell2matize(chain_names-'const'),'?'];
+opt_cnames=[parser.cell2matize(chain_names-'const'),'?'];
 nc2='(?:,)?';
 nc3='(?:\))?'; % group if exist but do not capture
 opt_digits='(\d+)?';% capture if exist
@@ -189,10 +189,6 @@ convert_the_guy=@do_conversion;
             error(['wrong state number for parameter "',pname,'"'])
         end
         c=['M(',int2str(aloc),',',int2str(col(1)),')'];
-    end
-    function c2m=cell2matize(list)
-        c2m=cell2mat(strcat(list,'|'));
-        c2m=['(',c2m(1:end-1),')'];
     end
 end
 
