@@ -237,7 +237,7 @@ end
             number_of_regimes;
         for ireg=1:nregs
             p_ireg=p(:,ireg);
-            [ss_1,p_ireg,retcode,r_1,Jac]=do_one_regime(y(:,ireg),p_ireg,...
+            [ss_1,r_1,Jac,p_ireg,retcode]=do_one_regime(y(:,ireg),p_ireg,...
                 d{ireg});
             if retcode
                 return
@@ -256,7 +256,7 @@ end
                             % the system is not uniquely identified.
                             ss0=ss(:,ireg)-pinv(full(Jac))*r(:,ireg);
                         end
-                        [ss(:,ireg),p_ireg,retcode,r(:,ireg)]=do_one_regime(...
+                        [ss(:,ireg),r(:,ireg),~,p_ireg,retcode]=do_one_regime(...
                             ss0,p_ireg,d{ireg});
                     else
                         vlist=~obj.auxiliary_variables.model;
@@ -296,7 +296,7 @@ end
                 end
             end
             if retcode
-                ss=[];r=[];
+%                 ss=[];r=[];
                 return
             end
         end
@@ -341,6 +341,8 @@ end
             elseif strcmp(arg_zero_solver,'fsolve')
                 % call to fsolve
                 %------------------
+%                 optimopt.Jacobian='on';
+%                 optimopt.MaxIter=10000;
                 [ssc1,fval,exitflag]=fsolve(@concentrated_residuals,ssc0,optimopt);
                 resnorm=norm(fval);
             elseif strcmp(arg_zero_solver,'fminunc')
@@ -364,22 +366,26 @@ end
             function [resids,Jac,ss1,rcode]=concentrated_residuals(ssc)
                 sstmp=y(:,ireg);
                 sstmp(vlist)=ssc;
-                [ss1,p_ireg,rcode,resids,Jac]=do_one_regime(sstmp,p_ireg,...
-                    d{ireg});
-                if rcode||any(isnan(resids))||any(isinf(resids))
-                    tmp=sqrt(obj.options.estim_penalty/(endo_nbr*nv));
-                    Jac=tmp*ones(endo_nbr,nv);
-                    resids=Jac(:,1);
-                    % explicitly signal there is a problem
-                    %--------------------------------------
-                    rcode=inf; 
+                if nargout>1
+                    [ss1,resids,Jac,p_ireg,rcode]=do_one_regime(sstmp,...
+                        p_ireg,d{ireg});
+                    if rcode||any(isnan(resids))||any(isinf(resids))
+                        tmp=sqrt(obj.options.estim_penalty/(endo_nbr*nv));
+                        Jac=tmp*ones(endo_nbr,nv);
+                        resids=Jac(:,1);
+                        % explicitly signal there is a problem
+                        %--------------------------------------
+                        rcode=inf;
+                    else
+                        Jac=Jac(:,vlist);
+                    end
                 else
-                    Jac=Jac(:,vlist);
+                    [ss1,resids]=do_one_regime(sstmp,p_ireg,d{ireg});
                 end
             end
         end
         
-        function [ss,pp,retcode,r,Jac]=do_one_regime(ys,pp,dd)
+        function [ss,r,Jac,pp,retcode]=do_one_regime(ys,pp,dd)
             retcode=0;
             ss=[];r=[];Jac=[];
             if obj.is_unique_steady_state
@@ -429,8 +435,12 @@ end
             % evaluate residuals
             %--------------------
             y_=ss;
-            r=utils.code.evaluate_functions(static_model,y_,x,ss,pp,dd,[],[]); % func_ss
-            Jac=utils.code.evaluate_functions(static_model_jacobian,y_,x,ss,pp,dd,[],[]);%func_jac
+            if nargout>1
+                r=utils.code.evaluate_functions(static_model,y_,x,ss,pp,dd,[],[]); % func_ss
+                if nargout>2
+                    Jac=utils.code.evaluate_functions(static_model_jacobian,y_,x,ss,pp,dd,[],[]);%func_jac
+                end
+            end
         end
     end
 
