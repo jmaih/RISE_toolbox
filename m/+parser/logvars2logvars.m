@@ -32,11 +32,15 @@ if ~isempty(logvarnames)
     for itarg=1:numel(target_blocks)
         target_blocks{itarg}=find(strcmp(target_blocks{itarg},{blocks.name}));
     end
+    
+    [expr,replace,convcoef]=regexp_setup(); %#ok<ASGLU>
+    
+    for iblk=1:numel(target_blocks)
+        blocks(target_blocks{iblk}).listing(:,2)=regexprep(blocks(target_blocks{iblk}).listing(:,2),...
+            expr,replace);
+    end
+    
     for ivar=1:numel(logvarnames)
-        for iblk=1:numel(target_blocks)
-            blocks(target_blocks{iblk}).listing(:,2)=regexprep(blocks(target_blocks{iblk}).listing(:,2),...
-                ['(?<!\w+)',logvarnames{ivar},'(?!\w+)'],['exp(LOG_',logvarnames{ivar},')']);
-        end
         loc=strcmp(logvarnames{ivar},{dictionary.endogenous.name});
         dictionary.endogenous(loc).name=['LOG_',logvarnames{ivar}];
         dictionary.endogenous(loc).is_log_var=true;
@@ -63,4 +67,27 @@ if ~isempty(logvarnames)
         ssblock{irow}=[ssblock{irow}(5:right_par-1),'=log(',ssblock{irow}(equal_loc+1:end),');'];
     end
     blocks(target_blocks{2}).listing(:,2)=ssblock;
+end
+
+
+function [expr,replace,convcoef]=regexp_setup()
+
+sstatel='(steady_state\()?';
+sstater='(\))?';
+ncl='(?<!\w+)';
+vlist=parser.cell2matize(logvarnames);
+left='(\(|\{)?';
+pm='(\+|\-)?';
+digits='(\d+)?';
+right='(\)|\})?';
+ncr='(?!\w+)';
+% let nc = no capture
+replace='${convcoef($1,$2,$3,$4,$5,$6,$7)}';
+expr=[sstatel,ncl,vlist,left,pm,digits,right,ncr,sstater];
+convcoef=@coef_converter;
+    function out=coef_converter(sstatel,vname,left,pm,digits,right,sstater)
+        out=['exp(',sstatel,'LOG_',vname,left,pm,digits,right,sstater,')'];
+    end
+end
+
 end
