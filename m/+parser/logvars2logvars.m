@@ -33,9 +33,12 @@ if ~isempty(logvarnames)
         target_blocks{itarg}=find(strcmp(target_blocks{itarg},{blocks.name}));
     end
     
+%     [exprLog,replaceLog,convLog]=regexp_logsetup(); %#ok<ASGLU>
     [expr,replace,convcoef]=regexp_setup(); %#ok<ASGLU>
     
     for iblk=1:numel(target_blocks)
+%         blocks(target_blocks{iblk}).listing(:,2)=regexprep(blocks(target_blocks{iblk}).listing(:,2),...
+%             exprLog,replaceLog);
         blocks(target_blocks{iblk}).listing(:,2)=regexprep(blocks(target_blocks{iblk}).listing(:,2),...
             expr,replace);
     end
@@ -68,6 +71,27 @@ if ~isempty(logvarnames)
     end
     blocks(target_blocks{2}).listing(:,2)=ssblock;
 end
+
+
+% function [exprLog,replaceLog,convLog]=regexp_logsetup()
+% 
+% logl='(log\()';
+% logr='(\))';
+% ncl='(?<!\w+)';
+% vlist=parser.cell2matize(logvarnames);
+% left='(\(|\{)?';
+% pm='(\+|\-)?';
+% digits='(\d+)?';
+% right='(\)|\})?';
+% ncr='(?!\w+)';
+% % let nc = no capture
+% replaceLog='${convLog($1,$2,$3,$4,$5,$6,$7)}';
+% exprLog=[logl,ncl,vlist,left,pm,digits,right,ncr,logr];
+% convLog=@converter;
+%     function out=converter(sstatel,vname,left,pm,digits,right,sstater)
+%         out=['LOG_',vname,left,pm,digits,right];
+%     end
+% end
 
 
 function [expr,replace,convcoef]=regexp_setup()
