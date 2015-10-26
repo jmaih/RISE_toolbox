@@ -49,6 +49,7 @@ for ii=1:numel(equation_type)
     is_sseq=any(equation_type(ii)==[5,7]);
     is_planner=equation_type(ii)==6;
     
+    Vss_pos=0;
     for jj=1:size(eq_i,2)
         item=eq_i{1,jj};
         lead_or_lag=eq_i{2,jj};
@@ -189,7 +190,8 @@ for ii=1:numel(equation_type)
             otherwise
                 if strcmp(item,'steady_state')
                     % then two blocks later is the name of the variable
-                    Vss=eq_i{1,jj+2};
+                    Vss_pos=jj+2;
+                    Vss=eq_i{1,Vss_pos};
                     if is_mcp
                         pos=find(strcmp(Vss,{dictionary.endogenous.name}));
                     else
@@ -209,8 +211,13 @@ for ii=1:numel(equation_type)
                 elseif is_mcp
                     sh_mcp=[sh_mcp,item];
                 else
-                    o_m=[o_m,item];
-                    s_m=[s_m,item];
+                    if isequal(jj,Vss_pos)
+                        o_m=[o_m,Vss];
+                        s_m=[s_m,Vss];
+                    else
+                        o_m=[o_m,item];
+                        s_m=[s_m,item];
+                    end
                     sh_o=[sh_o,item];
                     sh_s=[sh_s,item];
                     sh_b1=[sh_b1,item];
