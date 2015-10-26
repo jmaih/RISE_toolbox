@@ -110,16 +110,21 @@ switch action
         [x1,f1,H,issue]=optimization.estimation_engine(PROBLEM_,...
             obj(1).options.hessian_type,estim_blocks);
     case 'eval'
-        [f1,retcode_0]=fh_wrapper(x0);
+        [f1,retcode_0,max_pen]=fh_wrapper(x0);
         x1=x0;
         H=[];
         issue=retcode_0;
         viol=nonlcon_with_gradient(x0);
+        if isempty(viol)
+            viol=max_pen;
+        else
+            viol=viol+max_pen;
+        end
     otherwise
         error(['unknown type of action ',action])
 end
 
-    function [minus_log_post,retcode]=fh_wrapper(xtilde)
+    function [minus_log_post,retcode,max_pen]=fh_wrapper(xtilde)
         % this function returns the minimax if there are many objects
         % evaluated simultaneously
         
@@ -134,7 +139,7 @@ end
         %------------------------------------------------------------------
         x=unstransform_parameters(obj(1),xtilde);
         fval=estim_penalty*ones(1,nobj);
-        
+        max_pen=0;
         % general restrictions are sometimes infeasible. Rather than
         % imposing a barrier that will be difficult to cross if the initial
         % constraints are not satified, we use a penalty function approach.
@@ -163,6 +168,7 @@ end
                         % violations of the restrictions decrease the value
                         % of the objective function
                         fval(mo)=fval(mo)-this_pen;
+                        max_pen=max(max_pen,this_pen);
                     end
                 end
             end
