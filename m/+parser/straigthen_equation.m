@@ -23,8 +23,11 @@ if abs(leadorlag)>0
         return
     elseif abs(leadorlag)>1
         % realm of endogenous variables
+        vloc= strcmp(variable,endo_names);
+        is_log_var=dico.endogenous(vloc).is_log_var;
         leadorlag__=leadorlag;
-        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,variable,leadorlag);
+        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,...
+            variable,leadorlag,is_log_var);
         if leadorlag>0
             new_var=parser.create_auxiliary_name(variable,leadorlag__-1,true);
             leadorlag=1;
@@ -34,9 +37,15 @@ if abs(leadorlag)>0
         end
         eqtn{1,end}=new_var;
         dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,...
-            new_var,leadorlag,variable);
+            new_var,leadorlag,is_log_var,variable);
     else
-        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,variable,leadorlag);
+        is_log_var=false;
+        vloc= strcmp(variable,endo_names);
+        if any(vloc)
+            is_log_var=dico.endogenous(vloc).is_log_var;
+        end
+        dico.endogenous=parser.update_variable_lead_lag(dico.endogenous,...
+            variable,is_log_var,leadorlag);
     end
     eqtn{2,end}=leadorlag;
 end
