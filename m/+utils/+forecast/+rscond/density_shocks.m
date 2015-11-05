@@ -143,5 +143,6 @@ end
 
     function d=maxdiff(a,b)
         d=max(max(abs(bsxfun(@minus,a,b))));
+        d=full(d);
     end
 end
