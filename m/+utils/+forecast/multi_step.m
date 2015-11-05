@@ -89,8 +89,16 @@ if condforkst
         end
     end
 else
-    % condition on shocks only
-    shocks__=condition_on_shocks_only(shocks(:,:,1));
+    % condition on shocks only: The shock database may not have the
+    % appropriate size if not all shocks are conditioned upon. This has to
+    % be amended for.
+    bigt=size(shocks,2);
+    tmp=zeros(nx,bigt);
+    tmp(y0.econd.pos,:)=shocks(:,:,1);
+    % expand as necessary if the conditions do not span the whole
+    % simulation period.
+    tmp(:,bigt+1:span+options.k_future)=0;
+    shocks__=condition_on_shocks_only(tmp);
     myshocks=shocks__(:,options.burn+1:end);
 end
 regimes=regimes(options.burn+1:end);
