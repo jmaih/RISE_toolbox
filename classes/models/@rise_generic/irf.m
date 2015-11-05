@@ -198,9 +198,6 @@ myirfs=format_irf_output(myirfs);
         if is_dsge
             do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
             solve_order=obj.options.solve_order;
-            % hide future shocks if required
-            %-------------------------------
-            obj=do_not_anticipate_future_shocks(obj);
         end
         % load the order_var solution
         %-----------------------------
