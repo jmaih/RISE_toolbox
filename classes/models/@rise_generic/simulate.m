@@ -68,7 +68,7 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   option allows to impose that agents continue to see only the
 %   contemporaneous shocks.
 %
-%   - **simulate_bgp_deviation** [true|{false}]: When the model is
+%   - **simul_bgp_deviation** [true|{false}]: When the model is
 %   nonstationary, a growth component appears in the solution. This option
 %   enables or disables that component.
 %
@@ -116,7 +116,7 @@ if isempty(obj)
         'simul_shock_uncertainty',true,...
         'simul_honor_constraints_through_switch',false,...
         'simul_anticipate_zero',false,...
-        'simulate_bgp_deviation',false);
+        'simul_bgp_deviation',false);
     %         'simul_start_date','',... does not seem to be in use
     return
 end
