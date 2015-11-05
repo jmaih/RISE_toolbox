@@ -85,10 +85,13 @@ classdef dsge < rise_generic
         planner_system
         raw_file
         rawfile_triggers
-        steady_state_file_2_model_communication
-        steady_state_funcs % holder for steady-state calculating functions
         sticky_information_lambda_id
         input_list
+        % steady state solution facilitators
+        %------------------------------------
+        occurrence
+        steady_state_blocks
+        steady_state_file_2_model_communication
         % steady state model characteristics
         %------------------------------------
         is_imposed_steady_state=false
@@ -191,7 +194,7 @@ classdef dsge < rise_generic
                 'endogenous','exogenous','parameters','observables',...
                 'raw_file','rawfile_triggers','equations','definitions',...
                 'markov_chains','v','locations','siz','order_var',...
-                'inv_order_var','steady_state_index',...
+                'inv_order_var','steady_state_index','occurrence',...
                 'routines'};
             
             % check that all the shocks in the model are in use
@@ -228,8 +231,7 @@ classdef dsge < rise_generic
                 end
             end
             
-                obj.options.estim_nonlinear_restrictions=...
-                    dictionary.Param_rest_block;
+            obj.options.estim_nonlinear_restrictions=dictionary.Param_rest_block;
             
             % parameters and estimated parameters and more ...:
             % format_parameters depends on the value of the prior
@@ -322,6 +324,7 @@ classdef dsge < rise_generic
         varargout=prepare_transition_routine(varargin)
         varargout=problem_reduction(varargin)
         varargout=set_z_eplus_horizon(varargin)
+        varargout=growth_component_solver(varargin)
     end
 end
 
