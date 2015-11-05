@@ -317,7 +317,6 @@ classdef dsge < rise_generic
     methods(Hidden=true)
         varargout=assign_estimates(varargin)
         varargout=conclude_estimation(varargin) % abstract method
-        varargout=do_not_anticipate_future_shocks(varargin)
         varargout=latex_model_file(varargin)
         varargout=load_solution(varargin)
         varargout=load_data(varargin)
