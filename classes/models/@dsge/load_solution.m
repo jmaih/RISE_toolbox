@@ -167,7 +167,7 @@ end
 
     function order_var_solution()
         zzz=repmat('z',1,order);
-        is_dev=obj.options.simulate_bgp_deviation;
+        is_dev=obj.options.simul_bgp_deviation;
         target=numel(state_vars_location)+1;
         for io=1:order
             for ireg=1:regimes_number
