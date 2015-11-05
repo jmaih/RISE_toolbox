@@ -68,6 +68,10 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   option allows to impose that agents continue to see only the
 %   contemporaneous shocks.
 %
+%   - **simulate_bgp_deviation** [true|{false}]: When the model is
+%   nonstationary, a growth component appears in the solution. This option
+%   enables or disables that component.
+%
 % Outputs
 % --------
 %
@@ -111,7 +115,8 @@ if isempty(obj)
         'simul_to_time_series',true,...
         'simul_shock_uncertainty',true,...
         'simul_honor_constraints_through_switch',false,...
-        'simul_anticipate_zero',false);
+        'simul_anticipate_zero',false,...
+        'simulate_bgp_deviation',false);
     %         'simul_start_date','',... does not seem to be in use
     return
 end
@@ -147,7 +152,7 @@ do_dsge_var=false;
 if isa(obj,'dsge')
     do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
 end
-[T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
+[T,~,~,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
 
 Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
 
@@ -156,6 +161,8 @@ if numel(y0)>1
     error('more than one initial conditions')
 end
 
+% use the steady state with possibly loglinear variables
+steady_state=Initcond.log_var_steady_state;
 [y,states,retcode,~,myshocks]=utils.forecast.multi_step(y0(1),steady_state,T,...
     state_vars_location,Initcond);
 
@@ -182,6 +189,12 @@ if do_dsge_var
     yold=y;
     y=zeros(endo_nbr,smply)+1i;
     y(relevant,:)=yold(1:max_rows,:);
+end
+
+% exponentiate before doing anything: is_log_var is in the order_var order
+%-------------------------------------------------------------------------
+if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
+    y(Initcond.is_log_var,:,:)=exp(y(Initcond.is_log_var,:,:));
 end
 
 % put y in the correct order before storing
