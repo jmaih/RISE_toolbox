@@ -198,11 +198,19 @@ end
         function [Tzp,eigval,retcode]=rise_solve_1(Afrwrd_plus,Apred_0,Afrwrd_0,Apred_minus)
             A=[Apred_0,Afrwrd_plus]; % pred,frwrd
             B=-[Apred_minus,Afrwrd_0]; % pred,frwrd
+            fA=full(A); fB=full(B);
+            do_norm=true;
+            if do_norm
+                mynorm=max([max(abs(A),[],2),max(abs(B),[],2)],[],2);
+                mynorm(mynorm==0)=1;
+                fA=bsxfun(@rdivide,fA,mynorm);
+                fB=bsxfun(@rdivide,fB,mynorm);
+            end
             npred=size(Apred_0,2);
             nfrwrd=size(Afrwrd_0,2);
             % real schur decomposition
             %-------------------------
-            [TT,SS,Q,Z] = qz(full(A),full(B),'real');
+            [TT,SS,Q,Z] = qz(fA,fB,'real');
             % so we have Q*A*Z = TT, Q*B*Z = SS.
             
             % process eigenvalues
