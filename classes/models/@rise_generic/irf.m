@@ -59,10 +59,6 @@ function myirfs=irf(obj,varargin)
 %   form of time series. Else it is in the form of a cell containing the
 %   information needed to reconstruct the time series.
 %
-%   - **irf_bgp_deviation** [false|{true}]: When the model is
-%   nonstationary, a growth component appears in the solution. This option
-%   enables or disables that component.
-%
 % Outputs
 % --------
 %
@@ -76,6 +72,10 @@ function myirfs=irf(obj,varargin)
 %   of the impulse responses.
 %
 % - for nonlinear models, the initial conditions is the ergodic mean
+%
+% - irf automatically enables simul_bgp_deviation. The intuition is clear:
+% if we apply the GIRFs, the growth components will always fall out.
+% Somehow it is a different story with Tz_sig
 %
 % Examples
 % ---------
@@ -95,7 +95,6 @@ mydefaults={'irf_shock_list','',@(x)ischar(x)||iscellstr(x),'irf_shock_list must
         'irf_regime_specific',true,@(x)islogical(x),'irf_regime_specific must be a logical'
         'irf_use_historical_data',false,@(x)islogical(x),'irf_use_historical_data must be a logical'
         'irf_to_time_series',true,@(x)islogical(x),'irf_to_time_series must be a logical'
-        'irf_bgp_deviation',true,@(x)islogical(x),'irf_bgp_deviation must be a logical'
         };
 if isempty(obj)
     myirfs=cell2struct(mydefaults(:,2),mydefaults(:,1),1);
@@ -120,7 +119,7 @@ myirfs=format_irf_output(myirfs);
         end
         [irf_shock_list,irf_var_list,irf_periods,irf_shock_sign,irf_draws,...
             irf_type,irf_regime_specific,irf_use_historical_data,...
-            irf_to_time_series,irf_bgp_deviation]=parse_arguments(mydefaults,...
+            irf_to_time_series]=parse_arguments(mydefaults,...
             'irf_shock_list',obj.options.irf_shock_list,...
             'irf_var_list',obj.options.irf_var_list,...
             'irf_periods',obj.options.irf_periods,...
@@ -129,11 +128,13 @@ myirfs=format_irf_output(myirfs);
             'irf_type',obj.options.irf_type,...
             'irf_regime_specific',obj.options.irf_regime_specific,...
             'irf_use_historical_data',obj.options.irf_use_historical_data,...
-            'irf_to_time_series',obj.options.irf_to_time_series,...
-            'irf_bgp_deviation',obj.options.irf_bgp_deviation);
+            'irf_to_time_series',obj.options.irf_to_time_series);
         is_dsge=isa(obj,'dsge');
         
-        obj.options.simul_bgp_deviation=irf_bgp_deviation;
+        % automatically enable deviations from balanced growth
+        %-----------------------------------------------------
+        obj.options.simul_bgp_deviation=true;
+        
         obj.options.simul_periods=irf_periods;
         obj.options.simul_burn=0;
         if ~irf_use_historical_data
