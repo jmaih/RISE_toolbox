@@ -196,7 +196,7 @@ myirfs=format_irf_output(myirfs);
         end
         % load the order_var solution
         %-----------------------------
-        [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
+        [T,~,~,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
        
         h=obj.markov_chains.regimes_number;
         
@@ -262,6 +262,10 @@ myirfs=format_irf_output(myirfs);
             max_rows=obj.observables.number(1);
             relevant=obj.inv_order_var(obj.observables.state_id);
         end
+        
+        % use the steady state with possibly loglinear variables
+        steady_state=Initcond.log_var_steady_state;
+        
         retcode=0;
         for istate=1:number_of_threads
             if ~retcode
@@ -277,6 +281,12 @@ myirfs=format_irf_output(myirfs);
         % set to 0 the terms that are too tiny
         Impulse_dsge(abs(Impulse_dsge)<=too_small)=0;
         
+        % exponentiate before doing anything: is_log_var is in the order_var order
+        %-------------------------------------------------------------------------
+        if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
+            Impulse_dsge(Initcond.is_log_var,:,:,:,:)=exp(Impulse_dsge(Initcond.is_log_var,:,:,:,:));
+        end
+
         % re-order the variables according to the inv_order_var;
         Impulse_dsge=re_order_output_rows(obj,Impulse_dsge);
         % going from variables x time x shocks x irf_draws x regimes
