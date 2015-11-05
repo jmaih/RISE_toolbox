@@ -117,12 +117,16 @@ dictionary=orderfields(dictionary);
     end
 
     function cleanup_equations(dynamic,static)
+        % dynamic
         dictionary.equations.dynamic=dynamic.model;
         dictionary.equations.shadow_dynamic=dynamic.shadow_model;
+        dictionary.equations.number=numel(dynamic.model);
+        % static
         dictionary.equations.static=static.model;
         dictionary.equations.shadow_static=static.shadow_model;
-        dictionary.equations.shadow_balanced_growth_path=static.shadow_BGP_model;
-        dictionary.equations.number=numel(dynamic.model);
+        dictionary.equations.shadow_steady_state_model=static.shadow_steady_state_model;
+        dictionary.equations.shadow_steady_state_auxiliary_eqtns=static.shadow_steady_state_auxiliary_eqtns;
+        % steady state attributes/properties
         dictionary.is_imposed_steady_state=static.is_imposed_steady_state;
         dictionary.is_unique_steady_state=static.is_unique_steady_state;
         dictionary.is_initial_guess_steady_state=static.is_initial_guess_steady_state;

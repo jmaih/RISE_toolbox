@@ -3,10 +3,7 @@ function [dictionary,...
     stat,...
     defs,...
     shadow_tvp,...
-    shadow_complementarity]=shadowize(dictionary,AllModels,equation_type,...
-    overall_max_lead_lag)
-
-orig_endo_nbr=numel(dictionary.endogenous);
+    shadow_complementarity]=shadowize(dictionary,AllModels,equation_type)
 
 % dynamic to be merged later with the other portion
 %---------------------------------------------------
@@ -19,8 +16,7 @@ dyn.shadow_model=cell(0,1);
 stat=struct();
 stat.model=cell(0,1);
 stat.shadow_model=cell(0,1);
-stat.shadow_BGP_model=cell(0,1);
-stat.steady_state_shadow_model=cell(0,1);
+stat.shadow_steady_state_model=cell(0,1);
 
 % plan_syst to be merged later with the other portion in
 % dictionary.planner_system 
@@ -39,7 +35,7 @@ shadow_complementarity=cell(0,1);
 for ii=1:numel(equation_type)
     % we don't need the semicolons anymore
     eq_i=AllModels{ii,1};
-    o_m='';s_m='';sh_o='';sh_s='';sh_b1='';sh_b2='';
+    o_m='';s_m='';sh_o=''; sh_s='';
     sh_d='';sh_tvp='';sh_ssm='';
     sh_pl='';o_d='';
     sh_mcp='';
@@ -79,6 +75,7 @@ for ii=1:numel(equation_type)
                     dictionary.endogenous(pos).is_trans_prob=true;
                 elseif is_sseq
                     sh_ssm=[sh_ssm,'y(',sprintf('%0.0f',index),')'];
+                    sh_ssm=update_time(sh_ssm,lead_or_lag);
                 elseif is_planner
                     sh_pl=[sh_pl,'y(',sprintf('%0.0f',index),')'];
                 elseif is_mcp
@@ -92,23 +89,7 @@ for ii=1:numel(equation_type)
                     
                     s_m=[s_m,item];
                     sh_s=[sh_s,'y(',sprintf('%0.0f',pos),')'];
-                    this_bgp_lead=overall_max_lead_lag+lead_or_lag;
-                    switch lead_or_lag
-                        case -1
-                            sh_b1=[sh_b1,'(','y(',sprintf('%0.0f',pos),')-y(',sprintf('%0.0f',pos+orig_endo_nbr),'))'];
-                        case 0
-                            sh_b1=[sh_b1,'y(',sprintf('%0.0f',pos),')'];
-                        case 1
-                            sh_b1=[sh_b1,'(','y(',sprintf('%0.0f',pos),')+y(',sprintf('%0.0f',pos+orig_endo_nbr),'))'];
-                    end
-                    switch this_bgp_lead
-                        case 0
-                            sh_b2=[sh_b2,'y(',sprintf('%0.0f',pos),')'];
-                        case 1
-                            sh_b2=[sh_b2,'(','y(',sprintf('%0.0f',pos),')+y(',sprintf('%0.0f',pos+orig_endo_nbr),'))'];
-                        otherwise
-                            sh_b2=[sh_b2,'(','y(',sprintf('%0.0f',pos),')+',sprintf('%0.0f',this_bgp_lead),'*y(',sprintf('%0.0f',pos+orig_endo_nbr),'))'];
-                    end
+                    sh_s=update_time(sh_s,lead_or_lag);
                 end
             case 'x'
                 if is_def||is_mcp|| is_tvp|| is_planner
@@ -120,8 +101,6 @@ for ii=1:numel(equation_type)
                     sh_o=[sh_o,'x(',sprintf('%0.0f',pos),')'];
                     s_m=[s_m,item];
                     sh_s=[sh_s,'x(',sprintf('%0.0f',pos),')'];
-                    sh_b1=[sh_b1,'x(',sprintf('%0.0f',pos),')'];
-                    sh_b2=[sh_b2,'x(',sprintf('%0.0f',pos),')'];
                 end
             case 'param'
                 if is_def
@@ -159,8 +138,6 @@ for ii=1:numel(equation_type)
                     sh_o=[sh_o,pname,'(',sprintf('%0.0f',pos),')'];
                     s_m=[s_m,item];
                     sh_s=[sh_s,sprintf('param(%0.0f)',pos)];
-                    sh_b1=[sh_b1,sprintf('param(%0.0f)',pos)];
-                    sh_b2=[sh_b2,sprintf('param(%0.0f)',pos)];
                 end
             case 'def'
                 if is_def
@@ -179,8 +156,6 @@ for ii=1:numel(equation_type)
                     s_m=[s_m,item];
                     sh_o=[sh_o,'def(',sprintf('%0.0f',pos),')'];
                     sh_s=[sh_s,'def(',sprintf('%0.0f',pos),')'];
-                    sh_b1=[sh_b1,'def(',sprintf('%0.0f',pos),')'];
-                    sh_b2=[sh_b2,'def(',sprintf('%0.0f',pos),')'];
                 end
             case 'tvp'
                 if ~is_tvp
@@ -220,8 +195,6 @@ for ii=1:numel(equation_type)
                     end
                     sh_o=[sh_o,item];
                     sh_s=[sh_s,item];
-                    sh_b1=[sh_b1,item];
-                    sh_b2=[sh_b2,item];
                 end
         end
     end
@@ -231,7 +204,7 @@ for ii=1:numel(equation_type)
     elseif is_tvp
         shadow_tvp=[shadow_tvp;{sh_tvp}];
     elseif is_sseq
-        stat.steady_state_shadow_model=[stat.steady_state_shadow_model;{sh_ssm}];
+        stat.shadow_steady_state_model=[stat.shadow_steady_state_model;{sh_ssm}];
         % put back the semicolon as this is going to be evaluated
     elseif is_planner
         shadow_plan_syst=[shadow_plan_syst;{sh_pl}];
@@ -239,10 +212,9 @@ for ii=1:numel(equation_type)
         shadow_complementarity=[shadow_complementarity;{sh_mcp}];
     else
         dyn.model=[dyn.model;{o_m}];
-        stat.model=[stat.model;{s_m}];
         dyn.shadow_model=[dyn.shadow_model;{sh_o}];
+        stat.model=[stat.model;{s_m}];
         stat.shadow_model=[stat.shadow_model;{sh_s}];
-        stat.shadow_BGP_model=[stat.shadow_BGP_model;{sh_b1};{sh_b2}];
     end
 end
 
@@ -258,5 +230,19 @@ end
 %-------------------------------
 dyn.shadow_model=parser.replace_steady_state_call(dyn.shadow_model);
 stat.shadow_model=parser.replace_steady_state_call(stat.shadow_model);
-stat.shadow_BGP_model=parser.replace_steady_state_call(stat.shadow_BGP_model);
 shadow_complementarity=parser.replace_steady_state_call(shadow_complementarity);
+% remove the useless call to the steady state in steady state models
+%---------------------------------------------------------------------
+stat.shadow_model=strrep(stat.shadow_model,'ss','y');
+
+end
+
+function sh=update_time(sh,lead_or_lag)
+switch lead_or_lag
+    case -1
+        sh=[sh,'{-1}'];
+    case 1
+        sh=[sh,'{+1}'];
+end
+end
+
