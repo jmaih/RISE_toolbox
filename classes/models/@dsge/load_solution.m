@@ -167,6 +167,8 @@ end
 
     function order_var_solution()
         zzz=repmat('z',1,order);
+        is_dev=obj.options.simulate_bgp_deviation;
+        target=numel(state_vars_location)+1;
         for io=1:order
             for ireg=1:regimes_number
                 if ~is_alphabetical_order && io==1
@@ -176,6 +178,9 @@ end
                 % re-order the rows
                 %------------------
                 T{io,ireg}=obj.solution.(['T',zzz(1:io)]){ireg}(ov,:);
+                if is_dev && io==1
+                    T{io,ireg}(:,target)=real(T{io,ireg}(:,target));
+                end
             end
         end
     end
