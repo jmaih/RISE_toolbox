@@ -36,16 +36,18 @@ defaults={
     'nsteps',[],@(x)isnumeric(x)&&isscalar(x)&&x>0 && floor(x)==ceil(x),...
     'nsteps must be a positive integer'
     };
+
 if nargin==0
     RS=cell2struct(defaults(:,2),defaults(:,1),1);
     yhats=defaults;
     return
 else
     narginchk(4,5)
+    if nargin<5
+        options=[];
+    end
 end
-if nargin<5
-    options=[];
-end
+
 if isempty(options)
     options=struct();
 end
@@ -112,6 +114,8 @@ rs_cols=min(rs_cols,maxcols);
 
 RS=RS(:,1:rs_cols);
 
+
+
     function [A,r,c]=allocate(xcond,isshock)
         if nargin<2
             isshock=false;
@@ -140,8 +144,9 @@ RS=RS(:,1:rs_cols);
         if isshock
             A=xcond.data;
             if r>0
-                missing=rs_cols-r*c;
-                cplus=missing/r;
+                rstar=M.nshocks;
+                missing=rs_cols-rstar*c;
+                cplus=missing/rstar;
                 if missing>0
                     % add nans
                     A=cat(2,A,nan(r,cplus,3));
