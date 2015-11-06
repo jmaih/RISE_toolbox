@@ -93,8 +93,9 @@ oo_.irfs=irf(obj);
 
 if obj.options.simul_periods > 0
     db= simulate(obj);
-    disp_moments(db,var_list);
+    db_names=disp_moments(db);
     oo_.simulations=db;
+    do_storage()
 else
     for ii=1:10
         disp('No theoretical moments implemented yet. Please send a reminder to junior.maih@gmail.com')
@@ -106,6 +107,31 @@ end
 % if obj.options.SpectralDensity.trigger == 1
 %     [omega,f] = UnivariateSpectralDensity(oo_.dr,var_list);
 % end
+
+    function do_storage()
+        fields=fieldnames(oo_);
+        endo_names=obj.endogenous.name;
+        pos=locate_variables(endo_names,db_names);
+        for ifield=1:numel(fields)
+            name=fields{ifield};
+            if isstruct(oo_.(name))
+                continue
+            elseif iscell(oo_.(name))
+                % this has to be checked first
+                for icel=1:numel(oo_.(name))
+                    oo_.(name){icel}=oo_.(name){icel}(pos,pos);
+                end
+            elseif isvector(oo_.(name))
+                tmp=struct();
+                for iname=1:numel(endo_names)
+                    tmp.(endo_names{iname})=oo_.(name)(pos(iname));
+                end
+                oo_.(name)=tmp;
+            elseif ismatrix(oo_.(name))
+                oo_.(name)=oo_.(name)(pos,pos);
+            end
+        end
+    end
 
     function check_model()
         xlen = 0;% DynareModel.maximum_exo_lag+DynareModel.maximum_exo_lead + 1;
@@ -133,10 +159,7 @@ end
         end
     end
 
-    function disp_moments(db,var_list)
-        if nargin<2
-            var_list=[];
-        end
+    function db_names=disp_moments(db)
         if isempty(var_list)
             var_list=get(obj,'endo_list(original)');
         end
@@ -145,7 +168,8 @@ end
             db=ts.collect(db);
         end
         
-        ivar=locate_variables(var_list,db.varnames);
+        db_names=db.varnames;
+        ivar=locate_variables(var_list,db_names);
         oo_.mean=mean(db);
         
         % warning_old_state = warning;
