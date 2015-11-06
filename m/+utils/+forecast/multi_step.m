@@ -23,8 +23,10 @@ function [sims,regimes,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_locati
 endo_nbr=size(y0.y,1);
 PAI=options.PAI;
 Qfunc=options.Qfunc;
+
 % use first page only as it is the most relevant
 regimes=vec(y0.rcond.data(:,:,1));
+
 shocks=y0.econd.data;
 cond_shocks_id=[];
 if options.k_future
@@ -40,7 +42,7 @@ simul_do_update_shocks=options.simul_do_update_shocks;
 forecast_conditional_hypothesis=options.forecast_conditional_hypothesis;
 options=rmfield(options,{'PAI','Qfunc','y'});
 
-h=size(T,2);
+[solve_order,h]=size(T);
 Qt=[];
 retcode=0;
 penalty=1e+6;
@@ -58,6 +60,9 @@ condforkst=~isempty(y0.ycond.data)||...
     max(max(abs(shocks(:,:,2)-shocks(:,:,3))>1e-19))||...
     options.forecast_conditional_sampling_ndraws>1;
 
+if options.simul_anticipate_zero
+    NotAnt_T=no_anticipation_solution();
+end
 %-------------------------------------
 all_known_states=~any(isnan(regimes));
 unique_state=numel(PAI)==1||(all_known_states && all(regimes==regimes(1)));
@@ -75,7 +80,7 @@ if condforkst
     if options.burn
         error('conditional forecasting and burn-in not allowed')
     end
-    model_is_linear=size(T,1)==1;
+    model_is_linear=solve_order==1;
     if model_is_linear
         % apply standard tools
         standard_conditional_forecasting_tools();
@@ -102,6 +107,8 @@ else
     myshocks=shocks__(:,options.burn+1:end);
 end
 regimes=regimes(options.burn+1:end);
+
+
 
     function nonlinear_conditional_forecasting_tools()
         % here we do not substract the steady state as we do in the linear
@@ -172,8 +179,14 @@ regimes=regimes(options.burn+1:end);
         end
     end
 
+
+
     function standard_conditional_forecasting_tools()
-        model=struct('T',{T},'sstate',{ss},'state_cols',state_vars_location,...
+        Tstar=T;
+        if options.simul_anticipate_zero
+            Tstar=NotAnt_T;
+        end
+        model=struct('T',{Tstar},'sstate',{ss},'state_cols',state_vars_location,...
             'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
         opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
         if h==1||~(isempty(regimes)||any(isnan(regimes)))
@@ -193,10 +206,16 @@ regimes=regimes(options.burn+1:end);
         end
     end
 
+
+
     function shocks=condition_on_shocks_only(shocks)
         if isfield(options,'occbin') && ~isempty(options.occbin)
             do_occbin_sim()
             return
+        end
+        Tstar=T;
+        if options.simul_anticipate_zero
+            Tstar=NotAnt_T;
         end
         y1=[];
         % shocks that are nan are shocks that are not conditioned on
@@ -210,9 +229,6 @@ regimes=regimes(options.burn+1:end);
                 shocks_t=shocks(:,t+(0:options.k_future));
                 if ~isempty(simul_update_shocks_handle) && simul_do_update_shocks
                     shocks_t=simul_update_shocks_handle(shocks_t,y00.y);
-                end
-                if options.simul_anticipate_zero
-                    shocks_t(:,2:end)=0;
                 end
                 % compute transition matrix and switching probabilities
                 %------------------------------------------------------
@@ -268,7 +284,8 @@ regimes=regimes(options.burn+1:end);
                 lucky=find(cp>rand,1,'first')-1;
                 rt=state_list(lucky);
             end
-            y1=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
+            % use the solution prescribed by simul_anticipate_zero
+            y1=utils.forecast.one_step_fbs(Tstar(:,rt),y00,ss{rt},state_vars_location,...
                 options.simul_sig,shocks_t,options.simul_order);
             if ~isempty(options.complementarity) && ~options.complementarity(y1.y)
                 if options.simul_honor_constraints_through_switch
@@ -279,6 +296,8 @@ regimes=regimes(options.burn+1:end);
                     rt=nan;
                     y1=[];
                 else
+                    % use the normal solution
+                    %-------------------------
                     [y1,~,retcode,shocks_t1]=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
                         options.sep_compl,cond_shocks_id);
@@ -309,7 +328,39 @@ regimes=regimes(options.burn+1:end);
             sims=sims(:,options.burn+1:end);
         end
     end
+
+
+
+    function NotAnt_T=no_anticipation_solution()
+        
+        NotAnt_T=T;
+        if options.k_future==0
+            return
+        end
+                
+        nz=size(NotAnt_T{1,1},2);
+        zproto=false(1,nz);
+        offset=nsv+1+nx;
+        bad=1:nx;
+        for iplus=1:options.k_future
+            bad_locs=offset+bad;
+            zproto(bad_locs)=true;
+            offset=offset+nx;
+        end
+        zkz=zproto;
+        
+        for io=1:solve_order
+            for ireg_=1:h
+                NotAnt_T{io,ireg_}(:,zkz)=0;
+            end
+            if io<solve_order
+                zkz=logical(kron(zkz,zproto));
+            end
+        end
+    end
 end
+
+
 
 function c=recreate_conditions(c,hard)
 if nargin<2
@@ -332,6 +383,8 @@ lbub=struct('LB',lb,'UB',ub);
 OMG =[];
 c={c,OMG,lbub,rest_id};
 end
+
+
 
 function [sim1,regimes,retcode]=simul_occbin(y0,T,ss,state_vars_location,...
     options,shocks)
