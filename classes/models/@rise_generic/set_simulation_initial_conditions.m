@@ -266,8 +266,7 @@ Initcond.y=y0;
 
         conditional_vars=obj.options.forecast_cond_endo_vars;
         datay=build_cond_data(conditional_vars);
-        y_pos=strcmp(conditional_vars,obj.observables.name);
-        y_pos=obj.observables.state_id(y_pos);
+        y_pos=locate_variables(conditional_vars,obj.endogenous.name);
         y0(1).ycond=struct('data',datay,'pos',y_pos);
         is_conditional_forecasting=~isempty(datay);
     end
