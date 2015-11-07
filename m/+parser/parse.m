@@ -35,8 +35,6 @@ function dictionary=parse(FileName,varargin)
 %   the rise file. In case of a cell, the cell should be a k x 2 cell,
 %   where the first column collects the conditional parsing names and the
 %   second column the values.
-%   - **stationary_model** [{empty}|true|false]: decides whether the model
-%   is stationary in which case, the Balance growth path is not computed.
 %
 % Outputs
 % --------
@@ -63,8 +61,7 @@ DefaultOptions=...
     'max_deriv_order',2,'definitions_inserted',false,...
     'parse_debug',false,...
     'add_welfare',false,...
-    'parameter_differentiation',false,...
-    'stationary_model',[]);
+    'parameter_differentiation',false);
 DefaultOptions=utils.miscellaneous.mergestructures(DefaultOptions,...
     parser.preparse());
 if nargin<1
@@ -94,7 +91,6 @@ dictionary.definitions_inserted=DefaultOptions.definitions_inserted;
 dictionary.parse_debug=DefaultOptions.parse_debug;
 dictionary.add_welfare=DefaultOptions.add_welfare;
 parameter_differentiation=DefaultOptions.parameter_differentiation;
-dictionary.is_stationary_model=DefaultOptions.stationary_model;
 
 %% set various blocks
 
@@ -573,6 +569,13 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         end
         % keep only the structural equations
         occurrence=occurrence(equation_type==1,:,:);
+        neqtns=size(occurrence,1);
+        nvars=size(occurrence,2);
+        if neqtns>nvars
+            error(['more equations (',int2str(neqtns),') than variables(',int2str(nvars),')'])
+        elseif neqtns<nvars
+            error(['more variables (',int2str(nvars),') than equations(',int2str(neqtns),')'])
+        end
     end
 
     function do_parameter_restrictions()
