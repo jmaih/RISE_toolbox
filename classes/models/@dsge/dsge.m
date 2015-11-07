@@ -151,7 +151,81 @@ classdef dsge < rise_generic
         % constructor
         %------------
         function obj=dsge(model_filename,varargin)
-            % default options
+            % dsge -- constructor for dsge models
+            %
+            % Syntax
+            % -------
+            % ::
+            %
+            %   obj=dsge(model_filename,varargin)
+            %
+            % Inputs
+            % -------
+            %
+            % - **model_filename** [char]: name of the model file. The file
+            % should have extensions rs, rz or dsge
+            %
+            % - **varargin** []: pairwise arguments with possiblities as
+            % follows: 
+            %
+            %   - **parameter_differentiation** [true|{false}]: compute or
+            %   not parameter derivatives
+            %
+            %   - **definitions_inserted** [true|{false}]: substitute
+            %   definitions given in the model block. Necessary if the
+            %   definitions contain variables.
+            %
+            %   - **definitions_in_param_differentiation** [true|{false}]:
+            %   insert or not definitions in equations before
+            %   differentiating with respect to parameters
+            %
+            %   - **rise_save_macro** [true|{false}]: save the macro file
+            %   in case of insertions of sub-files
+            %
+            %   - **max_deriv_order** [integer|{2}]: order for symbolic
+            %   differentiation. It is recommended to set to 1, especially
+            %   for large models in case one does not intend to solve
+            %   higher-order approximations 
+            %
+            %   - **parse_debug** [true|{false}]: debugging in the parser
+            %
+            %   - **add_welfare** [true|{false}]: add the welfare equation
+            %   when doing optimal policy. N.B: The welfare variable, WELF
+            %   is the true welfare multiplied by (1-discount). The
+            %   within-period utility variable, UTIL is automatically
+            %   added. The reason why welfare is not automatically added 
+            %   is that oftentimes models with that equation do not solve.
+            %
+            %   - **rise_flags** [struct|cell]: instructions for the
+            %   partial parsing of the rise file. In case of a cell, the
+            %   cell should be a k x 2 cell, where the first column
+            %   collects the conditional parsing names and the second
+            %   column the values. 
+            %
+            % Outputs
+            % --------
+            %
+            % - **obj** [rise|dsge]: model object
+            %
+            % More About
+            % ------------
+            %
+            % - The pairwise options listed above are the ones that will be
+            % processed in the parser. Additional options related to
+            % specific methods can also be passed at this stage, but will
+            % only be applied or used when the specific method dealing with
+            % them is called.
+            %
+            % - In RISE it is possible to declare exogenous and make them
+            % observable at the same time. The exogenous that are observed
+            % are determisitic. This is the way to introduce e.g. time
+            % trends. This strategy also opens the door for estimating
+            % partial equilibrium models.
+            %
+            % Examples
+            % ---------
+            %
+            % See also:
             obj=obj@rise_generic();
             if nargin<1
                 return
@@ -187,10 +261,10 @@ classdef dsge < rise_generic
                 'is_dsge_var_model','is_optimal_simple_rule_model',...
                 'is_hybrid_model','is_purely_backward_looking_model',...
                 'is_purely_forward_looking_model',...
-                'is_linear_model','is_stationary_model',...
-                'is_endogenous_switching_model','input_list',...
-                'is_imposed_steady_state','is_unique_steady_state',...
-                'is_initial_guess_steady_state','is_param_changed_in_ssmodel',...
+                'is_linear_model','is_endogenous_switching_model',...
+                'input_list','is_imposed_steady_state',...
+                'is_unique_steady_state','is_initial_guess_steady_state',...
+                'is_param_changed_in_ssmodel',...
                 'endogenous','exogenous','parameters','observables',...
                 'raw_file','rawfile_triggers','equations','definitions',...
                 'markov_chains','v','locations','siz','order_var',...
