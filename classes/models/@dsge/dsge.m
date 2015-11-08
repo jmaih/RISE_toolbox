@@ -78,7 +78,6 @@ classdef dsge < rise_generic
         is_optimal_simple_rule_model
         is_purely_backward_looking_model
         is_purely_forward_looking_model
-        is_stationary_model
         lead_lag_incidence
         measurement_errors_restrictions
         model_derivatives
@@ -139,6 +138,8 @@ classdef dsge < rise_generic
         varargout=filter_initialization(varargin)
         varargout=forecast_real_time(varargin)
         varargout=frontier(varargin)
+% % % %         varargout=get(varargin): TODO
+        varargout=is_stationary_system(varargin)
         varargout=monte_carlo_filtering(varargin)
         varargout=pull_objective(varargin)
         varargout=print_solution(varargin)
