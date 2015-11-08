@@ -220,18 +220,8 @@ myirfs=format_irf_output(myirfs);
         
         Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
         
-%         if solve_order==1 && ...
-%                 ~obj.options.simul_honor_constraints % first-order solution ||isa(obj,'rfvar')
-%             % kill the steady state and the initial conditions
-%             for ireg=1:h
-%                 steady_state{ireg}=0*steady_state{ireg};
-%             end
-%             Initcond.y.y=0*Initcond.y.y;
-%         end
         y0=Initcond.y;
-%         if ~obj.options.irf_use_historical_data
-%             y0.econd.data=0*y0.econd.data;
-%         end
+
         number_of_threads=h;
         if ~irf_regime_specific||isfield(Initcond,'occbin')
             number_of_threads=1;
@@ -282,10 +272,15 @@ myirfs=format_irf_output(myirfs);
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end
+        % subtract the initial conditions
+        %---------------------------------
+        Impulse_dsge=Impulse_dsge-y0.y(:,ones(Initcond.nsteps+1,1),...
+            ones(nshocks,1),ones(irf_draws,1),ones(number_of_threads,1));
         
         % set to 0 the terms that are too tiny
+        %-------------------------------------
         Impulse_dsge(abs(Impulse_dsge)<=too_small)=0;
-        
+                
         % exponentiate before doing anything: is_log_var is in the order_var order
         %-------------------------------------------------------------------------
         if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
