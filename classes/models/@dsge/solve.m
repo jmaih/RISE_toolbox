@@ -709,7 +709,20 @@ else
 end
 % create functions
 list={'y','g','x','param','def'};
-obj.routines.static=utils.code.code2func(static,list);
+
+% TODO: Link this up with solve_function_mode: explicit, amateur,
+% vectorized, professional
+devectorize=true;
+static=utils.code.code2func(static,list);
+nblks=numel(equations_blocks);
+theBlks=cell(1,nblks);
+for iblk=1:nblks
+    theBlks(iblk)=utils.code.code2vector(static(equations_blocks{iblk}),devectorize);
+end
+OneBlk=utils.code.code2vector(static,devectorize);
+
+obj.routines.static=struct('one_block',OneBlk{1},'separate_blocks',{theBlks});
+
 obj.routines.shadow_steady_state_auxiliary_eqtns=struct('code',cell2mat(sssae(:)'),...
     'argins',{list},...
     'argouts',{{'y'}});
