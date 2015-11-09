@@ -17,7 +17,7 @@ function func=code2func(code,argins)
 % Examples
 % ---------
 %
-% See also: 
+% See also: UTILS.CODE.CODE2VECTOR
 
 % writes a cell array of strings into a structure with a field containing
 % functions, a field with information about the size of the matrix to be
