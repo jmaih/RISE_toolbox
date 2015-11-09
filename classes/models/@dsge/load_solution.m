@@ -113,7 +113,6 @@ end
         else
             mu=zeros(k_minus_constant,1);
         end
-        % old_steady_state=steady_state;
         steady_state{1}=mu;
         
         % Get rotation

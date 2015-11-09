@@ -62,6 +62,7 @@ classdef dsge < rise_generic
     % solution -   model solution including steady state, definitions, etc.
     % filtering -   structure holding predicted, updated and smoothed series
     properties (Hidden = true)
+        old_solution
     end
     properties (SetAccess = private, Hidden = true)
         auxiliary_variables % variables for which the user does not need to solve for the steady state
@@ -91,7 +92,6 @@ classdef dsge < rise_generic
         occurrence
         steady_state_blocks
         steady_state_file_2_model_communication
-        old_steady_state
         % steady state model characteristics
         %------------------------------------
         is_imposed_steady_state=false

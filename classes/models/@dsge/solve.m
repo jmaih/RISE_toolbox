@@ -137,6 +137,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - **solve_bgp_shift** [numeric|{5}]: shift/lead of the static model for
 % solving the balanced growth path.
 %
+% - **solve_reuse_solution** [false|{true}]: re-use previous solution as
+% initial conditions
+%
 % Outputs
 % --------
 %
@@ -208,7 +211,8 @@ if isempty(obj)
         'solve_automatic_differentiator',@aplanar_.diff,...
         'solve_higher_order_solver','dsge_solver_h',...
         'solve_occbin',[],...
-        'solve_bgp_shift',5);
+        'solve_bgp_shift',5,...
+        'solve_reuse_solution',true);
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
@@ -527,6 +531,16 @@ end
     function retcode=solve_zeroth_order()
         retcode=0;
         if resolve_it
+            % This may take a lot of space in large models or higher-order
+            % approximations
+            %--------------------------------------------------------------
+            if ~isempty(obj.solution) && obj.options.solve_reuse_solution
+                obj.old_solution=obj.solution;
+            else
+                % make sure the old solution is truly empty
+                obj.old_solution=[];
+            end
+            
             if isempty(obj.solution)||~obj.estimation_under_way
                 obj.solution=struct();%dsge.initialize_solution_or_structure('solution',h);
                 obj.solution.H=cell(1,h);
