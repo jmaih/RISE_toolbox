@@ -91,6 +91,7 @@ classdef dsge < rise_generic
         occurrence
         steady_state_blocks
         steady_state_file_2_model_communication
+        old_steady_state
         % steady state model characteristics
         %------------------------------------
         is_imposed_steady_state=false
