@@ -125,10 +125,8 @@ end
                                     static.is_imposed_steady_state=true;
                                 elseif strcmp(tokk,'unique') && strcmp(block_name,'steady_state_model')
                                     static.is_unique_steady_state=true;
-                                elseif strcmp(tokk,'initial_guess') && strcmp(block_name,'steady_state_model')
-                                    static.is_initial_guess_steady_state=true;
                                 elseif strcmp(tokk,'loop') && strcmp(block_name,'steady_state_model')
-                                    static.is_loop=true;
+                                    static.is_loop_steady_state=true;
                                 else
                                     error([mfilename,':: unknown attribute ''',tokk,''' in file ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                                 end

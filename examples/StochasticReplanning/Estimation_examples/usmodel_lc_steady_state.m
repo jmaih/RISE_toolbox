@@ -52,7 +52,7 @@ if nargin==1
     y={'dy','dc','dinve','dw','pinfobs','robs','labobs'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',false,'imposed',true,'initial_guess',false);
+    newp=struct('unique',false,'imposed',true);
 else
     % if some parameters are computed in the steady state, they have to be
     % returned in a structure or in a cell with two columns

@@ -52,7 +52,7 @@ if nargin==1
     y={'dy','dc','dinve','dw','pinfobs','robs','labobs'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',false,'imposed',true,'initial_guess',false);
+    newp=struct('unique',false,'imposed',true);
 else
     % no parameter is computed in the steady state file, return an empty
     % structure

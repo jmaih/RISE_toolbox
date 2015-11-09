@@ -57,7 +57,7 @@ if nargin==1
         'G_F','G_H','M_F','M_H','V_F','V_H','V_HF','Z_F','Z_H','Z_HF'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',true,'initial_guess',false);
+    newp=struct('unique',true,'imposed',true);
     % initialize the persistent variable at first call
     %--------------------------------------------------
     yss=[];

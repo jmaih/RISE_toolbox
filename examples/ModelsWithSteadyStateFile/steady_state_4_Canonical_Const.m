@@ -51,7 +51,7 @@ if nargin==1
     y={'DPQ_P_NW','Y','ZGDP','ZI','ZPAI','ZY','D_GDP_NW','I','PAI','R','RN3M_NW'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',false,'imposed',true,'initial_guess',false);
+    newp=struct('unique',false,'imposed',true);
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------

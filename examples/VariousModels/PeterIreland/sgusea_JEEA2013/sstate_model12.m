@@ -67,7 +67,7 @@ if nargin==1
     yss=[];
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',true,'initial_guess',false);
+    newp=struct('unique',true,'imposed',true);
 else
     if isempty(yss)
         newp_=struct();

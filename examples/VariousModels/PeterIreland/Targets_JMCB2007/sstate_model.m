@@ -50,7 +50,7 @@ if nargin==1
         'LAMBDA','Q','X','R','RRPAI','E'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',true,'initial_guess',false);
+    newp=struct('unique',true,'imposed',true);
 else
     % no parameter to update
     %-----------------------

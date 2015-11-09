@@ -129,7 +129,7 @@ dictionary=orderfields(dictionary);
         % steady state attributes/properties
         dictionary.is_imposed_steady_state=static.is_imposed_steady_state;
         dictionary.is_unique_steady_state=static.is_unique_steady_state;
-        dictionary.is_initial_guess_steady_state=static.is_initial_guess_steady_state;
+        dictionary.is_loop_steady_state=static.is_loop_steady_state;
     end
 
     function cleanup_definitions()

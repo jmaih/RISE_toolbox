@@ -52,7 +52,7 @@ if nargin==1
         'H','C','LAMBDA_C','LAMBDA_I','XI_C','XI_I'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',true,'initial_guess',false);
+    newp=struct('unique',true,'imposed',true);
 else
     % parameters to push
     %------------------

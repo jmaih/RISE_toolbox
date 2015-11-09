@@ -57,7 +57,7 @@ if nargin==1
         'K','I','H','W','D','N','LC','LI','LM','LPI','LR'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',true,'initial_guess',false);
+    newp=struct('unique',true,'imposed',true);
 else
     % no parameters to update
     %-------------------------
