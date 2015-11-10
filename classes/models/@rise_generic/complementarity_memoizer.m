@@ -58,8 +58,6 @@ if hc && ~(simul_honor_constraints_through_switch||...
     
 end
 
-clear obj
-
 sep_cf=[];
 
 cf=[];
