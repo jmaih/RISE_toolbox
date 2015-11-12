@@ -1,4 +1,4 @@
-function T0=msre_initial_guess(A0,dpb_minus,dbf_plus,solve_initialization)
+function T0=msre_initial_guess(A0,dpb_minus,dbf_plus,solve_initialization,old_T0)
 % H1 line
 %
 % Syntax
@@ -27,6 +27,13 @@ n=size(A0{1},1);
 h=numel(A0);
 npb=size(dpb_minus{1},2);
 T0=zeros(n,npb,h);
+if ~isempty(old_T0)
+    for ireg=1:h
+        T0(:,:,ireg)=old_T0{ireg}(:,1:npb);
+    end
+    return
+end
+
 switch solve_initialization
     case {'zeros'}
     case {'backward'}

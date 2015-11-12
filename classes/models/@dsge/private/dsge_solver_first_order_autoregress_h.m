@@ -1,6 +1,6 @@
 function [Tz_pb,eigval,retcode,options]=...
     dsge_solver_first_order_autoregress_h(dbf_plus,ds_0,dp_0,db_0,df_0,...
-    dpb_minus,Q,siz,pos,options)
+    dpb_minus,Q,siz,pos,options,old_Tz)
 
 % options
 %--------
@@ -73,19 +73,24 @@ if isempty(options.solver)
 end
 
 T0=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,...
-    options.solve_initialization);
+    options.solve_initialization,old_Tz);
+
+is_has_solution=~isempty(old_Tz);
+
+if is_has_solution
+    Tz_pb=T0;
+end
 
 model_class=isempty(pb_cols_adjusted)+2*isempty(bf_cols_adjusted);
 
 retcode=0;
 eigval=[];
 switch model_class
-    case 1 % forward-looking models
-        Tz_pb=0*T0;
+    case {1,3} % forward-looking or static models
+        Tz_pb=if_then_else(is_has_solution,T0,0*T0);
     case 2 % backward-looking models
-        Tz_pb=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,'backward');
-    case 3 % static models
-        Tz_pb=0*T0;
+        Tz_pb=if_then_else(is_has_solution,T0,...
+            dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,'backward'));
     case 0 % hybrid models
         kron_method=strncmpi(options.solver,'mnk',3);
         
