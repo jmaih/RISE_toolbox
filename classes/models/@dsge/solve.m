@@ -535,7 +535,14 @@ end
             % approximations
             %--------------------------------------------------------------
             if ~isempty(obj.solution) && obj.options.solve_reuse_solution
-                obj.old_solution=obj.solution;
+                main_fields={'ss','bgp','Tz'};
+                allfields=fieldnames(obj.solution);
+                bad_fields=allfields-main_fields;
+                obj.old_solution=rmfield(obj.solution,bad_fields);
+                ov=obj.order_var;
+                for ireg_=1:h
+                    obj.old_solution.Tz{ireg_}=obj.old_solution.Tz{ireg_}(ov,:);
+                end
             else
                 % make sure the old solution is truly empty
                 obj.old_solution=[];
@@ -552,6 +559,11 @@ end
             % 2- put most of those things are sub-functions or nested
             % functions.
             [obj,structural_matrices,retcode]=compute_steady_state(obj);
+            
+            % put a copy of the old solution into the structural matrices
+            %-------------------------------------------------------------
+            structural_matrices.old_solution=obj.old_solution;
+            
             if ~retcode
                 % measurement errors
                 %-------------------
