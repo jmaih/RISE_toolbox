@@ -172,20 +172,22 @@ end
             icdf=gaminv(u,a,1/b);
         end
     end
+
+    function d=draws(a,b,n,c,d)
+        if nargin<5
+            d=1;
+            if nargin<4
+                c=0;
+                if nargin<3
+                    n=numel(b);
+                end
+            end
+        end
+        d=inverse_cdf(rand(n,1),a,b,c,d);
+    end
+
 end
 
-function d=draws(a,b,n,c,d)
-if nargin<5
-    d=1;
-    if nargin<4
-        c=0;
-        if nargin<3
-            n=numel(b);
-        end
-    end
-end
-d=inverse_cdf(rand(n,1),a,b,c,d);
-end
 
 function [violation,space]=hyperparameters(hyper)
 % a>0, b>0
