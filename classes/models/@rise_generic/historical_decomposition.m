@@ -96,6 +96,8 @@ for ireg=1:reg_nbr
     R{ireg}=reshape(full(tmp(:,obj.locations.after_solve.z.e_0(1):end)),...
         [endo_nbr,exo_nbr,horizon]);
     Tsig{ireg}=tmp(:,obj.locations.after_solve.z.sig);
+    % add the growth rate directly
+    Tsig{ireg}=real(Tsig{ireg})+imag(Tsig{ireg});
 end
 
 [smoothed_variables,smoothed_shocks,dn]=load_smooth();

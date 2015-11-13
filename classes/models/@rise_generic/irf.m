@@ -209,9 +209,17 @@ myirfs=format_irf_output(myirfs);
         %-------------------
                    
         girf=solve_order>1||(solve_order==1 && h>1 && strcmp(irf_type,'girf'));
+        
         if ~girf
+            
             irf_draws=1;
+            
+            % always remove the sigma in the linear case without girfs
+            %-----------------------------------------------------------
+            obj.options.simul_sig=0;
+            
         end
+        
         irf_shock_uncertainty=irf_draws>1;
         
         obj.options.simul_shock_uncertainty=irf_shock_uncertainty;

@@ -148,6 +148,7 @@ end
             end
         end
         max_pen=0;
+        retcode=0;
         if ~is_processed
             % general restrictions are sometimes infeasible. Rather than
             % imposing a barrier that will be difficult to cross if the initial
