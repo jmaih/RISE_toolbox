@@ -49,9 +49,9 @@ if ~isempty(new_options)
         loc=find(strcmpi(fields{ii},default_fields));
         if ~isempty(loc)
             value=new_options.(fields{ii});
-            if ~isempty(value)
-                fresh_options.(default_fields{loc})=new_options.(fields{ii});
-            end
+%             if ~isempty(value)
+                fresh_options.(default_fields{loc})=value;
+%             end
         else
             missing(ii)=true;
         end
