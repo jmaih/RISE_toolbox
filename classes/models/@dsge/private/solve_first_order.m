@@ -4,7 +4,12 @@ Q=structural_matrices.transition_matrices.Q;
 
 [dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus]=utils.solve.pull_first_order_partitions(dv,pos.v);
 
-[Tz_pb,eigval,retcode,options]=dsge_solver_first_order_autoregress_h(dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,Q,siz,pos,options);
+old_Tz=[];
+if isfield(structural_matrices.old_solution,'Tz')
+    old_Tz=structural_matrices.old_solution.Tz;
+end
+[Tz_pb,eigval,retcode,options]=dsge_solver_first_order_autoregress_h(dbf_plus,...
+    ds_0,dp_0,db_0,df_0,dpb_minus,Q,siz,pos,options,old_Tz);
 
 Tz=cell(1,siz.h);
 if ~retcode

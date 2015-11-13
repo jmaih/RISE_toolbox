@@ -29,17 +29,25 @@ if obj.is_endogenous_switching_model
     %-------------------------------------------------
     defs=mean([obj.solution.definitions{:}],2);
     Vargs={[],obj.solution.ss{1},mean(M,2),defs,[],[]};%Q{3}={[],obj.solution.ss{1},mean(M,2),[],[],[],[]};
-    Qfunc=memoizer(obj.routines.transition_matrix,Vargs{:});
+    % account for log vars
+    is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+    Qfunc=memoizer(obj.routines.transition_matrix,is_log_var,Vargs{:});
 else
     Qfunc=prepare_transition_routine@rise_generic(obj);
 end
 
 end
 
-function Qfunc=memoizer(routine,varargin)
+function Qfunc=memoizer(routine,is_log_var,varargin)
 Qfunc=@engine;
     function [Q,retcode]=engine(y)
-        [Qall,retcode]=utils.code.evaluate_transition_matrices(routine,y,varargin{:});
+        % re-exponentiate the logvars before computing the transition probs
+        %------------------------------------------------------------------
+        if any(is_log_var)
+            y(is_log_var)=exp(y(is_log_var));
+        end
+        [Qall,retcode]=utils.code.evaluate_transition_matrices(routine,y,...
+            varargin{:});
         Q=Qall.Q;
     end
 end

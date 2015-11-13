@@ -78,6 +78,10 @@ ub=[obj.estimation.priors.upper_bound]';
 x00=obj.estimation.posterior_maximization.mode;
 vcov=obj.estimation.posterior_maximization.vcov;
 
+% never allow violations
+%------------------------
+obj.options.estim_barrier=true;
+
 % transform estimates
 %---------------------
 [obj,x0,lb,ub,vcov]=transform_parameters(obj,x00,lb,ub,vcov);

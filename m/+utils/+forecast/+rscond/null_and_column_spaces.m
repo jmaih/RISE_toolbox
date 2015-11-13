@@ -43,9 +43,14 @@ R=full(R);
 
 [U,S,V]=svd(R);
 
-dS=diag(S);
-
-if ~isempty(dS) && dS(end)<sqrt(eps)
+% this can be treacherous if q==1
+if q>1
+    dS=diag(S);
+    failed= ~isempty(dS) && dS(end)<sqrt(eps);
+else
+    failed=~any(R);
+end
+if failed
     % Avoid calling SVD twice by computing the rank first
     %-----------------------------------------------------
     disp([mfilename,':: Restrictions are not independent or they are not ',...

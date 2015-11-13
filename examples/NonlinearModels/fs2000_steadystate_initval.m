@@ -69,7 +69,7 @@ if nargin==1
     ss=tmp(:,1);
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',false,'initial_guess',true);
+    newp=struct('unique',true,'imposed',false);
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------

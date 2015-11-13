@@ -35,8 +35,6 @@ function dictionary=parse(FileName,varargin)
 %   the rise file. In case of a cell, the cell should be a k x 2 cell,
 %   where the first column collects the conditional parsing names and the
 %   second column the values.
-%   - **stationary_model** [{empty}|true|false]: decides whether the model
-%   is stationary in which case, the Balance growth path is not computed.
 %
 % Outputs
 % --------
@@ -63,8 +61,7 @@ DefaultOptions=...
     'max_deriv_order',2,'definitions_inserted',false,...
     'parse_debug',false,...
     'add_welfare',false,...
-    'parameter_differentiation',false,...
-    'stationary_model',[]);
+    'parameter_differentiation',false);
 DefaultOptions=utils.miscellaneous.mergestructures(DefaultOptions,...
     parser.preparse());
 if nargin<1
@@ -94,8 +91,7 @@ dictionary.definitions_inserted=DefaultOptions.definitions_inserted;
 dictionary.parse_debug=DefaultOptions.parse_debug;
 dictionary.add_welfare=DefaultOptions.add_welfare;
 parameter_differentiation=DefaultOptions.parameter_differentiation;
-dictionary.is_stationary_model=DefaultOptions.stationary_model;
-is_bgp_model=isempty(dictionary.is_stationary_model)||~dictionary.is_stationary_model;
+
 %% set various blocks
 
 % first output: the dictionary.filename
@@ -161,7 +157,14 @@ dictionary.chain_names={dictionary.markov_chains.name};
 
 %% turn all log_vars into exp(log_vars) both in the model block
 % and update the names of the variables in the process
-[dictionary,blocks,old_endo_names]=parser.logvars2logvars(dictionary,blocks);
+
+old_endo_names={dictionary.endogenous.name};
+logvarnames={dictionary.log_vars.name};
+for ivar=1:numel(logvarnames)
+    loc=strcmp(logvarnames{ivar},{dictionary.endogenous.name});
+    dictionary.endogenous(loc).is_log_var=true;
+end
+% % % [dictionary,blocks,old_endo_names]=parser.logvars2logvars(dictionary,blocks);
 
 %% Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
@@ -195,14 +198,13 @@ dictionary.endogenous_list={dictionary.endogenous.name};
 % at the same time, construct the incidence and occurrence matrices
 orig_endo_nbr=numel(dictionary.endogenous);
 
-[equation_type,Occurrence]=equation_types_and_variables_occurrences();
-
+[equation_type,occurrence]=equation_types_and_variables_occurrences();
 
 %% Steady state Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
 % the steady state model block
-[static,SteadyStateModel_block,auxiliary_steady_state_equations,dictionary,blocks]=...
-            parser.parse_steady_state(dictionary,blocks);
+[static,SteadyStateModel_block,auxiliary_steady_state_equations,...
+    dictionary,blocks]=parser.parse_steady_state(dictionary,blocks);
 %% exogenous definitions block
 
 [dictionary,blocks]=parser.parse_exogenous_definitions(dictionary,blocks);
@@ -250,62 +252,64 @@ do_incidence_matrix();
 
 %% models in shadow/technical/tactical form
 
-overall_max_lead_lag=max([dictionary.endogenous.max_lead]);
-overall_max_lead_lag=max([abs([dictionary.endogenous.max_lag]),overall_max_lead_lag]);
-
 [dictionary,...
     dynamic,...
     stat,...
     defs,...
     shadow_tvp,...
     shadow_complementarity]=parser.shadowize(dictionary,AllModels,...
-    equation_type,overall_max_lead_lag);
+    equation_type);
 orig_definitions=defs.original;
 shadow_definitions=defs.shadow;
+
+%% steady state and static models
 static=utils.miscellaneous.mergestructures(static,stat);
+
+static.shadow_steady_state_model=parser.substitute_definitions(...
+    static.shadow_steady_state_model,shadow_definitions);
 
 if dictionary.is_optimal_policy_model
     dictionary.planner_system.static_mult_equations{1}=...
-        static.steady_state_shadow_model(ss_eq_nbr+aux_ss_eq_nbr+1:end);
+        static.shadow_steady_state_model(ss_eq_nbr+aux_ss_eq_nbr+1:end);
 end
 
-static.steady_state_auxiliary_eqtns=...
-    static.steady_state_shadow_model(ss_eq_nbr+(1:aux_ss_eq_nbr));
+static.shadow_steady_state_auxiliary_eqtns=...
+    static.shadow_steady_state_model(ss_eq_nbr+(1:aux_ss_eq_nbr));
 
-static.steady_state_shadow_model(ss_eq_nbr+1:end)=[];
+static.shadow_steady_state_model(ss_eq_nbr+1:end)=[];
 
 dictionary.is_param_changed_in_ssmodel=parser.parameters_changed_in_ssmodel(...
-    static.steady_state_shadow_model,'param',numel(dictionary.parameters));
+    static.shadow_steady_state_model,'param',numel(dictionary.parameters));
 
-static.steady_state_shadow_model=strrep(static.steady_state_shadow_model,...
+static.shadow_steady_state_model=strrep(static.shadow_steady_state_model,...
     'x1_=','[x1_,fval,exitflag]=');
-static.steady_state_shadow_model=strrep(static.steady_state_shadow_model,...
+static.shadow_steady_state_model=strrep(static.shadow_steady_state_model,...
     ',x0_,',',x0_,options,');
-old_shadow_steady_state_model=static.steady_state_shadow_model;
-static.steady_state_shadow_model=cell(0,1);
+old_shadow_steady_state_model=static.shadow_steady_state_model;
+static.shadow_steady_state_model=cell(0,1);
 fsolve_nbr=0;
 for ii=1:numel(old_shadow_steady_state_model)
     eq_i=old_shadow_steady_state_model{ii};
     if ~isempty(strfind(eq_i,'argzero'))
         eq_i=strrep(eq_i,'argzero','fsolve');
-        static.steady_state_shadow_model=[static.steady_state_shadow_model;{eq_i}];
+        static.shadow_steady_state_model=[static.shadow_steady_state_model;{eq_i}];
         eq_i={'retcode=1-(exitflag==1);'};
         if ii<numel(old_shadow_steady_state_model)
             eq_i=[eq_i;{'if ~retcode,'}]; %#ok<*AGROW>
             fsolve_nbr=fsolve_nbr+1;
         end
-        static.steady_state_shadow_model=[static.steady_state_shadow_model;eq_i];
+        static.shadow_steady_state_model=[static.shadow_steady_state_model;eq_i];
     else
-        static.steady_state_shadow_model=[static.steady_state_shadow_model;{eq_i}];
+        static.shadow_steady_state_model=[static.shadow_steady_state_model;{eq_i}];
     end
 end
 for ii=1:fsolve_nbr
-    static.steady_state_shadow_model=[static.steady_state_shadow_model;{'end;'}];
+    static.shadow_steady_state_model=[static.shadow_steady_state_model;{'end;'}];
 end
 clear old_shadow_steady_state_model
 % now add the prelude
-if ~isempty(static.steady_state_shadow_model)
-    static.steady_state_shadow_model=[{['if ~exist(''y'',''var''),y=zeros(',sprintf('%0.0f',orig_endo_nbr),',1); end;']};static.steady_state_shadow_model];
+if ~isempty(static.shadow_steady_state_model)
+    static.shadow_steady_state_model=[{['if ~exist(''y'',''var''),y=zeros(',sprintf('%0.0f',orig_endo_nbr),',1); end;']};static.shadow_steady_state_model];
 end
 %% replace the list of definition names with definition equations
 dictionary.definitions=struct('name',dictionary.definitions(:),...
@@ -326,16 +330,10 @@ routines.definitions=utils.code.code2func(...
 % steady state model routine (cannot be written as a function)
 %--------------------------------------------------------------
 routines.steady_state_model=parser.substitute_definitions(...
-    static.steady_state_shadow_model,shadow_definitions);
+    static.shadow_steady_state_model,shadow_definitions);
 routines.steady_state_model=struct('code',cell2mat(routines.steady_state_model(:)'),...
     'argins',{parser.input_list},...
     'argouts',{{'y','param'}});
-
-routines.steady_state_auxiliary_eqtns=parser.substitute_definitions(...
-    static.steady_state_auxiliary_eqtns,shadow_definitions);
-routines.steady_state_auxiliary_eqtns=struct('code',cell2mat(routines.steady_state_auxiliary_eqtns(:)'),...
-    'argins',{parser.input_list},...
-    'argouts',{{'y'}});
 
 %% load transition matrices and transform markov chains
 % the Trans mat will go into the computation of derivatives
@@ -411,36 +409,20 @@ end
 %----------------------
 routines.symbolic.probs_times_dynamic={original_funcs,wrt};
 
+% The so-called static model may also have some growth in which case the
+% relevant thing to differentiate is not the static model...
 % static model wrt y
 %--------------------
-static_incidence=zeros(orig_endo_nbr,3);
-static_incidence(:,2)=1:orig_endo_nbr;
-wrt=dynamic_differentiation_list(static_incidence,0);
+% static_incidence=zeros(orig_endo_nbr,3);
+% static_incidence(:,2)=1:orig_endo_nbr;
+% wrt=dynamic_differentiation_list(static_incidence,0);
 
-routines.static=utils.code.code2func(static.shadow_model);
-[routines.static_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
-    differentiate_system(routines.static,dictionary.input_list,wrt,1);
-routines.symbolic.static={original_funcs,wrt};
-disp([mfilename,':: 1st-order derivatives of static model wrt y(0). ',...
-    sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
-
-% balanced growth path model wrt y
-%---------------------------------
-bgp_incidence=zeros(2*orig_endo_nbr,3);
-bgp_incidence(:,2)=1:2*orig_endo_nbr;
-wrt=dynamic_differentiation_list(bgp_incidence,0);
-
-if is_bgp_model
-    routines.static_bgp=utils.code.code2func(static.shadow_BGP_model);
-    [routines.static_bgp_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
-        differentiate_system(...
-        routines.static_bgp,...
-        dictionary.input_list,wrt,1);
-    routines.symbolic.static_bgp={original_funcs,wrt};
-    disp([mfilename,':: 1st-order derivatives of static BGP model wrt y(0). ',...
-        sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
-end
-
+% [routines.static_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
+%     differentiate_system(routines.static,dictionary.input_list,wrt,1);
+% routines.symbolic.static={original_funcs,wrt};
+% disp([mfilename,':: 1st-order derivatives of static model wrt y(0). ',...
+%     sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+% 
 % dynamic model wrt param
 %------------------------
 if parameter_differentiation
@@ -532,6 +514,8 @@ clear unsorted_endogenous
 %% clean up
 dictionary.routines=routines;
 
+dictionary.occurrence=occurrence;
+
 dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,logical_incidence);
 
     function do_incidence_matrix()
@@ -539,7 +523,7 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         before_solve=zeros(3,orig_endo_nbr);
         for iii=1:3
             for jj=1:orig_endo_nbr
-                if any(Occurrence(:,jj,iii))
+                if any(occurrence(:,jj,iii))
                     before_solve(iii,jj)=1;
                 end
             end
@@ -557,9 +541,9 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         dictionary.lead_lag_incidence.before_solve=before_solve;
     end
 
-    function [equation_type,Occurrence]=equation_types_and_variables_occurrences()
+    function [equation_type,occurrence]=equation_types_and_variables_occurrences()
         number_of_equations=size(Model_block,1);
-        Occurrence=false(number_of_equations,orig_endo_nbr,3);
+        occurrence=false(number_of_equations,orig_endo_nbr,3);
         equation_type=ones(number_of_equations,1);
         for iii=1:number_of_equations
             eq_i_= Model_block{iii,1};
@@ -579,12 +563,19 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
                     elseif equation_type(iii)==3 && ismember(lag_or_lead,[3,1])
                         error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to describe endogenous switching cannot contain leads or lags'])
                     end
-                    Occurrence(iii,var_loc,lag_or_lead)=true;
+                    occurrence(iii,var_loc,lag_or_lead)=true;
                 end
             end
         end
         % keep only the structural equations
-        Occurrence=Occurrence(equation_type==1,:,:);
+        occurrence=occurrence(equation_type==1,:,:);
+        neqtns=size(occurrence,1);
+        nvars=size(occurrence,2);
+        if neqtns>nvars
+            error(['more equations (',int2str(neqtns),') than variables(',int2str(nvars),')'])
+        elseif neqtns<nvars
+            error(['more variables (',int2str(nvars),') than equations(',int2str(neqtns),')'])
+        end
     end
 
     function do_parameter_restrictions()

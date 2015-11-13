@@ -113,7 +113,6 @@ end
         else
             mu=zeros(k_minus_constant,1);
         end
-        % old_steady_state=steady_state;
         steady_state{1}=mu;
         
         % Get rotation
@@ -167,15 +166,29 @@ end
 
     function order_var_solution()
         zzz=repmat('z',1,order);
+        is_dev=obj.options.simul_bgp_deviation;
+        log_vars=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+        target=numel(state_vars_location)+1;
         for io=1:order
             for ireg=1:regimes_number
-                if ~is_alphabetical_order && io==1
-                    % do this only if the alphabetical order is not needed
-                    steady_state{ireg}=steady_state{ireg}(ov);
+                if io==1
+                    % Take log of log-var variables to be consistent with
+                    % the solution
+                    %-----------------------------------------------------
+                    steady_state{ireg}(log_vars)=...
+                        log(steady_state{ireg}(log_vars));
+                    if ~is_alphabetical_order
+                        % do this only if the alphabetical order is not
+                        % needed 
+                        steady_state{ireg}=steady_state{ireg}(ov);
+                    end
                 end
                 % re-order the rows
                 %------------------
                 T{io,ireg}=obj.solution.(['T',zzz(1:io)]){ireg}(ov,:);
+                if is_dev && io==1
+                    T{io,ireg}(:,target)=real(T{io,ireg}(:,target));
+                end
             end
         end
     end

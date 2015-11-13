@@ -1,4 +1,4 @@
-function xout=code2vector(xcell)
+function xout=code2vector(xcell,devect)
 % code2vector - transforms a set of function handles into a single function
 %
 % Syntax
@@ -21,6 +21,8 @@ function xout=code2vector(xcell)
 %       - else it is assumed we have transition matrix, in which case the
 %           output is the same as the input
 %
+% - **devect** [true|{false}]: de-vectorize functions.
+%
 % Outputs
 % --------
 %
@@ -35,12 +37,16 @@ function xout=code2vector(xcell)
 % Examples
 % ---------
 %
-% See also: 
+% See also: UTILS.CODE.CODE2FUNC
 
 
 xout=xcell;
 if isempty(xcell)
     return
+end
+
+if nargin<2
+    devect=false;
 end
 
 if iscell(xcell)
@@ -94,6 +100,9 @@ end
                     error('all elements in xcell should be function handles')
                 end
                 xout{item}=func2str(xcell{item});
+                if devect
+                    xout{item}=devectorize(xout{item});
+                end
                 if isempty(entry_gate)
                     right_parenth=find(xout{item}==')',1,'first');
                     entry_gate=xout{item}(1:right_parenth);
@@ -119,5 +128,12 @@ end
     function [code]=eval_engine()
         % eval is already vectorized...
         code=xcell;
+    end
+
+    function code=devectorize(code)
+        code=strrep(code,',:','');
+        code=strrep(code,'./','/');
+        code=strrep(code,'.^','^');
+        code=strrep(code,'.*','*');
     end
 end

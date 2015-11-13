@@ -15,6 +15,10 @@ function y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order)
 % More About
 % ------------
 %
+% - It is expected that the solution of the first order also contains the
+% exogenous growth rate, which is nonzero for nonstationary models. That
+% component is the imaginary part of the column numel(xloc)+1.
+%
 % Examples
 % ---------
 %
@@ -87,6 +91,13 @@ if ~pruned
     z=stateify(1);
 end
 
+% extract the exogenous constant
+%--------------------------------
+const_pos=numel(xloc)+1;
+Tsig_growth=T{1}(:,const_pos);
+growth=imag(Tsig_growth);
+T{1}(:,const_pos)=real(Tsig_growth);
+
 % add the various orders of approximation
 %----------------------------------------
 ifact=1./cumprod(1:order);
@@ -104,8 +115,10 @@ for iy=1:order
 end
 
 y1.y=y1.y+ss;
+% add growth
+y1.y=y1.y+growth;
 if pruned
-    y1.y_lin=y01;
+    y1.y_lin=y01+growth;
 end
 
     function zkz=mykron(io,zkz)

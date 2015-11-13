@@ -129,8 +129,9 @@ end
         %----------------------------------------
         SIGeta=repmat({eye(stoch_exo_nbr*horizon)},1,h);
         
-        % load solution in order_var form
-        %---------------------------------
+        % load solution in order_var form: the steady state is already
+        % logged where necessary and the Qfunc is also in sync with that
+        %------------------------------------------------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
         endo_nbr=obj.endogenous.number;
         iov(new_order)=1:numel(new_order);
@@ -194,6 +195,9 @@ end
         a0=[];
         if ~retcode
             a0=ss_star;
+            % take the real part in order to avoid mixing up with growth
+            %-------------------------------------------------------------
+            Tsig_star=real(Tsig_star);
             if any(abs(Tsig_star)>1e-7)
                 Ix=eye(endo_nbr);
                 Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;

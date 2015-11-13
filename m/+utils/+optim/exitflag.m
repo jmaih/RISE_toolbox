@@ -33,13 +33,31 @@ function flag=exitflag(flag,x1,fx1,TolFun)
 % See also:
 
 if nargin<4
+    
     TolFun=sqrt(eps);
+    
 end
 
-if ismember(flag,[1:4,-3]) && utils.error.valid(x1)
-    flag=inf;
-    if fx1 <=TolFun
-        flag=1;
-        %         x1=reshape(x1,size(x0));
+if utils.error.valid(x1)
+    
+    if ismember(flag,[1:4,-3])
+        
+        flag=inf;
+        
+        if fx1 <=TolFun
+            
+            flag=1;
+            
+        end
+        
     end
+    
+else
+    
+    flag=inf;
+    
 end
+
+end
+
+

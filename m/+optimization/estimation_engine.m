@@ -24,6 +24,7 @@ opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify
     'MaxFunEvals',inf,...% [ positive scalar ]
     'MaxIter',1000,...%: [ positive scalar ]
     'TolFun',sqrt(eps),...%: [ positive scalar ]
+    'TolX',sqrt(eps),...%: [ positive scalar ]
     'MaxNodes',20,...%: [ positive scalar | {1000*numberOfVariables} ]
     'UseParallel','never',...%: [ always | {never} ]
     'MaxTime',3600);%: [ positive scalar | {7200} ]

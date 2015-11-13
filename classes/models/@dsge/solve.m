@@ -129,6 +129,17 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % Iacoviello(2015). It is then assumed that the transition matrix is
 % diagonal. if not empty, the value entered is the reference regime.
 %
+% - **solve_bgp** [true|{false}]: Solves the model as non-stationary.
+%
+% - **solve_sstate_blocks** [true|{false}]: blockwise solution of the
+% steady state.
+%
+% - **solve_bgp_shift** [numeric|{5}]: shift/lead of the static model for
+% solving the balanced growth path.
+%
+% - **solve_reuse_solution** [false|{true}]: re-use previous solution as
+% initial conditions
+%
 % Outputs
 % --------
 %
@@ -181,7 +192,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 if isempty(obj)
     is_SetupChangeAndResolve=struct(...
         'solve_function_mode','explicit',... %['explicit','disc','vectorized'] see dsge.set
-        'solve_derivatives_type','symbolic'); %['symbolic','numerical','automatic']
+        'solve_derivatives_type','symbolic',... %['symbolic','numerical','automatic']
+        'solve_bgp',false,...
+        'solve_sstate_blocks',false);
     
     is_ResolveOnly=struct('solver',[],...
         'solve_order',1,...
@@ -197,7 +210,9 @@ if isempty(obj)
     others=struct('solve_check_stability',true,...
         'solve_automatic_differentiator',@aplanar_.diff,...
         'solve_higher_order_solver','dsge_solver_h',...
-        'solve_occbin',[]);
+        'solve_occbin',[],...
+        'solve_bgp_shift',5,...
+        'solve_reuse_solution',true);
 
     obj=utils.miscellaneous.mergestructures(is_SetupChangeAndResolve,is_ResolveOnly,...
         optimal_policy_solver_h(obj),others);%
@@ -243,7 +258,7 @@ ys=[];
 ss=[];
 nx=sum(obj.exogenous.number);
 xss=zeros(nx,1);
-[the_leads,the_current,the_lags,indices,nind,endo_nbr]=...
+[the_leads,the_lags,nind,endo_nbr]=...
     create_indices(obj.lead_lag_incidence.before_solve);
 structural_matrices=[];
 
@@ -436,8 +451,12 @@ end
                     if utils.error.valid(G01)
                         % use the derivatives Gi to build dv, dvv, dvvv, ...
                         %---------------------------------------------------
+                        zkz=1;
+                        log_deriv_coefs=structural_matrices.log_deriv_coefs.';
                         for io=1:solve_order
-                            structural_matrices.(['d',xxx(1:io)]){s0,s1}=G01{io};%
+                            zkz=kron(zkz,log_deriv_coefs(s1,:));
+                            structural_matrices.(['d',xxx(1:io)]){s0,s1}=...
+                                bsxfun(@times,G01{io},zkz);%
                         end
                     else
                         retcode=2; % nans in jacobian
@@ -505,13 +524,30 @@ end
         % steady state functions (just for output)
         %-----------------------------------------
         if load_ssfuncs
-            obj.steady_state_funcs=recreate_steady_state_functions(obj);
+            obj=recreate_steady_state_functions(obj);
         end
     end
 
     function retcode=solve_zeroth_order()
         retcode=0;
         if resolve_it
+            % This may take a lot of space in large models or higher-order
+            % approximations
+            %--------------------------------------------------------------
+            if ~isempty(obj.solution) && obj.options.solve_reuse_solution
+                main_fields={'ss','bgp','Tz'};
+                allfields=fieldnames(obj.solution);
+                bad_fields=allfields-main_fields;
+                obj.old_solution=rmfield(obj.solution,bad_fields);
+                ov=obj.order_var;
+                for ireg_=1:h
+                    obj.old_solution.Tz{ireg_}=obj.old_solution.Tz{ireg_}(ov,:);
+                end
+            else
+                % make sure the old solution is truly empty
+                obj.old_solution=[];
+            end
+            
             if isempty(obj.solution)||~obj.estimation_under_way
                 obj.solution=struct();%dsge.initialize_solution_or_structure('solution',h);
                 obj.solution.H=cell(1,h);
@@ -523,6 +559,11 @@ end
             % 2- put most of those things are sub-functions or nested
             % functions.
             [obj,structural_matrices,retcode]=compute_steady_state(obj);
+            
+            % put a copy of the old solution into the structural matrices
+            %-------------------------------------------------------------
+            structural_matrices.old_solution=obj.old_solution;
+            
             if ~retcode
                 % measurement errors
                 %-------------------
@@ -543,34 +584,36 @@ end
         %-----------------------------------------------------------------
         if ~retcode
             ys=zeros(nind,h);
+            % derivatives taken wrt y+|y0|y-|shocks
+            log_deriv_coefs=ones(nind+nx,h);
             ss=zeros(endo_nbr,h);
             def=obj.solution.definitions;
-            for s0=1:h
-                for s1=1:h
-                    if s0==1
-                        ss(:,s1)=obj.solution.ss{s1};
-                        ys(:,s1)=ss(indices,s1);
-                        % y needs to be modified for the variables that have a
-                        % nonzero balanced-growth path
-                        if ~obj.is_stationary_model
-                            if s1==1
-                                [bgp_coefs,change_loc]=balanced_growth_path_powers();
-                            end
-                            ys(change_loc,s1)=ys(change_loc,s1).*obj.solution.bgp{s1}(indices(change_loc)).^bgp_coefs;
-                        end
-                    end
-                end
+            is_log_var=obj.endogenous.is_log_var;
+            
+            % order of differentiation is different from alphabetic order
+            %-------------------------------------------------------------
+            yindex_deriv_order=obj.lead_lag_incidence.before_solve(obj.order_var,:);
+            yindex_deriv_order=nonzeros(yindex_deriv_order(:))';
+            
+            long_is_log_var=is_log_var;
+            long_is_log_var=[long_is_log_var(the_leads),long_is_log_var,long_is_log_var(the_lags)];
+            for s1=1:h
+                ss(:,s1)=obj.solution.ss{s1};
+                bgp=obj.solution.bgp{s1};
+                sscurr=ss(:,s1);
+                sslead=balanced_growth_path_powers(ss(:,s1),1);
+                sslag=balanced_growth_path_powers(ss(:,s1),-1);
+                ys(:,s1)=[sslead(the_leads);sscurr;sslag(the_lags)];
+                tmp=ys(:,s1);
+                tmp(~long_is_log_var)=1;
+                % reorder according to the differentiation order
+                log_deriv_coefs(1:nind,s1)=tmp(yindex_deriv_order);
             end
+            structural_matrices.log_deriv_coefs=log_deriv_coefs;
         end
-        function [bgp_coefs,change_loc]=balanced_growth_path_powers()
-            bgp_1=obj.solution.bgp{s1};
-            bgp_vars=find(abs(bgp_1)>1e-3); % very low threshold...
-            c_leads=zeros(size(the_leads)); c_leads(ismember(the_leads,bgp_vars))=1;
-            c_current=zeros(size(the_current)); %c_current(ismember(the_current,bgp_vars))=0;
-            c_lags=zeros(size(the_lags)); c_lags(ismember(the_lags,bgp_vars))=-1;
-            cc=[c_leads(:);c_current(:);c_lags(:)];
-            change_loc=cc~=0;
-            bgp_coefs=cc(change_loc);
+        function [ss]=balanced_growth_path_powers(ss,c)
+            ss(is_log_var)=ss(is_log_var).*bgp(is_log_var).^c;
+            ss(~is_log_var)=ss(~is_log_var)+c*bgp(~is_log_var);
         end
     end
 
@@ -644,7 +687,7 @@ end
     end
 end
 
-function [the_leads,the_current,the_lags,indices,nind,endo_nbr]=create_indices(lead_lag_incidence)
+function [the_leads,the_lags,nind,endo_nbr]=create_indices(lead_lag_incidence)
 endo_nbr=size(lead_lag_incidence,1);
 the_leads=find(lead_lag_incidence(:,1)>0);
 the_current=(1:endo_nbr)';
@@ -653,52 +696,81 @@ indices=[the_leads;the_current;the_lags];
 nind=numel(indices);
 end
 
-function ssfuncs=recreate_steady_state_functions(obj)
-% initialize this here
-ssfuncs=struct();
+function obj=recreate_steady_state_functions(obj)
 
-is_potentially_bgp=isempty(obj.is_stationary_model)||~obj.is_stationary_model;
+% the steady state is always ordered alphabetically
+%---------------------------------------------------
+ss_occurrence=sum(obj.occurrence,3);
+ss_occurrence(ss_occurrence>0)=1;
+[equations_blocks,variables_blocks]=parser.block_triangularize(ss_occurrence,...
+    obj.options.solve_sstate_blocks);
+obj.steady_state_blocks=struct('equations',{equations_blocks},...
+    'variables',{variables_blocks});
 
-symbolic_derivatives=strcmp(obj.options.solve_derivatives_type,'symbolic');
-ssfuncs.static=obj.routines.static;
-if is_potentially_bgp
-    ssfuncs.static_bgp=obj.routines.static_bgp;
-end
-if symbolic_derivatives
-    ssfuncs.jac_static=obj.routines.static_derivatives;
-    if is_potentially_bgp
-        ssfuncs.jac_bgp=obj.routines.static_bgp_derivatives;
-    end
-else
-    solve_order=1;
-    ssfuncs.jac_static=compute_automatic_derivatives(...
-        obj.routines.symbolic.static,solve_order,...
-        obj.options.solve_automatic_differentiator);
-    if is_potentially_bgp
-        ssfuncs.jac_bgp=compute_automatic_derivatives(...
-            obj.routines.symbolic.static_bgp,solve_order,...
-            obj.options.solve_automatic_differentiator);
-    end
-end
-end
-
-function func=compute_automatic_derivatives(derivatives,solve_order,...
-    differentiator)
-
-func=@engine;
-
-    function [D01,retcode]=engine(varargin)
-        D01=utils.code.evaluate_automatic_derivatives(derivatives,...
-            solve_order,differentiator,varargin{:});
-        good=all(cellfun(@(x)utils.error.valid(x),D01));
-        retcode=0;
-        D01=D01{1};
-        if ~good
-            retcode=2; % nans in jacobian
+static=obj.equations.shadow_static;
+sssae=obj.equations.shadow_steady_state_auxiliary_eqtns;
+repl_log=@replace_log;
+repl_lin=@replace_lin;
+if obj.options.solve_bgp
+    is_log_var=obj.endogenous.is_log_var;
+    endo_nbr=numel(is_log_var);
+    % replace the time subscripts
+    for ivar=1:endo_nbr
+        digit= sprintf('%g',ivar);
+        expr=['y\((',digit,')\)',...
+            '\{(\+|\-)?(\d+)\}'];
+        if is_log_var(ivar)
+            static=regexprep(static,expr,'${repl_log($1,$2,$3)}');
+            sssae=regexprep(sssae,expr,'${repl_log($1,$2,$3)}');
+        else
+            static=regexprep(static,expr,'${repl_lin($1,$2,$3)}');
+            sssae=regexprep(sssae,expr,'${repl_lin($1,$2,$3)}');
         end
     end
+else
+    % remove the time subscripts
+    expr='(\{[\+\-]?\d+\})';
+    static=regexprep(static,expr,'');
+    sssae=regexprep(sssae,expr,'');
 end
+% create functions
+list={'y','g','x','param','def'};
 
+% TODO: Link this up with solve_function_mode: explicit, amateur,
+% vectorized, professional
+devectorize=true;
+static=utils.code.code2func(static,list);
+nblks=numel(equations_blocks);
+theBlks=cell(1,nblks);
+for iblk=1:nblks
+    theBlks(iblk)=utils.code.code2vector(static(equations_blocks{iblk}),devectorize);
+end
+OneBlk=utils.code.code2vector(static,devectorize);
+
+obj.routines.static=struct('one_block',OneBlk{1},'separate_blocks',{theBlks});
+
+obj.routines.shadow_steady_state_auxiliary_eqtns=struct('code',cell2mat(sssae(:)'),...
+    'argins',{list},...
+    'argouts',{{'y'}});
+
+    function out=replace_lin(vp,sign_,digit)
+        if isempty(sign_)||strcmp(sign_,'+')
+            out=['(y(',vp,')+',digit,'*g(',vp,'))'];
+        else
+            out=['(y(',vp,')-',digit,'*g(',vp,'))'];
+        end
+    end
+
+    function out=replace_log(vp,sign_,digit)
+        if isempty(sign_)||strcmp(sign_,'+')
+            out=['(y(',vp,')*g(',vp,')^',digit,')'];
+        else
+%             out=['(y(',vp,')*g(',vp,')^(-',digit,'))'];
+            out=['(y(',vp,')/g(',vp,')^',digit,')'];
+        end
+    end
+
+end
 
 function do_it=do_occbin(occbin,nregs)
 do_it=@(x)true;

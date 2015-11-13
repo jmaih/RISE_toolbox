@@ -80,14 +80,6 @@ zpb=obj.locations.after_solve.z.pb;
 %================= trimming preparation=================%
 for i_state=1:h_red
     T_red{i_state}=T_red{i_state}(ov(pb),zpb);
-    % target the variables that are known to be unstable a priori
-    if ~obj.is_stationary_model
-        if i_state==1
-            balanced_growth=abs(full(obj.solution.bgp{1}))>1e-4;
-            balanced_growth=balanced_growth(ov(pb));
-        end
-        T_red{i_state}=T_red{i_state}(~balanced_growth,~balanced_growth);
-    end
 end
 %=======================================================%
 % update n

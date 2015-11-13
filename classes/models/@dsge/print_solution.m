@@ -192,8 +192,8 @@ end
 
     function data=build_printing_array(regime_index)
         bigtime=[
-            obj.solution.ss{regime_index}(ids,:)'
-            obj.solution.bgp{regime_index}(ids,:)'
+            obj.solution.ss{regime_index}(ids,:).'
+            obj.solution.bgp{regime_index}(ids,:).'
             ];
         if regime_index==1
             orders=sort(orders);
@@ -220,7 +220,7 @@ end
         for io=1:orders(end)
             Tzname=[Tzname,'z'];
             if any(io==orders)
-                Tz=obj.solution.(Tzname){regime_index}(ids,:)';
+                Tz=obj.solution.(Tzname){regime_index}(ids,:).';
                 bigtime=[
                     bigtime
                     ifact(io)*Tz];

@@ -17,6 +17,7 @@ endo_nbr=numel(endog);
 new_auxvars=cell(1,100);
 for ivar=1:endo_nbr
     this=endog(ivar);
+    is_log_var=this.is_log_var;
     excess_lags=abs(this.max_lag);
     excess_leads=abs(this.max_lead);
     if max(excess_leads,excess_lags)>1
@@ -60,7 +61,8 @@ dic.auxiliary_variables.model=[dic.auxiliary_variables.model,...
         end
         for item=1:n-1
             newguy=parser.create_auxiliary_name(vname,seign*item,true);
-            endog=parser.update_variable_lead_lag(endog,newguy,seign,current_name);
+            endog=parser.update_variable_lead_lag(endog,newguy,seign,is_log_var,...
+                current_name);
             newthing=sprintf('%s = %s{%s1};',newguy,oldguy,str);
             oldguy=newguy;
             if item==n-1

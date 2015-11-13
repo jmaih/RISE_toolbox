@@ -73,6 +73,10 @@ function myirfs=irf(obj,varargin)
 %
 % - for nonlinear models, the initial conditions is the ergodic mean
 %
+% - irf automatically enables simul_bgp_deviation. The intuition is clear:
+% if we apply the GIRFs, the growth components will always fall out.
+% Somehow it is a different story with Tz_sig
+%
 % Examples
 % ---------
 %
@@ -126,6 +130,10 @@ myirfs=format_irf_output(myirfs);
             'irf_use_historical_data',obj.options.irf_use_historical_data,...
             'irf_to_time_series',obj.options.irf_to_time_series);
         is_dsge=isa(obj,'dsge');
+        
+        % automatically enable deviations from balanced growth
+        %-----------------------------------------------------
+        obj.options.simul_bgp_deviation=true;
         
         obj.options.simul_periods=irf_periods;
         obj.options.simul_burn=0;
@@ -190,13 +198,10 @@ myirfs=format_irf_output(myirfs);
         if is_dsge
             do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
             solve_order=obj.options.solve_order;
-            % hide future shocks if required
-            %-------------------------------
-            obj=do_not_anticipate_future_shocks(obj);
         end
         % load the order_var solution
         %-----------------------------
-        [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
+        [T,~,~,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
        
         h=obj.markov_chains.regimes_number;
         
@@ -215,18 +220,8 @@ myirfs=format_irf_output(myirfs);
         
         Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
         
-%         if solve_order==1 && ...
-%                 ~obj.options.simul_honor_constraints % first-order solution ||isa(obj,'rfvar')
-%             % kill the steady state and the initial conditions
-%             for ireg=1:h
-%                 steady_state{ireg}=0*steady_state{ireg};
-%             end
-%             Initcond.y.y=0*Initcond.y.y;
-%         end
         y0=Initcond.y;
-%         if ~obj.options.irf_use_historical_data
-%             y0.econd.data=0*y0.econd.data;
-%         end
+
         number_of_threads=h;
         if ~irf_regime_specific||isfield(Initcond,'occbin')
             number_of_threads=1;
@@ -262,6 +257,10 @@ myirfs=format_irf_output(myirfs);
             max_rows=obj.observables.number(1);
             relevant=obj.inv_order_var(obj.observables.state_id);
         end
+        
+        % use the steady state with possibly loglinear variables
+        steady_state=Initcond.log_var_steady_state;
+        
         retcode=0;
         for istate=1:number_of_threads
             if ~retcode
@@ -273,10 +272,21 @@ myirfs=format_irf_output(myirfs);
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end
+        % subtract the initial conditions
+        %---------------------------------
+        Impulse_dsge=Impulse_dsge-y0.y(:,ones(Initcond.nsteps+1,1),...
+            ones(nshocks,1),ones(irf_draws,1),ones(number_of_threads,1));
         
         % set to 0 the terms that are too tiny
+        %-------------------------------------
         Impulse_dsge(abs(Impulse_dsge)<=too_small)=0;
-        
+                
+        % exponentiate before doing anything: is_log_var is in the order_var order
+        %-------------------------------------------------------------------------
+        if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
+            Impulse_dsge(Initcond.is_log_var,:,:,:,:)=exp(Impulse_dsge(Initcond.is_log_var,:,:,:,:));
+        end
+
         % re-order the variables according to the inv_order_var;
         Impulse_dsge=re_order_output_rows(obj,Impulse_dsge);
         % going from variables x time x shocks x irf_draws x regimes

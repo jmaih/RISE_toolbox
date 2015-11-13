@@ -137,6 +137,9 @@ if nargout>1
 end
 
     function x=back_and_forth(draw)
+        if isempty(obj(1).linear_restrictions_data)
+            obj=setup_restrictions(obj);
+        end
         draw=obj(1).linear_restrictions_data.a2tilde_func(draw);
         x=obj(1).linear_restrictions_data.a_func(draw);
     end

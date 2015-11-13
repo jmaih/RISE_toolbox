@@ -69,11 +69,26 @@ end
 
 % one initial condition despite multiple regimes
 %------------------------------------------------
-ss=cell2mat(obj.solution.ss);
 [PAI,retcode]=initial_markov_distribution(obj.solution.transition_matrices.Q);
 if retcode
     error(decipher(retcode))
 end
+
+is_log_var=[];
+if isa(obj,'dsge')
+    is_log_var=obj.endogenous.is_log_var;
+end
+
+% log the steady state if necessary: is_log_var is in the order_var order
+%-------------------------------------------------------------------------
+ss1=obj.solution.ss;
+if ~isempty(is_log_var)
+    for ih=1:numel(ss1)
+        ss1{ih}(is_log_var)=log(ss1{ih}(is_log_var));
+    end
+end
+ss=cell2mat(ss1);
+
 ss=sum(bsxfun(@times,ss,PAI(:).'),2);
 if do_dsge_var
     nlags=obj.options.dsgevar_lag;
@@ -154,6 +169,8 @@ if isfield(obj.options,'solve_occbin') && ~isempty(obj.options.solve_occbin)
     Initcond.occbin=obj.options.occbin;
     Initcond.solve_occbin=obj.options.solve_occbin;
 end
+Initcond.is_log_var=is_log_var;
+Initcond.log_var_steady_state=ss1;
 %-----------------------------------------
 if is_conditional_forecasting
     % shocks have already been set from the initial conditions no
@@ -230,6 +247,14 @@ Initcond.y=y0;
             %-----------------------------------------------
             y0(1).y=y0(1).y(:,:,1);
             
+            % log it if required
+            %--------------------
+            if ~isempty(is_log_var)
+                loc=locate_variables(endo_names,obj.endogenous.name);
+                local_log_var=is_log_var(loc);
+                y0(1).y(local_log_var,:)=log(y0(1).y(local_log_var,:));
+            end
+            
             % past regimes for the computation of initial regime probabilities
             %-----------------------------------------------------------------
             PAI_lag=utils.forecast.load_start_values(obj.markov_chains.regime_names,...
@@ -241,8 +266,7 @@ Initcond.y=y0;
 
         conditional_vars=obj.options.forecast_cond_endo_vars;
         datay=build_cond_data(conditional_vars);
-        y_pos=strcmp(conditional_vars,obj.observables.name);
-        y_pos=obj.observables.state_id(y_pos);
+        y_pos=locate_variables(conditional_vars,obj.endogenous.name);
         y0(1).ycond=struct('data',datay,'pos',y_pos);
         is_conditional_forecasting=~isempty(datay);
     end
@@ -284,7 +308,18 @@ Initcond.y=y0;
                 % - According to this specification, there is no conditionning
                 % on a variable if the user does not give a central tendency.
                 % - We have to revisit the role of nan central tendency vs nan
-                % bounds...
+                % bounds...   
+                
+                % log it if required
+                %--------------------
+                if ~isempty(is_log_var)
+                    silent=true;
+                    loc=locate_variables(vname,obj.endogenous.name,silent);
+                    if ~isnan(loc)
+                        local_log_var=is_log_var(loc);
+                        datax(local_log_var,:,:)=log(datax(local_log_var,:,:));
+                    end
+                end
             end
         else
             nspan=0;

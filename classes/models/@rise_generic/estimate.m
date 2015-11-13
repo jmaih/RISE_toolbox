@@ -129,6 +129,9 @@ function obj=estimate(obj,varargin)
 % the optimizer. Else, store the hessian returned by the optimizer, but
 % also compute and use the numerical hessian.
 %
+% - **estim_barrier** [{false}|true]: never allow constraints to be
+% violated in no circumstances.
+%
 % Outputs
 % --------
 %
@@ -171,7 +174,8 @@ if nobj==0
         'estim_blocks',[],...
         'estim_penalty',1e+8,...
         'estim_penalty_factor',10,...
-        'estim_optimizer_hessian',false);
+        'estim_optimizer_hessian',false,...
+        'estim_barrier',false);
     % violations of the restrictions in a vector for instance in order to impose the max operator ZLB, Linde and Maih
     obj=utils.miscellaneous.mergestructures(optimization.estimation_engine(),...
         main_defaults);

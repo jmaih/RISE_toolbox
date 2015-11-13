@@ -87,6 +87,7 @@ for iii=1:nobj
 end
 
 estim_penalty=obj(1).options.estim_penalty;
+estim_barrier=obj(1).options.estim_barrier;
 
 estim_blocks=obj(1).options.estim_blocks;
 if ~isempty(estim_blocks)
@@ -139,14 +140,23 @@ end
         %------------------------------------------------------------------
         x=unstransform_parameters(obj(1),xtilde);
         fval=estim_penalty*ones(1,nobj);
+        is_processed=false;
+        if estim_barrier
+            violLast=mynonlinear_constraints(x,obj,true);
+            if any(violLast>0)
+                is_processed=true;
+            end
+        end
         max_pen=0;
-        % general restrictions are sometimes infeasible. Rather than
-        % imposing a barrier that will be difficult to cross if the initial
-        % constraints are not satified, we use a penalty function approach.
-        for mo=1:nobj
-            [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
-            if retcode
-                break
+        if ~is_processed
+            % general restrictions are sometimes infeasible. Rather than
+            % imposing a barrier that will be difficult to cross if the initial
+            % constraints are not satified, we use a penalty function approach.
+            for mo=1:nobj
+                [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
+                if retcode
+                    break
+                end
             end
         end
         
@@ -164,15 +174,23 @@ end
                 g=evaluate_general_restrictions(obj);
                 for mo=1:nobj
                     if ~isempty(g{mo})
-                        this_pen=utils.estim.penalize_violations(g{mo},max(abs(fval(mo)),c{mo}));
-                        % violations of the restrictions decrease the value
-                        % of the objective function
-                        fval(mo)=fval(mo)-this_pen;
-                        max_pen=max(max_pen,this_pen);
+                        if estim_barrier && any(g{mo}>0)
+                            fval(:)=estim_penalty;
+                            is_processed=true;
+                        end
+                        if ~is_processed
+                            this_pen=utils.estim.penalize_violations(g{mo},max(abs(fval(mo)),c{mo}));
+                            % violations of the restrictions decrease the value
+                            % of the objective function
+                            fval(mo)=fval(mo)-this_pen;
+                            max_pen=max(max_pen,this_pen);
+                        end
                     end
                 end
             end
-            violLast=mynonlinear_constraints(x,obj,true);
+            if ~is_processed
+                violLast=mynonlinear_constraints(x,obj,true);
+            end
         end
         % make xLast ready for nonlcon_with_gradient.
         %----------------------------------------------

@@ -51,7 +51,7 @@ if nargin==1
     ss={'m','P','c','e','W','R','k','d','n','l','gy_obs','gp_obs','y','dA'};
     % flags on the calculation
     %--------------------------
-    newp=struct('unique',true,'imposed',false,'initial_guess',false);
+    newp=struct('unique',true,'imposed',false);
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------

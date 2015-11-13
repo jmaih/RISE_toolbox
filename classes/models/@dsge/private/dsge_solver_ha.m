@@ -78,6 +78,12 @@ if obj.options.solve_order>=1
     if obj.options.solve_order>=2 && ~retcode
         [T,retcode]=solve_higher_orders(T,others,obj.options.solve_accelerate);
     end
+    
+    % solve for growth constant
+    %--------------------------
+    if ~retcode
+        T=growth_component_solver(obj,pos,T);
+    end
 end
 
     function [T,retcode]=solve_higher_orders(T,others,accelerate)
