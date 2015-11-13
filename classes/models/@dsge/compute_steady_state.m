@@ -85,13 +85,7 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 
 if isempty(obj)
     
-    obj=struct('steady_state_file','',...
-        'steady_state_use_steady_state_model',true,...
-        'steady_state_solver','lsqnonlin',...
-        'steady_state_algorithm',{{'levenberg-marquardt',2*.005}},...
-        'steady_state_unique',false,...
-        'steady_state_imposed',false,...
-        'steady_state_loop',false);
+    obj=struct();
 
     return
     
@@ -155,7 +149,7 @@ y=y0;
 
 g=g0;
 
-if obj.options.is_unique_steady_state
+if obj.options.steady_state_unique
     
     converged=false;
     
@@ -531,11 +525,11 @@ fixed_vars=find(~unsolved);
 
 sseqtns=blocks.sseqtns;
 
+ssjacobians=blocks.ssjacobians;
+
 debug=blocks.debug;
 
 shift=blocks.solve_bgp_shift;
-
-fast=nblocks==numel(sseqtns);
 
 for iblock=1:nblocks
     
@@ -552,9 +546,7 @@ for iblock=1:nblocks
     end
     
     eqtnblk=blocks.equations{iblock};
-    
-    neqtn=numel(eqtnblk);
-    
+        
     log_status=is_log_var(varblk);
     
     if solve_bgp
@@ -607,7 +599,9 @@ end
 
 r=blocks.residcode(y,g,x,p,d);
 
-    function rs=small_system(zyg)
+    function [rs,Jac]=small_system(zyg)
+        
+        is_jac=nargout>1;
         
         zyg(log_status)=exp(zyg(log_status));
         
@@ -619,21 +613,14 @@ r=blocks.residcode(y,g,x,p,d);
             
         end
         
-        if fast
+        rs=sseqtns{iblock}(y,g,x,p,d);
+        
+        if is_jac
             
-            rs=sseqtns{iblock}(y,g,x,p,d);
-            
-        else
-            
-            rs=zeros(neqtn,1);
-            
-            for ieqtn=1:neqtn
-                
-                rs(ieqtn)=sseqtns{eqtnblk(ieqtn)}(y,g,x,p,d);
-                
-            end
+            Jac=utils.code.evaluate_functions(ssjacobians{iblock},y,g,x,p,d);
             
         end
+        
         
         if solve_bgp
             
@@ -643,23 +630,17 @@ r=blocks.residcode(y,g,x,p,d);
             
             yshift(is_log_var)=y(is_log_var).*g(is_log_var).^shift;
             
-            if fast
-                
-                rs2=sseqtns{iblock}(yshift,g,x,p,d);
-                
-            else
-                
-                rs2=rs;
-                
-                for ieqtn=1:neqtn
-                    
-                    rs2(ieqtn)=sseqtns{eqtnblk(ieqtn)}(yshift,g,x,p,d);
-                    
-                end
-                
-            end
+            rs2=sseqtns{iblock}(yshift,g,x,p,d);
             
             rs=[rs;rs2];
+            
+            if is_jac
+                
+                Jac2=utils.code.evaluate_functions(ssjacobians{iblock},yshift,g,x,p,d);
+                
+                Jac=[Jac;Jac2];
+                
+            end
             
         end
         
@@ -855,6 +836,8 @@ if isempty(obj.steady_state_2_blocks_optimization)
     
     optimopt.Algorithm=obj.options.steady_state_algorithm;
     
+    optimopt.Jacobian='off';
+    
     if obj.options.debug
         
         optimopt.Display='iter';
@@ -887,6 +870,7 @@ if isempty(obj.steady_state_2_blocks_optimization)
         'solve_bgp',obj.options.solve_bgp,...
         'solve_bgp_shift',obj.options.solve_bgp_shift,...
         'sseqtns',{obj.routines.static.separate_blocks},...
+        'ssjacobians',{obj.routines.static.separate_jacobians},...
         'debug',obj.options.debug,...
         'equations',{obj.steady_state_blocks.equations},...
         'endo_list',{obj.endogenous.name},...
@@ -928,9 +912,9 @@ static=obj.equations.shadow_static;
 
 sssae=obj.equations.shadow_steady_state_auxiliary_eqtns;
 
-repl_log=@replace_log;
+repl_log=@replace_log; %#ok<NASGU>
 
-repl_lin=@replace_lin;
+repl_lin=@replace_lin; %#ok<NASGU>
 
 if obj.options.solve_bgp
     
@@ -978,29 +962,76 @@ list={'y','g','x','param','def'};
 
 % TODO: Link this up with solve_function_mode: explicit, amateur,
 % vectorized, professional
-devectorize=true;
+do_vectorize=false;
 
-static=utils.code.code2func(static,list);
+neqtns=numel(static);
+
+ynames=utils.char.create_names([],'y',neqtns);
+
+gnames=utils.char.create_names([],'g',neqtns);
+
+static=utils.code.code2func(static,list,do_vectorize);
 
 nblks=numel(equations_blocks);
 
 theBlks=cell(1,nblks);
+
+theJacobs=cell(1,nblks);
+
+devectorize=true;
+
+derivative_fields={'size','functions','partitions','nnz_derivs','vectorizer'};
+
+bad_fields=[];
 
 for iblk=1:nblks
     
     theBlks(iblk)=utils.code.code2vector(static(equations_blocks{iblk}),...
         devectorize);
     
+    do_jacobian();
+    
 end
 
 OneBlk=utils.code.code2vector(static,devectorize);
 
-obj.routines.static=struct('one_block',OneBlk{1},'separate_blocks',{theBlks});
+obj.routines.static=struct('one_block',OneBlk{1},'separate_blocks',{theBlks},...
+    'separate_jacobians',{theJacobs});
 
 obj.routines.shadow_steady_state_auxiliary_eqtns=...
     struct('code',cell2mat(sssae(:)'),...
     'argins',{list},...
     'argouts',{{'y'}});
+
+    function []=do_jacobian()
+        
+        ywrt=ynames(variables_blocks{iblk});
+        
+        gwrt=[];
+        
+        order=1;
+        
+        if obj.options.solve_bgp
+            
+            gwrt=gnames(variables_blocks{iblk});
+            
+        end
+        
+        myfunc=static(equations_blocks{iblk});
+        
+        wrt=[ywrt(:).',gwrt(:).'];
+        
+        [derivs]=parser.differentiate_system(myfunc,list,wrt,order);
+        
+        if iblk==1
+            
+            bad_fields=fieldnames(derivs)-derivative_fields;
+            
+        end
+        
+        theJacobs{iblk}=rmfield(derivs,bad_fields);
+        
+    end
 
     function out=replace_lin(vp,sign_,digit)
         

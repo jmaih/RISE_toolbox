@@ -140,6 +140,20 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - **solve_reuse_solution** [false|{true}]: re-use previous solution as
 % initial conditions
 %
+% - **steady_state_file** [char|function_handle|{''}]: 
+%
+% - **steady_state_use_steady_state_model** [false|{true}]: 
+%
+% - **steady_state_solver** [char|function_handle|{'lsqnonlin'}]: 
+%
+% - **steady_state_algorithm** [char|function_handle|{{'levenberg-marquardt',2*.005}}]: 
+%
+% - **steady_state_unique** [true|{false}]: 
+%
+% - **steady_state_imposed** [true|{false}]: 
+%
+% - **steady_state_loop** [true|{false}]: 
+%
 % Outputs
 % --------
 %
@@ -194,7 +208,14 @@ if isempty(obj)
         'solve_function_mode','explicit',... %['explicit','disc','vectorized'] see dsge.set
         'solve_derivatives_type','symbolic',... %['symbolic','numerical','automatic']
         'solve_bgp',false,...
-        'solve_sstate_blocks',false);
+        'solve_sstate_blocks',false,...
+        'steady_state_file','',...
+        'steady_state_use_steady_state_model',true,...
+        'steady_state_solver','lsqnonlin',...
+        'steady_state_algorithm',{{'levenberg-marquardt',2*.005}},...
+        'steady_state_unique',false,...
+        'steady_state_imposed',false,...
+        'steady_state_loop',false);
     
     is_ResolveOnly=struct('solver',[],...
         'solve_order',1,...
