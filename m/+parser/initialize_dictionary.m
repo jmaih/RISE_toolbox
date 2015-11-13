@@ -63,7 +63,6 @@ dictionary.syntax_typical={'y)','y+','y*','y;','x)','x+','x*','x;','param)','def
 
 dictionary.determine_status=@determine_status;
 
-dictionary.is_linear_model=false;
 dictionary.input_list=parser.input_list();
 
 end

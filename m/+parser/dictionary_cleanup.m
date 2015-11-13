@@ -126,10 +126,6 @@ dictionary=orderfields(dictionary);
         dictionary.equations.shadow_static=static.shadow_model;
         dictionary.equations.shadow_steady_state_model=static.shadow_steady_state_model;
         dictionary.equations.shadow_steady_state_auxiliary_eqtns=static.shadow_steady_state_auxiliary_eqtns;
-        % steady state attributes/properties
-        dictionary.is_imposed_steady_state=static.is_imposed_steady_state;
-        dictionary.is_unique_steady_state=static.is_unique_steady_state;
-        dictionary.is_loop_steady_state=static.is_loop_steady_state;
     end
 
     function cleanup_definitions()

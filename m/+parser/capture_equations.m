@@ -119,17 +119,9 @@ end
                         while ~isempty(rest1)
                             [tokk,rest1]=strtok(rest1,DELIMITERS);
                             if ~isempty(tokk)
-                                if strcmp(tokk,'linear') && strcmp(block_name,'model')
-                                    dictionary.is_linear_model=true;
-                                elseif strcmp(tokk,'imposed') && strcmp(block_name,'steady_state_model')
-                                    static.is_imposed_steady_state=true;
-                                elseif strcmp(tokk,'unique') && strcmp(block_name,'steady_state_model')
-                                    static.is_unique_steady_state=true;
-                                elseif strcmp(tokk,'loop') && strcmp(block_name,'steady_state_model')
-                                    static.is_loop_steady_state=true;
-                                else
-                                    error([mfilename,':: unknown attribute ''',tokk,''' in file ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                                end
+                                error([mfilename,':: attributes to ',...
+                                    block_name,' block no longer permitted in file ',...
+                                    file_name_,' at line ',sprintf('%0.0f',iline_)])
                             end
                         end
                         break % exit while ~isempty(rest_) loop

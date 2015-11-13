@@ -88,7 +88,10 @@ if isempty(obj)
     obj=struct('steady_state_file','',...
         'steady_state_use_steady_state_model',true,...
         'steady_state_solver','lsqnonlin',...
-        'steady_state_algorithm',{{'levenberg-marquardt',2*.005}});
+        'steady_state_algorithm',{{'levenberg-marquardt',2*.005}},...
+        'steady_state_unique',false,...
+        'steady_state_imposed',false,...
+        'steady_state_loop',false);
 
     return
     
@@ -152,7 +155,7 @@ y=y0;
 
 g=g0;
 
-if obj.is_unique_steady_state
+if obj.options.is_unique_steady_state
     
     converged=false;
     
@@ -715,43 +718,45 @@ end
 
 
 function [obj,sscode,blocks]=prepare_steady_state_program(obj)
-% steady state file
-%------------------
-sscode=struct();
 
-sscode.is_param_changed=false(1,sum(obj.parameters.number));
 
-if ~isempty(obj.options.steady_state_file) && ...
-        ~isa(obj.options.steady_state_file,'function_handle')
+% steady state functions (just for output)
+%-----------------------------------------
+if obj.warrant_setup_change
     
-    if ~ischar(obj.options.steady_state_file)
-        
-        error('steady state file must be a function handle or a char')
-        
-    end
-    
-    obj.options.steady_state_file=str2func(obj.options.steady_state_file);
+    obj=recreate_steady_state_functions(obj);
     
 end
-
+        
+% steady state file
+%------------------
 sscode=[];
-
-default_sstate_attributes=struct('unique',false,'imposed',false,...
-    'loop',false);
 
 if isempty(obj.steady_state_2_model_communication)
     
     if ~isempty(obj.options.steady_state_file)
         
-        sscode=struct();
+        if ~isa(obj.options.steady_state_file,'function_handle')
+            
+            if ~ischar(obj.options.steady_state_file)
+                
+                error('steady state file must be a function handle or a char')
+                
+            end
+            
+            obj.options.steady_state_file=str2func(obj.options.steady_state_file);
+            
+        end
         
+        sscode=struct();
+                
         % memo will follow
         %------------------
         sscode.func=obj.options.steady_state_file;
         
         % call the function with the object only
         %----------------------------------------
-        [var_names,updated_param_list,new_settings]=sscode.func(obj);
+        [var_names,updated_param_list]=sscode.func(obj);
         
         isUpdate=false(1,obj.parameters.number(1));
         if ~isempty(updated_param_list)
@@ -760,26 +765,7 @@ if isempty(obj.steady_state_2_model_communication)
         end
         
         sscode.is_param_changed=isUpdate;
-        
-        ff=fieldnames(new_settings);
-        
-        for ifield=1:numel(ff)
-            
-            if ~isfield(default_sstate_attributes,ff{ifield})
-                error(['The expected fields of a steady state file are : ',...
-                    '"unique","imposed" and "loop"'])
-            end
-            
-            default_sstate_attributes.(ff{ifield})=new_settings.(ff{ifield});
-            
-        end
-        
-        sscode.is_imposed_steady_state=default_sstate_attributes.imposed;
-        
-        sscode.is_unique_steady_state=default_sstate_attributes.unique;
-        
-        sscode.is_loop_steady_state=default_sstate_attributes.loop;
-        
+                        
         user_endo_ids=locate_variables(var_names,obj.endogenous.name);
         
         sscode.solved=ismember(obj.endogenous.name,var_names);
@@ -813,17 +799,16 @@ if isempty(obj.steady_state_2_model_communication)
             
             sscode.solved=obj.auxiliary_variables.ssmodel_solved;
             
-            sscode.is_imposed_steady_state=obj.is_imposed_steady_state;
-            
-            sscode.is_unique_steady_state=obj.is_unique_steady_state;
-            
-            sscode.is_loop_steady_state=obj.is_loop_steady_state;
-            
         end
         
     end
     
     if ~isempty(sscode)
+        sscode.is_imposed_steady_state=obj.options.steady_state_imposed;
+        
+        sscode.is_unique_steady_state=obj.options.steady_state_unique;
+        
+        sscode.is_loop_steady_state=obj.options.steady_state_loop;
         
         % after having parsed the ssfile and the ssmodel, we can do this
         %----------------------------------------------------------------
@@ -846,7 +831,6 @@ if isempty(obj.steady_state_2_model_communication)
             sscode.subset=~sscode.solved & ~obj.endogenous.is_auxiliary;
             
         end
-        
         
         obj.steady_state_2_model_communication=sscode;
         
@@ -920,6 +904,132 @@ else
     
 end
 
+
+
+end
+
+
+
+function obj=recreate_steady_state_functions(obj)
+
+% the steady state is always ordered alphabetically
+%---------------------------------------------------
+ss_occurrence=sum(obj.occurrence,3);
+
+ss_occurrence(ss_occurrence>0)=1;
+
+[equations_blocks,variables_blocks]=parser.block_triangularize(ss_occurrence,...
+    obj.options.solve_sstate_blocks);
+
+obj.steady_state_blocks=struct('equations',{equations_blocks},...
+    'variables',{variables_blocks});
+
+static=obj.equations.shadow_static;
+
+sssae=obj.equations.shadow_steady_state_auxiliary_eqtns;
+
+repl_log=@replace_log;
+
+repl_lin=@replace_lin;
+
+if obj.options.solve_bgp
+    
+    is_log_var=obj.endogenous.is_log_var;
+    
+    endo_nbr=numel(is_log_var);
+    
+    % replace the time subscripts
+    for ivar=1:endo_nbr
+        
+        digit= sprintf('%g',ivar);
+        
+        expr=['y\((',digit,')\)',...
+            '\{(\+|\-)?(\d+)\}'];
+        
+        if is_log_var(ivar)
+            
+            static=regexprep(static,expr,'${repl_log($1,$2,$3)}');
+            
+            sssae=regexprep(sssae,expr,'${repl_log($1,$2,$3)}');
+            
+        else
+            
+            static=regexprep(static,expr,'${repl_lin($1,$2,$3)}');
+            
+            sssae=regexprep(sssae,expr,'${repl_lin($1,$2,$3)}');
+            
+        end
+        
+    end
+    
+else
+    
+    % remove the time subscripts
+    expr='(\{[\+\-]?\d+\})';
+    
+    static=regexprep(static,expr,'');
+    
+    sssae=regexprep(sssae,expr,'');
+    
+end
+
+% create functions
+list={'y','g','x','param','def'};
+
+% TODO: Link this up with solve_function_mode: explicit, amateur,
+% vectorized, professional
+devectorize=true;
+
+static=utils.code.code2func(static,list);
+
+nblks=numel(equations_blocks);
+
+theBlks=cell(1,nblks);
+
+for iblk=1:nblks
+    
+    theBlks(iblk)=utils.code.code2vector(static(equations_blocks{iblk}),...
+        devectorize);
+    
+end
+
+OneBlk=utils.code.code2vector(static,devectorize);
+
+obj.routines.static=struct('one_block',OneBlk{1},'separate_blocks',{theBlks});
+
+obj.routines.shadow_steady_state_auxiliary_eqtns=...
+    struct('code',cell2mat(sssae(:)'),...
+    'argins',{list},...
+    'argouts',{{'y'}});
+
+    function out=replace_lin(vp,sign_,digit)
+        
+        if isempty(sign_)||strcmp(sign_,'+')
+            
+            out=['(y(',vp,')+',digit,'*g(',vp,'))'];
+            
+        else
+            
+            out=['(y(',vp,')-',digit,'*g(',vp,'))'];
+            
+        end
+        
+    end
+
+
+    function out=replace_log(vp,sign_,digit)
+        
+        if isempty(sign_)||strcmp(sign_,'+')
+            
+            out=['(y(',vp,')*g(',vp,')^',digit,')'];
+            
+        else
+            
+            out=['(y(',vp,')/g(',vp,')^',digit,')'];
+            
+        end
+        
+    end
 
 end
 

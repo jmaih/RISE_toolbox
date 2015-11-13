@@ -520,12 +520,6 @@ end
         resolve_it=obj.estimation_under_way||obj.warrant_resolving||...
             strcmp(obj.options.solve_initialization,'random')||...
             ~isfield(obj.solution,'Tz')||is_struct_mat_out;
-        load_ssfuncs=obj.warrant_setup_change;
-        % steady state functions (just for output)
-        %-----------------------------------------
-        if load_ssfuncs
-            obj=recreate_steady_state_functions(obj);
-        end
     end
 
     function retcode=solve_zeroth_order()
@@ -534,7 +528,9 @@ end
             % This may take a lot of space in large models or higher-order
             % approximations
             %--------------------------------------------------------------
-            if ~isempty(obj.solution) && obj.options.solve_reuse_solution
+            if ~isempty(obj.solution) && ...
+                    isfield(obj.solution,'Tz') && ...
+                    obj.options.solve_reuse_solution
                 main_fields={'ss','bgp','Tz'};
                 allfields=fieldnames(obj.solution);
                 bad_fields=allfields-main_fields;
@@ -694,82 +690,6 @@ the_current=(1:endo_nbr)';
 the_lags=find(lead_lag_incidence(:,3)>0);
 indices=[the_leads;the_current;the_lags];
 nind=numel(indices);
-end
-
-function obj=recreate_steady_state_functions(obj)
-
-% the steady state is always ordered alphabetically
-%---------------------------------------------------
-ss_occurrence=sum(obj.occurrence,3);
-ss_occurrence(ss_occurrence>0)=1;
-[equations_blocks,variables_blocks]=parser.block_triangularize(ss_occurrence,...
-    obj.options.solve_sstate_blocks);
-obj.steady_state_blocks=struct('equations',{equations_blocks},...
-    'variables',{variables_blocks});
-
-static=obj.equations.shadow_static;
-sssae=obj.equations.shadow_steady_state_auxiliary_eqtns;
-repl_log=@replace_log;
-repl_lin=@replace_lin;
-if obj.options.solve_bgp
-    is_log_var=obj.endogenous.is_log_var;
-    endo_nbr=numel(is_log_var);
-    % replace the time subscripts
-    for ivar=1:endo_nbr
-        digit= sprintf('%g',ivar);
-        expr=['y\((',digit,')\)',...
-            '\{(\+|\-)?(\d+)\}'];
-        if is_log_var(ivar)
-            static=regexprep(static,expr,'${repl_log($1,$2,$3)}');
-            sssae=regexprep(sssae,expr,'${repl_log($1,$2,$3)}');
-        else
-            static=regexprep(static,expr,'${repl_lin($1,$2,$3)}');
-            sssae=regexprep(sssae,expr,'${repl_lin($1,$2,$3)}');
-        end
-    end
-else
-    % remove the time subscripts
-    expr='(\{[\+\-]?\d+\})';
-    static=regexprep(static,expr,'');
-    sssae=regexprep(sssae,expr,'');
-end
-% create functions
-list={'y','g','x','param','def'};
-
-% TODO: Link this up with solve_function_mode: explicit, amateur,
-% vectorized, professional
-devectorize=true;
-static=utils.code.code2func(static,list);
-nblks=numel(equations_blocks);
-theBlks=cell(1,nblks);
-for iblk=1:nblks
-    theBlks(iblk)=utils.code.code2vector(static(equations_blocks{iblk}),devectorize);
-end
-OneBlk=utils.code.code2vector(static,devectorize);
-
-obj.routines.static=struct('one_block',OneBlk{1},'separate_blocks',{theBlks});
-
-obj.routines.shadow_steady_state_auxiliary_eqtns=struct('code',cell2mat(sssae(:)'),...
-    'argins',{list},...
-    'argouts',{{'y'}});
-
-    function out=replace_lin(vp,sign_,digit)
-        if isempty(sign_)||strcmp(sign_,'+')
-            out=['(y(',vp,')+',digit,'*g(',vp,'))'];
-        else
-            out=['(y(',vp,')-',digit,'*g(',vp,'))'];
-        end
-    end
-
-    function out=replace_log(vp,sign_,digit)
-        if isempty(sign_)||strcmp(sign_,'+')
-            out=['(y(',vp,')*g(',vp,')^',digit,')'];
-        else
-%             out=['(y(',vp,')*g(',vp,')^(-',digit,'))'];
-            out=['(y(',vp,')/g(',vp,')^',digit,')'];
-        end
-    end
-
 end
 
 function do_it=do_occbin(occbin,nregs)

@@ -35,9 +35,6 @@ test_for_deep_parameters_calibration();
 
 obj=set(obj,varargin{:});
 if isa(obj,'dsge')
-    if obj.is_linear_model
-        obj=set(obj,'solve_order',1);
-    end
     if obj.options.solve_order == 1
         obj=set(obj,'irf_draws',1);% replic
     end
