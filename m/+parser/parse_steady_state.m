@@ -1,8 +1,6 @@
 function [static,SteadyStateModel_block,auxiliary_steady_state_equations,...
     dictionary,blocks]=parse_steady_state(dictionary,blocks)
-static=struct('is_imposed_steady_state',false,...
-    'is_unique_steady_state',false,...
-    'is_loop_steady_state',false);
+static=struct();
 current_block_id=find(strcmp('steady_state_model',{blocks.name}));
 if dictionary.parse_debug
     profile off
