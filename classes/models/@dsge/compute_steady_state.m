@@ -31,9 +31,8 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 % - There are 2 cases to consider:
 %   - The user does not provide any steady state equations: RISE will
 %   attempt to solve the steady state using a vector of zeros as initial
-%   guess. In this first step, RISE assumes the model is stationary. If
-%   this steps fails, RISE assumes the process is nonstationary and
-%   proceeds to solving for the balanced growth path.
+%   guess. It makes life easy if the user provides the status of the
+%   variables in the system i.e. whether they grow linear or log-linearly.
 %   - The user provide some equations for solving the steady state. This is
 %   done in two ways:
 %       1-) the steady_state_model block: the variables that do not appear
@@ -333,6 +332,8 @@ flag=all(isfinite(r)) && max(abs(r))<tol;
 
 end
 
+
+
 function [y,g,r,p,retcode]=run_one_regime(y0,g0,p,x,d,sscode,unsolved,dq_blocks)
 
 is_log_var=dq_blocks.is_log_var;
@@ -346,7 +347,7 @@ optimopt=dq_blocks.optimopt;
 if ~isempty(sscode)
     if sscode.is_loop_steady_state
         
-        [y,g,r,retcode]=loop_over(y0,g0,subset);
+        [y,g,r,retcode]=loop_over(y0,g0,sscode.subset);
         
     else
         
@@ -390,7 +391,17 @@ end
 
     function [y,g,r,retcode]=loop_over(y0,g0,subset)
         
-        nv=numel(subset);
+        if islogical(subset)
+            
+            nv=sum(subset);
+            
+        else
+            
+            nv=numel(subset);
+            
+        end
+        
+        arg_zero_solver=dq_blocks.arg_zero_solver;
         
         % pay some respect to log vars
         %-----------------------------
@@ -431,6 +442,14 @@ end
             
             [y,g,p,r,retcode]=grand_sscode(ytmp,gtmp,p,d);
             
+            if ~all(isfinite(r))
+                
+                retcode=1;
+                
+                r(~isfinite(r))=1;
+                
+            end
+            
         end
         
     end
@@ -467,7 +486,7 @@ end
         
         if retcode
             
-            r=100*ones(size(y));
+            r=ones(size(y));
             
         else
             
@@ -553,14 +572,6 @@ for iblock=1:nblocks
     
     [z,retcode]=optimization_center(@small_system,z0,arg_zero_solver,optimopt);
 
-    if retcode
-        
-        r=nan(size(y));
-        
-        return
-        
-    end
-    
     z(log_status)=exp(z(log_status));
     
     z(abs(z) <= optimopt.TolX) = 0;
@@ -580,6 +591,12 @@ for iblock=1:nblocks
         blocks.dynamic(eqtnblk)
         
         disp([blocks.endo_list(varblk)',num2cell(full([y(varblk),g(varblk)]))])
+        
+    end
+    
+    if retcode
+        
+        return
         
     end
     
@@ -642,6 +659,8 @@ r=blocks.residcode(y,g,x,p,d);
             rs=[rs;rs2];
             
         end
+        
+%         if any(~isfinite(rs)),rs=10000*ones(size(rs));end
         
     end
 
@@ -732,7 +751,15 @@ if isempty(obj.steady_state_2_model_communication)
         
         % call the function with the object only
         %----------------------------------------
-        [var_names,new_settings]=sscode.func(obj);
+        [var_names,updated_param_list,new_settings]=sscode.func(obj);
+        
+        isUpdate=false(1,obj.parameters.number(1));
+        if ~isempty(updated_param_list)
+            locs=locate_variables(updated_param_list,obj.parameters.name);
+            isUpdate(locs)=true;
+        end
+        
+        sscode.is_param_changed=isUpdate;
         
         ff=fieldnames(new_settings);
         
@@ -805,9 +832,18 @@ if isempty(obj.steady_state_2_model_communication)
             'the parameters cannot be modified in the steady state ',...
             'model or file'];
         
-        if ~sscode.is_imposed_steady_state && any(sscode.is_param_changed)
+        if ~(sscode.is_imposed_steady_state||...
+                sscode.is_loop_steady_state) && ...
+                any(sscode.is_param_changed)
             
             error(errmsg)
+            
+        end
+        
+        if  sscode.is_loop_steady_state
+            % subset of variables to loop over
+            %---------------------------------
+            sscode.subset=~sscode.solved & ~obj.endogenous.is_auxiliary;
             
         end
         
@@ -828,6 +864,10 @@ if isempty(obj.steady_state_2_blocks_optimization)
     % optimization setup
     %--------------------
     optimopt=obj.options.optimset;
+    
+    optimopt.TolX=1e-12;
+    
+    optimopt.TolFun=1e-12;
     
     optimopt.Algorithm=obj.options.steady_state_algorithm;
     
@@ -883,6 +923,8 @@ end
 
 end
 
+
+
 function memo=memoize_steady_statemodel(ssmodelcode)
 
 memo=@memo_engine;
@@ -911,6 +953,8 @@ memo=@memo_engine;
     end
 
 end
+
+
 
 function memo=memoize_steady_statefile(obj,ssfilecode,id,pnames,defnames)
 
@@ -957,6 +1001,7 @@ memo=@engine;
     end
 
 end
+
 
 
 function auxcode=auxiliary_memoizer(aux_ssfunc,planner_routines,is_lagr_mult)
