@@ -83,6 +83,10 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 %
 % See also:
 
+% - As it seems, the true jacobian only works in linear models. In
+% nonlinear models, somehow, the finite difference approach yields better
+% results.
+
 if isempty(obj)
     
     obj=struct();
@@ -342,7 +346,8 @@ auxcode=dq_blocks.auxcode;
 optimopt=dq_blocks.optimopt;
 
 if ~isempty(sscode)
-    if sscode.is_loop_steady_state
+    if sscode.is_loop_steady_state && ~dq_blocks.solve_linear
+        % no point in doing loops if the model is linear
         
         [y,g,r,retcode]=loop_over(y0,g0,sscode.subset);
         
@@ -513,23 +518,40 @@ if check_residuals(r,optimopt.TolFun)
     
 end
 
-nblocks=numel(blocks.variables);
+sseqtns=blocks.sseqtns;
 
-arg_zero_solver=blocks.arg_zero_solver;
+ssjacobians=blocks.ssjacobians;
 
 is_log_var=blocks.is_log_var;
 
 solve_bgp=blocks.solve_bgp;
 
+shift=blocks.solve_bgp_shift;
+
+if blocks.solve_linear
+    % exploit jacobian information and exit quickly
+    %-----------------------------------------------
+    if any(is_log_var)
+        
+        error('log variables not permitted in linear models')
+        
+    end
+    
+    iblock=1;
+    
+    [r,retcode]=solve_linearly();
+    
+    return
+    
+end
+
+nblocks=numel(blocks.variables);
+
+arg_zero_solver=blocks.arg_zero_solver;
+
 fixed_vars=find(~unsolved);
 
-sseqtns=blocks.sseqtns;
-
-ssjacobians=blocks.ssjacobians;
-
 debug=blocks.debug;
-
-shift=blocks.solve_bgp_shift;
 
 for iblock=1:nblocks
     
@@ -599,6 +621,60 @@ end
 
 r=blocks.residcode(y,g,x,p,d);
 
+    function [rupdate,retcode]=solve_linearly()
+        % Since the model is linear, the Jacobian is independent of the
+        % variables.
+        
+        J=solve_jacobian(ssjacobians{iblock},y,[],g);
+        
+        if solve_bgp
+            
+            ny=numel(y);
+            
+            Ay=J(:,1:ny);
+            
+            Ag=J(:,ny+1:end);
+            
+            r2=r+shift*Ay*g;
+            
+            yg=[y;g]-pinv(full([J;Ay,shift*Ay+Ag]))*[r;r2];
+
+            yg(abs(yg)<optimopt.TolFun)=0;
+            
+            y=yg(1:ny);
+            
+            g=yg(ny+1:end);
+            
+        else
+            
+            y=J\uminus(r)+y;
+            
+        end
+        
+        rupdate=blocks.residcode(y,g,x,p,d);
+        
+        resnorm=norm(rupdate);
+        
+        exitflag=utils.optim.exitflag(1,[y;g],resnorm);
+
+        retcode=1-(exitflag==1);
+        
+    end
+
+    function J=solve_jacobian(func,y,yshift,g)
+        
+        J=utils.code.evaluate_functions(func,y,g,x,p,d);
+        
+        if ~isempty(yshift)
+            
+        J2=utils.code.evaluate_functions(func,yshift,g,x,p,d);
+        
+        J=[J;J2];
+        
+        end
+        
+    end
+
     function [rs,Jac]=small_system(zyg)
         
         is_jac=nargout>1;
@@ -615,12 +691,7 @@ r=blocks.residcode(y,g,x,p,d);
         
         rs=sseqtns{iblock}(y,g,x,p,d);
         
-        if is_jac
-            
-            Jac=utils.code.evaluate_functions(ssjacobians{iblock},y,g,x,p,d);
-            
-        end
-        
+        yshift=[];
         
         if solve_bgp
             
@@ -634,13 +705,11 @@ r=blocks.residcode(y,g,x,p,d);
             
             rs=[rs;rs2];
             
-            if is_jac
-                
-                Jac2=utils.code.evaluate_functions(ssjacobians{iblock},yshift,g,x,p,d);
-                
-                Jac=[Jac;Jac2];
-                
-            end
+        end
+            
+        if is_jac
+            
+            Jac=solve_jacobian(ssjacobians{iblock},y,yshift,g);
             
         end
         
@@ -678,12 +747,9 @@ else
     [ssc1,resnorm,exitflag]=arg_zero_solver(objfun,ssc0,optimopt,vargs{:});
     
 end
-% N.B: I use sqrt(tol) below on purpose!!!
-%-----------------------------------------
-sqrt_tol=optimopt.TolFun;
 
-exitflag=utils.optim.exitflag(exitflag,ssc1,resnorm,sqrt_tol);
-%--------------------------------------------------------------
+exitflag=utils.optim.exitflag(exitflag,ssc1,resnorm);
+
 retcode=1-(exitflag==1);
 
     function fval=minimizer(ssc)
@@ -740,9 +806,13 @@ if isempty(obj.steady_state_2_model_communication)
         [var_names,updated_param_list]=sscode.func(obj);
         
         isUpdate=false(1,obj.parameters.number(1));
+        
         if ~isempty(updated_param_list)
+            
             locs=locate_variables(updated_param_list,obj.parameters.name);
+            
             isUpdate(locs)=true;
+            
         end
         
         sscode.is_param_changed=isUpdate;
@@ -785,6 +855,7 @@ if isempty(obj.steady_state_2_model_communication)
     end
     
     if ~isempty(sscode)
+        
         sscode.is_imposed_steady_state=obj.options.steady_state_imposed;
         
         sscode.is_unique_steady_state=obj.options.steady_state_unique;
@@ -836,7 +907,19 @@ if isempty(obj.steady_state_2_blocks_optimization)
     
     optimopt.Algorithm=obj.options.steady_state_algorithm;
     
-    optimopt.Jacobian='off';
+    % The true jacobian is faster but it does not work as well as the
+    % finite difference approximation for lsqnonlin and fsolve when the
+    % model is nonlinear. In the linear case, however, we do need the
+    % jacobian.
+    if obj.options.steady_state_use_jacobian
+        
+        optimopt.Jacobian='on';
+        
+    else
+        
+        optimopt.Jacobian='off';
+        
+    end
     
     if obj.options.debug
         
@@ -878,7 +961,8 @@ if isempty(obj.steady_state_2_blocks_optimization)
         'residcode',obj.routines.static.one_block,...
         'auxcode',auxcode,...
         'arg_zero_solver',obj.options.steady_state_solver,...
-        'optimopt',optimopt);
+        'optimopt',optimopt,...
+        'solve_linear',obj.options.solve_linear);
     
     obj.steady_state_2_blocks_optimization=blocks;
     
@@ -902,8 +986,14 @@ ss_occurrence=sum(obj.occurrence,3);
 
 ss_occurrence(ss_occurrence>0)=1;
 
+if obj.options.solve_linear
+    reblocks=false;
+else
+    reblocks=obj.options.solve_sstate_blocks;
+end
+
 [equations_blocks,variables_blocks]=parser.block_triangularize(ss_occurrence,...
-    obj.options.solve_sstate_blocks);
+    reblocks);
 
 obj.steady_state_blocks=struct('equations',{equations_blocks},...
     'variables',{variables_blocks});
@@ -980,16 +1070,16 @@ theJacobs=cell(1,nblks);
 
 devectorize=true;
 
-derivative_fields={'size','functions','partitions','nnz_derivs','vectorizer'};
-
-bad_fields=[];
-
 for iblk=1:nblks
     
     theBlks(iblk)=utils.code.code2vector(static(equations_blocks{iblk}),...
         devectorize);
     
-    do_jacobian();
+    if obj.options.solve_linear||obj.options.steady_state_use_jacobian
+        
+        do_jacobian();
+        
+    end
     
 end
 
@@ -1023,15 +1113,18 @@ obj.routines.shadow_steady_state_auxiliary_eqtns=...
         
         [derivs]=parser.differentiate_system(myfunc,list,wrt,order);
         
-        if iblk==1
-            
-            bad_fields=fieldnames(derivs)-derivative_fields;
-            
-        end
+%         if iblk==1
+%             
+%             bad_fields=fieldnames(derivs)-derivative_fields;
+%             
+%         end
+%         
+%         theJacobs{iblk}=rmfield(derivs,bad_fields);
         
-        theJacobs{iblk}=rmfield(derivs,bad_fields);
+        theJacobs{iblk}=derivs;
         
     end
+
 
     function out=replace_lin(vp,sign_,digit)
         
