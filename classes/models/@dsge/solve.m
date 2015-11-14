@@ -140,6 +140,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % - **solve_reuse_solution** [false|{true}]: re-use previous solution as
 % initial conditions
 %
+% - **solve_linear** [true|{false}]: set this to true in order to use more
+% efficient algorithms for solving the steady state when the original model
+% is truly linear.
+%
 % - **steady_state_file** [char|function_handle|{''}]: 
 %
 % - **steady_state_use_steady_state_model** [false|{true}]: 
@@ -152,7 +156,13 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
 % - **steady_state_imposed** [true|{false}]: 
 %
-% - **steady_state_loop** [true|{false}]: 
+% - **steady_state_loop** [true|{false}]: steady_state_use_jacobian
+%
+% - **steady_state_use_jacobian** [true|{false}]: In linear models, the
+% jacobian is always used. In the nonlinear case, however, the true
+% jacobian tends not to work as well as its finite differences
+% approximation. Hence by default, we do not invoke the use of the true
+% jacobian.
 %
 % Outputs
 % --------
@@ -209,13 +219,15 @@ if isempty(obj)
         'solve_derivatives_type','symbolic',... %['symbolic','numerical','automatic']
         'solve_bgp',false,...
         'solve_sstate_blocks',false,...
+        'solve_linear',false,...
         'steady_state_file','',...
         'steady_state_use_steady_state_model',true,...
         'steady_state_solver','lsqnonlin',...
         'steady_state_algorithm',{{'levenberg-marquardt',2*.005}},...
         'steady_state_unique',false,...
         'steady_state_imposed',false,...
-        'steady_state_loop',false);
+        'steady_state_loop',false,...
+        'steady_state_use_jacobian',false);
     
     is_ResolveOnly=struct('solver',[],...
         'solve_order',1,...
