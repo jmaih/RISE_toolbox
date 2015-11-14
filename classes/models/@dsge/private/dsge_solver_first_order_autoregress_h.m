@@ -90,7 +90,7 @@ switch model_class
         Tz_pb=if_then_else(is_has_solution,T0,0*T0);
     case 2 % backward-looking models
         Tz_pb=if_then_else(is_has_solution,T0,...
-            dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,'backward'));
+            dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,'backward',old_Tz));
     case 0 % hybrid models
         kron_method=strncmpi(options.solver,'mnk',3);
         
