@@ -280,10 +280,13 @@ myirfs=format_irf_output(myirfs);
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end
-        % subtract the initial conditions
-        %---------------------------------
-        Impulse_dsge=Impulse_dsge-y0.y(:,ones(Initcond.nsteps+1,1),...
-            ones(nshocks,1),ones(irf_draws,1),ones(number_of_threads,1));
+        % subtract the initial conditions if not girf. For the girf, the
+        % subtraction is already done
+        %------------------------------------------------------------------
+        if ~girf
+            Impulse_dsge=Impulse_dsge-y0.y(:,ones(Initcond.nsteps+1,1),...
+                ones(nshocks,1),ones(irf_draws,1),ones(number_of_threads,1));
+        end
         
         % set to 0 the terms that are too tiny
         %-------------------------------------
