@@ -37,7 +37,7 @@ irfs=zeros(endo_nbr,nlags+options.nsteps,nshocks,options.nsimul);
 iter=0;
 
 retcode=0;
-orig_shocks=y0.econd.data(:,:,1);
+% orig_shocks=y0.econd.data(:,:,1);
 for ishock=1:exo_nbr
     if ~which_shocks(ishock)
         continue
@@ -50,9 +50,9 @@ for ishock=1:exo_nbr
             % make sure that impulses that are inherited stay on in the
             % reference simulation. This may imply over-riding the impulse
             % itself if it happens to be on the path of an inherited shock
-            %--------------------------------------------------------------
-            inherited_shocks=orig_shocks~=0;
-            shocks(inherited_shocks)=orig_shocks(inherited_shocks);
+%             %--------------------------------------------------------------
+%             inherited_shocks=orig_shocks~=0;
+%             shocks(inherited_shocks)=orig_shocks(inherited_shocks);
             y0.econd.data=shocks(:,:,ones(3,1));
             if ~retcode
                 [sim1,states1,retcode]=utils.forecast.multi_step(y0,ss,T,state_vars_location,options);
@@ -71,7 +71,7 @@ for ishock=1:exo_nbr
                         % set to 0 the location corresponding to the
                         % inherited shocks
                         %------------------------------------------
-                        shocks(inherited_shocks)=0;
+%                         shocks(inherited_shocks)=0;
                         y02.econd.data=shocks(:,:,ones(3,1));
                         y02.rcond.data=states1;
                         % ensure that the shocks are not updated in the
