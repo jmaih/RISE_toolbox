@@ -31,20 +31,7 @@ function [y,newp,retcode]=rwz_steady_state(obj,y,p,d,id) %#ok<INUSL>
 % - **newp** [cell array]: List of the parameters calculated inside the
 % steady state function
 %
-% - **retcode** [struct]: possible fields are "imposed", "unique", "loop".
-% The default value for all of those is false.
-%   - "imposed": This tells RISE not to check that this is actually solves
-%       the steady state. Hence, RISE will attempt to approximate the model
-%       around the chosen point
-%   - "unique": This tells RISE that the steady state is the same across
-%       all regimes. RISE will call the function only once but instead of
-%       using just any parameter vector, it will use the ergodic mean of
-%       the parameter vector (mean across all regimes).
-%   - "loop": This tells RISE that if the user was given the steady state
-%       values for some of the variables, he would be able to compute the
-%       steady state for the remaining variables. RISE will then exploit
-%       this information to optimize over the variables that the user needs
-%       for computing the steady state.
+% - **retcode** []: not needed
 %
 %   CASE 2: More than one input argument
 %
@@ -89,16 +76,12 @@ if nargin==1
 		
     newp={};
 	
-    % flags on the calculation
-    %--------------------------
-    retcode=struct('unique',true,'imposed',true);
-	
 else
     newp=[];
     
     PAI=1;
     Y=(p.eta-1)/p.eta;
-    R=exp(p.mu_bar)/p.betta*PAI;
+    R=exp(p.mu)/p.betta*PAI;
     
     ss=[PAI,Y,R]' ;
     

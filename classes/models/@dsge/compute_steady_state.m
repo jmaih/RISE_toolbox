@@ -83,6 +83,21 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 %
 % See also:
 
+% possible fields are "imposed", "unique", "loop".
+% The default value for all of those is false.
+%   - "imposed": This tells RISE not to check that this is actually solves
+%       the steady state. Hence, RISE will attempt to approximate the model
+%       around the chosen point
+%   - "unique": This tells RISE that the steady state is the same across
+%       all regimes. RISE will call the function only once but instead of
+%       using just any parameter vector, it will use the ergodic mean of
+%       the parameter vector (mean across all regimes).
+%   - "loop": This tells RISE that if the user was given the steady state
+%       values for some of the variables, he would be able to compute the
+%       steady state for the remaining variables. RISE will then exploit
+%       this information to optimize over the variables that the user needs
+%       for computing the steady state.
+
 % - As it seems, the true jacobian only works in linear models. In
 % nonlinear models, somehow, the finite difference approach yields better
 % results.

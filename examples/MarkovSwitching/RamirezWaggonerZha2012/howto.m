@@ -7,31 +7,31 @@ rise_startup()
 
 
 %% read the models and their calibrations
-frwz_nk0=rise('frwz_nk');
+m=rise('frwz_nk');
 
 %% solve the model
-frwz_nk=solve(frwz_nk0);
+m=solve(m,'steady_state_unique',true,'steady_state_imposed',true);
 
 %% print results
-frwz_nk.print_solution()
+m.print_solution()
 
 %% print solution for a subset of variables only
-frwz_nk.print_solution({'PAI','Y'})
+m.print_solution({'PAI','Y'})
 
 %% Alternative calibrations
 
 cal_2=struct('psi_a_2', 0.7);
-frwz_nk2=set(frwz_nk,'parameters',cal_2);
+m2=set(m,'parameters',cal_2);
 
 %% construct a vector of models
 
-frwz=[frwz_nk,frwz_nk2];
+bigm=[m,m2];
 %% compute impulse responses for all models simultaneously
-myirfs=irf(frwz,'irf_periods',20);
+myirfs=irf(bigm,'irf_periods',20);
 
 %% plot the impulse responses
 close all
-var_list=frwz_nk.endogenous.name;
+var_list=m.endogenous.name;
 figure('name','Impulse responses to a monetary policy shock');
 for ii=1:numel(var_list)
     subplot(3,1,ii)

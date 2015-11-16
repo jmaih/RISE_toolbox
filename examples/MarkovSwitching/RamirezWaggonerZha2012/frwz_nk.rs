@@ -3,11 +3,12 @@
 % Reference: Foerster, Rubio-Ramirez, Waggoner and Zha (2013)
 % Perturbation Methods for Markov Switching Models.
 %-------------------------------------------------------------
+
 endogenous PAI, "Inflation", Y, "Output gap", R, "Interest rate"
 
 exogenous EPS_R	"Monetary policy shock"
 
-parameters betta, eta, kappa, mu_bar, rhor sigr a_tp_1_2, a_tp_2_1
+parameters betta, eta, kappa, rhor sigr a_tp_1_2, a_tp_2_1 %, mu_bar
 
 parameters(a,2) mu, psi
 
@@ -22,7 +23,7 @@ model
 steady_state_model
     PAI=1;
     Y=(eta-1)/eta;
-    R=exp(mu_bar)/betta*PAI;
+    R=exp(mu)/betta*PAI;
 
 parameterization
 	a_tp_1_2,1-.9; 
@@ -32,7 +33,7 @@ parameterization
 	eta, 10;
 	rhor, .8;
 	sigr, 0.0025;
-	mu_bar,0.02; 
+	%%mu_bar,0.02; 
 	mu(a,1), 0.03;
 	mu(a,2), 0.01;
 	psi(a,1), 3.1;
