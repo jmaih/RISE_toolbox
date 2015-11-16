@@ -26,7 +26,9 @@ if isempty(obj)
     return
 end
 
-obj.options.simul_anticipate_zero=~obj.options.irf_anticipate;
+for iobj=1:numel(obj)
+    obj(iobj).options.simul_anticipate_zero=~obj(iobj).options.irf_anticipate;
+end
 
 out=irf@rise_generic(obj,varargin{:});
 end
