@@ -19,7 +19,7 @@ model
 
 	(R{-1}/steady_state(R))^rhor*(PAI/steady_state(PAI))^((1-rhor)*psi)*exp(sigr*EPS_R)-R/steady_state(R);
 
-steady_state_model(unique,imposed)
+steady_state_model
     PAI=1;
     Y=(eta-1)/eta;
     R=exp(mu_bar)/betta*PAI;
