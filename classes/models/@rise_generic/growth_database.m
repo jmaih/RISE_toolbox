@@ -1,4 +1,23 @@
 function db=growth_database(obj,endhist_date,end_sample,growth_type)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
 if isempty(obj)
 
@@ -9,61 +28,86 @@ if isempty(obj)
 end
 
 if ~ismember(growth_type,{'zero','steady'})
+    
     error('growth_type should be "zero" or "steady"')
+    
 end
+
 zero_growth_=strcmp(growth_type,'zero');
 
 % needs to be adapted for VARs
 sv=get(obj,'state_vars');
+
 maxlag=max(cell2mat(sv(2,:)))+1;
+
 is_log_var=obj.endogenous.is_log_var;
 
 ss=get(obj,'sstate');
+
 g=get(obj,'growth');
 
 endhist_date=date2serial(endhist_date);
+
 starthist_date=endhist_date-maxlag+1;
+
 last_date=date2serial(end_sample);
+
 nperiods=numel(starthist_date:last_date);
 
 db=struct();
+
 nv=obj.endogenous.number;
+
 span=(1-maxlag:nperiods-maxlag)';
+
+h=obj.markov_chains.regimes_number;
+
+d=nan(numel(span),h);
+
+if zero_growth_
+    span(:)=0;
+end
+
 for iv=1:nv
+    
     name=obj.endogenous.name{iv};
-    if zero_growth_
-        d=zero_growth();
-    else
-        d=steady_growth();
-    end
+    
+    do_growth();
+            
     db.(name)=ts(starthist_date,d);
+    
 end
 
-d=zeros(nperiods,1);
+d=zeros(nperiods,h);
+
 for ix=1:sum(obj.exogenous.number)
+    
     name=obj.exogenous.name{ix};
+    
     db.(name)=ts(starthist_date,d);
+    
 end
 
-    function d=zero_growth()
+    function do_growth()
+        
         ssv=ss.(name);
+        
         gv=g.(name);
-        span_zero=0*span;
-        if is_log_var(iv)
-            d=ssv*gv.^span_zero;
-        else
-            d=ssv+gv*span_zero;
-        end
-    end
-
-    function d=steady_growth()
-        ssv=ss.(name);
-        gv=g.(name);        
-        if is_log_var(iv)
-            d=ssv*gv.^span;
-        else
-            d=ssv+gv*span;
-        end
+        
+        for ireg=1:h
+            
+            if is_log_var(iv)
+                
+                d(:,ireg)=ssv(ireg)*gv(ireg).^span;
+                
+            else
+                
+                d(:,ireg)=ssv(ireg)+gv(ireg)*span;
+                
+            end
+            
+        end 
+        
     end
 
 end
