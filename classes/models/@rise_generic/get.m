@@ -273,7 +273,7 @@ end
                 lags(pos)=max(lags(pos),abs(lag));
             end
         end
-        Reply=[Reply;num2cell(lags)];
+        Reply=[Reply(:).';num2cell(lags(:).')];
     end
 
 
