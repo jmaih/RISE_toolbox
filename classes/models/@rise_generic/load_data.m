@@ -137,8 +137,11 @@ if data_provided
     
     % locate the log vars and log them
     %----------------------------------
-    
-    verdier=do_log(verdier,allvars);
+    if isa(obj,'dsge')
+        
+        verdier=do_log(verdier,allvars);
+        
+    end
     
     
     obs_id=locate_variables(obj.observables.name,allvars);

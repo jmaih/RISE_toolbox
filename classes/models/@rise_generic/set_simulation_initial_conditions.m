@@ -170,7 +170,7 @@ if isfield(obj.options,'solve_occbin') && ~isempty(obj.options.solve_occbin)
     Initcond.solve_occbin=obj.options.solve_occbin;
 end
 Initcond.is_log_var=is_log_var;
-Initcond.log_var_steady_state=ss1;
+
 %-----------------------------------------
 if is_conditional_forecasting
     % shocks have already been set from the initial conditions no
@@ -204,6 +204,15 @@ if ~isempty(simul_regime)
     end
 end
 Initcond.y=y0;
+Initcond.do_dsge_var=do_dsge_var;
+
+% now put everything in order var
+%---------------------------------
+[Initcond.T,~,Initcond.log_var_steady_state,new_order,...
+    Initcond.state_vars_location]=load_solution(obj,'ov',Initcond.do_dsge_var);
+
+Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
+
 
     function set_shocks_and_states()
         conditional_shocks=obj.options.forecast_cond_exo_vars;

@@ -31,16 +31,6 @@ Initcond.y.y=Initcond.y.y(new_order,:,:);% [variables,ncols,1+n_conditions]
 
 iov(new_order)=1:numel(new_order);
 
-% re-order is_log_var
-%---------------------
-if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
-    Initcond.is_log_var=Initcond.is_log_var(new_order);
-    for ireg=1:numel(Initcond.log_var_steady_state)
-        Initcond.log_var_steady_state{ireg}=...
-            Initcond.log_var_steady_state{ireg}(new_order);
-    end
-end
-
 % re-order conditions accordingly
 %---------------------------------
 if isfield(Initcond.y.ycond,'pos') && ~isempty(Initcond.y.ycond.pos)

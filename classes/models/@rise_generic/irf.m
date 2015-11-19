@@ -194,14 +194,9 @@ myirfs=format_irf_output(myirfs);
             error('model cannot be solved')
         end
         solve_order=1;
-        do_dsge_var=false;
         if is_dsge
-            do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
             solve_order=obj.options.solve_order;
         end
-        % load the order_var solution
-        %-----------------------------
-        [T,~,~,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
        
         h=obj.markov_chains.regimes_number;
         
@@ -225,8 +220,6 @@ myirfs=format_irf_output(myirfs);
         obj.options.simul_shock_uncertainty=irf_shock_uncertainty;
         
         Initcond=set_simulation_initial_conditions(obj);
-        
-        Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
         
         y0=Initcond.y;
 
@@ -261,13 +254,10 @@ myirfs=format_irf_output(myirfs);
         %----------------------------------------------------------
         relevant=1:endo_nbr;
         max_rows=endo_nbr;
-        if do_dsge_var
+        if Initcond.do_dsge_var
             max_rows=obj.observables.number(1);
             relevant=obj.inv_order_var(obj.observables.state_id);
         end
-        
-        % use the steady state with possibly loglinear variables
-        steady_state=Initcond.log_var_steady_state;
         
         retcode=0;
         for istate=1:number_of_threads
@@ -275,8 +265,9 @@ myirfs=format_irf_output(myirfs);
                 if h==1||number_of_threads==h
                     y0.rcond.data(:,1)=istate;
                 end
-                    [xxxx,retcode]=utils.forecast.irf(y0,T,steady_state,...
-                        state_vars_location,which_shocks,det_shocks,Initcond);
+                    [xxxx,retcode]=utils.forecast.irf(y0,Initcond.T,...
+                        Initcond.log_var_steady_state,...
+                        Initcond.state_vars_location,which_shocks,det_shocks,Initcond);
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
             end
         end
@@ -284,7 +275,7 @@ myirfs=format_irf_output(myirfs);
         % subtraction is already done
         %------------------------------------------------------------------
         if ~girf
-            Impulse_dsge=Impulse_dsge-y0.y(:,ones(Initcond.nsteps+1,1),...
+            Impulse_dsge=Impulse_dsge-y0.y(relevant,ones(Initcond.nsteps+1,1),...
                 ones(nshocks,1),ones(irf_draws,1),ones(number_of_threads,1));
         end
         
@@ -294,7 +285,7 @@ myirfs=format_irf_output(myirfs);
                 
         % exponentiate before doing anything: is_log_var is in the order_var order
         %-------------------------------------------------------------------------
-        if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
+        if ~isempty(Initcond.is_log_var)
             Impulse_dsge(Initcond.is_log_var,:,:,:,:)=exp(Impulse_dsge(Initcond.is_log_var,:,:,:,:));
         end
 

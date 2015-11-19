@@ -146,25 +146,16 @@ end
 %-------------------
 Initcond=set_simulation_initial_conditions(obj);
 
-% load the order_var solution
-%-----------------------------
-do_dsge_var=false;
-if isa(obj,'dsge')
-    do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
-end
-[T,~,~,new_order,state_vars_location]=load_solution(obj,'ov',do_dsge_var);
-
-Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.options);
-
 y0=Initcond.y;
 if numel(y0)>1
     error('more than one initial conditions')
 end
 
 % use the steady state with possibly loglinear variables
-steady_state=Initcond.log_var_steady_state;
-[y,states,retcode,~,myshocks]=utils.forecast.multi_step(y0(1),steady_state,T,...
-    state_vars_location,Initcond);
+
+[y,states,retcode,~,myshocks]=utils.forecast.multi_step(y0(1),...
+    Initcond.log_var_steady_state,Initcond.T,...
+    Initcond.state_vars_location,Initcond);
 
 % add initial conditions: (only the actual data on the first page)
 % ONLY IF THERE WAS NO BURN-IN
@@ -182,7 +173,7 @@ end
 % recompose the output if we have a dsge-var
 %-------------------------------------------
 smply=size(y,2);
-if do_dsge_var
+if Initcond.do_dsge_var
     endo_nbr=obj.endogenous.number;
     max_rows=obj.observables.number(1);
     relevant=obj.inv_order_var(obj.observables.state_id);
