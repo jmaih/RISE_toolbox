@@ -27,9 +27,34 @@ if isempty(obj)
 
 end
 
-if ~ismember(growth_type,{'zero','steady'})
+regime=1;
+
+if ischar(growth_type) 
     
-    error('growth_type should be "zero" or "steady"')
+    if ~(strncmp(growth_type,'zero',4)||...
+            strncmp(growth_type,'steady',5))
+        
+        error('growth_type should be "zero" or "steady"')
+        
+    end
+    
+    growth_type(isspace(growth_type))=[];
+    
+    left_par=find(growth_type=='(');
+    
+    if ~isempty(left_par)
+        
+        right_par=find(growth_type==')');
+        
+        regime=str2double(growth_type(left_par+1:right_par-1));
+        
+        growth_type=growth_type(1:left_par-1);
+        
+    end
+    
+else
+    
+    error('Other options not yet implemented')
     
 end
 
@@ -62,10 +87,12 @@ span=(1-maxlag:nperiods-maxlag)';
 
 h=obj.markov_chains.regimes_number;
 
-d=nan(numel(span),h);
+d=[];
 
 if zero_growth_
+    
     span(:)=0;
+    
 end
 
 for iv=1:nv
@@ -78,7 +105,7 @@ for iv=1:nv
     
 end
 
-d=zeros(nperiods,h);
+d=zeros(nperiods,1);
 
 for ix=1:sum(obj.exogenous.number)
     
@@ -94,19 +121,15 @@ end
         
         gv=g.(name);
         
-        for ireg=1:h
+        if is_log_var(iv)
             
-            if is_log_var(iv)
-                
-                d(:,ireg)=ssv(ireg)*gv(ireg).^span;
-                
-            else
-                
-                d(:,ireg)=ssv(ireg)+gv(ireg)*span;
-                
-            end
+            d=ssv(regime)*gv(regime).^span;
             
-        end 
+        else
+            
+            d=ssv(regime)+gv(regime)*span;
+            
+        end
         
     end
 
