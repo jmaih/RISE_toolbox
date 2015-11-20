@@ -259,18 +259,25 @@ end
             Reply=setdiff(Reply,Relags);
         end
         ncols=numel(Reply);
-        lags=zeros(1,ncols);
-        if ~isempty(Relags)
-            for ilag=1:numel(Relags)
-                name=Relags{ilag};
-                loc=strfind(name,'{');
-                prefix=name(1:loc-1);
-                lag=str2double(name(loc+1:end-1));
-                pos=find(strcmp(prefix,Reply));
-                if isempty(pos)
-                    error(['"',prefix,'" is not in the list of state variables but surprisingly "',name,'" is'])
+        % N.B: What I am doing here is a bit weird in the sense that lags
+        % are counted in the same way as the counting in C language rather
+        % than from 1 as in matlab.
+        if isa(obj,'svar')
+            lags=(obj.nlags-1)*ones(1,ncols);
+        else
+            lags=zeros(1,ncols);
+            if ~isempty(Relags)
+                for ilag=1:numel(Relags)
+                    name=Relags{ilag};
+                    loc=strfind(name,'{');
+                    prefix=name(1:loc-1);
+                    lag=str2double(name(loc+1:end-1));
+                    pos=find(strcmp(prefix,Reply));
+                    if isempty(pos)
+                        error(['"',prefix,'" is not in the list of state variables but surprisingly "',name,'" is'])
+                    end
+                    lags(pos)=max(lags(pos),abs(lag));
                 end
-                lags(pos)=max(lags(pos),abs(lag));
             end
         end
         Reply=[Reply(:).';num2cell(lags(:).')];
