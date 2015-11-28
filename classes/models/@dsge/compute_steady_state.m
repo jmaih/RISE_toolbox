@@ -126,15 +126,13 @@ if retcode
     
 end
 
-[obj,sscode,blocks]=prepare_steady_state_program(obj);
+[obj,sscode,blocks,unsolved]=prepare_steady_state_program(obj);
 
 number_of_regimes=obj.markov_chains.small_markov_chain_info.regimes_number;
 
 endo_nbr=obj.endogenous.number;
 
 exo_nbr=sum(obj.exogenous.number);
-
-unsolved=true(1,endo_nbr);
 
 x=zeros(exo_nbr,1);
 
@@ -168,11 +166,19 @@ y=y0;
 
 g=g0;
 
+blocks.y0=y0;
+
+blocks.g0=g0;
+
 if obj.options.steady_state_unique
     
     converged=false;
     
+    iloop=0;
+    
     while ~converged
+        
+        iloop=iloop+1;
         
         [p_unic,def_unic,TransMat,retcode]=ergodic_parameters(y0(:,1));
         
@@ -185,9 +191,13 @@ if obj.options.steady_state_unique
         [y(:,1),g(:,1),~,p_unic,retcode]=run_one_regime(y0(:,1),g0(:,1),p_unic,x,...
             def_unic,sscode,unsolved,blocks);
        
+        % exit if there is a problem (retcode>0) or if we have converged
+        %----------------------------------------------------------------
         converged=retcode||max(abs(y0(:,1)-y(:,1)))<=obj.options.fix_point_TolFun;
         
         y0(:,1)=y(:,1);
+        
+        g0(:,1)=g(:,1);
         
     end
     
@@ -256,7 +266,6 @@ else
         [TransMat,retcode]=compute_steady_state_transition_matrix(...
             obj.routines.transition_matrix,y(:,1),p(:,1),d{1},...
             sum(obj.exogenous.number));
-        
         
     end
     
@@ -370,6 +379,7 @@ if ~isempty(sscode)
         
         [y,g,p,r,retcode]=grand_sscode(y0,g0,p,d);
         
+        
         if sscode.is_imposed_steady_state || check_residuals(r,optimopt.TolFun)
             
             return
@@ -385,7 +395,7 @@ if ~isempty(sscode)
                 
             else
                 
-                if any(unsolved)
+                if any(unsolved)||~all(isfinite(y))||~all(isfinite(g))
                     
                     [y,g,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,...
                         dq_blocks);
@@ -439,7 +449,9 @@ end
         [ssc1,retcode]=optimization_center(@concentrated_residuals,ssc0,...
             arg_zero_solver,optimopt);
         
+        
         [r,y,g]=concentrated_residuals(ssc1);
+        
         
         function [r,y,g]=concentrated_residuals(ssc)
             
@@ -475,13 +487,29 @@ end
 
     function [y,g,p,r,retcode]=grand_sscode(y0,g0,p,d)
         
+        % try a quick exit
+        %-----------------
+        r=dq_blocks.residcode(y0,g0,x,p,d);
+        
+        if check_residuals(r,optimopt.TolFun)
+            
+            retcode=0;
+            
+            y=y0;
+            
+            g=g0;
+            
+            return
+            
+        end
+        
         yg0=y0;
         
         g = g0;
         
         if solve_bgp
             
-            yg0=yg0+g0*1i;
+            yg0=[yg0,g0];
             
         end
         
@@ -493,14 +521,14 @@ end
             
         end
         
-        y=real(yg);
+        y=yg(:,1);
         
         if solve_bgp
             
-            g=imag(yg);
+            g=yg(:,2);
             
         end
-        
+                
         if retcode
             
             r=ones(size(y));
@@ -543,6 +571,16 @@ solve_bgp=blocks.solve_bgp;
 
 shift=blocks.solve_bgp_shift;
 
+debug=blocks.debug;
+
+if debug
+    
+    y0=y;
+    
+    g0=g;
+    
+end
+
 if blocks.solve_linear
     % exploit jacobian information and exit quickly
     %-----------------------------------------------
@@ -566,63 +604,71 @@ arg_zero_solver=blocks.arg_zero_solver;
 
 fixed_vars=find(~unsolved);
 
-debug=blocks.debug;
-
 for iblock=1:nblocks
     
-    varblk=blocks.variables{iblock};
+    [orig_varlk,varblk,nv,fixed_level,fixed_growth]=load_relevant();
     
-    fixed=ismember(varblk,fixed_vars);
-    
-    varblk(fixed)=[];
-    
-    nv=numel(varblk);
-    
-    if nv==0
-        continue
-    end
-    
-    eqtnblk=blocks.equations{iblock};
+    if nv>0
         
-    log_status=is_log_var(varblk);
-    
-    if solve_bgp
+        level_vars=varblk(~fixed_level);
         
-        log_status=[log_status,log_status]; %#ok<AGROW>
+        nvl=numel(level_vars);
         
-    end
-    
-    z0=y(varblk);
-    
-    if solve_bgp
+        growth_vars=varblk(~fixed_growth);
         
-        z0=[z0;g(varblk)]; %#ok<AGROW>
+        log_status=is_log_var(level_vars);
         
-    end
-    
-    z0(log_status)=log(z0(log_status));
-    
-    [z,retcode]=optimization_center(@small_system,z0,arg_zero_solver,optimopt);
-
-    z(log_status)=exp(z(log_status));
-    
-    z(abs(z) <= optimopt.TolX) = 0;
-    
-    y(varblk)=z(1:nv);
-    
-    if solve_bgp
+        if solve_bgp
+            
+            log_status=[log_status,...
+                is_log_var(growth_vars)]; %#ok<AGROW>
+            
+        end
         
-        g(varblk)=z(nv+1:end);
+        z0=y(level_vars);
+        
+        if solve_bgp
+            
+            z0=[z0;g(growth_vars)]; %#ok<AGROW>
+            
+        end
+        
+        z0(log_status)=log(z0(log_status));
+        
+        [z,retcode]=optimization_center(@small_system,z0,arg_zero_solver,optimopt);
+        
+        z(log_status)=exp(z(log_status));
+        
+        try
+            z=round(z,12);
+        catch
+            z(abs(z) <= optimopt.TolX) = 0;
+        end
+        
+        y(level_vars)=z(1:nvl);
+        
+        if solve_bgp
+            
+            g(growth_vars)=z(nvl+1:end);
+            
+        end
+        
+    else
+        
+        retcode=0;
         
     end
     
     if debug
         
-        blocks.endo_list(varblk)
+        eqtnblk=blocks.equations{iblock};
+        
+        blocks.endo_list(orig_varlk)
         
         blocks.dynamic(eqtnblk)
         
-        disp([blocks.endo_list(varblk)',num2cell(full([y(varblk),g(varblk)]))])
+        disp([blocks.endo_list(orig_varlk)',...
+            num2cell(full([y(orig_varlk),g(orig_varlk),y0(orig_varlk),g0(orig_varlk)]))])
         
     end
     
@@ -635,6 +681,39 @@ for iblock=1:nblocks
 end
 
 r=blocks.residcode(y,g,x,p,d);
+
+    function [orig_varblk,varblk,nv,fixed_level,fixed_growth]=load_relevant()
+        
+        varblk=blocks.variables{iblock};
+        
+        orig_varblk=varblk;
+        
+        fixed=ismember(varblk,fixed_vars);
+        
+        fixed=fixed(:);
+        
+        bad_y=isnan(y(varblk));
+        
+        bad_g=isnan(g(varblk));
+        
+        fixed_level=fixed & ~bad_y;
+        
+        fixed_growth=fixed & ~bad_g;
+        
+        y(varblk(bad_y))=blocks.y0(varblk(bad_y));
+        
+        g(varblk(bad_g))=blocks.g0(varblk(bad_g));
+        
+        totally_fixed=fixed_level & fixed_growth;
+        
+        varblk(totally_fixed)=[];
+        
+        fixed_level(totally_fixed)=[];
+        
+        fixed_growth(totally_fixed)=[];
+        
+        nv=numel(varblk);
+    end
 
     function [rupdate,retcode]=solve_linearly()
         % Since the model is linear, the Jacobian is independent of the
@@ -696,11 +775,11 @@ r=blocks.residcode(y,g,x,p,d);
         
         zyg(log_status)=exp(zyg(log_status));
         
-        y(varblk)=zyg(1:nv);
+        y(level_vars)=zyg(1:nvl);
         
         if solve_bgp
             
-            g(varblk)=zyg(nv+1:end);
+            g(growth_vars)=zyg(nvl+1:end);
             
         end
         
@@ -779,14 +858,19 @@ end
 
 
 
-function [obj,sscode,blocks]=prepare_steady_state_program(obj)
+function [obj,sscode,blocks,unsolved]=prepare_steady_state_program(obj)
 
+unsolved=true(1,obj.endogenous.number);
 
 % steady state functions (just for output)
 %-----------------------------------------
 if obj.warrant_setup_change
     
     obj=recreate_steady_state_functions(obj);
+    
+    obj.steady_state_2_blocks_optimization=[];
+    
+    obj.steady_state_2_model_communication=[];
     
 end
         
@@ -877,6 +961,14 @@ if isempty(obj.steady_state_2_model_communication)
         
         sscode.is_loop_steady_state=obj.options.steady_state_loop;
         
+        sscode.is_fixed_steady_state=obj.options.steady_state_fixed;
+        
+        if sscode.is_fixed_steady_state && sscode.is_loop_steady_state
+            
+            error('steady state cannot be simultaneously fixed and looped')
+            
+        end
+        
         % after having parsed the ssfile and the ssmodel, we can do this
         %----------------------------------------------------------------
         
@@ -909,6 +1001,11 @@ else
     
 end
 
+if ~isempty(sscode) && sscode.is_fixed_steady_state
+    
+    unsolved(sscode.solved)=false;
+    
+end
 
 if isempty(obj.steady_state_2_blocks_optimization)
     
@@ -919,6 +1016,12 @@ if isempty(obj.steady_state_2_blocks_optimization)
     optimopt.TolX=1e-12;
     
     optimopt.TolFun=1e-12;
+    
+    % When a solution is to be found, usually it is found very fast. When
+    % there is no solution, it may take forever so we change the default
+    % number of iterations from 1000 to 20
+    %---------------------------------------------------------------
+    optimopt.MaxIter=20;
     
     optimopt.Algorithm=obj.options.steady_state_algorithm;
     
@@ -997,7 +1100,11 @@ function obj=recreate_steady_state_functions(obj)
 
 % the steady state is always ordered alphabetically
 %---------------------------------------------------
-ss_occurrence=sum(obj.occurrence,3);
+try
+    ss_occurrence=sum(obj.fast_sstate_occurrence,3);
+catch
+    ss_occurrence=sum(obj.occurrence,3);
+end
 
 ss_occurrence(ss_occurrence>0)=1;
 
@@ -1013,7 +1120,11 @@ end
 obj.steady_state_blocks=struct('equations',{equations_blocks},...
     'variables',{variables_blocks});
 
-static=obj.equations.shadow_static;
+try
+    static=obj.equations.shadow_fast_ssmodel;
+catch
+    static=obj.equations.shadow_static;
+end
 
 sssae=obj.equations.shadow_steady_state_auxiliary_eqtns;
 
@@ -1259,9 +1370,9 @@ auxcode=@auxiliary_evaluation;
 
     function [yg,retcode]=auxiliary_evaluation(yg,x,p,d)
         
-        y=real(yg);
+        y=yg(:,1);
         
-        g=imag(yg);
+        g=yg(:,2);
         
         retcode=0;
         
@@ -1311,7 +1422,7 @@ auxcode=@auxiliary_evaluation;
             
         end
         
-        yg=y+g*1i;
+        yg=[y,g];
         
     end
 
