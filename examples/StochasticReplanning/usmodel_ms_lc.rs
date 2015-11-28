@@ -13,7 +13,7 @@ crhoa crhoas crhob crhog crhols crhoqs crhoms crhopinf crhow
 ctrend cg ProbabilityOfCommitment testpar
 
 
-model(linear) 
+model 
 
 # cpie=1+constepinf/100;
 # cgamma=1+ctrend/100 ;
