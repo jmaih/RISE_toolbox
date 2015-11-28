@@ -196,7 +196,7 @@ dictionary.endogenous_list={dictionary.endogenous.name};
 % at the same time, construct the incidence and occurrence matrices
 orig_endo_nbr=numel(dictionary.endogenous);
 
-[equation_type,occurrence]=equation_types_and_variables_occurrences();
+[equation_type,occurrence,fast_sstate_occurrence]=equation_types_and_variables_occurrences();
 
 %% Steady state Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
@@ -257,6 +257,10 @@ do_incidence_matrix();
     shadow_tvp,...
     shadow_complementarity]=parser.shadowize(dictionary,AllModels,...
     equation_type);
+% Remove the fast steady state from the dynamic!!!
+% then build the bgp/static system
+%---------------------------------------------------
+
 orig_definitions=defs.original;
 shadow_definitions=defs.shadow;
 
@@ -514,6 +518,8 @@ dictionary.routines=routines;
 
 dictionary.occurrence=occurrence;
 
+dictionary.fast_sstate_occurrence=fast_sstate_occurrence;
+
 dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,logical_incidence);
 
     function do_incidence_matrix()
@@ -539,12 +545,43 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         dictionary.lead_lag_incidence.before_solve=before_solve;
     end
 
-    function [equation_type,occurrence]=equation_types_and_variables_occurrences()
+    function [equation_type,occurrence,fast_sstate_occurrence]=equation_types_and_variables_occurrences()
         number_of_equations=size(Model_block,1);
         occurrence=false(number_of_equations,orig_endo_nbr,3);
+        fast_sstate_occurrence=occurrence;
+        has_fast_sstate=cellfun(@(x)~isempty(x),Model_block(:,end));
         equation_type=ones(number_of_equations,1);
         for iii=1:number_of_equations
+            % main equation
             eq_i_= Model_block{iii,1};
+            run_occurrence(eq_i_);
+            % bgp/sstate equation if not empty
+            eq_i_= Model_block{iii,end};
+            run_occurrence(eq_i_,false);
+        end
+        % replace the locations without steady state equations with the
+        % normal equations
+        %---------------------------------------------------------------
+        fast_sstate_occurrence(~has_fast_sstate,:,:)=occurrence(~has_fast_sstate,:,:);
+        % keep only the structural equations
+        %------------------------------------
+        occurrence=occurrence(equation_type==1,:,:);
+        fast_sstate_occurrence=fast_sstate_occurrence(equation_type==1,:,:);
+        neqtns=size(occurrence,1);
+        nvars=size(occurrence,2);
+        if neqtns>nvars
+            error(['more equations (',int2str(neqtns),') than variables(',int2str(nvars),')'])
+        elseif neqtns<nvars
+            error(['more variables (',int2str(nvars),') than equations(',int2str(neqtns),')'])
+        end
+        
+        function run_occurrence(eq_i_,is_dynamic)
+            if nargin<2
+                is_dynamic=true;
+            end
+            if isempty(eq_i_)
+                return
+            end
             if strcmp(Model_block{iii,4},'def') % <---ismember(eq_i_{1,1},dictionary.definitions) && strcmp(eq_i_{1,2}(1),'=')
                 equation_type(iii)=2;
             elseif strcmp(Model_block{iii,4},'tvp') % <---ismember(eq_i_{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i_{1,2}(1),'=')
@@ -561,18 +598,13 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
                     elseif equation_type(iii)==3 && ismember(lag_or_lead,[3,1])
                         error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to describe endogenous switching cannot contain leads or lags'])
                     end
-                    occurrence(iii,var_loc,lag_or_lead)=true;
+                    if is_dynamic
+                        occurrence(iii,var_loc,lag_or_lead)=true;
+                    else
+                        fast_sstate_occurrence(iii,var_loc,lag_or_lead)=true;
+                    end
                 end
             end
-        end
-        % keep only the structural equations
-        occurrence=occurrence(equation_type==1,:,:);
-        neqtns=size(occurrence,1);
-        nvars=size(occurrence,2);
-        if neqtns>nvars
-            error(['more equations (',int2str(neqtns),') than variables(',int2str(nvars),')'])
-        elseif neqtns<nvars
-            error(['more variables (',int2str(nvars),') than equations(',int2str(neqtns),')'])
         end
     end
 

@@ -126,6 +126,7 @@ dictionary=orderfields(dictionary);
         dictionary.equations.shadow_static=static.shadow_model;
         dictionary.equations.shadow_steady_state_model=static.shadow_steady_state_model;
         dictionary.equations.shadow_steady_state_auxiliary_eqtns=static.shadow_steady_state_auxiliary_eqtns;
+        dictionary.equations.shadow_fast_ssmodel=static.shadow_fast_ssmodel;
     end
 
     function cleanup_definitions()

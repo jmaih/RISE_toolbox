@@ -89,6 +89,7 @@ classdef dsge < rise_generic
         % steady state solution facilitators
         %------------------------------------
         occurrence
+        fast_sstate_occurrence
         steady_state_blocks
         steady_state_2_model_communication
         steady_state_2_blocks_optimization
@@ -266,7 +267,7 @@ classdef dsge < rise_generic
                 'raw_file','rawfile_triggers','equations','definitions',...
                 'markov_chains','v','locations','siz','order_var',...
                 'inv_order_var','steady_state_index','occurrence',...
-                'routines'};
+                'fast_sstate_occurrence','routines'};
             
             % check that all the shocks in the model are in use
             not_in_use=dictionary.exogenous.name(~dictionary.exogenous.is_in_use);
