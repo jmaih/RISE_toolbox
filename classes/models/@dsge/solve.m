@@ -156,7 +156,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
 % - **steady_state_imposed** [true|{false}]: 
 %
-% - **steady_state_loop** [true|{false}]: steady_state_use_jacobian
+% - **steady_state_loop** [true|{false}]: 
+%
+% - **steady_state_fixed** [true|{false}]: 
 %
 % - **steady_state_use_jacobian** [true|{false}]: In linear models, the
 % jacobian is always used. In the nonlinear case, however, the true
@@ -227,7 +229,8 @@ if isempty(obj)
         'steady_state_unique',false,...
         'steady_state_imposed',false,...
         'steady_state_loop',false,...
-        'steady_state_use_jacobian',false);
+        'steady_state_use_jacobian',false,...
+        'steady_state_fixed',false);
     
     is_ResolveOnly=struct('solver',[],...
         'solve_order',1,...
