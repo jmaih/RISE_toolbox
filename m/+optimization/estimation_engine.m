@@ -112,6 +112,8 @@ else
         [xfinal,ffinal,exitflag,~,~,~,H(:,:,1)]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
     elseif strcmp(tmp,'fminunc')
         [xfinal,ffinal,exitflag,~,~,H(:,:,1)]=optimizer(fh,x0,lb,ub,options,vargs{:});
+    elseif strcmp(tmp,'fminsearch')
+        [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
     else
         nout=nargout(optimizer);
         if nout==3
