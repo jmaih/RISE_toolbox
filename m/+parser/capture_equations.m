@@ -31,7 +31,7 @@ def_flag=false;
 endo_switch_flag=false;
 mcp_flag=false;
 equation=initialize_equation();%cell(2,0);
-block=cell(0,4);
+block=cell(0,5);
 DELIMITERS=parser.delimiters();
 
 chain_names={dictionary.markov_chains.name};
@@ -141,7 +141,9 @@ end
                         dictionary.exogenous(position).is_in_use=true;
                     end
                     is_lhs_def=false;
-                    if strcmp(tok_status,'#')||strcmp(tok_status,'!')||strcmp(tok_status,'?')
+                    if (strcmp(tok_status,'#') && isempty(equation.eqtn))||...
+                            strcmp(tok_status,'!')||...
+                            strcmp(tok_status,'?')
                         def_flag=strcmp(tok_status,'#');
                         if strcmp(block_name,'exogenous_definition')
                             error([mfilename,':: the exogenous definition block cannot contain ''#'' or ''!'' or ''?'' ',file_name_,' at line ',sprintf('%0.0f',iline_)])
@@ -354,7 +356,14 @@ end
                     % load it and reinitialize.
                     equation.eqtn=validate_equation(equation.eqtn,...
                         max(abs([equation.max_lag,equation.max_lead])));
-                    block=[block;{equation.eqtn,equation.max_lag,equation.max_lead,equation.type}];
+                    fast_ss_form=[];
+                    pound_key=find(strcmp(equation.eqtn(1,:),'#'));
+                    if ~isempty(pound_key)
+                        fast_ss_form=equation.eqtn(:,pound_key+1:end);
+                        equation.eqtn=equation.eqtn(:,1:pound_key-1);
+                    end
+                    block=[block;...
+                        {equation.eqtn,equation.max_lag,equation.max_lead,equation.type,fast_ss_form}];
                     nblks=nblks+1;
                     if equation.is_def && dictionary.definitions_inserted
                         blocks_to_discard_coz_they_are_defs(nblks,1)=true;
@@ -386,6 +395,30 @@ end
             end
         end
         function equation=validate_equation(equation,max_lead_lag)
+            % if there is a # in the equation, split the equation in to two
+            % validate each part and reconnect
+            pound_key_=find(strcmp(equation(1,:),'#'));
+            if ~isempty(pound_key_)
+                if ~strcmp(block_name,'model')
+                    error(['# sign only allowed in model block in ',...
+                        file_name_,' at line ',sprintf('%0.0f',iline_)])
+                elseif numel(pound_key_)>1
+                    error([' Only one # sign allowed per equation. In ',...
+                        file_name_,' at line ',sprintf('%0.0f',iline_)])
+                elseif mcp_flag||endo_switch_flag||def_flag
+                    error([' Complementarities, endogenous switching probs ',...
+                        ' and definitions cannot contain a # sign. In ',...
+                        file_name_,' at line ',sprintf('%0.0f',iline_)])
+                end
+                % add a semicolon to the first part and validate
+                first_part=[equation(:,1:pound_key_-1),{';';[]}];
+                second_part=equation(:,pound_key_+1:end);
+                % validate the bgp/sstate part
+                first_part=validate_equation(first_part,max_lead_lag);
+                second_part=validate_equation(second_part,max_lead_lag);
+                % reconnect both
+                equation=[first_part,{'#';[]},second_part];
+            end
             if mcp_flag
                 if max_lead_lag
                     % 3- cannot contain lags or leads
