@@ -24,11 +24,29 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %   - **'solution'** [char]: solution of the model
 %
-%   - **'trend'|'growth'|'bgp'** [char]: balanced growth path. N.B. For
-%   linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
+%   - **'trend'|'growth'|'bgp'** [char]: balanced growth path. It is
+%   also possible to further taylor the output:
+%       - 'trend' | 'trend(default)' | 'growth' |
+%       'growth(default)' | 'bgp' | 'bgp(default)' 
+%       will give the same result (default) result
+%       - '...(struct)' will return the BGP in vector of structures,
+%       where each structure is a separate regime 
+%       - '...(cell)' will return the BGP in a cell array in which
+%       the first column is the list of variables and the subsequent
+%       columns are the different regimes. 
+%  N.B. For linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
 %   variables the BGP is x_t/x_{t-1}
 %
-%   - **'sstate'|'steadystate'|'steady_state'** [char]: steady state
+%   - **'sstate'|'steadystate'|'steady_state'** [char]: steady state. It is
+%   also possible to further taylor the output:
+%       - 'sstate' | 'sstate(default)' | 'steadystate' |
+%       'steadystate(default)' | 'steady_state' | 'steady_state(default)' 
+%       will give the same result (default) result
+%       - '...(struct)' will return the sstates in vector of structures,
+%       where each structure is a separate regime 
+%       - '...(cell)' will return the sstates in a cell array in which
+%       the first column is the list of variables and the subsequent
+%       columns are the different regimes.
 %
 %   - **'parameters'|'par_vals'** [char]: parameter values. It is also
 %   possible to further taylor the output:
@@ -162,15 +180,6 @@ elseif strcmp(PropertyName,'definitions')
 elseif strcmpi(PropertyName,'solution')
     error('solution not gettable yet')
     
-elseif ismember(lower(PropertyName),{'trend','growth','bgp'})
-    Reply=load_steady_state_or_balanced_growth(obj.solution.bgp);
-    
-elseif ismember(lower(PropertyName),{'sstate','steadystate','steady_state'})
-    if isempty(obj.solution)
-        error('The model has not been solved')
-    end
-    Reply=load_steady_state_or_balanced_growth(obj.solution.ss);
-    
 elseif strncmpi(PropertyName,'parameters',length('parameters'))||...
         strncmpi(PropertyName,'par_vals',length('par_vals'))
     Reply=load_par_vals();
@@ -228,13 +237,57 @@ elseif ismember(lower(PropertyName),{'mode','prior_mean','start'})%,'mean','medi
     Reply=load_parameters();
     
 else
-    par_list=get(obj,'par_list');
-    ploc=locate_variables(PropertyName,par_list,true);
-    if ~isnan(ploc)
-        Reply=obj.parameter_values(ploc,:);
-    else
-        error(['unknown gettable property ',PropertyName])
+    success=false;
+    
+    ss_bgp_names={'trend','growth','bgp',...
+        'sstate','steadystate','steady_state'};
+    
+    for ii=1:numel(ss_bgp_names)
+        
+        if strncmpi(PropertyName,ss_bgp_names{ii},length(ss_bgp_names{ii}))
+            
+            if isempty(obj.solution)
+                
+                error('The model has not been solved')
+                
+            end
+            
+            if ii<=3
+                
+                Reply=load_steady_state_or_balanced_growth(obj.solution.bgp);
+                
+            else
+                
+                Reply=load_steady_state_or_balanced_growth(obj.solution.ss);
+                
+            end
+            
+            success=true;
+            
+            break
+            
+        end
+        
     end
+    
+    if ~success
+        
+        par_list=get(obj,'par_list');
+        
+        ploc=locate_variables(PropertyName,par_list,true);
+        
+        if ~isnan(ploc)
+            
+            Reply=obj.parameter_values(ploc,:);
+            
+        else
+            
+            error(['unknown gettable property ',PropertyName])
+            
+        end
+        
+    end
+    
 end
 
 
@@ -332,32 +385,23 @@ end
         if isempty(item{1})
             error('the steady state of the model has not been solved')
         end
-        Reply=struct();
+        type=find_type();
         endo_names=obj.endogenous.name;
-        h=numel(item);
-        tmp=nan(1,h);
-        for ii=1:obj.endogenous.number
-            for ireg=1:h
-                tmp(ireg)=item{ireg}(ii);
-            end
-            Reply.(endo_names{ii})=tmp;
-        end
+        vals=cell2mat(item);
+        Reply=dispatch_type(type,endo_names,vals);
+        
     end
 
 
     function Reply=load_par_vals()
-        type='default';
-        left_par=PropertyName=='(';
-        if any(left_par)
-            left_par=find(left_par);
-            if ~strcmp(PropertyName(end),')')
-                error(['right parenthesis expected at the end of string, but found ',PropertyName(end)])
-            end
-            type=PropertyName(left_par+1:end-1);
-        end
-        Reply=struct();
+        type=find_type();
         pnames=obj.parameters.name;
         pvals=obj.parameter_values;
+        Reply=dispatch_type(type,pnames,pvals);
+    end
+
+    function Reply=dispatch_type(type,pnames,pvals)
+        Reply=struct();
         [np,nregs]=size(pvals);
         switch type
             case {'','default'}
@@ -377,6 +421,17 @@ end
         end
     end
 
+    function type=find_type()
+        type='default';
+        left_par=PropertyName=='(';
+        if any(left_par)
+            left_par=find(left_par);
+            if ~strcmp(PropertyName(end),')')
+                error(['right parenthesis expected at the end of string, but found ',PropertyName(end)])
+            end
+            type=PropertyName(left_par+1:end-1);
+        end
+    end
 
     function Reply=load_list(type,proplength,type2)
         if nargin<3
