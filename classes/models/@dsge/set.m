@@ -65,7 +65,7 @@ end
 % the options warranting setup change also imply the resolving of the model
 %--------------------------------------------------------------------------
 [~,bingo]=solve(dsge.empty(0));
-change_setup_and_resolve=bingo.change_setup_and_resolve;     
+change_setup_and_resolve=union(bingo.change_setup_and_resolve,'debug');     
 resolve_only=bingo.resolve_only;
 
 is_resolve=false;
