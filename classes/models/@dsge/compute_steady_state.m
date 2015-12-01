@@ -236,7 +236,7 @@ else
             
         end
         
-        if ~isempty(sscode) && sscode.is_imposed_steady_state
+        if ~isempty(sscode) && sscode.is_unique_steady_state
             
             % update the parameters since we are not going into the steady
             % state for every regime
