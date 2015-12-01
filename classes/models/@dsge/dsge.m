@@ -61,6 +61,11 @@ classdef dsge < rise_generic
     % estimation -   information on estimation: posterior maximization and simulation
     % solution -   model solution including steady state, definitions, etc.
     % filtering -   structure holding predicted, updated and smoothed series
+    properties
+        % this is so that the user can tailor the information to pass
+        % around functions written by him but called by RISE
+        user_data
+    end
     properties (Hidden = true)
         old_solution
     end
