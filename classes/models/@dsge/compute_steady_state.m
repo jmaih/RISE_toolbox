@@ -1056,8 +1056,8 @@ if isempty(obj.steady_state_2_blocks_optimization)
     if obj.is_optimal_policy_model
         
         planner_routines=struct(...
-            'planner_static_mult_support',obj.routines.planner_static_mult_support,...
-            'planner_static_mult',obj.routines.planner_static_mult);
+            'planner_static_mult_support',{obj.routines.planner_static_mult_support},...
+            'planner_static_mult',{obj.routines.planner_static_mult});
         
     end
     
