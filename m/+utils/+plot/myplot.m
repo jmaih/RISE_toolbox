@@ -140,7 +140,7 @@ end
                 hold off
             end
             set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels,...
-                'ylim',[ymin,ymax])
+                'ylim',[ymin,max(ymax,ymin+eps)])
             vout={gca()};
         elseif strcmp(funct_type,{'plot_decomp'})
             uall=d{:};
