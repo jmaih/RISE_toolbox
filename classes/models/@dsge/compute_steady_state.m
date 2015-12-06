@@ -1372,7 +1372,15 @@ auxcode=@auxiliary_evaluation;
         
         y=yg(:,1);
         
-        g=yg(:,2);
+        g=[];
+        
+        is_growth=size(yg,2)==2;
+        
+        if is_growth
+            
+            g=yg(:,2);
+            
+        end
         
         retcode=0;
         
@@ -1381,7 +1389,11 @@ auxcode=@auxiliary_evaluation;
 
             y=utils.code.evaluate_functions(aux_ssfunc,y,g,x,p,d);
             
-            g=utils.code.evaluate_functions(aux_ssfunc,g,g,x,p,d);
+            if is_growth
+                
+                g=utils.code.evaluate_functions(aux_ssfunc,g,g,x,p,d);
+                
+            end
             
         end
         
