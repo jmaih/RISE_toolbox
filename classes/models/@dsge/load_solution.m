@@ -1,4 +1,5 @@
-function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,type,do_bvar_dsge)
+function [T,R,steady_state,new_order,state_vars_location,log_vars]=...
+    load_solution(obj,type,do_bvar_dsge)
 % H1 line
 %
 % Syntax
@@ -58,6 +59,8 @@ steady_state=obj.solution.ss;
 new_order=ov;
 state_vars_location=obj.locations.after_solve.t.pb;
 
+log_vars=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+        
 % update T and steady state
 %--------------------------
 order_var_solution();
@@ -162,12 +165,14 @@ end
         if order>1
             warning([mfilename,':: Only first order will be used'])
         end
+        % re-order the log vars
+        %----------------------
+        log_vars=log_vars(iov);
     end
 
     function order_var_solution()
         zzz=repmat('z',1,order);
         is_dev=obj.options.simul_bgp_deviation;
-        log_vars=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
         target=numel(state_vars_location)+1;
         for io=1:order
             for ireg=1:regimes_number
@@ -191,5 +196,8 @@ end
                 end
             end
         end
+        % Now also re-order the log vars
+        %-------------------------------
+        log_vars=log_vars(ov);
     end
 end

@@ -1,4 +1,5 @@
-function [T,R,steady_state,new_order,state_vars_location]=load_solution(obj,flag,~)
+function [T,R,steady_state,new_order,state_vars_location,log_vars]=...
+    load_solution(obj,flag,~)
 % H1 line
 %
 % Syntax
@@ -33,6 +34,8 @@ if isempty(obj)
     T=struct();
     return
 end
+
+log_vars=[];
 
 [T,R,steady_state]=set_solution_to_companion(obj);
 
