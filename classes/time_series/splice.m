@@ -100,6 +100,10 @@ end
 v=ts(d(1),v);
     function fill_it()
         startx=find(tmp(iarg).start==d);
+        if tmp(iarg).c<c && tmp(iarg).c==1
+            tmp(iarg).data=tmp(iarg).data(:,ones(1,c));
+            tmp(iarg).c=c;
+        end
         v(startx:startx+tmp(iarg).r-1,1:tmp(iarg).c,1:tmp(iarg).p)=...
             tmp(iarg).data;
     end
