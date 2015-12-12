@@ -28,7 +28,12 @@ mydates_start=dbcell{1}.(varList{1}).start;
 output=struct();
 nobj=numel(dbcell);
 for ivar=1:numel(varList)
+    is_good=true;
     for imod=1:numel(dbcell)
+        is_good=is_good && isfield(dbcell{imod},varList{ivar});
+        if ~is_good
+            continue
+        end
         this=dbcell{imod}.(varList{ivar});
         dn=this.date_numbers;
         datta=double(this);
@@ -61,6 +66,10 @@ for ivar=1:numel(varList)
             finish=find(dn(end)==dn0,1,'last');
             tank(start:finish,imod,:)=datta;
         end
+    end
+    if ~is_good
+        disp(['skipping "', varList{ivar},'" as it is not included in all models'])
+        continue
     end
     if data_size(2)>1
         for ireg=1:data_size(2)
