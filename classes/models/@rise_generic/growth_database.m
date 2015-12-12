@@ -147,6 +147,8 @@ end
             
         end
         
+        d=full(d);
+        
     end
 
     function do_time_series()
