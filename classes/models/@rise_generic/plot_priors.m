@@ -1,4 +1,4 @@
-function pdata=plot_priors(obj,parlist)
+function pdata=plot_priors(obj,parlist,varargin)
 % plot_priors -- computes prior densities for estimated parameters
 %
 % Syntax
@@ -7,7 +7,9 @@ function pdata=plot_priors(obj,parlist)
 %
 %   ppdata=plot_priors(obj)
 %
-%   ppdata=posterior_plots(obj,varargin)
+%   ppdata=plot_priors(obj,parlist)
+%
+%   ppdata=plot_priors(obj,parlist,varargin)
 %
 % Inputs
 % -------
@@ -16,6 +18,8 @@ function pdata=plot_priors(obj,parlist)
 %
 % - **parlist** [[]|char|cellstr]: list of the parameters for which one
 % wants to plot the priors
+%
+% - **varargin** [pairwise plotting arguments]: 
 %
 % Outputs
 % --------
@@ -84,6 +88,22 @@ if numel(unique(plocs))~=numel(plocs)
     error('parameter names duplicated')
 end
 
+vargs={'LineWidth',2.5};
+if isempty(varargin)
+    varargin=vargs;
+else
+    found=false;
+    for ii=1:2:length(varargin)-1
+        found=strcmpi(varargin{ii},vargs{1});
+        if found
+            break
+        end
+    end
+    if ~found
+        varargin=[vargs,varargin];
+    end
+end
+
 pnames=parlist;
 
 tex_names={obj.estimation.priors(plocs).tex_name};
@@ -125,14 +145,15 @@ end
         x_prior=vec(linspace(lb(ipar),ub(ipar),N));
         pdens.x_prior=x_prior;
         pdens.f_prior=distr{ipar}(x_prior,hypers(ipar,1),hypers(ipar,2));
+        pdens.f_prior=exp(pdens.f_prior);
         pdens.tex_name=tex_names{ipar};
         pdens.x_min=lb(ipar);
         pdens.x_max=ub(ipar);
     end
 
-end
-
 function [tex_name,legend_]=plotfunc(pname,ppdata)
 % the caller may use the tex_name information to override the title...
-[~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),'LineWidth',2.5);
+[~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),varargin{:});
+end
+
 end

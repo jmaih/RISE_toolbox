@@ -136,6 +136,7 @@ end
         x_min_sim = min(all_vals);
         x_max_sim = max(all_vals);
         [ss.f_kdens,ss.x_kdens]=distributions.kernel_density(all_vals,[],[],'normal',N);
+        ss.f_kdens=exp(ss.f_kdens);
         if is_posterior_max
             ss.post_mode=post_mode(ipar);
         end
