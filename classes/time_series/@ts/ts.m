@@ -311,6 +311,7 @@ classdef ts
         varargout=index(varargin)
         varargout=interpolate(varargin)
         varargout=intersect(varargin)
+        varargout=moments(varargin)
         varargout=regress(varargin)
         varargout=rolling(varargin)
         varargout=sort(varargin)
