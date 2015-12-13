@@ -67,7 +67,7 @@ end
 %-----------------
 x_min=min(pp.x);
 x_max=max(pp.x);
-axis([x_min x_max (1-rescale)*low_f (1+rescale)*high_f]);
+axis([x_min x_max (1-sign(low_f)*rescale)*low_f (1+sign(high_f)*rescale)*high_f]);
 % % axis tight % xlim([min(pp.x),max(pp.x)])
 h=gca();
 
