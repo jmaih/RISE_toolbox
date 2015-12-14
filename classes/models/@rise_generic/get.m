@@ -457,16 +457,8 @@ end
                 mygovern=obj.(type).(['is_',item]);
             else
                 if strcmp(item,'stationary') && strcmpi(type,'endogenous')
-                    log_vars=obj.endogenous.is_log_var;
-                    bgp=cell2mat(obj.solution.bgp);
                     too_small=1e-10;
-                    checklog=@(x)~any(abs(bgp(x,:)-1)>too_small);
-                    checklev=@(x)~any(abs(bgp(x,:))>too_small);
-                    mygovern=false(1,obj.endogenous.number);
-                    for ivar=1:obj.endogenous.number
-                        mygovern(ivar)=if_then_else(log_vars(ivar),...
-                            checklog(ivar),checklev(ivar));
-                    end
+                    mygovern=stationary_index(obj,too_small);
                 else
                     disp(strrep(ff,'is_',''))
                     error(['"',item,'" is not a valid property. The valid ',...

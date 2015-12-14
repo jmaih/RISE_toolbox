@@ -188,6 +188,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=load_data(varargin)
         varargout=prepare_transition_routine(varargin)
         varargout=setup_restrictions(varargin)
+        varargout=stationary_index(varargin)
     end
 end
 
