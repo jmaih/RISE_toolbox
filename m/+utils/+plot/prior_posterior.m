@@ -107,7 +107,7 @@ tex_name=ss.tex_name;
 
 % size of the plot
 %-----------------
-axis([ss.x_min ss.x_max bottom 1.4*top]);
+axis([ss.x_min ss.x_max bottom 1*top]);
 
 h=gca();
 end

@@ -61,14 +61,15 @@ if isempty(simulation_folder)
 end
 
 is_saved_to_disk=ischar(simulation_folder);
+number_of_matrices=1;
 if is_saved_to_disk
     W = what(simulation_folder);
     W=W.mat;
     W=strrep(W(locs),'.mat','');
+    number_of_matrices=numel(W);
 elseif ~isstruct(simulation_folder)
     error('wrong specification of simulation_folder')
 end
-number_of_matrices=numel(W);
 
 % do prior densities for all parameters
 %----------------------------------------
