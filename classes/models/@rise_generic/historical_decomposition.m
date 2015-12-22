@@ -49,6 +49,377 @@ function [Histdec,obj]=historical_decomposition(obj,varargin)
 % See also: 
 
 if isempty(obj)
+    
+    Histdec=struct('histdec_start_date','');
+    
+    return
+    
+end
+
+nobj=numel(obj);
+
+if nobj>1
+    
+    Histdec=cell(1,nobj);
+    
+    for iobj=1:nobj
+        
+        [Histdec{iobj},obj(iobj)]=historical_decomposition(obj(iobj),varargin{:});
+        
+    end
+    
+    return
+    
+end
+
+obj=set(obj,varargin{:});
+
+[obj,~,~,retcode]=filter(obj);
+
+if retcode
+    
+    error(decipher(retcode))
+    
+end
+
+init=filter_initialization(obj);
+
+ov=obj.order_var;
+
+order_var_endo_names=obj.endogenous.name(ov);
+
+shock_names=obj.exogenous.name;
+
+[Ty,Te,Tsig]=rebuild_state_space();
+
+ss=init.steady_state;
+
+regimes_number=obj.markov_chains.regimes_number;
+
+D=cell(1,regimes_number);
+
+histdec_start_date=obj.options.histdec_start_date;
+
+first=[];
+
+for st=1:regimes_number
+    
+    if regimes_number==1
+        
+        [smoothed_vars,dn]=load_values(obj.filtering.smoothed_variables,...
+            order_var_endo_names);
+        
+        smoothed_vars(init.is_log_var_new_order,:)=log(smoothed_vars(init.is_log_var_new_order,:));
+        
+        [smoothed_shocks,~,~,np]=load_values(obj.filtering.smoothed_shocks,shock_names);
+        
+    else
+        
+        reg=['regime_',int2str(st)];
+        
+        [smoothed_vars,dn]=load_values(obj.filtering.smoothed_variables.(reg),...
+            order_var_endo_names);
+        
+        smoothed_vars(init.is_log_var_new_order,:)=log(smoothed_vars(init.is_log_var_new_order,:));
+        
+        [smoothed_shocks,~,~,np]=load_values(obj.filtering.smoothed_shocks.(reg),shock_names);
+        
+    end
+    
+    select_range()
+    
+    y0=smoothed_vars(:,1);
+    
+    shocks=smoothed_shocks;
+    
+    D{st}=decomposition_engine(y0,Ty{st},Te{st},Tsig{st},ss{st},shocks,np);
+    
+    if obj.options.debug
+        
+        Dtest=sum(D{st},3).';
+        
+        smoothed_vars-Dtest
+        
+        keyboard
+    end
+
+    D{st}=permute(D{st},[1,3,2]);
+    
+end
+
+smoothed_probabilities=double(...
+    ts.collect(obj.filtering.smoothed_regime_probabilities));
+
+Histdec=struct();
+
+contrib_names=[{'y0','ss','sig','trend'},shock_names];
+
+for v=1:numel(order_var_endo_names)
+    
+    newdata=bsxfun(@times,D{1}(:,:,v),smoothed_probabilities(:,1));
+    
+    for st=2:regimes_number
+        
+        newdata=newdata+bsxfun(@times,D{st}(:,:,v),smoothed_probabilities(:,st));
+        
+    end
+    
+    Histdec.(order_var_endo_names{v})=ts(histdec_start_date,newdata,contrib_names);
+    
+end
+
+    function select_range()
+        
+        if st==1
+            
+            hist_start_date=dn(1);
+            
+            hist_end_date=dn(end);
+            
+            if isempty(histdec_start_date)
+                
+                histdec_start_date=hist_start_date;
+                
+            else
+                
+                histdec_start_date=date2serial(histdec_start_date);
+                
+            end
+            
+            if histdec_start_date<hist_start_date || ...
+                    histdec_start_date>hist_end_date
+                
+                error([mfilename,':: the decomposition start date must lie between ',...
+                    serial2date(hist_start_date),' and ',serial2date(hist_end_date)])
+                
+            end
+            
+            first=find(histdec_start_date==(hist_start_date:hist_end_date));
+            
+        end
+        
+        smoothed_vars=smoothed_vars(:,first:end);
+        
+        smoothed_shocks=smoothed_shocks(:,first:end);
+        
+    end
+
+
+    function [Ty,Te,Tsig]=rebuild_state_space()
+        
+        Ty=init.Tx;
+        
+        ny=size(Ty{1},1);
+        
+        tmp=zeros(ny);
+        
+        Te=init.Te;
+        
+        for ireg=1:numel(Ty)
+            
+            tmp(:,init.state_vars_location)=Ty{ireg};
+            
+            Ty{ireg}=tmp;
+            
+            % expand for anticipation terms
+            %------------------------------
+            Te{ireg}=Te{ireg}(:,:);
+            
+        end
+        
+        Tsig=init.Tsig;
+        
+    end
+
+
+    function [v,dn,nt,np]=load_values(smooth,vnames)
+        
+        nt=smooth.(vnames{1}).NumberOfObservations;
+        
+        np=smooth.(vnames{1}).NumberOfVariables;
+        
+        nv=numel(vnames);
+        
+        v0=nan(nv,nt,np);
+        
+        for iv=1:nv
+            
+            if iv==1
+                
+                dn=smooth.(vnames{iv}).date_numbers;
+                
+            end
+            
+            v0(iv,:,:)=permute(double(smooth.(vnames{iv})),[3,1,2]);
+            
+        end
+        
+        v=v0(:,:,1);
+        
+        for ireg=2:np
+            
+            v=[v;v0(:,:,ireg)]; %#ok<AGROW>
+            
+        end
+        
+    end
+
+end
+
+function [D,y0_id,ss_id,sig_id,trend_id,shocks_id]=decomposition_engine(y0,...
+    Ty,Te,Tsig,ss,shocks,np)
+
+ny=size(Ty,1);
+
+[nx_np,nt]=size(shocks);
+
+nx=nx_np/np;
+
+nz=1+1+1+1+nx;
+
+y0_id=1;
+
+ss_id=y0_id+1;
+
+sig_id=ss_id+1;
+
+trend_id=sig_id+1;
+
+shocks_id=trend_id+(1:nx);
+
+D=zeros(nt,ny,nz);
+
+I=eye(ny);
+
+D(1,:,y0_id)=y0;
+
+for t=2:nt
+        
+    y0=Ty*y0;
+    
+    if t==2
+        
+        Css=get_Css();
+        
+        Csig=get_Csig();
+        
+        Ctrend=get_Ctrend();
+        
+        Sh=get_shocks();
+        
+    else
+        
+        Css=Ty*Css+get_Css();
+        
+        Csig=Ty*Csig+get_Csig();
+        
+        Ctrend=Ty*Ctrend+get_Ctrend();
+        
+        Sh=Ty*Sh+get_shocks();
+        
+    end
+    
+    D(t,:,y0_id)=y0;
+    
+    D(t,:,ss_id)=Css;
+    
+    D(t,:,sig_id)=Csig;
+    
+    D(t,:,trend_id)=Ctrend;
+    
+    D(t,:,shocks_id)=Sh;
+    
+end
+
+    function sh=get_shocks()
+        
+        sh0=bsxfun(@times,Te,shocks(:,t).');
+        
+        sh=sh0(:,1:nx);
+        
+        offset=nx;
+        
+        for ip=2:np
+            
+            sh=sh+sh0(:,offset+(1:nx));
+            
+            offset=offset+nx;
+            
+        end
+        
+    end
+
+    function Ctrend=get_Ctrend()
+        
+        Ctrend=imag(Tsig);
+        
+    end
+
+    function Csig=get_Csig()
+        
+        Csig=real(Tsig);
+        
+    end
+
+    function Css=get_Css()
+        
+        Css=(I-Ty)*ss;
+        
+    end
+end
+
+%{
+function [Histdec,obj]=historical_decomposition(obj,varargin)
+% historical_decomposition Computes historical decompositions of a DSGE model
+%
+% Syntax
+% -------
+% ::
+%
+%   [Histdec,obj]=history_dec(obj)
+%   [Histdec,obj]=history_dec(obj,varargin)
+%
+% Inputs
+% -------
+%
+% - obj : [rise|dsge|rfvar|svar] model(s) for which to compute the
+%   decomposition. obj could be a vector of models
+%
+% - varargin : standard optional inputs **coming in pairs**. Among which:
+%   - **histdec_start_date** : [char|numeric|{''}] : date at which the
+%     decomposition starts. If empty, the decomposition starts at he
+%     beginning of the history of the dataset
+%
+% Outputs
+% --------
+%
+% - Histdec : [struct|cell array] structure or cell array of structures
+%   with the decompositions in each model. The decompositions are given in
+%   terms of:
+%   - the exogenous variables
+%   - **InitialConditions** : the effect of initial conditions
+%   - **risk** : measure of the effect of non-certainty equivalence
+%   - **switch** : the effect of switching (which is also a shock!!!)
+%   - **steady_state** : the contribution of the steady state
+%
+% Remarks
+% --------
+%
+% - the elements that do not contribute to any of the variables are
+%   automatically discarded.
+%
+% - **N.B** : a switching model is inherently nonlinear and so, strictly
+%   speaking, the type of decomposition we do for linear/linearized
+%   constant-parameter models is not feasible. RISE takes an approximation
+%   in which the variables, shocks and states matrices across states are
+%   averaged. The averaging weights are the smoothed probabilities.
+%
+% Examples
+% ---------
+%
+% See also: 
+
+if isempty(obj)
     Histdec=struct('histdec_start_date','');
     return
 end
@@ -99,6 +470,8 @@ for ireg=1:reg_nbr
     % add the growth rate directly
     Tsig{ireg}=real(Tsig{ireg})+imag(Tsig{ireg});
 end
+
+logvars=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
 
 [smoothed_variables,smoothed_shocks,dn]=load_smooth();
 
@@ -168,6 +541,7 @@ end
 
     function [v,s,dn]=load_smooth()
         [v,dn]=pull_it(obj.filtering.smoothed_variables,endo_names,endo_nbr);
+        v(logvars,:)=log(v(logvars,:));
         s=pull_it(obj.filtering.smoothed_shocks,exo_names,exo_nbr,true);
         function [d,dn]=pull_it(where,names,n,isshock)
             if nargin<4
@@ -200,7 +574,9 @@ end
     end
 
     function [z]=HistoricalDecompositionEngine(z,ireg)
-        z(:,ss_id,:)=obj.solution.ss{ireg}(:,ones(NumberOfObservations,1));
+        ss_ireg=obj.solution.ss{ireg};
+        ss_ireg(logvars)=log(ss_ireg(logvars));
+        z(:,ss_id,:)=ss_ireg(:,ones(NumberOfObservations,1));
         
         A=T{ireg};
         B=R{ireg};
@@ -259,6 +635,8 @@ end
     end
 
 end
+
+%}
 
 %{
 
