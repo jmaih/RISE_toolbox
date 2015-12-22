@@ -29,6 +29,11 @@ function Initcond=initial_conditions_to_order_var(Initcond,new_order,options)
 Initcond.y.y=full(Initcond.y.y); % [variables,ncols,1+n_conditions]
 Initcond.y.y=Initcond.y.y(new_order,:,:);% [variables,ncols,1+n_conditions]
 
+% adjust the log_var
+if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
+    Initcond.is_log_var=Initcond.is_log_var(new_order);
+end
+
 iov(new_order)=1:numel(new_order);
 
 % re-order conditions accordingly

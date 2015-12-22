@@ -79,15 +79,9 @@ if isa(obj,'dsge')
     is_log_var=obj.endogenous.is_log_var;
 end
 
-% log the steady state if necessary: is_log_var is in the order_var order
-%-------------------------------------------------------------------------
-ss1=obj.solution.ss;
-if ~isempty(is_log_var)
-    for ih=1:numel(ss1)
-        ss1{ih}(is_log_var)=log(ss1{ih}(is_log_var));
-    end
-end
-ss=cell2mat(ss1);
+% initial conditions for endogenous
+%-----------------------------------
+ss=cell2mat(obj.solution.ss);
 
 ss=sum(bsxfun(@times,ss,PAI(:).'),2);
 if do_dsge_var
