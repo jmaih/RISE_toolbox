@@ -397,6 +397,7 @@ classdef ts
         varargout=decompose_series(varargin)
         varargout=drop(varargin)
         varargout=dust_up(varargin)
+        varargout=group(varargin)
         varargout=horzcat(varargin)
         varargout=isfinite(varargin)
         varargout=isinf(varargin)
