@@ -157,6 +157,10 @@ end
     Initcond.log_var_steady_state,Initcond.T,...
     Initcond.state_vars_location,Initcond);
 
+if retcode
+    error(decipher(retcode))
+end
+
 % add initial conditions: (only the actual data on the first page)
 % ONLY IF THERE WAS NO BURN-IN
 %---------------------------------------------------------------
