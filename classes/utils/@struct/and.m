@@ -32,7 +32,11 @@ for ifield=1:nfields
             batch{ii}=varargin{ii}.(name);
         end
     end
-    h.(name)=cat(2,batch{:});
+    try
+        h.(name)=cat(2,batch{:});
+    catch
+        warning(['field ',name,' failed'])
+    end
 end
 
     function [ff,fi,typical]=get_all_fields_names()
