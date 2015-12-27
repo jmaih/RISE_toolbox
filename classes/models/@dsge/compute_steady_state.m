@@ -150,9 +150,17 @@ if isempty(obj.old_solution)
     
 else
     
+    big2small=true;
+    
+    map_=map_regimes(obj,big2small);
+    
     g0=cell2mat(obj.old_solution.bgp);
     
+    g0=g0(:,map_);
+    
     y0=cell2mat(obj.old_solution.ss);
+    
+    y0=y0(:,map_);
     
 end
 

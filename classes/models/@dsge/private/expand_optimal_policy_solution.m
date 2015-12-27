@@ -51,8 +51,9 @@ if obj.is_optimal_policy_model && ~isempty(loose_com_col)
     
     for ireg=1:bigh
         
-        % map big regimes into small ones
-        %--------------------------------
+        % map big regimes into small ones. N.B: regimes are decided by rows
+        % and not by columns
+        %------------------------------------------------------------------
         bingo=all(bsxfun(@minus,big_regimes(ireg,:),small_regimes)==0,2);
         
         Tsol=T.Tz{bingo};
