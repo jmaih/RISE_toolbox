@@ -84,14 +84,11 @@ else
     pp=plot_specs(date_numbers{1},nticks,rise_items.date_format);
 end
 
-if rise_items.subplots
-    [varargout{1:nargout}]=do_multiple_plots();
-else
    [varargout{1:nargout}]=plot_it(datta);
-end
-if nargout==0
-    clear plot_handle
-end
+   
+   if nargout==0
+       clear plot_handle
+   end
 
     function reset_data(xrange)
         for its_=1:ndatasets
@@ -220,33 +217,4 @@ end
         end
     end
 
-    function graph_handle=do_multiple_plots()
-        r0=rise_items.figsize(1);
-        c0=rise_items.figsize(2);
-        nstar=r0*c0;
-        npar=size(datta{1},2);
-        nfig=ceil(npar/nstar);
-        graph_handle=nan(nfig,1);
-        dd=cell(1,ndatasets);
-        for fig=1:nfig
-            if nfig>1
-                titelfig=[rise_items.figtitle,' ',int2str(fig)];
-            else
-                titelfig=rise_items.figtitle;
-            end
-            graph_handle(fig)=figure('name',titelfig);
-            [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,npar,r0,c0);
-            for idata=1:min(nstar,Remains)
-                subplot(r,c,idata)
-                var_id=(fig-1)*nstar+idata;
-                for ids=1:ndatasets
-                    dd{ids}=datta{ids}(:,var_id);
-                end
-                plot_it(dd);
-                if ndatasets==1
-                    title(this{1}.varnames{var_id})
-                end
-            end
-        end
-    end
 end

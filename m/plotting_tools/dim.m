@@ -42,7 +42,7 @@ for ii=1:numel(kids)
         end;
         % Now, prevent the shading from covering up the lines in the plot.
         h = findobj(kids(ii),'Type','line');
-        set(h,'EraseMode','xor');
+        % set(h,'EraseMode','xor');
         
         h = findobj(kids(ii),'Type','patch');
         set(h,'EdgeColor','none');
