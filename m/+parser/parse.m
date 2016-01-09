@@ -20,8 +20,10 @@ function dictionary=parse(FileName,varargin)
 %   - **definitions_in_param_differentiation** [true|{false}]: insert or
 %   not definitions in equations before differentiating with respect to
 %   parameters  
-%   - **rise_save_macro** [true|{false}]: save the macro file in case of
-%   insertions of sub-files
+%   - **saveas** [true|false|char|{''}]: save the possibly expanded model
+%   file. If "true", the name of the main original file is used appended with
+%   "_expanded.dsge". Alternatively, the user can provide a name under
+%   which he wants the file to be saved.
 %   - **max_deriv_order** [integer|{2}]: order for symbolic
 %   differentiation. It is recommended to set to 1, especially for large
 %   models in case one does not intend to solve higher-order approximations
@@ -57,7 +59,7 @@ function dictionary=parse(FileName,varargin)
 
 DefaultOptions=...
     struct('definitions_in_param_differentiation',false,...
-    'rise_save_macro',false,...
+    'saveas','',...
     'max_deriv_order',1,'definitions_inserted',false,...
     'parse_debug',false,...
     'add_welfare',false,...
@@ -122,13 +124,28 @@ end
 
 % read file and remove comments
 % RawFile=read_file(FileName,DefaultOptions.rise_flags);
-[RawFile,has_macro]=parser.preparse(FileName,DefaultOptions.rise_flags);
 
-% write the expanded version
-if has_macro && DefaultOptions.rise_save_macro
-    newfile='';
+RawFile=parser.preparse(FileName,DefaultOptions.rise_flags);
+
+logic=islogical(DefaultOptions.saveas) && DefaultOptions.saveas;
+
+hasname= ~isempty(DefaultOptions.saveas) && ischar(DefaultOptions.saveas);
+
+newname='';
+if logic
     thedot=strfind(FileName,'.');
-    fid=fopen([FileName(1:thedot-1),'_expanded.dsge'],'w');
+    newname=[FileName(1:thedot-1),'_expanded.dsge'];
+elseif hasname
+    newname=DefaultOptions.saveas;
+    thedot=strfind(newname,'.');
+    if isempty(thedot)
+        newname=[newname,'.dsge'];
+    end
+end
+% write the expanded version
+if ~isempty(newname)
+    newfile='';
+    fid=fopen(newname,'w');
     for irow=1:size(RawFile,1)
         write_newfilename=isempty(newfile)||~strcmp(newfile,RawFile{irow,2});
         if write_newfilename

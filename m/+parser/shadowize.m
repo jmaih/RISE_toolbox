@@ -17,7 +17,7 @@ dyn.shadow_model=cell(ndyn,1);
 stat=struct();
 stat.model=cell(ndyn,1);
 stat.shadow_model=cell(ndyn,1);
-stat.shadow_steady_state_model=cell(ndyn,1);
+stat.shadow_steady_state_model=cell(0,1);
 stat.shadow_fast_ssmodel=cell(ndyn,1);
 
 % plan_syst to be merged later with the other portion in
