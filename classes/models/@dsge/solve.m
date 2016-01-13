@@ -295,7 +295,7 @@ ss=[];
 nx=sum(obj.exogenous.number);
 xss=zeros(nx,1);
 [the_leads,the_lags,nind,endo_nbr]=...
-    create_indices(obj.lead_lag_incidence.before_solve);
+    dsge_tools.create_endogenous_variables_indices(obj.lead_lag_incidence.before_solve);
 structural_matrices=[];
 
 if ~isempty(obj.options.solve_occbin)
@@ -717,15 +717,6 @@ end
             end
         end
     end
-end
-
-function [the_leads,the_lags,nind,endo_nbr]=create_indices(lead_lag_incidence)
-endo_nbr=size(lead_lag_incidence,1);
-the_leads=find(lead_lag_incidence(:,1)>0);
-the_current=(1:endo_nbr)';
-the_lags=find(lead_lag_incidence(:,3)>0);
-indices=[the_leads;the_current;the_lags];
-nind=numel(indices);
 end
 
 function do_it=do_occbin(occbin,nregs)
