@@ -263,20 +263,23 @@ myirfs=format_irf_output(myirfs);
         for istate=1:number_of_threads
             if ~retcode
                 if h==1||number_of_threads==h
-                    y0.rcond.data(:,1)=istate;
+                    y0.rcond.data(:)=istate;
+                    y0.y=full(Initcond.log_var_steady_state{istate});
                 end
-                    [xxxx,retcode]=utils.forecast.irf(y0,Initcond.T,...
-                        Initcond.log_var_steady_state,...
-                        Initcond.state_vars_location,which_shocks,det_shocks,Initcond);
-                Impulse_dsge(relevant,:,:,:,istate)=xxxx(1:max_rows,:,:,:);
+                [xxxx,retcode]=utils.forecast.irf(y0,Initcond.T,...
+                    Initcond.log_var_steady_state,...
+                    Initcond.state_vars_location,which_shocks,det_shocks,Initcond);
+                % subtract the initial conditions if not girf. For the girf, the
+                % subtraction is already done
+                %------------------------------------------------------------------
+               
+                xxxx2=xxxx(1:max_rows,:,:,:);
+                if ~girf
+                    xxxx2=xxxx2-y0.y(relevant,ones(Initcond.nsteps+1,1),...
+                        ones(nshocks,1),ones(irf_draws,1));
+                end
+                Impulse_dsge(relevant,:,:,:,istate)=xxxx2;
             end
-        end
-        % subtract the initial conditions if not girf. For the girf, the
-        % subtraction is already done
-        %------------------------------------------------------------------
-        if ~girf
-            Impulse_dsge=Impulse_dsge-y0.y(relevant,ones(Initcond.nsteps+1,1),...
-                ones(nshocks,1),ones(irf_draws,1),ones(number_of_threads,1));
         end
         
         % set to 0 the terms that are too tiny
