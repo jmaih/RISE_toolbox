@@ -104,7 +104,7 @@ end
 Filters=initialize_storage();
 
 oldK=inf;
-PAI01y=nan(h,1);
+
 twopi_p_dF=nan(1,h);
 K=zeros(m,p0,h); % <---K=cell(1,h);
 
@@ -125,7 +125,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         iF=nan(p,p,h);
     end
     
-    likt=0;
+    log_f01 = nan(h,1);
+    
     for st=1:h
         % forecast of observables: already include information about the
         % trend and or the steady state from initialization
@@ -167,31 +168,30 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         %-------------------------
         a(:,st)=a(:,st)+K(:,occur,st)*v_st;
         
-        f01=(twopi_p_dF(st)*exp(v_st'*iF_st*v_st))^(-0.5);
-        PAI01y(st)=PAI(st)*f01;
-        likt=likt+PAI01y(st);
+        log_f01(st)=-0.5*(...
+            log(twopi_p_dF(st))+...
+            v{st}'*iF{st}*v{st}...
+            );
+        
         if store_filters>2
             iF(:,:,st)=iF_st;
             v(:,st)=v_st;
         end
     end
     
-    % Probability updates
-    %--------------------
-    PAI01_tt=PAI01y/likt;
-    if likt<kalman_tol && (any(isnan(PAI01_tt))||any(isinf(PAI01_tt)))
-        retcode=306;
+    [Incr(t),PAI01_tt,retcode]=switch_like_exp_facility(PAI,log_f01,kalman_tol);
+    
+    if retcode
+        
         return
+        
     end
+    
     PAItt=sum(PAI01_tt,2);
     
     if store_filters>1
         store_updates();
     end
-    
-    % Likelihood computation
-    %-----------------------
-    Incr(t)=log(likt);
     
     % endogenous probabilities (conditional on time t information)
     %-------------------------------------------------------------

@@ -115,6 +115,7 @@ else
     % do not do multi-step forecasting during estimation
     nsteps=1;
 end
+
 kalman_tol=options.kf_tol;
 
 % time-varying R matrix
@@ -136,7 +137,7 @@ Incr=nan(smpl,1);
 [Filters]=utils.filtering.initialize_storage(a,P,PAI,Q,p0,exo_nbr,horizon,nsteps,smpl,store_filters);
 
 oldK=inf;
-PAI01y=nan(h,1);
+
 twopi_p_dF=nan(1,h);
 % the following elements change size depending on whether observations are
 % missing or not and so it is better to have them in cells rather than
@@ -172,7 +173,8 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     [p,occur,obsOccur,no_more_missing]=z(t);
     y=data_y(occur,t,1);
     
-    likt=0;
+    log_f01 = nan(h,1);
+    
     for st=1:h
         % forecast of observables: already include information about the
         % trend and or the steady state from initialization
@@ -222,27 +224,27 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         if retcode
             return
         end
-        f01=(twopi_p_dF(st)*exp(v{st}'*iF{st}*v{st}))^(-0.5);
-        PAI01y(st)=PAI(st)*f01;
-        likt=likt+PAI01y(st);
+        
+        log_f01(st)=-0.5*(...
+            log(twopi_p_dF(st))+...
+            v{st}'*iF{st}*v{st}...
+            );
+        
     end
     
-    % Probability updates
-    %--------------------
-    PAI01_tt=PAI01y/likt;
-    if likt<kalman_tol && (any(isnan(PAI01_tt))||any(isinf(PAI01_tt)))
-        retcode=306;
+    [Incr(t),PAI01_tt,retcode]=switch_like_exp_facility(PAI,log_f01,kalman_tol);
+    
+    if retcode
+        
         return
+        
     end
+    
     PAItt=sum(PAI01_tt,2);
     
     if store_filters>1
         store_updates();
     end
-    
-    % Likelihood computation
-    %-----------------------
-    Incr(t)=log(likt);
     
     % endogenous probabilities (conditional on time t information)
     %-------------------------------------------------------------

@@ -146,7 +146,7 @@ else
     
 end
 
-% kalman_tol=options.kf_tol;
+kalman_tol=options.kf_tol;
 
 % time-varying R matrix
 %-----------------------
@@ -267,21 +267,9 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         
     end
     
-    maxf=max(log_f01);
+    [Incr(t),PAI01_tt,retcode]=switch_like_exp_facility(PAI,log_f01,kalman_tol);
     
-    PAI01y=PAI.*exp(log_f01-maxf);
-    
-    PSTAR=sum(PAI01y);
-    
-    % Probability updates
-    %--------------------
-    PAI01_tt=PAI01y/PSTAR;
-    
-    log_likt=log(PSTAR)+maxf;
-    
-    if (any(isnan(PAI01_tt))||any(isinf(PAI01_tt))) % log_likt<log(kalman_tol) &&
-        
-        retcode=306;
+    if retcode
         
         return
         
@@ -294,10 +282,6 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         store_updates();
         
     end
-    
-    % Likelihood computation
-    %-----------------------
-    Incr(t)=log_likt;
     
     % endogenous probabilities (conditional on time t information)
     %-------------------------------------------------------------

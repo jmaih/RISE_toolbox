@@ -137,7 +137,6 @@ pi0=transpose(Q)*pi0;
 [Filters,K_store,iF_store,v_store]=utils.filtering.initialize_storage(x0,S0,...
     pi0,Q,ny0,nv,horizon,nsteps,T,store_filters);
 
-pi01 = zeros(h,1);
 pi_tt1 = pi0;
 retcode=0;
 for t = 1:T
@@ -146,7 +145,7 @@ for t = 1:T
     [ny,occur,obsOccur]=z(t);
     yt=y(occur,t);
     
-    likt = 0;
+    log_f01 = nan(h,1);
     
     for rt = 1:h
         
@@ -183,14 +182,6 @@ for t = 1:T
             return
         end
         
-        % contribution to the likelihood
-        %--------------------------------
-        f01 = (2*pi)^(-ny/2)*detF^(-0.5)*exp(-0.5*v'*Finv*v);
-        
-        pi01(rt) = pi_tt1(rt)*f01;
-        
-        likt = likt + pi01(rt);
-        
         % Kalman gain
         %-------------
         K = Pxy*Finv;
@@ -209,22 +200,31 @@ for t = 1:T
         Shat_x{rt} = utils.cov.householder([Sbarx{rt} - K*Syxbar_1, KSyw_1],...
             kf_householder_chol);
         
+        % contribution to the likelihood
+        %--------------------------------
+        log_f01(rt)=-0.5*(...
+            log((2*pi)^ny*detF)+...
+            v'*Finv*v...
+            );
+        
+    end
+    
+    [Incr(t),PAI01_tt,retcode]=switch_like_exp_facility(pi_tt1,log_f01,kalman_tol);
+    
+    if retcode
+        
+        return
+        
     end
     
     % update of probabilities
     %-------------------------
-    pi_tt = sum(pi01/likt,2);
-    if likt<kalman_tol && (any(isnan(pi_tt))||any(isinf(pi_tt)))
-        retcode=306;
-        return
-    end
+    pi_tt = sum(PAI01_tt,2);
     
     if store_filters>1
         store_updates();
     end
 
-    Incr(t) = log(likt);
-    
     % update of transition matrix
     %-----------------------------
     if h>1
