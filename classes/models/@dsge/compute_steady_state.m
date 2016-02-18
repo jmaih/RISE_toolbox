@@ -244,36 +244,13 @@ else
             
         end
         
-        if ~isempty(sscode) && sscode.is_unique_steady_state
+        if istate==1
             
-            % update the parameters since we are not going into the steady
-            % state for every regime
-            %--------------------------------------------------------------
-            update_changed_parameters(p(:,1));
-            
-            y=y(:,ones(1,number_of_regimes));
-            
-            g=g(:,ones(1,number_of_regimes));
-            
-            % recompute residuals for the remaining regimes
-            %-----------------------------------------------
-            for i2=2:number_of_regimes
-                
-                r(:,i2)=blocks.residcode(y(:,i2),g(:,i2),x,p(:,i2),d{i2});
-                
-            end
-            
-            break
+            [TransMat,retcode]=compute_steady_state_transition_matrix(...
+                obj.routines.transition_matrix,y(:,1),p(:,1),d{1},...
+                sum(obj.exogenous.number));
             
         end
-        
-    end
-    
-    if ~retcode
-        
-        [TransMat,retcode]=compute_steady_state_transition_matrix(...
-            obj.routines.transition_matrix,y(:,1),p(:,1),d{1},...
-            sum(obj.exogenous.number));
         
     end
     
@@ -328,7 +305,7 @@ end
             %--------------------------------------------------------------
             changelocs=find(sscode.is_param_changed);
             
-            p(changelocs,2:number_of_regimes)=ptarg(changelocs)*ones(1,number_of_regimes-1);
+            p(changelocs,:)=ptarg(changelocs)*ones(1,number_of_regimes);
             
         end
         
