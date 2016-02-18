@@ -175,7 +175,7 @@ if obj.options.kf_filtering_level && ~retcode
         'smoothed_regime_probabilities'};
     obj.filtering=struct();
     iov=obj.inv_order_var;
-    is_log_var=init.is_log_var_new_order;
+    is_log_var_new_order=obj.endogenous.is_log_var(init.new_order);
     expectation=@utils.filtering.expectation;
     for ifield=1:size(Fields,2)
         main_field=Fields{1,ifield};
@@ -185,8 +185,8 @@ if obj.options.kf_filtering_level && ~retcode
                 % re-order endogenous variables alphabetically
                 %-----------------------------------------------
                 for reg=1:h
-                    Filters.(main_field){reg}(is_log_var,:,:,:)=...
-                        exp(Filters.(main_field){reg}(is_log_var,:,:,:));
+                    Filters.(main_field){reg}(is_log_var_new_order,:,:,:)=...
+                        exp(Filters.(main_field){reg}(is_log_var_new_order,:,:,:));
                     Filters.(main_field){reg}=Filters.(main_field){reg}(iov,:,:,:);
                 end
             end
