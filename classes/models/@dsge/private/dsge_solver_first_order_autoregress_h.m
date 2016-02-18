@@ -72,10 +72,18 @@ if isempty(options.solver)
     end
 end
 
+is_has_solution=~isempty(old_Tz);
+
+if is_has_solution && accelerate
+    % remove the solution for the static variables
+    %----------------------------------------------
+    for ireg=1:numel(old_Tz)
+        old_Tz{ireg}=old_Tz{ireg}(siz.ns+1:end,:);
+    end
+end
+
 T0=dsge_tools.utils.msre_initial_guess(d0,dpb_minus,dbf_plus,...
     options.solve_initialization,old_Tz);
-
-is_has_solution=~isempty(old_Tz);
 
 if is_has_solution
     Tz_pb=T0;
