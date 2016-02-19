@@ -56,6 +56,13 @@ function [x1,f1,H,issue,viol,obj,funevals]=...
 if isempty(action)
     action='eval';
 end
+
+if strcmp(action,'draw')
+    npar=numel(lb);
+    x0=lb+(ub-lb).*rand(npar,1);
+    action='eval';
+end
+
 nonlcon=[];
 nconst=0;
 if isfield(obj(1).routines,'nonlinear_restrictions')

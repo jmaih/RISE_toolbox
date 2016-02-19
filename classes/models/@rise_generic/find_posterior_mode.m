@@ -61,7 +61,7 @@ warning('off','MATLAB:nearlySingularMatrix')
 warning('off','MATLAB:illConditionedMatrix')
 
 fprintf(1,'%s\n','Looking for good enough start values. Please wait...');
-gen_start=@()estimation_wrapper(obj,[],[],lb,ub,funevals);
+gen_start=@()estimation_wrapper(obj,'draw',[],lb,ub,funevals);
 for ii=beg:Nsim
     NotDone=true;
     iter=0;
