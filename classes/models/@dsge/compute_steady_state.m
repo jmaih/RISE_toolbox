@@ -1394,6 +1394,8 @@ auxcode=@auxiliary_evaluation;
             
             vals=zeros(size(pos));
             
+            ss=y;
+            
             vals(pos)=utils.code.evaluate_functions(planner_routines.planner_static_mult,...
                 y,x,ss,p,d,[],[]); % y, x, ss, param, def, s0, s1
             
