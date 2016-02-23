@@ -16,10 +16,6 @@ function varargout=pull_objective(obj,varargin)
 nout=nargout;
 if isempty(obj)
     [varargout{1:nout}]=pull_objective@svar(obj,varargin{:});
-    % use analytical posterior whenever possible. Normally this should have
-    % been used in some estimation method but I do not want to write a
-    % specialized one just for the sake of this one element.
-    varargout{1}.vp_analytical_post_mode=true;
     return
 end
 
@@ -27,7 +23,7 @@ if ~isempty(varargin)
     obj=set(obj,varargin{:});
 end
 
-if obj.markov_chains.regimes_number==1 && obj.options.vp_analytical_post_mode
+if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
     % if the prior is set, the following should available even if the model has
     % not been estimated yet.
     lb=[obj.estimation.priors.lower_bound]';

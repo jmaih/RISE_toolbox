@@ -21,7 +21,7 @@ function estim_names=update_estimated_parameter_names(obj,estim_names)
 
 
 is_constant_parameter_var=obj.markov_chains.regimes_number==1 && ...
-        obj.options.vp_analytical_post_mode;
+        obj.options.estim_analytical_post_mode;
 % if constant paramater and analytical solution, keep only the ai and ci
 % parameters
 if is_constant_parameter_var
