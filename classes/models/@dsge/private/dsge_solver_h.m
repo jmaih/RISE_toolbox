@@ -29,22 +29,6 @@ if isempty(obj)
     return
 end
 
-% It is assumed the steady states have been solved and the derivatives
-% evaluated at different orders
-%% shortcuts to functions
-is_computable=@utils.cr.is_computable;
-A_times_kron_I_B=@utils.kronecker.A_times_kron_I_B;
-A_times_sum_perms=@utils.kronecker.A_times_sum_perms;
-Pfunc=@(ABCD,matsizes,varargin)...
-    utils.kronecker.sum_permutations(ABCD,matsizes,...
-    struct('use_old_algo',true),...
-    varargin{:});
-kron_Q1_Qk_times_A=@utils.kronecker.kron_Q1_Qk_times_A;
-A_times_kron_Q1_Qk=@utils.kronecker.A_times_kron_Q1_Qk;
-A_times_k_kron_B=@utils.kronecker.A_times_k_kron_B;
-dv_vz_omega=@utils.cr.dv_vz_omega;
-kronall=@utils.kronecker.kronall;
-
 %% begin
 T=struct();
 
@@ -85,6 +69,20 @@ if obj.options.solve_order>=1
     % higher orders
     %--------------
     if obj.options.solve_order>=2 && ~retcode
+        % shortcuts to functions
+        %-----------------------
+        is_computable=@utils.cr.is_computable;
+        A_times_kron_I_B=@utils.kronecker.A_times_kron_I_B;
+        A_times_sum_perms=@utils.kronecker.A_times_sum_perms;
+        Pfunc=@(ABCD,matsizes,varargin)...
+            utils.kronecker.sum_permutations(ABCD,matsizes,...
+            struct('use_old_algo',true),...
+            varargin{:});
+        kron_Q1_Qk_times_A=@utils.kronecker.kron_Q1_Qk_times_A;
+        A_times_kron_Q1_Qk=@utils.kronecker.A_times_kron_Q1_Qk;
+        A_times_k_kron_B=@utils.kronecker.A_times_k_kron_B;
+        dv_vz_omega=@utils.cr.dv_vz_omega;
+        kronall=@utils.kronecker.kronall;
         [T,retcode]=solve_higher_orders(T,others,obj.options.solve_accelerate);
     end
     
