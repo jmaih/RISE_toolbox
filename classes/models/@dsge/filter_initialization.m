@@ -133,6 +133,7 @@ end
         % logged where necessary and the Qfunc is also in sync with that
         %------------------------------------------------------------------
         [T,~,steady_state,new_order,state_vars_location]=load_solution(obj,'ov');
+        
         endo_nbr=obj.endogenous.number;
         iov(new_order)=1:numel(new_order);
         obs_id=real(obj.observables.state_id);
@@ -194,15 +195,45 @@ end
         P0=[];
         a0=[];
         if ~retcode
-            a0=ss_star;
+            
+            stat_ind=stationary_index(obj);
+            
+            stat_ind=stat_ind(new_order);
+            
+            stat_ind=stat_ind(grand_order_var_state);
+            
+            is_state_var=false(size(stat_ind));
+            
+            is_state_var(state_vars_location)=true;
+            
+            is_stat_state_var=stat_ind & is_state_var;
+            
+            is_old=false;
+            
             % take the real part in order to avoid mixing up with growth
             %-------------------------------------------------------------
             Tsig_star=real(Tsig_star);
-            if any(abs(Tsig_star)>1e-7)
-                Ix=eye(endo_nbr);
-                Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;
-                a0=a0+pinv(Ix)*Tsig_star;
-            end
+%             if is_old
+                a0=ss_star;
+                if any(abs(Tsig_star)>1e-7)
+                    Ix=eye(endo_nbr);
+                    Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;
+                    a0=a0+pinv(Ix)*Tsig_star;
+                end
+%             else
+%                 a0=zeros(endo_nbr,1);
+%                 a0(stat_ind)=ss_star(stat_ind);
+%                 nstat=sum(stat_ind);
+%                 if nstat && any(abs(Tsig_star)>1e-7)
+%                     %--------------
+%                     cols_ind=is_stat_state_var(state_vars_location);
+%                     %--------------
+%                     Ix=eye(nstat);
+%                     Ix(:,is_stat_state_var)=Ix(:,is_stat_state_var)-Tx_star(stat_ind,cols_ind);
+%                     a0(stat_ind)=a0(stat_ind)+pinv(Ix)*Tsig_star(stat_ind);
+%                 end
+%             end
+            
             if a0_given
                 % correct the previous entries.
                 if ~isstruct(kf_user_init{1})
@@ -228,12 +259,31 @@ end
             if kf_diffuse_all
                 P0=kf_init_variance*eye(endo_nbr);
             else
-                LxTx=Tx_star(state_vars_location,:);
-                LxR=Te_star(state_vars_location,:);
-                [vx,retcode]=lyapunov_equation(LxTx,LxR*LxR',obj.options);
-                if ~retcode
-                    P0=Tx_star*vx*Tx_star.'+Te_star*Te_star.';
-                    P0=utils.cov.symmetrize(P0);
+                
+                if is_old
+                    LxTx=Tx_star(state_vars_location,:);
+                    LxR=Te_star(state_vars_location,:);
+                    
+                    [vx,retcode]=lyapunov_equation(LxTx,LxR*LxR',obj.options);
+                    if ~retcode
+                        P0=Tx_star*vx*Tx_star.'+Te_star*Te_star.';
+                        P0=utils.cov.symmetrize(P0);
+                    end
+                else
+                
+                P0=zeros(endo_nbr);
+                
+                    rows_ind=is_stat_state_var;
+                    cols_ind=is_stat_state_var(state_vars_location);
+                    LxTx=Tx_star(rows_ind,cols_ind);
+                    LxR=Te_star(rows_ind,:);
+                    [vx,retcode]=lyapunov_equation(LxTx,LxR*LxR',obj.options);
+                    if ~retcode
+                        LxTx=Tx_star(stat_ind,cols_ind);
+                        LxR=Te_star(stat_ind,:);
+                        P0(stat_ind,stat_ind)=LxTx*vx*LxTx.'+LxR*LxR.';
+                        P0=utils.cov.symmetrize(P0);
+                    end
                 end
             end
             if P0_given
@@ -258,6 +308,7 @@ end
                 a0=repmat({a0},1,h);
             end
         end
+        is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
         init=struct('a',{a0},'P',{P0},'PAI00',PAI00,'T',{T},...
             'Tx',{Tx},'Tsig',{Tsig},'Te',{Te},'Te_Te_prime',{Te_Te_prime},...
             'Te_det',{Te_det},'steady_state',{steady_state},...
@@ -265,7 +316,8 @@ end
             'Qfunc',Qfunc,'anticipated_shocks',anticipated_shocks,...
             'sep_compl',sep_compl,'H',{obj.solution.H},'obs_id',obs_id,...
             'SIGeta',{SIGeta},'is_det_shock',is_det_shock,'horizon',horizon,...
-            'k',k);
+            'k',k,'is_log_var_new_order',is_log_var(new_order));
+        
         function [Tx_star,Tsig_star,Te_star,ss_star]=aggregate()
             Tx_star=0;
             Te_star=0;
