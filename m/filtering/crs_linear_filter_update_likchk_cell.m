@@ -179,6 +179,12 @@ options.k_future=horizon-1;
 options.nsteps=horizon;
 
 is_violation=false(smpl,h);
+% originally, the update is the same as the filter since a=T*a . If this is
+% not the case, it does not matter much since this is just the beginning of
+% the filter.
+%--------------------------------------------------------------------------
+att=a;
+
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
@@ -415,9 +421,10 @@ end
             atmp_ss=atmp-ss{st};
             a_expect=ss{st}+T{st}*atmp_ss(xlocs);
         else
-            % compute the conditional update
+            % compute the conditional update: note that we are now using
+            % the last update as the initial condition
             %-------------------------------------------------------------
-            y0=crs_filter_simul_init(a_filt,shocks,cond_shocks_id,...
+            y0=crs_filter_simul_init(att{st},shocks,cond_shocks_id,...
                 data_y,t,p,obs_id,true);
             options_=options;
             options_.nsteps=lgcobs+1;
@@ -465,7 +472,10 @@ end
         if has_fire(st) && violations
             nsteps__=2;
             match_first_page=true;
-            [a_update,a_expect_,myshocks_,retcode]=do_anticipation(a_filt,nsteps__,...
+            % compute the conditional update: note that we are now
+            % using the last update as the initial condition
+            %----------------------------------------------------------
+            [a_update,a_expect_,myshocks_,retcode]=do_anticipation(att{st},nsteps__,...
                 match_first_page);
             if is_recompute_K
                 K=recompute_kalman_gain(a_update,a_filt,v);

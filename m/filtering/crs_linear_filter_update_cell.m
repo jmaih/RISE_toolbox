@@ -167,6 +167,12 @@ options.k_future=horizon-1;
 % forecast all the way...
 options.nsteps=horizon;
 
+% originally, the update is the same as the filter since a=T*a . If this is
+% not the case, it does not matter much since this is just the beginning of
+% the filter.
+%--------------------------------------------------------------------------
+att=a;
+
 for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
@@ -411,9 +417,10 @@ end
             atmp=a_filt+Kv;
             myshocks=shocks;
         else
-            % compute the conditional update
+            % compute the conditional update: note that we are now using
+            % the last update as the initial condition
             %-------------------------------------------------------------
-            y0=simul_initial_conditions(a_filt);
+            y0=simul_initial_conditions(att{st});
             options_=options;
             options_.nsteps=lgcobs+1;
             options_.shocks(:,options_.nsteps+1:end)=0;
@@ -458,9 +465,9 @@ end
         end
         
         function do_anticipation()
-            % if we can expect violations, inform the state that constraints
-            % will be binding
-            %----------------------------------------------------------------
+            % if we can expect violations, inform the state that
+            % constraints will be binding
+            %--------------------------------------------------------------
             if options.debug
                 old_update=atmp(:,ones(1,horizon));
                 old_update(:,2:end)=nan;
@@ -468,7 +475,10 @@ end
             start_iter=1;
             while start_iter<horizon && violations
                 start_iter=start_iter+1;
-                y0=simul_initial_conditions(a_filt,start_iter);
+                % compute the conditional update: note that we are now
+                % using the last update as the initial condition
+                %----------------------------------------------------------                
+                y0=simul_initial_conditions(att{st},start_iter);
                 myoptions=options;
                 myoptions.nsteps=start_iter;
                 myoptions.states=options.states(1:start_iter);
