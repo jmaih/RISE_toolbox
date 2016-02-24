@@ -186,7 +186,6 @@ end
         end
         %,'XTickMode','auto'...
         %     'ylim',[min(d{:}(:))-sqrt(eps),max(d{:}(:))+sqrt(eps)])
-        grid on
         varargout=vout(1:nout);
         
         function add_horizontal_lines()
