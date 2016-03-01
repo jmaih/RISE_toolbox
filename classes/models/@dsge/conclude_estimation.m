@@ -1,4 +1,4 @@
-function [log_post,log_lik,log_prior,Incr,retcode,obj]=conclude_estimation(obj,x1)
+function [log_post,log_lik,log_prior,Incr,retcode,obj,x1]=conclude_estimation(obj,x1)
 % H1 line
 %
 % Syntax

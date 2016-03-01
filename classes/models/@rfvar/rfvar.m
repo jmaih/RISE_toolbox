@@ -92,6 +92,9 @@ classdef rfvar < svar
         varargout=update_estimated_parameter_names(varargin)
         varargout=find_posterior_mode(varargin)
     end
+    methods(Hidden=true)
+        varargout=conclude_estimation(varargin) % abstract method
+    end
     methods(Static)
         function r=template()
             r=svar.template();

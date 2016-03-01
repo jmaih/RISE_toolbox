@@ -276,6 +276,7 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 linear_restricts=obj(1).linear_restrictions_data;
 x1 = linear_restricts.a_func(x1);
 x0 = linear_restricts.a_func(x0); %#ok<NASGU>
+% H=linear_restricts.a_func(H,true);
 
 numberOfActiveInequalities=numel(viol);
 
@@ -288,7 +289,7 @@ for ii=1:nobj
     % set the filtering/smoothing flag to 3 in order to get out the final
     % outputs with the smoothed and filtered variables (if feasible)
     
-    [log_post,log_lik,log_prior,~,~,obj(ii)]=conclude_estimation(obj(ii),x1);
+    [log_post,log_lik,log_prior,~,~,obj(ii),xmode]=conclude_estimation(obj(ii),x1);
     % compute the penalties for the restrictions violations
     %-------------------------------------------------------
     g=evaluate_general_restrictions(obj(ii));
@@ -299,7 +300,7 @@ for ii=1:nobj
     % smoothing part done in conclude_estimation.
     post_max.estim_end_time=estim_end_time;
     % capture the final parameters and their standard deviations
-    post_max.mode=x1;
+    post_max.mode=xmode;
     
     % Hessian
     post_max.hessian=H;

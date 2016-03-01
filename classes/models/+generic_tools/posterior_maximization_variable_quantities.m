@@ -80,7 +80,14 @@ post_max.log_marginal_data_density_laplace=...
 
 % inflate the covariance under linear restrictions
 %--------------------------------------------------
-post_max.vcov=a_func(Hinv,true); %
+try
+    post_max.vcov=a_func(Hinv,true); %
+catch
+    % under constant-parameter RFVAR we do not compute the hessian at
+    % posterior maximization and if there are parameter restrictions, the
+    % step above will not work
+    post_max.vcov=Hinv; %
+end
 
 % compute the standard deviations based on the inflated covariance
 %------------------------------------------------------------------

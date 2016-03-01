@@ -95,8 +95,14 @@ obj.linear_restrictions_data=struct('R1i_r_0',R1i_r_0,...
         % get atilde first then re-order it
         %----------------------------------
         if covflag
-            atilde=R1i_R2_I2*a2tilde*R1i_R2_I2';
-            a=atilde(ievec,ievec);
+            % the covariance may have several pages...
+            npages=size(a2tilde,3);
+            nn=numel(ievec);
+            a=nan(nn,nn,npages);
+            for ii=1:npages
+                atilde=R1i_R2_I2*a2tilde(:,:,ii)*R1i_R2_I2';
+                a(:,:,ii)=atilde(ievec,ievec);
+            end
         else
             atilde=R1i_r_0+R1i_R2_I2*a2tilde;
             a=atilde(ievec);

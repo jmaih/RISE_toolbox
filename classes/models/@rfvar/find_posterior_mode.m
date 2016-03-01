@@ -31,11 +31,7 @@ end
 
 if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
     priors_hyperparams=obj.construction_data.priors_hyperparams;
-    % the following is hard-coded
-    %----------------------------
-    compute_hessian=false;
     
-    npar=size(x0,1);
     a2tilde=struct();
     
     [vdata,bigx,bigy,orig_order,inv_order,smpl]=restricted_var_data(obj);
@@ -57,34 +53,37 @@ if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
         vdata.ytilde,a2tilde_prior);
     
     resid_post=reshape(a2tilde_post.resid,obj.endogenous.number,[]);
-    K=(npar-sum(1:nvars))/nvars;
+    K=size(bigx,1);
     vcov=(resid_post*resid_post.')/(nobs-K);
     
     resid_ols=reshape(a2tilde_ols.resid,obj.endogenous.number,[]);
     a2tilde_ols.SSE=(resid_ols*resid_ols.');
     a2tilde_ols.SIGMA = a2tilde_ols.SSE./(nobs-K);
     
-    a_post=obj.linear_restrictions_data.a_func(a2tilde_post.a);
+    % this is the value that goes out and it has the same size as the x0
+    % that came in
+    x1=a2tilde_post.a;
     
-    x1=vartools.build_parameter_vector(vdata,a_post,vcov);
+    % towards the final vector... that does not go out
+    a_post=obj.linear_restrictions_data.a_func(x1);
+    
+    x11=vartools.build_parameter_vector(vdata,a_post,vcov);
     
     a2tilde.prior=a2tilde_prior;
     a2tilde.ols=a2tilde_ols;
     a2tilde.post=a2tilde_post;
     
     fh=@(x)uminus(log_posterior_kernel(obj,x));
-    f1=fh(x1);
-    f0=fh(x0);
-    % compute Hessian: we always compute two hessians, one returned by the optimizer and the other computed numerically
+    f1=fh(x11);
+    f0=fh(vec([obj.estimation.priors.start]));
+    % compute Hessian: we always compute two hessians, one returned by the
+    % optimizer and the other computed numerically. The following is not to
+    % be modified
     %----------------
+    npar=size(x11,1);
     H=repmat(eye(npar,npar),[1,1,2]);
-    if compute_hessian
-		% compute the numerical hessian
-		%-------------------------------
-		[H(:,:,2),issue]=utils.hessian.numerical(fh,x1,lower(obj.options.hessian_type));
-    else
-        warning([mfilename,':: this variance for one-regime VARs is wrong'])
-    end
+    warning([mfilename,':: this variance for one-regime VARs is wrong'])
+    
     % add remaining items
     %--------------------
     viol=[];
@@ -124,14 +123,15 @@ if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
         'Y',transpose(bigy),...
         'prior_type',priors_hyperparams.vp_prior_type,...
         'SIGMA',a2tilde_ols.SIGMA,...
-        'x0',x1,...
+        'x0',x11,...
         'f0',f1,...
         'funevals',0,...
         'a2Aprime',a2Aprime,...
         'na2',numel(a2tilde.prior.a),...
         'vdata',vdata,...
         'estimafy',estimafy,...
-        'inv_order',inv_order);
+        'inv_order',inv_order,...
+        'vcov',vcov);
 else
     [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode@rise_generic(obj,x0,lb,ub);
 end
@@ -207,13 +207,21 @@ function [vd,bigx,bigy,orig_order,inv_order,smpl]=restricted_var_data(obj)
     obj.nlags,obj.constant);
 vd=struct();
 xi=kron(bigx',eye(nv));
+
+estim_names=obj.linear_restrictions_data.estim_names;
+% test=true;
+% if test
+%     [lag_names]=vartools.select_parameter_type(estim_names,'lag_coef');
+%     [det_names]=vartools.select_parameter_type(estim_names,'det_coef');
+%     estim_names=[lag_names,det_names];
+% end
 % re-order the columns of xi to conform with the order of the names of the
 % estimated parameters
-inv_order=locate_variables(obj.all_param_names_vec,obj.linear_restrictions_data.estim_names,true);
+inv_order=locate_variables(obj.all_param_names_vec,estim_names,true);
 good=~isnan(inv_order);
 % tmp=obj.all_param_names_vec(good);
 inv_order=inv_order(good);
-if numel(inv_order)~=numel(obj.linear_restrictions_data.estim_names)
+if numel(inv_order)~=numel(estim_names)
     error('Please contact junior.maih@gmail.com with this')
 end
 % this is expected to be perfectly symmetric such that orig_order =
