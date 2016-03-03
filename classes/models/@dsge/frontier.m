@@ -56,105 +56,104 @@ if isempty(obj)
     
     f=struct();
     
-    return
+else
     
-end
-
-if nargin<5
-    
-    seed=[];
-    
-    if nargin<4
+    if nargin<5
         
-        simul=[];
+        seed=[];
+        
+        if nargin<4
+            
+            simul=[];
+            
+        end
+        
+    end
+    
+    if isempty(seed)
+        
+        seed=1971;
+        
+    end
+    
+    
+    if isempty(simul)
+        
+        simul=false;
+        
+    end
+    
+    lambda_vals=sort(lambda_vals);
+    
+    if numel(lambda_vals)==2
+        
+        lambda_vals=linspace(lambda_vals(1),lambda_vals(2),50);
+        
+    end
+    
+    is_linear=obj.options.solve_order==1 && obj.markov_chains.regimes_number;
+    
+    if ~isempty(simul)
+        
+        if ~islogical(simul)
+            
+            error('simul must be empty or logical')
+            
+        end
+        
+    end
+    
+    simul=simul||~is_linear;
+    
+    nvals=numel(lambda_vals);
+    
+    obj=set(obj,'autocov_ar',0,...
+        'simul_to_time_series',false);%,'lyapunov_algo','schur'
+    
+    n=obj.endogenous.number;
+    
+    names=obj.endogenous.name;
+    
+    good_locs=[];
+    
+    objective=@(x)variance_engine(x);
+    
+    sd=nan(n,nvals);
+    
+    nworkers=utils.parallel.get_number_of_workers();
+    
+    retcode=zeros(1,nvals);
+    
+    parfor(ival=1:nvals,nworkers)
+        
+        [V,retcode(ival)]=objective(lambda_vals(ival));
+        
+        if ~retcode(ival)
+            
+            sd(:,ival)=sqrt(diag(V));
+            
+        end
+        
+    end
+    
+    f=struct();
+    
+    for iname=1:n
+        
+        f.(names{iname})=sd(iname,:);
+        
+    end
+    
+    f.stats__=struct('lambda',lambda_vals,'ngrid',nvals,'simul_periods',0,...
+        'retcode',retcode);
+    
+    if simul
+        
+        f.stats__.simul_periods__=obj.options.simul_periods;
         
     end
     
 end
-
-if isempty(seed)
-    
-    seed=1971;
-    
-end
-
-
-if isempty(simul)
-    
-    simul=false;
-    
-end
-
-lambda_vals=sort(lambda_vals);
-
-if numel(lambda_vals)==2
-    
-    lambda_vals=linspace(lambda_vals(1),lambda_vals(2),50);
-    
-end
-
-is_linear=obj.options.solve_order==1 && obj.markov_chains.regimes_number;
-
-if ~isempty(simul)
-    
-    if ~islogical(simul)
-        
-        error('simul must be empty or logical')
-        
-    end
-    
-end
-
-simul=simul||~is_linear;
-
-nvals=numel(lambda_vals);
-
-obj=set(obj,'autocov_ar',0,...
-    'simul_to_time_series',false);%,'lyapunov_algo','schur'
-
-n=obj.endogenous.number;
-
-names=obj.endogenous.name;
-
-good_locs=[];
-
-objective=@(x)variance_engine(x);
-
-sd=nan(n,nvals);
-
-nworkers=utils.parallel.get_number_of_workers();
-
-retcode=zeros(1,nvals);
-
-parfor(ival=1:nvals,nworkers)
-    
-    [V,retcode(ival)]=objective(lambda_vals(ival));
-    
-    if ~retcode(ival)
-        
-        sd(:,ival)=sqrt(diag(V));
-        
-    end
-    
-end
-
-f=struct();
-
-for iname=1:n
-    
-    f.(names{iname})=sd(iname,:);
-    
-end
-
-f.stats__=struct('lambda',lambda_vals,'ngrid',nvals,'simul_periods',0,...
-    'retcode',retcode);
-
-if simul
-    
-    f.stats__.simul_periods__=obj.options.simul_periods;
-    
-end
-
 
     function [V,retcode]=variance_engine(val)
         
