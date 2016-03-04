@@ -107,7 +107,7 @@ smpl = zeros(npar,N);
 start.f0=nan;
 
 obj=struct();
-obj.funcCount=sum(funevals);
+obj.funcCount=sum(start.funevals);
 obj.iterations=0;
 obj.start_time=clock;
 obj.MaxTime=options.MaxTime;
