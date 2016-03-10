@@ -88,7 +88,7 @@ end
         
         % higher-order moments
         %----------------------        
-        [Eu{1:obj.options.solve_order}]=u_higher_order_moments(siz);
+        [Eu{1:obj.options.solve_order}]=dsge_tools.u_higher_order_moments(siz);
         
         a0_z=sparse(siz.nv,siz.nz);
         a1_z=sparse(siz.nv,siz.nz);
