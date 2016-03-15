@@ -118,7 +118,10 @@ y1.y=y1.y+ss;
 % add growth
 y1.y=y1.y+growth;
 if pruned
-    y1.y_lin=y01+growth;
+    y1.y_lin=y01;
+    if any(growth)
+        y1.y_lin(:,1)=y1.y_lin(:,1)+growth;
+    end
 end
 
     function zkz=mykron(io,zkz)
