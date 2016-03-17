@@ -43,6 +43,7 @@ m=rise.empty(0);
 % we loop through the different models using the information in the labels
 for imod=1:size(labels,1)
     m(imod,1)=rise('fwz',... % name of the file to read
+		'solve_linear',true,... % indicate that the model is linear
         'rise_flags',struct('indx_model',labels{imod,1})... % conditional on this parameterization
         );
     % indx_model varies from 0 to 3 in the model file

@@ -12,7 +12,7 @@ parameters nk_tp_1_2, nk_tp_2_1
 % the remaining parameters switch depending on the specification of the model and so
 % are included in the "specific" specifications.
 
-model(linear)
+model
 	% N.B: time is denoted by () as in dynare or by {}. Below, we use the {} notation
 
    % Main equations
