@@ -33,7 +33,7 @@ blocks(current_block_id)=[];
 %------------------------------------------------
 [Model_block,dictionary]=parser.hybrid_expectator(Model_block,dictionary);
 
-neqtns=sum(strcmp(Model_block(:,end),'normal'));
+neqtns=sum(strcmp(Model_block(:,end-1),'normal'));
 nendo=numel(dictionary.endogenous);
 if nendo<neqtns
     error('More equations than the number of endogenous variables')
