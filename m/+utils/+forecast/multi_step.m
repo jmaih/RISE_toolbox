@@ -21,93 +21,139 @@ function [sims,regimes,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_locati
 
 % Qt below may be used to get the time series of the transition matrix
 endo_nbr=size(y0.y,1);
+
 PAI=options.PAI;
+
 Qfunc=options.Qfunc;
 
 % use first page only as it is the most relevant
 regimes=vec(y0.rcond.data(:,:,1));
 
 shocks=y0.econd.data;
+
 cond_shocks_id=[];
+
 if options.k_future
+    
     if isfield(options,'shock_structure')
+        
         cond_shocks_id=any(options.shock_structure,2);
+        
     else
+        
         cond_shocks_id=any(isnan(shocks(:,2:end,1)),2);
+        
     end
+    
 end
 
 simul_update_shocks_handle=options.simul_update_shocks_handle;
+
 simul_do_update_shocks=options.simul_do_update_shocks;
+
 forecast_conditional_hypothesis=options.forecast_conditional_hypothesis;
+
 options=rmfield(options,{'PAI','Qfunc','y'});
 
 [solve_order,h]=size(T);
+
 Qt=[];
+
 retcode=0;
+
 penalty=1e+6;
 
 do_Qt=nargout>3;
+
 span=options.nsteps+options.burn;
+
 sims=nan(endo_nbr,options.nsteps);
+
 nsv=numel(state_vars_location);
+
 nx=(size(T{1,1},2)-nsv-1)/(options.k_future+1); %<---size(shocks,1);
 
 condforkst=~isempty(y0.ycond.data)||...
     (...
     ~isempty(shocks) && (any(isnan(shocks(:)))||any(isinf(shocks(:)))||...
-    max(max(abs(shocks(:,:,1)-shocks(:,:,2))>1e-19))||...
-    max(max(abs(shocks(:,:,1)-shocks(:,:,3))>1e-19))||...
-    max(max(abs(shocks(:,:,2)-shocks(:,:,3))>1e-19)))...
+    max(max(abs(shocks(:,:,1)-shocks(:,:,2))))>1e-19||...
+    max(max(abs(shocks(:,:,1)-shocks(:,:,3))))>1e-19||...
+    max(max(abs(shocks(:,:,2)-shocks(:,:,3))))>1e-19)...
     )||...
     options.forecast_conditional_sampling_ndraws>1;
 
 if options.simul_anticipate_zero
+    
     NotAnt_T=no_anticipation_solution();
+    
 end
 %-------------------------------------
 all_known_states=~any(isnan(regimes));
+
 unique_state=numel(PAI)==1||(all_known_states && all(regimes==regimes(1)));
 % model_is_linear=size(T,1)==1;
 if unique_state
+    
     if isnan(regimes(1))
         % no states were provided. Uniqueness in this case implies that
         % we have only one state
         regimes(:)=1;
+        
     end
+    
 end
 %-------------------------------------
 if condforkst
+    
     myshocks=[];
+    
     if options.burn
+        
         error('conditional forecasting and burn-in not allowed')
+        
     end
+    
     model_is_linear=solve_order==1;
+    
     if model_is_linear
         % apply standard tools
         standard_conditional_forecasting_tools();
+        
     else
         % apply nonlinear tools
         if all_known_states
             % apply nonlinear tools
             nonlinear_conditional_forecasting_tools();
+            
         else
+            
             error('randomly jumping from one state to another not allowed for conditional forecasting')
+            
         end
+        
     end
+    
 else
+    
     % condition on shocks only: The shock database may not have the
     % appropriate size if not all shocks are conditioned upon. This has to
     % be amended for.
     bigt=size(shocks,2);
+    
     tmp=zeros(nx,bigt);
+    
     tmp(y0.econd.pos,:)=shocks(:,:,1);
+    
     % expand as necessary if the conditions do not span the whole
     % simulation period.
     tmp(:,bigt+1:span+options.k_future)=0;
+    
     shocks__=condition_on_shocks_only(tmp);
+    
     myshocks=shocks__(:,options.burn+1:end);
+    
 end
+
 regimes=regimes(options.burn+1:end);
 
 
@@ -184,28 +230,53 @@ regimes=regimes(options.burn+1:end);
 
 
     function standard_conditional_forecasting_tools()
-        Tstar=T;
-        if options.simul_anticipate_zero
-            Tstar=NotAnt_T;
-        end
-        model=struct('T',{Tstar},'sstate',{ss},'state_cols',state_vars_location,...
-            'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
-        opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
-        if h==1||~(isempty(regimes)||any(isnan(regimes)))
-            [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
-                y0.ycond,y0.econd,opt,regimes);
+        
+        if options.simul_frwrd_back_shoot
+            
+            [cfkst,myshocks,PAI,retcode]=simul_forward_back_shooting(T,ss,y0,...
+                state_vars_location,h,nx,Qfunc,regimes,options);
+            
         else
-            [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
-                y0.ycond,y0.econd,opt,regimes);
+            
+            Tstar=T;
+            
+            if options.simul_anticipate_zero
+                
+                Tstar=NotAnt_T;
+                
+            end
+            
+            model=struct('T',{Tstar},'sstate',{ss},'state_cols',state_vars_location,...
+                'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
+            
+            opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
+            
+            if h==1||~(isempty(regimes)||any(isnan(regimes)))
+                
+                [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
+                    y0.ycond,y0.econd,opt,regimes);
+                
+            else
+                
+                [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
+                    y0.ycond,y0.econd,opt,regimes);
+                
+            end
+            
         end
+        
         % skip the initial conditions and add the mean
         if retcode
+            
             sims=[];
+            
         else
             % remove one period of history as it will be added back later
             % on
             sims=cfkst(:,2:end,:);
+            
         end
+        
     end
 
 
@@ -568,4 +639,217 @@ do_one_occbin_path()
             end
         end
     end
+end
+
+
+function [sims,myshocks,PAI,retcode]=simul_forward_back_shooting(T,ss,y0,state_vars_location,h,nx,Qfunc,regimes,options)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also:
+
+cutoff=-1e-10;
+
+if h>1
+    
+    error('Forward-back shooting only available for constant-parameter models')
+    
+end
+
+st=1;
+
+xlocs=state_vars_location;
+
+free=setdiff(1:nx,y0.econd.pos);
+
+if options.simul_anticipate_zero
+    
+    error('simul_anticipate_zero inconsistent with forward-back shooting')
+    
+end
+
+retcode=0;
+
+model=struct('T',{T},'sstate',{ss},'state_cols',state_vars_location,...
+    'Qfunc',Qfunc,'k',options.k_future,'nshocks',nx);
+
+horizon=options.k_future;
+
+if horizon==0
+    
+    error('Must anticipate the future for forward-back shooting')
+    
+end
+
+sims=y0.y(:,ones(options.nsteps+1,1));
+
+violation=@(x)any(options.sep_compl(x)<cutoff);
+
+% straigthen the shocks (they may be in a wrong order)...
+%--------------------------------------------------------
+myshocks=nan(nx,size(y0.econd.data,2));
+
+myshocks(y0.econd.pos,:)=y0.econd.data(:,:,1);
+
+for istep=2:options.nsteps+1
+    
+    j0=istep-1;
+    
+    shocks=get_shocks(j0);
+    
+    atmp_ss=sims(:,j0)-ss{st};
+    
+    sims(:,j0+1)=ss{st}+T{st}*[atmp_ss(xlocs);0;shocks(:)];
+    
+    if violation(sims(:,istep))
+        % do a formal forward back shoot
+        [tmp,shocks]=forward_back_shoot();
+        
+        if retcode
+            
+            error(decipher(retcode))
+            
+        end
+        
+        sims(:,j0+1)=tmp(:,1);
+        
+    end
+    
+    % replace the first column only
+    myshocks(:,j0)=shocks(:,1);
+    
+end
+
+myshocks=myshocks(:,1:options.nsteps);
+
+% Keep history in, it will be removed by the caller
+%--------------------------------------------------
+sims=sims(:,1:end);
+    
+
+    function shocks=get_shocks(j0,keep_nan)
+        
+        if nargin<2
+            
+            keep_nan=false;
+            
+        end
+        
+        limit=min(j0+options.k_future,size(myshocks,2));
+        
+        shocks=myshocks(:,j0:limit);
+        
+        if ~keep_nan
+            
+            shocks(isnan(shocks))=0;
+            
+        end
+        
+        missing=options.k_future+1-size(shocks,2);
+        
+        if missing>0
+            
+            shocks=[shocks,zeros(nx,missing)]; 
+            
+        elseif missing<0
+            
+            error('something quite not right')
+            
+        end
+        
+    end
+
+    function [y1,updated_shocks]=forward_back_shoot()
+        
+        is_violation=true;
+        
+        start=j0;
+        
+        shocks_=get_shocks(start,true);
+        
+        start_iter=0;
+        
+        while is_violation && start_iter<horizon
+            
+            start_iter=start_iter+1;
+            
+            % set the unused shocks to 0
+            %----------------------------            
+            these_shocks=shocks_; these_shocks(free,start_iter+1:end)=0;
+            
+            y0_=initial_conditions_frwrd_back_shoot(these_shocks,sims(:,j0),start_iter);
+            
+            % forecast only for the required number of periods
+            opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
+            opt.nsteps=start_iter;
+            
+            [updated_shocks,~,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0_.y,...
+                y0_.ycond,y0_.econd,opt,regimes(1:opt.nsteps));
+            
+            % remove one period of history
+            y1=cfkst(:,2:start_iter+1,:);
+            
+            if retcode
+                
+                return
+                
+            end
+            
+            % The steps up until start_iter should check and so simply
+            % check the next step
+            
+            start=j0+start_iter;
+            
+            % these shocks are
+            these_other_shocks=get_shocks(start);
+            
+            f__=y1(:,end)-ss{st};
+            
+            a_expect=ss{st}+T{st}*[f__(xlocs);0;these_other_shocks(:)];
+            
+            is_violation=violation(a_expect);
+            
+        end
+        
+        if is_violation
+            
+            retcode=701;
+            
+        end
+        
+    end
+
+
+    function y0_=initial_conditions_frwrd_back_shoot(the_shocks,a_start,start_iter)
+        % compute a conditional forecast
+        
+        ycond=y0.ycond.data(:,1:start_iter,1);
+        
+        ycond=struct('data',ycond(:,:,ones(3,1)),'pos',y0.ycond.pos);
+        
+        econd=[the_shocks,zeros(nx,start_iter-1)];
+        
+        econd=struct('data',econd(:,:,ones(3,1)),'pos',1:nx);
+        
+        rcond=struct('data',ones(start_iter,1),'pos',nan);
+        
+        y0_=struct('y',a_start,'ycond',ycond,'econd',econd,'rcond',rcond);
+        
+    end
+
 end
