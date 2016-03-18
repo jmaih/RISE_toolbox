@@ -665,6 +665,8 @@ function [sims,myshocks,PAI,retcode]=simul_forward_back_shooting(T,ss,y0,state_v
 
 cutoff=-1e-10;
 
+PAI=1;
+
 if h>1
     
     error('Forward-back shooting only available for constant-parameter models')
