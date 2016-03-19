@@ -23,7 +23,9 @@ fmap=frequency_map();
 if isnumeric(fq)
     locs=nan(size(fq));
     for ii=1:numel(fq)
-        locs(ii)=find(fq(ii)==fmap.code);
+        try
+            locs(ii)=find(fq(ii)==fmap.code);
+        end
     end
     if any(isnan(locs(:)))
         error('some wrong frequency codes found')
