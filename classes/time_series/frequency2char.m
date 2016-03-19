@@ -23,7 +23,7 @@ fmap=frequency_map();
 if isnumeric(fq)
     locs=nan(size(fq));
     for ii=1:numel(fq)
-        try
+        try %#ok<TRYNC>
             locs(ii)=find(fq(ii)==fmap.code);
         end
     end
