@@ -143,7 +143,7 @@ end
         good=freq==freq0;
         same_freq=find(good);
         for idate=same_freq
-            tmp=find(x(idate)==obj.date_numbers);
+            tmp=find(abs(x(idate)-obj.date_numbers)<1e-9);%<--tmp=find(x(idate)==obj.date_numbers);
             if isempty(tmp)
                 error(['date ',char(serial2date(x(idate))),' is out of range'])
             end

@@ -164,7 +164,7 @@ for kk=1:n_unic
         oldata=celldata{ii}.data;
         locations=nan(size(dat_n_ii));
         for jj=1:numel(locations)
-            loc=find(newdates==dat_n_ii(jj));
+            loc=find(abs(newdates-dat_n_ii(jj))<1e-9);% <--loc=find(newdates==dat_n_ii(jj));
             if isempty(loc)
                 error([mfilename,':: date not found in new vector'])
             end
