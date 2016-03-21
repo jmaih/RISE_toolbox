@@ -65,7 +65,7 @@ estim_models=cell(1,nmodels);
 for imod=1:nmodels 
     % replace "for" by "parfor" if you want to use parallel computation
     estim_models{imod}=rise(model_names{imod},... % name of the file to read
-        'rise_save_macro',true,... % we ask rise to write the expanded model to disk
+        'saveas',true,... % write the expanded model to disk with the default name
         'data',mydata... % we may assign the data now or later
         );
     % a model with multiple files inserted can be difficult to read. The

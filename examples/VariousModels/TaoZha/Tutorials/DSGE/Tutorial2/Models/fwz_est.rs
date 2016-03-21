@@ -24,7 +24,7 @@ rhod, "$\rho _{d}$" rhos, "$\rho _{s}$"
 varobs R, X, PAI
 
 
-model(linear)
+model
 	% auxiliary parameters
 	# beta=1/(1+beta_trans/100);
 	
