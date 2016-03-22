@@ -17,7 +17,7 @@ function [sims,retcode]=simulate_nonlinear(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if isempty(obj)
     sims=struct('simul_stack_solve_algo','sparse',...
@@ -25,6 +25,7 @@ if isempty(obj)
         'simul_exogenous_func','');
     return
 end
+
 sims=[];
 
 obj.options.simul_burn=0;
@@ -32,13 +33,19 @@ obj.options.simul_burn=0;
 [obj,retcode]=solve(obj,varargin{:});
 
 if retcode
+    
     return
     %     error('model cannot be solved')
 end
 
+debug=obj.options.debug;
+
 % initial conditions
 %-------------------
 Initcond=set_simulation_initial_conditions(obj);
+
+Initcond.shocks=Initcond.y.econd.data(:,:,1);
+
 bigt=obj.options.simul_periods;
 
 simul_stack_solve_algo=obj.options.simul_stack_solve_algo;
@@ -53,59 +60,84 @@ t_last_shock=forecast_exogenous();
 endo_nbr=obj.endogenous.number;
 
 s0=1;
+
 s1=1;
+
 param=obj.parameter_values(:,s1);
-sparam=param;
+
 ss=obj.solution.ss{s1};
+
 % initial and final conditions
 %-----------------------------
 sims=ss(:,ones(1,bigt+2)); % initial,simul,final
-ystart=Initcond.y.y;
+
+ystart=Initcond.y.y(obj.inv_order_var,1);%
+
 yfinal=ss;
+
 sims(:,1)=ystart;
+
 sims(:,end)=yfinal;
 
 def=obj.solution.definitions{s1};
+
 % dynamic model
 %--------------
 dynamic_model=obj.routines.dynamic;
+
 if isa(obj.routines.probs_times_dynamic_derivatives,'function_handle')
+    
     jacobian_dynamic_model=@(varargin)obj.routines.probs_times_dynamic_derivatives(varargin{:});
+    
 else
+    
     order__=1;
+    
     jacobian_dynamic_model=obj.routines.probs_times_dynamic_derivatives(order__);
+    
 end
-order_var=obj.order_var;
+
+iov=obj.inv_order_var;
+
+is_symbolic=strcmp(obj.options.solve_derivatives_type,'symbolic');
+
+numjac_aplus_a0_aminus=find(obj.lead_lag_incidence.before_solve(:));
+
 % locations of various variables in the jacobian
 %-----------------------------------------------
-ns=numel(obj.locations.before_solve.v.s_0);
-np=numel(obj.locations.before_solve.v.p_0);
-nb=numel(obj.locations.before_solve.v.b_0);
-nf=numel(obj.locations.before_solve.v.f_0);
-aplus_cols=ns+np+(1:nb+nf);
-aplus=obj.locations.before_solve.v.bf_plus;
-aminus_cols=ns+(1:np+nb);
-aminus=obj.locations.before_solve.v.pb_minus;
-a0=obj.locations.before_solve.v.t_0;
-jac_aminus_a0_aplus=[aminus,a0,aplus];
-jac_aminus_a0=[aminus,a0];
-jac_a0_aplus=[a0,aplus];
-A_aminus_a0=[aminus_cols,endo_nbr+(1:endo_nbr)];
-A_aminus_a0_aplus=[A_aminus_a0,2*endo_nbr+aplus_cols];
-A_a0_aplus=[1:endo_nbr,endo_nbr+aplus_cols];
+[aplus,aplus_cols,a0,aminus,aminus_cols]=get_locations();
 
-lead_lag_incidence=obj.lead_lag_incidence.after_solve;
-the_leads=find(lead_lag_incidence(:,1)>0);
+[the_leads,the_lags]=dsge_tools.create_endogenous_variables_indices(...
+    obj.lead_lag_incidence.before_solve);
+
 the_current=(1:endo_nbr)';
-the_lags=find(lead_lag_incidence(:,3)>0);
-exo_nbr=sum(obj.exogenous.number);
+
 x=[];
+
 if obj.options.simul_recursive
+    
     nsmpl=bigt;
+    
 else
+    
     nsmpl=1;
+    
 end
+
+options=obj.options.optimset;
+
+if debug||obj.options.fix_point_verbose
+    
+    options.Display='iter';
+    
+end
+
+options.Jacobian='on';
+
+% options.Algorithm={'levenberg-marquardt',2*.005};
+
 for t=1:min(t_last_shock,nsmpl)
+    
     if ~retcode
         % compute the forecast of the exogenous
         %--------------------------------------
@@ -114,168 +146,558 @@ for t=1:min(t_last_shock,nsmpl)
         % initialize the solver at the steady state
         %-------------------------------------------
         fprintf(1,'\n pass # %0.0f of %0.0f\n',t,nsmpl);
+        
         switch simul_stack_solve_algo
+            
             case 'fsolve'
-                options=obj.options.optimset;
-                if obj.options.debug||obj.options.fix_point_verbose
-                    options.Display='iter';
-                end
-                Y0=sims(:,1+(t:bigt));
-                [sims(:,1+(t:bigt)),~,exitflag]=...
-                    fsolve(@objective,Y0,options,sims(:,t),sims(:,end));
-                %-------------------------------------------
-                if exitflag==0
-                    retcode=21;
-                elseif ~utils.error.valid(sims)
-                    retcode=22;
-                else
-                    retcode=(~ismember(exitflag,[1,2,3,4]))*23;
-                end
-                %-------------------------------------------
+                
+                [sims(:,t:end),retcode]=do_fsolve(sims(:,t:end));
+                
+            case 'lsqnonlin'
+                
+                [sims(:,t:end),retcode]=do_lsqnonlin(sims(:,t:end));
+
             case 'sparse'
+                
                 [sims(:,t:end),retcode]=sparse_simulation_algorithm(sims(:,t:end));
+                
             case 'lbj'
-                error('LBJ''s relaxation algorithm not yet implemented')
+                
+                error('lbj currently broken: post issue on the forum')
+                
+                [sims(:,t:end),retcode]=relaxation(sims(:,t:end));
+                
             otherwise
-                error(['unknown algorithm ',parser.any2str(simul_stack_solve_algo)])
+                % user-defined algorithm
+                
+                if iscell(simul_stack_solve_algo)
+                    
+                    user_algo=simul_stack_solve_algo{1};
+                    
+                    vargs=simul_stack_solve_algo(2:end);
+                    
+                else
+                    
+                    vargs={};
+                    
+                    user_algo=simul_stack_solve_algo;
+                    
+                end
+                
+                if ischar(user_algo)
+                    
+                    user_algo=str2func(user_algo);
+                    
+                end
+                
+                x00=vec(sims(:,t+1:end-1));
+                
+                [x11,retcode]=user_algo(@objective,x00,vargs{:},sims(:,t),...
+                    sims(:,end));
+                
+                sims(:,t+1:end-1)=reshape(x11,endo_nbr,[]);
+                                
         end
+        
     end
+    
 end
+
 % store the simulations in a database: use the date for last observation in
 % history and not first date of forecast
 %--------------------------------------------------------------------------
+
 if isempty(obj.options.simul_history_end_date)
+    
     obj.options.simul_history_end_date=0;
+    
 end
+
 start_date= obj.options.simul_history_end_date;
+
 sims=ts(start_date,full(sims)',obj.endogenous.name);
+
 sims=pages2struct(sims);
 
+    function [sims,retcode]=do_lsqnonlin(sims)
+        
+        sims=reshape(sims,endo_nbr,[]);
+        
+        Y0=sims(:,2:end-1);
+        
+        [y1,~,~,exitflag]=lsqnonlin(@objective,Y0(:),[],[],options,...
+            sims(:,1),sims(:,end));
+        
+        if exitflag==0
+            
+            retcode=21;
+            
+        elseif ~utils.error.valid(y1)
+            
+            retcode=22;
+            
+        else
+            
+            retcode=(~ismember(exitflag,[1,2,3,4]))*23;
+            
+        end
+        
+        if retcode==0
+            
+            sims(:,2:end-1)=reshape(y1,endo_nbr,[]);
+            
+        end
+        
+    end
+
+    function [sims,retcode]=do_fsolve(sims)
+        
+        Y0=sims(:,2:end-1);
+        
+        [y1,~,exitflag]=fsolve(@objective,Y0(:),options,sims(:,1),...
+            sims(:,end));
+        
+        if exitflag==0
+            
+            retcode=21;
+            
+        elseif ~utils.error.valid(y1)
+            
+            retcode=22;
+            
+        else
+            
+            retcode=(~ismember(exitflag,[1,2,3,4]))*23;
+            
+        end
+        
+        if retcode==0
+            
+            sims(:,2:end-1)=reshape(y1,endo_nbr,[]);
+            
+        end
+        
+    end
+
+    function [BIGX,retcode]=relaxation(BIGX)
+        
+        BIGX=reshape(BIGX,endo_nbr,[]);
+        
+        nsyst=size(BIGX,2)-2;
+        
+        [BIGX,~,retcode]=fix_point_iterator(@relaxation_iterator,BIGX,...
+            obj.options);
+        
+        function [BIGX,crit]=relaxation_iterator(BIGX)
+            
+            Y=build_lead_current_lag_matrix(BIGX);
+            
+            d=utils.code.evaluate_functions(dynamic_model,Y,...
+                x(:,1:nsyst),ss,param,def,s0,s1);
+            
+            C=cell(nsyst,1);
+            
+            B=C;
+            
+            A=C;
+            
+            D=C;
+            
+            relaxed_jacobian();
+            
+            for isyst=1:nsyst
+                
+                if isyst==1
+                    
+                    D{isyst}=B{isyst}\C{isyst};
+                    
+                    d(:,isyst)=B{isyst}\d(:,isyst);
+                    
+                else
+                    
+                    tmp=(B{isyst}-A{isyst}*D{isyst-1})\eye(endo_nbr);
+                    
+                    if isyst<nsyst
+                        
+                        D{isyst}=tmp*C{isyst};
+                        
+                    end
+                    
+                    d(:,isyst)=tmp*(d(:,isyst)+A{isyst}*d(:,isyst-1));
+                    
+                end
+                
+            end
+            
+            dx=BIGX(:,2:end-1);
+            
+            for isyst=nsyst:-1:1
+                
+                if isyst==nsyst
+                    
+                    dx(:,isyst)=-d(:,isyst);
+                    
+                else
+                    
+                    dx(:,isyst)=-d(:,isyst)-D{isyst}*d(:,isyst+1);
+                    
+                end
+                
+            end
+            
+            crit=full(max(max(abs(dx))));
+            
+            if nsyst==1
+                
+                dx=dx(:,1);
+                
+            end
+            
+            s=junior_maih_2016(BIGX,dx,nsyst);
+            
+            BIGX(:,2:end-1)=BIGX(:,2:end-1)+s*dx;
+            
+            function relaxed_jacobian()
+                
+                for isyst_=1:nsyst
+                    
+                    [C{isyst_},B{isyst_},A{isyst_}]=...
+                        build_system_matrices(Y(:,isyst_),isyst_);
+                    
+                end
+                
+            end
+            
+        end
+        
+    end
+
+    function [BIGX,retcode]=sparse_simulation_algorithm(BIGX)
+        
+        BIGX=reshape(BIGX,endo_nbr,[]);
+        
+        nsyst=size(BIGX,2)-2;
+        
+        [BIGX,~,retcode]=fix_point_iterator(@sparse_iterator,BIGX,...
+            obj.options);
+        
+        function [BIGX,crit]=sparse_iterator(BIGX)
+                        
+            Y=build_lead_current_lag_matrix(BIGX);
+            
+            resid=utils.code.evaluate_functions(dynamic_model,Y,...
+                x(:,1:nsyst),ss,param,def,s0,s1);
+            
+            A=build_big_jacobian(Y,nsyst);
+            
+            dx=reshape(-A\resid(:),endo_nbr,[]);
+            
+            crit=full(max(max(abs(dx))));
+            
+            if nsyst==1
+                
+                dx=dx(:,1);
+                
+            end
+                        
+            s=junior_maih_2016(BIGX,dx,nsyst);
+            
+            BIGX(:,2:end-1)=BIGX(:,2:end-1)+s*dx;
+            
+        end
+        
+    end
+
+    function s=junior_maih_2016(BIGX,dx,nsyst)
+        % Now we need to ensure that the step is valid
+        
+        if ~utils.error.valid(dx)
+            
+            error('invalid step')
+            
+        end
+        
+        s=1;
+        
+        iter=0;
+        
+        while s>0 && ~utils.error.valid(update_residuals(s));
+            
+            s=0.9*s;
+            
+            iter=iter+1;
+            
+            if debug
+                
+                fprintf(1,'iteration %0.0f, slowc %0.8f\n',iter,s);
+                
+            end
+            
+        end
+        
+        if s==0
+            
+            error('Could not find a path')
+            
+        end
+        
+        function resid1=update_residuals(s)
+            
+            BIGX1=BIGX;
+            
+            BIGX1(:,2:end-1)=BIGX1(:,2:end-1)+s*dx;
+            
+            Y1=build_lead_current_lag_matrix(BIGX1);
+            
+            resid1=utils.code.evaluate_functions(dynamic_model,Y1,...
+                x(:,1:nsyst),ss,param,def,s0,s1);
+            
+        end
+        
+    end
+            
+    function [aplus,aplus_cols,a0,aminus,aminus_cols]=get_locations()
+        
+        ns=numel(obj.locations.before_solve.v.s_0);
+        
+        np=numel(obj.locations.before_solve.v.p_0);
+        
+        nb=numel(obj.locations.before_solve.v.b_0);
+        
+        nf=numel(obj.locations.before_solve.v.f_0);
+        
+        aplus_cols=ns+np+(1:nb+nf);
+        
+        aplus=obj.locations.before_solve.v.bf_plus;
+        
+        aminus_cols=ns+(1:np+nb);
+        
+        aminus=obj.locations.before_solve.v.pb_minus;
+        
+        a0=obj.locations.before_solve.v.t_0;
+        
+    end
+
+    function [resid,Jac]=objective(X,X0,Xlast)
+        
+        X=reshape(X,endo_nbr,[]);
+        
+        nsyst=size(X,2);
+        
+        X=[X0,X,Xlast];
+        
+        Y=build_lead_current_lag_matrix(X);
+        
+        resid=utils.code.evaluate_functions(dynamic_model,Y,x(:,1:nsyst),...
+            ss,param,def,s0,s1);
+        
+        resid=resid(:);
+        
+        if nargout>1
+            
+            Jac=build_big_jacobian(Y,nsyst);
+            
+        end
+        
+    end
+
+    function J=build_big_jacobian(Y,nsyst)
+        
+        if nargin<2
+            
+            nsyst=size(Y,2);
+            
+        end
+        
+        nrows=nsyst*endo_nbr;
+        
+        ncols=nrows;
+        
+        nzmax=max_non_zeros();
+        
+        J=spalloc(nrows,ncols,nzmax);%Jac=sparse([],[],[],nrows,ncols,nzmax);
+        
+        offset_rows=0;
+        
+        offset_cols=0;
+        
+        for isyst=1:nsyst
+            
+            [Aplus,A0,Aminus]=build_system_matrices(Y(:,isyst),isyst);
+            
+            if isyst>2
+                
+                offset_cols=offset_cols+endo_nbr;
+                
+            end
+            
+            if isyst==1
+                
+                J(1:endo_nbr,offset_cols+(1:2*endo_nbr))=[A0,Aplus];
+                
+            elseif isyst==nsyst
+                
+                J(offset_rows+(1:endo_nbr),offset_cols+(1:2*endo_nbr))=[Aminus,A0];
+                
+            else
+                
+                J(offset_rows+(1:endo_nbr),offset_cols+(1:3*endo_nbr))=[Aminus,A0,Aplus];
+                
+            end
+            
+            offset_rows=offset_rows+endo_nbr;
+            
+        end
+        
+        function n=max_non_zeros()
+            
+            %             n=3*endo_nbr^2*(nsyst-2)+2*endo_nbr^2*2;
+            n=endo_nbr^2*(3*(nsyst-2)+4);
+            
+        end
+        
+    end
+
+    function Y=build_lead_current_lag_matrix(X)
+        
+        Y=[
+            X(the_leads,3:end)
+            X(the_current,2:end-1)
+            X(the_lags,1:end-2)
+            ];
+        
+    end
+
+    function [Aplus,A0,Aminus]=build_system_matrices(y,isyst)
+        
+        if is_symbolic
+            
+            SymbJac=utils.code.evaluate_functions(jacobian_dynamic_model,...
+                y,x(:,isyst),ss,param,def,s0,s1);
+            
+            [Aplus,A0,Aminus]=decompose_symbolic_jacobian(SymbJac);
+            
+        else
+            
+            NumJac=numerical_jacobian(dynamic_model,y,x(:,isyst),...
+                ss,param,def,s0,s1);
+            
+            [Aplus,A0,Aminus]=decompose_numerical_jacobian(NumJac);
+            
+        end
+        
+        if debug
+            if is_symbolic
+                % compute numeric
+                
+                NumJac=numerical_jacobian(dynamic_model,y,x(:,isyst),...
+                    ss,param,def,s0,s1);
+                
+                [Aplus_,A0_,Aminus_]=decompose_numerical_jacobian(NumJac);
+            else
+                % compute symbolic
+                SymbJac=utils.code.evaluate_functions(jacobian_dynamic_model,...
+                    y,x(:,isyst),ss,param,def,s0,s1);
+                
+                [Aplus_,A0_,Aminus_]=decompose_symbolic_jacobian(SymbJac);
+            end
+            
+            max(max(abs(Aplus_-Aplus)))
+            
+            max(max(abs(A0_-A0)))
+            
+            max(max(abs(Aminus_-Aminus)))
+            
+        end
+        
+    end
+
+    function [Aplus,A0,Aminus]=decompose_symbolic_jacobian(Jac)
+        
+        Aplus=zeros(endo_nbr);
+        
+        Aminus=Aplus;
+        
+        Aplus(:,aplus_cols)=Jac(:,aplus);
+        
+        Aminus(:,aminus_cols)=Jac(:,aminus);
+        
+        A0=Jac(:,a0);
+        
+        Aplus=Aplus(:,iov);
+        
+        A0=A0(:,iov);
+        
+        Aminus=Aminus(:,iov);
+        
+    end
+
+    function [Aplus,A0,Aminus]=decompose_numerical_jacobian(Jac)
+        
+        biga=zeros(endo_nbr,3*endo_nbr);
+        
+        biga(:,numjac_aplus_a0_aminus)=Jac;
+        
+        Aplus=biga(:,1:endo_nbr);
+        
+        A0=biga(:,endo_nbr+1:2*endo_nbr);
+        
+        Aminus=biga(:,2*endo_nbr+1:end);
+        
+    end
 
     function forecast_exogenous=upload_exogenous_forecast_func()
         
         forecast_exogenous=obj.options.simul_exogenous_func;
+        
         if isempty(forecast_exogenous)
-            forecast_exogenous=@x_forecast;
-        end
-        function x=x_forecast(~,t)
-            if nargin==0
-                last_shock_period=find(any(Initcond.shocks,1),1,'last');
-                x=last_shock_period;
-            else
-                if obj.options.simul_recursive
-                    x=zeros(size(Initcond.shocks));
-                    x(:,1)=Initcond.shocks(:,t);
-                else
-                    x=Initcond.shocks(:,1:end);
-                end
-            end
-        end
-    end
-
-    function resid=objective(X,X0,Xlast)
-        X=reshape(X,endo_nbr,[]);
-        nsyst=size(X,2);
-        resid=X;
-        X=[X0,X,Xlast];
-        for isyst=1:nsyst
-            y=build_lead_current_lag_vector(X,isyst);
-            resid(:,isyst)=utils.code.evaluate_functions(dynamic_model,...
-                y,x(:,isyst),ss,param,sparam,def,s0,s1);
-        end
-    end
-
-    function y=build_lead_current_lag_vector(X,iter)
-        XX=X(:,iter:iter+2);
-        
-        y=[ % indices=[the_leads;the_current;the_lags];
-            XX(the_leads,end)
-            XX(the_current,end-1)
-            XX(the_lags,end-2)
-            ];
-    end
-
-    function [Y,retcode]=sparse_simulation_algorithm(Y)
-        Y=reshape(Y,endo_nbr,[]);
-        nsyst=size(Y,2)-2;
-        A=initialize_jacobian(nsyst);
-        resid=nan(endo_nbr,nsyst);
-        
-        [Y,~,retcode]=fix_point_iterator(@iteration_engine,Y,obj.options);
-        
-        function [Y,crit]=iteration_engine(Y)
-            irows=1:endo_nbr;
-            offset_cols=0;
-            for isyst=1:nsyst
-                y=build_lead_current_lag_vector(Y,isyst);%,nsyst
-                
-                resid(:,isyst)=utils.code.evaluate_functions(dynamic_model,...
-                    y,x(:,isyst),ss,param,sparam,def,s0,s1);
-                
-                SymbJac=utils.code.evaluate_functions(jacobian_dynamic_model,...
-                    y,x(:,isyst),ss,param,sparam,def,s0,s1);
-                if obj.options.debug
-                    NumJac=numerical_jacobian(dynamic_model,y,x(:,isyst),ss,param,...
-                        sparam,def,s0,s1);
-                    NumJac0=NumJac(:,nb+nf+(1:endo_nbr));
-                    % the jacobian comes in the order_var order. I have to
-                    % re-order the NumJac portion to test
-                    tmp=NumJac0(:,order_var)-full(SymbJac(:,nb+nf+(1:endo_nbr)));
-                    crit0=max(abs(tmp(:)));
-                    if crit0>1e-4
-                        keyboard
-                    end
-                    fprintf(1,'%0.8f\n',crit0);
-                end
-                
-                if isyst==1
-                    A(irows,A_a0_aplus)=SymbJac(:,jac_a0_aplus);
-                elseif isyst==nsyst
-                    A(irows,offset_cols+A_aminus_a0)=SymbJac(:,jac_aminus_a0);
-                else
-                    A(irows,offset_cols+A_aminus_a0_aplus)=SymbJac(:,jac_aminus_a0_aplus);
-                end
-                
-                if isyst<nsyst
-                    irows=irows+endo_nbr;
-                    if isyst>=2
-                        offset_cols=offset_cols+endo_nbr;
-                    end
-                end
-            end
-            dx=-A\resid(:);
             
-            crit=max(abs(dx));
-            dx=reshape(dx,endo_nbr,[]);
-            if nsyst==1
-                dx=dx(:,1);
-            end
-            Y(order_var,2:end-1)=Y(order_var,2:end-1)+dx;
+            forecast_exogenous=@x_forecast;
+            
         end
+        
+        function x=x_forecast(~,t)
+            
+            if nargin==0
+                
+                last_shock_period=find(any(Initcond.shocks,1),1,'last');
+                
+                x=last_shock_period;
+                
+            else
+                
+                if obj.options.simul_recursive
+                    
+                    x=zeros(size(Initcond.shocks));
+                    
+                    x(:,1)=Initcond.shocks(:,t);
+                    
+                else
+                    
+                    x=Initcond.shocks(:,1:end);
+                    
+                end
+                
+            end
+            
+        end
+        
     end
 
-    function A=initialize_jacobian(nperiods)
-        y=[ % indices=[the_leads;the_current;the_lags];
-            ss(the_leads,1)
-            ss(the_current,1)
-            ss(the_lags,1)
-            ];
-        ll0_nbr=numel(y);
-        JJ=utils.code.evaluate_functions(jacobian_dynamic_model,...
-            y,rand(exo_nbr,1),ss,param,sparam,def,s0,s1);
-        JJ=JJ(:,1:ll0_nbr);
-        nzmax=nnz(JJ)*nperiods;
-        nrows=endo_nbr*nperiods;
-        ncols=nrows;
-        A=sparse([],[],[],nrows,ncols,nzmax);
-    end
 end
 
 function J=numerical_jacobian(funcs,y,varargin)
+
 nrows=numel(funcs);
+
 ncols=numel(y);
+
 J=nan(nrows,ncols);
+
 for irow=1:nrows
+    
     J(irow,:)=utils.numdiff.jacobian(funcs{irow},y,varargin{:});
+    
 end
+
 end
