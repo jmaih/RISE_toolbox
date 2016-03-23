@@ -29,6 +29,10 @@ function cond_fkst_db=forecast(obj,varargin)
 %   - **forecast_cond_exo_vars** [{''},char|cellstr]: names of conditional
 %   exogenous variables to be used either in forecasting or in estimation
 %
+%   - **forecast_endo_exo_vars** [{''},char|cellstr]: names of exogenous
+%   variables that are potentially modified under conditional forecasting
+%   with forward-back shooting
+%
 %   - **forecast_shock_uncertainty** [true|{false}]: draw shocks over the
 %   simulation horizon.
 %
@@ -81,6 +85,7 @@ if isempty(obj)
         'forecast_nsteps',12,...
         'forecast_cond_endo_vars','',...
         'forecast_cond_exo_vars','',...
+        'forecast_endo_exo_vars','',...
         'forecast_to_time_series',true);
     cond_fkst_db=utils.miscellaneous.mergestructures(cond_fkst_db,...
         utils.forecast.rscond.forecast());

@@ -164,10 +164,10 @@ end
 % add initial conditions: (only the actual data on the first page)
 % ONLY IF THERE WAS NO BURN-IN
 %---------------------------------------------------------------
-[nr,nc,np]=size(y);
+[nr,nc,npy]=size(y);
 if Initcond.burn==0
     % we include history
-    y=cat(2,y0(1).y(:,:,ones(np,1)),y);
+    y=cat(2,y0(1).y(:,:,ones(npy,1)),y);
     y0cols=size(y0(1).y,2);
 else
     % then we start after the end of history
@@ -199,19 +199,19 @@ y=re_order_output_rows(obj,y);
 start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
 
 nrs=size(states,1);
-states=reshape(states,[nrs,1,np]);
+states=reshape(states,[nrs,1,npy]);
 smpl_states=size(states,1);
 [states_,markov_chains]=regimes2states(states);
-[exo_nbr,smplx,np]=size(myshocks);
-myshocks=cat(2,zeros(exo_nbr,y0cols,np),myshocks);
+[exo_nbr,smplx,npx]=size(myshocks);
+myshocks=cat(2,zeros(exo_nbr,y0cols,npx),myshocks);
 smplx=smplx+y0cols;
 vnames=[obj.endogenous.name,obj.exogenous.name,'regime',markov_chains];
 endo_nbr=obj.endogenous.number;
 smpl=max(smplx,smply);
-yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains),np);
-yy(1:smply,1:endo_nbr,:)=permute(y(1:endo_nbr,:,:),[2,1,3]);
-yy(1:smplx,endo_nbr+(1:exo_nbr),:)=permute(myshocks,[2,1,3]);
-yy(y0cols+1:smply,endo_nbr+exo_nbr+1:end,:)=cat(2,states,states_);
+yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains),max(npx,npy));
+yy(1:smply,1:endo_nbr,1:npy)=permute(y(1:endo_nbr,:,:),[2,1,3]);
+yy(1:smplx,endo_nbr+(1:exo_nbr),1:npx)=permute(myshocks,[2,1,3]);
+yy(y0cols+1:smply,endo_nbr+exo_nbr+1:end,1:npy)=cat(2,states,states_);
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
     % history and not first date of forecast
@@ -234,9 +234,9 @@ end
         markov_chains=regimes_tables(1,2:end);
         nchains=numel(markov_chains);
         reg_table=cell2mat(regimes_tables(2:end,2:end));
-        states=nan(smpl_states,nchains,np);
+        states=nan(smpl_states,nchains,npy);
         
-        for ip=1:np
+        for ip=1:npy
             % there is only one column and so the following should also
             % work max_reg=max(regimes_history(:,ip));
             max_reg=max(regimes_history(:,1,ip));

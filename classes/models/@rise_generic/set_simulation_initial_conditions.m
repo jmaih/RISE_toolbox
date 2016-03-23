@@ -166,6 +166,9 @@ if isfield(obj.options,'solve_occbin') && ~isempty(obj.options.solve_occbin)
 end
 Initcond.is_log_var=is_log_var;
 
+Initcond.is_endogenous_exo_vars=ismember(obj.exogenous.name,...
+    obj.options.forecast_endo_exo_vars);
+
 %-----------------------------------------
 if is_conditional_forecasting
     % shocks have already been set from the initial conditions no
