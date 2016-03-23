@@ -97,7 +97,8 @@ else
     
 end
 
-iov=obj.inv_order_var;
+% iov=obj.inv_order_var;
+ov=obj.order_var;
 
 is_symbolic=strcmp(obj.options.solve_derivatives_type,'symbolic');
 
@@ -105,7 +106,11 @@ numjac_aplus_a0_aminus=find(obj.lead_lag_incidence.before_solve(:));
 
 % locations of various variables in the jacobian
 %-----------------------------------------------
-[aplus,aplus_cols,a0,aminus,aminus_cols]=get_locations();
+[aplus,aplus_cols,a0,aminus,aminus_cols]=get_jacobian_locations();
+
+% location of variables in the system matrices ordered alphabetically
+%---------------------------------------------------------------------
+[ov_aplus_cols,ov_a0_cols,ov_aminus_cols]=get_alphabetic_system_locations();
 
 [the_leads,the_lags]=dsge_tools.create_endogenous_variables_indices(...
     obj.lead_lag_incidence.before_solve);
@@ -455,8 +460,18 @@ sims=pages2struct(sims);
         end
         
     end
+
+    function [ov_aplus_cols,ov_a0_cols,ov_aminus_cols]=get_alphabetic_system_locations()
+                
+        ov_aplus_cols=ov(aplus_cols);
+        
+        ov_aminus_cols=ov(aminus_cols);
+        
+        ov_a0_cols=ov;
+
+    end
             
-    function [aplus,aplus_cols,a0,aminus,aminus_cols]=get_locations()
+    function [aplus,aplus_cols,a0,aminus,aminus_cols]=get_jacobian_locations()
         
         ns=numel(obj.locations.before_solve.v.s_0);
         
@@ -618,17 +633,13 @@ sims=pages2struct(sims);
         
         Aminus=Aplus;
         
-        Aplus(:,aplus_cols)=Jac(:,aplus);
+        A0=Aplus;
+                
+        Aplus(:,ov_aplus_cols)=Jac(:,aplus);
         
-        Aminus(:,aminus_cols)=Jac(:,aminus);
+        Aminus(:,ov_aminus_cols)=Jac(:,aminus);
         
-        A0=Jac(:,a0);
-        
-        Aplus=Aplus(:,iov);
-        
-        A0=A0(:,iov);
-        
-        Aminus=Aminus(:,iov);
+        A0(:,ov_a0_cols)=Jac(:,a0);
         
     end
 
