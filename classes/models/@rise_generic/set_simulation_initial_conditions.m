@@ -448,7 +448,7 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
         
         function di=get_data(vname)
             
-            di=simul_historical_data(simul_historical_data.finish,vname);
+            di=simul_historical_data(simul_history_end_date,vname);
             
             di=squeeze(double(di));
             
