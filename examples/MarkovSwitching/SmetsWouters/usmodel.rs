@@ -15,7 +15,7 @@ parameters(coef,2)  crpi crdy cry crr
 
 parameters coef_tp_1_2, coef_tp_2_1
 
-model(linear) 
+model 
 
 		# cpie=1+constepinf/100;
 		# cgamma=1+ctrend/100 ;

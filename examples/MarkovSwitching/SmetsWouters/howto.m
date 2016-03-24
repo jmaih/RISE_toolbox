@@ -1,16 +1,13 @@
 %% Housekeeping
-clear all
 close all
 clc
-%% load RISE
-rise_startup()
-
+%% load RISE before proceeding if you have not done so already
 
 %% read the models and their calibrations
-sw=rise('usmodel');
+sw0=rise('usmodel','solve_linear',true);
 
 %% solve the model
-sw=solve(sw,'solver','newton_kronecker_iteration');
+sw=solve(sw0,'solver','mn');
 
 %% print results
 sw.print_solution()
