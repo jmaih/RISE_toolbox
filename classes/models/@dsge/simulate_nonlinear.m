@@ -102,6 +102,14 @@ ov=obj.order_var;
 
 is_symbolic=strcmp(obj.options.solve_derivatives_type,'symbolic');
 
+is_linear=obj.options.solve_linear;
+
+if is_linear
+    
+    Ai=[];
+    
+end
+
 numjac_aplus_a0_aminus=find(obj.lead_lag_incidence.before_solve(:));
 
 % locations of various variables in the jacobian
@@ -393,9 +401,25 @@ sims=pages2struct(sims);
             resid=utils.code.evaluate_functions(dynamic_model,Y,...
                 x(:,1:nsyst),ss,param,def,s0,s1);
             
-            A=build_big_jacobian(Y,nsyst);
-            
-            dx=reshape(-A\resid(:),endo_nbr,[]);
+            if is_linear
+                
+                if isempty(Ai)
+                    
+                    A=build_big_jacobian(Y,nsyst);
+                    
+                    Ai=A\eye(size(A,1));
+                    
+                end
+                
+                dx=reshape(-Ai*resid(:),endo_nbr,[]);
+                
+            else
+                
+                A=build_big_jacobian(Y,nsyst);
+                
+                dx=reshape(-A\resid(:),endo_nbr,[]);
+                
+            end
             
             crit=full(max(max(abs(dx))));
             
