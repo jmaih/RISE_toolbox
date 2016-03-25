@@ -245,7 +245,19 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
         
         % sort the conditional shocks to avoid bad surprises down the road
         %-----------------------------------------------------------------
-        conditional_shocks=sort(obj.options.forecast_cond_exo_vars);
+        conditional_shocks=obj.options.forecast_cond_exo_vars;
+        
+        if ~isempty(conditional_shocks)
+            
+            if ischar(conditional_shocks)
+                
+                conditional_shocks=cellstr(conditional_shocks);
+                
+            end
+            
+            conditional_shocks=sort(conditional_shocks);
+            
+        end
         
         if ~is_conditional_forecasting
             
