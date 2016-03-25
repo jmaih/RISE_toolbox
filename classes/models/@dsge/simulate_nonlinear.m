@@ -19,6 +19,12 @@ function [sims,retcode]=simulate_nonlinear(obj,varargin)
 %
 % See also:
 
+% To Do: Conditional forecasting
+%---------------------------------
+% idea is to condition on future values...
+% the system potentially becomes over-identified...
+% more conditions than the number of equations to solve for
+
 if isempty(obj)
     sims=struct('simul_stack_solve_algo','sparse',...
         'simul_recursive',false,...
@@ -106,7 +112,9 @@ is_linear=obj.options.solve_linear;
 
 if is_linear
     
-    Ai=[];
+    old_Jac_i=[];
+    
+    old_Jac=[];
     
 end
 
@@ -403,15 +411,15 @@ sims=pages2struct(sims);
             
             if is_linear
                 
-                if isempty(Ai)
+                if isempty(old_Jac_i)
                     
                     A=build_big_jacobian(Y,nsyst);
                     
-                    Ai=A\eye(size(A,1));
+                    old_Jac_i=A\eye(size(A,1));
                     
                 end
                 
-                dx=reshape(-Ai*resid(:),endo_nbr,[]);
+                dx=reshape(-old_Jac_i*resid(:),endo_nbr,[]);
                 
             else
                 
@@ -534,7 +542,21 @@ sims=pages2struct(sims);
         
         if nargout>1
             
-            Jac=build_big_jacobian(Y,nsyst);
+            if is_linear
+                
+                if isempty(old_Jac)
+                    
+                    old_Jac=build_big_jacobian(Y,nsyst);
+                    
+                end
+                
+                Jac=old_Jac;
+                
+            else
+                
+                Jac=build_big_jacobian(Y,nsyst);
+                
+            end
             
         end
         
