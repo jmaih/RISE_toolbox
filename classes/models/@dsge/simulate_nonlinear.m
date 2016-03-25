@@ -28,7 +28,8 @@ function [sims,retcode]=simulate_nonlinear(obj,varargin)
 if isempty(obj)
     sims=struct('simul_stack_solve_algo','sparse',...
         'simul_recursive',false,...
-        'simul_exogenous_func','');
+        'simul_exogenous_func','',...
+        'simul_sparse',true);
     return
 end
 
@@ -44,15 +45,33 @@ if retcode
     %     error('model cannot be solved')
 end
 
-debug=obj.options.debug;
+do_full=~obj.options.simul_sparse;
 
 % initial conditions
 %-------------------
 Initcond=set_simulation_initial_conditions(obj);
 
-Initcond.shocks=Initcond.y.econd.data(:,:,1);
+nshocks_periods=size(Initcond.y.econd.data,2);
+
+nshocks=obj.exogenous.number(1);
+
+Initcond.shocks=zeros(nshocks,nshocks_periods); 
+
+Initcond.shocks(Initcond.y.econd.pos,:)=Initcond.y.econd.data(:,:,1);
 
 bigt=obj.options.simul_periods;
+
+% check we have enough periods for the shocks
+%---------------------------------------------
+missing=bigt-nshocks_periods;
+
+if missing>0
+    
+    Initcond.shocks=[Initcond.shocks,zeros(nshocks,missing)];
+    
+end
+
+debug=obj.options.debug;
 
 simul_stack_solve_algo=obj.options.simul_stack_solve_algo;
 
@@ -103,7 +122,8 @@ else
     
 end
 
-% iov=obj.inv_order_var;
+iov=obj.inv_order_var;
+
 ov=obj.order_var;
 
 is_symbolic=strcmp(obj.options.solve_derivatives_type,'symbolic');
@@ -118,7 +138,22 @@ if is_linear
     
 end
 
-numjac_aplus_a0_aminus=find(obj.lead_lag_incidence.before_solve(:));
+% sparsity of matrices
+%-----------------------
+nzlag=nnz(obj.occurrence(:,:,1));
+
+nz0=nnz(obj.occurrence(:,:,2));
+
+nzlead=nnz(obj.occurrence(:,:,3));
+
+nzall=nzlag+nz0+nzlead;
+
+% various indices
+%-----------------
+[ap_a0_am,np_n0_nm]=symb_jac_reordering_indices(obj.lead_lag_incidence.before_solve,ov,iov);
+
+[numjac_aplus_a0_aminus,a0_ap_1,am_a0_end,am_a0_ap]=...
+    num_jac_ordering_indices(obj.lead_lag_incidence.before_solve,do_full);
 
 % locations of various variables in the jacobian
 %-----------------------------------------------
@@ -448,13 +483,13 @@ sims=pages2struct(sims);
     function s=junior_maih_2016(BIGX,dx,nsyst)
         % Now we need to ensure that the step is valid
         
+        s=1;
+        
         if ~utils.error.valid(dx)
-            
-            error('invalid step')
+                        
+            return
             
         end
-        
-        s=1;
         
         iter=0;
         
@@ -473,8 +508,9 @@ sims=pages2struct(sims);
         end
         
         if s==0
+            % set s to nan in order to avoid an "infinite" (maxiter) loop
             
-            error('Could not find a path')
+            s=nan;
             
         end
         
@@ -574,9 +610,10 @@ sims=pages2struct(sims);
         
         ncols=nrows;
         
-        nzmax=max_non_zeros();
+        nzmax=max_non_zeros(nsyst);
         
-        J=spalloc(nrows,ncols,nzmax);%Jac=sparse([],[],[],nrows,ncols,nzmax);
+        J=spalloc(nrows,ncols,nzmax);
+        % J=sparse([],[],[],nrows,ncols,nzmax);
         
         offset_rows=0;
         
@@ -591,18 +628,18 @@ sims=pages2struct(sims);
                 offset_cols=offset_cols+endo_nbr;
                 
             end
-            
+                        
             if isyst==1
                 
-                J(1:endo_nbr,offset_cols+(1:2*endo_nbr))=[A0,Aplus];
+                J(1:endo_nbr,offset_cols+a0_ap_1)=[A0,Aplus];
                 
             elseif isyst==nsyst
                 
-                J(offset_rows+(1:endo_nbr),offset_cols+(1:2*endo_nbr))=[Aminus,A0];
+                J(offset_rows+(1:endo_nbr),offset_cols+am_a0_end)=[Aminus,A0];
                 
             else
                 
-                J(offset_rows+(1:endo_nbr),offset_cols+(1:3*endo_nbr))=[Aminus,A0,Aplus];
+                J(offset_rows+(1:endo_nbr),offset_cols+am_a0_ap)=[Aminus,A0,Aplus];
                 
             end
             
@@ -610,12 +647,11 @@ sims=pages2struct(sims);
             
         end
         
-        function n=max_non_zeros()
-            
-            %             n=3*endo_nbr^2*(nsyst-2)+2*endo_nbr^2*2;
-            n=endo_nbr^2*(3*(nsyst-2)+4);
-            
-        end
+    end
+
+    function n=max_non_zeros(nsyst)
+        
+        n=nzall*(nsyst-2)+(nz0+nzlead)+(nzlag+nz0);
         
     end
 
@@ -675,31 +711,61 @@ sims=pages2struct(sims);
 
     function [Aplus,A0,Aminus]=decompose_symbolic_jacobian(Jac)
         
-        Aplus=zeros(endo_nbr);
-        
-        Aminus=Aplus;
-        
-        A0=Aplus;
-                
-        Aplus(:,ov_aplus_cols)=Jac(:,aplus);
-        
-        Aminus(:,ov_aminus_cols)=Jac(:,aminus);
-        
-        A0(:,ov_a0_cols)=Jac(:,a0);
+        if do_full
+            
+            Aplus=zeros(endo_nbr);
+            
+            Aminus=Aplus;
+            
+            A0=Aplus;
+            
+            Aplus(:,ov_aplus_cols)=Jac(:,aplus);
+            
+            Aminus(:,ov_aminus_cols)=Jac(:,aminus);
+            
+            A0(:,ov_a0_cols)=Jac(:,a0);
+            
+        else
+            
+            Aplus=Jac(:,ap_a0_am{1});
+            
+            A0=Jac(:,ap_a0_am{2});
+            
+            Aminus=Jac(:,ap_a0_am{3});
+            
+        end
         
     end
 
     function [Aplus,A0,Aminus]=decompose_numerical_jacobian(Jac)
         
-        biga=zeros(endo_nbr,3*endo_nbr);
-        
-        biga(:,numjac_aplus_a0_aminus)=Jac;
-        
-        Aplus=biga(:,1:endo_nbr);
-        
-        A0=biga(:,endo_nbr+1:2*endo_nbr);
-        
-        Aminus=biga(:,2*endo_nbr+1:end);
+        if do_full
+            
+            biga=zeros(endo_nbr,3*endo_nbr);
+            
+            biga(:,numjac_aplus_a0_aminus)=Jac;
+            
+            Aplus=biga(:,1:endo_nbr);
+            
+            A0=biga(:,endo_nbr+1:2*endo_nbr);
+            
+            Aminus=biga(:,2*endo_nbr+1:end);
+            
+        else
+            
+            aplus_=1:np_n0_nm(1);
+            
+            a0_=np_n0_nm(1)+(1:np_n0_nm(2));
+            
+            aminus_=np_n0_nm(1)+np_n0_nm(2)+(1:np_n0_nm(3));
+            
+            Aplus=Jac(:,aplus_);
+            
+            A0=Jac(:,a0_);
+            
+            Aminus=Jac(:,aminus_);
+            
+        end
         
     end
 
@@ -743,6 +809,44 @@ sims=pages2struct(sims);
 
 end
 
+function [numjac_aplus_a0_aminus,a0_ap_1,am_a0_end,am_a0_ap]=...
+    num_jac_ordering_indices(lli,do_full)
+
+n=size(lli,1);
+
+aplus=find(lli(:,1));
+
+aplus=aplus(:).';
+
+np=numel(aplus);
+
+a0=(1:n);
+
+aminus=find(lli(:,3));
+
+aminus=aminus(:).';
+
+numjac_aplus_a0_aminus=[aplus,np+a0,np+n+aminus];
+
+if do_full
+    
+    a0_ap_1=1:2*n;% =[A0,Aplus];
+    
+    am_a0_end=1:2*n;%=[Aminus,A0];
+    
+    am_a0_ap=1:3*n;%=[Aminus,A0,Aplus];
+               
+else
+    
+    a0_ap_1=[a0,n+aplus];% =[A0,Aplus];
+    
+    am_a0_end=[aminus,n+a0];%=[Aminus,A0];
+    
+    am_a0_ap=[am_a0_end,2*n+aplus];%=[Aminus,A0,Aplus];
+end
+
+end
+
 function J=numerical_jacobian(funcs,y,varargin)
 
 nrows=numel(funcs);
@@ -754,6 +858,54 @@ J=nan(nrows,ncols);
 for irow=1:nrows
     
     J(irow,:)=utils.numdiff.jacobian(funcs{irow},y,varargin{:});
+    
+end
+
+end
+
+function [ap_a0_am,np_n0_nm]=symb_jac_reordering_indices(lli,ov,iov)
+
+offset=0;
+
+np_n0_nm=sum(lli>0,1);
+
+ap_a0_am=cell(1,3);
+
+for icol=1:3
+    
+    if icol==2
+        % current
+        %---------
+        
+        batch=np_n0_nm(icol-1)+iov;
+        
+    else
+        % leads and lags
+        %----------------
+        
+        l=lli(:,icol);
+        
+        lov=l(ov);
+        
+        lf=l(l>0);
+        
+        lovf=lov(lov>0);
+        
+        batch=zeros(1,np_n0_nm(icol));
+        
+        for jj=1:np_n0_nm(icol)
+            
+            tmp=find(lf(jj)==lovf);
+            
+            batch(jj)=offset+tmp;
+            
+        end
+        
+    end
+    
+    offset=offset+np_n0_nm(icol);
+    
+    ap_a0_am{icol}=batch;
     
 end
 
