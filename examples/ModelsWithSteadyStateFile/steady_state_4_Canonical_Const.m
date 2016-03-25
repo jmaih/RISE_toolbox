@@ -49,9 +49,9 @@ if nargin==1
     % list of endogenous variables to be calculated
     %----------------------------------------------
     y={'DPQ_P_NW','Y','ZGDP','ZI','ZPAI','ZY','D_GDP_NW','I','PAI','R','RN3M_NW'};
-    % flags on the calculation
-    %--------------------------
-    newp=struct('unique',false,'imposed',true);
+    % list of parameters to be computed during steady state calculation
+    %-------------------------------------------------------------------
+    newp={};
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------
