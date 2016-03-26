@@ -998,9 +998,9 @@ if isempty(obj.steady_state_2_blocks_optimization)
     %--------------------
     optimopt=obj.options.optimset;
     
-    optimopt.TolX=1e-12;
-    
-    optimopt.TolFun=1e-12;
+    % we no longer overwrite the default tolerance
+    %---------------------------------------------
+    % optimopt.TolX=1e-12; optimopt.TolFun=1e-12;
     
     % When a solution is to be found, usually it is found very fast. When
     % there is no solution, it may take forever so we change the default
