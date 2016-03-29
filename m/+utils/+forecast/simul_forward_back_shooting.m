@@ -151,6 +151,10 @@ sims=sims(:,1:end);
             
         end
         
+        % set all the shocks beyond the first period to 0
+        %-------------------------------------------------
+        shocks(:,2:end)=0;
+        
     end
 
     function [y1,updated_shocks,start_iter]=forward_back_shoot()
@@ -165,16 +169,11 @@ sims=sims(:,1:end);
         
         while is_violation && start_iter<horizon+1
             
-            start_iter=start_iter+1;
-            
-            % set all the shocks beyond start_iter to 0
-            %-------------------------------------------  
-            these_shocks=shocks_; 
-            
-            these_shocks(:,2:end)=0;
+            start_iter=start_iter+1;  
             
             % set the endogenous shocks to nan over the conditioning period
             %--------------------------------------------------------------
+            these_shocks=shocks_;
             
             these_shocks(is_endogenous,1:start_iter)=nan;
             
