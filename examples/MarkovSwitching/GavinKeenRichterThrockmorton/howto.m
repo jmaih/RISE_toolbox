@@ -1,15 +1,14 @@
 %% housekeeping
-clear all
 close all
 clc
 %% rise the model file
 
 gdexo=rise('globdynzlb','rise_flags',struct('exogenous_switching',true));
-gdexo.legend='exo_switch';
+gdexo.legend='endo_switch';
 
 %% solve the model
 
-gdexo=solve(gdexo);
+gdexo=solve(gdexo,'steady_state_imposed',true);
 
 %% print the solution
 
@@ -57,7 +56,7 @@ for ishock=1:numel(shock_names)
 end
 %% we can also solve the model using a 2nd-order perturbation
 
-ldzlb2=solve(gdexo,'solve_order',2);
+ldzlb2=solve(gdexo,'solve_order',2,'solve_derivatives_type','automatic');
 
 %% and print the solution
 

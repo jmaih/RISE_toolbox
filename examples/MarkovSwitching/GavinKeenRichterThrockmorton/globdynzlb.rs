@@ -74,7 +74,7 @@ model
 
 	BETA = betass*(BETA{-1}/betass)^rhobeta*exp(sigmabeta*EBETA);
 
-steady_state_model(imposed) %,unique
+steady_state_model
 	PSI = (theta-1)/theta;
 	Z = zbar;
 	BETA =  betass;
