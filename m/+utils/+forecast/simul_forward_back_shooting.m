@@ -91,7 +91,7 @@ for istep=2:options.nsteps+1
     
     atmp_ss=sims(:,j0)-ss{st};
     
-    sims(:,j0+1)=ss{st}+T{st}*[atmp_ss(xlocs);0;shocks(:)];
+    sims(:,istep)=ss{st}+T{st}*[atmp_ss(xlocs);0;shocks(:)];
     
     start_iter=1;
     
@@ -105,7 +105,7 @@ for istep=2:options.nsteps+1
             
         end
         
-        sims(:,j0+1)=tmp(:,1);
+        sims(:,istep)=tmp(:,1);
         
     end
     
@@ -165,6 +165,9 @@ sims=sims(:,1:end);
         
         shocks_=get_shocks(start,true);
         
+        % these shocks are used when testing for extra violations
+        these_other_shocks=zeros(size(shocks_));
+            
         start_iter=0;
         
         while is_violation && start_iter<horizon+1
@@ -197,11 +200,6 @@ sims=sims(:,1:end);
             
             % The steps up until start_iter should check and so simply
             % check the next step
-            
-            start=j0+start_iter;
-            
-            % these shocks are
-            these_other_shocks=get_shocks(start);
             
             f__=y1(:,end)-ss{st};
             
