@@ -5,8 +5,8 @@ if isempty(obj)
     out=simulate@rise_generic(obj);
     
     [varargout{1:nargout}]=utils.miscellaneous.mergestructures(out,...
-        struct('simul_sig',1,'simul_pruned',false,'simul_order',[]),...
-        'simul_fbs_horizon',0);
+        struct('simul_sig',1,'simul_pruned',false,'simul_order',[],...
+        'simul_fbs_horizon',0));
     
     return
     
