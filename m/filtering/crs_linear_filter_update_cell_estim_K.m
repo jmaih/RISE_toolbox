@@ -93,6 +93,11 @@ obs_id=syst.obs_id;
 %-------------------------------------------------------------------
 first=syst.start;
 
+% regime-wise anticipation
+%--------------------------
+k=syst.k(:).';
+has_fire=k>0;
+
 % state matrices
 %---------------
 ff=syst.ff;
