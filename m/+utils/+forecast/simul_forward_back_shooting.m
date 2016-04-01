@@ -77,6 +77,16 @@ if ~any(is_endogenous)
 
 end
 
+simul_fbs_horizon=options.simul_fbs_horizon;
+
+if ~ismember(simul_fbs_horizon,(0:horizon))
+    
+    error(['simul_fbs_horizon must be an integer in [0,',int2str(horizon),']'])
+    
+end
+
+howmany=simul_fbs_horizon+1;
+
 % add a number of pages for the anticipation
 %--------------------------------------------
 myshocks=myshocks(:,:,ones(1,1+horizon));
@@ -89,15 +99,11 @@ for istep=2:options.nsteps+1
     
     shocks=get_shocks(j0);
     
-    atmp_ss=sims(:,j0)-ss{st};
+    [y1,isviol,icount]=do_multiple_steps(sims(:,j0),shocks,howmany);
     
-    sims(:,istep)=ss{st}+T{st}*[atmp_ss(xlocs);0;shocks(:)];
-    
-    start_iter=1;
-    
-    if violation(sims(:,istep))
+    if isviol
         % do a formal forward back shoot
-        [tmp,shocks,start_iter]=forward_back_shoot();
+        [tmp,shocks,start_iter]=forward_back_shoot(icount,j0);
         
         if retcode
             
@@ -106,6 +112,12 @@ for istep=2:options.nsteps+1
         end
         
         sims(:,istep)=tmp(:,1);
+        
+    else
+        
+        sims(:,istep)=y1;
+        
+        start_iter=1;
         
     end
     
@@ -157,18 +169,23 @@ sims=sims(:,1:end);
         
     end
 
-    function [y1,updated_shocks,start_iter]=forward_back_shoot()
+    function [y1,updated_shocks,start_iter]=forward_back_shoot(icount,j0)
+        
+        % icount: first period of violation
+        % j0: date of first shock
         
         is_violation=true;
         
-        start=j0;
-        
-        shocks_=get_shocks(start,true);
+        shocks_=get_shocks(j0,true);
         
         % these shocks are used when testing for extra violations
         these_other_shocks=zeros(size(shocks_));
             
-        start_iter=0;
+        start_iter=icount-1;
+        
+        first_is_viol=icount==1;
+        
+        first_was_viol=first_is_viol;
         
         while is_violation && start_iter<horizon+1
             
@@ -178,9 +195,29 @@ sims=sims(:,1:end);
             %--------------------------------------------------------------
             these_shocks=shocks_;
             
-            these_shocks(is_endogenous,1:start_iter)=nan;
+            if first_is_viol
+                
+                istart=1;
+                
+            else
+                
+                istart=min(2,max(1,icount)); % this will always be 2
+                
+            end
+            
+            these_shocks(is_endogenous,istart:start_iter)=nan;
             
             y0_=initial_conditions_frwrd_back_shoot(these_shocks,sims(:,j0),start_iter);
+            
+            % update the initial conditions
+            %------------------------------
+            if istart>1
+                % do not constrain the first period since the shock in that
+                % period is given
+                %-------------------------------------------------------
+                y0_.ycond.data(:,1,:)=nan;
+                
+            end
             
             % forecast only for the required number of periods
             opt=utils.miscellaneous.reselect_options(options,@utils.forecast.rscond.forecast);
@@ -190,6 +227,7 @@ sims=sims(:,1:end);
                 y0_.ycond,y0_.econd,opt,regimes(1:opt.nsteps));
             
             % remove one period of history
+            %------------------------------
             y1=cfkst(:,2:start_iter+1,:);
             
             if retcode
@@ -198,15 +236,38 @@ sims=sims(:,1:end);
                 
             end
             
-            % The steps up until start_iter should check and so simply
-            % check the next step
+            % recheck all the forecast starting from the first since it is
+            % affected by future shocks
+            %--------------------------------------------------------------
             
-            f__=y1(:,end)-ss{st};
+            for icol=1:size(y1,2)
+                
+                is_violation=violation(y1(:,1));
+                
+                if is_violation
+                    
+                    if icol==1 && ~first_was_viol
+                        
+                        first_is_viol=true;
+                        
+                        start_iter=start_iter-1;
+                        
+                    end
+                    
+                    break
+                    
+                end
+                
+            end
             
-            a_expect=ss{st}+T{st}*[f__(xlocs);0;these_other_shocks(:)];
-            
-            is_violation=violation(a_expect);
-            
+            % Then check and additional step
+            %--------------------------------
+            if ~is_violation
+                
+                [~,is_violation]=one_step(y1(:,end),these_other_shocks);
+                
+            end
+
         end
         
         if is_violation
@@ -217,6 +278,49 @@ sims=sims(:,1:end);
         
     end
 
+    function [y1,isviol,icount]=do_multiple_steps(y0,shocks,howmany)
+        
+        if nargin<3
+            
+            howmany=1;
+            
+        end
+        
+        % in the first step, use the original shocks
+        %-------------------------------------------
+        y1=one_step(y0,shocks);
+        
+        % use zero shocks in the subsequent ones
+        %----------------------------------------
+        shocks=0*shocks;
+        
+        y1=y1(:,ones(howmany,1));
+        
+        isviol=violation(y1);
+        
+        icount=1;
+        
+        while ~isviol && icount<howmany
+            
+            icount=icount+1;
+            
+            [y1(:,icount),isviol]=one_step(y1(:,icount-1),shocks);
+            
+        end
+        
+        y1=y1(:,1);
+        
+    end
+
+    function [y1,isviol]=one_step(y0,shocks)
+        
+        y0=y0-ss{st};
+        
+        y1=ss{st}+T{st}*[y0(xlocs);0;shocks(:)];
+        
+        isviol=violation(y1);
+        
+    end
 
     function y0_=initial_conditions_frwrd_back_shoot(the_shocks,a_start,start_iter)
         % compute a conditional forecast
