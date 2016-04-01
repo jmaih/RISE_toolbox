@@ -201,7 +201,7 @@ sims=sims(:,1:end);
                 
             else
                 
-                istart=min(2,max(1,icount)); % this will always be 2
+                istart=max(1,icount);
                 
             end
             
@@ -215,7 +215,7 @@ sims=sims(:,1:end);
                 % do not constrain the first period since the shock in that
                 % period is given
                 %-------------------------------------------------------
-                y0_.ycond.data(:,1,:)=nan;
+                y0_.ycond.data(:,1:icount-1,:)=nan;
                 
             end
             
@@ -242,7 +242,7 @@ sims=sims(:,1:end);
             
             for icol=1:size(y1,2)
                 
-                is_violation=violation(y1(:,1));
+                is_violation=violation(y1(:,icol));
                 
                 if is_violation
                     
@@ -250,9 +250,11 @@ sims=sims(:,1:end);
                         
                         first_is_viol=true;
                         
-                        start_iter=start_iter-1;
-                        
                     end
+                    
+                    icount=icol;
+                    
+                    start_iter=start_iter-1;
                     
                     break
                     
@@ -288,15 +290,13 @@ sims=sims(:,1:end);
         
         % in the first step, use the original shocks
         %-------------------------------------------
-        y1=one_step(y0,shocks);
+        [y1,isviol]=one_step(y0,shocks);
         
         % use zero shocks in the subsequent ones
         %----------------------------------------
         shocks=0*shocks;
         
         y1=y1(:,ones(howmany,1));
-        
-        isviol=violation(y1);
         
         icount=1;
         
