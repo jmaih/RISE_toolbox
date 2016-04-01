@@ -160,9 +160,12 @@ Initcond.simul_shock_uncertainty=obj.options.simul_shock_uncertainty;
 Initcond.simul_update_shocks_handle=obj.options.simul_update_shocks_handle;
 Initcond.simul_do_update_shocks=obj.options.simul_do_update_shocks;
 Initcond.simul_frwrd_back_shoot=obj.options.simul_frwrd_back_shoot;
-if isfield(obj.options,'solve_occbin') && ~isempty(obj.options.solve_occbin)
-    Initcond.occbin=obj.options.occbin;
-    Initcond.solve_occbin=obj.options.solve_occbin;
+if isa(obj,'dsge')
+    Initcond.simul_fbs_horizon=obj.options.simul_fbs_horizon;
+    if ~isempty(obj.options.solve_occbin)
+        Initcond.occbin=obj.options.occbin;
+        Initcond.solve_occbin=obj.options.solve_occbin;
+    end
 end
 Initcond.is_log_var=is_log_var;
 
