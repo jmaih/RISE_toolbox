@@ -70,6 +70,8 @@ switch code
         msg='Nans or Inf in initial conditions for the state vector';
     case 30002
         msg='Nans or Inf in initial covariance matrix';
+    case 300002
+        msg='Nans or Inf in likelihood';
     case 303
         msg='Explosion limit reached in Lyapunov solution';
     case 304
