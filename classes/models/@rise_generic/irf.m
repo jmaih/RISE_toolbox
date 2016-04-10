@@ -321,8 +321,19 @@ myirfs=format_irf_output(myirfs);
                 for ishock=1:nshocks
                     shock_name=irf_shock_list{ishock};
                     for vv=1:numel(irf_var_list)
-                        dsge_irfs.(shock_name).(irf_var_list{vv})=...
-                            ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),ishock)),RegimeNames);
+                        if ishock==1 && vv==1
+                            tmp=ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),...
+                                ishock)),RegimeNames);
+                        else
+                            try
+                                tmp=reset_data(tmp,squeeze(Impulse_dsge(:,:,vlocs(vv),...
+                                    ishock)));
+                            catch
+                                tmp=ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),...
+                                    ishock)),RegimeNames);
+                            end
+                        end
+                        dsge_irfs.(shock_name).(irf_var_list{vv})=tmp;
                     end
                 end
             else
