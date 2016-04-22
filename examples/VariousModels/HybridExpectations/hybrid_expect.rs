@@ -8,9 +8,10 @@ lamb_lead "$\lambda_{lead}$", lamb_y "$\lambda_{y}$",
 rhoi "$\rho_{i}$", rhopai "$\rho_{\pi}$", rhoy "$\rho_{y}$",
 siggdp "$\sigma_{gdp}$", sigi "$\sigma_{i}$", sigpai "$\sigma_{\pi}$", sigy "$\sigma_{y}$"
 
-parameters hybrid_expectations_lambda
+parameters hbe_lambda hbe_w
 
-model(linear)
+model
+
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
 
    PAI=lamb_lag*PAI(-1)+lamb_lead*PAI(+1)+lamb_y*Y(-1)+ZPAI;
@@ -42,6 +43,7 @@ parameterization;
 	sigi   		 ,0.5000; 
 	sigpai 		 ,0.5000; 
 	sigy   		 ,0.5000;
-	hybrid_expectations_lambda, .3;
+	hbe_lambda   ,0.3000; % weight on current relative to past in backward-looking expectations
+	hbe_w        ,0.3000; % weight on backward-looking expectations in "total" expectations
 
 	
