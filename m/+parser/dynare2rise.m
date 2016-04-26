@@ -29,13 +29,18 @@ dynFileName = strtrim(dynFileName);
 riseFileName = strtrim(riseFileName);
 
 % read input file
+%-----------------
 raw_code = read_file();
+
+% remove block comments
+%-----------------------
+rise_code = regexprep(raw_code,'/\*(.*)\*/','');
 
 header = sprintf('Conversion of Dynare file [%s] into RISE file [%s]\n',...
     dynFileName,riseFileName);
 
 % Remove line comments.
-rise_code = regexprep(raw_code,'//(.*?\n)','');
+rise_code = regexprep(rise_code,'//(.*?\n)','');
 
 % Convert char(10) to white space.
 eol=char(10);
@@ -45,6 +50,10 @@ rise_code = converteols(rise_code);
 rise_code = regexprep(rise_code,'\s+',' ');
 
 rise_code = regexprep(rise_code,'model\(linear\)','model');
+
+% predetermined variables
+%-------------------------
+pred_vars=get_list('predetermined_variables',';');
 
 % endogenous: var section
 %-------------------------
@@ -67,6 +76,9 @@ model_eqtns = get_list('model;','end;',false);
 
 % replace time indices
 model_eqtns = regexprep(model_eqtns,'(?<=\w)\(([\+-]?\d*)\)','{$1}');
+
+% take care of predetermined variables
+do_predetermined();
 
 % steady state model equations
 %------------------------------
@@ -98,6 +110,46 @@ end
 timestamp = datestr(now);
 
 recreate_code();
+
+    function do_predetermined()
+        
+        if ~isempty(pred_vars)
+            
+            just_neat=@myreplace; %#ok<NASGU>
+            
+            % add {0} to guys that are current
+            %----------------------------------
+            xpress0=parser.cell2matize(pred_vars);
+            xpress=['(?<!\w+)',xpress0,'(?!\w+)(?!{)'];
+            model_eqtns=regexprep(model_eqtns,xpress,'$1{0}');
+            
+            % substract 1 to the time indices
+            %---------------------------------
+            xpress=['(?<!\w+)',xpress0,'(?!\w+){(\+|\-)?(\d+)}'];
+            repl='${just_neat($1,$2,$3)}';
+            model_eqtns=regexprep(model_eqtns,xpress,repl);
+            
+            % remove {0}
+            %------------
+            model_eqtns=strrep(model_eqtns,'{0}','');
+                        
+        end
+        
+        function b=myreplace(a1,a2,a3)
+            
+            b=a1;
+            
+            a2a3_1=str2double([a2,a3])-1;
+            
+            if a2a3_1
+                
+                b=[b,'{',int2str(a2a3_1),'}'];
+                
+            end
+            
+        end
+        
+    end
 
     function add_stdev_to_model(fast)
         
