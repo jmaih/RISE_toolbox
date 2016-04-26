@@ -66,8 +66,11 @@ if ~isempty(stshocks)
     
     % redo the observables as some of them could be exogenous
     %--------------------------------------------------------
-    obs_names=get(obj,'obs_list');
-    obs_texnames=strcat('"',get(obj,'obs_tex'),'"');
-    obs=transpose([obs_names(:),obs_texnames(:)]);
-    obj=do_names(obj,obs(:)','observables');
+    obs_texnames=get(obj,'obs_tex');
+    names=fieldnames(obs_texnames);
+    names=[names.';names.'];
+    for iname=1:size(names,2)
+        names{2,iname}=['"',obs_texnames.(names{1,iname}),'"'];
+    end
+    obj=do_names(obj,names(:).','observables');
 end
