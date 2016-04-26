@@ -1,4 +1,38 @@
 function db=randsample(obj,N,K,varargin)
+% RANDSAMPLE -- generates random time series from a model
+%
+% Syntax
+% -------
+% ::
+%
+%   db=randsample(obj,N,K)
+%
+%   db=randsample(obj,N,K,varargin)
+%
+% Inputs
+% -------
+%
+% - **obj** [rise|dsge|svar|rfvar]: model object
+%
+% - **N** [integer]: length of the time series
+%
+% - **K** [integer]: number of time series
+%
+% - **varargin** []: additional options for the model object
+%
+% Outputs
+% --------
+%
+% - **db** [struct]: time series
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also:
+
 
 % returns K samples of length N
 
