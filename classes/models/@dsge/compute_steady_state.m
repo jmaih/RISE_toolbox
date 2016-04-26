@@ -1006,7 +1006,7 @@ if isempty(obj.steady_state_2_blocks_optimization)
     % there is no solution, it may take forever so we change the default
     % number of iterations from 1000 to 20
     %---------------------------------------------------------------
-    optimopt.MaxIter=20;
+%     optimopt.MaxIter=20;
     
     optimopt.Algorithm=obj.options.steady_state_algorithm;
     
