@@ -31,19 +31,19 @@ tmpl.endogenous={'robs','"interest rates"','dy','"GDP growth"',...
 %%
 rv=rfvar(tmpl,'data',data);
 
-%% Estimate the reduced-form VAR 
+%% Estimate the reduced-form VAR
 
-rv1=estimate(rv); 
+rv1=estimate(rv);
 
 %% add some options
 
 structural_shocks={'mp','"Monetary Policy"','ad','"Aggregate demand"',...
     'as','"Aggregate supply"','ls','"Labor supply"'};
 restrict_irf_zero={
-%     'dy{inf}@mp',0
-%     'dy{inf}@ad',0
-%     'dy{inf}@as',0
-%     'dy{inf}@ls',0
+    %     'dy{inf}@mp',0
+    %     'dy{inf}@ad',0
+    %     'dy{inf}@as',0
+    %     'dy{inf}@ls',0
     };
 restrict_irf_sign={
     'robs{0}@mp','+'
@@ -52,22 +52,22 @@ restrict_irf_sign={
     'robs{0}@ad','+'
     'pinfobs@ad','+'
     'dy@ad','+'
-%     'robs@as','-'
+    %     'robs@as','-'
     'dy@as','+'
     'pinfobs@as','-'
     'robs@ls','-'
     'dy@ls','+'
     'labobs@ls','+'
-%     'pinfobs@ls','-'
+    %     'pinfobs@ls','-'
     'dw@ls','-'
-};
+    };
 
 rv1=set(rv1,'structural_shocks',structural_shocks,...
     'restrict_irf_zero',restrict_irf_zero,...
     'restrict_irf_sign',restrict_irf_sign);
 
 % note we could have added restrictions on the lag structure. In that case
-% the syntaxt would be 'restrict_lags',{...} 
+% the syntaxt would be 'restrict_lags',{...}
 
 %% Check identification
 rv1=check_identification(rv1);
@@ -91,13 +91,13 @@ for ishock=1:numel(shock_names)
     figure('name',['Orthogonalized responses to a ',...
         shock_texnames{ishock},' shock']);
     for ivar=1:numel(var_names)
+        vname=var_names{ivar};
         m=sstate.(vname);
         if m
             s=m;
         else
             s=1;
         end
-        vname=var_names{ivar};
         subplot(3,3,ivar)
         plot((myirfs.(shock).(vname)-m)/s)
         title(var_texname{ivar})
