@@ -38,7 +38,7 @@ for ii=1:this0.NumberOfVariables
     
     if ii==1
         
-        this.(this0.varnames{ii})=ts(this0.date_numbers,newdata);
+        this.(this0.varnames{ii})=ts(this0.date_numbers,newdata,[],false,true);
         
     else
         
