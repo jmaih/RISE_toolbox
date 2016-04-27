@@ -51,7 +51,7 @@ end
 
 if retcode
     
-    error('model cannot be solved')
+    error(['model cannot be solved:: ',decipher(retcode)])
     
 end
 
