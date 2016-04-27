@@ -28,7 +28,7 @@ end
 % serial2date(test)
 % test=(date2serial('1990h1'):date2serial('1995h2'))
 % serial2date(test)
-% test=(date2serial('1990q1'):date2serial('1995q4'))
+% test=(date2serial('2040q1'):date2serial('2050q4'))
 % serial2date(test)
 % test=(date2serial('1990m1'):date2serial('1995m6'))
 % serial2date(test)
@@ -36,30 +36,35 @@ end
 % check whether it is truly serial
 %-----------------------------------
 if ~is_serial(s)
+    
     error('input is not serial')
+    
 end
 
 [stamp,unstamp]=time_frequency_stamp();
 
-freq=unstamp(s(1)-floor(s(1)));
-year=floor(s/freq);
-period=round(s-year*freq+1-stamp(freq));
-period_str=num2str(period(:));
-year_str=num2str(year(:));
+freq=unstamp(s-floor(s));
+
+year=floor(s./freq);
+
+period=round(s-year.*freq+1-stamp(freq));
+
+period_str=cellstr(num2str(period(:)));
+
+year_str=cellstr(num2str(year(:)));
+
 dat=year_str;
-fmap=frequency_map();
-if ~ismember(freq,fmap.code)
-    if silent
-        dat=[];
-        frequency=[];
-        return
-    else
-        error('wrong frequency of the time series')
-    end
+
+frequency=cellstr(frequency2char(freq));
+
+nonyear=freq>1;
+
+if any(nonyear)
+    
+    dat(nonyear)=strcat(dat(nonyear),frequency(nonyear),period_str(nonyear));
+    
 end
-frequency=frequency2char(freq);
-if freq>1
-    dat=strcat(dat,frequency,period_str);
-end
-dat=cellstr(dat);
+
 dat=cellfun(@(x)x(~isspace(x)),dat,'uniformOutput',false);
+
+dat=reshape(dat,size(s));

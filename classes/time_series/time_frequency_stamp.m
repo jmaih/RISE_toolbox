@@ -47,9 +47,7 @@ unstamp=@myunstamp;
         elseif option==2
             
             us=round(1./x-1);
-            
-            us(isinf(us))=1;
-            
+                        
         end
         
     end

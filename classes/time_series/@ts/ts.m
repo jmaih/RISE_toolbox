@@ -428,7 +428,9 @@ classdef ts
                 
                 self.date_numbers=start_date(:)';
                 
-                [these_dates,self.frequency]=serial2date(self.date_numbers);
+                [these_dates,freq_]=serial2date(self.date_numbers);
+                
+                self.frequency=char(freq_);
                 
                 self.start=these_dates{1};
                 

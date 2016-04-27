@@ -118,11 +118,7 @@ if rise_items.logy
 end
 
     function [xrange,msg]=process_xrange(xrange,must_be_same)
-        if ischar(xrange)
-            xrange=char2serial(xrange);
-        elseif isnumeric(xrange)
-            xrange=date2serial(xrange);
-        end
+        xrange=date2serial(xrange);
         freq1=frequency2num(this{1}.frequency);
         msg='';
         if must_be_same

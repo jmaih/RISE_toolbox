@@ -17,23 +17,41 @@ function fq=frequency2num(fq)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 fmap=frequency_map();
+
 if ischar(fq)
+    
     fq=cellstr(fq);
-    locs=nan(size(fq));
-    for ii=1:numel(fq)
-        try %#ok<TRYNC>
+    
+end
+
+locs=nan(size(fq));
+
+for ii=1:numel(fq)
+    
+    try %#ok<TRYNC>
+        
         locs(ii)=find(strcmp(fq{ii},fmap.strings));
-        end
+        
     end
-    if any(isnan(locs(:)))
-        error('some wrong frequency codes found')
-    end
-    fq=fmap.code(locs);
+    
 end
+
+if any(isnan(locs(:)))
+    
+    error('some wrong frequency codes found')
+    
+end
+
+fq=reshape(fmap.code(locs),size(locs));
+
+
 if ~all(ismember(fq,fmap.code))
+    
     error('wrong frequency codes')
+    
 end
+
 end

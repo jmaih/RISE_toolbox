@@ -17,15 +17,26 @@ function [year,period,freq,frequency]=date2year_period(date)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
-[serial_flag,year,period,freq,frequency]=is_serial(date);
-if ~serial_flag
-    date=date2serial(date);
-    [serial_flag,year,period,freq,frequency]=is_serial(date);
-    if ~serial_flag
-        error('wrong date')
-    end
+[dec,success]=decompose_date(date);
+
+if ~success
+    
+    error('wrong date')
+    
 end
+
+year=cellfun(@str2double,{dec.year},'uniformOutput',true);
+
+year=year(:);
+
+period=cellfun(@str2double,{dec.period},'uniformOutput',true);
+
+period=period(:);
+
+freq=dec(1).freq;
+
+frequency=dec(1).frequency;
 
 end
