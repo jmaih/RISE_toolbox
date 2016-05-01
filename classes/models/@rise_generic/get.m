@@ -168,6 +168,15 @@ if isempty(obj)
     Reply=struct();
     return
 end
+
+if numel(obj)>1
+    
+    warning('getting from multiple objects, only the first one will apply')
+    
+    obj=obj(1);
+    
+end
+
 PropertyName(isspace(PropertyName))=[];
 
 retcode=0;
