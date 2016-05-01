@@ -302,7 +302,7 @@ end
                 end
             end
             [tokk,rest_]=strtok(rawline_,DELIMITERS);
-            if ismember(tokk,blknames)
+            if ismember(tokk,blknames) &&  ~quote_active
                 error([tokk,' not admissible as a declaration or block name ',...
                     'should start at the beginning of a line. In ',...
                     file_name,' at line ',sprintf('%0.0f',line_number)])
