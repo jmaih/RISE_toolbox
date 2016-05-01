@@ -8,7 +8,19 @@ if nargin<4
         
         stderr_name=[];
         
+        if nargin<2
+            
+            riseFileName=[];
+            
+        end
+        
     end
+    
+end
+
+if isempty(riseFileName)
+    
+    riseFileName=[regexprep(dynFileName,'(\w+)\.\w+','$1'),'.rs'];
     
 end
 
@@ -40,49 +52,91 @@ header = sprintf('Conversion of Dynare file [%s] into RISE file [%s]\n',...
     dynFileName,riseFileName);
 
 % Remove line comments.
-rise_code = regexprep(rise_code,'//(.*?\n)','');
+%----------------------
+rise_code = regexprep(rise_code,'(//|%)(.*?\n)','\n');
 
-% Convert char(10) to white space.
-eol=char(10);
-rise_code = converteols(rise_code);
+% replace y ${y}$ (long_name='output') with y "{y}(output)"
+%----------------------------------------------------------
+express='(\w+)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
+replace='$1 "$3($2)"';
+rise_code = regexprep(rise_code,express,replace);
+
+% % add a semicolon at the end of each line starting with a @#, it will be
+% % removed later
+% %--------------------------------------------------------------------------
+% rise_code = regexprep(rise_code,'(@\s*#[^\n;]+)','$1;');
+
+% place a ¤ at the end of each @#...
+%-------------------------------------------
+atPound='@\s*#\s*[^\n]+';
+express=['(',atPound,')\n'];
+rise_code = regexprep(rise_code,express,'¤$1¤');
+
+% replace all $ with "
+%---------------------
+rise_code=strrep(rise_code,'$','"');
+
+% replace all endif with end
+%----------------------------
+rise_code=regexprep(rise_code,'(#\s*)\<endif\>','$1end');
+
+% add space to all # signs
+%----------------------------
+rise_code=strrep(rise_code,'#','# ');
+
+% Convert char(10) to white space
+%--------------------------------
+eol=char(10);% sprintf('\n')
+tab=char(9);% sprintf('\t')
 
 % remove multiple white characters
+%----------------------------------
 rise_code = regexprep(rise_code,'\s+',' ');
-
-rise_code = regexprep(rise_code,'model\(linear\)','model');
 
 % predetermined variables
 %-------------------------
-pred_vars=get_list('predetermined_variables',';');
+[~,pred_vars]=extract_declaration_block('predetermined_variables');
 
-% endogenous: var section
-%-------------------------
-endo_list=get_list('var',';');
+% extract block of endogenous
+%-----------------------------
+[endo_block]=extract_declaration_block('var','endogenous');
 
-% exogenous: varexo section
-%----------------------------
-exo_list=get_list('varexo',';');
+% extract block of exogenous
+%-----------------------------
+[exo_block,exo_list]=extract_declaration_block('varexo','exogenous');
 
-% parameters: parameters section
-%--------------------------------
-par_list=get_list('parameters',';');
+% extract block of exogenous
+%-----------------------------
+[param_block]=extract_declaration_block('parameters');
 
-% add new parameters
-par_list=[par_list,strcat([stderr_name,'_'],exo_list)];
+% extract block of observables
+%-----------------------------
+[obs_block]=extract_declaration_block('varobs','observables');
+
+% extract planner objective
+%---------------------------
+[planner_block]=extract_planner_objective();
+
+% add new parameters at the end of the parameters block. Those parameters
+% will not have definitions. But what if the block is empty?
+%-----------------------------------------------------------------------
+newparams=cell2mat(strcat([stderr_name,'_'],exo_list,'@'));
+
+newparams=strrep(newparams,'@',' ');
+
+param_block=[param_block,' ',newparams];
 
 % model equations
 %-----------------
-model_eqtns = get_list('model;','end;',false);
-
-% replace time indices
-model_eqtns = regexprep(model_eqtns,'(?<=\w)\(([\+-]?\d*)\)','{$1}');
+rise_code = regexprep(rise_code,'model\(linear\)','model');
+model_eqtns = extract_other_blocks('model;',true);
 
 % take care of predetermined variables
 do_predetermined();
 
 % steady state model equations
 %------------------------------
-ssmodel_eqtns = get_list('steady_state_model;','end;',false);
+ssmodel_eqtns = extract_other_blocks('steady_state_model;');
 
 % push standard deviations into equations directly
 %-------------------------------------------------
@@ -90,11 +144,11 @@ add_stdev_to_model(fast)
 
 % Looking for covariances: shocks section
 %----------------------------------------
-shocks_block = get_list('shocks;','end;',false);
+shocks_block = extract_other_blocks('shocks;');
 
 if ~isempty(shocks_block)
     
-    match = regexpi(shocks_block,'var\s*\w+\s*,\s*\w+\s*=.*?;','match');
+    match = regexpi(shocks_block,'corr\s*\w+\s*,\s*\w+\s*=.*?;','match');
     
     for ii = 1 : length(match)
         
@@ -111,6 +165,163 @@ timestamp = datestr(now);
 
 recreate_code();
 
+    function [planner_block,isCommitment,isDiscretion,discount]=extract_planner_objective()
+        
+        planner_block='';
+        
+        isDiscretion=false;
+        
+        isCommitment=false;
+        
+        discount='';
+        
+        loc=strfind(rise_code,'planner_objective');
+        
+        if isempty(loc)
+            
+            return
+            
+        end
+        
+        start=loc(1)+length('planner_objective');
+        
+        finish=find(rise_code(start:end)==';',1,'first');
+        
+        planner_block=rise_code(start:start+finish-1);
+        
+        loc=strfind(rise_code,'planner_discount');
+        
+        if isempty(loc)
+            
+            discount='0.99';
+            
+        else
+            
+            start=loc(1)+length('planner_discount');
+            
+            start=start+find(rise_code(start:end)=='=',1,'first');
+            
+            discount=strtok(rise_code(start:end),parser.delimiters);
+            
+        end
+        
+        isCommitment=~isempty(strfind(rise_code,'ramsey_policy'));
+        
+            isDiscretion=false;
+            
+        if ~isCommitment
+            
+            isDiscretion=~isempty(strfind(rise_code,'discretionary_policy'));
+            
+        end
+        
+        add_on=['discount=',discount,'} '];
+        
+        if isCommitment
+            
+            add_on=['{commitment=1,',add_on];
+            
+        elseif isDiscretion
+            
+            add_on=['{commitment=0,',add_on];
+            
+        else
+            
+            add_on=['{',add_on];
+            
+        end
+        
+        planner_block=['planner_objective ',add_on,planner_block];
+        
+    end
+
+    function [blk,list]=extract_declaration_block(trigger,repl_trigger)
+        
+        express_=['(\<',trigger,'\>\s+[^;]+;)'];
+        
+        blk=regexp(rise_code,express_,'tokens','once');
+        
+        if nargin>1
+            
+            blk=regexprep(blk,['\<',trigger,'\>'],repl_trigger);
+            
+        else
+            
+            repl_trigger=trigger;
+            
+        end
+        
+        % remove the semicolon
+        %----------------------
+        if isempty(blk)
+            
+            blk='';
+            
+            list={};
+            
+            return
+            
+        end
+        
+        blk=blk{1};
+        
+        semcol=find(blk==';',1,'last');
+        
+        blk(semcol)=[];
+        
+        if nargout>1
+            
+            list=extract_list_of_names();
+            
+        end
+        
+        function list=extract_list_of_names()
+            
+            tmp=blk; 
+            
+            description_removal()
+            
+            % remove trigger
+            %----------------
+            loc=strfind(tmp,repl_trigger);
+            
+            tmp(loc(1):loc(1)+length(repl_trigger)-1)=[];
+            
+            % remove @#...;
+            %---------------
+            
+            tmp=regexprep(tmp,'@\s*#\s*[^¤\n]+¤','');
+            
+            list=regexp(tmp,'\w+','match');
+            
+            function description_removal()
+                
+                dblq=find(tmp=='"');
+                
+                kill_spots(dblq)
+                
+            end
+            
+            function kill_spots(dblq)
+                
+                if ~isempty(dblq)
+                    
+                    dblq=reshape(dblq,2,[]);
+                    
+                    for iii=size(dblq,2):-1:1
+                        
+                        tmp(dblq(1,iii):dblq(2,iii))=[];
+                        
+                    end
+                    
+                end
+                
+            end
+            
+        end
+        
+    end
+
     function do_predetermined()
         
         if ~isempty(pred_vars)
@@ -120,19 +331,19 @@ recreate_code();
             % add {0} to guys that are current
             %----------------------------------
             xpress0=parser.cell2matize(pred_vars);
-            xpress=['(?<!\w+)',xpress0,'(?!\w+)(?!{)'];
+            xpress=['\<',xpress0,'\>(?!{)'];
             model_eqtns=regexprep(model_eqtns,xpress,'$1{0}');
             
             % substract 1 to the time indices
             %---------------------------------
-            xpress=['(?<!\w+)',xpress0,'(?!\w+){(\+|\-)?(\d+)}'];
+            xpress=['\<',xpress0,'\>{(\+|\-)?(\d+)}'];
             repl='${just_neat($1,$2,$3)}';
             model_eqtns=regexprep(model_eqtns,xpress,repl);
             
             % remove {0}
             %------------
             model_eqtns=strrep(model_eqtns,'{0}','');
-                        
+            
         end
         
         function b=myreplace(a1,a2,a3)
@@ -169,7 +380,7 @@ recreate_code();
             
             expre=cell2mat(strcat(exo_list,'|'));
             
-            expre=['(?<!\w+)(',expre(1:end-1),')(?!\w+)'];
+            expre=['\<(',expre(1:end-1),')\>'];
             
             repl=[stderr_name,'_$1*$1'];
             
@@ -179,44 +390,73 @@ recreate_code();
 
     function rise_code = recreate_code()
         
+        rmda=@remove_declaration_anchors;
+        
         header = [header,sprintf('\n Done %s.',timestamp)];
         
         rise_code = [
-            'endogenous ',endo_list,eol,...
-            'exogenous ',exo_list,eol,...
-            'parameters ',par_list,eol,...
-            'model ',model_eqtns,eol
+            rmda(endo_block),eol,eol,...
+            rmda(exo_block),eol,eol,...
+            rmda(param_block),eol,eol];
+        
+        if ~isempty(obs_block)
+            
+            rise_code = [rise_code,...
+                rmda(obs_block),eol,eol];
+            
+        end
+        
+        rise_code = [rise_code,...
+            'model ',eol,eol,model_eqtns,eol,eol
             ];
         
         if ~isempty(ssmodel_eqtns)
+            
             rise_code = [rise_code,...
-                'steady_state_model ',ssmodel_eqtns,eol
+                'steady_state_model ',eol,eol,ssmodel_eqtns,eol,eol
                 ];
+            
         end
         
-        rise_code = regexprep(rise_code,'(\n)\s*','$1  ');
-        
-        rise_code = regexprep(rise_code,';',sprintf(';\n\n'));
+        if ~isempty(planner_block)
+            
+            rise_code = [rise_code,eol,eol,...
+                planner_block,eol,eol
+                ];
+        end
+
+        rise_code = strrep(rise_code,';',sprintf(';\n\n'));
         
         rise_code = [
-            regexprep(['%',header],'(\n)','$1%'),...
+            regexprep(['%',header],'(\n)','$1%'),eol,eol,...
             rise_code
             ];
         
+        % remove the semicolon in lines starting with @#
+        %-----------------------------------------------------------
+        rise_code = regexprep(rise_code,'(@\s*#[^\n]+);','$1');
+
+        
         write2file(rise_code,riseFileName);
         
-    end
-
-    function list=get_list(typeof,closing,do_match)
-        
-        if nargin<3
+        function x=remove_declaration_anchors(x)
             
-            do_match=true;
+            x=strrep(x,'¤',sprintf('\n'));
             
         end
         
-        tokens = regexpi(rise_code,...
-            [typeof,'\s*(.*?)',closing],'tokens','once');
+    end
+
+    function list=extract_other_blocks(typeof,do_replace_time)
+        
+        if nargin<2
+            
+            do_replace_time=false;
+            
+        end
+        
+        tokens = regexpi(rise_code,[typeof,'\s*(.*?)end;'],...
+            'tokens','once');
         
         if isempty(tokens)
             
@@ -226,15 +466,23 @@ recreate_code();
             
         end
         
-        if do_match
+        list = tokens{1};
+        
+        % replace time indices
+        if do_replace_time
             
-            list = regexp(tokens{1},'\w*','match');
-            
-        else
-            
-            list = tokens{1};
+            list = regexprep(list,'(?<=\w)\(([\+-]?\d*)\)','{$1}');
             
         end
+        
+        list=regexprep(list,'(;|¤)\s+','$1');
+                
+        % add empty line at end of @#...
+        patt='(@#\s*[^¤]+\s*)¤'; repl='$1\n\n';
+        
+        list=regexprep(list,patt,repl);
+        
+        list = strrep(list,';¤',';');
         
     end
 
@@ -261,16 +509,6 @@ recreate_code();
         fclose(fid);
         
     end
-
-end
-
-function x = converteols(x)
-%x = regexprep(x,'\r\n?','\n');
-% This is much faster:
-% Windows:
-x = strrep(x,sprintf('\r\n'),sprintf('\n'));
-% Apple:
-x = strrep(x,sprintf('\r'),sprintf('\n'));
 
 end
 
