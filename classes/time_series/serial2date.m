@@ -67,4 +67,10 @@ end
 
 dat=cellfun(@(x)x(~isspace(x)),dat,'uniformOutput',false);
 
+if all(strcmp(frequency,frequency{1}))
+    
+    frequency=frequency{1};
+    
+end
+
 dat=reshape(dat,size(s));
