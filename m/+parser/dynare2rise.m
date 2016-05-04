@@ -1,8 +1,8 @@
-function dynare2rise(dynFileName,riseFileName,stderr_name,fast)
+function dynare2rise(dynFileName,riseFileName,stderr_name,do_paramFile)
 
 if nargin<4
     
-    fast=[];
+    do_paramFile=[];
     
     if nargin<3
         
@@ -18,15 +18,16 @@ if nargin<4
     
 end
 
+if isempty(do_paramFile)
+    
+    do_paramFile=true;
+
+end
+    
+
 if isempty(riseFileName)
     
     riseFileName=[regexprep(dynFileName,'(\w+)\.\w+','$1'),'.rs'];
-    
-end
-
-if isempty(fast)
-    
-    fast=false;
     
 end
 
@@ -107,7 +108,7 @@ rise_code = regexprep(rise_code,'\s+',' ');
 
 % extract block of exogenous
 %-----------------------------
-[param_block]=extract_declaration_block('parameters');
+[param_block,par_list]=extract_declaration_block('parameters');
 
 % extract block of observables
 %-----------------------------
@@ -140,7 +141,7 @@ ssmodel_eqtns = extract_other_blocks('steady_state_model;');
 
 % push standard deviations into equations directly
 %-------------------------------------------------
-add_stdev_to_model(fast)
+add_stdev_to_model()
 
 % Looking for covariances: shocks section
 %----------------------------------------
@@ -163,7 +164,72 @@ end
 %---------------------------
 timestamp = datestr(now);
 
+header = [header,sprintf('\n Done %s.',timestamp)];
+        
 recreate_code();
+
+write_parameter_file()
+
+    function write_parameter_file()
+        
+        if ~do_paramFile
+            
+            return
+            
+        end
+        
+        new_par_list=regexp(newparams,'\w+','match');
+        
+        par_list=[par_list,new_par_list];
+        
+        % parameter values
+        %------------------
+        % express=['\<',parser.cell2matize(par_list),'\>\s*=[^;]+;'];
+        % str=regexp(rise_code,express,'match');
+        
+        express=['(?<name>\<',parser.cell2matize(par_list),'\>)\s*=(?<value>[^;]+);'];
+        
+        str=regexp(rise_code,express,'names');
+        
+        % add standard deviations
+        nbase=numel(str);
+        
+        nnew=numel(new_par_list);
+        
+        str(end+(1:nnew))=str(1);
+        
+        for istd=1:nnew
+            
+            str(nbase+istd)=struct('name',new_par_list{istd},'value','1');
+            
+        end
+        
+        pnames={str.name};
+        
+        % taking care of recursive computations
+        xpress=['\<',parser.cell2matize(pnames),'\>'];
+        
+        repl='p.$1';
+        
+        pvals=regexprep({str.value},xpress,repl);
+        
+        pvals=cellfun(@(x)x(~isspace(x)),pvals,'uniformOutput',false);
+        
+        code=strcat('p.',pnames,'=',pvals,';',sprintf('\n'));
+        
+        matFileName=regexprep(riseFileName,'(\w+)\.\w+','$1_params');
+        
+        code=[sprintf('function p=%s()\n\np=struct();\n',matFileName),...
+            code];
+        
+%         code = [
+%             regexprep(['%',header],'(\n)','$1%'),...
+%             code
+%             ];
+        
+        write2file(code,[matFileName,'.m'])
+
+    end
 
     function [planner_block,isCommitment,isDiscretion,discount]=extract_planner_objective()
         
@@ -274,6 +340,14 @@ recreate_code();
             list=extract_list_of_names();
             
         end
+                
+        blk=remove_declaration_anchors(blk);
+        
+        function x=remove_declaration_anchors(x)
+            
+            x=strrep(x,'¤',sprintf('\n'));
+            
+        end
         
         function list=extract_list_of_names()
             
@@ -287,10 +361,10 @@ recreate_code();
             
             tmp(loc(1):loc(1)+length(repl_trigger)-1)=[];
             
-            % remove @#...;
+            % remove ¤@#...¤
             %---------------
             
-            tmp=regexprep(tmp,'@\s*#\s*[^¤\n]+¤','');
+            tmp=regexprep(tmp,'¤\s*@\s*#\s*[^¤\n]+¤','');
             
             list=regexp(tmp,'\w+','match');
             
@@ -362,47 +436,29 @@ recreate_code();
         
     end
 
-    function add_stdev_to_model(fast)
+    function add_stdev_to_model()
         
-        if fast
-            
-            for ishock=1:numel(exo_list)
-                
-                expre=exo_list{ishock};
-                
-                repl=[stderr_name,'_',expre,'*',expre];
-                
-                model_eqtns=regexprep(model_eqtns,expre,repl);
-                
-            end
-            
-        else
-            
-            expre=cell2mat(strcat(exo_list,'|'));
-            
-            expre=['\<(',expre(1:end-1),')\>'];
-            
-            repl=[stderr_name,'_$1*$1'];
-            
-            model_eqtns=regexprep(model_eqtns,expre,repl);
-        end
+        expre=cell2mat(strcat(exo_list,'|'));
+        
+        expre=['\<(',expre(1:end-1),')\>'];
+        
+        repl=[stderr_name,'_$1*$1'];
+        
+        model_eqtns=regexprep(model_eqtns,expre,repl);
+        
     end
 
     function rise_code = recreate_code()
         
-        rmda=@remove_declaration_anchors;
-        
-        header = [header,sprintf('\n Done %s.',timestamp)];
-        
         rise_code = [
-            rmda(endo_block),eol,eol,...
-            rmda(exo_block),eol,eol,...
-            rmda(param_block),eol,eol];
+            endo_block,eol,eol,...
+            exo_block,eol,eol,...
+            param_block,eol,eol];
         
         if ~isempty(obs_block)
             
             rise_code = [rise_code,...
-                rmda(obs_block),eol,eol];
+                obs_block,eol,eol];
             
         end
         
@@ -438,12 +494,6 @@ recreate_code();
 
         
         write2file(rise_code,riseFileName);
-        
-        function x=remove_declaration_anchors(x)
-            
-            x=strrep(x,'¤',sprintf('\n'));
-            
-        end
         
     end
 
