@@ -1,4 +1,4 @@
-function dynare2rise(dynFileName,riseFileName,stderr_name,do_paramFile)
+function paramFileName=dynare2rise(dynFileName,riseFileName,stderr_name,do_paramFile)
 
 if nargin<4
     
@@ -17,6 +17,8 @@ if nargin<4
     end
     
 end
+
+paramFileName='';
 
 if isempty(do_paramFile)
     
@@ -147,8 +149,6 @@ add_stdev_to_model()
 %----------------------------------------
 shocks_block = extract_other_blocks('shocks;');
 
-if ~isempty(shocks_block)
-    
     match = regexpi(shocks_block,'corr\s*\w+\s*,\s*\w+\s*=.*?;','match');
     
     for ii = 1 : length(match)
@@ -157,8 +157,6 @@ if ~isempty(shocks_block)
             match{ii})]; %#ok<AGROW>
         
     end
-    
-end
 
 % Create and save RISE code.
 %---------------------------
@@ -190,20 +188,7 @@ write_parameter_file()
         express=['(?<name>\<',parser.cell2matize(par_list),'\>)\s*=(?<value>[^;]+);'];
         
         str=regexp(rise_code,express,'names');
-        
-        % add standard deviations
-        nbase=numel(str);
-        
-        nnew=numel(new_par_list);
-        
-        str(end+(1:nnew))=str(1);
-        
-        for istd=1:nnew
-            
-            str(nbase+istd)=struct('name',new_par_list{istd},'value','1');
-            
-        end
-        
+                
         pnames={str.name};
         
         % taking care of recursive computations
@@ -213,13 +198,23 @@ write_parameter_file()
         
         pvals=regexprep({str.value},xpress,repl);
         
+        % add shock standard deviations
+        shock_standard_deviations();
+        
         pvals=cellfun(@(x)x(~isspace(x)),pvals,'uniformOutput',false);
         
         code=strcat('p.',pnames,'=',pvals,';',sprintf('\n'));
         
-        matFileName=regexprep(riseFileName,'(\w+)\.\w+','$1_params');
+        paramFileName=regexprep(riseFileName,'(\w+)\.\w+','$1_params');
         
-        code=[sprintf('function p=%s()\n\np=struct();\n',matFileName),...
+        manualAdjust=['% Remarks: ',sprintf('\n'),...
+            '% - Only the parameters and shocks variances or ',sprintf('\n'),...
+            '%   standard deviations found in the dynare file are assigned. ',...
+            sprintf('\n'),...
+            '% - RISE will set all parameters without a value to nan'];
+        
+        code=[sprintf('function p=%s()\n%s\n\np=struct();\n',...
+            paramFileName,manualAdjust),...
             code];
         
 %         code = [
@@ -227,7 +222,61 @@ write_parameter_file()
 %             code
 %             ];
         
-        write2file(code,[matFileName,'.m'])
+        write2file(code,[paramFileName,'.m'])
+        
+        function shock_standard_deviations()           
+            % match variances
+            pat=['\<var\>\s+(?<shock>',parser.cell2matize(exo_list),...
+                ')\s*=(?<variance>[^;]+);'];
+            
+            match_shock_variances = regexp(shocks_block,pat,'names');
+            
+            shock_names={};
+            
+            shock_stdev={};
+            
+            if ~isempty(match_shock_variances)
+                
+                for ishock=1:numel(match_shock_variances)
+                    
+                    match_shock_variances(ishock).stdev=...
+                        ['sqrt(',match_shock_variances(ishock).variance,')'];
+                    
+                end
+                
+                match_shock_stdev0=rmfield(match_shock_variances,'variance');
+                
+                shock_names=[shock_names,{match_shock_stdev0.shock}];
+                
+                shock_stdev=[shock_stdev,{match_shock_stdev0.stdev}];
+                
+            end
+            
+            % match standard deviations
+            pat=['\<var\>\s+(?<shock>',parser.cell2matize(exo_list),...
+                ')\s*;\s*stderr\s+(?<stdev>[^;]+);'];
+            
+            match_shock_stdev = regexp(shocks_block,pat,'names');
+            
+            if ~isempty(match_shock_stdev)
+                
+                shock_names=[shock_names,{match_shock_stdev.shock}];
+                
+                shock_stdev=[shock_stdev,{match_shock_stdev.stdev}];
+                
+            end
+            
+            if ~isempty(shock_names)
+                
+                shock_params=strcat([stderr_name,'_'],shock_names);
+                
+                pnames=[pnames,shock_params];
+                
+                pvals=[pvals,shock_stdev];
+                
+            end
+            
+        end
 
     end
 
