@@ -80,7 +80,7 @@ cd(root)
             
             fprintf(1,'Now converting %s into %s',dyn_name,rise_name);
             
-            dynare2rise([thisPath,filesep,dyn_name],rise_name)
+            param_file_name=dynare2rise([thisPath,filesep,dyn_name],rise_name);
             
             fprintf(1,'... done in %0.8f secs\n',toc);
             
@@ -91,6 +91,8 @@ cd(root)
             end
             
             movefile(rise_name,rise_folder_name)
+            
+            movefile([param_file_name,'.m'],rise_folder_name)
             
         end
         
