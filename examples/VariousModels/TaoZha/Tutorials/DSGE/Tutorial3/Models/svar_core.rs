@@ -18,7 +18,7 @@ c_y, "$c_{y}$", beta_y1, "$\beta_{y,1}$", beta_y2, "$\beta_{y,2}$", beta_r, "$\b
 observables I, Y, PAI
 
 
-model(linear)
+model
 	% define xx_ssmdef_iary expression to be inserted into the model equations
 	% the strategy is to interpret the inverse of the elements below as
 	% standard deviations
@@ -35,7 +35,7 @@ model(linear)
 %   gam_i*I = c_i + gam_i*rho_i*I{-1} - gam_i*(1-rho_i)*(gam_y*Y+gam_pai*PAI) + EI;
    gam_i*I = c_i + gam_i*rho_i*I{-1} +gam_i*(1-rho_i)*(gam_y*Y+gam_pai*PAI) + EI;
 
-steady_state_model(imposed)
+steady_state_model
 	xx_ssmdef_1=alpha_pai-alpha_pai1-alpha_pai2;
 	xx_ssmdef_2=gam_i*(1-rho_i);
 	xx_ssmdef_3=beta_r*(gam_pai-1);
