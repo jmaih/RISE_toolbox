@@ -29,11 +29,19 @@ end
 
 locs=nan(size(fq));
 
+if iscellstr(fq)
+    find_func=@(ii)find(strcmp(fq{ii},fmap.strings));
+elseif isnumeric(fq)
+    find_func=@(ii)find(fq(ii)==fmap.code);
+else
+    error('A problem I do not understand')
+end
+
 for ii=1:numel(fq)
     
     try %#ok<TRYNC>
         
-        locs(ii)=find(strcmp(fq{ii},fmap.strings));
+        locs(ii)=find_func(ii);
         
     end
     

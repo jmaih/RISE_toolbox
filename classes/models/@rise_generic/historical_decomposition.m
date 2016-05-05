@@ -535,7 +535,7 @@ ncontribs=numel(ContributingNames);
 Histdec=struct();
 for ii=1:endo_nbr
     theData=transpose(squeeze(z(ii,1:end,:)));
-    Histdec.(endo_names{ii})=ts(serial2date(histdec_start_date),...
+    Histdec.(endo_names{ii})=ts(histdec_start_date,...
         theData(:,1:ncontribs),ContributingNames(1:ncontribs));
 end
 
@@ -826,7 +826,7 @@ ncontribs=numel(ContributingNames);
 Histdec=struct();
 for ii=1:endo_nbr
     theData=transpose(squeeze(z(ii,1:end,:)));
-    Histdec.(endo_names{ii})=ts(serial2date(histdec_start_date),...
+    Histdec.(endo_names{ii})=ts(histdec_start_date,...
         theData(:,1:ncontribs),ContributingNames(1:ncontribs));
 end
 

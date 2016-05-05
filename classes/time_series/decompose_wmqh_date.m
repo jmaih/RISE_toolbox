@@ -1,10 +1,42 @@
 function [dec,flag]=decompose_wmqh_date(x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also: 
 
-if ~iscellstr(x)
+if ~(ischar(x)||iscellstr(x))
     
-    error('input must be a cellstr')
+    error('input must be a char or a cellstr')
     
 end
+% try turning into annual if possible and do not scream
+%-------------------------------------------------------
+x=char2num(x,true);
+
+if isnumeric(x)
+    
+    [dec,flag]=serial2dec(x);
+    
+    return
+    
+end
+
+flag=false;
 
 dec=[];
 
@@ -16,97 +48,104 @@ test=regexp(x,['\d+?(',WMQH,')\d+|\d+'],'tokens');
 
 test=[test{:}];
 
+if iscellstr(x) % iscell(test{1})
+    
+    test=[test{:}];
+    
+end
+
 % first test
 %-----------
 nonsense=cellfun(@isempty,test,'uniformOutput',true);
 
-if any(nonsense)
-    
-    flag=false;
-    
-else
-    
-    test=[test{:}];
-    
-    express=['(?<year>\d+)(?<WMQH>',...
-        parser.cell2matize(unique(test)),...
-        ')(?<period>\d+)'];
-    
-    tmp=regexp(x,express,'names');
-    
-    tmp=[tmp{:}];
-    
-    for id=1:numel(tmp)
-        
-        i_check=is_valid_wmqh_periodicity(tmp(id));
-        
-        if ~i_check
-            
-            flag=false;
-            
-            break
-            
-        end
-        
-    end
-    
-    if i_check
-        
-        flag=true;
-        
-        dec=reshape(add_remaining_fields(tmp),size(x));
-        
-    end
-    
-end
-
-end
-
-function dec=add_remaining_fields(dec)
-
-tmp_=decompose_date();
-
-tmp_=tmp_(ones(size(dec)));
-
-subset=fieldnames(dec);
-
-for iset=1:numel(subset)
-    
-    name=subset{iset};
-    
-    for icase=1:numel(dec)
-        
-        tmp_(icase).(name)=dec(icase).(name);
-        
-    end
-    
-end
-
-dec=tmp_;
-
-end
-
-function i_check=is_valid_wmqh_periodicity(tmp)
-
-per=str2double(tmp.period);
-
-i_check=per>0;
-
-if ~i_check
+if any(nonsense)||isempty(nonsense)
     
     return
     
 end
 
-switch tmp.WMQH
-    case 'W'
-        i_check=per<=52;
-    case 'M'
-        i_check=per<=12;
-    case 'Q'
-        i_check=per<=4;
-    case 'H'
-        i_check=per<=2;
+express='(?<year>\d+)(?<frequency>(W|M|Q|H))(?<period>\d+)';
+
+tmp=regexpi(x,express,'names');
+
+if iscellstr(x) % iscell(test{1})
+    
+    tmp=[tmp{:}];
+    
 end
+
+for id=1:numel(tmp)
+    
+    tmp(id).year=str2double(tmp(id).year);
+    
+    tmp(id).period=str2double(tmp(id).period);
+    
+    i_check=is_valid_wmqh_periodicity();
+    
+    if ~i_check
+        
+        break
+        
+    end
+    
+end
+
+if i_check
+    
+    freq=[tmp.freq];
+    
+    if all(freq==freq(1))
+        
+        flag=true;
+        
+        dec=tmp;
+        
+    end
+    
+end
+
+    function i_check=is_valid_wmqh_periodicity()
+        
+        per=tmp(id).period;
+        
+        i_check=per>0 && per==floor(per);
+        
+        if ~i_check
+            
+            return
+            
+        end
+        
+        switch tmp(id).frequency
+            
+            case 'W'
+                
+                i_check=per<=52;
+                
+                tmp(id).freq=52;
+                
+            case 'M'
+                
+                i_check=per<=12;
+                
+                tmp(id).freq=12;
+                
+            case 'Q'
+                
+                i_check=per<=4;
+                
+                tmp(id).freq=4;
+                
+            case 'H'
+                
+                i_check=per<=2;
+                
+                
+                tmp(id).freq=2;
+        end
+        
+        
+    end
+
 
 end

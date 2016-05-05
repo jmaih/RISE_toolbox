@@ -77,38 +77,53 @@ if ~silent
     
 end
 
-if ischar(dat)
-    % in order to take the appropriate size below
-    dat=cellstr(dat);
-    
-end
-
-s=reshape(s,size(dat));
-
-
     function do_it_then()
         
-        [dec,flag]=decompose_date(dat);
+        % try turning into annual if possible and do not scream
+        %-------------------------------------------------------
+        [dat,is_colon]=char2num(dat,true);
         
-        if ~flag
+        if ischar(dat)||iscellstr(dat);
             
-            error('decomposition failed')
+            [dec,flag]=decompose_wmqh_date(dat);
+            
+            if ~flag
+                
+                error('decomposition failed')
+                
+            end
+            
+            year=[dec.year];
+            
+            period=[dec.period];
+            
+            freq=[dec.freq];
+            
+        else
+            
+            if ~(isnumeric(dat) && all(abs(dat-floor(dat))<1e-12))
+                
+                error('wrong date format')
+                
+            end
+            
+            year=dat;
+            
+            period=1;
+            
+            freq=1;
             
         end
         
-        year=cellfun(@str2double,{dec.year},'uniformOutput',true);
+        s=dec2serial(year,period,freq);
         
-        period=cellfun(@str2double,{dec.period},'uniformOutput',true);
+        if is_colon
+            
+            s=s(1):1:s(end);
+            
+        end
         
-        frequency={dec.WMQH};
-        
-        freq=frequency2num(frequency);
-        
-        stamp=time_frequency_stamp();
-        
-        dn=@(x,per,freq)x.*freq+per-1+stamp(freq);
-        
-        s=dn(year,period,freq);
+        s=s(:).';
         
     end
 

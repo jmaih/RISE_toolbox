@@ -30,8 +30,10 @@ obj=varargout{1};
 data_provided=obj.options.data.NumberOfVariables>0;
 if data_provided %simulation_available || 
     estim_start_date=obj.options.estim_start_date;
-    obj.dates_filtering=serial2date(date2serial(estim_start_date)+(0:obj.data.nobs));
-    obj.dates_smoothing=obj.dates_filtering(1:end-1);
+    obj.dates_filtering=date2serial(estim_start_date);
+    obj.dates_smoothing=obj.dates_filtering;
+%    obj.dates_filtering=serial2date(date2serial(estim_start_date)+(0:obj.data.nobs));
+%    obj.dates_smoothing=obj.dates_filtering(1:end-1);
      
     % information on the conditional variables
     %------------------------------------------

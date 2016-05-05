@@ -198,52 +198,89 @@ end
 
 function this=convert_date(this0,newfreq)
 
-[~,oldfreq,year,period]=serial2date(this0);
+dec=serial2dec(this0);
+
+oldfreq=dec(1).frequency;
+
+year=[dec.year];
+
+period=[dec.period];
+
 freqtable={'','H','Q','M'
     1,2,3,4};
+
 oldfreq_id=find(strcmp(oldfreq,freqtable(1,:)));
+
 if isempty(oldfreq_id)
+    
     error([mfilename,':: unknown frequency ''',oldfreq,''])
+    
 end
+
 newfreq_id=find(strcmp(newfreq,freqtable(1,:)));
+
 if isempty(newfreq_id)
+    
     error([mfilename,':: unknown frequency ''',newfreq,''])
+    
 end
+
 if oldfreq_id==newfreq_id
+    
     this=this0;
+    
 else
+    
     if oldfreq_id>newfreq_id
+        
         error([mfilename,':: date conversion from high to low frequency is undefined'])
+        
     end
+    
     if oldfreq_id==1 % Annual
+        
         if newfreq_id==2 % 'H'
+            
             period=2;
+            
         elseif newfreq_id==3 % 'Q'
+            
             period=4;
+            
         elseif newfreq_id==4% 'M'
+            
             period=12;
+            
         end
+        
     elseif oldfreq_id==2 % H
+        
         if newfreq_id==3% 'Q'
+            
             period=2*period;
+            
         elseif newfreq_id==4% 'M'
+            
             period=6*period;
+            
         end
+        
     elseif oldfreq_id==3 % Q
+        
         if newfreq_id==4% 'M'
+            
             period=3*period;
+            
         end
+        
     elseif oldfreq_id==4 % M
         % this case is not expected to happen
     end
-    year=num2str(year(:));
-    switch newfreq
-        case ''
-            dat=year;
-        case {'H','Q','M'}
-            period=num2str(period(:));
-            dat=strcat(year,newfreq,period);
-    end
-    this=date2serial(cellstr(dat));
+    
+    freq=frequency2num(newfreq);
+    
+    this=dec2serial(year,period,freq);
+    
 end
+
 end

@@ -41,36 +41,28 @@ if ~is_serial(s)
     
 end
 
-[stamp,unstamp]=time_frequency_stamp();
+dec=serial2dec(s,true);
 
-freq=unstamp(s-floor(s));
+year=[dec.year];
 
-year=floor(s./freq);
+period=[dec.period];
 
-period=round(s-year.*freq+1-stamp(freq));
+period_str=cellstr(int2str(period(:)));
 
-period_str=cellstr(num2str(period(:)));
-
-year_str=cellstr(num2str(year(:)));
+year_str=cellstr(int2str(year(:)));
 
 dat=year_str;
 
-frequency=cellstr(frequency2char(freq));
+frequency=frequency2char(dec(1).freq);
 
-nonyear=freq>1;
+nonyear=dec(1).freq>1;
 
-if any(nonyear)
+if nonyear
     
-    dat(nonyear)=strcat(dat(nonyear),frequency(nonyear),period_str(nonyear));
+    dat=strcat(dat,frequency,period_str);
     
 end
 
 dat=cellfun(@(x)x(~isspace(x)),dat,'uniformOutput',false);
-
-if all(strcmp(frequency,frequency{1}))
-    
-    frequency=frequency{1};
-    
-end
 
 dat=reshape(dat,size(s));

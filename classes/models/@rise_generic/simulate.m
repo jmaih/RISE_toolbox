@@ -196,7 +196,7 @@ end
 %------------------------------------------
 y=re_order_output_rows(obj,y);
 
-start_date=serial2date(date2serial(Initcond.simul_history_end_date)-y0cols+1);
+start_date=date2serial(Initcond.simul_history_end_date)-y0cols+1;
 
 nrs=size(states,1);
 states=reshape(states,[nrs,1,npy]);

@@ -1,46 +1,80 @@
 function [dec,flag]=decompose_yearly_date(x)
+% H1 line
+%
+% Syntax
+% -------
+% ::
+%
+% Inputs
+% -------
+%
+% Outputs
+% --------
+%
+% More About
+% ------------
+%
+% Examples
+% ---------
+%
+% See also:
 
-if ~iscellstr(x)
+
+% try turning into annual if possible and do not scream
+%-------------------------------------------------------
+x=char2num(x,true);
+
+if ischar(x)||iscellstr(x)
     
-    error('input must be a cellstr')
+    [dec,flag]=decompose_wmqh_date(x);
     
-end
-
-dec=[];
-
-flag=false;
-
-nx=numel(x);
-
-ii=0;
-
-tmp=decompose_date();
-
-tmp=tmp(1,ones(nx,1));
-
-while ii<nx
-    
-    ii=ii+1;
-    
-    xx=str2double(x{ii});
-    
-    flag_i=xx==floor(xx);
-    
-    if ~flag_i
-        
-        break
-        
-    end
-    
-    tmp(ii).year=x{ii}; tmp(ii).period='1';
+    return
     
 end
 
-if flag_i
+if is_serial(x)
+    
+    [dec]=serial2dec(x,true);
     
     flag=true;
     
-    dec=reshape(tmp,size(x));
+else
+    
+    dec=[];
+    
+    flag=false;
+    
+    if any(x-floor(x))
+        
+        return
+        
+        %     error('wrong annual date format')
+        
+    end
+    
+    flag=true;
+    
+    nx=numel(x);
+    
+    dec=decompose_date();
+    
+    dec.frequency='';
+    
+    dec.period=1;
+    
+    dec.freq=1;
+    
+    dec=dec(1,ones(nx,1));
+    
+    ii=0;
+    
+    while ii<nx
+        
+        ii=ii+1;
+        
+        dec(ii).year=x(ii);
+        
+    end
     
 end
 

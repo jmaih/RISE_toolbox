@@ -38,12 +38,9 @@ if db.NumberOfPages>1
     error('Number of pages cannot exceed 1')
 end
 
-if ~ischar(pivot_date)
-    pivot_date=serial2date(pivot_date);
-    pivot_date=char(pivot_date);
-end
+pivot_date=date2serial(pivot_date);
 
-db=db([pivot_date,':',db.finish]);
+db=db(pivot_date:db.date_numbers(end));
 
 tmp=double(db);
 
