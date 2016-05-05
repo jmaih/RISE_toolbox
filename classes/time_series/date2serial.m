@@ -38,7 +38,7 @@ end
 
 s=[];
 
-frequency=[];
+frequency='';
 
 if isempty(dat)
     
