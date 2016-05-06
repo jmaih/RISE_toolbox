@@ -61,7 +61,8 @@ rise_code = regexprep(rise_code,'(//|%)(.*?\n)','\n');
 % replace y ${y}$ (long_name='output') with y "{y}(output)"
 %----------------------------------------------------------
 express='(\w+)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
-replace='$1 "$3($2)"';
+% replace='$1 "$3($2)"';
+replace='$1 "$3 # $2"';
 rise_code = regexprep(rise_code,express,replace);
 
 % % add a semicolon at the end of each line starting with a @#, it will be
