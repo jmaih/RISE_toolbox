@@ -61,6 +61,18 @@ if nargin<6
     
 end
 
+if isempty(xrange)
+    
+    xrange={};
+    
+end
+
+if ~isempty(xrange) && ~iscell(xrange)
+    
+    xrange={xrange};
+    
+end
+
 if isempty(r0c0)
     
     r0c0=[4,4];
@@ -97,15 +109,7 @@ end
         
         theIrf=batch.(var_name);
         
-        if isempty(xrange)
-            
-            plot(theIrf,'linewidth',2)
-            
-        else
-            
-            plot(xrange,theIrf,'linewidth',2)
-            
-        end
+        plot(xrange{:},theIrf,'linewidth',2)
         
     end
 
