@@ -28,7 +28,7 @@ end
 vlist=cell2mat(strcat(var_list(:)','|'));
 vlist=vlist(1:end-1);
 
-no_word_before='(?<!\w+)';
+no_word_before='\<';% no_word_before='(?<!\w+)';
 
 left_par='\(';
 digits='\d+';

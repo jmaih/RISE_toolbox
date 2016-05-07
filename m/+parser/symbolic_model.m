@@ -26,7 +26,7 @@ if ischar(var_list)
     var_list=cellstr(var_list);
 end
 
-no_word_before='(?<!\w+)';
+no_word_before='\<'; % no_word_before='(?<!\w+)';
 
 vlist=cell2mat(strcat(var_list(:)','|'));
 vlist=vlist(1:end-1);
