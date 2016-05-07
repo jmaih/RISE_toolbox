@@ -93,6 +93,8 @@ end
                 
             end
             
+            frequency=dec(1).frequency;
+            
             year=[dec.year];
             
             period=[dec.period];
