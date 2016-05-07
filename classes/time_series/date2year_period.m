@@ -27,11 +27,11 @@ if ~success
     
 end
 
-year=cellfun(@str2double,{dec.year},'uniformOutput',true);
+year=[dec.year];
 
 year=year(:);
 
-period=cellfun(@str2double,{dec.period},'uniformOutput',true);
+period=[dec.period];
 
 period=period(:);
 

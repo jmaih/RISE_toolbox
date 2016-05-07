@@ -130,11 +130,7 @@ end
             xrange=[xrange(1),xrange(end)];
             [year,period0,freq0]=date2year_period(xrange);
             period1=period2period(period0(:),freq0,freq1);
-            dat=num2str(year(:));
-            if ~isempty(this{1}.frequency)
-                dat=cellstr(strcat(dat,this{1}.frequency,num2str(period1(:))));
-            end
-            xrange=date2serial(dat);
+            xrange=dec2serial(year,period1,freq1);
         end
     end
 end
