@@ -22,6 +22,8 @@ if
 imposed
 include
 linear
+level_variables
+log_variables
 log_vars
 model
 observables
