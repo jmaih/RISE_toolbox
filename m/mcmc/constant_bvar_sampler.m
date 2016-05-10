@@ -65,13 +65,14 @@ if isempty(options)
     options=struct();
 end
 
-num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
+num_=@(x)isnumeric(x) && isscalar(x) && isreal(x);
+num_fin=@(x)num_(x) && isfinite(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
 defaults={ % arg_names -- defaults -- checks -- error_msg
     'burnin',0,@(x)num_fin_int(x),'burnin should be an integer in [0,inf)'
     'N',20000,@(x)num_fin_int(x) && x>0 ,'N should be a strictly positive integer'
     'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
-    'MaxTime',inf,@(x)num_fin(x) && x>0,'MaxTime must be a positive scalar'
+    'MaxTime',inf,@(x)num_(x) && x>0,'MaxTime must be a positive scalar'
     };
 if nargin==0
     Results=cell2struct(defaults(:,2),defaults(:,1),1);

@@ -30,9 +30,10 @@ if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
     ub=[obj.estimation.priors.upper_bound]';
     x0=obj.estimation.posterior_maximization.mode;
     vcov=obj.estimation.posterior_maximization.vcov;
-    mycell={obj.constant_var_data,lb,ub,x0,vcov};
+    mycell={obj.constant_var_data,lb,ub,x0,vcov,obj};
     varargout=mycell(1:nout);
 else
+    % ff,lb,ub,x0,vcov,obj
     [varargout{1:nout}]=pull_objective@svar(obj,varargin{:});
 end
 
