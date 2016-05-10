@@ -24,7 +24,6 @@ quote_active=false;
 last_block_id=[];
 
 block_col_names={'name','trigger','listing'};
-listing=parser.listing();
 
 current_markov_chain_name='';
 current_number_of_states=[];
@@ -32,19 +31,8 @@ new_markov_chain_tex_names={};
 markov_chains=parser.initialize_markov_chain('const',1,'is_endogenous',false);
 
 all_chain_names={markov_chains.name};
-blocks={
-    'endogenous'       ,{'var','endogenous'}    ,listing
-    'exogenous'             ,{'varexo','exogenous'}  ,listing
-    'parameters'            ,'parameters'            ,listing
-    'observables'           ,{'varobs','observables'},listing
-    'log_vars'              ,'log_vars'              ,listing
-    'model'                 ,'model'                 ,cell(0,3)
-    'steady_state_model'    ,'steady_state_model'    ,cell(0,3)
-    'parameterization'      ,'parameterization'      ,cell(0,3)
-    'planner_objective'     ,'planner_objective'     ,cell(0,3)
-    'exogenous_definition'  ,'exogenous_definition'  ,cell(0,3)
-    'parameter_restrictions','parameter_restrictions',cell(0,3)
-    };
+
+blocks=parser.initialize_blocks();
 
 % 'endogenous','exogenous','parameters','observables' blocks are just
 % declarations. The corresponding blocks are to hold name and tex_name
@@ -94,7 +82,8 @@ while iline<NumberOfLines
     [is_trigger,last_block_id]=check_block(tok,trigger_map,last_block_id);
     current_block_name=blocks(last_block_id).name;
     switch current_block_name
-        case {'log_vars','endogenous','exogenous','parameters','observables'}
+        case {'log_vars','endogenous','exogenous','parameters','observables',...
+                'level_variables'}
             blocks(last_block_id)=construct_list(blocks(last_block_id),rawline,tok);
         case {'model','steady_state_model','parameterization',...
                 'planner_objective','exogenous_definition','parameter_restrictions'}
@@ -116,7 +105,8 @@ end
 
 % sort the declaration blocks
 %----------------------------
-sort_list={'log_vars','endogenous','exogenous','parameters','observables'};
+sort_list={'log_vars','endogenous','exogenous','parameters','observables',...
+    'level_variables'};
 for isort=1:numel(sort_list)
     loc=strcmp(sort_list{isort},blknames);
     [~,tags]=sort({blocks(loc).listing.name});
@@ -128,6 +118,8 @@ end
 [~,tags]=sort({markov_chains.name});
 markov_chains=markov_chains(tags);
 
+levelVarBlock=strcmp('level_variables',{blocks.name});
+levelvar_names={blocks(levelVarBlock).listing.name};
 logvarBlock=strcmp('log_vars',{blocks.name});
 logvar_names={blocks(logvarBlock).listing.name};
 endogBlock=strcmp('endogenous',{blocks.name});
@@ -138,6 +130,43 @@ obsBlock=strcmp('observables',{blocks.name});
 obsVars = {blocks(obsBlock).listing.name};
 paramBlock=strcmp('parameters',{blocks.name});
 param_names={blocks(paramBlock).listing.name};
+
+if ~isempty(levelvar_names) 
+    
+    if ~isempty(logvar_names)
+        
+        error('log_variables and level_variables cannot be declared in the same file')
+    
+    end
+    
+    locs=locate_variables(levelvar_names,endovar_names,true);
+    
+    store_locs=locs;
+    
+    locs=find(isnan(locs));
+    
+    if ~isempty(locs)
+        
+        bad_vars=levelvar_names(locs);
+        
+        disp(bad_vars(:)')
+        
+        error('The LEVEL variables above have not been found in the list of endogenous variables')
+        
+    end
+    
+    blocks(levelVarBlock).listing=blocks(logvarBlock).listing;
+    
+%     levelvar_names={blocks(logvarBlock).listing.name};
+    
+    % now swap and destroy
+    blocks(logvarBlock).listing=blocks(endogBlock).listing;
+    
+    blocks(logvarBlock).listing(store_locs)=[];
+    
+    logvar_names={blocks(logvarBlock).listing.name};    
+    
+end
 
 % check that the potential measurement errors have corresponding observables
 %--------------------------------------------------------------------------
@@ -163,7 +192,7 @@ if ~isempty(logvar_names)
     if ~isempty(locs)
         logvar_names=logvar_names(locs);
         disp(logvar_names(:)')
-        error('The variables above have not been found in the list of endogenous variables')
+        error('The LOG variables above have not been found in the list of endogenous variables')
     end
 end
 
