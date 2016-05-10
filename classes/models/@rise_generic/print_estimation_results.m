@@ -79,8 +79,16 @@ for kk=1:numel(obj)
     reprints=[reprints;{sprintf('%s %8.7f \n','log-MDD(Laplace)',...
         obj(kk).estimation.posterior_maximization.log_marginal_data_density_laplace)}];
     if is_dsge && ~obj.is_optimal_simple_rule_model
+        start_date=obj(kk).options.estim_start_date;
+        if ~ischar(start_date)
+            start_date=serial2date(start_date);
+        end
+        end_date=obj(kk).options.estim_end_date;
+        if ~ischar(end_date)
+            end_date=serial2date(end_date);
+        end
         reprints=[reprints;{sprintf('estimation sample is:  %s : %s (%s observations)\n',...
-            parser.any2str(obj(kk).options.estim_start_date),parser.any2str(obj(kk).options.estim_end_date),...
+            parser.any2str(start_date),parser.any2str(end_date),...
             parser.any2str(obj(kk).data.nobs))}];
     end
     if is_dsge 
