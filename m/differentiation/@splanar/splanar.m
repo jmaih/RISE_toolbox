@@ -43,6 +43,7 @@ classdef splanar
     % - [mtimes](splanar/mtimes)
     % - [ne](splanar/ne)
     % - [normcdf](splanar/normcdf)
+    % - [norminv](splanar/norminv)
     % - [normpdf](splanar/normpdf)
     % - [or](splanar/or)
     % - [plus](splanar/plus)
@@ -345,6 +346,16 @@ classdef splanar
         function obj=ne(a,b)
             % ne - overloads ne for splanar
             obj=do_bivariate(a,b,'ne');
+        end
+        function obj=norminv(x,mu,sd)
+            % normcdf - overloads normcdf for splanar
+            if nargin<3
+                sd=1;
+                if nargin<2
+                    mu=0;
+                end
+            end
+            obj=do_trivariate_normal(x,mu,sd,'norminv');
         end
         function obj=normcdf(x,mu,sd)
             % normcdf - overloads normcdf for splanar
@@ -657,6 +668,9 @@ classdef splanar
                         t14 = 2/t13;
                         % (2/(sqrt(pi)*exp(x^2)))*dx;
                         d= t14*d_args{1};
+                    case 'norminv'
+                        d=(d_args{1}+d_args{2}+d_args{3})/normpdf(...
+                            norminv(x.args{1},x.args{2},x.args{3}));
                     case 'normcdf'
                         d=(d_args{1}+d_args{2}+d_args{3})*normpdf(x.args{1},x.args{2},x.args{3});
                     case 'normpdf'
