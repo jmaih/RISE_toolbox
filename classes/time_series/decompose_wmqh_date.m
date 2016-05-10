@@ -44,7 +44,7 @@ fmap=frequency_map();
 
 WMQH=strrep(cell2mat(strcat(fmap.strings','|')),'||','');
 
-test=regexp(x,['\d+?(',WMQH,')\d+|\d+'],'tokens');
+test=regexpi(x,['\d+?(',WMQH,')\d+|\d+'],'tokens');
 
 test=[test{:}];
 
@@ -116,7 +116,7 @@ end
             
         end
         
-        switch tmp(id).frequency
+        switch upper(tmp(id).frequency)
             
             case 'W'
                 
