@@ -66,7 +66,7 @@ for fig=1:nfig
         end
         if plt==1 && ~isempty(legend_)
             hleg=legend(legend_);
-            set(hleg,varargin{:})
+            set(hleg,varargin{:});
         end
     end
 end
