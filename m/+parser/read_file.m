@@ -56,6 +56,8 @@ while 1
         
     end
     
+    iter=iter+1;
+    
     if is_block_comments_open
         
         if strcmp(tokk,'%}')||strcmp(tokk,'*/')
@@ -69,8 +71,6 @@ while 1
     end
     
     rawline=parser.remove_comments(rawline);
-    
-    iter=iter+1;
     
     if all(isspace(rawline))
         
