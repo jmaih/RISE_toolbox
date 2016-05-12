@@ -19,45 +19,114 @@ function [output,has_macro]=preparse(FileName,parsing_definitions)
 %
 % See also: 
 
+% {'movave','movavg','movgeom','movprod','movsum','diff','difflog'}
+
+% @#include(filename)
+% @#include"filename"
+% @#import(filename)
+% @#import"filename"
+
+% @#for co={ca,fr,de,be}
+%     Y_@{co}=rho_@{co}*Y_@{co}{-1}+sig_@{co}*E_@{co};
+%     @#end
+% 
+% @#for co=[1,4,6,8]
+%     Y_@{co}=rho_@{co}*Y_@{co}{-1}+sig_@{co}*E_@{co};
+%     @#end
+% 
+% @#for co=1:8
+%     Y_@{co}=rho_@{co}*Y_@{co}{-1}+sig_@{co}*E_@{co};
+%     @#end
+% 
+% @#for co=1:8
+%     @#for coo={ca,fr,de,be}
+%         Y_@{co}_@{coo}=rho_@{co}_@{coo}*Y_@{co}_@{coo}{-1}+sig_@{co}_@{coo}*E_@{co}_@{coo};
+%         @#end
+%     @#end
+
+% @# if strcmp(capRec,'firstCase')
+%     @# elseif strcmp(capRec,'anotherCase')
+%     @# end
+
+% @# switch capRec
+%     @# case 'firstCase'
+%     @# case 'secondCase'
+%     @# otherwise
+%     @# end
+
 % int2str(x)=sprintf('%.0f',x)
 if nargin<2
+    
     parsing_definitions=struct();
+    
     if nargin<1
+        
         output=struct('rise_flags',struct());
+        
         return
+        
     end
+    
 end
 
 if ~isstruct(parsing_definitions)
+    
     if ~iscell(parsing_definitions)||(iscell(parsing_definitions) && size(parsing_definitions,2)~=2)
+        
         error('parsing definitions must be a struct or a cell array with two columns')
+        
     end
+    
     tmp=struct();
+    
     for irow=1:size(parsing_definitions,1)
+        
         tmp.(parsing_definitions{irow,1})=parsing_definitions{irow,2};
+        
     end
+    
     parsing_definitions=tmp;
+    
 end
 
 valid_extensions={'rs','rz','dsge'};
+
 FileName(isspace(FileName))=[];
+
 loc=strfind(FileName,'.');
+
 if isempty(loc)
+    
     for iext=1:numel(valid_extensions)
+        
         found= exist([FileName,'.',valid_extensions{iext}],'file');
+        
         if found
+            
             break
+            
         end
+        
     end
+    
 else
+    
     ext=FileName(loc+1:end);
+    
     if ~ismember(ext,valid_extensions)
+        
         error(['file extension ',ext,' is not recognized by RISE'])
+        
     end
+    
     found= exist(FileName,'file');
+    
 end
+
 if ~found
+    
     error([mfilename,':: ',FileName,'.rs or ',FileName,'.rz  or ',FileName,'.dsge not found'])
+    
 end
 
 % first sweep: read the file, and remove comments and stamp the lines
@@ -69,218 +138,609 @@ RawFile=parser.read_file(FileName);
 
 end
 
-function [output,has_macro]=preparse_expand(RawFile,definitions,has_macro,output)
+%--------------------------------------------------------------------------
+
+function [output,has_macro]=preparse_expand(rawfile,definitions,has_macro,output)
 if nargin<4
+    
     output=[];
+    
     if nargin<3
+        
         has_macro=false;
+        
     end
+    
 end
-if isempty(RawFile)
+
+if isempty(rawfile)
+    
     return
+    
 end
+
 if isempty(output),output=cell(0,3);end
+
 if isempty(has_macro),has_macro=false;end
 
-remove_space=@(x)x(~isspace(x));
+has_macro=false;
 
-depth=0;
-iter=0;
-end_of_file=size(RawFile,1);
-while iter<end_of_file
-    iter=iter+1;
-    rline=next_line(iter);
-    switch rline.first_tok
-        case '@#include'
-            has_macro=true;
-            if depth==0
-                output=parser.append_file(output,rline,definitions);
-            end
-        case {'@#if','@#for'}
-            has_macro=true;
-            depth=depth+1;
-            control=rline.first_tok(3:end);
-            if depth==1
-                if strcmp(control,'if')
-                    steps=check_and_store_condition(rline,definitions,iter);
-                    % steps={start,finish,flag};
-                else
-                    steps=get_index_start_and_finish(rline,definitions,iter);
-                    % steps={start,finish,{index,start_loop,end_loop}};
-                end
-                jter=iter;
-                old_line=rline;
-                while jter<end_of_file
-                    jter=jter+1;
-                    rline=next_line(jter);
-                    update_steps_and_depth(rline);
-                    if depth==0
-                        break
-                    end
-                end
-                if depth~=0
-                    error(['if statement started in ',old_line.FileName,' at line ',old_line.row_number_string,' is not closed'])
-                end
-                step_rows=select_appropriate_rows(steps);
-                if strcmp(control,'if')
-                    [output,has_macro]=preparse_expand(RawFile(step_rows,:),definitions,has_macro,output);
-                else
-                    [output,has_macro2]=for_loop_batch(output,RawFile(step_rows,:),definitions,steps{3});
-                    has_macro=has_macro||has_macro2;
-                end
-                iter=jter;
-            end
-        case {'@#elseif','@#else','@#end'}
-            error(['token ',rline.first_tok,' in ',rline.FileName,' at line ',rline.row_number_string,' is not initialized'])
-        otherwise
-            tank=parser.remove_definitions(RawFile(iter,:),definitions);
-            output=[output;tank];
-    end
-end
+process_include()
 
-    function update_steps_and_depth(rline)
-        switch rline.first_tok
-            case {'@#if','@#for'}
-                depth=depth+1;
-            case '@#elseif'
-                if depth==1
-                    newsteps=check_and_store_condition(rline,definitions,jter);
-                    steps{end,2}=jter-1;
-                    steps=[steps;newsteps];
-                    good=find(cell2mat(steps(:,end)));
-                    if numel(good)>1
-                        error(['multiple valid conditional statements in "if" control in ',rline.FileName,' at line ',rline.row_number_string])
-                    end
-                end
-            case '@#else'
-                if depth==1
-                    steps{end,2}=jter-1;
-                    flag=~any(cell2mat(steps(:,end)));
-                    steps=[steps;{jter+1,nan,flag}];
-                end
-            case {'@#end','@#endif','@#endfor'} % accommodating dynare
-                if depth==1
-                    steps{end,2}=jter-1;
-                end
-                depth=depth-1;
-            otherwise
+[rawfile,has_macro]=process_flow_controls(rawfile,definitions,has_macro);
+
+% process keywords last
+rawfile(:,1)=process_keywords(rawfile(:,1));
+
+output=[output;rawfile];
+
+    function process_include()
+        
+        arobase=include_arobase(rawfile(:,1));
+        
+        while ~isempty(arobase)
+            
+            if ~has_macro
+                
+                has_macro=true;
+                
+            end
+            
+            process_include_engine()
+            
         end
+        
+        function process_include_engine
+            
+            tmp=rawfile(1:0,:);
+            
+            locs=[arobase.pos];
+            
+            offset=0;
+            
+            for iloc=1:numel(locs)
+                
+                rline_=next_line(locs(iloc));
+                
+                tmp=[tmp
+                    rawfile(offset+1:locs(iloc)-1,:);
+                    ]; %#ok<AGROW>
+                
+                tmp=parser.append_file(tmp,rline_,definitions);
+                
+                offset=locs(iloc);
+                
+            end
+            
+            tmp=[tmp
+                rawfile(offset+1:end,:);
+                ];
+            
+            rawfile=tmp;
+            
+            arobase=include_arobase(rawfile(:,1));
+            
+        end
+        
     end
 
-%--------------------------------------------------------------------------
     function rline=next_line(iter)
-        rline.rawline = RawFile{iter,1};
-        rline.FileName= RawFile{iter,2};
-        rline.row_number_string= int2str(RawFile{iter,3});
+        
+        rline.rawline = rawfile{iter,1};
+        
+        rline.FileName= rawfile{iter,2};
+        
+        rline.row_number_string= int2str(rawfile{iter,3});
         
         [startIndex,endIndex] = regexp(rline.rawline,['@\s*(?#0 or more spaces)',...
             '#\s*(include|if|for|else(if)?|end(if|for)?',...
             '(?#optionally followed by if or for))']);
+        
         if numel(startIndex)>1
+            
             error('')
+            
         elseif numel(startIndex)==1
+            
             rline.first_tok=remove_space(rline.rawline(startIndex:endIndex));
+            
             rline.rest=rline.rawline(endIndex+1:end);
+            
         else
+            
             rline.first_tok='';
+            
             rline.rest=rline.rawline;
+            
         end
+        
     end
+
 end
 
 %--------------------------------------------------------------------------
-function step_rows=select_appropriate_rows(steps)
-step_rows=1:0;
-if iscell(steps{end,end})
-    % we have a for loop
-    step_rows=steps{1}:steps{2};
+
+function [rawfile,has_macro]=process_flow_controls(rawfile,definitions,has_macro)
+
+arobase=[];
+
+update_arobase();
+
+while ~isempty(arobase)
+    
+    if ~has_macro
+        
+        has_macro=true;
+        
+    end
+    
+    process_flow_control_engine()
+    
+end
+
+    function process_flow_control_engine()
+        
+        locs=[arobase.pos];
+        
+        switch arobase(1).type
+            case 'for'
+                do_for()
+            case 'if'
+                do_if()
+            case 'switch'
+                do_switch()
+        end
+        
+        update_arobase()
+        
+        function do_for()
+            
+            top=rawfile(1:locs(1)-1,:);
+            
+            bottom=rawfile(locs(end)+1:end,:);
+            
+            middle=rawfile(locs(1)+1:locs(end)-1,:);
+            
+            info=regexp(arobase(1).action,'(?<stud>\w+)\s*=\s*(?<set>.+)','names');
+            
+            update_set()
+            
+            for ii=1:numel(info.set)
+                
+                tmp=middle;
+                
+                tmp(:,1)=regexprep(tmp(:,1),['@{',info.stud,'}'],info.set{ii});
+                
+                top=[top;tmp]; %#ok<AGROW>
+                
+            end
+            
+            rawfile=[top;bottom];
+            
+            function update_set()
+                
+                sset=info.set;
+                
+                if any(sset=='{')||any(sset=='[')
+                    
+                    sset=regexp(sset,',','split');
+                    
+                    sset=regexprep(sset,'(\{|\}|\[|\])','');
+                    
+                elseif any(sset==':')
+                    
+                    sset=regexp(sset,':','split');
+                    
+                    if numel(sset)==2
+                        
+                        sset=[sset(1),'1',sset(2)];
+                        
+                    end
+                    
+                    sset=str2double(sset{1}):str2double(sset{2}):str2double(sset{3});
+                    
+                    sset=num2cell(sset);
+                    
+                    sset=cellfun(@(x)num2str(x),sset,'uniformOutput',false);
+                    
+                end
+                
+                info.set=sset;
+                
+            end
+            
+        end
+        
+        function do_if()
+            
+            start=1;
+            
+            ff=@(x)eval_action(definitions,x);
+            
+            rmQuotes=@(x)x;
+            
+            do_if_or_switch(start,ff,rmQuotes)
+            
+        end
+    
+        function do_switch()
+            
+            test=regexprep(rawfile(locs(1)+1:locs(2)-1,1),'%.+','');
+            
+            if ~all(cellfun(@isempty,test,'uniformOutput',true))
+                
+                error('Non comment found between switch and case')
+                
+            end
+            
+            stud=arobase(1).action;
+            
+            start=2;
+            
+            ff=@(x)strcmp(definitions.(stud),x);
+            
+            rmQuotes=@(x)strrep(x,'''','');
+            
+            do_if_or_switch(start,ff,rmQuotes)
+        
+        end
+        
+        function do_if_or_switch(start,ff,rmQuotes)
+            
+            for icase=start:numel(arobase)-1
+                
+                action=rmQuotes(arobase(icase).action);
+                
+                action(isspace(action))=[];
+                
+                if isempty(action)
+                    % otherwise or else
+                    found=true;
+                    
+                else
+                    
+                    found=ff(action);
+                    
+                end
+                
+                if found
+                    
+                    break
+                    
+                end
+                
+            end
+            
+            if found
+                
+                discard=[locs(1):locs(icase),locs(icase+1):locs(end)];
+                
+            else
+                
+                discard=locs(1):locs(end);
+                
+            end
+            
+            rawfile(discard,:)=[];
+            
+        end
+        
+    end
+
+    function update_arobase()
+        
+       [arobase]=control_flow_arobase(rawfile(:,1));
+        
+    end
+
+end
+
+%--------------------------------------------------------------------------
+
+function flag___=eval_action(def____,action)
+
+fields___=fieldnames(def____);
+
+for ifield___=1:numel(fields___)
+    
+    name______=fields___{ifield___};
+    
+    eval([name______,'=def.(name______);'])
+    
+end
+
+flag___=eval(action);
+
+end
+
+%--------------------------------------------------------------------------
+
+function [arobase]=include_arobase(txt)
+
+% @#include(filename)
+% @#include"filename"
+% @#import(filename)
+% @#import"filename"
+
+arobase=regexp(txt,'@#\s*(include|import)\s*("|\()\s*(?<filename>[^"\)]+)("|\))(?<pos>)','names');
+
+for ib=1:numel(arobase)
+    
+    if ~isempty(arobase{ib})
+        
+        arobase{ib}.pos=ib;
+        
+    end
+    
+end
+
+arobase=[arobase{:}];
+
+end
+
+%--------------------------------------------------------------------------
+
+function [arobase]=control_flow_arobase(txt)
+
+triggers={'switch','if','for'};
+
+followers={'else','elseif','case','otherwise'};
+
+finish='end';
+
+arobase=regexp(txt,'@#\s*(?<type>\w+)\s*(?<action>.*)(?<pos>)(?<level>)','names');
+
+for ib=1:numel(arobase)
+    
+    if ~isempty(arobase{ib})
+        
+        arobase{ib}.pos=ib;
+        
+    end
+    
+end
+
+arobase=[arobase{:}];
+
+if isempty(arobase)
+    
+    return
+    
+end
+
+if any(strcmp(arobase(1).type,triggers))
+    
+    arobase(1).level=0;
+    
 else
-    % we have an if control
-    good=find(cell2mat(steps(:,end)));
-    if ~isempty(good)
-        steps=steps(good,:);
-        step_rows=steps{1}:steps{2};
+    
+    error('wrong level start')
+    
+end
+
+depth=0;
+
+for iro=2:numel(arobase)
+    
+    if any(strcmp(arobase(iro).type,triggers))
+        
+        depth=depth+1;
+        
+        arobase(iro).level=depth;
+        
+    elseif strcmp(arobase(iro).type,finish)
+        
+        arobase(iro).level=depth;
+        
+        depth=depth-1;
+        
+    elseif any(strcmp(arobase(iro).type,followers))
+        
+        arobase(iro).level=depth;
+        
     end
+    
 end
-end
-%--------------------------------------------------------------------------
-function [output,has_macro]=for_loop_batch(output,batch,definitions,index_start_finish)
 
-index=index_start_finish{1};
-start_finish=index_start_finish{2};
-co=index(3:end-1);
-if ischar(start_finish)
-    start_finish=definitions.(start_finish);
-elseif isa(start_finish,'double')
-    start=start_finish(1);
-    finish=start_finish(2);
-    start_finish=num2cell(start:finish);
-else
-    error(['unknown case ',start_finish])
+levels=[arobase.level];
+
+if any(levels<0)
+    
+    error('too many endings')
+    
 end
-for ii=1:numel(start_finish)
-    if isa(start_finish{ii},'double')
-        start_finish{ii}=num2str(start_finish{ii});
+
+good=levels==0;
+
+arobase=arobase(good);
+
+types={arobase.type};
+
+first_end=find(strcmp(types,finish),1,'first');
+
+if isempty(first_end)
+    
+    error('opened flow control not closed')
+    
+end
+
+arobase=arobase(1:first_end);
+
+% check consistency
+types=types(1:first_end);
+
+theLeader=types{1};
+
+theFollowers=types(2:end-1);
+
+switch theLeader
+    
+    case 'for'
+        
+        if ~isempty(theFollowers)
+            
+            error('"For" should not have followers')
+            
+        end
+        
+    case 'if'
+        
+        if ~isempty(theFollowers)
+            
+            ellsse=find(strcmp(theFollowers,'else'));
+            
+            if numel(ellsse)==1
+                
+                if ~strcmp(theFollowers{end},'end')
+                    
+                    error('for "if", "else" must appear right before "end"')
+                    
+                end
+                
+                theFollowers(ellsse)=[];
+                
+            elseif numel(ellsse)>1
+                
+                error('in "if", only one "else" is allowed')
+                
+            end
+            
+            ellsseiff=strcmp(theFollowers,'elseif');
+            
+            theFollowers(ellsseiff)=[];
+            
+            if ~isempty(theFollowers)
+                
+                error('Followers of "if" can only be "else" and "elseif"')
+                
+            end
+            
+        end
+        
+    case 'switch'
+        
+        if isempty(theFollowers)
+            
+            error('"switch" must have followers')
+            
+        end
+        
+        ozerwise=find(strcmp(theFollowers,'otherwise'));
+        
+        if numel(ozerwise)==1
+            
+            if ~strcmp(theFollowers{end},'otherwise')
+                
+                error('for "switch", "otherwise" must appear right before "end"')
+                
+            end
+            
+            theFollowers(ozerwise)=[];
+            
+        elseif numel(ozerwise)>1
+            
+            error('in "switch", only one "otherwise" is allowed')
+            
+        end
+        
+        kases=strcmp(theFollowers,'case');
+        
+        theFollowers(kases)=[];
+        
+        if ~isempty(theFollowers)
+            
+            error('Followers of "switch" can only be "case" and "otherwise"')
+            
+        end
+        
+end
+
+
+end
+
+%--------------------------------------------------------------------------
+
+function xout=process_keywords(xin)
+
+myreplace=@replacer; %#ok<NASGU>
+
+kwords={'movave','movavg','movgeom','movprod','movsum','diff','difflog'};
+
+kwords=parser.cell2matize(kwords);
+
+patt=['\<',kwords,'\>\(\s*(\w+)\s*(,\s*\d+)?\s*\)'];
+
+xout=regexprep(xin,patt,'${myreplace($1,$2,$3)}');
+
+    function str=replacer(func,v,n)
+        
+        if isempty(n)
+            
+            n='1';
+            
+        end
+        
+        n=str2double(strrep(n,',',''));
+        
+        if n<=0||~isfinite(n)||(floor(n)~=ceil(n))
+            
+            error(['wrong specification of integer when using ',func])
+            
+        end
+        
+        switch func
+            
+            case {'movave','movavg'}
+                
+                str=many_together('+');
+                
+                str=['1/',int2str(n),'*',str];
+                
+            case 'movprod'
+                
+                str=many_together('*');
+                
+            case 'movgeom'
+                
+                str=many_together('*');
+                
+                str=[str,'^(1/',int2str(n),')'];
+                
+            case 'movsum'
+                
+                str=many_together('+');
+                
+            case 'diff'
+                
+                str=[v,'-',v,'{-',int2str(n),'}'];
+                
+            case 'difflog'
+                
+                str=['log(',v,')-log(',v,'{-',int2str(n),'})'];
+                
+            otherwise
+                
+                error('Report this error to the forum or contact junior.maih@gmail.com')
+                
+        end
+        
+        str=['(',str,')'];
+        
+        function str=many_together(sign_)
+            
+            str=['(',v];
+            
+            for ii=2:n
+                
+                str=[str,sign_,v,'{-',int2str(ii-1),'}']; %#ok<AGROW>
+                
+            end
+            
+            str=[str,')'];
+            
+        end
+        
     end
-    definitions.(co)=start_finish{ii};
-    %------------------------------------
-    tank=parser.remove_definitions(batch,definitions);
-    %------------------------------------
-    % Now expand the content of the loop before storing...
-    [tank,has_macro]=preparse_expand(tank,definitions);
-    output=[output;tank];
-end
 
-end
-%--------------------------------------------------------------------------
-function steps=get_index_start_and_finish(rline,definitions,iter)
-
-SPACE_DELIMITERS=char([9:13,32]);
-% load definitions
-fields=fieldnames(definitions);
-for ifield=1:numel(fields)
-    ff=fields{ifield};
-    tmp=definitions.(ff); %#ok<NASGU>
-    eval([ff,'=tmp;'])
-end
-
-[index,rline.rest]=strtok(rline.rest,SPACE_DELIMITERS);
-index=['@{',index,'}'];
-in=strfind(rline.rest,'in');
-rline.rest=rline.rest(in+2:end);
-colon=strfind(rline.rest,':');
-if isempty(colon)
-    % then we probably have a list... why not input it as {'A','adscs'}?
-    start_finish=strtok(rline.rest,SPACE_DELIMITERS);
-else
-    start=eval(rline.rest(1:colon-1));
-    finish=eval(rline.rest(colon+1:end));
-    start_finish=[start,finish];
-    if any(isnan(start_finish))
-        error(['problem parsing ',rline.rest,' in ',rline.FileName,' at line ',rline.row_number_string])
-    end
-end
-steps={iter+1,nan,{index,start_finish}};
-
-end
-%--------------------------------------------------------------------------
-function steps=check_and_store_condition(rline,definitions,iter)
-% steps={start,finish,flag};
-fields=fieldnames(definitions);
-for ifield=1:numel(fields)
-    ff=fields{ifield};
-    tmp=definitions.(ff); %#ok<NASGU>
-    eval([ff,'=tmp;'])
-end
-flag=logical(eval(rline.rest));
-if isnan(flag)
-    error(['expression ',rline.rest,...
-        ' in ',rline.rline.FileName,' at line ',rline.rline.row_number_string,...
-        ' is not a valid logical statement'])
-end
-start=iter+1;
-finish=nan;
-steps={start,finish,flag};
-% (rline.rest,definitions,iter,,)
 end
 
