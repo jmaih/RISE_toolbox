@@ -445,7 +445,7 @@ for ifield___=1:numel(fields___)
     
     name______=fields___{ifield___};
     
-    eval([name______,'=def.(name______);'])
+    eval([name______,'=def____.(name______);'])
     
 end
 
