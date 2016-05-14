@@ -101,7 +101,14 @@ end
 
     function [texname,theLegend]=plotfunc(var_name)
         
-        theLegend='';
+        theLegend=batch.(var_name).varnames;
+        
+        if numel(theLegend)==1||...
+                all(cellfun(@(x)isempty(x),theLegend,'uniformOutput',true))
+            
+            theLegend='';
+            
+        end
         
         var_tex=description.(var_name);
         
