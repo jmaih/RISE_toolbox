@@ -124,6 +124,16 @@ classdef svar < rise_generic
                 obj=set@rise_generic(obj,varargin{:});
                 % combine with specific elements if necessary
             else
+                if nn==0
+                    return
+                end
+                nobj=numel(obj);
+                if nobj>1
+                    for iobj=1:nobj
+                        obj(iobj)=set(obj(iobj),varargin{:});
+                    end
+                    return
+                end
                 very_special={'estim_linear_restrictions','data'};
                 redo_priors=false;
                 for iobj=1:numel(obj)
