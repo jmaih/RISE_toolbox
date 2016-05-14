@@ -223,7 +223,7 @@ write_parameter_file()
 %             code
 %             ];
         
-        write2file(code,[paramFileName,'.m'])
+        parser.write2file(code,[paramFileName,'.m'])
         
         function shock_standard_deviations()           
             % match variances
@@ -543,7 +543,7 @@ write_parameter_file()
         rise_code = regexprep(rise_code,'(@\s*#[^\n]+);','$1');
 
         
-        write2file(rise_code,riseFileName);
+        parser.write2file(rise_code,riseFileName);
         
     end
 
@@ -612,38 +612,3 @@ write_parameter_file()
 
 end
 
-function write2file(C,filename)
-
-fid = fopen(filename,'w+');
-
-if fid == -1
-    
-    error(['Cannot open file ''%s'' for writing.',filename]);
-    
-end
-
-if iscellstr(C)
-    
-    C = sprintf('%s\n',C{:});
-    
-    if ~isempty(C)
-        
-        C(end) = '';
-        
-    end
-    
-end
-
-count = fwrite(fid,C,'char');
-
-if count ~= length(C)
-    
-    fclose(fid);
-    
-    error(['Cannot write character string to file ''%s''.',filename]);
-    
-end
-
-fclose(fid);
-
-end
