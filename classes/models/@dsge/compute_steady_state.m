@@ -178,6 +178,10 @@ blocks.y0=y0;
 
 blocks.g0=g0;
 
+swapping_func=blocks.swapping_func;
+
+extend_param_func=blocks.extend_param_func;
+
 if obj.options.steady_state_unique
     
     converged=false;
@@ -210,7 +214,12 @@ if obj.options.steady_state_unique
     end
     
     if ~retcode
+        % swap for the output
+        %---------------------
+        [y(:,1),p_unic]=swapping_func(y(:,1),p_unic);
         
+        % expand
+        %--------
         y=y(:,ones(1,number_of_regimes));
         
         g=g(:,ones(1,number_of_regimes));
@@ -243,6 +252,10 @@ else
             break
             
         end
+        
+        % swap for the output
+        %---------------------
+        [y(:,istate),p(:,istate)]=swapping_func(y(:,istate),p(:,istate));
         
         if istate==1
             
@@ -309,6 +322,10 @@ end
             
         end
         
+        % alternatively, apply the swapping...
+        %---------------------------------------
+        p=extend_param_func(p,ptarg);
+        
     end
 
     function [pp_unique,def_unique,TransMat,retcode]=ergodic_parameters(y)
@@ -355,6 +372,9 @@ auxcode=dq_blocks.auxcode;
 optimopt=dq_blocks.optimopt;
 
 if ~isempty(sscode)
+    
+    swapping_func=dq_blocks.swapping_func;
+    
     if sscode.is_loop_steady_state && ~dq_blocks.solve_linear
         % no point in doing loops if the model is linear
         
@@ -375,14 +395,14 @@ if ~isempty(sscode)
                 
                 unsolved(:)=true;
                 
-                [y,g,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,...
+                [y,g,p,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,...
                     dq_blocks);
                 
             else
                 
                 if any(unsolved)||~all(isfinite(y))||~all(isfinite(g))
                     
-                    [y,g,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,...
+                    [y,g,p,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,...
                         dq_blocks);
                     
                 end
@@ -395,8 +415,8 @@ if ~isempty(sscode)
     
 else
     
-    [y,g,r,retcode]=divide_and_conquer(y0,g0,p,x,d,unsolved,dq_blocks);
-    
+    [y,g,p,r,retcode]=divide_and_conquer(y0,g0,p,x,d,unsolved,dq_blocks);
+        
 end
 
 
@@ -474,7 +494,7 @@ end
         
         % try a quick exit
         %-----------------
-        r=dq_blocks.residcode(y0,g0,x,p,d);
+        r=evaluate_all_residuals(dq_blocks.residcode,y0,g0,x,p,d,swapping_func);
         
         if check_residuals(r,optimopt.TolFun)
             
@@ -520,7 +540,7 @@ end
             
         else
             
-            r=dq_blocks.residcode(y,g,x,p,d);
+            r=evaluate_all_residuals(dq_blocks.residcode,y,g,x,p,d,swapping_func);
             
         end
         
@@ -530,13 +550,15 @@ end
 
 
 
-function [y,g,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,blocks)
+function [y,g,p,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,blocks)
 
 optimopt=blocks.optimopt;
+        
+swapping_func=blocks.swapping_func;
 
 % try a quick exit
 %-----------------
-r=blocks.residcode(y,g,x,p,d);
+r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
 
 if check_residuals(r,optimopt.TolFun)
     
@@ -665,8 +687,8 @@ for iblock=1:nblocks
     
 end
 
-r=blocks.residcode(y,g,x,p,d);
-
+r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
+ 
     function [orig_varblk,varblk,nv,fixed_level,fixed_growth]=load_relevant()
         
         varblk=blocks.variables{iblock};
@@ -767,8 +789,8 @@ r=blocks.residcode(y,g,x,p,d);
             g(growth_vars)=zyg(nvl+1:end);
             
         end
-        
-        rs=sseqtns{iblock}(y,g,x,p,d);
+                
+        rs=evaluate_all_residuals(sseqtns{iblock},y,g,x,p,d,swapping_func);
         
         yshift=[];
         
@@ -780,7 +802,7 @@ r=blocks.residcode(y,g,x,p,d);
             
             yshift(is_log_var)=y(is_log_var).*g(is_log_var).^shift;
             
-            rs2=sseqtns{iblock}(yshift,g,x,p,d);
+            rs2=evaluate_all_residuals(sseqtns{iblock},yshift,g,x,p,d,swapping_func);
             
             rs=[rs;rs2];
             
@@ -795,6 +817,20 @@ r=blocks.residcode(y,g,x,p,d);
 %         if any(~isfinite(rs)),rs=10000*ones(size(rs));end
         
     end
+
+end
+
+
+
+function r=evaluate_all_residuals(residfunc,y,g,x,p,d,swapping_func)
+
+if ~isempty(swapping_func)
+    
+    [y,p]=swapping_func(y,p);
+    
+end
+
+r=residfunc(y,g,x,p,d);
 
 end
 
@@ -844,6 +880,9 @@ end
 
 
 function [obj,sscode,blocks,unsolved]=prepare_steady_state_program(obj)
+
+% In case of a swap, the location of the endogenous variables swapped
+% remain unsolved !!!
 
 unsolved=true(1,obj.endogenous.number);
 
@@ -1052,13 +1091,15 @@ if isempty(obj.steady_state_2_blocks_optimization)
         obj.endogenous.is_lagrange_multiplier);
     
     blocks=struct('variables',{obj.steady_state_blocks.variables},...
-        'is_log_var',obj.endogenous.is_log_var,...
+        'equations',{obj.steady_state_blocks.equations},...
+        'swapping_func',obj.steady_state_blocks.swapping_func,...
+        'extend_param_func',obj.steady_state_blocks.extend_param_func,...
+        'is_log_var',obj.steady_state_blocks.is_log_var,...
         'solve_bgp',obj.options.solve_bgp,...
         'solve_bgp_shift',obj.options.solve_bgp_shift,...
         'sseqtns',{obj.routines.static.separate_blocks},...
         'ssjacobians',{obj.routines.static.separate_jacobians},...
         'debug',obj.options.debug,...
-        'equations',{obj.steady_state_blocks.equations},...
         'endo_list',{obj.endogenous.name},...
         'dynamic',{obj.equations.dynamic},...
         'residcode',obj.routines.static.one_block,...
@@ -1085,13 +1126,43 @@ function obj=recreate_steady_state_functions(obj)
 
 % the steady state is always ordered alphabetically
 %---------------------------------------------------
-try
-    ss_occurrence=sum(obj.fast_sstate_occurrence,3);
-catch
-    ss_occurrence=sum(obj.occurrence,3);
-end
+ss_occurrence=sum(obj.fast_sstate_occurrence.y,3);
 
 ss_occurrence(ss_occurrence>0)=1;
+
+swaps=obj.options.steady_state_endo_param_swap;
+
+is_log_var=obj.endogenous.is_log_var;
+
+if isempty(swaps)
+    
+    [swappingFunc,extendParamFunc]=swap_func();
+    
+else
+    
+    swaps_values=cell2mat(swaps(:,2));
+    
+    pos_endo=locate_variables(swaps(:,1),obj.endogenous.name);
+    
+    pos_param=locate_variables(swaps(:,3),obj.parameters.name);
+    
+    occparam=obj.fast_sstate_occurrence.param(:,pos_param);
+    
+    % swap occurrences: now the parameters take the place of the variables
+    
+    ss_occurrence(:,pos_endo)=occparam;
+    
+    % the following function re-establishes the order before each
+    % evaluation
+    
+    [swappingFunc,extendParamFunc]=swap_func(pos_endo,pos_param,swaps_values);
+    
+    is_log_var(pos_endo)=false;
+    
+end
+
+% nullify the columns of the variables that are fixed append the columns of
+% the parameters that are endogenized...
 
 if obj.options.solve_linear
     reblocks=false;
@@ -1103,7 +1174,10 @@ end
     reblocks);
 
 obj.steady_state_blocks=struct('equations',{equations_blocks},...
-    'variables',{variables_blocks});
+    'variables',{variables_blocks},...
+    'swapping_func',swappingFunc,...
+    'extend_param_func',extendParamFunc,...
+    'is_log_var',is_log_var);
 
 try
     static=obj.equations.shadow_fast_ssmodel;
@@ -1261,6 +1335,42 @@ obj.routines.shadow_steady_state_auxiliary_eqtns=...
         else
             
             out=['(y(',vp,')/g(',vp,')^',digit,')'];
+            
+        end
+        
+    end
+
+end
+
+
+
+function [sf,es]=swap_func(pos_endo,pos_param,swaps_values)
+
+n=nargin;
+
+sf=@swap_engine;
+
+es=@extend_swaps;
+    
+    function [y,p]=swap_engine(y,p)
+        
+        if n>0
+            
+            p(pos_param)=y(pos_endo);
+            
+            y(pos_endo)=swaps_values;
+            
+        end
+        
+    end
+
+    function p=extend_swaps(p,pold)
+        
+        if n>0
+            
+            ncols=size(p,2);
+            
+            p(pos_param,:)=pold(pos_param,ones(1,ncols));
             
         end
         

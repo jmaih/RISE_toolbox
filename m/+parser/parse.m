@@ -274,6 +274,12 @@ do_incidence_matrix();
     shadow_tvp,...
     shadow_complementarity]=parser.shadowize(dictionary,AllModels,...
     equation_type);
+
+% occurrence of parameters in case of swap when solving steady state
+%--------------------------------------------------------------------
+fast_sstate_occurrence_params=parser.occurrence_map(stat.shadow_fast_ssmodel,...
+    'param',numel(dictionary.parameters),true);
+
 % Remove the fast steady state from the dynamic!!!
 % then build the bgp/static system
 %---------------------------------------------------
@@ -535,7 +541,8 @@ dictionary.routines=routines;
 
 dictionary.occurrence=occurrence;
 
-dictionary.fast_sstate_occurrence=fast_sstate_occurrence;
+dictionary.fast_sstate_occurrence=struct('y',fast_sstate_occurrence,...
+    'param',fast_sstate_occurrence_params);
 
 dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,logical_incidence);
 
