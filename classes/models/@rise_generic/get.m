@@ -27,23 +27,23 @@ function [Reply,retcode]=get(obj,PropertyName)
 %   - **'trend'|'growth'|'bgp'** [char]: balanced growth path. It is
 %   also possible to further taylor the output:
 %       - 'trend' | 'trend(default)' | 'growth' |
-%       'growth(default)' | 'bgp' | 'bgp(default)' 
+%       'growth(default)' | 'bgp' | 'bgp(default)'
 %       will give the same result (default) result
 %       - '...(struct)' will return the BGP in vector of structures,
-%       where each structure is a separate regime 
+%       where each structure is a separate regime
 %       - '...(cell)' will return the BGP in a cell array in which
 %       the first column is the list of variables and the subsequent
-%       columns are the different regimes. 
+%       columns are the different regimes.
 %  N.B. For linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
 %   variables the BGP is x_t/x_{t-1}
 %
 %   - **'sstate'|'steadystate'|'steady_state'** [char]: steady state. It is
 %   also possible to further taylor the output:
 %       - 'sstate' | 'sstate(default)' | 'steadystate' |
-%       'steadystate(default)' | 'steady_state' | 'steady_state(default)' 
+%       'steadystate(default)' | 'steady_state' | 'steady_state(default)'
 %       will give the same result (default) result
 %       - '...(struct)' will return the sstates in vector of structures,
-%       where each structure is a separate regime 
+%       where each structure is a separate regime
 %       - '...(cell)' will return the sstates in a cell array in which
 %       the first column is the list of variables and the subsequent
 %       columns are the different regimes.
@@ -53,16 +53,16 @@ function [Reply,retcode]=get(obj,PropertyName)
 %       - 'parameters'|'parameters(default)'|'par_vals'|'par_vals(default)'
 %       will give the same result (default) result
 %       - '...(struct)' will return the parameters in vector of structures,
-%       where each structure is a separate regime 
+%       where each structure is a separate regime
 %       - '...(cell)' will return the parameters in a cell array in which
 %       the first column is the list of the parameters and the subsequent
-%       columns are the different regimes. 
+%       columns are the different regimes.
 %
 %   - **'par_list'** [char]: list of parameters. Instead of the full list,
 %   a sub-list or its complement (using a "~" sign in from of the
-%   attribute) can also be queried: 
+%   attribute) can also be queried:
 %       - '...(switching)' : list of parameters that are switching
-%       - '...(trans_prob)' : list of transition probability parameters 
+%       - '...(trans_prob)' : list of transition probability parameters
 %       - '...(measurement_error)' : list of measurement-error parameters
 %       - '...(in_use)' : list of parameters that are in use
 %
@@ -70,7 +70,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %   - **'endo_list'** [char]: list of the endogenous variables. Instead of
 %   the full list, a sub-list or its complement (using a "~" sign in from
-%   of the attribute) can also be queried: 
+%   of the attribute) can also be queried:
 %       - '...(lagrange_multiplier)' : Lagrange multipliers for optimal
 %       policy models
 %       - '...(static)': static variables or variables appearing only
@@ -101,7 +101,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %   - **'exo_list'** [char]: list of exogenous variables. Instead of the
 %   full list, a sub-list or its complement (using a "~" sign in from of
-%   the attribute) can also be queried: 
+%   the attribute) can also be queried:
 %       - '...(observed)' : list of exogenous variables that are observed
 %       - '...(in_user)' : list of exogenous variables that appear in the
 %       model block
@@ -110,7 +110,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %   - **'obs_list'** [char]: list of observable variables. Instead of the
 %   full list, a sub-list or its complement (using a "~" sign in from of
-%   the attribute) can also be queried: 
+%   the attribute) can also be queried:
 %       - '...(endogenous)' : list of observable variables that are
 %       endogenous.
 %
@@ -160,7 +160,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 % See also:
 
-% TODO: 
+% TODO:
 % create a separate get function for dsge
 % ,'mean','median','post_sim_mode',,
 
@@ -231,14 +231,24 @@ elseif any(strcmpi(PropertyName,{'chain_tex','regime_tex','state_tex'}))
         Reply.(name_item{iname_})=tex_item{iname_};
     end
     
-elseif any(strcmpi(PropertyName,{'tex','description'}))
+elseif strncmpi(PropertyName,'tex',3)||...
+        strncmpi(PropertyName,'description',11)
     Reply=struct();
     items={'par_tex','endo_tex','exo_tex','chain_tex','regime_tex','state_tex'};
     for iii=1:numel(items)
         [Replyi]=get(obj,items{iii});
         Reply=utils.miscellaneous.mergestructures(Reply,Replyi);
     end
-    
+    lp=find(PropertyName=='(');
+    rp=find(PropertyName==')');
+    klass=isempty(lp)+2*isempty(rp);
+    switch klass
+        case 0
+            Reply=reprocess_description(struct2cell(Reply),...
+                PropertyName(lp+1:rp-1),fieldnames(Reply));
+        case {1,2}
+            error('left or right parenthesis missing')
+    end
 elseif strcmpi(PropertyName,'state_vars')
     Reply=load_state_variables();
     
@@ -468,6 +478,9 @@ end
                 if strcmp(item,'stationary') && strcmpi(type,'endogenous')
                     too_small=1e-10;
                     mygovern=stationary_index(obj,too_small);
+                elseif strcmp(PropertyName(proplength-2:proplength),'tex')
+                    Reply=reprocess_description(Reply,item,obj.(type).name);
+                    return
                 else
                     disp(strrep(ff,'is_',''))
                     error(['"',item,'" is not a valid property. The valid ',...
@@ -479,12 +492,27 @@ end
             end
             Reply=Reply(mygovern);
         elseif strcmp(type2,'tex_name')
-            tmp=Reply;
             vnames=obj.(type).name;
+            Reply=reprocess_description(Reply,'decoy',vnames);
+        end
+    end
+end
+
+function Reply=reprocess_description(Reply,type_,vnames)
+switch type_
+    case 'math'
+        Reply=regexprep(Reply,'[^#]*#','');
+    case 'long'
+        Reply=regexprep(Reply,'#.*','');
+    case 'decoy'
+        % don't do anything
+    otherwise
+        error('valid extensions of tex are "math" and "long"')
+end
+            tmp=Reply;
             Reply=struct();
             for ivar=1:numel(vnames)
                 Reply.(vnames{ivar})=tmp{ivar};
             end
-        end
-    end
+
 end
