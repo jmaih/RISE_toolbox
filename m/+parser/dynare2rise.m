@@ -45,7 +45,11 @@ riseFileName = strtrim(riseFileName);
 
 % read input file
 %-----------------
-raw_code = read_file();
+raw_code = read_file(dynFileName);
+
+% insert all subfiles
+%--------------------
+insert_all_subfiles();
 
 % remove block comments
 %-----------------------
@@ -188,7 +192,11 @@ write_parameter_file()
         
         express=['(?<name>\<',parser.cell2matize(par_list),'\>)\s*=(?<value>[^;]+);'];
         
-        str=regexp(rise_code,express,'names');
+        % first delete all places where equalities can occur i.e. model and
+        % steady_state_model blocks
+        tmp=regexprep(rise_code,'(model|steady_state_model)\s*(.*?)end;','');
+        
+        str=regexp(tmp,express,'names');
                 
         pnames={str.name};
         
@@ -209,10 +217,14 @@ write_parameter_file()
         paramFileName=regexprep(riseFileName,'(\w+)\.\w+','$1_params');
         
         manualAdjust=['% Remarks: ',sprintf('\n'),...
-            '% - Only the parameters and shocks variances or ',sprintf('\n'),...
+            '% - The parameters and shocks variances or ',sprintf('\n'),...
             '%   standard deviations found in the dynare file are assigned. ',...
             sprintf('\n'),...
-            '% - RISE will set all parameters without a value to nan'];
+            '% - Shock standard deviations not assigned in the ',sprintf('\n'),...
+            '%   dynare file get a value of 0 following dynare''s convention',...
+            sprintf('\n'),...
+            '% - RISE will set all other parameters without a value to nan'
+            ];
         
         code=[sprintf('function p=%s()\n%s\n\np=struct();\n',...
             paramFileName,manualAdjust),...
@@ -276,6 +288,11 @@ write_parameter_file()
                 pvals=[pvals,shock_stdev];
                 
             end
+            
+            % set to zero the shocks that have not been assigned
+            not_assigned_shocks=new_par_list(~ismember(new_par_list,pnames));
+            pnames=[pnames,not_assigned_shocks];
+            pvals=[pvals,repmat({'0'},1,numel(not_assigned_shocks))];
             
         end
 
@@ -586,7 +603,41 @@ write_parameter_file()
         
     end
 
-    function raw_code = read_file()
+    function insert_all_subfiles()
+        
+        do_import=@import_engine; %#ok<NASGU>
+        
+        patt='@#\s*include\s*"([^"]+)"';
+        
+        repl='${do_import($1)}';
+        
+        while true
+            
+            mm=regexp(raw_code,patt,'match','once');
+            
+            if isempty(mm)
+                
+                break
+                
+            end
+            
+            raw_code=regexprep(raw_code,patt,repl);
+            
+        end
+        
+        function c=import_engine(fname)
+            
+            c= read_file(fname);
+            
+            c=[char(10),c,char(10)];
+            
+        end
+        
+    end
+
+end
+
+    function raw_code = read_file(dynFileName)
         
         fid = fopen(dynFileName,'r');
         
@@ -609,6 +660,4 @@ write_parameter_file()
         fclose(fid);
         
     end
-
-end
 
