@@ -657,7 +657,7 @@ classdef mcf < handle
             largest=ff==max(ff);
             largest=find(largest);
             if numel(largest)>1
-                disp([parname,' has more than one location with largest distance'])
+%                 disp([parname,' has more than one location with largest distance'])
                 largest=largest(1);
             end
             Dn=ff(largest);
