@@ -142,7 +142,7 @@ hasname= ~isempty(DefaultOptions.saveas) && ischar(DefaultOptions.saveas);
 
 newname='';
 if logic
-    newname=[strrep(filename_,'+''_'),'_expanded.dsge'];
+    newname=[strrep(filename_,'+','_'),'_expanded.dsge'];
 elseif hasname
     newname=DefaultOptions.saveas;
     thedot=strfind(newname,'.');

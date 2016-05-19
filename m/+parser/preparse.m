@@ -119,6 +119,8 @@ if isempty(rawfile)
     
 end
 
+remove_space=@(x)x(~isspace(x));
+
 if isempty(output),output=cell(0,3);end
 
 if isempty(has_macro),has_macro=false;end

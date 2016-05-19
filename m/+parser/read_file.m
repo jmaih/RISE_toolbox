@@ -28,6 +28,10 @@ if isempty(FileName)
     
 end
 
+FileName=char2struct(FileName);
+
+% safeguard against the include files that sends out char instead of struct
+
 for ifile=1:numel(FileName)
     
     RawFile_i=reading_engine(FileName(ifile));
@@ -35,6 +39,12 @@ for ifile=1:numel(FileName)
     RawFile=[RawFile;RawFile_i];
     
 end
+
+    function st=char2struct(st)
+        if ischar(st)
+            st=regexp(st,'(?<fname>\w+)(?<ext>\.\w+)','names');
+        end        
+    end
 
 end
 
