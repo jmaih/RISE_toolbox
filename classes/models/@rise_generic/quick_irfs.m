@@ -73,7 +73,7 @@ if isempty(shock_list)
     
 end
 
-description=get(m,'tex');
+description=get(m,'tex(long)');
 
 nshocks=numel(shock_list);
 
@@ -85,9 +85,49 @@ for ishock=1:nshocks
     
     shocktex=description.(shock_name);
     
-    fig_title=['Impulse responses to a ',shocktex];
+    irf_batch=myirfs.(shock_name);
     
-    hfig{ishock}=quick_plots(m,myirfs.(shock_name),var_list,fig_title,r0c0,xrange);
+    regime_names=fieldnames(irf_batch);
+    
+    test=regexp(regime_names,'regime_\d+','match');
+    
+    test=[test{:}];
+    
+    is_multiple_regimes=~isempty(test) && ...
+        all(cellfun(@(x)~isempty(x),test,'uniformOutput',true));
+    
+    if is_multiple_regimes
+        
+        nregs=numel(regime_names);
+        
+        tmp=cell(1,nregs);
+        
+        for ireg=1:nregs
+            
+            tmp{ireg}=irf_batch.(regime_names{ireg});
+            
+            regime_names{ireg}=['(',regime_names{ireg},')'];
+            
+        end
+        
+        irf_batch=tmp;
+        
+    else
+        
+        nregs=1;
+        
+        regime_names={''};
+        
+        irf_batch={irf_batch};
+        
+    end
+    
+    for ireg=1:nregs
+        
+        fig_title=['Impulse responses to a ',shocktex,regime_names{ireg}];
+        
+        hfig{ishock,ireg}=quick_plots(m,irf_batch{ireg},var_list,fig_title,r0c0,xrange);
+    end
     
 end
 

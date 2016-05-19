@@ -89,7 +89,7 @@ r0=r0c0(1);
 
 c0=r0c0(2);
 
-description=get(m,'tex');
+description=get(m,'tex(long)');
 
 hfig=utils.plot.multiple(@plotfunc,var_list,fig_title,r0,c0);
 
