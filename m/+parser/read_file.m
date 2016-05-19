@@ -28,7 +28,21 @@ if isempty(FileName)
     
 end
 
-fid = fopen(FileName);
+for ifile=1:numel(FileName)
+    
+    RawFile_i=reading_engine(FileName(ifile));
+    
+    RawFile=[RawFile;RawFile_i];
+    
+end
+
+end
+
+function RawFile=reading_engine(FileName)
+
+RawFile=cell(0,1);
+
+fid = fopen([FileName.fname,FileName.ext]);
 
 iter=0;
 
@@ -78,7 +92,7 @@ while 1
         
     end
     
-    rawline={rawline,FileName,iter}; %#ok<*AGROW>
+    rawline={rawline,FileName.fname,iter}; %#ok<*AGROW>
     
     RawFile=[RawFile;rawline];
     

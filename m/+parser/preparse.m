@@ -89,46 +89,6 @@ if ~isstruct(parsing_definitions)
     
 end
 
-valid_extensions={'rs','rz','dsge'};
-
-FileName(isspace(FileName))=[];
-
-loc=strfind(FileName,'.');
-
-if isempty(loc)
-    
-    for iext=1:numel(valid_extensions)
-        
-        found= exist([FileName,'.',valid_extensions{iext}],'file');
-        
-        if found
-            
-            break
-            
-        end
-        
-    end
-    
-else
-    
-    ext=FileName(loc+1:end);
-    
-    if ~ismember(ext,valid_extensions)
-        
-        error(['file extension ',ext,' is not recognized by RISE'])
-        
-    end
-    
-    found= exist(FileName,'file');
-    
-end
-
-if ~found
-    
-    error([mfilename,':: ',FileName,'.rs or ',FileName,'.rz  or ',FileName,'.dsge not found'])
-    
-end
-
 % first sweep: read the file, and remove comments and stamp the lines
 RawFile=parser.read_file(FileName);
 
@@ -591,7 +551,7 @@ switch theLeader
             
             if numel(ellsse)==1
                 
-                if ~strcmp(theFollowers{end},'end')
+                if ~strcmp(types{end},'end')
                     
                     error('for "if", "else" must appear right before "end"')
                     

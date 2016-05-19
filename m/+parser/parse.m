@@ -10,8 +10,10 @@ function dictionary=parse(FileName,varargin)
 % Inputs
 % -------
 %
-% - **FileName** [char]: name of the model file. The file should have
-% extensions rs, rz or dsge
+% - **FileName** [char|cellstr]: if "char", name of the model file. The
+% file should have extensions rs, rz or dsge. If "cellstr" each cell
+% contains the name of a separate model file. The files are then meant to
+% be combined into one single model.
 %
 % - **varargin** []: pairwise arguments with possiblities as follows:
 %   - **parameter_differentiation** [true|{false}]: compute or not
@@ -97,30 +99,37 @@ parameter_differentiation=DefaultOptions.parameter_differentiation;
 %% set various blocks
 
 % first output: the dictionary.filename
-
-FileName(isspace(FileName))=[];
-loc=strfind(FileName,'.');
 valid_extensions={'.rs','.rz','.dsge'};
-if isempty(loc)
-    dictionary.filename=FileName;
-    found=false;
-    iext=0;
-    while ~found && iext<numel(valid_extensions)
-        iext=iext+1;
-        found=exist([FileName,valid_extensions{iext}],'file');
-    end
-    if ~found
-        error([mfilename,':: ',FileName,'.rs or ',FileName,'.rz  or ',FileName,'.dsge not found'])
-    end
-    FileName=[FileName,valid_extensions{iext}];
-else
-    ext=FileName(loc:end);
-    if ~any(strcmp(ext,valid_extensions))
-        disp(valid_extensions)
-        error([mfilename,':: Input file is expected to have one of the above extenstions'])
-    end
-    dictionary.filename=FileName(1:loc-1);
+VE=parser.cell2matize(valid_extensions);
+FileName=regexprep(FileName,'\s*','');
+FileName=regexp(FileName,['(?<fname>\w+)(?<ext>',VE,'?)'],'names');
+if iscell(FileName)
+    FileName=[FileName{:}];
 end
+for id=1:numel(FileName)
+    if isempty(FileName(id).ext)
+        iext=0; found=false;
+        while ~found && iext<numel(valid_extensions)
+            iext=iext+1;
+            found=exist([FileName(id).fname,valid_extensions{iext}],'file');
+        end
+        if ~found
+            error([mfilename,':: ',FileName(id).fname,'.rs or ',...
+                FileName(id).fname,'.rz  or ',FileName(id).fname,'.dsge not found'])
+        end
+        FileName(id).ext=valid_extensions{iext};
+    else
+        if ~exist([FileName(id).fname,FileName(id).ext],'file')
+            error([mfilename,':: ',[FileName(id).fname,FileName(id).ext],' not found'])
+        end
+    end
+end
+
+filename_=strrep(parser.cell2matize({FileName.fname}),'|','+');
+filename_=strrep(filename_,'(','');
+filename_=strrep(filename_,')','');
+
+dictionary.filename=filename_;
 
 % read file and remove comments
 % RawFile=read_file(FileName,DefaultOptions.rise_flags);
@@ -133,8 +142,7 @@ hasname= ~isempty(DefaultOptions.saveas) && ischar(DefaultOptions.saveas);
 
 newname='';
 if logic
-    thedot=strfind(FileName,'.');
-    newname=[FileName(1:thedot-1),'_expanded.dsge'];
+    newname=[strrep(filename_,'+''_'),'_expanded.dsge'];
 elseif hasname
     newname=DefaultOptions.saveas;
     thedot=strfind(newname,'.');
