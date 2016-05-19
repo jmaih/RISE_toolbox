@@ -1087,6 +1087,7 @@ if isempty(obj.steady_state_2_blocks_optimization)
     
     auxcode=auxiliary_memoizer(...
         obj.routines.shadow_steady_state_auxiliary_eqtns,...
+        obj.routines.shadow_steady_state_auxiliary_growth_rate_eqtns,...
         planner_routines,...
         obj.endogenous.is_lagrange_multiplier);
     
@@ -1221,6 +1222,11 @@ if obj.options.solve_bgp
         
     end
     
+    % auxiliary equation for solving for growth rates
+    %-------------------------------------------------
+    
+    sssae_gr=auxil_growth_rates(sssae,is_log_var);
+    
 else
     
     % remove the time subscripts
@@ -1229,6 +1235,8 @@ else
     static=regexprep(static,expr,'');
     
     sssae=regexprep(sssae,expr,'');
+    
+    sssae_gr={};
     
 end
 
@@ -1277,6 +1285,11 @@ obj.routines.shadow_steady_state_auxiliary_eqtns=...
     struct('code',cell2mat(sssae(:)'),...
     'argins',{list},...
     'argouts',{{'y'}});
+
+obj.routines.shadow_steady_state_auxiliary_growth_rate_eqtns=...
+    struct('code',cell2mat(sssae_gr(:)'),...
+    'argins',{list},...
+    'argouts',{{'g'}});
 
     function []=do_jacobian()
         
@@ -1336,6 +1349,52 @@ obj.routines.shadow_steady_state_auxiliary_eqtns=...
             
             out=['(y(',vp,')/g(',vp,')^',digit,')'];
             
+        end
+        
+    end
+
+end
+
+
+
+function sssae=auxil_growth_rates(sssae,islogvar)
+
+myreplace1=@just_neat1; %#ok<NASGU>
+
+patt1='y\((\d+)\)=([^;]+);';
+
+repl1='${myreplace1($1,$2)}';
+
+sssae=regexprep(sssae,patt1,repl1);
+
+    function out=just_neat1(vn,formule)
+        
+        myreplace2=@just_lag_it;  %#ok<NASGU>
+        
+        patt2='y\((\d+)\)';
+        
+        repl2='${myreplace2($1)}';
+        
+        newFormula=regexprep(formule,patt2,repl2);
+        
+        if islogvar(str2double(vn))
+            % ratio
+            out=['g(',vn,')=(',formule,')/(',newFormula,');'];
+        else
+            % subtract
+            out=['g(',vn,')=',formule,'-(',newFormula,');'];
+        end
+        
+    end
+
+    function out=just_lag_it(vn)
+        
+        if islogvar(str2double(vn))
+            % ratio
+            out=['(y(',vn,')/g(',vn,'))'];
+        else
+            % subtract
+            out=['(y(',vn,')-g(',vn,'))'];
         end
         
     end
@@ -1459,7 +1518,7 @@ end
 
 
 
-function auxcode=auxiliary_memoizer(aux_ssfunc,planner_routines,is_lagr_mult)
+function auxcode=auxiliary_memoizer(aux_ssfunc,aux_ss_gr_func,planner_routines,is_lagr_mult)
 
 auxcode=@auxiliary_evaluation;
 
@@ -1486,7 +1545,7 @@ auxcode=@auxiliary_evaluation;
             
             if is_growth
                 
-                g=utils.code.evaluate_functions(aux_ssfunc,g,g,x,p,d);
+                g=utils.code.evaluate_functions(aux_ss_gr_func,y,g,x,p,d);
                 
             end
             
