@@ -20,11 +20,17 @@ newpatt_d=['\<',endo_names_,'\>(\(|\{)((\+|\-)?\d+)(\)|\})'];
 
 wedge='_____';
 
-for i1=1:numel(xin)
+for i1=1:size(xin,1)
+    
+    rawline=xin{i1,2};
+    
+    file_name=xin{i1,3};
+    
+    line_number=xin{i1,1};
     
     while 1
         
-        [start_index,end_index]=regexp(xin{i1},trigger_patt,'start','end');
+        [start_index,end_index]=regexp(rawline,trigger_patt,'start','end');
         
         if isempty(start_index)
             
@@ -38,13 +44,13 @@ for i1=1:numel(xin)
         
         depth=0;
         
-        left=xin{i1}(1:start_index-1);
+        left=rawline(1:start_index-1);
         
-        right=xin{i1}(end_index+1:end);
+        right=rawline(end_index+1:end);
         
         start=find_closing();
         
-        stud=xin{i1}(start_index:end_index-1);
+        stud=rawline(start_index:end_index-1);
         
         middle=right(1:start-1);
         
@@ -56,7 +62,9 @@ for i1=1:numel(xin)
         
         process_matter();
         
-        xin{i1}=[left,main_matter,right];
+        rawline=[left,main_matter,right];
+        
+        xin{i1,2}=rawline;
         
     end
     
@@ -92,7 +100,8 @@ end
         
         if ~closingFound
             
-            error('Missing closing for pseudo function')
+            error(['Missing closing for pseudo function in ',...
+                 file_name,' at line ',sprintf('%0.0f',line_number)])
             
         end
         
@@ -116,7 +125,8 @@ end
             
             if ~isfinite(n)||(floor(n)~=ceil(n))
                 
-                error(['wrong specification of integer when using ',stud])
+                error(['wrong specification of integer when using ',stud,...
+                     'in ',file_name,' at line ',sprintf('%0.0f',line_number)])
                 
             end
             
@@ -174,7 +184,9 @@ end
                 
             otherwise
                 
-                error('Report this error to the forum or contact junior.maih@gmail.com')
+                error(['Problem in ',file_name,' at line ',...
+                    sprintf('%0.0f',line_number),' Please report this ',...
+                    'error to the forum or contact junior.maih@gmail.com'])
                 
         end
         
@@ -224,7 +236,8 @@ end
         
         if ~isfinite(d)||(floor(d)~=ceil(d))
             
-            error(['wrong specification of integer when using ',stud])
+            error(['wrong specification of integer when using ',stud,...
+                 'in ',file_name,' at line ',sprintf('%0.0f',line_number)])
             
         end
         

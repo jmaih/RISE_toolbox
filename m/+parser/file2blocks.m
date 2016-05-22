@@ -270,8 +270,9 @@ end
 
 % replace pseudofunctions in the model blocks
 %--------------------------------------------
-blocks(modelBlock).listing(:,2)=parser.process_keywords(...
-    blocks(modelBlock).listing(:,2),endovar_names);
+blocks(modelBlock).listing=parser.process_keywords(...
+    blocks(modelBlock).listing,endovar_names);
+
 %--------------------------------------------------------------------------
 
     function block=construct_list(block,rawline_,tokk)
