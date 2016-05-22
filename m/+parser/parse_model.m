@@ -1,26 +1,45 @@
 function [Model_block,dictionary,blocks]=parse_model(dictionary,blocks)
+
 current_block_id=find(strcmp('model',{blocks.name}));
+
 more_string='';
+
 if dictionary.definitions_inserted
+
     more_string='(& possibly definitions insertions)';
+
 end
+
 if dictionary.parse_debug
+
     profile off
+
     profile on
+
 else
+    
     tic
+
 end
+
 [Model_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'model');
+
 if dictionary.parse_debug
+
     profile off
     profile viewer
     keyboard
+
 else
+    
     disp([mfilename,':: Model parsing ',more_string,'. ',sprintf('%0.4f',toc),' seconds'])
+
 end
 
 if isempty(Model_block)
+
     error([mfilename,':: no model declared'])
+
 end
 % remove item from block
 blocks(current_block_id)=[];
@@ -34,9 +53,15 @@ blocks(current_block_id)=[];
 [Model_block,dictionary]=parser.hybrid_expectator(Model_block,dictionary);
 
 neqtns=sum(strcmp(Model_block(:,end-1),'normal'));
+
 nendo=numel(dictionary.endogenous);
+
 if nendo<neqtns
+
     error('More equations than the number of endogenous variables')
+
 end
+
 dictionary.is_deficient_eqtns=neqtns<nendo;
+
 end
