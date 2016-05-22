@@ -130,6 +130,7 @@ obsBlock=strcmp('observables',{blocks.name});
 obsVars = {blocks(obsBlock).listing.name};
 paramBlock=strcmp('parameters',{blocks.name});
 param_names={blocks(paramBlock).listing.name};
+modelBlock=strcmp('model',{blocks.name});
 
 if ~isempty(levelvar_names) 
     
@@ -267,6 +268,10 @@ for iparam=1:numel(param_names)
     end
 end
 
+% replace pseudofunctions in the model blocks
+%--------------------------------------------
+blocks(modelBlock).listing(:,2)=parser.process_keywords(...
+    blocks(modelBlock).listing(:,2),endovar_names);
 %--------------------------------------------------------------------------
 
     function block=construct_list(block,rawline_,tokk)

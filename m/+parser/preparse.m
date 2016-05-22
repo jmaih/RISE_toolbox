@@ -131,8 +131,8 @@ process_include()
 
 [rawfile,has_macro]=process_flow_controls(rawfile,definitions,has_macro);
 
-% process keywords last
-rawfile(:,1)=process_keywords(rawfile(:,1));
+% % process keywords last
+% rawfile(:,1)=process_keywords(rawfile(:,1));
 
 output=[output;rawfile];
 
@@ -622,6 +622,7 @@ end
 
 %--------------------------------------------------------------------------
 
+%{
 function xout=process_keywords(xin)
 
 myreplace=@replacer; %#ok<NASGU>
@@ -705,4 +706,5 @@ xout=regexprep(xin,patt,'${myreplace($1,$2,$3)}');
     end
 
 end
+%}
 
