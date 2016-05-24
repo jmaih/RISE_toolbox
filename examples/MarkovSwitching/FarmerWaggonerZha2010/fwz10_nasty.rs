@@ -12,10 +12,6 @@ parameters a_tp_1_2, a_tp_2_1
 % we declare the switching parameters
 parameters(a,2) betta, delta, phi, rho
 
-% This is the model block. The linear statement in parenthesis is useless
-% the parser won't even read it. I just leave it there to remind people that
-% the procedure will not do linearization for you as more elaborate procedures
-% like dynare would.
-model(linear)
+model
 	phi*PAI=PAI(+1)+delta*PAI(-1)+betta*R;
 	R=rho*R(-1)+E;
