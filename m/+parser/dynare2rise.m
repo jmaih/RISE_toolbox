@@ -23,9 +23,9 @@ paramFileName='';
 if isempty(do_paramFile)
     
     do_paramFile=true;
-
-end
     
+end
+
 
 if isempty(riseFileName)
     
@@ -46,6 +46,11 @@ riseFileName = strtrim(riseFileName);
 % read input file
 %-----------------
 raw_code = read_file(dynFileName);
+
+% Convert char(10) to white space
+%--------------------------------
+eol=char(10);% sprintf('\n')
+% tab=char(9);% sprintf('\t')
 
 % insert all subfiles
 %--------------------
@@ -91,11 +96,6 @@ rise_code=regexprep(rise_code,'(#\s*)\<endif\>','$1end');
 % add space to all # signs
 %----------------------------
 rise_code=strrep(rise_code,'#','# ');
-
-% Convert char(10) to white space
-%--------------------------------
-eol=char(10);% sprintf('\n')
-tab=char(9);% sprintf('\t')
 
 % remove multiple white characters
 %----------------------------------
@@ -154,21 +154,27 @@ add_stdev_to_model()
 %----------------------------------------
 shocks_block = extract_other_blocks('shocks;');
 
-    match = regexpi(shocks_block,'corr\s*\w+\s*,\s*\w+\s*=.*?;','match');
+% Looking for covariances: shocks section
+%----------------------------------------
+estim_block = extract_other_blocks('estimated_params;');
+
+est=extract_estimation(estim_block,stderr_name);
+
+match = regexpi(shocks_block,'corr\s*\w+\s*,\s*\w+\s*=.*?;','match');
+
+for ii = 1 : length(match)
     
-    for ii = 1 : length(match)
-        
-        header = [header,sprintf('Cross-covariance ignored:\n  %s\n',...
-            match{ii})]; %#ok<AGROW>
-        
-    end
+    header = [header,sprintf('Cross-covariance ignored:\n  %s\n',...
+        match{ii})]; %#ok<AGROW>
+    
+end
 
 % Create and save RISE code.
 %---------------------------
 timestamp = datestr(now);
 
 header = [header,sprintf('\n Done %s.',timestamp)];
-        
+
 recreate_code();
 
 write_parameter_file()
@@ -197,7 +203,7 @@ write_parameter_file()
         tmp=regexprep(rise_code,'(model|steady_state_model)\s*(.*?)end;','');
         
         str=regexp(tmp,express,'names');
-                
+        
         pnames={str.name};
         
         % taking care of recursive computations
@@ -216,7 +222,9 @@ write_parameter_file()
         
         paramFileName=regexprep(riseFileName,'(\w+)\.\w+','$1_params');
         
-        manualAdjust=['% Remarks: ',sprintf('\n'),...
+        manualAdjust=[regexprep(['% ',header],'(\n)','$1%'),sprintf('\n'),...
+            '% ',sprintf('\n'),...
+            '% Remarks: ',sprintf('\n'),...
             '% - The parameters and shocks variances or ',sprintf('\n'),...
             '%   standard deviations found in the dynare file are assigned. ',...
             sprintf('\n'),...
@@ -226,18 +234,43 @@ write_parameter_file()
             '% - RISE will set all other parameters without a value to nan'
             ];
         
-        code=[sprintf('function p=%s()\n%s\n\np=struct();\n',...
-            paramFileName,manualAdjust),...
-            code];
+        codest=['priors=struct();',eol,eol];
         
-%         code = [
-%             regexprep(['%',header],'(\n)','$1%'),...
-%             code
-%             ];
+        for ip=1:numel(est)
+            
+            par_i=est(ip);
+            
+            newline=sprintf('priors.%s={%s, %s, %s, ''%s''',...
+                par_i.name,par_i.start,par_i.mean,par_i.sd,par_i.distr);
+            
+            if ~isempty(par_i.lb)
+                
+                newline=sprintf('%s, %s',newline,par_i.lb);
+                
+                if ~isempty(par_i.ub)
+                    
+                    newline=sprintf('%s, %s',newline,par_i.ub);
+                    
+                end
+                
+            end
+            
+            codest=[codest,newline,'};',eol,eol]; %#ok<AGROW>
+            
+        end
+        
+        code=[sprintf('function [p,priors]=%s()\n%s\n\np=struct();\n',...
+            paramFileName,manualAdjust),...
+            code,eol,eol,codest];
+        
+        %         code = [
+        %             regexprep(['%',header],'(\n)','$1%'),...
+        %             code
+        %             ];
         
         parser.write2file(code,[paramFileName,'.m'])
         
-        function shock_standard_deviations()           
+        function shock_standard_deviations()
             % match variances
             pat=['\<var\>\s+(?<shock>',parser.cell2matize(exo_list),...
                 ')\s*=(?<variance>[^;]+);'];
@@ -295,7 +328,7 @@ write_parameter_file()
             pvals=[pvals,repmat({'0'},1,numel(not_assigned_shocks))];
             
         end
-
+        
     end
 
     function [planner_block,isCommitment,isDiscretion,discount]=extract_planner_objective()
@@ -340,8 +373,8 @@ write_parameter_file()
         
         isCommitment=~isempty(strfind(rise_code,'ramsey_policy'));
         
-            isDiscretion=false;
-            
+        isDiscretion=false;
+        
         if ~isCommitment
             
             isDiscretion=~isempty(strfind(rise_code,'discretionary_policy'));
@@ -407,7 +440,7 @@ write_parameter_file()
             list=extract_list_of_names();
             
         end
-                
+        
         blk=remove_declaration_anchors(blk);
         
         function x=remove_declaration_anchors(x)
@@ -418,7 +451,7 @@ write_parameter_file()
         
         function list=extract_list_of_names()
             
-            tmp=blk; 
+            tmp=blk;
             
             description_removal()
             
@@ -547,18 +580,18 @@ write_parameter_file()
                 planner_block,eol,eol
                 ];
         end
-
+        
         rise_code = strrep(rise_code,';',sprintf(';\n\n'));
         
         rise_code = [
-            regexprep(['%',header],'(\n)','$1%'),eol,eol,...
+            regexprep(['% ',header],'(\n)','$1%'),eol,eol,...
             rise_code
             ];
         
         % remove the semicolon in lines starting with @#
         %-----------------------------------------------------------
         rise_code = regexprep(rise_code,'(@\s*#[^\n]+);','$1');
-
+        
         
         parser.write2file(rise_code,riseFileName);
         
@@ -593,7 +626,7 @@ write_parameter_file()
         end
         
         list=regexprep(list,'(;|¤)\s+','$1');
-                
+        
         % add empty line at end of @#...
         patt='(@#\s*[^¤]+\s*)¤'; repl='$1\n\n';
         
@@ -629,7 +662,7 @@ write_parameter_file()
             
             c= read_file(fname);
             
-            c=[char(10),c,char(10)];
+            c=[eol,c,eol];
             
         end
         
@@ -637,27 +670,219 @@ write_parameter_file()
 
 end
 
-    function raw_code = read_file(dynFileName)
+function raw_code = read_file(dynFileName)
+
+fid = fopen(dynFileName,'r');
+
+if fid == -1
+    
+    if exist(dynFileName,'file') == false
         
-        fid = fopen(dynFileName,'r');
+        error('Unable to find ''%s''.',dynFileName);
         
-        if fid == -1
+    else
+        
+        error('Unable to open ''%s'' for reading.',dynFileName);
+        
+    end
+    
+end
+
+raw_code = transpose(fread(fid,'*char'));
+
+fclose(fid);
+
+end
+
+function est=extract_estimation(estim_block,std_type)
+
+% remove rows starting with corr
+corr_rows=regexp(estim_block,'corr[^;]+;','match');
+
+estim_block=regexprep(estim_block,'corr[^;]+;','');
+
+splits=regexp(estim_block,';','split');
+
+good=cellfun(@(x)~isempty(x),splits,'uniformOutput',true);
+
+splits=splits(good);
+
+n=numel(splits);
+
+est=struct('name',{},'start',{},'lb',{},'ub',{},'distr',{},...
+    'mean',{},'sd',{},'p3',{},'p4',{},'scale',{},'is_idistr_shift',{});
+
+fields=fieldnames(est);
+
+est0=cell(n,10);
+
+% shiftBoundsDistr={'normal','gamma','inv_gamma','uniform','beta'};
+
+for irow=1:n
+    
+    rawline=regexp(splits{irow},',','split');
+    
+    est0(irow,1)=rawline(1);
+    
+    rawline(1)=[];
+    
+    iter=1;
+    
+    if ischar(rawline{1})
+        
+        iter=5;
+        
+    else
+        
+        iter=iter+1;
+        
+    end
+    
+    while ~isempty(rawline)
+        
+        est0{irow,iter}=rawline{1};
+        
+        rawline(1)=[];
+        
+        iter=iter+1;
+        
+    end
+    
+    if isempty(est0{irow,2})
+        
+        est0{irow,2}=est0{irow,6};
+        
+    end
+    
+    if isempty(est0{irow,5})
+        
+        est0{irow,5}='uniform';
+        
+    else
+        
+        est0{irow,5}=strrep(lower(est0{irow,5}),'_pdf','');
+        
+    end
+    
+    est(irow).name=est0{irow,1};
+    
+    est(irow).start=est0{irow,2};
+    
+    est(irow).lb=est0{irow,3};
+    
+    est(irow).ub=est0{irow,4};
+    
+    est(irow).distr=est0{irow,5};
+    
+    est(irow).mean=est0{irow,6};
+    
+    est(irow).sd=est0{irow,7};
+    
+    est(irow).p3=est0{irow,8};
+    
+    est(irow).p4=est0{irow,9};
+    
+    est(irow).scale=est0{irow,10};
+    
+    est(irow).is_idistr_shift=false;
+    
+    est(irow)=process_one(est(irow));
+    
+end
+
+shifted=est([est.is_idistr_shift]);
+
+if ~isempty(shifted)
+    
+    warning(['RISE does not support beta distributions ',...
+        'with ranges outside [0,1]. Switching to a truncated ',...
+        'normal distribution for parameter(s): '])
+    
+    disp({shifted.name})
+    
+end
+
+
+    function x=process_one(x)
+        
+        x.name=process_name(x.name);
+        
+        for ifield=1:numel(fields)
             
-            if exist(dynFileName,'file') == false
+            ff=fields{ifield};
+            
+            if ~isempty(x.(ff))
                 
-                error('Unable to find ''%s''.',dynFileName);
-                
-            else
-                
-                error('Unable to open ''%s'' for reading.',dynFileName);
+                x.(ff)(isspace(x.(ff)))=[];
                 
             end
             
         end
         
-        raw_code = transpose(fread(fid,'*char'));
+        if ~isempty(x.p3) % any(strcmp(x.distr,shiftBoundsDistr)) && 
+            
+            x.lb=x.p3;
+            
+            if ~isempty(x.p4)
+                
+                x.ub=x.p4;
+                
+            end
+            
+        end
         
-        fclose(fid);
+        lb=str2double(x.lb);
+        
+        ub=str2double(x.ub);
+        
+        if ~isnan(lb)
+            
+            if (strcmp(x.distr,'gamma') && lb==0 && ub==inf)||...
+                    (strcmp(x.distr,'beta') && lb==0 && ub==1)
+                
+                x.lb=[];
+                
+                x.ub=[];
+                
+                
+            elseif (strcmp(x.distr,'beta') && ~((lb>=0 && lb<=1) && (ub<=1)))
+                
+                x.is_idistr_shift=true;
+                
+                x.distr='normal';
+                
+            end
+            
+            
+        end
+        
+        if (strcmp(x.distr,'inv_gamma') && strcmpi(x.sd,'inf'))
+            
+            warning(['RISE does not understand inf ',...
+                'changing the prior standard deviation of parameter ',...
+                x.name,' from inf to 4'])
+            
+            x.sd='4';
+            
+        end
+        
+        function name=process_name(name)
+            % get rid of any space before the name
+            name=regexp(name,'\w+.*','match');
+            
+            name=name{1};
+            
+            if strncmp(name,'stderr',6)
+                
+                name=[std_type,'_',name(8:end)];
+                
+                name(isspace(name))=[];
+                
+            end
+            
+        end
         
     end
+
+end
 
