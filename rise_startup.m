@@ -207,11 +207,11 @@ end
         l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
         logo={
             ' _____	  _  ____  _____'
-            '|  _  |  (_)|  __||  ___|   | Rationality In Switching Environments'
-            ['| (_) /  | || |__ | |___    |	Welcome to the ',vv.Name]
-            ['|  __ \\  | ||__  ||  ___|   |	Version: ',vv.Version]
-            ['| |  \\ \\ | | __| || |___    |	Date: ',vv.Date]
-            ['|_|   \\_\\|_||____||_____|   |	Tested with Matlab: ',vv.Release]
+            '|  _  |  (_)|  __||  ___|    |   Rationality In Switching Environments'
+            ['| (_) /  | || |__ | |___     |	  Welcome to the ',vv.Name]
+            ['|  __ \\  | ||__  ||  ___|    |	  Version: ',vv.Version]
+            ['| |  \\ \\ | | __| || |___     |	  Date: ',vv.Date]
+            ['|_|   \\_\\|_||____||_____|    |	  Tested with Matlab: ',vv.Release]
             };
         docs={
             ['* Check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
