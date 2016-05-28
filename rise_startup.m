@@ -204,7 +204,7 @@ end
             [' - Statistics toolbox: ',statistics_version]
             [' - ',MiKTeX,': ',miktex_version]
             };
-        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
+        l1 = '+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+';
         logo={
             ' _____	  _  ____  _____'
             '|  _  |  (_)|  __||  ___|   | Rationality In Switching Environments'
@@ -214,19 +214,19 @@ end
             ['|_|   \\_\\|_||____||_____|   |	Tested with Matlab: ',vv.Release]
             };
         docs={
-            ['* Please check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
+            ['* Check out the <a href="',strrep(html_doc,'\','\\'),'">html documentation</a>, ',...
             'or the <a href="',strrep(pdf_doc,'\','\\'),'">pdf documentation</a> ']
             };
         concerns={
-            '* For concerns, problems, suggestions and desideratas'
-            'please send email to this <a href="mailto:junior.maih@gmail.com">address</a>'
+            ['* Use the <a href="https://github.com/jmaih/RISE_toolbox/issues">',...
+            'forum</a> to post concerns, problems, suggestions and desideratas']
             '* Thank you in advance for your feedback !!!'
             };
         tmp=[
             l1
             logo
-            docs
             your_system
+            docs
             concerns
             ];
         if retcode
