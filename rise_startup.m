@@ -88,7 +88,8 @@ if USE_RISE_PRINT
                 matlab_version = [v.Version ' ' v.Release];
             case 'Optimization Toolbox'
                 optimization_version = [v.Version ' ' v.Release];
-            case 'Statistics Toolbox'
+            case {'Statistics Toolbox',...
+                    'Statistics and Machine Learning Toolbox'}
                 statistics_version = [v.Version ' ' v.Release];
             case 'RISE Toolbox'
                 rise_version = [v.Version ' ' v.Release];
