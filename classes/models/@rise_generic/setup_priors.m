@@ -56,7 +56,23 @@ function obj=setup_priors(obj,MyPriors,error_control)
 % See also: RISE_GENERIC/ESTIMATE, DSGE/ESTIMATE
 
 if nargin<3
+    
     error_control=[];
+    
+end
+
+nobj=numel(obj);
+
+if nobj>1
+    
+    for iobj=1:nobj
+        
+        obj(iobj)=setup_priors(obj(iobj),MyPriors,error_control);
+        
+    end
+    
+    return
+    
 end
 
 warnstate=warning('query','all');
