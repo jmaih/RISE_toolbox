@@ -1,15 +1,56 @@
 function plot_handle=plot(varargin)
-% H1 line
+% PLOT -- plots a rise time series
 %
 % Syntax
 % -------
 % ::
 %
+%   PLOT(Y) plots the time series vector or matrix Y against its date
+%
+%   PLOT(X,Y) plots the time series vector or matrix Y over the range given
+%   by X. X can take various forms and need not be of the same length or
+%   frequence as Y
+%     - a string of dates. e.g. X='1990:2000', X='1990Q1:2000Q1',
+%     X='1990m1:2000m2'
+%     - serial dates. e.g. X=date2serial('1990Q1):date2serial('2000Q1')
+%     X='1990m1:2000m2' 
+%     - If X is a scalar, disconnected line objects are created and
+%     plotted as discrete points vertically at X.
+%
+%   PLOT(...,Y,S) plots Y with the line types, symbols and colors specified
+%   in S, where S is a character string described in matlab's plot
+%   function.
+%
+%   PLOT(...,'nticks',k) plots the time series vector or matrix Y modifying
+%   the default number of ticks (k=8) in the x-axis.
+%
+%   PLOT(...,'date_format',A) Applies the date formats of Matlab.
+%      - A can be a character string, e.g. 'yyyy', 'yy', 'mmmyy', 'QQ-YY',
+%       'QQ', 'QQ-YYYY', etc.
+%      - A can be an integer between -1 and 31, again following Matlab's
+%       conventions.
+%
 % Inputs
 % -------
 %
+%   - **X** [char|serial date vector] : range over which to plot 
+%
+%   - **S** [char] : Matlab's line types, symbols and colors 
+%
+%   - **nticks** [integer|{8}] : number of tick marks on the x-axis 
+%
+%   - **vline** [char|cellstr|serial dates|{''}] : vertical line(s) e.g.
+%   'vline' = '2000Q1'= '2000Q1,2003Q2' must be in the same frequency as
+%   the database to be plotted
+%
+%   - **hline** [integer|{''}] : horizontal line(s) 'hline' =1, =[1 5.5 2]
+%
+%   - **logy** [true|{false}] : log the database or not 
+%
 % Outputs
 % --------
+%
+%   - **plot_handle** [scalar|vector] : handle to the plot
 %
 % More About
 % ------------
@@ -19,15 +60,8 @@ function plot_handle=plot(varargin)
 %
 % See also: 
 
-
 %     plot(X,db) plots time series db versus vector of dates X. X can be of
 %     multiple forms and need not be of the same length as db:
-%         - a string of dates. e.g. X='1990:2000' X='1990Q1:2000Q1'
-%         X='1990m1:2000m2' 
-%         - serial dates. e.g. X=date2serial('1990Q1):date2serial('2000Q1')
-%         X='1990m1:2000m2' 
-%         - If X is a scalar, disconnected line objects are created and
-%           plotted as discrete points vertically at X.
 %  
 %     plot(db) plots the columns of db versus the dates within db
 %     If db is complex, plot(db) is equivalent to plot(real(db),imag(db)).
