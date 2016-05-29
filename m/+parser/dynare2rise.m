@@ -119,7 +119,7 @@ rise_code = regexprep(rise_code,'\s+',' ');
 
 % extract block of observables
 %-----------------------------
-[obs_block]=extract_declaration_block('varobs','observables');
+[obs_block,obs_list]=extract_declaration_block('varobs','observables');
 
 % extract planner objective
 %---------------------------
@@ -158,7 +158,7 @@ shocks_block = extract_other_blocks('shocks;');
 %----------------------------------------
 estim_block = extract_other_blocks('estimated_params;');
 
-est=extract_estimation(estim_block,stderr_name);
+est=extract_estimation(estim_block,stderr_name,obs_list);
 
 match = regexpi(shocks_block,'corr\s*\w+\s*,\s*\w+\s*=.*?;','match');
 
@@ -694,7 +694,7 @@ fclose(fid);
 
 end
 
-function est=extract_estimation(estim_block,std_type)
+function est=extract_estimation(estim_block,std_type,obs_list)
 
 % remove rows starting with corr
 corr_rows=regexp(estim_block,'corr[^;]+;','match');
@@ -874,9 +874,19 @@ end
             
             if strncmp(name,'stderr',6)
                 
-                name=[std_type,'_',name(8:end)];
+                name=strrep(name,'stderr','');
                 
                 name(isspace(name))=[];
+                
+                main_type=std_type;
+                
+                if ismember(name,obs_list)
+                    
+                    main_type='stderr';
+                    
+                end
+                
+                name=[main_type,'_',name];
                 
             end
             
