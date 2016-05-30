@@ -103,12 +103,12 @@ elseif strcmp('yy',whichLabel)
     set(ax,'YAxisLocation','right')
 end
 
-% restore all other axes
-for k=1:length(currax)
-    try
-        axes(currax(k)); %#ok<LAXES>
-    end
-end
+% % restore all other axes
+% for k=1:length(currax)
+%     try
+%         axes(currax(k)); %#ok<LAXES>
+%     end
+% end
 
 if (nargout < 2)
     return
