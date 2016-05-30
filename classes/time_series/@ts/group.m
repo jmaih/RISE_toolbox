@@ -32,6 +32,18 @@ function g=group(this,varargin)
 
 
 n=length(varargin);
+discard=false(1,n);
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        discard(ii)=true;
+        is_pop=strcmp(varargin{ii},'pop');
+        if ~is_pop
+            error('To discard the rest, the option is "pop"')
+        end
+    end
+end
+varargin=varargin(~discard);
+n=length(varargin);
 
 data=double(this);
 
