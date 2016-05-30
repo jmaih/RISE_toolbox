@@ -650,9 +650,7 @@ end
             if ~isnumeric(leadorlag)||~isequal(leadorlag,floor(leadorlag))
                 error([mfilename,':: time syntax error in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
             end
-            variable=equation.eqtn{1,end};            
-            [equation.eqtn,dictionary,leadorlag]=parser.straigthen_equation(...
-                equation.eqtn,variable,leadorlag,dictionary);
+            equation.eqtn{2,end}=leadorlag;
             equation.max_lag=min(equation.max_lag,leadorlag);
             equation.max_lead=max(equation.max_lead,leadorlag);
         end
