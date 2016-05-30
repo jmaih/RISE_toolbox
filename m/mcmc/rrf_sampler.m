@@ -5,7 +5,7 @@ function [Results]=rrf_sampler(logf,lb,ub,options,mu,SIG)
 % -------
 % ::
 %
-%   [Results]=MH_SAMPLER(logf,lb,ub)
+%   [Results]=RRF_SAMPLER(logf,lb,ub)
 %
 %   [Results]=RRF_SAMPLER(logf,lb,ub,options)
 %
@@ -127,6 +127,9 @@ if nargin<6
     SIG=[];
     if nargin<5
         mu=[];
+        if nargin<4
+            options=struct();
+        end
     end
 end
 
@@ -351,10 +354,10 @@ Results=struct('pop',genpop,...
         metrop_draws=zeros(1,M);
         metrop_accept=zeros(1,M);
         parfor (istri=1:M,NumWorkers)
-            if I_should_stop
-                % basically check convergence
-                continue
-            end
+%             if I_should_stop
+%                 % basically check convergence
+%                 continue
+%             end
             tmp_i=tic;
             if use_true_moments
                 sqrt_cSIG=chol(exp(log_c(istri))*SIG,'lower');
@@ -366,7 +369,8 @@ Results=struct('pop',genpop,...
             pop{istri}=theta_star(1,ones(1,number_of_draws_per_striation));
             for idraw=1:number_of_draws_per_striation
                 [theta_star,metrop_accept(istri),metrop_draws(istri)]=dsmh_draw_hdle(...
-                    theta_star,metrop_accept(istri),metrop_draws(istri));
+                    theta_star,metrop_accept(istri),metrop_draws(istri),...
+                    sqrt_cSIG,pointer);
                 pop{istri}(idraw)=theta_star;
             end
             
@@ -439,7 +443,8 @@ Results=struct('pop',genpop,...
             bestf,options.accept_ratio,options.ess,numel(w),time_it_took,...
             is_time_to_exploit);
         
-        function [theta,metrop_accept__,metrop_draws__]=dsmh_draw(theta_star,metrop_accept__,metrop_draws__)
+        function [theta,metrop_accept__,metrop_draws__]=dsmh_draw(theta_star,...
+                metrop_accept__,metrop_draws__,sqrt_cSIG,pointer)
             
             is_metrop_draw=rand>p;
             if is_metrop_draw
