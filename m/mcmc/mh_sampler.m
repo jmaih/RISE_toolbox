@@ -26,6 +26,8 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
 %   - **alpha** [scalar|2-element|{[.25,.45]}]: target acceptance rate
 %   - **burnin** [integer|{0}]: number of burn-in initial simulations
 %   - **N** [integer|{20000}]: number of simulations
+%   - **verbose** [integer|{100}]: displays progress for every multiple of
+%   "verbose"
 %   - **c** [scalar|{0.25}]: initial scale for the covariance matrix
 %   - **c_range** [vector|{}]: range of variation of c
 %   - **thin** [integer|{1}]: number of thinning simulations. 1 means we
@@ -83,6 +85,7 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'alpha',[.25,.45],@(x)((numel(x)==2 && x(2)>=x(1))||numel(x)==1) && all(x>0) && all(x<1),'target_range should be a 2-element vector s.t. x(2)>=x(1) and x(i) in (0,1)'
     'burnin',0,@(x)num_fin_int(x),'burnin should be an integer in [0,inf)'
     'N',20000,@(x)num_fin_int(x) && x>0 ,'N should be a strictly positive integer'
+    'verbose',100,@(x)num_fin_int(x) && x>0 ,'verbose should be a strictly positive integer'
     'c',0.25,@(x)num_fin(x) && x>0 ,'c (tuning parameter) should be a positive scalar'
     'c_range',[sqrt(eps),100],@(x)numel(x)==2 && all(num_fin(x) & x>0) && x(2)>=x(1),'c_range variation range for tuning parameter must be a two element vector'
     'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
@@ -217,7 +220,13 @@ obj.funcCount=sum(funevals);
 obj.iterations=0;
 obj.start_time=clock;
 obj.MaxTime=options.MaxTime;
+obj.verbose=options.verbose;
 obj.MaxFunEvals=inf;
+obj.best_fval=[];
+obj.MaxNodes=1;
+obj.optimizer=mfilename;
+obj.number_of_parameters=size(mu,1);
+obj.accept_ratio=[];
 
 sqrt_cSIG=[];
 nbatch=1;
@@ -236,9 +245,14 @@ utils.optim.manual_stopping;
 
 stopflag=utils.optim.check_convergence(obj);
 
-bestf=[stud.f];
+best=stud;
+
+obj.best_fval=[best.f];
+
 accept_ratio=[];
-wtbh=waitbar(0,'please wait...','Name','MH sampling');
+
+% wtbh=waitbar(0,'please wait...','Name','MH sampling');
+
 while isempty(stopflag)
     idraw=idraw+1;
     obj.iterations=idraw+burnin;
@@ -258,19 +272,30 @@ while isempty(stopflag)
     % Accept or reject the proposal
     %-------------------------------
     acc = min(rho,0)>=U(obj.iterations,:);
+    
     stud(acc,:) = y(acc,:); % preserves x's shape.
+    
     accept = accept+acc;
+    
     % save down
     %----------
     if idraw>0 && mod(idraw,thin)==0 % burnin and thin
-        pop(:,idraw/thin) = stud;
+        
+        the_iter=idraw/thin;
+        
+        pop(:,the_iter) = stud;
+        
     end
     
     % update the best
     %-----------------
-    tmp=[stud.f];
-    good=tmp<bestf;
-    bestf(good)=tmp(good);
+    tmpf=[stud.f];
+    
+    good=tmpf<obj.best_fval;
+    
+    best(good)=stud(good);
+    
+    obj.best_fval=[best.f];
     
     % update the moments
     %-------------------
@@ -285,28 +310,27 @@ while isempty(stopflag)
     
     % display progress
     %------------------
-    if mod(obj.iterations,100)==0
-        fprintf(1,'iter # %0.0f, bestf %s\n',obj.iterations,num2str(bestf));
-        fprintf(1,'iter # %0.0f, acceptance rate %s\n\n',obj.iterations,num2str(100*accept_ratio));
-    end
+    obj.accept_ratio=accept_ratio;
+    utils.optim.display_progress(obj)
+    
+    % check convergence
+    %------------------
     stopflag=utils.optim.check_convergence(obj);
-    waitbar_updating()
+    
+%     waitbar_updating()
 end
-delete(wtbh)
+
+% delete(wtbh)
 
 do_results()
 
     function do_results()
-        best=pop(1,ones(1,nchains));
-        for ichain=1:nchain
-            tmp=utils.mcmc.sort_population(pop(ichain,:));
-            best(ichain)=tmp(1);
-        end
-        best=utils.mcmc.sort_population(best);
+        pop=pop(:,1:the_iter);
+        bestOfTheBest=utils.mcmc.sort_population(best);
         obj.end_time=clock;
         Results=struct('pop',pop,...
-            'bestf',best(1).f,...
-            'bestx',best(1).x,...
+            'bestf',bestOfTheBest(1).f,...
+            'bestx',bestOfTheBest(1).x,...
             'best',best,...
             'm',mu,...
             'SIG',SIG,...
@@ -365,14 +389,14 @@ do_results()
         obj.funcCount=sum(funevals);
     end
 
-    function waitbar_updating()
-        x=obj.iterations/total_draws;
-        waitbar(x,wtbh,...
-            {
-            sprintf('bestf %s',num2str(bestf))
-            sprintf('acceptance rate %s',num2str(100*accept_ratio))
-            }...
-            )
-    end
+%     function waitbar_updating()
+%         x=obj.iterations/total_draws;
+%         waitbar(x,wtbh,...
+%             {
+%             sprintf('bestf %s',num2str(obj.best_fval))
+%             sprintf('acceptance rate %s',num2str(100*accept_ratio))
+%             }...
+%             )
+%     end
 
 end
