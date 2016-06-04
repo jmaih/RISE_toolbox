@@ -123,6 +123,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
         varargout=plot_priors(varargin)
         varargout=plot_priors_and_posteriors(varargin)
         varargout=plot_posteriors(varargin)
+        varargout=posterior_sample(varargin)
         varargout=print_estimation_results(varargin)
         varargout=pull_objective(varargin)
         varargout=randsample(varargin)
