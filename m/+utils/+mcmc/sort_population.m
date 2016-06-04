@@ -30,5 +30,7 @@ function [pop,tags]=sort_population(pop)
 % See also:
 
 [~,tags]=sort([pop.f]);
+
 pop=pop(tags);
+
 end

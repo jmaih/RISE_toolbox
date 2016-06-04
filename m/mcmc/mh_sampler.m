@@ -297,10 +297,12 @@ delete(wtbh)
 do_results()
 
     function do_results()
+        best=pop(1,ones(1,nchains));
         for ichain=1:nchain
-            pop(ichain,:)=utils.mcmc.sort_population(pop(ichain,:));
+            tmp=utils.mcmc.sort_population(pop(ichain,:));
+            best(ichain)=tmp(1);
         end
-        best=utils.mcmc.sort_population(pop(:,1));
+        best=utils.mcmc.sort_population(best);
         obj.end_time=clock;
         Results=struct('pop',pop,...
             'bestf',best(1).f,...
