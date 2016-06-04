@@ -115,8 +115,7 @@ end
             plotfunc(d{:},this.varnames,matlab_args{:});
             vout={gca()};
         elseif strcmp(funct_type,{'hist'})
-            plotfunc(d{:},matlab_args{:});
-            vout={gca()};
+            [vout{1:nout}]=plotfunc(d{:},matlab_args{:});
         elseif strcmp(funct_type,{'plot_real_time'})
             ymax=max(d{:}(:));
             ymin=min(d{:}(:));
@@ -156,17 +155,16 @@ end
             hold off
             set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
             vout={gca()};
-        else
-            h1h2={};
-            if strcmp(funct_type,{'plotyy'})
+        else % : plot, plotyy, bar, etc.
+            if strcmp(funct_type,'plotyy')
                 [ax12,h1,h2]=plotfunc(pp.xdatenums,d{1},pp.xdatenums,d{2},matlab_args{:});
-                h1h2={h1,h2};
                 ax12={ax12};
                 if ~isempty(linewidth)
                     set([h1,h2],linewidth{:})
                 end
+                 h1h2={h1,h2};
             else
-                plotfunc(pp.xdatenums,d{:},matlab_args{:});
+               plotfunc(pp.xdatenums,d{:},matlab_args{:});
                 ax12={gca};
             end
             hold on
@@ -182,10 +180,13 @@ end
                 % 2014B vagaries
                 set([ax12{:}],'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
             end
-            vout=[ax12,h1h2(1:nout-1)];
+            if strcmp(funct_type,'plotyy')
+                vout=[ax12,h1h2(1:nout-1)];
+            else
+                h=get(ax12{1},'Children');
+                vout={h};
+            end
         end
-        %,'XTickMode','auto'...
-        %     'ylim',[min(d{:}(:))-sqrt(eps),max(d{:}(:))+sqrt(eps)])
         varargout=vout(1:nout);
         
         function add_horizontal_lines()

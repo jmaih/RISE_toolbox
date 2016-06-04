@@ -1,4 +1,4 @@
-function plot_handle=plot(varargin)
+function varargout=plot(varargin)
 % PLOT -- plots a rise time series
 %
 % Syntax
@@ -50,7 +50,7 @@ function plot_handle=plot(varargin)
 % Outputs
 % --------
 %
-%   - **plot_handle** [scalar|vector] : handle to the plot
+%   - **varargout** [scalar|vector] : handle to the lines of plot
 %
 % More About
 % ------------
@@ -133,9 +133,6 @@ function plot_handle=plot(varargin)
 %     'date_format',17);
 % xrotate(90)
 
-plot_handle0=utils.plot.myplot(@plot,varargin{:});
-if nargout
-    plot_handle=plot_handle0;
-end
+[varargout{1:nargout}]=utils.plot.myplot(@plot,varargin{:});
 
 end

@@ -1,4 +1,4 @@
-function plot_handle=bar(varargin)
+function varargout=bar(varargin)
 % H1 line
 %
 % Syntax
@@ -67,9 +67,6 @@ function plot_handle=bar(varargin)
 %     'date_format',17);
 % xrotate(90)
 
-plot_handle0=utils.plot.myplot(@bar,varargin{:});
-if nargout
-    plot_handle=plot_handle0;
-end
+[varargout{1:nargout}]=utils.plot.myplot(@bar,varargin{:});
 
 end
