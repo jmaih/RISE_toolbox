@@ -207,14 +207,36 @@ for ii=1:numel(model_legends)
 end
 end
 
+function ptex=pick_priors_names(tex_names,model_names,threshold)
+if nargin<3
+    threshold=15;
+end
+% pick the math form first
+ptex=regexprep(tex_names,'[^#]*#','');
+
+for iname=1:numel(ptex)
+    if length(ptex{iname})>threshold
+        ptex{iname}=model_names{iname};
+    end
+    if ~any(ptex{iname}=='$')
+        ptex{iname}=['$',ptex{iname},'$'];
+    end
+end
+
+end
+
 function estim=model_estimation_results(obj)
+threshold=20;
 ncases=numel(obj);
-type_name='tex_name';
-parnames= {obj(1).estimation.priors.(type_name)};
+parnames=pick_priors_names({obj(1).estimation.priors.tex_name},...
+    {obj(1).estimation.priors.name},...
+    threshold);
 ordered_names=sort(parnames);
 PALL=cell(1,ncases);
 for ic=1:ncases
-    newnames={obj(ic).estimation.priors.(type_name)};
+    newnames=pick_priors_names({obj(ic).estimation.priors.tex_name},...
+    {obj(ic).estimation.priors.name},...
+    threshold);
     mode=num2cell(obj(ic).estimation.posterior_maximization.mode);
     mode_std=num2cell(obj(ic).estimation.posterior_maximization.mode_stdev);
     prior_prob=num2cell(vertcat(obj(ic).estimation.priors.prior_prob));
