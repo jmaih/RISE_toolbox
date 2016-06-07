@@ -138,7 +138,7 @@ classdef rise_generic % < matlab.mixin.Heterogeneous
     end
     methods(Static,Hidden=true)
         function obj=reset(obj,varargin)
-            implemented_classes={'svar','rfvar','dsge','stochvol'};
+            implemented_classes={'svar','rfvar','dsge','vstar'};%,'stochvol'
             model_type=class(obj);
             endogen=varargin{1};
             exogen=varargin{2};
