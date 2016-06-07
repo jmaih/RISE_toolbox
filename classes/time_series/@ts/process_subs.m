@@ -42,7 +42,7 @@ switch nsubs
                 if subs1<0
                     datta=datta(1:end-lead_or_lag,:,:);
                     date_numbers=date_numbers(1+lead_or_lag);
-                elseif subs1>0
+                elseif subs1>=0
                     datta=datta(1+lead_or_lag:end,:,:);
                     date_numbers=date_numbers(1);
                 end
@@ -63,7 +63,8 @@ switch nsubs
             % if starts with a digit: date
             date_style=false;
             if ~isempty(subs1)
-                date_style=~isvarname(subs1{1});
+                % check that the first element is a letter
+                date_style=~isstrprop(subs1{1}(1),'alpha'); % date_style=~isvarname(subs1{1});
             end
             if date_style
                 ss=char2serial(subs1);
