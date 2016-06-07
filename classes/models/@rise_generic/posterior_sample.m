@@ -61,85 +61,93 @@ function [result,is_failed,time_it_took]=posterior_sample(m,pop,dowhat,howmany,o
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
-if nargin<5
+if isempty(m)
     
-    ouf=[];
-    
-    if nargin<4
-        
-        howmany=[];
-        
-    end
-    
-end
-
-if isempty(ouf)
-    
-    ouf=@(x)x;
-    
-end
-
-m=set(m,varargin{:});
-
-m=setup_restrictions(m);
-
-pop=pop(:).';
-
-npop=numel(pop);
-
-if isempty(howmany)
-    
-    howmany=npop;
+    result=struct();
     
 else
     
-    if howmany>npop
+    if nargin<5
         
-        error('howmany cannot exceed the number of elements in the population')
+        ouf=[];
         
-    end
-    
-end
-
-order=randperm(npop);
-
-order=order(1:howmany);
-
-result=cell(1,howmany);
-
-% cut the crap
-%-------------
-pop=pop(order);
-
-objective=@do_it;
-
-NumWorkers=utils.parallel.get_number_of_workers();
-
-is_failed=false(1,howmany);
-
-tic
-
-parfor(ii=1:howmany,NumWorkers)
-    
-    x=pop(ii).x;
-    
-    try
-        
-        result{ii}=objective(x);
-        
-    catch me
-        
-        disp(ii),disp(me.message),disp(' ')
-        
-        is_failed(ii)=true;
+        if nargin<4
+            
+            howmany=[];
+            
+        end
         
     end
     
+    if isempty(ouf)
+        
+        ouf=@(x)x;
+        
+    end
+    
+    m=set(m,varargin{:});
+    
+    m=setup_restrictions(m);
+    
+    pop=pop(:).';
+    
+    npop=numel(pop);
+    
+    if isempty(howmany)
+        
+        howmany=npop;
+        
+    else
+        
+        if howmany>npop
+            
+            error('howmany cannot exceed the number of elements in the population')
+            
+        end
+        
+    end
+    
+    order=randperm(npop);
+    
+    order=order(1:howmany);
+    
+    result=cell(1,howmany);
+    
+    % cut the crap
+    %-------------
+    pop=pop(order);
+    
+    objective=@do_it;
+    
+    NumWorkers=utils.parallel.get_number_of_workers();
+    
+    is_failed=false(1,howmany);
+    
+    tic
+    
+    parfor(ii=1:howmany,NumWorkers)
+        
+        x=pop(ii).x;
+        
+        try
+            
+            result{ii}=objective(x);
+            
+        catch me
+            
+            disp(ii),disp(me.message),disp(' ')
+            
+            is_failed(ii)=true;
+            
+        end
+        
+    end
+    
+    time_it_took=toc;
+    
 end
-
-time_it_took=toc;
 
     function out=do_it(x)
         
