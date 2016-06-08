@@ -1,6 +1,10 @@
 function [dic,modelBlock]=create_auxiliary_equations(dic,modelBlock)
 
-[dic,modelBlock,LeadListing,new_auxvars,ilist_lead]=getRidOfExcessLeads(dic,modelBlock);
+[dic,modelBlock,LeadListing,new_auxvars,ilist_lead]=auxiliarize_exo_params(...
+    dic,modelBlock);
+
+[dic,modelBlock,LeadListing,new_auxvars,ilist_lead]=getRidOfExcessLeads(...
+    dic,modelBlock,LeadListing,new_auxvars,ilist_lead);
 
 [dic,modelBlock,BigListing,new_auxvars,ilist_all]=getRidOfExcessLags(dic,...
     modelBlock,LeadListing,new_auxvars,ilist_lead); %#ok<ASGLU>
@@ -43,9 +47,7 @@ for irow=1:size(modelBlock,1)
     eqtn=modelBlock{irow,1};
     
     endog=dic.endogenous;
-    
-    str='-';
-    
+        
     for icol0=1:size(eqtn,2)
         
         theLag=eqtn{2,icol0};
@@ -84,7 +86,7 @@ for irow=1:size(modelBlock,1)
                 endog=parser.update_variable_lead_lag(endog,newguy,-1,...
                     is_log_var,vname);
                 
-                newthing=sprintf('%s = %s{%s1};',newguy,oldguy,str);
+                newthing=sprintf('%s = %s{-1};',newguy,oldguy);
                 
                 ilist=ilist+1;
                 
@@ -114,15 +116,8 @@ new_auxvars=new_auxvars(1:ilist);
 
 end
 
-function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcessLeads(dic,modelBlock)
-
-% Do not count these as auxiliary
-
-ilist=0;
-
-listing=cell(1000,3);
-
-new_auxvars=cell(1,1000);
+function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcessLeads(...
+    dic,modelBlock,listing,new_auxvars,ilist)
 
 newMaxLeadOrLag=1;
 
@@ -139,7 +134,7 @@ for irow=1:size(modelBlock,1)
     end
     
     eqtn=modelBlock{irow,1};
-    
+        
     start_index=0;
     
     auxVar=makeNewJensenVariable(irow,start_index);
@@ -162,13 +157,13 @@ end
             
             if ilead==maxLead
                 
-                newthing=sprintf('%s{+1}=0;',old_guy);
+                new_aux_eqtn=sprintf('%s{+1}=0;',old_guy);
                 
             else
                 
                 newguy=makeNewJensenVariable(irow,start_index);
                 
-                newthing=sprintf('%s=%s{+1};',newguy,old_guy);
+                new_aux_eqtn=sprintf('%s=%s{+1};',newguy,old_guy);
                 
                 % All new variables have a lead
                 dic.endogenous=parser.update_variable_lead_lag(dic.endogenous,...
@@ -182,7 +177,7 @@ end
             
             ilist=ilist+1;
             
-            listing(ilist,:)={nan,newthing,'auxiliary equations'};
+            listing(ilist,:)={nan,new_aux_eqtn,'auxiliary equations'};
             
         end
         
@@ -190,8 +185,8 @@ end
 
     function lagEquation()
         
-        eqtn(2,:)=cellfun(@(x)if_then_else(~isempty(x),x-3,x),eqtn(2,:),...
-            'uniformOutput',false);
+        eqtn(2,:)=cellfun(@(x)if_then_else(~isempty(x),x-maxLead+1,x),...
+            eqtn(2,:),'uniformOutput',false);
         
         eqtn=[
             {'-',auxVar,'+'
@@ -238,3 +233,97 @@ end
     end
 
 end
+
+
+function [dic,modelBlock,listing,new_auxvars,ilist]=auxiliarize_exo_params(dic,modelBlock)
+
+xo_param_names=[{dic.exogenous.name},{dic.parameters.name}];
+
+ilist=0;
+
+listing=cell(1000,3);
+
+new_auxvars=cell(1,1000);
+
+for irow=1:size(modelBlock,1)
+    
+    maxLag=modelBlock{irow,2};
+    
+    maxLead=modelBlock{irow,3};
+    
+    force_change=max(abs([maxLag,maxLead]))>1;
+    
+    [modelBlock{irow,1}]=auxiliarize_one_equation(...
+        modelBlock{irow,1});
+    
+end
+
+    function eqtn=auxiliarize_one_equation(eqtn)
+        
+        for icol0=1:size(eqtn,2)
+            
+            leadOrLag=eqtn{2,icol0};
+            
+            vname=eqtn{1,icol0};
+            
+            if ~any(strcmp(xo_param_names,vname))|| isempty(leadOrLag)
+                
+                continue
+                
+            end
+            
+            if ~force_change
+                
+                if leadOrLag==0
+                    
+                    continue
+                    
+                end
+                
+            end
+            
+            if leadOrLag<0
+                
+                error('Leads or lags on parameters or exogenous not allowed')
+                
+            end
+            
+            [new_name]=create_new_auxiliary_for_exo_or_param(vname,leadOrLag);
+            
+            eqtn{1,icol0}=new_name;
+            
+        end
+        
+        function  [new_name]=create_new_auxiliary_for_exo_or_param(...
+                old_name,leadOrLag)
+            
+            endo_vars={dic.endogenous.name};
+            
+            new_name=parser.create_auxiliary_name(old_name,0,true);
+            
+            % if the name is not in the dictionary, create an auxiliary equation at the
+            % same time
+            
+            if ~any(strcmp(endo_vars,new_name))
+                
+                ilist=ilist+1;
+                
+                new_aux_eqtn=sprintf('%s=%s;',new_name,old_name);
+                
+                listing(ilist,:)={nan,new_aux_eqtn,'auxiliary equations'};
+                
+                is_log_var=false;
+                
+                dic.endogenous=parser.update_variable_lead_lag(dic.endogenous,new_name,...
+                    leadOrLag,is_log_var);
+                
+                new_auxvars{ilist}=new_name;
+                
+            end
+            
+        end
+
+    end
+
+end
+
