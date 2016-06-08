@@ -47,6 +47,8 @@ parameter_govern=[dictionary.parameters.governing_chain];
 % keyboard
 nlist=size(listing,1);
 
+swp=switching_status_of_parameters(dictionary);
+
 nblks=0;
 blocks_to_discard_coz_they_are_defs=false(nblks,1);
 definitions_loc=struct();
@@ -319,7 +321,9 @@ end
                         else
                             equation.eqtn=[equation.eqtn,{tokk,[]}'];
                         end
-                        if (strcmp(tok_status,'y')||strcmp(tok_status,'x')||strcmp(tok_status,'param'))
+                        if (strcmp(tok_status,'y')||strcmp(tok_status,'x')||...
+                                (strcmp(tok_status,'param') && swp.(tokk))...
+                                )
                             equation.eqtn{2,end}=0;
                         end
                         fill_time='';
@@ -667,4 +671,15 @@ end
             error([mfilename,':: wrong syntax ',syntax,' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
         end
     end
+end
+
+function p=switching_status_of_parameters(dic)
+% control parameters
+%-------------------
+p=struct();
+for ipar=1:numel(dic.parameters)
+    
+    p.(dic.parameters(ipar).name)=dic.parameters(ipar).is_switching;
+    
+end
 end
