@@ -26,7 +26,7 @@ function dictionary=parse(FileName,varargin)
 %   file. If "true", the name of the main original file is used appended with
 %   "_expanded.dsge". Alternatively, the user can provide a name under
 %   which he wants the file to be saved.
-%   - **max_deriv_order** [integer|{2}]: order for symbolic
+%   - **max_deriv_order** [integer|{1}]: order for symbolic
 %   differentiation. It is recommended to set to 1, especially for large
 %   models in case one does not intend to solve higher-order approximations
 %   - **parse_debug** [true|{false}]: debugging in the parser
