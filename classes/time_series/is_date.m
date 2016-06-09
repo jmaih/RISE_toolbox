@@ -19,7 +19,7 @@ if isnumeric(x)
     
     for iii=1:numel(x0)
         
-        x{iii}=num2str(x0{iii});
+        x{iii}=num2str(x0(iii));
         
     end
     
