@@ -677,7 +677,7 @@ classdef aplanar_
             iarg=1;
             while ~done && iarg<nargs
                 check=varargin{iarg};
-                if ~isa(check,'double')
+                if ~(isa(check,'double')||isa(check,'logical'))
                     check=check.x;
                 end
                 if check
