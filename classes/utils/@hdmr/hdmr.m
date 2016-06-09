@@ -194,7 +194,7 @@ classdef hdmr
                     % This exactly where one could think about reducing the obj.poly_coefs
                     % order to, say l<pol_max_order as the number of factors (ncols)
                     % increases.
-                    Regimes=mygrid(obj.pol_max_order*ones(ncols,1));
+                    Regimes=utils.gridfuncs.mygrid(obj.pol_max_order*ones(ncols,1));
                     %         nregs=size(Regimes,1);
                     aggr=0;
                     for kk=1:size(Regimes,1)
@@ -265,7 +265,7 @@ classdef hdmr
                     % This exactly where one could think about reducing the poly_coefs
                     % order to, say l<pol_max_order as the number of factors (ncols)
                     % increases.
-                    Regimes=mygrid(obj.pol_max_order*ones(ncols,1));
+                    Regimes=utils.gridfuncs.mygrid(obj.pol_max_order*ones(ncols,1));
                     %         nregs=size(Regimes,1);
                     f_ijklmn=0;
                     fijk_name='f';

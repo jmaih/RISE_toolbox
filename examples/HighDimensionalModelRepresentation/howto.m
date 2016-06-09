@@ -24,7 +24,9 @@ expansion_order=3;
 %% choose the number of samples
 N=2^9;%2048;
 %% option 1: generate samples and create the hdmr object
-theta=quasi_monte_carlo.sobol(npar,N,lb,ub,scramble_flag); % number of sub-intervals
+
+% theta=quasi_monte_carlo.sobol(npar,N,lb,ub,scramble_flag); % number of sub-intervals
+theta=quasi_monte_carlo.sobol(lb,ub,N,scramble_flag); % number of sub-intervals
 f=objective(theta);
 objective_={f,theta};
 %% option 2: let the hdmr object generate the samples for you
@@ -33,6 +35,7 @@ objective_={f,theta};
 obj=hdmr(objective_,param_names,bounds,expansion_order,pol_order,optimal_poly);
 
 %% estimate the object
+profile off
 profile on
 obj=estimate(obj,debug_flag);
 profile off
