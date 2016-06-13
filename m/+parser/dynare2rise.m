@@ -58,26 +58,25 @@ insert_all_subfiles();
 
 % remove block comments
 %-----------------------
-rise_code = regexprep(raw_code,'/\*(.*)\*/','');
+rise_code=stepwise_removal_of_block_comments(raw_code);
+% rise_code = regexprep(raw_code,'/\*(.*)\*/',''); % to revisit
+lraw=length(raw_code);
+lrise=length(rise_code);
+fprintf(1,'Removing block comments: Old(%0.0f), New(%0.0f)\n',lraw,lrise);
 
 header = sprintf('Conversion of Dynare file [%s] into RISE file [%s]\n',...
     dynFileName,riseFileName);
 
 % Remove line comments.
 %----------------------
+lrise_old=lrise;
 rise_code = regexprep(rise_code,'(//|%)(.*?\n)','\n');
+lrise=length(rise_code);
+fprintf(1,'Removing comment lines: Old(%0.0f), New(%0.0f)\n',lrise_old,lrise);
 
 % replace y ${y}$ (long_name='output') with y "{y}(output)"
 %----------------------------------------------------------
-express='(\w+)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
-% replace='$1 "$3($2)"';
-replace='$1 "$3 # $2"';
-rise_code = regexprep(rise_code,express,replace);
-
-% % add a semicolon at the end of each line starting with a @#, it will be
-% % removed later
-% %--------------------------------------------------------------------------
-% rise_code = regexprep(rise_code,'(@\s*#[^\n;]+)','$1;');
+rise_code=replace_descriptions(rise_code);
 
 % place a ¤ at the end of each @#...
 %-------------------------------------------
@@ -89,9 +88,9 @@ rise_code = regexprep(rise_code,express,'¤$1¤');
 %---------------------
 rise_code=strrep(rise_code,'$','"');
 
-% replace all endif with end
+% replace all endif or endfor with end
 %----------------------------
-rise_code=regexprep(rise_code,'(#\s*)\<endif\>','$1end');
+rise_code=regexprep(rise_code,'(#\s*)\<end(if|for)\>','$1end');
 
 % add space to all # signs
 %----------------------------
@@ -107,7 +106,8 @@ rise_code = regexprep(rise_code,'\s+',' ');
 
 % extract block of endogenous
 %-----------------------------
-[endo_block]=extract_declaration_block('var','endogenous');
+is_endo_decl=true;
+[endo_block]=extract_declaration_block('var','endogenous',is_endo_decl);
 
 % extract block of exogenous
 %-----------------------------
@@ -128,16 +128,19 @@ rise_code = regexprep(rise_code,'\s+',' ');
 % add new parameters at the end of the parameters block. Those parameters
 % will not have definitions. But what if the block is empty?
 %-----------------------------------------------------------------------
-newparams=cell2mat(strcat([stderr_name,'_'],exo_list,'@'));
+newparams=cell2mat(strcat([stderr_name,'_'],exo_list,'#'));
 
-newparams=strrep(newparams,'@',' ');
+newparams=strrep(newparams,'#',' ');
 
 param_block=[param_block,' ',newparams];
 
 % model equations
 %-----------------
 rise_code = regexprep(rise_code,'model\(linear\)','model');
-model_eqtns = extract_other_blocks('model;',true);
+do_replace_time=false;
+model_eqtns = extract_other_blocks('model;',do_replace_time);
+% replace STEADY_STATE
+model_eqtns=regexprep(model_eqtns,'STEADY_STATE','steady_state');
 
 % take care of predetermined variables
 do_predetermined();
@@ -178,6 +181,32 @@ header = [header,sprintf('\n Done %s.',timestamp)];
 recreate_code();
 
 write_parameter_file()
+
+    function raw_code=stepwise_removal_of_block_comments(raw_code)
+        
+        starts=strfind(raw_code,'/*');
+        
+        finishes=strfind(raw_code,'*/');
+        
+        if numel(starts)~=numel(finishes)
+            
+            error('mismatches of block comments')
+            
+        end
+        
+        while ~ isempty(starts)
+            
+            blk=starts(end):finishes(end)+1;
+            
+            raw_code(blk)=[];
+            
+            starts(end)=[];
+            
+            finishes(end)=[];
+            
+        end
+        
+    end
 
     function write_parameter_file()
         
@@ -401,11 +430,38 @@ write_parameter_file()
         
     end
 
-    function [blk,list]=extract_declaration_block(trigger,repl_trigger)
+    function [blk,list]=extract_declaration_block(trigger,repl_trigger,is_endo_decl)
+        
+        if nargin<3
+            % var can appear both in the declaration of endogenous and in
+            % the shocks block            
+            is_endo_decl=false;
+            
+        end
         
         express_=['(\<',trigger,'\>\s+[^;]+;)'];
         
-        blk=regexp(rise_code,express_,'tokens','once');
+        pull_from=rise_code;
+        
+        if is_endo_decl
+            
+            pull_from=regexprep(pull_from,'\<shocks\>;\s*(.*?)end;','');
+            
+        end
+        
+        blk=regexp(pull_from,express_,'tokens');
+        
+        if isempty(blk)
+            
+            blk='';
+            
+            list={};
+            
+            return
+            
+        end
+        
+        blk=[blk{:}];
         
         if nargin>1
             
@@ -417,23 +473,19 @@ write_parameter_file()
             
         end
         
-        % remove the semicolon
-        %----------------------
-        if isempty(blk)
+        for iblk=1:numel(blk)
             
-            blk='';
+            semcol=find(blk{iblk}==';',1,'last');
             
-            list={};
+            blk{iblk}(semcol)=[];
             
-            return
+            if iblk>1
+                blk{iblk}=strrep(blk{iblk},repl_trigger,'');
+            end
             
         end
         
-        blk=blk{1};
-        
-        semcol=find(blk==';',1,'last');
-        
-        blk(semcol)=[];
+        blk=cell2mat(blk);% blk=blk{1};
         
         if nargout>1
             
@@ -466,7 +518,7 @@ write_parameter_file()
             
             tmp=regexprep(tmp,'¤\s*@\s*#\s*[^¤\n]+¤','');
             
-            list=regexp(tmp,'\w+','match');
+            list=regexp(tmp,'\w+[^\s]*','match');
             
             function description_removal()
                 
@@ -605,8 +657,7 @@ write_parameter_file()
             
         end
         
-        tokens = regexpi(rise_code,[typeof,'\s*(.*?)end;'],...
-            'tokens','once');
+        tokens = regexpi(rise_code,['\<',typeof,'\s*(.*?)end;'],'tokens');
         
         if isempty(tokens)
             
@@ -616,7 +667,15 @@ write_parameter_file()
             
         end
         
-        list = tokens{1};
+        tokens=[tokens{:}];
+        
+        for iblk=1:numel(tokens)-1
+            
+            tokens{iblk}=[tokens{iblk},' '];
+            
+        end
+                
+        list = cell2mat(tokens);
         
         % replace time indices
         if do_replace_time
@@ -638,15 +697,11 @@ write_parameter_file()
 
     function insert_all_subfiles()
         
-        do_import=@import_engine; %#ok<NASGU>
-        
         patt='@#\s*include\s*"([^"]+)"';
-        
-        repl='${do_import($1)}';
         
         while true
             
-            mm=regexp(raw_code,patt,'match','once');
+            mm=regexp(raw_code,patt,'match');
             
             if isempty(mm)
                 
@@ -654,15 +709,36 @@ write_parameter_file()
                 
             end
             
-            raw_code=regexprep(raw_code,patt,repl);
+            if ischar(mm)
+                
+                mm={mm};
+                
+            end
+            
+            for ifile=1:numel(mm)
+                
+                process_import(mm{ifile});
+                
+            end
             
         end
         
-        function c=import_engine(fname)
+        function process_import(include_file)
+            
+            dblq=strfind(include_file,'"');
+            
+            fname=include_file(dblq(1)+1:dblq(2)-1);
             
             c= read_file(fname);
             
-            c=[eol,c,eol];
+            lc=length(c);
+            
+            lr=length(raw_code);
+            
+            raw_code=strrep(raw_code,include_file,[eol,c,eol]);
+            
+            fprintf(1,'Uploading %s : old(%0.0f)+new(%0.0f)= %0.0f\n',...
+                include_file,lr,lc,lr+lc);
             
         end
         
@@ -701,6 +777,10 @@ corr_rows=regexp(estim_block,'corr[^;]+;','match');
 
 estim_block=regexprep(estim_block,'corr[^;]+;','');
 
+% remove the trigger
+estim_block=strrep(estim_block,'estimated_params;','');
+estim_block=strrep(estim_block,'end;','');
+
 splits=regexp(estim_block,';','split');
 
 good=cellfun(@(x)~isempty(x),splits,'uniformOutput',true);
@@ -717,6 +797,7 @@ fields=fieldnames(est);
 est0=cell(n,10);
 
 % shiftBoundsDistr={'normal','gamma','inv_gamma','uniform','beta'};
+
 
 for irow=1:n
     
@@ -896,3 +977,25 @@ end
 
 end
 
+function rise_code=replace_descriptions(rise_code)
+% replace y ${y}$ (long_name='output') with y "{y}(output)"
+%----------------------------------------------------------
+patt2='(\w+[^$]*)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
+% patt2='(\w+)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
+% replace2='$1 "$3($2)"';
+replace2='$1 "$3 # $2"';
+
+replacer=@replace_engine; %#ok<NASGU>
+patt='\<(var|varexo|parameters)\>([^;]+;)';
+repl='${replacer($1,$2)}';
+rise_code = regexprep(rise_code,patt,repl);
+
+    function out=replace_engine(str1,str2)
+        
+        out = regexprep(str2,patt2,replace2);
+        
+        out=[str1,out];
+        
+    end
+
+end
