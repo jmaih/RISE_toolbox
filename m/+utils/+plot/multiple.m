@@ -56,6 +56,12 @@ nfig=ceil(npar/nstar);
 
 hfig=nan(nfig,1);
 
+is_legend=abs(nargout(plotfunc))>1;
+
+warnState=warning('query');
+
+warning('off') %#ok<WNOFF>
+
 for fig=1:nfig
     
     [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,npar,r0,c0);
@@ -80,11 +86,27 @@ for fig=1:nfig
         
         subplot(r,c,plt)
         
-        [tex_name,legend_]=plotfunc(vnames{par_id});
+        if is_legend
+            
+            [tex_name,legend_]=plotfunc(vnames{par_id});
+            
+        else
+            
+            tex_name=plotfunc(vnames{par_id});
+            
+            legend_='';
+            
+        end
         
         if ~isempty(tex_name)
-            
-            title(rmdoll(tex_name),varargin{:})
+            % a plot function will not always return a tex_name, it could
+            % return a handle, in which case the following will break. That
+            % is why this shoud only be tried
+            try %#ok<TRYNC>
+                
+                title(rmdoll(tex_name),varargin{:})
+                
+            end
             
         end
         
@@ -103,5 +125,7 @@ for fig=1:nfig
     end
     
 end
+
+warning(warnState)
 
 end
