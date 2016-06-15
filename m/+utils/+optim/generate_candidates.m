@@ -62,8 +62,11 @@ funevals=0;
 success=false;
 try %#ok<TRYNC>
     c=lb+(ub-lb).*rand(npar,1);
-    [~,~]=objective(c,varargin{:}); 
-    success=true;
+    [~,rcode]=objective(c,varargin{:});
+    try %#ok<TRYNC>
+        msg=decipher(rcode);
+        success=true;
+    end
 end
 % success=nargout(objective)>=2;
 msg='';
