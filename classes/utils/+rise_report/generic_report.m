@@ -59,9 +59,15 @@ classdef generic_report < handle
                 if any(xin=='$')% ||sum(xin=='_')<=1 %&& ~isempty(strfind(xin,'ensuremath'))
                     return
                 end
-                xin=strrep(xin,'\_','LouisPergaud');
-                xin=strrep(xin,'_','\_');
-                xin=strrep(xin,'LouisPergaud','\_');
+                repList={'_','%'};
+                for ilist=1:numel(repList)
+                    % protect the already escaped
+                    xin=strrep(xin,['\',repList{ilist}],'LouisPergaud');
+                    % escape the un-escaped
+                    xin=strrep(xin,repList{ilist},['\',repList{ilist}]);
+                    % undo the protection
+                    xin=strrep(xin,'LouisPergaud',['\',repList{ilist}]);
+                end
             end
             xin=strtrim(xin);
         end
