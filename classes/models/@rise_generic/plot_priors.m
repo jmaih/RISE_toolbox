@@ -74,7 +74,7 @@ if nobj>1
         
         if nout
             
-            [argouts{1:nout}]=plot_priors(obj(iobj));
+            [argouts{1:nout}]=plot_priors(obj(iobj),parlist,varargin{:});
             
             tmpdata{iobj}=argouts{1};
             
@@ -86,7 +86,7 @@ if nobj>1
             
         else
             
-            plot_priors(obj(iobj));
+            plot_priors(obj(iobj),parlist,varargin{:});
             
         end
         
@@ -145,35 +145,7 @@ if numel(unique(plocs))~=numel(plocs)
     
 end
 
-vargs={'LineWidth',2.5};
-
-if isempty(varargin)
-    
-    varargin=vargs;
-    
-else
-    
-    found=false;
-    
-    for ii=1:2:length(varargin)-1
-        
-        found=strcmpi(varargin{ii},vargs{1});
-        
-        if found
-            
-            break
-            
-        end
-        
-    end
-    
-    if ~found
-        
-        varargin=[vargs,varargin];
-        
-    end
-    
-end
+vargs=utils.plot.expand_varargin([],varargin{:});
 
 pnames=parlist;
 
@@ -241,38 +213,59 @@ if nout
 end
 
     function pdens=do_one_prior(ipar)
+        
         pdens=struct();
+        
         x_prior=vec(linspace(lb(ipar),ub(ipar),N));
+        
         pdens.x_prior=x_prior;
+        
         hpp=hypers(ipar,:);
+        
         pdens.f_prior=distr{ipar}(x_prior,hpp(1),hpp(2));
+        
         pdens.f_prior=exp(pdens.f_prior);
+        
         fname=get_name();
         %         pdens.tex_name=tex_names{ipar};
+        
         whatever=[distr0{ipar},'(',num2str(hpp(1)),',',num2str(hpp(2)),')'];
+        
         pdens.tex_name={fname,whatever};
         
         pdens.x_min=lb(ipar);
+        
         pdens.x_max=ub(ipar);
         
         function fname=get_name()
+            
             divise=regexp(tex_names{ipar},'#','split');
+            
             fname=divise{1};
+            
             if numel(divise)>1
+                
                 if ~any(divise{2}=='$')
+                    
                     divise{2}=['$',divise{2},'$'];
+                    
                     divise{2}(isspace(divise{2}))=[];
+                    
                 end
+                
 %                 fname=[fname,'(',divise{2},')'];
+
                 fname=divise{2};
+                
             end
+            
         end
         
     end
 
     function [tex_name,legend_]=plotfunc(pname,ppdata)
         % the caller may use the tex_name information to override the title...
-        [~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),varargin{:});
+        [~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),vargs{:});
         
     end
 

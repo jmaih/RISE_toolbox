@@ -1,6 +1,6 @@
-function ppdata=plot_priors_and_posteriors(obj,simulation_folder,parlist)
+function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,parlist,normalize2prior,varargin)
 % plot_priors_and_posteriors -- computes posterior and prior densities for
-% estimated parameters 
+% estimated parameters
 %
 % Syntax
 % -------
@@ -24,6 +24,9 @@ function ppdata=plot_priors_and_posteriors(obj,simulation_folder,parlist)
 % - **parlist** [empty|char|cellstr]: list of the parameters for which one
 % wants to plot the priors and the posteriors
 %
+% - **normalize2prior** [true|{false}]: if true, the range of the densities
+% is the same as that of the prior, else is the range of the posterior
+%
 % Outputs
 % --------
 %
@@ -31,7 +34,10 @@ function ppdata=plot_priors_and_posteriors(obj,simulation_folder,parlist)
 % containing the information needed to plot the posterior and prior
 % densities. The user can always plot those using
 % utils.plot.prior_posterior(ppdata.(pname)), where pname is the name of
-% one particular parameter of interest. 
+% one particular parameter of interest.
+%
+% - **hdl** [vector]: optional output argument, placeholder for handles to
+% graphs
 %
 % More About
 % ------------
@@ -43,22 +49,101 @@ function ppdata=plot_priors_and_posteriors(obj,simulation_folder,parlist)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if isempty(obj)
+    
     ppdata=struct();
+    
     return
+    
 end
 
-if nargin<3
-    parlist=[];
-    if nargin<2
-        simulation_folder=[];
+if nargin<4
+    
+    normalize2prior=[];
+    
+    if nargin<3
+        
+        parlist=[];
+        
+        if nargin<2
+            
+            simulation_folder=[];
+            
+        end
+        
     end
+    
+end
+
+
+if isempty(normalize2prior)
+    
+    normalize2prior=false;
+    
+end
+
+nout=nargout;
+
+if nout
+    
+    ppdata=0;
+    
+    hdl=[];
+    
+end
+
+nobj=numel(obj);
+
+if nobj>1
+    
+    tmpdata=cell(1,nobj);
+    
+    tmphdl=cell(1,nobj);
+    
+    for iobj=1:nobj
+        
+        if nout
+            
+            [argouts{1:nout}]=plot_priors_and_posteriors(obj(iobj),simulation_folder,parlist,normalize2prior,varargin{:});
+            
+            tmpdata{iobj}=argouts{1};
+            
+            if nout>1
+                
+                tmphdl{iobj}=argouts{2};
+                
+            end
+            
+        else
+            
+            plot_priors_and_posteriors(obj(iobj),simulation_folder,parlist,normalize2prior,varargin{:});
+            
+        end
+        
+    end
+    
+    if nout
+        
+        ppdata=tmpdata;
+        
+        if nout>1
+            
+            hdl=tmphdl;
+            
+        end
+        
+    end
+    
+    return
+    
 end
 
 if isempty(simulation_folder)
+    
     simulation_folder=obj.folders_paths.simulations;
+    
 end
 
 % do posterior densities
@@ -74,39 +159,66 @@ prior_dens=plot_priors(obj,vnames);
 % create the data
 %----------------
 npar=numel(vnames);
+
 ppdata_=struct();
+
 for ipar=1:npar
+    
     ppdata_.(vnames{ipar})=do_one_post_prior(prior_dens.(vnames{ipar}),post_dens.(vnames{ipar}));
+    
 end
 
-if nargout
-    ppdata=ppdata_;
-else
+vargs=utils.plot.expand_varargin([],varargin{:});
+
+if nout==0||nout==2
     % plot the data
     %--------------
     r0=obj.options.graphics(1);
+    
     c0=obj.options.graphics(2);
+    
     titel='prior and posterior(marginal) densities';
     
-    utils.plot.multiple(@(xname)plotfunc(xname,ppdata_),...
+    tmphdl=utils.plot.multiple(@(xname)plotfunc(xname,ppdata_),...
         vnames,titel,r0,c0,...
         'FontSize',11,'FontWeight','normal');
+    
+end
+
+if nout
+    
+    ppdata=ppdata_;
+    
+    if nout>1
+        
+        hdl=tmphdl;
+        
+    end
+    
 end
 
     function ss=do_one_post_prior(prior,post)
+        
         post=rmfield(post,{'x_min','x_max','tex_name'});
         
         ss=utils.miscellaneous.mergestructures(prior,post);
-
-        % give the prior density the same range as ss.f_kdens
-        %-----------------------------------------------------
-        ss.f_prior=utils.miscellaneous.apply_property('range',ss.f_kdens,ss.f_prior);
+        
+        if normalize2prior
+            % give the posterior density the same range as the prior
+            ss.f_kdens=utils.miscellaneous.apply_property('range',ss.f_prior,ss.f_kdens);
+            
+        else
+            % give the prior density the same range as ss.f_kdens
+            ss.f_prior=utils.miscellaneous.apply_property('range',ss.f_kdens,ss.f_prior);
+            
+        end
+        
     end
 
-end
+    function [tex_name,legend_]=plotfunc(pname,ppdata)
+        % the caller may use the tex_name information to override the title...
+        [~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),vargs{:});
+    end
 
-function [tex_name,legend_]=plotfunc(pname,ppdata)
-% the caller may use the tex_name information to override the title...
-[~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),'LineWidth',2.5);
 end
 
