@@ -24,7 +24,7 @@ dictionary.auxiliary_variables=struct('model',{{}},'ssmodel_solved',{{}});
 dictionary.definitions={};
 % unlike the declared list, definitions will never be sorted
 dictionary.known_words={'steady_state','argzero','x0_','x1_','param_obj','commitment','discount',...
-    'log','exp','cos','sin','normpdf','normcdf'};
+    'log','exp','cos','sin','normpdf','normcdf','$'};
 % dictionary.steady_state_parameters={};
 dictionary.time_varying_probabilities={};
 dictionary.symbols={'#','!','?',')','(','}','{',']','[',',',';','.','=','@'};

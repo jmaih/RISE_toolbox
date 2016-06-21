@@ -230,7 +230,7 @@ stat.shadow_fast_ssmodel=strrep(stat.shadow_fast_ssmodel,'ss','y');
                     end
                     sh_tvp=[sh_tvp,item];
                 otherwise
-                    if strcmp(item,'steady_state')
+                    if any(strcmp(item,{'steady_state','$'}))
                         % then two blocks later is the name of the variable
                         Vss_pos=jj+2;
                         Vss=eq_i{1,Vss_pos};

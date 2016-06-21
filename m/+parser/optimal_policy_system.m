@@ -266,7 +266,7 @@ jac_toc=toc;
         
         % replace calls to steady states
         %--------------------------------
-        eqtns=regexprep(eqtns,'(steady_state)\((\w+)\)','$1_$2');
+        eqtns=regexprep(eqtns,'(steady_state|\$)\((\w+)\)','steady_state_$2');
         
         % construct the list of the variables to differentiate
         %-----------------------------------------------------
@@ -337,9 +337,9 @@ jac_toc=toc;
         %-------------------------------
         x=strrep(x,discount_name,discount);
         
-        % replace steady states (steady_state_C --> steady_state(C))
+        % replace steady states (steady_state_C --> $(C))
         %-----------------------------------------------------------
-        x=regexprep(x,'(steady_state)_(\w+)','$1($2)');
+        x=regexprep(x,'\<steady_state_(\w+)','\$($1)');
         
         % add a column of nan at the beginning and a column of opt pol at the end
         %-------------------------------------------------------------------------

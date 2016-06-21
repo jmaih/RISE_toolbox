@@ -26,8 +26,10 @@ model
 	
 	x=y/a^(1/eta);
 
-	log(r/steady_state(r))=rho_r*log(r{-1}/steady_state(r))+rho_pai*log(pai/pai_ss)+
-		rho_g*log(g/steady_state(g))+rho_x*log(x/steady_state(x))+sig_r*e_r;
+	log(r/steady_state(r))=rho_r*log(r{-1}/$(r))+rho_pai*log(pai/pai_ss)+
+		rho_g*log(g/steady_state(g))+rho_x*log(x/$(x))+sig_r*e_r;
+
+	% steady_state(v) is the same as $(v)
 
 parameterization
 	% fixed parameters

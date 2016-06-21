@@ -60,8 +60,8 @@ for iequiv=1:numel(blknames)
 end
 rise_code = strrep(rise_code,'=#','=');
 rise_code = strrep(rise_code,'!!','#');
-rise_code = strrep(rise_code,'...','');
-rise_code=regexprep(rise_code,'(&|\$)(\w+)(?!\$)','steady_state($2)');
+rise_code = strrep(rise_code,'...','');				   
+rise_code=regexprep(rise_code,'(&|\$)(\w+)(?!\$)','\$($2)');
 
 % replace the remaining exclamation signs... (preparsing)
 rise_code = strrep(rise_code,'!','@# ');
