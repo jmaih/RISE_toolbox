@@ -50,6 +50,11 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
 %   is updated with the sampled draws.
 %   - **save** [struct|{'every='inf,'location=',pwd,'filename=',''}]:
 %   structure with fields "every", "location", "filename"
+%   - **recover** [false|{true}]: attempts to recover from an earlier
+%   aborted simulation
+%   - **recover_start_at_best** [true|{false}]: in an event of a recovery,
+%   start all the chains at the best value. Note this will break the chains
+%   if the best value is not the last element that was saved in the chain.
 %
 % - **mu** [d x 1 vector]: initial condition for the sampler
 %
@@ -92,7 +97,7 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'burnin',0,@(x)num_fin_int(x),'burnin should be an integer in [0,inf)'
     'N',20000,@(x)num_fin_int(x) && x>0 ,'N should be a strictly positive integer'
     'verbose',100,@(x)num_fin_int(x) && x>0 ,'verbose should be a strictly positive integer'
-    'c',0.25,@(x)num_fin(x) && x>0 ,'c (tuning parameter) should be a positive scalar'
+    'c',0.25,@(x)all(num_fin(x)) && all(x>0) ,'c (tuning parameter) should be a positive scalar'
     'c_range',[sqrt(eps),100],@(x)numel(x)==2 && all(num_fin(x) & x>0) && x(2)>=x(1),'c_range variation range for tuning parameter must be a two element vector'
     'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
     'retune_cov_every',100,@(x)num_fin_int && x>0, 'retune_cov_every should be a positive integer'
@@ -101,6 +106,8 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'rwm_exp',0.6,@(x)num_fin(x) && x>0.5 && x<1,'rwm_exp (Exponent of random-walk adaptation step size) must be in (1/2,1)'
     'fixed_scaling',false,@(x)isscalar(x) && islogical(x),'fixed_scaling (fixed tuning parameter) should be a logical scalar'
     'use_true_moments',false,@(x)isscalar(x) && islogical(x),'use_true_moments should be a logical scalar'
+    'recover',true,@(x)isscalar(x) && islogical(x),'recover should be a logical scalar'
+    'recover_start_at_best',false,@(x)isscalar(x) && islogical(x),'recover_start_at_best should be a logical scalar'
     'logproppdf',[],@(x)isa(x,'function_handle'),'logproppdf must be a function handle'
     'MaxTime',inf,@(x)num_fin(x) && x>0,'MaxTime must be a positive scalar'
     'adapt_covariance',false,@(x)isscalar(x) && islogical(x),'adapt_covariance should be a logical scalar'
@@ -164,6 +171,18 @@ end
 
 options=parse_arguments(defaults,options);
 
+% number of chains
+%------------------
+nchain=options.nchain;
+
+% burn-in
+%--------
+burnin=options.burnin;
+
+% tuning parameter for the covariance of the metropolis
+%-------------------------------------------------------
+log_c=log(options.c)*ones(1,nchain);
+
 savefile=options.save.filename;
 
 savelocation=options.save.location;
@@ -172,6 +191,8 @@ saveevery=options.save.every;
 
 is_save=isfinite(saveevery);
 
+isave_batch=0;
+    
 if is_save
     
     if isempty(savelocation)
@@ -182,7 +203,51 @@ if is_save
     
     if isempty(savefile)
         
-        savefile='mhDraws';
+        savefile='mhDraws';  
+        
+    end
+    
+    % try recovering
+    %---------------
+    
+    if options.recover
+        
+        [~,~,~,summary]=mcmc.process_draws(savelocation);
+        
+        if summary.nchains
+            
+            burnin=0;
+            
+            if nchain~=summary.nchains
+               
+                error('number of chains does not match')
+                
+            end
+            
+            mu=[summary.last.x];
+            
+            if options.recover_start_at_best
+                
+                mu=summary.best_of_the_best.x;
+                % mu will be expanded below as needed if necessary
+                
+            end
+            
+            if ~isempty(summary.last_cov)
+                
+                SIG=summary.last_cov;
+                
+            end
+            
+            if ~isempty(summary.last_cScale)
+                
+                log_c=log(summary.last_cScale);
+                
+            end
+            
+        end
+        
+        isave_batch=summary.last_saved_index;
         
     end
     
@@ -222,21 +287,9 @@ use_true_moments=options.use_true_moments;
 %------------------------------------------
 penalty=options.penalty;
 
-% burn-in
-%--------
-burnin=options.burnin;
-
 % thining
 %--------
 thin=options.thin;
-
-% number of chains
-%------------------
-nchain=options.nchain;
-
-% tuning parameter for the covariance of the metropolis
-%-------------------------------------------------------
-log_c=log(options.c)*ones(1,nchain);
 
 % number of simulations per chain
 %----------------------------------
@@ -254,7 +307,8 @@ adapt_covariance=options.adapt_covariance;
 
 if isempty(SIG)
     
-    SIG=1e-4*eye(d);%SIG=covar;
+    SIG=utils.mcmc.initial_covariance(lb,ub);
+    % SIG=1e-4*eye(d);%SIG=covar;
     
     adapt_covariance=true;
     
@@ -291,8 +345,6 @@ if is_save
     pop=stud(:,ones(1,saveevery));
     
     the_iter=0;
-    
-    isave_batch=0;
     
 else
     
@@ -397,7 +449,10 @@ while isempty(stopflag)
             
             isave_batch=isave_batch+1;
             
-            save(sprintf('%s%s%s_%0.0f',savelocation,filesep,savefile,isave_batch),'pop')
+            c=exp(log_c); %#ok<NASGU>
+            
+            save(sprintf('%s%s%s_%0.0f',savelocation,filesep,savefile,isave_batch),...
+                'pop','SIG','c')
             
             the_iter=0;
             
