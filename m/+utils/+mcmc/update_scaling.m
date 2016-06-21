@@ -50,17 +50,27 @@ function log_c=update_scaling(log_c,accept_ratio,alpha_range,fixed_scaling,...
 % Adapts formulae 20 in Blazej Miasojedow, Eric Moulines and Matti
 % Vihola (2012): "Adaptive Parallel Tempering Algorithm"
 if nargin<8
+    
     c_range=[sqrt(eps),100];
+    
     if nargin<7
+        
         c3=[];
+        
     end
+    
 end
+
 if isempty(c3)
+    
     c3=1;
+    
 end
 
 if xi3<=0.5||xi3>=1
+    
     error('xi3 must be in (0.5,1)')
+    
 end
 
 gam3 = c3*(n+1)^(-xi3);
@@ -78,16 +88,25 @@ log_c = log_c + gam3*alpha_diff;
 projection_facility()
 
     function projection_facility()
+        
         if ~fixed_scaling
+            
             log_c_range=log(c_range);
+            
             if log_c<log_c_range(1)
+                
                 log_c=log_c_range(1);
+                
             end
             
             if log_c>log_c_range(2)
+                
                 log_c=log_c_range(2);
+                
             end
+            
         end
+        
     end
 
 end
