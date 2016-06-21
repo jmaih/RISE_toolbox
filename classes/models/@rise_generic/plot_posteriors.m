@@ -269,8 +269,6 @@ end
         
         [ss.f_kdens,ss.x_kdens]=distributions.kernel_density(all_vals,[],[],'normal',N);
         
-% % % % % % % % % % % % % % %         ss.f_kdens=exp(ss.f_kdens);
-        
         if is_posterior_max
             
             ss.post_mode=post_mode(ipar);
