@@ -1,8 +1,20 @@
-function [d,drop,start,summary]=process_draws(draws,drop)
+function [d,drop,start,summary]=process_draws(draws,drop,start_from)
 
-if nargin<2
+if nargin<3
     
-    drop=[];
+    start_from=[];
+    
+    if nargin<2
+        
+        drop=[];
+        
+    end
+    
+end
+
+if isempty(start_from)
+    
+    start_from=1;
     
 end
 
@@ -40,9 +52,7 @@ if is_saved_to_disk
         
         W=strrep(W,'.mat','');
         
-        N=numel(W);
-        
-        re_order_names()
+        N=re_order_names();
         
         d=cell(1,N);
         
@@ -171,11 +181,11 @@ summary=struct('nchains',nchains,'npop',npop,...
         
     end
 
-    function re_order_names()
+    function N=re_order_names()
         
         Wbar=regexprep(W,'\w+_(\d+)','$1');
         
-        for ii=1:N
+        for ii=1:numel(Wbar)
             
             if isempty(Wbar{ii})
                 
@@ -195,7 +205,9 @@ summary=struct('nchains',nchains,'npop',npop,...
         
         last_saved_index=Wbar_ordered(end);
         
-        W=W(tags);
+        W=W(tags(start_from:end));
+        
+        N=numel(W);
         
     end
 
