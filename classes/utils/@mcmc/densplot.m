@@ -26,6 +26,10 @@ x=vec(x.');
 
 hdl0=plot(x_kdens,f_kdens);
 
+title(pname)
+
+axis tight
+
 if nargout
     
     hdl=hdl0;
