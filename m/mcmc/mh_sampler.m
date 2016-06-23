@@ -1,4 +1,4 @@
-function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG)
+function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 % MH_SAMPLER -- Metropolis Hastings sampler
 %
 % Syntax
@@ -100,7 +100,6 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'c',0.25,@(x)all(num_fin(x)) && all(x>0) ,'c (tuning parameter) should be a positive scalar'
     'c_range',[sqrt(eps),100],@(x)numel(x)==2 && all(num_fin(x) & x>0) && x(2)>=x(1),'c_range variation range for tuning parameter must be a two element vector'
     'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
-    'retune_cov_every',100,@(x)num_fin_int && x>0, 'retune_cov_every should be a positive integer'
     'penalty',1e+8,@(x)isempty(x)||num_fin(x) && x>0,'penalty (worst value possible in absolute value) must be empty or a finite positive number'
     'nchain',1,@(x)num_fin_int(x) && x>0,'nchain(# chains) should be a strictly positive integer'
     'rwm_exp',0.6,@(x)num_fin(x) && x>0.5 && x<1,'rwm_exp (Exponent of random-walk adaptation step size) must be in (1/2,1)'
@@ -113,6 +112,7 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
     'adapt_covariance',false,@(x)isscalar(x) && islogical(x),'adapt_covariance should be a logical scalar'
     'save',savestruct,@(x)isstruct(x) && all(ismember(fieldnames(x),fieldnames(savestruct))),'fields for save must be "every", "location" and "filename"'
 %     'delay_rejection',true,@(x)isscalar(x) && islogical(x),'delay_rejection should be a logical scalar'
+%     'retune_cov_every',100,@(x)num_fin_int(x) && x>0, 'retune_cov_every should be a positive integer'
     };
 
 
@@ -126,7 +126,7 @@ end
 
 if nargin<6
     
-    SIG=[];
+    SIG_mom=[];
     
     if nargin<5
         
@@ -183,6 +183,8 @@ burnin=options.burnin;
 %-------------------------------------------------------
 log_c=log(options.c)*ones(1,nchain);
 
+c_range=options.c_range;
+
 savefile=options.save.filename;
 
 savelocation=options.save.location;
@@ -235,7 +237,7 @@ if is_save
             
             if ~isempty(summary.last_cov)
                 
-                SIG=summary.last_cov;
+                SIG_mom=summary.last_cov;
                 
             end
             
@@ -273,13 +275,13 @@ end
 %------------------------
 alpha=options.alpha;
 
+rho=.5*(alpha(1)+alpha(end))*ones(1,nchain);
+
 % more options
 %-------------
 fixed_scaling=options.fixed_scaling;
 
 rwm_exp=options.rwm_exp;
-
-c_range=options.c_range;
 
 use_true_moments=options.use_true_moments;
 
@@ -305,10 +307,9 @@ end
 %-------------------------
 adapt_covariance=options.adapt_covariance;
 
-if isempty(SIG)
+if isempty(SIG_mom)
     
-    SIG=utils.mcmc.initial_covariance(lb,ub);
-    % SIG=1e-4*eye(d);%SIG=covar;
+    SIG_mom=utils.mcmc.initial_covariance(lb,ub);
     
     adapt_covariance=true;
     
@@ -320,19 +321,20 @@ if size(mu,2)<nchain
     
 end
 
-if size(SIG,3)<nchain
+if size(SIG_mom,3)<nchain
 
-    SIG=SIG(:,:,ones(1,nchain));
+    SIG_mom=SIG_mom(:,:,ones(1,nchain));
     
 end
 
 mu_algo=mu;
 
-SIG_algo=SIG;
+SIG_algo=SIG_mom;
 
 % draw initial distribution:
 %----------------------------
 [stud,funevals,~,~,NumWorkers]=utils.mcmc.initial_draws(logf,lb,ub,nchain,penalty,mu);
+
 % vectorize in case of many parallel chains
 stud=stud(:);
 
@@ -352,8 +354,6 @@ else
     
 end
 
-retune_cov_every=options.retune_cov_every;
-
 d=numel(lb);
 
 obj=struct('funcCount',sum(funevals),'iterations',0,'start_time',clock,...
@@ -363,11 +363,7 @@ obj=struct('funcCount',sum(funevals),'iterations',0,'start_time',clock,...
 
 sqrt_cSIG=[];
 
-nbatch=1;
-
-accept=zeros(1,nchain);
-
-big_accept=0;
+accept_ratio=zeros(1,nchain);
 
 scale_times_sqrt_covariance_updating()
 
@@ -376,8 +372,6 @@ idraw=-burnin;
 total_draws=N*thin+burnin;
 
 obj.MaxIter=total_draws;
-
-U = log(rand(total_draws,nchain));
 
 q_x0_given_y = 0;
 
@@ -390,8 +384,6 @@ stopflag=utils.optim.check_convergence(obj);
 best=stud;
 
 obj.best_fval=[best.f];
-
-accept_ratio=[];
 
 % wtbh=waitbar(0,'please wait...','Name','MH sampling');
 
@@ -416,17 +408,21 @@ while isempty(stopflag)
     % this is a generic formula.
     rho = ([y.f]+q_x0_given_y)-([stud.f]+q_y_given_x0);
     
-    % minimization: change sign
+    % minimization: change sign: 
     %--------------------------
     rho=-rho;
     
+    rho=exp(min(rho,0));
+    
     % Accept or reject the proposal
     %-------------------------------
-    acc = min(rho,0)>=U(obj.iterations,:);
+    U=rand(1,nchain);
+    
+    acc = rho>=U;
     
     stud(acc,:) = y(acc,:); % preserves x's shape.
     
-    accept = accept+acc;
+    accept_ratio=((obj.iterations-1)*accept_ratio+acc)/obj.iterations;
     
     % save down
     %----------
@@ -444,19 +440,8 @@ while isempty(stopflag)
         
         
         pop(:,the_iter) = stud;
-        
-        if is_save && the_iter==saveevery
             
-            isave_batch=isave_batch+1;
-            
-            c=exp(log_c); %#ok<NASGU>
-            
-            save(sprintf('%s%s%s_%0.0f',savelocation,filesep,savefile,isave_batch),...
-                'pop','SIG','c')
-            
-            the_iter=0;
-            
-        end
+        do_save()
         
     end
     
@@ -476,14 +461,8 @@ while isempty(stopflag)
     
     % update the cCs
     %---------------
-    if mod(obj.iterations,retune_cov_every)==0
+    scale_times_sqrt_covariance_updating()
         
-        nbatch=nbatch+1;
-        
-        scale_times_sqrt_covariance_updating()
-        
-    end
-    
     % display progress
     %------------------
     obj.accept_ratio=accept_ratio;
@@ -499,17 +478,17 @@ end
 
 % delete(wtbh)
 
-do_results()
+Results=do_results();
 
-    function do_results()
+    function Results=do_results()
         
         if is_save
             % in case we end right at the re-initialization...
-            pop=pop(:,1:max(1,the_iter));
+           cutoff=max(1,the_iter);
             
         else
             
-            pop=pop(:,1:the_iter);
+            cutoff=the_iter;
             
         end
         
@@ -517,57 +496,75 @@ do_results()
         
         obj.end_time=clock;
         
-        Results=struct('pop',pop,...
+        c=exp(log_c); 
+        
+        Results=struct('pop',pop(:,1:cutoff),...
             'bestf',bestOfTheBest(1).f,...
             'bestx',bestOfTheBest(1).x,...
             'best',best,...
             'm',mu,...
-            'SIG',SIG,...
+            'SIG',SIG_mom,...
             'thinning',thin,...
             'm_algo',mu_algo,...
             'SIG_algo',SIG_algo,...
             'funevals',funevals,...
-            'stats',obj);
+            'stats',obj,...
+            'c',c);
+    end
+
+    function do_save()
+        
+        if ~(is_save && the_iter==saveevery)
+            
+            return
+            
+        end
+        
+        results=do_results(); %#ok<NASGU>
+        
+        isave_batch=isave_batch+1;
+        
+        save(sprintf('%s%s%s_%0.0f',savelocation,filesep,savefile,isave_batch),...
+            '-struct','results')
+        
+        the_iter=0;
+        
     end
 
     function scale_times_sqrt_covariance_updating()
         
-        accept_ratio=accept/retune_cov_every;
-        
-        sqrt_cSIG=SIG;
-        
-        iterations=obj.iterations;
-        
-        parfor (ichain=1:nchain,NumWorkers)
+            nbatch=obj.iterations;
             
-            if iterations>0
+            sqrt_cSIG=SIG_mom;
+            
+            iterations=obj.iterations;
+            
+            parfor (ichain=1:nchain,NumWorkers)
                 
-                log_c(ichain)=utils.mcmc.update_scaling(log_c(ichain),...
-                    accept_ratio(ichain),alpha,fixed_scaling,nbatch,...
-                    rwm_exp,[],c_range);
+                if iterations>0
+                    
+                     log_c(ichain)=utils.mcmc.update_scaling(log_c(ichain),...
+                        rho(ichain),alpha,fixed_scaling,nbatch,...
+                        rwm_exp,[],c_range);
+                    
+               end
+                
+                if use_true_moments
+                    
+                    sqrt_cSIG(:,:,ichain)=chol(...
+                        exp(log_c(ichain))*SIG_mom(:,:,ichain),...
+                        'lower');
+                    
+                else
+                    
+                    sqrt_cSIG(:,:,ichain)=chol(...
+                        exp(log_c(ichain))*SIG_algo(:,:,ichain),...
+                        'lower');
+                    
+                end
                 
             end
             
-            if use_true_moments
-                
-                sqrt_cSIG(:,:,ichain)=chol(...
-                    exp(log_c(ichain))*SIG(:,:,ichain),...
-                    'lower');
-                
-            else
-                
-                sqrt_cSIG(:,:,ichain)=chol(...
-                    exp(log_c(ichain))*SIG_algo(:,:,ichain),...
-                    'lower');
-                
-            end
-            
-        end
-        
-        big_accept=big_accept+accept;
-        
-        accept=0*accept;
-        
     end
 
     function moments_updating()
@@ -576,8 +573,8 @@ do_results()
             
             for ichain=1:nchain
                 
-                [mu(:,ichain),SIG(:,:,ichain)]=utils.moments.recursive(...
-                    mu(:,ichain),SIG(:,:,ichain),stud(ichain).x,obj.iterations);
+                [mu(:,ichain),SIG_mom(:,:,ichain)]=utils.moments.recursive(...
+                    mu(:,ichain),SIG_mom(:,:,ichain),stud(ichain).x,obj.iterations);
                 
                 [mu_algo(:,ichain),SIG_algo(:,:,ichain)]=utils.mcmc.update_moments(...
                     mu_algo(:,ichain),SIG_algo(:,:,ichain),stud(ichain).x,obj.iterations,...
