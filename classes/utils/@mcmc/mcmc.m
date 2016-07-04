@@ -1,4 +1,4 @@
-classdef mcmc
+classdef mcmc < handle
     
     properties
         pnames
@@ -68,6 +68,8 @@ classdef mcmc
         varargout=autocorrplot(varargin)
         
         varargout=gelman_plot(varargin)
+        
+        varargout=scatterplot(varargin)
         
         varargout=summary(varargin)
         
