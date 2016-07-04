@@ -276,7 +276,7 @@ x=untransform_parameters(xt,bc,[lb,ub]);
 
 end
 
-function [x,fval,exitflag,output]=fminunc_bnd(fun,x0,lb,ub,options,varargin) %#ok<DEFNU>
+function [x,fval,exitflag,output,grad,hess]=fminunc_bnd(fun,x0,lb,ub,options,varargin) %#ok<DEFNU>
 
 nonlcon=options.nonlcon;
 
@@ -286,7 +286,7 @@ bc=bound_class([lb,ub]);
 
 xt=transform_parameters(x0,bc,[lb,ub]);
 
-[xt,fval,exitflag,output]=fminunc(@wrapper,xt,options,fun,bc,lb,ub,varargin{:});
+[xt,fval,exitflag,output,grad,hess]=fminunc(@wrapper,xt,options,fun,bc,lb,ub,varargin{:});
 
 x=untransform_parameters(xt,bc,[lb,ub]);
 
