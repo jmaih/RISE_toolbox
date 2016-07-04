@@ -498,13 +498,25 @@ end
         
         if check_residuals(r,optimopt.TolFun)
             
-            retcode=0;
-            
             y=y0;
             
             g=g0;
             
-            return
+            retcode=0;
+            
+            % possibly update the parameter
+            %------------------------------
+            if any(sscode.is_param_changed)
+                
+                [~,p,retcode]=sscode.func(y,p,d);
+                
+            end
+            
+            if retcode==0
+                
+                return
+                
+            end
             
         end
         
