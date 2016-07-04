@@ -1,4 +1,4 @@
-function [result,is_failed,time_it_took]=posterior_sample(m,pop,dowhat,howmany,ouf,varargin)
+function [result,time_it_took]=posterior_sample(m,pop,dowhat,howmany,ouf,varargin)
 % POSTERIOR_SAMPLE -- computes a sample of any quantity of interest using
 % parameter draws from a population e.g. a posterior simulation
 %
@@ -47,8 +47,6 @@ function [result,is_failed,time_it_took]=posterior_sample(m,pop,dowhat,howmany,o
 % - **result** [1 x howmany cell]: container of the various applications of
 % the "dowhat" handle
 %
-% - **is_failed** [1 x howmany logical]: detector of failed simulations
-%
 % - **time_it_took** [numeric]: number of seconds needed to run all the
 % simulations.
 %
@@ -58,10 +56,20 @@ function [result,is_failed,time_it_took]=posterior_sample(m,pop,dowhat,howmany,o
 % - the function will exploit parallel computation if there are workers
 % idle.
 %
+% - Because the solving of the model is sometimes iterative, a change of
+% solver or of the settings of the solver can result in the model not
+% being solved or more generally simulations failures. The algorithm will
+% loop until the requested number of simulations is obtained. But it will
+% not point to the parameter vectors that fail.
+%
 % Examples
 % ---------
 %
 % See also:
+    
+% hard coded
+%-----------
+max_while_loops=20;
 
 if isempty(m)
     
@@ -98,56 +106,106 @@ else
     if isempty(howmany)
         
         howmany=npop;
-        
-    else
-        
-        if howmany>npop
-            
-            error('howmany cannot exceed the number of elements in the population')
-            
-        end
-        
+                
     end
     
-    order=randperm(npop);
-    
-    order=order(1:howmany);
-    
     result=cell(1,howmany);
-    
-    % cut the crap
-    %-------------
-    pop=pop(order);
     
     objective=@do_it;
     
     NumWorkers=utils.parallel.get_number_of_workers();
     
-    is_failed=false(1,howmany);
-    
     tic
     
-    parfor(ii=1:howmany,NumWorkers)
+    offset=0;
+    
+    howmany0=howmany;
+    
+    iter=0;
+    
+    while howmany0 && iter<max_while_loops
         
-        x=pop(ii).x;
+        iter=iter+1;
         
-        try
-            
-            result{ii}=objective(x);
-            
-        catch me
-            
-            disp(ii),disp(me.message),disp(' ')
-            
-            is_failed(ii)=true;
-            
-        end
+        small_result=do_one_pass(howmany0);
+        
+        ngood=numel(small_result);
+        
+        result(offset+(1:ngood))=small_result;
+        
+        offset=offset+ngood;
+        
+        howmany0=howmany-offset;
+        
+    end
+    
+    if iter==max_while_loops
+        
+        error('Too many vectors fail. This can occur if e.g. the solver or the solver''s settings are changed')
         
     end
     
     time_it_took=toc;
     
 end
+
+    function small_result=do_one_pass(hm)
+        % update the number in case population is shrunk
+        %-----------------------------------------------
+        npop=numel(pop);
+        
+        if hm>npop
+            
+            error('howmany exceeds the number of elements in the population... possibly after chop off')
+            
+        end
+        % reorder
+        %-------------
+        order=randperm(npop);
+        
+        pop=pop(order);
+        
+        small_result=cell(1,hm);
+        
+        is_failed_this_pass=true(1,hm);
+        
+        parfor(ii=1:hm,NumWorkers)
+            
+            if is_failed_this_pass(ii)
+                
+                x=pop(ii).x;
+                
+                try
+                    
+                    small_result{ii}=objective(x); %#ok<PFOUS>
+                    
+                    is_failed_this_pass(ii)=false;
+                    
+                catch me
+                    
+                    disp(ii),disp(me.message),disp(' ')
+                    
+                end
+                
+            end
+            
+        end
+        
+        % bump the failed
+        %----------------
+        failed=find(is_failed_this_pass);
+        
+        small_result(is_failed_this_pass)=[];
+        
+        if ~isempty(failed)
+            
+            warning(sprintf('%s:: %0.0f failed simulations',mfilename,numel(failed))) %#ok<SPWRN>
+            
+        end
+        
+        pop=pop(hm+1:end);
+        
+    end
 
     function out=do_it(x)
         
