@@ -66,8 +66,20 @@ end
 % size of the plot
 %-----------------
 x_min=min(pp.x);
+
 x_max=max(pp.x);
-axis([x_min x_max (1-sign(low_f)*rescale)*low_f (1+sign(high_f)*rescale)*high_f]);
+
+llf=(1-sign(low_f)*rescale)*low_f;
+
+hhf=(1+sign(high_f)*rescale)*high_f;
+
+if abs(hhf-llf)<eps
+    
+    hhf=inf;
+    
+end
+
+axis([x_min x_max llf hhf]);
 % % axis tight % xlim([min(pp.x),max(pp.x)])
 h=gca();
 
