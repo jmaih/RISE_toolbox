@@ -107,6 +107,13 @@ tex_name=ss.tex_name;
 
 % size of the plot
 %-----------------
+
+if abs(top-bottom)<sqrt(eps)
+    
+    top=inf;
+    
+end
+
 axis([ss.x_min ss.x_max bottom 1*top]);
 
 h=gca();
