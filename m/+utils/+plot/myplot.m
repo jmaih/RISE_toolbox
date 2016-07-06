@@ -160,9 +160,9 @@ end
                 [ax12,h1,h2]=plotfunc(pp.xdatenums,d{1},pp.xdatenums,d{2},matlab_args{:});
                 ax12={ax12};
                 if ~isempty(linewidth)
-                    set([h1,h2],linewidth{:})
+                    set([h1,h2(:).'],linewidth{:})
                 end
-                 h1h2={h1,h2};
+                 h1h2={h1,h2(:).'};
             else
                plotfunc(pp.xdatenums,d{:},matlab_args{:});
                 ax12={gca};
