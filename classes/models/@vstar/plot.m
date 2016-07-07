@@ -35,6 +35,14 @@ function h=plot(obj,number,range,varargin)
 %
 % See also:	
 
+if isempty(obj)
+    
+    h=struct();
+    
+    return
+    
+end
+
 g=obj.solution.thresholds{number}.g;
 
 c=num2cell(obj.solution.thresholds{number}.c);
