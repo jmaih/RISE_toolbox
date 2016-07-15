@@ -39,6 +39,7 @@ classdef table < rise_report.generic_report
         % number of decimals
         precision=4
         numbering=true
+        header={};
     end
     properties(Dependent)
         batch
@@ -70,6 +71,9 @@ classdef table < rise_report.generic_report
             %
             %   - ['numbering',[{true}|false]] : whether or not the table
             %     should be numbered in the final report
+            %
+            %   - ['header',[{''}|char|cell]] : Header of the table below the
+            %   title if not already included in the log
             %
             % Outputs
             % --------
@@ -111,8 +115,11 @@ classdef table < rise_report.generic_report
                     str=[str,' \\'];
                     AllBatch{irow}=str;
                 end
-                theHeader=AllBatch(1);
-                AllBatch=AllBatch(2:end);
+                theHeader=obj.header;
+                if isempty(theHeader)
+                    theHeader=AllBatch(1);
+                    AllBatch=AllBatch(2:end);
+                end
                 tablestyle='table';
                 if obj.longtable
                     tablestyle=['long',tablestyle];
