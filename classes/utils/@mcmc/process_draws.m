@@ -56,7 +56,9 @@ if is_saved_to_disk
         
         d=cell(1,N);
         
-        discard=false(1,N);
+        iter=0;
+        
+        offset=0;
         
         for imat=1:N
             
@@ -66,13 +68,30 @@ if is_saved_to_disk
             
             if ~(isfield(tmp,'pop') && isfield(tmp.pop,'x'))
                 
-                discard(imat)=true;
-                
                 continue
                 
             end
             
-            d{imat}=tmp.pop;
+            iter=iter+1;
+            
+            nc=size(tmp.pop,2);
+            
+            if iter==1
+                
+                
+                d=tmp.pop(:,ones(1,1e+6));
+                
+            end
+            
+            if offset+nc>size(d,2)
+                
+                d=[d,tmp.pop(:,ones(1,1e+5))]; %#ok<AGROW>
+                
+            end
+            
+            d(:,offset+(1:nc))=tmp.pop;
+            
+            offset=offset+nc;
             
             if isfield(tmp,'SIG')
                 
@@ -88,9 +107,7 @@ if is_saved_to_disk
             
         end
         
-        d=d(~discard);
-        
-        d=[d{:}];
+        d=d(:,1:offset);
         
     end
     
