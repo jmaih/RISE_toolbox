@@ -102,7 +102,7 @@ parameter_differentiation=DefaultOptions.parameter_differentiation;
 valid_extensions={'.rs','.rz','.dsge'};
 VE=parser.cell2matize(valid_extensions);
 FileName=regexprep(FileName,'\s*','');
-FileName=regexp(FileName,['(?<fname>\w+)(?<ext>',VE,'?)'],'names');
+FileName=regexp(FileName,['(?<fname>\w+[^\.]*)(?<ext>',VE,'?)'],'names');
 if iscell(FileName)
     FileName=[FileName{:}];
 end
