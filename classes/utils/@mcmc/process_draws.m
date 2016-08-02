@@ -1,14 +1,26 @@
-function [d,drop,start,summary]=process_draws(draws,drop,start_from)
+function [d,drop,start,summary]=process_draws(draws,drop,start_from,trimming)
 
-if nargin<3
+if nargin<4
     
-    start_from=[];
+    trimming=[];
     
-    if nargin<2
+    if nargin<3
         
-        drop=[];
+        start_from=[];
+        
+        if nargin<2
+            
+            drop=[];
+            
+        end
         
     end
+    
+end
+
+if isempty(trimming)
+    
+    trimming = 1;
     
 end
 
@@ -117,6 +129,8 @@ else
     
 end
 
+d=d(:,1:trimming:end);
+
 [nchains,npop]=size(d);
 
 discard=round(drop*npop);
@@ -168,7 +182,8 @@ summary=struct('nchains',nchains,'npop',npop,...
     'last_saved_index',last_saved_index,...
     'best_of_the_best',best,'last',dlast,...
     'last_cov',SIG,'estimated_cov',eSIG,...
-    'last_cScale',c);
+    'last_cScale',c,...
+    'trimming',trimming);
 
     function best=load_best()
         

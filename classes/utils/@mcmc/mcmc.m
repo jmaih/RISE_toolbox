@@ -14,32 +14,39 @@ classdef mcmc < handle
     
     methods
         
-        function obj=mcmc(draws,pnames,drop,start_from)
+        function obj=mcmc(draws,pnames,drop,start_from,trimming)
             
-            if nargin<4
+            if nargin<5
                 
-                start_from=[];
+                trimming=[];
                 
-                if nargin<3
+                if nargin<4
                     
-                    drop=[];
+                    start_from=[];
                     
-                    if nargin<2
+                    if nargin<3
                         
-                        pnames=[];
+                        drop=[];
                         
-                        if nargin<1
+                        if nargin<2
                             
-                            return
+                            pnames=[];
+                            
+                            if nargin<1
+                                
+                                return
+                                
+                            end
                             
                         end
                         
                     end
                     
                 end
+                
             end
             
-            [obj.draws,obj.i_dropped,obj.start,results_summary]=mcmc.process_draws(draws,drop,start_from);
+            [obj.draws,obj.i_dropped,obj.start,results_summary]=mcmc.process_draws(draws,drop,start_from,trimming);
             
             obj.best=results_summary.best_of_the_best;
             
