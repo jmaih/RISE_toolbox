@@ -2,18 +2,19 @@ function [ss,newp,retcode]=fs2000_steadystate_initval(obj,ss,pp,d,id) %#ok<INUSL
 % fs2000_steadystate_initval --  gives good start values for the steady
 % state of fs2000: this is the equivalent of dynare's initvals
 %
+%
 % Syntax
 % -------
 % ::
 %
-%   [y,newp,retcode]=fs2000_steadystate_initval(obj,y,p,d,id)
+%   [y,newp,retcode]=fs2000_steadystate(obj,y,p,d,id)
 %
 % Inputs
 % -------
 %
 % - **obj** [rise|dsge]: model object (not always needed)
 %
-% - **ss** [vector]: endo_nbr x 1 vector of initial steady state
+% - **y** [vector]: endo_nbr x 1 vector of initial steady state
 %
 % - **pp** [struct]: parameter structure
 %
@@ -24,7 +25,7 @@ function [ss,newp,retcode]=fs2000_steadystate_initval(obj,ss,pp,d,id) %#ok<INUSL
 % Outputs
 % --------
 %
-% - **ss** []: endo_nbr x 1 vector of updated steady state
+% - **y** []: endo_nbr x 1 vector of updated steady state
 %
 % - **newp** [struct]: structure containing updated parameters if any
 %
@@ -67,9 +68,9 @@ if nargin==1
     % list of endogenous variables to be calculated
     %----------------------------------------------
     ss=tmp(:,1);
-    % flags on the calculation
-    %--------------------------
-    newp=struct('unique',true,'imposed',false);
+    % list of parameters to be computed during steady state calculation
+    %-------------------------------------------------------------------
+    newp={};
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------

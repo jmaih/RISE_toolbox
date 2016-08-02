@@ -1,6 +1,6 @@
 %% housekeeping
 close all
-clear all
+clear
 clc
 %% add the necessary paths
 rise_startup()

@@ -12,7 +12,7 @@ function [ss,newp,retcode]=fs2000_steadystate(obj,ss,pp,d,id) %#ok<INUSL>
 %
 % - **obj** [rise|dsge]: model object (not always needed)
 %
-% - **ss** [vector]: endo_nbr x 1 vector of initial steady state
+% - **y** [vector]: endo_nbr x 1 vector of initial steady state
 %
 % - **pp** [struct]: parameter structure
 %
@@ -23,7 +23,7 @@ function [ss,newp,retcode]=fs2000_steadystate(obj,ss,pp,d,id) %#ok<INUSL>
 % Outputs
 % --------
 %
-% - **ss** []: endo_nbr x 1 vector of updated steady state
+% - **y** []: endo_nbr x 1 vector of updated steady state
 %
 % - **newp** [struct]: structure containing updated parameters if any
 %
@@ -49,9 +49,9 @@ if nargin==1
     % list of endogenous variables to be calculated
     %----------------------------------------------
     ss={'m','P','c','e','W','R','k','d','n','l','gy_obs','gp_obs','y','dA'};
-    % flags on the calculation
-    %--------------------------
-    newp=struct('unique',true,'imposed',false);
+    % list of parameters to be computed during steady state calculation
+    %-------------------------------------------------------------------
+    newp={};
 else
     % no parameters to update or create in the steady state file
     %-----------------------------------------------------------
