@@ -58,32 +58,34 @@ end
 
 kids=get(fig,'children');
 
+x=[start;start;finish;finish];
+
+nx=size(x,2);
+
 for ii=1:numel(kids)
     
     ylim=get(kids(ii),'ylim');
     
     if isnumeric(ylim)
         
-        y=[ylim(1) ylim(2) ylim(2) ylim(1)];
+        y=[ylim(1) ylim(2) ylim(2) ylim(1)].';
+        
+        y=y(:,ones(1,nx));
         
         axes(kids(ii))
         
         hold on
         
-        for i=1:length(start)
-            
-            x=[start(i) start(i) finish(i) finish(i)];
-            
-            fill(x,y,colorstr);
-            
-        end
-        % Now, prevent the shading from covering up the lines in the plot.
-%         h = findobj(kids(ii),'Type','line');
-        % set(h,'EraseMode','xor');
+        mypatch=patch(x,y,colorstr,'EdgeColor','none');
         
-        h = findobj(kids(ii),'Type','patch');
-        set(h,'EdgeColor','none');
+        grand_kids=get(kids(ii),'children');
         
+        grand_kids(grand_kids==mypatch)=[];
+        
+        grand_kids(end+1)=mypatch; %#ok<AGROW>
+        
+        set(kids(ii),'children',grand_kids);
+                
         % This last one makes the tick marks visible
         set(kids(ii), 'Layer', 'top')
         
