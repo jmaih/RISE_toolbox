@@ -129,7 +129,15 @@ else
     
 end
 
-d=d(:,1:trimming:end);
+if isa(trimming,'function_handle')
+    
+    d=trimming(d);
+    
+else
+    
+    d=d(:,1:trimming:end);
+
+end
 
 [nchains,npop]=size(d);
 
