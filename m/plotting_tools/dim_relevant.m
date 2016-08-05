@@ -100,7 +100,7 @@ dim(start,finish,colorstr,figs);
         
         finish_dn = date2serial(finish);
         
-        if start_dn(1)>curax(1)
+        if start_dn(1)<curax(1)
             
             begin=find(start_dn>=curax(1),1,'first');  % First recession to include;
             
@@ -112,7 +112,7 @@ dim(start,finish,colorstr,figs);
         
         if finish_dn(end)>curax(2)
             
-            last=find(finish_dn<=curax(2),1,'first');  % First recession to include;
+            last=find(finish_dn<=curax(2),1,'last');  % last recession to include;
             
         else
             
