@@ -8,6 +8,20 @@ end
 
 m=obj.nchains;
 
+p=struct.empty;
+
+R=[];
+
+W=[];
+
+B=[];
+
+if m == 1
+    
+    return
+    
+end
+
 if recursive
     
     last=2;
@@ -23,35 +37,23 @@ niter=obj.npop-last+1;
 % for istart=last:obj.npop
 time_end=obj.start;
 
-for iter=1:niter
+my_recursion=@do_one_recursion;
+
+R=zeros(obj.nparams,niter);
+
+W=zeros(obj.nparams,niter);
+
+B=zeros(obj.nparams,niter);
+
+V=zeros(obj.nparams,niter);
+
+parfor iter=1:niter
     
     time_end=time_end+1;
     
-    [Ri,Wi,Bi,Vi]=do_one_recursion(obj.draws(:,1:last+iter-1));
-    
-    if iter==1
+    [R(:,iter),W(:,iter),B(:,iter),V(:,iter)]=my_recursion(obj.draws(:,1:last+iter-1));
         
-        R=Ri(:,ones(niter,1));
-        
-        W=Wi(:,ones(niter,1));
-        
-        B=Bi(:,ones(niter,1));
-        
-        V=Vi(:,ones(niter,1));
-        
-    end
-    
-    R(:,iter)=Ri;
-    
-    W(:,iter)=Wi;
-    
-    B(:,iter)=Bi;
-    
-    V(:,iter)=Vi;
-    
 end
-
-p=struct();
 
 for iname=1:obj.nparams
     
