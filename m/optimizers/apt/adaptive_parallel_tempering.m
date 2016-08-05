@@ -542,37 +542,37 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
         % Pick random integer in [1,H-1]
         picked_stage = min(floor(rand*(H-1)+1),H-1);
         
-        [x, fx, acc_sw(picked_stage), alpha_swap(picked_stage)] = try_swap(x, fx, picked_stage);
+        [acc_sw(picked_stage), alpha_swap(picked_stage)] = try_swap(picked_stage);
         
         who_swapped(picked_stage) = 1;
         
-    end
-
-    function [x, fx, acc_sw, acceptance_prob] = try_swap(x, fx, chosen_stage)
-        % Try to swap the levels istage <-> istage+1
-        
-        % try_swap.m
-        %
-        % The acceptance probability:
-        delta_lambda=lambda(chosen_stage)-lambda(chosen_stage+1);
-        acceptance_prob=acceptance_probability(delta_lambda,fx(chosen_stage+1),fx(chosen_stage));
-        
-        % An accept-reject for the swap
-        if rand <= acceptance_prob
-            % Swap states
-            x_ = x(:,chosen_stage);
-            fx_ = fx(chosen_stage);
+        function [acc_sw, acceptance_prob] = try_swap(chosen_stage)
+            % Try to swap the levels istage <-> istage+1
             
-            x(:,chosen_stage) = x(:,chosen_stage+1);
-            fx(chosen_stage) = fx(chosen_stage+1);
+            % try_swap.m
+            %
+            % The acceptance probability:
+            delta_lambda=lambda(chosen_stage)-lambda(chosen_stage+1);
+            acceptance_prob=acceptance_probability(delta_lambda,fx(chosen_stage+1),fx(chosen_stage));
             
-            x(:,chosen_stage+1) = x_;
-            fx(chosen_stage+1) = fx_;
+            % An accept-reject for the swap
+            if rand <= acceptance_prob
+                % Swap states
+                x_ = x(:,chosen_stage);
+                fx_ = fx(chosen_stage);
+                
+                x(:,chosen_stage) = x(:,chosen_stage+1);
+                fx(chosen_stage) = fx(chosen_stage+1);
+                
+                x(:,chosen_stage+1) = x_;
+                fx(chosen_stage+1) = fx_;
+                
+                % Update statistics
+                acc_sw = 1;
+            else
+                acc_sw = 0;
+            end
             
-            % Update statistics
-            acc_sw = 1;
-        else
-            acc_sw = 0;
         end
         
     end
