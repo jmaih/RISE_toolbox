@@ -97,7 +97,7 @@ classdef generic_switch < generic
         
     end
     
-    methods(Sealed)
+    methods(Hidden=true,Sealed)
         
         varargout=decompose_parameter_name(varargin)
     end

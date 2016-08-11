@@ -188,8 +188,6 @@ classdef generic
     
     methods(Access=protected)
         
-        varargout=decompose_parameter_name(varargin)
-        
         varargout=parameters_links(varargin)
         
         varargout=setup_priors(varargin)
@@ -233,6 +231,8 @@ classdef generic
     methods(Hidden=true)
         
         varargout=assign_estimates(varargin)
+        
+        varargout=decompose_parameter_name(varargin)
         
         varargout=load_data(varargin)
         
