@@ -4,7 +4,7 @@ function obj=estimate(obj,varargin)
 % More About
 % ------------
 %
-% - ESTIMATE is the same as RISE_GENERIC/ESTIMATE except for options that
+% - ESTIMATE is the same as GENERIC_SWITCH/ESTIMATE except for options that
 % only apply to dsge or rise models. Those options are:
 %   - **estim_priors** [{[]}|struct]: This provides an alternative to
 %   setting priors inside the rise/dsge model file. Each field of the
@@ -12,10 +12,10 @@ function obj=estimate(obj,varargin)
 %   hold a cell array whose structure is described in help
 %   RISE_GENERIC/setup_priors.
 %
-% See also: RISE_GENERIC/ESTIMATE, RISE_GENERIC/SETUP_PRIORS
+% See also: GENERIC_SWITCH/ESTIMATE, GENERIC_SWITCH/SETUP_PRIORS
 
 if isempty(obj)
-    obj=estimate@rise_generic(obj,varargin{:});
+    obj=estimate@generic_switch(obj,varargin{:});
     obj=utils.miscellaneous.mergestructures(obj,...
         struct('estim_priors',[]));
 else
@@ -24,7 +24,7 @@ else
     % optimal_simple_rule_posterior, in which case there is no filtering going
     % on.
     obj=set(obj,'kf_filtering_level',0);
-    obj=estimate@rise_generic(obj,varargin{:});
+    obj=estimate@generic_switch(obj,varargin{:});
 end
 
 

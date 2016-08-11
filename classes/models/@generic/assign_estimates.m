@@ -19,7 +19,7 @@ function obj=assign_estimates(obj,params)
 % Outputs
 % --------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [generic_switch]: model object
 %
 % More About
 % ------------

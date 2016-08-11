@@ -5,7 +5,7 @@ function varargout=pull_objective(obj,varargin)
 % More About
 % ------------
 %
-% - PULL_OBJECTIVE is the same as RISE_GENERIC/PULL_OBJECTIVE except for
+% - PULL_OBJECTIVE is the same as GENERIC_SWITCH/PULL_OBJECTIVE except for
 % the kf_filtering_level
 %
 % Examples
@@ -17,6 +17,6 @@ if ~isempty(obj)
     obj=set(obj,'kf_filtering_level',0);
 end
 
-[varargout{1:nargout}]=pull_objective@rise_generic(obj,varargin{:});
+[varargout{1:nargout}]=pull_objective@generic_switch(obj,varargin{:});
 
 end

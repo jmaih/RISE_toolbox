@@ -1,4 +1,4 @@
-classdef dsge < rise_generic
+classdef dsge < generic_switch
     % dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
     %
     % dsge Methods:
@@ -231,7 +231,7 @@ classdef dsge < rise_generic
             % ---------
             %
             % See also:
-            obj=obj@rise_generic();
+            obj=obj@generic_switch();
             if nargin<1
                 return
             elseif isa(model_filename,'dsge')

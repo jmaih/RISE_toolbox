@@ -133,7 +133,7 @@ if obj.markov_chains.regimes_number==1 && obj.options.estim_analytical_post_mode
         'inv_order',inv_order,...
         'vcov',vcov);
 else
-    [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode@rise_generic(obj,x0,lb,ub);
+    [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode@generic_switch(obj,x0,lb,ub);
 end
 
     function A=transform_to_matrix_form(x)

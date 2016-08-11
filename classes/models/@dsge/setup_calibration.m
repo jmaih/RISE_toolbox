@@ -10,7 +10,7 @@ function obj=setup_calibration(obj,Calibration)
 % Inputs
 % -------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [generic_switch]: model object
 %
 % - **Calibration** [struct|cell]: calibration to push. There are two
 % possibilities:
@@ -43,7 +43,7 @@ if isempty(Calibration)
     return
 end
 
-obj=setup_calibration@rise_generic(obj,Calibration);
+obj=setup_calibration@generic_switch(obj,Calibration);
 % ensure the model will be re-solved no matter what
 %---------------------------------------------------
 obj.warrant_resolving = true;

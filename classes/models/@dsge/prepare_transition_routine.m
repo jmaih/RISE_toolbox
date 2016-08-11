@@ -33,7 +33,7 @@ if obj.is_endogenous_switching_model
     is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
     Qfunc=memoizer(obj.routines.transition_matrix,is_log_var,Vargs{:});
 else
-    Qfunc=prepare_transition_routine@rise_generic(obj);
+    Qfunc=prepare_transition_routine@generic_switch(obj);
 end
 
 end

@@ -25,7 +25,7 @@ function varargout=estimate(obj,varargin)
 nout=nargout;
 varargout=cell(1,nout);
 if isempty(obj)
-    est_opts=estimate@rise_generic(obj);
+    est_opts=estimate@generic_switch(obj);
     % option for computing the posterior mode analytically if possible
     est_opts.estim_analytical_post_mode=true;
     est_opts=utils.miscellaneous.mergestructures(est_opts,...
@@ -40,6 +40,6 @@ if isempty(obj)
         disp(est_opts)
     end
 else
-    [varargout{1:nout}]=estimate@rise_generic(obj,varargin{:});
+    [varargout{1:nout}]=estimate@generic_switch(obj,varargin{:});
 end
 end

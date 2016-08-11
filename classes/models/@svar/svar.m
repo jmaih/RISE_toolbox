@@ -1,4 +1,4 @@
-classdef svar < rise_generic
+classdef svar < generic_switch
     % svar Structural VAR modeling
     %
     % svar Methods:
@@ -69,7 +69,7 @@ classdef svar < rise_generic
     end
     methods
         function obj=svar(varargin)
-            obj=obj@rise_generic();
+            obj=obj@generic_switch();
             if isempty(varargin)
                 return
             end
@@ -84,7 +84,7 @@ classdef svar < rise_generic
             %---------------------------------------------------------
             svar.check_template(r,class(obj))
             out=vartools.preliminaries(varargin{:});
-            obj=rise_generic.reset(obj,out.endogenous,out.exogenous,...
+            obj=generic_switch.reset(obj,out.endogenous,out.exogenous,...
                 out.observables,out.markov_chains);
             quickfill={'param_template','constant','nlags','nx',...
                 'construction_data'};
@@ -119,9 +119,9 @@ classdef svar < rise_generic
         varargout=estimate(varargin)
         function obj=set(obj,varargin)
             nn=length(varargin);
-            % override the rise_generic set method
+            % override the generic_switch set method
             if isempty(obj)|| nn==1
-                obj=set@rise_generic(obj,varargin{:});
+                obj=set@generic_switch(obj,varargin{:});
                 % combine with specific elements if necessary
             else
                 if nn==0
@@ -170,7 +170,7 @@ classdef svar < rise_generic
                     obj(iobj).options=options_;
                     vargs(processed)=[];
                     if ~isempty(vargs)
-                        obj(iobj)=set@rise_generic(obj(iobj),vargs{:});
+                        obj(iobj)=set@generic_switch(obj(iobj),vargs{:});
                     end
                     if redo_priors && ~isempty(obj(iobj).options.data)
                         if isa(obj(iobj).options.data,'ts') && ...

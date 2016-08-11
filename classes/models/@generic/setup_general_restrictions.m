@@ -21,7 +21,7 @@ function obj=setup_general_restrictions(obj)
 % ------------
 %
 % - If present, the general restrictions should have been passed at an earlier stage
-%	See help for rise_generic/estimate for further information
+%	See help for generic_switch/estimate for further information
 %
 % Examples
 % ---------

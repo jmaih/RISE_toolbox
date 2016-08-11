@@ -2,7 +2,7 @@ function varargout=simulate(obj,varargin)
 
 if isempty(obj)
     
-    out=simulate@rise_generic(obj);
+    out=simulate@generic_switch(obj);
     
     [varargout{1:nargout}]=utils.miscellaneous.mergestructures(out,...
         struct('simul_sig',1,'simul_pruned',false,'simul_order',[],...
@@ -18,6 +18,6 @@ end
 % create problems with optimal policy if the user tries to simulate an optimal policy model
 % with order of approximation higher than 1  
 
-[varargout{1:nargout}]=simulate@rise_generic(obj,varargin{:});
+[varargout{1:nargout}]=simulate@generic_switch(obj,varargin{:});
 
 end

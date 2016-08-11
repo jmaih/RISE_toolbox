@@ -54,10 +54,10 @@ function obj=set(obj,varargin)
 % obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
 % obj=set(obj,'solve_shock_horizon',5)
 %
-% See also: rise_generic.set
+% See also: generic_switch.set
 
 if isempty(obj)
-    obj=set@rise_generic(obj);
+    obj=set@generic_switch(obj);
     % add other fields here if necessary
     return
 end
@@ -102,7 +102,7 @@ varargin(is_discard)=[];
 % do the following even if varargin isempty, it could well be the
 % initialization phase
 %--------------------------------------------------------------------------
-obj=set@rise_generic(obj,varargin{:});
+obj=set@generic_switch(obj,varargin{:});
 
 nobj=numel(obj);
 % do this one at a time

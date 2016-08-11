@@ -10,7 +10,7 @@ function obj=setup_calibration(obj,Calibration)
 % Inputs
 % -------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [generic_switch]: model object
 %
 % - **Calibration** [struct|cell]: calibration to push. There are two
 % possibilities:
@@ -23,7 +23,7 @@ function obj=setup_calibration(obj,Calibration)
 % Outputs
 % --------
 %
-% - **obj** [rise_generic]: model object
+% - **obj** [generic_switch]: model object
 %
 % More About
 % ------------

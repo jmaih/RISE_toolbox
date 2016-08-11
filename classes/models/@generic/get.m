@@ -1,5 +1,5 @@
 function [Reply,retcode]=get(obj,PropertyName)
-% GET -- fetches information from rise_generic objects
+% GET -- fetches information from generic_switch objects
 %
 % Syntax
 % -------

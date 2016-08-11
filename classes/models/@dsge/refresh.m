@@ -22,6 +22,6 @@ if ~isempty(obj)
     end
 end
 
-newobj=refresh@rise_generic(obj);
+newobj=refresh@generic_switch(obj);
 
 end

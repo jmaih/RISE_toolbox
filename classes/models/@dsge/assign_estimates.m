@@ -38,7 +38,7 @@ end
 
 if ~isempty(params)
     % this is general enough and includes measurement errors
-    obj=assign_estimates@rise_generic(obj,params);
+    obj=assign_estimates@generic_switch(obj,params);
     % ensure the model will be re-solved no matter what
     %---------------------------------------------------
     obj.warrant_resolving = true;
