@@ -43,9 +43,7 @@ h=size(Q,1);
 
 % form Aplus, A0, Aminus, B
 %--------------------------
-[dbf_plus,ds_0,dp_0,db_0,df_0,dpb_minus,de_0]=...
-    utils.solve.pull_first_order_partitions(structural_matrices.dv,...
-    obj.locations.before_solve.v);
+[sm]=utils.solve.pull_first_order_partitions(structural_matrices.dv,obj.locations.before_solve.v);
 
 Aplus=cell(h);
 A0=cell(1,h);
@@ -59,15 +57,15 @@ for rt=1:h
     aminus_rt=0;
     b_rt=0;
     for rplus=1:h
-        a0_rt=a0_rt+[ds_0{rt,rplus},dp_0{rt,rplus},db_0{rt,rplus},df_0{rt,rplus}];
-        aminus_rt=aminus_rt+dpb_minus{rt,rplus};
-        b_rt=b_rt+de_0{rt,rplus};
+        a0_rt=a0_rt+[sm.ds_0{rt,rplus},sm.dp_0{rt,rplus},sm.db_0{rt,rplus},sm.df_0{rt,rplus}];
+        aminus_rt=aminus_rt+sm.dpb_minus{rt,rplus};
+        b_rt=b_rt+sm.de_0{rt,rplus};
         if rt==1 && rplus==1
             [neqtns,ny]=size(a0_rt);
             aplus=zeros(neqtns,ny);
             Aminus__=aplus;
         end
-        aplus(:,bf_locs)=dbf_plus{rt,rplus};
+        aplus(:,bf_locs)=sm.dbf_plus{rt,rplus};
         Aplus{rt,rplus}=sparse(aplus);
     end
     A0{rt}=sparse(a0_rt);
@@ -83,8 +81,8 @@ H0=[];
 
 % solve the problem
 %------------------
-[H,G,retcode]=loose_commitment_engine(...
-    gam,beta,WW,AAplus,AA0,AAminus,BB,Q,H0,shock_horizon,obj.options);
+[H,G,retcode]=loose_commitment_engine(gam,beta,WW,AAplus,AA0,AAminus,BB,Q,...
+    H0,shock_horizon,obj.options);
 
 T=[];
 eigval=[];
@@ -214,8 +212,8 @@ end
     end
 end
 
-function [H,G,retcode]=loose_commitment_engine(...
-    gam,beta,W,Aplus,A0,Aminus,B,Q,H0,k,options)
+function [H,G,retcode]=loose_commitment_engine(gam,beta,W,Aplus,A0,Aminus,...
+    B,Q,H0,k,options)
 
 [nmult,ny]=size(A0{1});
 h=size(Q,1);
