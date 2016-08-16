@@ -60,6 +60,7 @@ for istep=2:nsteps+1
     regimes(istep)=s1;
     
     Tsim.Tx=T0.Tx(:,:,s1); Tsim.Tsig=T0.Tsig(:,:,s1); Tsim.Te=T0.Te(:,:,s1);
+    Tsim.ss=T0.ss(s1);
     
     % change the order here
     %-----------------------    

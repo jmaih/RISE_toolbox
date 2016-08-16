@@ -28,7 +28,7 @@ endo_nbr=obj.endogenous.number;
 
 exo_nbr=sum(obj.exogenous.number);
 
-regime_nbr=obj.markov_chains.chains_number;
+regime_nbr=obj.markov_chains.regimes_number;
 
 if isempty(T0);
     
