@@ -271,7 +271,7 @@ T=struct();
                 
 %                 W1(:,:,r00)=W1(:,:,r00)-new_T1_fi;
                 
-                T1.Te(:,:,r0) = -Ui * mat.B(:,:,r0);
+                T1.Te(:,:,r00) = -Ui * mat.B(:,:,r00);
                 
             end
             
