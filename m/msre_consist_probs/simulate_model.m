@@ -1,6 +1,11 @@
-function [sims,estim_probs,regimes,retcode]=simulate_model(m,inner_probs,x0,T0,shocks,control_shocks,s0,options)
+function [sims,estim_probs,regimes,retcode]=simulate_model(m,inner_probs,x0,...
+    T0,shocks,control_shocks,s0,options)
 
 % the user enters x0 in the order of m.endogenous.name
+
+[theSolver,vargs]=utils.code.user_function_to_rise_function(...
+    options.msre_solver);
+
 
 nsteps=size(shocks,3);
 
@@ -20,7 +25,7 @@ estim_probs=[];
 
 for istep=2:nsteps+1
     
-    [T0,retcode,sim_prob,Q]=msre_solver(m,inner_probs,T0,sims(:,istep-1),control_shocks,options);
+    [T0,retcode,sim_prob,Q]=theSolver(m,inner_probs,T0,sims(:,istep-1),control_shocks,options,vargs{:});
     
     if retcode
         
