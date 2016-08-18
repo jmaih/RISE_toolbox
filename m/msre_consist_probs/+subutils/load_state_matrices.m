@@ -67,7 +67,7 @@ adjusted.siz=siz; % adjusted sizes
 accelerate=false;
 % accelerate=options.solve_accelerate && siz.ns;
 
-[sm,adjusted,accelSupport]=dsge_tools.aggregate_matrices(sm,siz,adjusted,accelerate);
+[sm,adjusted,accelSupport]=dsge_tools.aggregate_matrices(sm,siz,adjusted,accelerate); %#ok<ASGLU>
 
 [mat.Aplus,mat.A0,mat.Aminus]=dsge_tools.full_state_matrices(siz,sm);
 

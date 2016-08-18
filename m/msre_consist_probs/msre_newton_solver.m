@@ -93,12 +93,35 @@ end
 
 I_nx_nd=speye(n_npb);
 
-[t,~,retcode]=fix_point_iterator(@iterator,subutils.vectorizer(T0),...
-    options);
+best_solution=struct('f',inf);
 
-T=struct();
+[t,~,retcode]=fix_point_iterator(@iterator,subutils.vectorizer(T0),options);
 
-[T.Tx,T.Tsig,T.Te,T.ss]=resizer(t);
+if ~isfield(options,'use_best') 
+    
+    options.use_best=false;
+    
+end
+
+if options.use_best
+    
+    if retcode
+        
+        warning('Using best found')
+        
+        retcode=0;
+        
+    end
+    
+    T=best_solution.T;
+    
+else
+    
+    T=struct();
+    
+    [T.Tx,T.Tsig,T.Te,T.ss]=resizer(t);
+    
+end
 
     function [Tx,Tsig,Te,ss1]=resizer(t)
         
@@ -218,6 +241,14 @@ T=struct();
         t1 = subutils.vectorizer(T1);
         
         f = abs(t1 - t0);
+        
+        if f < best_solution.f
+            
+            best_solution.f=f;
+            
+            best_solution.T=T1;
+            
+        end
         
         function update_the_rest()
             
