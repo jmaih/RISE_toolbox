@@ -183,16 +183,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1 && obj.dx(1,ii)
+                if oo>1 && obj.dx(1,ii)~=0
                     for jj=1:ii
                         do_second_order();
-                        if oo>2 && obj.dxx(1,ii,jj)
+                        if oo>2 && obj.dxx(1,ii,jj)~=0
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3 && obj.dxxx(1,ii,jj,kk)
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)~=0
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)~=0
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -258,16 +258,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1 && obj.dx(1,ii)
+                if oo>1 && obj.dx(1,ii)~=0
                     for jj=1:ii
                         do_second_order();
-                        if oo>2 && obj.dxx(1,ii,jj)
+                        if oo>2 && obj.dxx(1,ii,jj)~=0
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3 && obj.dxxx(1,ii,jj,kk)
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)~=0
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)~=0
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -329,16 +329,16 @@ classdef aplanar
                         break
                     end
                 end
-                if oo>1 && obj.dx(1,ii)
+                if oo>1 && obj.dx(1,ii)~=0
                     for jj=1:ii
                         do_second_order();
-                        if oo>2 && obj.dxx(1,ii,jj)
+                        if oo>2 && obj.dxx(1,ii,jj)~=0
                             for kk=1:jj
                                 do_third_order();
-                                if oo>3 && obj.dxxx(1,ii,jj,kk)
+                                if oo>3 && obj.dxxx(1,ii,jj,kk)~=0
                                     for ll=1:kk
                                         do_fourth_order();
-                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
+                                        if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)~=0
                                             for mm=1:ll
                                                 do_fifth_order();
                                             end
@@ -554,16 +554,16 @@ classdef aplanar
                             break
                         end
                     end
-                    if oo>1 && obj.dx(1,ii)
+                    if oo>1 && obj.dx(1,ii)~=0
                         for jj=1:ii
                             do_second_order();
-                            if oo>2 && obj.dxx(1,ii,jj)
+                            if oo>2 && obj.dxx(1,ii,jj)~=0
                                 for kk=1:jj
                                     do_third_order();
-                                    if oo>3 && obj.dxxx(1,ii,jj,kk)
+                                    if oo>3 && obj.dxxx(1,ii,jj,kk)~=0
                                         for ll=1:kk
                                             do_fourth_order();
-                                            if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
+                                            if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)~=0
                                                 for mm=1:ll
                                                     do_fifth_order();
                                                 end
@@ -920,16 +920,16 @@ for ii=1:obj.nvars
             break
         end
     end
-    if oo>1 && obj.dx(1,ii)
+    if oo>1 && obj.dx(1,ii)~=0
         for jj=1:ii
             do_second_order();
-            if oo>2 && obj.dxx(1,ii,jj)
+            if oo>2 && obj.dxx(1,ii,jj)~=0
                 for kk=1:jj
                     do_third_order();
-                    if oo>3 && obj.dxxx(1,ii,jj,kk)
+                    if oo>3 && obj.dxxx(1,ii,jj,kk)~=0
                         for ll=1:kk
                             do_fourth_order();
-                            if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)
+                            if oo>4 && obj.dxxxx(1,ii,jj,kk,ll)~=0
                                 for mm=1:ll
                                     do_fifth_order();
                                 end
