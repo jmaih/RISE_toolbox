@@ -20,34 +20,71 @@ function [oo_]=stoch_simul(obj,var_list,varargin)%,omega
 % See also: 
 
 if isempty(obj)
+    
     oo_=struct('stoch_sim_hpfilter_lambda',false);
+    
     return
+    
 end
-oo_=struct();
 
 if nargin<2
+    
     var_list=[];
+    
 end
+
+nobj=numel(obj);
+
+if nobj>1
+    
+    oo_=cell(1,nobj);
+    
+    for iobj=1:nobj
+        
+        fprintf('\n ******************* model(%0.0f): %s ******************* \n',iobj,obj(iobj).filename)
+        
+        [oo_{iobj}]=stoch_simul(obj(iobj),var_list,varargin{:});
+        
+    end
+    
+    return
+    
+end
+
+oo_=struct();
 % should also allow for passing options
 % get that small set of original variables
 
 test_for_deep_parameters_calibration();
 
 obj=set(obj,varargin{:});
+
 if isa(obj,'dsge')
+    
     if obj.options.solve_order == 1
+        
         obj=set(obj,'irf_draws',1);% replic
+        
     end
+    
 end
 
 if isempty(var_list)
+    
     if isa(obj,'dsge')
+        
         var_list=get(obj,'endo_list(original)');
+        
         lead_lag_incidence=obj.lead_lag_incidence;
+        
         check_model();
+        
     else
+        
         var_list=get(obj,'endo_list');
+        
     end
+    
 end
 
 % iter_ = max(obj.options.periods,1);
