@@ -11,8 +11,11 @@ observables GHAT PAIHAT RHAT
 
 exogenous EPS_A "Preference" EPS_Z "Technology" EPS_R "monetary policy" EPS_E "Cost push"
 
-parameters psi alpha rho_a sig_a beta gam rho_e	thetass zss	rho_g
-	sig_z  sig_r paiss sig_e rho_r rho_pai rho_x ess
+parameters psi alpha rho_a beta gam rho_e thetass zss paiss rho_r ess  pol_tp_1_2  pol_tp_2_1  vol_tp_1_2  vol_tp_2_1
+
+parameters(pol,2) rho_pai rho_x	rho_g
+
+parameters(vol, 2) sig_a sig_e sig_z sig_r
 
 model
 
