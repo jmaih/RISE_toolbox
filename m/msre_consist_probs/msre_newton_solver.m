@@ -65,10 +65,24 @@ own_stuff=[];
 
 nxx=numel(T0.Tx);
 
+if ~isfield(options,'local_approximation')
+    
+    options.local_approximation=false;
+    
+end
+
+if options.local_approximation
+    
+    obj.routines.steady_state_model=vector_to_steady_state_model(x0);
+    
+    obj=set(obj,'steady_state_imposed',true);
+    
+end
+
 [obj,structural_matrices,retcode]=compute_steady_state(obj);
 
 ss=obj.solution.ss;
-
+    
 for ireg=1:numel(ss)
     
     ss{ireg}=ss{ireg}(order_var);
@@ -114,6 +128,10 @@ if options.use_best
     end
     
     T=best_solution.T;
+    
+    c=best_solution.c;
+    
+    Q=best_solution.Q;
     
 else
     
@@ -248,6 +266,10 @@ end
             
             best_solution.T=T1;
             
+            best_solution.c=c;
+            
+            best_solution.Q=Q;
+            
         end
         
         function update_the_rest()
@@ -335,6 +357,18 @@ end
             Gd=Gd(:);
             
         end
+        
+    end
+
+end
+
+function ssm=vector_to_steady_state_model(y0)
+
+ssm=@numerical_ssmodel;
+
+    function [yout,param]=numerical_ssmodel(~,~,~,param,~,~,~)
+        
+        yout=y0;
         
     end
 

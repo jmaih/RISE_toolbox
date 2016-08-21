@@ -67,11 +67,15 @@ classdef generic
         
         parameter_values
         
+        restrictions_are_absorbed=false
+        
+    end
+    
+    properties(Hidden = true)
+        
         routines=struct()
         
         online_routines=struct()
-        
-        restrictions_are_absorbed=false
         
     end
     
