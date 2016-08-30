@@ -81,6 +81,12 @@ end
 
 [obj,structural_matrices,retcode]=compute_steady_state(obj);
 
+if retcode
+    
+    error(decipher(retcode))
+    
+end
+
 ss=obj.solution.ss;
     
 for ireg=1:numel(ss)
@@ -164,6 +170,7 @@ end
         T1 = TT;
         
         W=TT.Tx;
+        
         for r0=1:h
             
             U=mat.A0(:,:,r0);
@@ -260,9 +267,11 @@ end
         
         f = abs(t1 - t0);
         
-        if f < best_solution.f
+        max_f = max(f);
+        
+        if max_f < best_solution.f
             
-            best_solution.f=f;
+            best_solution.f = max_f;
             
             best_solution.T=T1;
             
