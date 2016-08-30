@@ -34,6 +34,8 @@ switch code
     case 0
     case 1
         msg='Steady state could not solve';
+    case 11
+        msg='Complex or nan steady state residuals';
     case 2
         msg='Nans in Jacobian';
     case 3

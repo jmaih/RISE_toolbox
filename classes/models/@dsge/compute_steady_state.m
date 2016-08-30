@@ -281,6 +281,14 @@ if ~retcode
     %-----------------
     structural_matrices.user_resids=r;
     
+    if ~isreal(r)||any(isnan(r(:)))
+        
+        retcode = 11;
+        
+        return
+        
+    end
+    
     structural_matrices.transition_matrices=obj.solution.transition_matrices;
     
     y=sparse(y);
