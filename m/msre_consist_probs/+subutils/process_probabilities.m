@@ -1,5 +1,11 @@
 function inner_probs=process_probabilities(obj,inner_probs)
 
+if all(cellfun(@isstruct,inner_probs(:,2),'uniformOutput',true))
+    
+    return
+    
+end
+
 regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
 
 ordered_names=obj.endogenous.name(obj.order_var);
