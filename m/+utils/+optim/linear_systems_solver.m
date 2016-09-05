@@ -53,6 +53,12 @@ function [X,retcode]= linear_systems_solver(A,b,x0,options)
 %
 % See also: 
 
+if ~isfield(options,'solve_linsyst_user_algo')
+    
+    options.solve_linsyst_user_algo=[];
+    
+end
+
 if isempty(options.solve_linsyst_user_algo)
     [X,retcode]=transpose_free_quasi_minimum_residual(A,b,... % right hand side
         x0,... % initial guess
