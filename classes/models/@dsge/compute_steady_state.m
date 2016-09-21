@@ -1032,7 +1032,8 @@ if isempty(obj.steady_state_2_model_communication)
         if  sscode.is_loop_steady_state
             % subset of variables to loop over
             %---------------------------------
-            sscode.subset=~sscode.solved & ~obj.endogenous.is_auxiliary;
+            sscode.subset=~sscode.solved & ~obj.endogenous.is_auxiliary & ...
+                ~obj.endogenous.is_lagrange_multiplier;
             
         end
         
