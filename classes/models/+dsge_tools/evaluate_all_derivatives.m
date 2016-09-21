@@ -34,6 +34,13 @@ end
 
 if size(ssdata,2)~=h
     
+    if obj.is_optimal_policy_model
+        % loose commitment may call for this
+        %-----------------------------------        
+        ssdata=ssdata(:,1);
+        
+    end
+    
     if size(ssdata,2)~=1
         
         error('wrong number of columns for ssdata')
