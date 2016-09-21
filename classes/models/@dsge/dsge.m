@@ -401,6 +401,7 @@ classdef dsge < generic_switch
         varargout=problem_reduction(varargin)
         varargout=set_z_eplus_horizon(varargin)
         varargout=growth_component_solver(varargin)
+        varargout=set_planner_derivatives(varargin)
     end
 end
 
