@@ -57,6 +57,8 @@ for ivar=1:numel(varList)
             
             datta=datta(:,ones(1,ncols));
             
+            warning('duplicating data from a model with unique regime to match the maximumn number of regimes across all models')
+            
         end
         
         % better start search from the beginning
