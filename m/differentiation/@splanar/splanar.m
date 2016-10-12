@@ -156,6 +156,18 @@ classdef splanar
             % atanh - overloads atanh for splanar
             obj=do_univariate(a,'atanh');
         end
+        function obj=betainv(x,a,b)
+            % betacdf - overloads betacdf for splanar
+            obj=do_trivariate(x,a,b,'betainv');
+        end
+        function obj=betacdf(x,a,b)
+            % betacdf - overloads betacdf for splanar
+            obj=do_trivariate(x,a,b,'betacdf');
+        end
+        function obj=betapdf(x,a,b)
+            % betapdf - overloads betapdf for splanar
+            obj=do_trivariate(x,a,b,'betapdf');
+        end        
         function obj=cos(a)
             % cos - overloads cos for splanar
             obj=do_univariate(a,'cos');
@@ -355,7 +367,7 @@ classdef splanar
                     mu=0;
                 end
             end
-            obj=do_trivariate_normal(x,mu,sd,'norminv');
+            obj=do_trivariate(x,mu,sd,'norminv');
         end
         function obj=normcdf(x,mu,sd)
             % normcdf - overloads normcdf for splanar
@@ -365,7 +377,7 @@ classdef splanar
                     mu=0;
                 end
             end
-            obj=do_trivariate_normal(x,mu,sd,'normcdf');
+            obj=do_trivariate(x,mu,sd,'normcdf');
         end
         function obj=normpdf(x,mu,sd)
             % normpdf - overloads normpdf for splanar
@@ -375,7 +387,7 @@ classdef splanar
                     mu=0;
                 end
             end
-            obj=do_trivariate_normal(x,mu,sd,'normpdf');
+            obj=do_trivariate(x,mu,sd,'normpdf');
         end
         function obj=or(a,b)
             % or - overloads or for splanar
@@ -677,6 +689,18 @@ classdef splanar
                         y=(x.args{1}-x.args{2})/x.args{3};
                         ss= d_args{3}/x.args{3};
                         d=((ss*y-(d_args{1}-d_args{2})/x.args{3})*y-ss)*x;
+                    case 'betainv'
+                        d=(d_args{1}+d_args{2}+d_args{3})/betapdf(...
+                            betainv(x.args{1},x.args{2},x.args{3}));
+                    case 'betacdf'
+                        d=(d_args{1}+d_args{2}+d_args{3})*betapdf(x.args{1},x.args{2},x.args{3});
+                    case 'betapdf'
+                        % https://en.wikipedia.org/wiki/Beta_distribution
+                        % this assumes that the derivatives wrt a and b are
+                        % zero !
+                        numerator=(x.args{2}+x.args{3}-2)*x.args{1};
+                        denominator= (x.args{1}-1)*x.args{1};
+                        d=numerator/denominator*betapdf(x.args{1},x.args{2},x.args{3});
                 end
             end
         end
@@ -769,7 +793,7 @@ for iarg=find(~guy_is_planar)
 end
 end
 
-function obj=do_trivariate_normal(x,mu,sd,func)
+function obj=do_trivariate(x,mu,sd,func)
 [x,mu,sd]=splanarize(x,mu,sd);
 % initialize the splanar
 %------------------------
