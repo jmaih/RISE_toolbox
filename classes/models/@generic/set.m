@@ -130,7 +130,11 @@ end
             obj=setup_calibration(obj,propval);
         elseif strcmpi(propname,'legend')
             if ~ischar(propval)
-                error('legend must be a string')
+                if iscellstr(propval) && numel(propval)==1
+                    propval=char(propval);
+                else
+                    error('legend must be a string or a one-component cellstr')
+                end
             end
             obj.legend=propval;
         elseif any(strcmp(propname,options_fields))||forced
