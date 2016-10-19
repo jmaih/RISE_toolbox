@@ -252,25 +252,27 @@ function [expr,replace,convert_the_guy]=regexp_setup2(param_names,...
     governing_chain,chain_names,regimes)
 % parse expressions such as "pname", "pname(chain,state)"
 % negative lookahead
-pnames=[parser.cell2matize(param_names),'(?!\w+)'];
+pnames=[parser.cell2matize(param_names),'\>'];
 
-nc1='(?:\()?'; % group if exist but do not capture
+c2='(\()?'; % group if exist AND capture
 
 opt_cnames=[parser.cell2matize(chain_names-'const'),'?'];
+c3=opt_cnames;
 
-nc2='(?:,)?';
-
-nc3='(?:\))?'; % group if exist but do not capture
+nc1='(?:,)?';
 
 opt_digits='(\d+)?';% capture if exist
+c4=opt_digits;
 
-expr=[pnames,nc1,opt_cnames,nc2,opt_digits,nc3];
+c5='(\))?'; % group if exist but do not capture
 
-replace='${convert_the_guy($1,$2,$3)}';
+expr=[pnames,c2,c3,nc1,c4,c5];
+
+replace='${convert_the_guy($1,$2,$3,$4,$5)}';
 
 convert_the_guy=@do_conversion;
     
-    function [c,aloc,col]=do_conversion(pname,cn,statepos)
+    function [c,aloc,col]=do_conversion(pname,left_par,cn,statepos,right_par)
         
         aloc=locate_variables(pname,param_names);
         
@@ -299,6 +301,13 @@ convert_the_guy=@do_conversion;
         end
         
         c=['M(',int2str(aloc),',',int2str(col(1)),')'];
+        
+        if isempty(left_par)
+            % in case a right parenthesis was immediately followed by a
+            % parameter name
+            c=[c,right_par];
+            
+        end
     
     end
 
