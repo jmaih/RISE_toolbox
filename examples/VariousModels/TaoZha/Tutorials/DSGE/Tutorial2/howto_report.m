@@ -1,6 +1,6 @@
 %% housekeeping
 close all
-clear all
+clear
 clc
 %% Information for the title page
 
