@@ -69,11 +69,11 @@ end
 
 if isempty(shock_list)
     
-    shock_list=get(m,'exo_list');
+    shock_list=get(m(1),'exo_list');
     
 end
 
-description=get(m,'tex(long)');
+description=get(m(1),'tex(long)');
 
 nshocks=numel(shock_list);
 
