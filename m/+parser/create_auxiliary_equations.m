@@ -282,11 +282,11 @@ end
                 
             end
             
-            if leadOrLag<0
-                
-                error('Leads or lags on parameters or exogenous not allowed')
-                
-            end
+%             if leadOrLag<0
+%                 
+%                 error('Leads or lags on parameters or exogenous not allowed')
+%                 
+%             end
             
             [new_name]=create_new_auxiliary_for_exo_or_param(vname,leadOrLag);
             
