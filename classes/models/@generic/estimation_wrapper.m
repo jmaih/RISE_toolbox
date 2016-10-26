@@ -14,7 +14,7 @@ function [x1,f1,H,issue,viol,obj,funevals]=...
 %
 % - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% - **action** [''|{'eval'}|'estimate']: intended action
+% - **action** ['draw'|{'eval'}|'estimate']: intended action
 %
 % - **x0** [[]|d x 1 vector]: paramter vector for start of the optimization
 % or for log-posterior-kernel evaluation
