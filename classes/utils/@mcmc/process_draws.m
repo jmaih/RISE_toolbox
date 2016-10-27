@@ -58,9 +58,9 @@ if is_saved_to_disk
     
     W = what(draws);
     
-    W=W.mat;
-    
     if ~isempty(W)
+        
+        W=W.mat;
         
         W=strrep(W,'.mat','');
         

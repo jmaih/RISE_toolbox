@@ -14,7 +14,9 @@ function varargout=pull_objective(obj,varargin)
 % See also: RISE_GENERIC/PULL_OBJECTIVE
 
 if ~isempty(obj)
+    
     obj=set(obj,'kf_filtering_level',0);
+    
 end
 
 [varargout{1:nargout}]=pull_objective@generic_switch(obj,varargin{:});
