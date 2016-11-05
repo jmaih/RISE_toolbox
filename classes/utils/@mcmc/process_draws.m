@@ -141,6 +141,12 @@ end
 
 [nchains,npop]=size(d);
 
+if npop==0
+    
+    nchains=0;
+    
+end
+
 discard=round(drop*npop);
 
 start=discard+1;
@@ -222,6 +228,14 @@ summary=struct('nchains',nchains,'npop',npop,...
     end
 
     function N=re_order_names()
+        
+        if isempty(W)
+            
+            N = 0;
+            
+            return
+            
+        end
         
         Wbar=regexprep(W,'\w+_(\d+)','$1');
         
