@@ -236,6 +236,8 @@ classdef generic
         
         varargout=assign_estimates(varargin)
         
+        varargout=back_door(varargin)
+        
         varargout=decompose_parameter_name(varargin)
         
         varargout=load_data(varargin)
