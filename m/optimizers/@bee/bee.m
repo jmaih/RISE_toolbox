@@ -203,7 +203,7 @@ end
     obj.violation_strength(n0+1:end),funevals,...
     obj.fitness(n0+1:end),obj.trial(n0+1:end)]=...
     new_bees(obj.Objective,obj.lb,obj.ub,missing,obj.nonlcon,...
-    obj.penalty,obj.vargs{:});
+    obj.penalty,obj.max_trials,obj.vargs{:});
 obj.funcCount=obj.funcCount+funevals;
 obj=memorize_best_source(obj);
 
@@ -242,7 +242,7 @@ function obj=send_scout_bees(obj)
 renew=find(obj.trial>=obj.max_trials);
 [obj.xx(:,renew),obj.ff(renew),obj.violation_strength(renew),funevals,obj.fitness(renew),...
     obj.trial(renew)]=new_bees(obj.Objective,obj.lb,...
-    obj.ub,numel(renew),obj.nonlcon,obj.penalty,obj.vargs{:});
+    obj.ub,numel(renew),obj.nonlcon,obj.penalty,obj.max_trials,obj.vargs{:});
 obj.funcCount=obj.funcCount+funevals;
 end
 
@@ -303,9 +303,9 @@ end
 [obj.ff,obj.xx,obj.fitness,obj.trial,obj.violation_strength]=deal(FF,XX,FIT,TRIALS,VIOLS);
 end
 
-function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,nonlcon,penalty,...
+function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,nonlcon,penalty,max_trials,...
     varargin)
-[x,f,viol_strength,funevals]=utils.optim.generate_candidates(objective,lb,ub,n,nonlcon,penalty,varargin{:});
+[x,f,viol_strength,funevals]=utils.optim.generate_candidates(objective,lb,ub,n,max_trials,nonlcon,penalty,varargin{:});
 trial=zeros(1,n);
 fit=utils.optim.compute_fitness(f);
 end
