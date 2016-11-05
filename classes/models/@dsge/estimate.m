@@ -15,16 +15,21 @@ function obj=estimate(obj,varargin)
 % See also: GENERIC_SWITCH/ESTIMATE, GENERIC_SWITCH/SETUP_PRIORS
 
 if isempty(obj)
+    
     obj=estimate@generic_switch(obj,varargin{:});
+    
     obj=utils.miscellaneous.mergestructures(obj,...
         struct('estim_priors',[]));
+    
 else
     % Initially set the filtering/smoothing flag to false (during estimation).
     % This is especially important given that the objective function could be
     % optimal_simple_rule_posterior, in which case there is no filtering going
     % on.
     obj=set(obj,'kf_filtering_level',0);
+    
     obj=estimate@generic_switch(obj,varargin{:});
+    
 end
 
 
