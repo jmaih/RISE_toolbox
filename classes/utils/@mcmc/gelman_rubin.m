@@ -8,7 +8,7 @@ end
 
 m=obj.nchains;
 
-p=struct.empty;
+p=struct();
 
 R=[];
 
