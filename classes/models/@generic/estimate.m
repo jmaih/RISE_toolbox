@@ -79,6 +79,20 @@ function obj=estimate(obj,varargin)
 %   however, it is assumed that the parameters entering the lhs of
 %   restrictions are not estimated. e.g. alpha(zlb,1)=3*cos(alpha(zlb,2))+1.
 %
+% - **estim_endogenous_priors** [{[]}|function handle]: When not empty,
+%   **estim_endogenous_priors** must be a function handle such that when
+%   called without inputs, it returns a struct with fields:
+%   - **priors** : cell array of estimation priors. more explicitly, each
+%   entry of the cell array is itself a cell with the same syntax as the
+%   priors for estimation, EXCEPT the start value! 
+%   - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
+%       for the computation of the endogenous priors. If 1, only the
+%       filtered variables are required. If 2, the updated variables are
+%       required. If 3, the smoothed variables are required.
+%   When the function handle is called with an input, what is returned is a
+%   vector of values for which RISE will evaluate the endogenous prior.
+%   This vector should have the same length as the previous cell array.
+%
 % - **estim_blocks** [{[]}|cell]: When not empty, this triggers blockwise
 %   optimization. For further information on how to set blocks, see help
 %   for dsge.create_estimation_blocks
@@ -172,6 +186,7 @@ if nobj==0
         'estim_linear_restrictions',[],...
         'estim_nonlinear_restrictions',[],...
         'estim_blocks',[],...
+        'estim_endogenous_priors',[],...
         'estim_penalty',1e+8,...
         'estim_penalty_factor',10,...
         'estim_optimizer_hessian',false,...

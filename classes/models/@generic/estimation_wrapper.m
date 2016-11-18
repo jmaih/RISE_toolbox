@@ -79,21 +79,13 @@ nobj=numel(obj);
 ngenrest=0;
 c=cell(1,nobj);
 for iii=1:nobj
-    % check the filtering level required under estimation
-    %-----------------------------------------------------
     if ~isempty(obj(iii).general_restrictions_data)
         ngenrest=ngenrest+1;
-        genrest_basic=obj(iii).options.estim_general_restrictions;
-        if iscell(genrest_basic)
-            genrest_basic=genrest_basic{1};
-        end
-        req=genrest_basic();
-        obj.options.kf_filtering_level=req.kf_filtering_level;
         c{iii}=obj(iii).options.estim_penalty_factor;
     end
 end
 
-estim_penalty=obj(1).options.estim_penalty;
+estim_penalty = -abs(obj(1).options.estim_penalty);
 estim_barrier=obj(1).options.estim_barrier;
 
 estim_blocks=obj(1).options.estim_blocks;
