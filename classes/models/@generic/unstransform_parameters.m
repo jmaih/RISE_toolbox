@@ -43,9 +43,9 @@ x=linear_restricts.a_func(x);
 % the transformations occur in setup_priors in function do_the_dirichlet
 %------------------------------------------------------------------------
 % Now we undo them
-for id=1:numel(obj.estim_dirichlet)
-    pos=obj.estim_dirichlet(id).location;
-    sum_aij=obj.estim_dirichlet(id).sum_aij;
+for id=1:numel(obj.estim_priors_data.estim_dirichlet)
+    pos=obj.estim_priors_data.estim_dirichlet(id).location;
+    sum_aij=obj.estim_priors_data.estim_dirichlet(id).sum_aij;
     x(pos)=utils.distrib.dirichlet_untransform(x(pos),sum_aij);
 end
 

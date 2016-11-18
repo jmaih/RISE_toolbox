@@ -109,8 +109,8 @@ do_covariance()
         if ~isempty(x0)
             % transform the dirichlet
             %------------------------
-            for id=1:numel(obj.estim_dirichlet)
-                di=obj.estim_dirichlet(id);
+            for id=1:numel(obj.estim_priors_data.estim_dirichlet)
+                di=obj.estim_priors_data.estim_dirichlet(id);
                 pos=di.location;
                 x0(pos)=utils.distrib.dirichlet_transform(x0(pos),...
                     di.sum_aij);

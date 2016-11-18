@@ -259,20 +259,20 @@ c2='(\()?'; % group if exist AND capture
 opt_cnames=[parser.cell2matize(chain_names-'const'),'?'];
 c3=opt_cnames;
 
-nc1='(?:,)?';
+c4='(,)?'; % '(?:,)?'
 
 opt_digits='(\d+)?';% capture if exist
-c4=opt_digits;
+c5=opt_digits;
 
-c5='(\))?'; % group if exist but do not capture
+c6='(\))?'; % group if exist but do not capture
 
-expr=[pnames,c2,c3,nc1,c4,c5];
+expr=[pnames,c2,c3,c4,c5,c6];
 
-replace='${convert_the_guy($1,$2,$3,$4,$5)}';
+replace='${convert_the_guy($1,$2,$3,$4,$5,$6)}';
 
 convert_the_guy=@do_conversion;
     
-    function [c,aloc,col]=do_conversion(pname,left_par,cn,statepos,right_par)
+    function [c,aloc,col]=do_conversion(pname,left_par,cn,comma,statepos,right_par)
         
         aloc=locate_variables(pname,param_names);
         
@@ -305,7 +305,7 @@ convert_the_guy=@do_conversion;
         if isempty(left_par)
             % in case a right parenthesis was immediately followed by a
             % parameter name
-            c=[c,right_par];
+            c=[c,comma,right_par];
             
         end
     

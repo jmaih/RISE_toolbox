@@ -137,6 +137,10 @@ end
                 end
             end
             obj.legend=propval;
+        elseif strcmpi(propname,'estim_endogenous_priors')
+            
+            obj=setup_endogenous_priors(obj,propval);
+
         elseif any(strcmp(propname,options_fields))||forced
             set_one_option()
         else

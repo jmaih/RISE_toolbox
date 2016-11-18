@@ -25,8 +25,18 @@ classdef generic
         options
         
         % information on estimation: posterior maximization and simulation
-        estimation
-        
+        estimation =orderfields(...
+        struct('endogenous_priors',[],'priors',[],...
+        'posterior_maximization',struct(...
+        'estim_start_time',[],'estim_end_time',[],...
+        'log_lik',[],'log_post',[],'log_prior',[],'log_endog_prior',[],...
+        'active_inequalities_number',0,'hessian',[],'vcov',[],'mode',[],...
+        'mode_stdev',[],'funevals',[],...
+        'log_marginal_data_density_laplace',[]...
+        ),...
+        'posterior_simulation',[])...
+        );
+
         % model solution including steady state, definitions, etc.
         solution
         
@@ -40,14 +50,10 @@ classdef generic
         data
         
         data_are_loaded = false
+
+		estim_priors_data = []
         
-        estim_distrib_locations={}
-        
-        estim_distributions={}
-        
-        estim_hyperparams=[]
-        
-		estim_dirichlet=[]
+		estim_endogenous_priors_data = []
         
         estimation_restrictions
         
@@ -195,6 +201,8 @@ classdef generic
         varargout=parameters_links(varargin)
         
         varargout=setup_priors(varargin)
+        
+        varargout=setup_endogenous_priors(varargin)
         
         varargout=setup_calibration(varargin)
         
