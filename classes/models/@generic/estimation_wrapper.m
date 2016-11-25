@@ -141,7 +141,7 @@ end
         fval=estim_penalty*ones(1,nobj);
         is_processed=false;
         if estim_barrier
-            violLast=mynonlinear_constraints(x,obj,true);
+            violLast=mynonlinear_constraints(x,obj,false);
             if any(violLast>0)
                 is_processed=true;
             end
