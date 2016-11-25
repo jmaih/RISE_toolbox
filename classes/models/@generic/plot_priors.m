@@ -170,7 +170,7 @@ lb=vertcat(obj.estimation.priors(plocs).lower_bound);
 
 ub=vertcat(obj.estimation.priors(plocs).upper_bound);
 
-hypers=obj.estim_hyperparams(plocs,:);
+hypers=obj.estim_priors_data.estim_hyperparams(plocs,:);
 
 npar=numel(lb);
 
