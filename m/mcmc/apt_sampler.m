@@ -352,6 +352,18 @@ if size(SIG_mom,4)<H
     
 end
 
+% make positive definite as necessary
+%------------------------------------
+for ii=1:size(SIG_mom,3)
+    
+    for jj=1:size(SIG_mom,4)
+        
+        SIG_mom(:,:,ii,jj)=utils.cov.nearest(SIG_mom(:,:,ii,jj));
+        
+    end
+    
+end
+
 mu_algo=mu;
 
 SIG_algo=SIG_mom;
