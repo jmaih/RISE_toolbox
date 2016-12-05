@@ -104,12 +104,15 @@ else
         choice=randi(N);
         this_matrix=W{choice};
         tmp=load([simulation_folder,filesep,this_matrix]);
+        if isfield(tmp,'pop')
+            tmp=tmp.pop;
+        end
         if ~isfield(tmp,'x')
             error('wrong format for the stored objects to draw from')
         end
         nn=numel(tmp);
         id=randi(nn);
-        draw=tmp.(id).x;
+        draw=tmp(id).x;
     elseif isstruct(simulation_folder)
         N=numel(simulation_folder);
         choice=randi(N);
