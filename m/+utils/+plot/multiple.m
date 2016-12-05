@@ -86,15 +86,37 @@ for fig=1:nfig
         
         subplot(r,c,plt)
         
-        if is_legend
+        if plt==1 && fig ==1 && ~is_legend
+            % plotfunc does not always return the correct number of
+            % arguments. So here we try...
             
-            [tex_name,legend_]=plotfunc(vnames{par_id});
+            try
+                
+                [tex_name,legend_]=plotfunc(vnames{par_id});
+                
+                is_legend=true;
+                
+            catch
+                
+                tex_name=plotfunc(vnames{par_id});
+                
+                legend_='';
+                
+            end
             
         else
             
-            tex_name=plotfunc(vnames{par_id});
-            
-            legend_='';
+            if is_legend
+                
+                [tex_name,legend_]=plotfunc(vnames{par_id});
+                
+            else
+                
+                tex_name=plotfunc(vnames{par_id});
+                
+                legend_='';
+                
+            end
             
         end
         
