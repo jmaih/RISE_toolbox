@@ -33,22 +33,46 @@ function db=prctile(db,p)
 % See also:
 
 if ~isvector(p) || numel(p) == 0 || any(p < 0 | p > 100) || ~isreal(p)
+    
     error('percentiles must be between 0 and 100');
+    
 end
 
-npages=db.NumberOfPages;
-if npages<2
-    error('time series database should have many pages')
-end
 x=double(db);
-nvars=db.NumberOfVariables;
-nobs=db.NumberOfObservations;
-np=numel(p);
-y=nan(nobs,nvars,np);
-for ivar=1:nvars
-    y(:,ivar,:) = prctile_engine(permute(x(:,ivar,:),[1,3,2]));
+
+if size(x,3)==1
+    
+    x=permute(x,[1,3,2]);
+    
+    if ~isempty(db.varnames{1})
+        
+        error('names found in the database but only one page. Suppress names or add pages')
+        
+    end
+    
 end
-db=ts(db.start,y,db.varnames);
+
+[nobs,nvars,npages]=size(x);
+
+np=numel(p);
+
+y=nan(nobs,nvars,np);
+
+for ivar=1:nvars
+    
+    y(:,ivar,:) = prctile_engine(permute(x(:,ivar,:),[1,3,2]));
+    
+end
+
+if isempty(db.varnames)
+    
+    db=ts(db.start,y);
+    
+else
+    
+    db=ts(db.start,y,db.varnames);
+    
+end
 
     function y = prctile_engine(x)
         
