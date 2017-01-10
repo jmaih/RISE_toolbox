@@ -50,7 +50,7 @@ classdef generic_switch < generic
         
         function obj=reset(obj,varargin)
             
-            obj=reset@generic(obj,varargin(1:3));
+            obj=reset@generic(obj,varargin{1:3});
             
             mark_parameters()
             
