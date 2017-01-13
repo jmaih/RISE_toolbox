@@ -38,6 +38,7 @@ end
 if ~isstruct(y0)
     error('y0 should be a structure')
 end
+xloc0=xloc;
 if isempty(xloc)
     % all variables are state variables
     xloc=1:size(y0.y,1);
@@ -84,19 +85,25 @@ elseif (order<no||is_var) && order~=1
     error('order appears to be inconsistent with # columns of y0')
 end
 
+% extract the exogenous constant
+%--------------------------------
+try
+    const_pos=numel(xloc)+1;
+    Tsig_growth=T{1}(:,const_pos);
+catch
+    xloc=xloc0;
+    const_pos=numel(xloc)+1;
+    Tsig_growth=T{1}(:,const_pos);
+end
+growth=imag(Tsig_growth);
+T{1}(:,const_pos)=real(Tsig_growth);
+
 y1.y=0;
 y01=zeros(n,order);
 zkz=1;
 if ~pruned
     z=stateify(1);
 end
-
-% extract the exogenous constant
-%--------------------------------
-const_pos=numel(xloc)+1;
-Tsig_growth=T{1}(:,const_pos);
-growth=imag(Tsig_growth);
-T{1}(:,const_pos)=real(Tsig_growth);
 
 % add the various orders of approximation
 %----------------------------------------
