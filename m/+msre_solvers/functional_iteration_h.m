@@ -76,7 +76,7 @@ for r0=1:h
         
     end
     
-    T1(:,:,r0)=-U\dpb_minus{r0};
+    T1(:,:,r0)=-pinv(full(U))*dpb_minus{r0}; %<--T1(:,:,r0)=-U\dpb_minus{r0};
     
 end
 

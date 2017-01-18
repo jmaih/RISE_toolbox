@@ -44,12 +44,13 @@ switch solve_initialization
             % this should accelerate the solving and give more accurate results since
             % we strictly don't need to solve for the non-state columns i.e. the columns
             % where Aminus is zero
-            T0(:,:,i_state)=-A0{i_state}\dpb_minus{i_state};
-            if any(any(isnan(T0(:,:,i_state))))
-                T0(:,:,i_state)=-pinv(full(A0{i_state}))*dpb_minus{i_state};
-                % the A0 matrix can be singular, for instance in the
-                % case of the zlb
-            end
+%             T0(:,:,i_state)=-A0{i_state}\dpb_minus{i_state};
+            T0(:,:,i_state)=-pinv(full(A0{i_state}))*dpb_minus{i_state};
+%             if any(any(isnan(T0(:,:,i_state))))
+%                 T0(:,:,i_state)=-pinv(full(A0{i_state}))*dpb_minus{i_state};
+%                 % the A0 matrix can be singular, for instance in the
+%                 % case of the zlb
+%             end
         end
         %     warning(warnstate)
     case {'random'}
