@@ -23,7 +23,7 @@ function [Aplus,A0,Aminus,T0]=full_state_matrices(siz,sm,T0)
 % Aplus*X_{t+1}+A0*X_{t}+Aminus*X_{t-1}=0
 % the variables are ordered in the order_var order i.e.
 % [Stat.,Pred.,Both,Frwrd] 
-if nargin<5
+if nargin<3
     
     T0=[];
     
