@@ -88,7 +88,10 @@ if do_dsge_var
     nlags=obj.options.dsgevar_lag;
     ss=ss(obj.observables.state_id,1);
 end
-y0=struct('y',[],'y_lin',[],'ycond',[],'econd',[]);
+
+y0=struct('y',[],'y_lin',[],'ycond',[],'econd',[],'switch_rule',[],...
+    'inv_order_var',obj.inv_order_var);
+
 y0(1).y=vec(ss(:,ones(1,nlags)));
 
 exo_nbr=sum(obj.exogenous.number);
@@ -211,6 +214,39 @@ else
 end
 
 simul_regime=obj.options.simul_regime;
+
+if ~isempty(simul_regime)
+    
+    if isa(simul_regime,'function_handle')|| iscell(simul_regime)
+        
+        if iscell(simul_regime) && ~isa(simul_regime{1},'function_handle')
+            
+            error(['A switching rule should be declared as a function ',...
+            'handle or a cell whose first element is a function handle'])
+            
+        end
+        
+        y0.switch_rule=simul_regime;
+        
+        simul_regime=[];
+        
+        if obj.options.simul_honor_constraints
+            
+            error(['With a switching rule declared, simul_honor_constraints ',...
+                'should be set to false'])
+            
+        end
+        
+        if obj.options.simul_burn
+            
+            error(['With a switching rule declared, simul_burn ',...
+                'should be set to 0'])
+            
+        end
+        
+    end
+    
+end
 
 if ~isempty(simul_regime)
     

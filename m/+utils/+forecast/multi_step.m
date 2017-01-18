@@ -29,6 +29,10 @@ Qfunc=options.Qfunc;
 % use first page only as it is the most relevant
 regimes=vec(y0.rcond.data(:,:,1));
 
+switch_rule=y0.switch_rule;
+
+inv_order_var=y0.inv_order_var;
+
 shocks=y0.econd.data;
 
 cond_shocks_id=[];
@@ -104,6 +108,12 @@ if unique_state
 end
 %-------------------------------------
 if condforkst
+    
+    if ~isempty(switch_rule)
+        
+        error('conditional forecasting with switching rule not yet implemented')
+        
+    end
     
     myshocks=[];
     
@@ -283,32 +293,51 @@ regimes=regimes(options.burn+1:end);
 
 
     function shocks=condition_on_shocks_only(shocks)
+        
         if isfield(options,'occbin') && ~isempty(options.occbin)
+            
             do_occbin_sim()
+            
             return
+            
         end
+        
         Tstar=T;
+        
         if options.simul_anticipate_zero
+            
             Tstar=NotAnt_T;
+            
         end
+        
         y1=[];
+        
         % shocks that are nan are shocks that are not conditioned on
         %------------------------------------------------------------
         shocks(isnan(shocks))=0;
+        
         y00=y0;
+        
         for t=1:span
+            
             if ~retcode
                 % process shocks
                 %----------------
                 shocks_t=shocks(:,t+(0:options.k_future));
+                
                 if ~isempty(simul_update_shocks_handle) && simul_do_update_shocks
+                    
                     shocks_t=simul_update_shocks_handle(shocks_t,y00.y);
+                    
                 end
                 % compute transition matrix and switching probabilities
                 %------------------------------------------------------
                 [Q,retcode]=Qfunc(y00.y);
+                
                 if ~retcode
+                    
                     rt=regimes(t);
+                    
                     if isnan(rt)
                         % the state is not known
                         if t==1
@@ -316,91 +345,174 @@ regimes=regimes(options.burn+1:end);
                         else
                             % draw conditional on yesterday's state
                             PAI=Q(regimes(t-1),:);
+                            
                         end
+                        
                         if do_Qt
+                            
                             if t==1
+                                
                                 Qt=Q(:,:,ones(1,options.nsteps));
+                                
                             end
+                            
                             if t>options.burn && t<span
+                                
                                 Qt(:,:,t-options.burn)=Q;
+                                
                             end
+                            
                         end
+                        
                     end
                     
                     % compute the forecast
                     %---------------------
                     state_list=1:h;
+                    
                     iter=0;
+                    
                     while isempty(y1) && iter < h
                         % draw state and compute forecast
                         %--------------------------------
                         one_step();
+                        
                         iter=iter+1;
+                        
                     end
+                    
                     if isempty(y1)
+                        
                         error('I could not find a feasible path')
+                        
                     end
+                    
                     if isnan(regimes(t))
+                        
                         regimes(t)=rt;
+                        
                     end
                     
                     if t>options.burn
+                        
                         sims(:,t-options.burn)=y1.y;
+                        
                     end
+                    
                     y00=y1;
+                    
                     y1=[];
+                    
                 end
+                
             end
+            
         end
+        
         function one_step()
+            
             cp=rebuild_cp();
+            
             if isnan(rt)
+                
                 lucky=find(cp>rand,1,'first')-1;
+                
                 rt=state_list(lucky);
+            
             end
             % use the solution prescribed by simul_anticipate_zero
             y1=utils.forecast.one_step_fbs(Tstar(:,rt),y00,ss{rt},state_vars_location,...
                 options.simul_sig,shocks_t,options.simul_order);
-            if ~isempty(options.complementarity) && ~options.complementarity(y1.y)
+            
+            ok = true;
+            
+            if ~isempty(switch_rule)
+                
+                if t==1 && ~iscell(switch_rule)
+                    
+                    switch_rule={switch_rule};
+                    
+                end
+                
+                ok=switch_rule{1}(y1.y(inv_order_var),rt,...
+                    regimes(1:t-1),...
+                    sims(inv_order_var,1:t-1),switch_rule{2:end});
+                
+            elseif ~isempty(options.complementarity) && ~options.complementarity(y1.y)
+                
                 if options.simul_honor_constraints_through_switch
+                    
                     if ~isnan(regimes(t))
+                        
                         error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',regimes(t))) %#ok<SPERR>
+                    
                     end
-                    state_list(state_list==rt)=[];
-                    rt=nan;
-                    y1=[];
+                    
+                    ok = false;
+                
                 else
                     % use the normal solution
                     %-------------------------
                     [y1,~,retcode,shocks_t1]=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
                         options.sep_compl,cond_shocks_id);
+                    
                     if options.simul_anticipate_zero
                         % update contemporaneous shocks only since future
                         % anticipated shocks may change later because of
                         % unanticipated shocks... and we do not want to
                         % push zeros for the non conditional shocks.
                         shocks(:,t)=shocks_t1(:,1);
+                    
                     else
+                        
                         shocks(:,t+(0:options.k_future))=shocks_t1;
+                    
                     end
+                    
                 end
+                
             end
+            
+            if ~ok
+                
+                state_list(state_list==rt)=[];
+                
+                rt=nan;
+                
+                y1=[];
+                
+            end
+            
             function cp=rebuild_cp()
+                
                 PAI00=PAI(state_list);
+                
                 PAI00=PAI00/sum(PAI00);
+                
                 if any(isnan(PAI00))
+                    
                     error('I could not find a feasible path')
+                
                 end
+                
                 cp=cumsum(PAI00);
+                
                 cp=[0,cp(:).'];
+            
             end
+            
         end
+        
         function do_occbin_sim()
+            
             [sims,regimes,retcode]=utils.forecast.simul_occbin(y0,T,ss,state_vars_location,...
                 options,shocks);
+            
             sims=sims(:,options.burn+1:end);
+        
         end
+        
     end
 
 

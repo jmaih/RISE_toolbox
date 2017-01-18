@@ -28,8 +28,13 @@ function [db,states,retcode] = simulate(obj,varargin)
 %   - **simul_history_end_date** [char|integer|serial date]: last date of
 %       history
 %
-%   - **simul_regime** [integer|vector|{[]}]: regimes for which the model
-%       is simulated
+%   - **simul_regime** [integer|vector|function handle|{[]}]: regimes for
+%       which the model is simulated. When it is a function handle, then it
+%       should accept as inputs y (new proposal), rt(current regime),
+%       regimes_1_t_1(regimes from 1 to t-1), sims_1_t_1(the simulated
+%       series up to t-1),varargin (possibly further arguments to the
+%       function handle). The output is a logical that is true if the
+%       simulation (vector y) is feasible/accepted and false otherwise.
 %
 %   - **simul_update_shocks_handle** [function handle]: we may want to
 %       update the shocks if some condition on the state of the economy is
