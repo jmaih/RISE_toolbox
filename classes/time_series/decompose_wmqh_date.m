@@ -30,7 +30,7 @@ x=char2num(x,true);
 
 if isnumeric(x)
     
-    [dec,flag]=serial2dec(x);
+    [dec]=serial2dec(x);
     
     return
     

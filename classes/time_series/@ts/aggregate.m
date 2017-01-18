@@ -45,6 +45,7 @@ end
 %-----------------------------------------------------------------------
 date_numbers=this.date_numbers;
 [year,period]=date2year_period(date_numbers);
+nobs=numel(date_numbers);
 while ~matches_first(first_guy)
     first_guy=first_guy+1;
     if first_guy>=nobs

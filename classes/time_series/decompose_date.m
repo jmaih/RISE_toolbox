@@ -17,6 +17,12 @@ if nargin==0
     
 end
 
+if ischar(x) && all(all(isstrprop(x,'digit')))
+    
+    x=str2double(x);
+    
+end
+
 if isnumeric(x)
     
     if is_serial(x)
