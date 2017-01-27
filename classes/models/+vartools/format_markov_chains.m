@@ -31,15 +31,15 @@ generic_params=unique(generic_params);
 for im=1:nmc
     name=markov_chains_(im).name;
     cparam{1,im}=name;
-    controled_params=markov_chains_(im).controled_parameters;
-    if isempty(controled_params)
+    controlled_params=markov_chains_(im).controlled_parameters;
+    if isempty(controlled_params)
         error(['markov chain "',name,'" must control at least one parameter'])
     end
     % check that the parameters are in the list
     %------------------------------------------
     thisList=[];
-    for ilist=1:numel(controled_params)
-        thisList=update_sublist(thisList,controled_params{ilist});
+    for ilist=1:numel(controlled_params)
+        thisList=update_sublist(thisList,controlled_params{ilist});
     end
     cparam{2,im}=thisList;
     % extract those parameters from the main list
@@ -48,7 +48,7 @@ for im=1:nmc
         thisListLoc=locate_variables(thisList,plist);
     catch
         disp(thisList)
-        error('some parameters in the list above may be controled by different chains')
+        error('some parameters in the list above may be controlled by different chains')
     end
     plist(thisListLoc)=[];
 end

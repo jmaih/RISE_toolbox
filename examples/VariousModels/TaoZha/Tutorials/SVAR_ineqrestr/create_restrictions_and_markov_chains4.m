@@ -67,7 +67,7 @@ function [lin_restr,nonlin_restr,tpl]=create_restrictions_and_markov_chains4(tpl
 last=numel(tpl.markov_chains);
 tpl.markov_chains(last+1)=struct('name','mpvol',...
     'states_expected_duration',[2+1i,2+1i,2+1i],...
-    'controled_parameters',{{'sig(1)'}});
+    'controlled_parameters',{{'sig(1)'}});
 
 % The parameter restrictions are identical to those in the basic model
 % without regime switching

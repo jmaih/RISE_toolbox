@@ -19,7 +19,7 @@ function blocks=create_estimation_blocks(obj,blocks)
 %
 % See also: 
 
-% this function separates the parameters to estimate into blocks controled
+% this function separates the parameters to estimate into blocks controlled
 % by one or several markov chains, depending on the information provided in
 % blocks
 % case 1: blocks={[1,3,5,7],[2,9,10],[6,20],...} The numbers represent the
@@ -31,7 +31,7 @@ function blocks=create_estimation_blocks(obj,blocks)
 %         chain names, then all the parameters controlled by alpha and all
 %         the parameters controlled by beta will be estimated
 %         simultaneously
-% The estimated parameters that are controled by a markov chain can be
+% The estimated parameters that are controlled by a markov chain can be
 % entered either as pname(chain,state) or as pname_chain_state
 
 if isempty(obj)

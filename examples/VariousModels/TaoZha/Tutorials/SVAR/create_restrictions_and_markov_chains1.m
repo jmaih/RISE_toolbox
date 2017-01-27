@@ -65,7 +65,7 @@ function [restr,tpl]=create_restrictions_and_markov_chains1(tpl)
 last=numel(tpl.markov_chains);
 tpl.markov_chains(last+1)=struct('name','syncoef',...
     'states_expected_duration',[3+1i,3+1i],...
-    'controled_parameters',{{'c','a0','a1','a2'}});
+    'controlled_parameters',{{'c','a0','a1','a2'}});
 
 % syntax is coef(eqtn,vname,lag,chain_name,state)
 %------------------------------------------------

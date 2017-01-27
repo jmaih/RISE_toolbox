@@ -72,6 +72,6 @@ function [lin_restr,nonlin_restr,tpl]=create_restrictions_and_markov_chains2(tpl
 last=numel(tpl.markov_chains);
 tpl.markov_chains(last+1)=struct('name','syncvol',...
     'states_expected_duration',[2+1i,2+1i,2+1i],...
-    'controled_parameters',{{'sig'}});
+    'controlled_parameters',{{'sig'}});
 
 end

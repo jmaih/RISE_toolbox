@@ -4,7 +4,7 @@ function obj=block_exogenous(endo_list,blk_exo_list,nlags)
 % number of lags
 % this cannot be applied to markov switching. In that case, one
 % has to explicitly list the coefficients that are zero. This
-% so because different coefficients may be controled by
+% so because different coefficients may be controlled by
 % different markov chains.
 % To Do: extend to markov switching by exploiting the information on the
 % parameters.

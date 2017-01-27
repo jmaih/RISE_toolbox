@@ -515,7 +515,7 @@ end
                         % later processing
                         equation{2,ic}={chain_,state_};
                     end
-                    % 3- parameter must be effectively controled by the
+                    % 3- parameter must be effectively controlled by the
                     % chain in the parameterization block
                 end
             end

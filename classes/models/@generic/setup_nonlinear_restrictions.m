@@ -286,7 +286,7 @@ convert_the_guy=@do_conversion;
         
         if ~strcmp(chain_names(governing_chain(aloc)),cn)
             
-            error(['parameter "',pname,'" is not controled by markov chain "',cn,'"'])
+            error(['parameter "',pname,'" is not controlled by markov chain "',cn,'"'])
         
         end
         

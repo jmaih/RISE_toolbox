@@ -310,7 +310,7 @@ classdef svar < generic_switch
             %   - **markov_chains** [struct]:
             %       - **name** [char|{}]:
             %       - **states_expected_duration** [row vector|{}]:
-            %       - **controled_parameters** [cellstr|{}]:
+            %       - **controlled_parameters** [cellstr|{}]:
             %
             % More About
             % ------------
@@ -328,7 +328,7 @@ classdef svar < generic_switch
                 'priors_hyperparams',priors);
             r.markov_chains=struct('name',{},...
                 'states_expected_duration',{},...
-                'controled_parameters',{});
+                'controlled_parameters',{});
         end
     end
 end
