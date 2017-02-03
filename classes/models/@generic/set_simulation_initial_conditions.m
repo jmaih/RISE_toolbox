@@ -57,7 +57,7 @@ elseif isa(obj,'dsge')
     k_future=max(obj.exogenous.shock_horizon(:));
     simul_sig=obj.options.simul_sig;
     simul_pruned=obj.options.simul_pruned;
-    if isempty(obj.options.simul_order);
+    if isempty(obj.options.simul_order)
         simul_order=obj.options.solve_order;
     else
         simul_order=obj.options.simul_order;
@@ -424,7 +424,7 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
                 
                 vname=names{ivar};
                 
-                if silent && ~any(strcmp(vname,simul_historical_data.varnames));
+                if silent && ~any(strcmp(vname,simul_historical_data.varnames))
                     
                     di=nan(1,nspan);
                     

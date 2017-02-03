@@ -45,7 +45,7 @@ end
 nstate_vars=numel(state_vars_location);
 
 endo_nbr=size(y0.y,1);
-exo_nbr=size(B,2);
+exo_nbr=size(B{1},2);
 
 span=options.nsteps+options.burn;
 
@@ -192,7 +192,7 @@ do_one_occbin_path()
                         A0(:,:,other_state))\eye(endo_nbr);
                 end
                 Ht(:,:,t)=AHAi*Aminus(:,:,other_state);
-                Gt(:,:,t)=AHAi*B(:,:,other_state);
+                Gt(:,:,t)=AHAi*B{other_state};
                 kt(:,t)=AHAi*(c(:,other_state)+Aplus(:,:,other_state)*kt(:,t+1));
                 regimes(t+last_step-1)=other_state;
             end
