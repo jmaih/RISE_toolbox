@@ -65,7 +65,7 @@ if ~retcode
     end
     
     if ~isempty(options.solve_occbin)
-        options.occbin.B=sm.de_0{1};
+        options.occbin.B=sm.de_0;
         if k_future
             error('Occbin-type models not solved with anticipated events')
         end
