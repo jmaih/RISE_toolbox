@@ -13,6 +13,10 @@ function [sims,myshocks,PAI,retcode]=simul_forward_back_shooting(T,ss,y0,state_v
 %
 % More About
 % ------------
+%   At present the restrictions are enforced only in the violating periods,
+%   which implies that the contemporaneous shocks are altered. But one can
+%   think of a scheme whereby only future shocks are changed, keeping the
+%   original/actual shocks unchanged.
 %
 % Examples
 % ---------
@@ -55,6 +59,8 @@ end
 sims=y0.y(:,ones(options.nsteps+1,1));
 
 violation=@(x)any(options.sep_compl(x)<cutoff);
+
+threshold_lookup();
 
 % straigthen the shocks (they may be in a wrong order)...
 %--------------------------------------------------------
@@ -131,7 +137,6 @@ myshocks=myshocks(:,1:options.nsteps,:);
 % Keep history in, it will be removed by the caller
 %--------------------------------------------------
 sims=sims(:,1:end);
-    
 
     function shocks=get_shocks(j0,keep_nan)
         
@@ -262,7 +267,7 @@ sims=sims(:,1:end);
                 
             end
             
-            % Then check and additional step
+            % Then check an additional step
             %--------------------------------
             if ~is_violation
                 
@@ -281,6 +286,8 @@ sims=sims(:,1:end);
     end
 
     function [y1,isviol,icount]=do_multiple_steps(y0,shocks,howmany)
+        % Do "howmany" steps while there is no violation
+        %-----------------------------------------------
         
         if nargin<3
             
@@ -336,6 +343,42 @@ sims=sims(:,1:end);
         rcond=struct('data',ones(start_iter,1),'pos',nan);
         
         y0_=struct('y',a_start,'ycond',ycond,'econd',econd,'rcond',rcond);
+        
+    end
+
+    function threshold_lookup()
+        
+        if ~isempty(y0.ycond.data)
+            
+            return
+            
+        end
+                
+        n=numel(y0.y);
+        
+        z0=zeros(n,1);
+        
+        pos=y0.ycond.pos;
+        
+        b0=zeros(numel(pos),1);
+        
+        fmsOptions=struct('Display','none');
+        
+        b=fminsearch(@lookup,b0,fmsOptions);
+        
+        y0.ycond.data=b(:,ones(1,horizon),ones(1,3));
+        
+        function r=lookup(b)
+            
+            z=z0;
+            
+            z(pos)=b;
+            
+            r=options.sep_compl(z);
+            
+            r=abs(r)+violation(z);
+            
+        end
         
     end
 
