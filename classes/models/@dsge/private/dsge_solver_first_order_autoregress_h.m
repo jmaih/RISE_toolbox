@@ -137,7 +137,9 @@ end
             if Q(ii,ii)
                 Apl{ii}=sm.dbf_plus{ii,ii}/Q(ii,ii);
             else
-                error('knife-edge probability matrix prevents from recovering a matrix')
+                stud=find(Q(ii,:)>0,1,'first');
+                Apl{ii}=sm.dbf_plus{ii,stud}/Q(ii,stud);
+                % error('knife-edge probability matrix prevents from recovering a matrix')
             end
         end
     end
