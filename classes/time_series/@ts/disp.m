@@ -12,7 +12,7 @@ if nargin < 3
     
 end
 
-between = 4;
+between = indent;
 
 within = 2;
 
