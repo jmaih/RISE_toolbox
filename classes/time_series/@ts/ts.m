@@ -1,4 +1,4 @@
-classdef ts
+classdef ts < gogetter
     % ts Time series
     %
     % ts Methods:
@@ -29,12 +29,11 @@ classdef ts
     % cot -   H1 line
     % coth -   H1 line
     % cov -   H1 line
-    % ctranspose -   H1 line
     % cumprod -   H1 line
     % cumsum -   H1 line
     % decompose_series -   H1 line
     % describe -   H1 line
-    % display -   H1 line
+    % disp -   H1 line
     % double -   H1 line
     % drop -   H1 line
     % dummy -   H1 line
@@ -43,7 +42,6 @@ classdef ts
     % expanding -   H1 line
     % fanchart -   H1 line
     % ge -   H1 line
-    % get -   H1 line
     % gt -   H1 line
     % head -   H1 line
     % hist -   H1 line
@@ -90,7 +88,6 @@ classdef ts
     % sin -   H1 line
     % sinh -   H1 line
     % skewness -   H1 line
-    % sort -   H1 line
     % spectrum -   H1 line
     % std -   H1 line
     % step_dummy -   H1 line
@@ -100,7 +97,6 @@ classdef ts
     % tail -   H1 line
     % times -   H1 line
     % transform -   H1 line
-    % transpose -   H1 line
     % ts - Methods:
     % uminus -   H1 line
     % values -   H1 line
@@ -118,18 +114,15 @@ classdef ts
     % NumberOfVariables -   number of variables in the time series
     
     properties
-        
         % names of the variables in the database
         varnames={}
         
-        % start time of the time series
-        start
-        
-        % end time of the time series
-        finish
-        
         % frequency of the time series
         frequency
+        
+    end
+    
+    properties(Dependent)
         
         % number of observations in the time series
         NumberOfObservations=0;
@@ -140,15 +133,26 @@ classdef ts
         % number of variables in the time series
         NumberOfVariables=0;
         
+        % start time of the time series
+        start
+        
+        % end time of the time series
+        finish
+        
+    end
+    
+    properties(Dependent,Hidden)
+        
+        date_numbers
+        
     end
     
     properties(Hidden)
         
         data
         
-        date_numbers
+        start_date_number
         
-        cell_style
     end
     
     methods
@@ -201,6 +205,8 @@ classdef ts
             %
             % See also:
             
+            self=self@gogetter();
+            
             vlen=length(varargin);
             
             if vlen
@@ -215,55 +221,15 @@ classdef ts
                     
                     [datax,vnames,sorting,trailnans]=dispatch_options();
                     
-                    self.cell_style=iscell(datax);
+                    siz_data=ts.check_size(datax);
                     
-                    if self.cell_style
-                        
-                        smpl=numel(datax);
-                        
-                        nvars=size(datax{1},1);
-                        
-                        if nvars~=size(datax{1},2)
-                            
-                            error('for matrix time series, each unit must be square')
-                            
-                        end
-                        
-                        npages=size(datax{1},3);
-                        
-                        siz_data=[smpl,nvars,npages];
-                        
-                    else
-                        
-                        siz_data=size(datax);
-                        
-                        smpl=siz_data(1);
-                        
-                        nvars=siz_data(2);
-                        
-                    end
+                    smpl=siz_data(1);
                     
-                    if numel(siz_data)>3
-                        
-                        error([mfilename,':: time series cannot have more than 3 dimensions in this environment'])
-                        
-                    elseif numel(siz_data)==3
-                        
-                        npages=siz_data(3);
-                        
-                    else
-                        
-                        npages=1;
-                        
-                    end
+                    nvars=siz_data(2);
                     
                     tags=1:nvars;
                     
-                    self.NumberOfVariables=nvars;
-                    
                     do_names()
-                    
-                    nobs=0;
                     
                     if smpl
                         
@@ -275,7 +241,7 @@ classdef ts
                         
                         is_valid_obs=true;
                         
-                        if ~trailnans && ~self.cell_style
+                        if ~trailnans
                             
                             while all(all(isnan(datax(first_good,:,:))))
                                 
@@ -301,39 +267,13 @@ classdef ts
                             
                         end
                         
-                        if is_valid_obs
-                            
-                            nobs=last_good-first_good+1;
-                            
-                        end
-                        
                         do_dates()
                         
-                        if self.cell_style
-                            
-                            if sorting
-                                
-                                for iobs=1:nobs
-                                    
-                                    datax{iobs}=datax{iobs}(tags,tags,:);
-                                    
-                                end
-                                
-                            end
-                            
-                        else
-                            
-                            datax=datax(first_good:last_good,tags,:);
-                            
-                        end
+                        datax=datax(first_good:last_good,tags,:);
                         
                     end
                     
                     self.data=datax;
-                    
-                    self.NumberOfObservations=nobs;
-                    
-                    self.NumberOfPages=npages;
                     
                 end
                 
@@ -341,18 +281,9 @@ classdef ts
             
             function do_names()
                 
+                if isempty(vnames),vnames={}; end
                 
-                if isempty(vnames)
-                    
-                    vnames={};
-                    
-                end
-                
-                if ischar(vnames)
-                    
-                    vnames=cellstr(vnames);
-                    
-                end
+                if ischar(vnames),vnames=cellstr(vnames); end
                 
                 if all(cellfun(@isempty,vnames))
                     
@@ -397,32 +328,22 @@ classdef ts
                     return
                     
                 end
-                                
+                
                 if isscalar(start_date)
                     
-                    start_date=start_date+(first_good-1)+(0:nobs-1);% <--- self.date_numbers=date2serial(start_date)+(first_good-1)+[0:nobs-1];
+                    start_date=start_date+(first_good-1);
                     
                 else
                     
-                    start_date=start_date(first_good:last_good);
-                    
-                    if numel(start_date)~=nobs
-                        
-                        error('number of input dates does not correspond to the number of observations')
-                        
-                    end
+                    start_date=start_date(first_good);
                     
                 end
                 
-                self.date_numbers=start_date(:)';
+                self.start_date_number=start_date;
                 
-                [these_dates,freq_]=serial2date(self.date_numbers([1,end]));
+                [~,freq_]=serial2date(self.start_date_number);
                 
                 self.frequency=char(freq_);
-                
-                self.start=these_dates{1};
-                
-                self.finish=these_dates{end};
                 
             end
             
@@ -476,16 +397,86 @@ classdef ts
             
         end
         
+        function n=get.NumberOfObservations(self)
+            
+            n=size(self.data,1);
+            
+        end
+        
+        function n=get.NumberOfPages(self)
+            
+            n=size(self.data,3);
+            
+        end
+        
+        function n=get.NumberOfVariables(self)
+            
+            n=size(self.data,2);
+            
+        end
+        
+        function dn=get.date_numbers(self)
+            
+            dn=self.start_date_number;
+            
+            if ~isempty(dn)
+                
+                dn=dn+(0:self.NumberOfObservations-1);
+                
+            end
+            
+        end
+        
+        function s=get.start(self)
+            
+            sdn=self.start_date_number;
+            
+            if isempty(sdn)
+                
+                s='';
+                
+            else
+                
+                s=serial2date(sdn);
+                
+                s=s{1};
+                
+            end
+            
+        end
+        
+        function s=get.finish(self)
+            
+            dn=self.date_numbers;
+            
+            if isempty(dn)
+                
+                s='';
+                
+            else                
+                
+                s=serial2date(dn(end));
+                
+                s=s{1};
+                
+            end
+            
+        end
+        
+        function varargout=size(self,varargin)
+            
+            [varargout{1:nargout}]=size(self.data,varargin{:});
+            
+        end
+        
         % visualization
         %--------------
         varargout=allmean(varargin)
         varargout=apply(varargin)
-        varargout=automatic_model_selection(varargin)
         varargout=bsxfun(varargin)
         varargout=chebyshev_box(varargin)
-        varargout=ctranspose(varargin)
         varargout=describe(varargin)
-        varargout=display(varargin)
+        varargout=disp(varargin)
         varargout=expanding(varargin)
         varargout=fanchart(varargin)
         varargout=hpfilter(varargin)
@@ -495,9 +486,7 @@ classdef ts
         varargout=moments(varargin)
         varargout=regress(varargin)
         varargout=rolling(varargin)
-        varargout=sort(varargin)
         varargout=spectrum(varargin)
-        varargout=transpose(varargin)
         %         varargout=ar(varargin)
         % statistics
         %------------
@@ -569,7 +558,6 @@ classdef ts
         varargout=tail(varargin)
         varargout=values(varargin)
         varargout=double(varargin)
-        varargout=get(varargin)
         % utilities
         %----------
         varargout=aggregate(varargin)
@@ -609,11 +597,11 @@ classdef ts
         varargout=binary_operation(varargin)
         varargout=set_locations(varargin)
         varargout=unary_operation(varargin)
+        varargout=check_size(varargin)
     end
     
     methods(Access=private)
         varargout=comparison(varargin)
-        varargout=main_frame(varargin)
         varargout=process_subs(varargin)
         varargout=ts_roll_or_expand(varargin)
     end
