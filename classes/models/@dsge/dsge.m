@@ -1,4 +1,4 @@
-classdef dsge < generic_switch
+classdef dsge < generic_switch % & gogetter
     % dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
     %
     % dsge Methods:
@@ -65,94 +65,124 @@ classdef dsge < generic_switch
         % this is so that the user can tailor the information to pass
         % around functions written by him but called by RISE
         user_data
+        
     end
+    
     properties (Hidden = true)
+        
         old_solution
+        
     end
+    
     properties (SetAccess = private, Hidden = true)
         auxiliary_variables % variables for which the user does not need to solve for the steady state
+        
         dates_filtering % those two options should be moved elsewhere so that they are visible...
+        
         dates_smoothing
+        
         hybrid_expectations_lambda_id
+        
         is_dsge_var_model
+        
         is_endogenous_switching_model
+        
         is_hybrid_expectations_model
+        
         is_hybrid_model
+        
         is_in_use_parameter
+        
         is_optimal_policy_model
+        
         is_optimal_simple_rule_model
+        
         is_purely_backward_looking_model
+        
         is_purely_forward_looking_model
+        
         lead_lag_incidence
+        
         measurement_errors_restrictions
+        
         model_derivatives
+        
         planner_system
+        
         raw_file
+        
         rawfile_triggers
+        
         sticky_information_lambda_id
+        
         input_list
+        
         % steady state solution facilitators
         %------------------------------------
         occurrence
+        
         fast_sstate_occurrence
+        
         steady_state_blocks
+        
         steady_state_2_model_communication
+        
         steady_state_2_blocks_optimization
+        
         % steady state model characteristics
         %------------------------------------
         is_param_changed_in_ssmodel
+        
         % statistics on the order of the variables
         %--------------------------------------------
         v
+        
         locations
+        
         siz
+        
         order_var
+        
         inv_order_var
+        
         % provision for automatic differentiation
         %----------------------------------------
         steady_state_index
+        
         % provision for functions, solving and resolving
         %--------------------------------------------------
         warrant_resolving = true;
+        
         warrant_setup_change = true % initialization of functions, derivatives, etc.
+        
         % dsge_var stuff
         %---------------
         dsge_var
+        
         dsge_prior_weight_id
+        
         % user information
         %------------------
         user_endogenous_priors_info
+        
     end
+    
     properties(SetAccess=protected)
         % values of auxiliary parameters defined in the model file with a #
         definitions
+        
         % equations of the system
         equations
+        
         % paths for the different folders in which RISE stores information
         folders_paths
+        
         % name of the rs/rz/dsge file read
         filename='';
+        
     end
+    
     methods
-        varargout=bvar_dsge(varargin)
-        varargout=check_derivatives(varargin)
-        varargout=create_state_list(varargin)
-        varargout=estimate(varargin) % re-signed...
-        varargout=filter(varargin)
-        varargout=filter_initialization(varargin)
-        varargout=forecast_real_time(varargin)
-        varargout=frontier(varargin)
-% % % %         varargout=get(varargin): TODO
-        varargout=is_stationary_system(varargin)
-        varargout=monte_carlo_filtering(varargin)
-        varargout=pull_objective(varargin)
-        varargout=print_solution(varargin)
-        varargout=refresh(varargin)
-        varargout=resid(varargin)
-        varargout=set_solution_to_companion(varargin)
-        varargout=simulate_nonlinear(varargin)
-        varargout=solve(varargin)
-        varargout=solve_alternatives(varargin)
         % constructor
         %------------
         function obj=dsge(model_filename,varargin)
@@ -231,33 +261,58 @@ classdef dsge < generic_switch
             % ---------
             %
             % See also:
+            
             obj=obj@generic_switch();
+            
+            % obj=obj@gogetter();
+            
             if nargin<1
+                
                 return
+                
             elseif isa(model_filename,'dsge')
+                
                 obj=model_filename;
+                
                 return
+                
             end
             
             % separate options going into CompileModelFile to the others
             cmfOptions=fieldnames(parser.parse());
+            
             if rem(length(varargin),2)~=0
+                
                 error('arguments must come in pairs')
+                
             end
+            
             discard=false(1,length(varargin));
+            
             for iv=1:2:length(varargin)
+                
                 if ~ischar(varargin{iv})
+                    
                     error('odd input arguments must be char')
+                    
                 end
+                
                 if ismember(varargin{iv},cmfOptions)
+                    
                     discard(iv:iv+1)=true;
+                    
                 end
+                
             end
+            
             cmfArgins=varargin(discard);
+            
             % proceed with the remaining arguments
             varargin(discard)=[];
+            
             % the constructor needs to have an output
             dictionary=parser.parse(model_filename,cmfArgins{:});
+            
             % build the equations object
             quick_fill={'lead_lag_incidence','filename',...
                 'planner_system',...
@@ -276,14 +331,21 @@ classdef dsge < generic_switch
             
             % check that all the shocks in the model are in use
             not_in_use=dictionary.exogenous.name(~dictionary.exogenous.is_in_use);
+            
             if ~isempty(not_in_use)
+                
                 disp([mfilename,'(gentle warning) :: the following shocks do not seem to affect the model.'])
+                
                 disp('You may want to discard them from your model file for tidiness')
+                
                 disp(not_in_use)
+                
             end
             
             for ii=1:numel(quick_fill)
+                
                 obj.(quick_fill{ii})=dictionary.(quick_fill{ii});
+                
             end
             % make a copy of the routines
             %-----------------------------
@@ -291,7 +353,9 @@ classdef dsge < generic_switch
             
             % flags for the different types of models
             if obj.is_hybrid_expectations_model
+                
                 obj.hybrid_expectations_lambda_id=find(strcmp('hybrid_expectations_lambda',obj.parameters.name),1);
+                
             end
                         
             % Once the names of the exogenous variables are known, we can
@@ -300,12 +364,19 @@ classdef dsge < generic_switch
             obj=set(obj,varargin{:});
             
             if obj.options.debug
+                
                 dicfields=fieldnames(dictionary);
+                
                 superfluous=setdiff(dicfields,quick_fill);
+                
                 if ~isempty(superfluous)
+                    
                     disp(superfluous(:)')
+                    
                     warning('the dictionary fields above are superfluous for the constructor')
+                    
                 end
+                
             end
             
             obj.options.estim_nonlinear_restrictions=dictionary.Param_rest_block;
@@ -324,84 +395,190 @@ classdef dsge < generic_switch
             
             % conclude
             disp(' ')
+            
             switch_type='Exogenous';
+            
             if obj.is_endogenous_switching_model
+                
                 switch_type='Endogenous';
+                
             end
             
             if obj.is_optimal_policy_model
+                
                 model_type='Optimal Policy';
+                
             elseif obj.is_dsge_var_model
+                
                 model_type='DSGE-VAR';
+                
             elseif obj.is_optimal_simple_rule_model
+                
                 model_type='Optimal Simple Rule (OSR)';
+                
             else
+                
                 model_type='DSGE';
+                
             end
-            disp([mfilename,':: ',switch_type,' Switching ',model_type,' model in ',int2str(obj.markov_chains.regimes_number),' regimes detected'])
+            
+            disp([mfilename,':: ',switch_type,' Switching ',model_type,...
+                ' model in ',int2str(obj.markov_chains.regimes_number),...
+                ' regimes detected'])
             
             if obj.is_hybrid_model
+                
                 disp([mfilename,':: model has both backward and forward-looking components'])
+                
             elseif obj.is_purely_backward_looking_model
+                
                 disp([mfilename,':: model is purely backward looking'])
+                
             elseif obj.is_purely_forward_looking_model
+                
                 disp([mfilename,':: model is purely forward-looking'])
+                
             else
+                
                 disp([mfilename,':: model is purely static'])
+                
             end
             
             if obj.is_hybrid_expectations_model
+                
                 disp([mfilename,':: The model features Hybrid Expectations'])
+                
             end
             
             function create_folders_and_add_further_routines()
+                
                 MainFolder=obj.options.results_folder;
+                
                 SubFoldersList={'graphs','estimation','simulations','routines'};
                 
                 if ~exist(MainFolder,'dir')
+                    
                     mkdir(MainFolder)
+                    
                 end
+                
                 obj.folders_paths=struct();
+                
                 for ifold=1:numel(SubFoldersList)
+                    
                     subfolder=[MainFolder,filesep,SubFoldersList{ifold}];
+                    
                     obj.folders_paths.(SubFoldersList{ifold})=subfolder;
+                    
                     if ~exist(subfolder,'dir')
+                        
                         mkdir(subfolder)
+                        
                     end
+                    
                 end
                 % likelihood functions
                 %---------------------
                 if obj.is_dsge_var_model
+                    
                     likelihood=@likelihood_dsge_var;
+                    
                 elseif obj.is_optimal_simple_rule_model
+                    
                     likelihood=@likelihood_optimal_simple_rule;
+                    
                 else
+                    
                     likelihood=@likelihood_markov_switching_dsge;
+                    
                 end
+                
                 obj=add_to_routines(obj,'likelihood',likelihood);
+                
             end
+            
         end
+        
+        varargout=bvar_dsge(varargin)
+        
+        varargout=check_derivatives(varargin)
+        
+        varargout=create_state_list(varargin)
+        
+        varargout=estimate(varargin) % re-signed...
+        
+        varargout=filter(varargin)
+        
+        varargout=filter_initialization(varargin)
+        
+        varargout=forecast_real_time(varargin)
+        
+        varargout=frontier(varargin)
+        
+% % % %         varargout=get(varargin): TODO
+        varargout=is_stationary_system(varargin)
+        
+        varargout=monte_carlo_filtering(varargin)
+        
+        varargout=pull_objective(varargin)
+        
+        varargout=print_solution(varargin)
+        
+        varargout=refresh(varargin)
+        
+        varargout=resid(varargin)
+        
+        varargout=set_solution_to_companion(varargin)
+        
+        varargout=simulate_nonlinear(varargin)
+        
+        varargout=solve(varargin)
+        
+        varargout=solve_alternatives(varargin)
+        
     end
+    
     methods(Sealed)
+        
         varargout=simulate(varargin)
+        
     end
+    
     methods(Access=protected)
+        
         varargout=setup_calibration(varargin)
+        
     end
+    
     methods(Access=protected,Hidden=true)
+        
         varargout=re_order_output_rows(varargin)
+        
     end
+    
     methods(Hidden=true)
+        
         varargout=assign_estimates(varargin)
+        
         varargout=conclude_estimation(varargin) % abstract method
+        
         varargout=latex_model_file(varargin)
+        
         varargout=load_solution(varargin)
+        
         varargout=load_data(varargin)
+        
         varargout=prepare_transition_routine(varargin)
+        
         varargout=problem_reduction(varargin)
+        
         varargout=set_z_eplus_horizon(varargin)
+        
         varargout=growth_component_solver(varargin)
+        
         varargout=set_planner_derivatives(varargin)
+        
     end
+    
 end
 
