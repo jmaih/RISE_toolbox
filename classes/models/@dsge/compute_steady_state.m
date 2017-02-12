@@ -1025,7 +1025,7 @@ if isempty(obj.steady_state_2_model_communication)
                 sscode.is_loop_steady_state) && ...
                 any(sscode.is_param_changed)
             
-            error(errmsg)
+%             error(errmsg)
             
         end
         
