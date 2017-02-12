@@ -21,7 +21,7 @@ function [sim1,regimes,retcode]=simul_occbin(y0,T,ss,state_vars_location,...
 %
 % See also:
 
-use_pinv=false;
+use_pinv=true;
 is_accelerated=true;
 
 % find the first-order approximation of the system
