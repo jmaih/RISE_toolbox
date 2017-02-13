@@ -42,7 +42,14 @@ end
 
     function st=char2struct(st)
         if ischar(st)
-            st=regexp(st,'(?<fname>\w+)(?<ext>\.\w+)','names');
+            tmp=struct();
+            lastdot=find(st=='.',1,'last');
+            tmp.ext=st(lastdot:end);
+            tmp.fname=st(1:lastdot-1);
+            st=tmp;
+            % st=regexp(st,'(?<fname>\w+)(?<ext>\.\w+)','names');
+            % this needs fixing for cases like ../Day1/baseline.rz that are
+            % not properly parsed
         end        
     end
 
