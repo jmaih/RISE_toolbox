@@ -112,7 +112,7 @@ end
     function varargout=plot_it(d)
         nout=nargout;
         if any(strcmp(funct_type,{'boxplot'}))
-            plotfunc(d{:},this.varnames,matlab_args{:});
+            plotfunc(d{:},this{1}.varnames,matlab_args{:});
             vout={gca()};
         elseif strcmp(funct_type,{'hist'})
             [vout{1:nout}]=plotfunc(d{:},matlab_args{:});
