@@ -85,7 +85,7 @@ for ip=1:sizdat(3)
     
     if is_many_pages
         
-        fprintf('(:,:,%0.0f)\n',ip);
+        fprintf('(:,:,%0.0f) =\n',ip);
         
     end
     
