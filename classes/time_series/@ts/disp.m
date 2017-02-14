@@ -67,6 +67,8 @@ else
     
 end
 
+tblCharsOrig=tblChars;
+
 sizdat=size(t.data);
 
 if numel(sizdat)==2
@@ -166,8 +168,6 @@ index(t)
             
             varnamePads(ivar) = size(varChars,2)-length(name);
             
-            if ip==1
-                
                 if ivar == 1 % starting over at left margin
                     
                     tblChars = [tblChars varChars]; %#ok<AGROW>
@@ -178,8 +178,6 @@ index(t)
                     
                 end
                 
-            end
-            
         end
         
         dispVarNames(true);
@@ -189,6 +187,12 @@ index(t)
         dispVarNames();
         
         fprintf(looseline);
+        
+        if sizdat(3)>1
+            
+            tblChars=tblCharsOrig;
+            
+        end
         
         %-----------------------------------------------------------------------
         function dispVarNames(before)
