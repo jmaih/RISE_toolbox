@@ -269,7 +269,7 @@ if isempty(obj.options.simul_history_end_date)
     
 end
 
-start_date= obj.options.simul_history_end_date;
+start_date=date2serial(Initcond.simul_history_end_date);%-y0cols+1
 
 sims=ts(start_date,full(sims)',obj.endogenous.name);
 
