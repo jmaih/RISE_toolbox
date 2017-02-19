@@ -86,7 +86,7 @@ if dic.is_optimal_simple_rule_model
     dic.planner_system.osr=osr_derivs;
 else
     proto=splanar();
-    proto.prototype=proto;
+%     proto.prototype=proto;
     % create map of derivatives according to... the map
     %---------------------------------------------------
     fx=proto; fx.func=0;

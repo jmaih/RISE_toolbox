@@ -52,7 +52,11 @@ if nx>1
 end
 if isnumeric(x)
     n=numel(x.func);
-    c=num2str(x.func);
+    % c=num2str(x.func);
+    c=sprintf('%0.15g',full(x.func(1)));
+    for ii=2:n
+        c=[c,',',sprintf('%0.15g',full(x.func(ii)))]; %#ok<AGROW>
+    end
     if n>1
         c=['[',c,']'];
     end

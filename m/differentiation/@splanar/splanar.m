@@ -68,7 +68,7 @@ classdef splanar
         incidence % tells which variable appears
         number_of_columns=1
         lineage={} % will serve to trace back all generations of derivatives
-        prototype
+%         prototype
         location % will hold position (column) where the derivative will be stored
     end
     methods
@@ -207,7 +207,7 @@ classdef splanar
             nconst=0;
             constants=cell(1,n);
             for iarg=1:n
-                if isnumeric(varargin{iarg});
+                if isnumeric(varargin{iarg})
                     constants{iarg}=varargin{iarg}.func;
                     nconst=nconst+1;
                 else
@@ -216,7 +216,7 @@ classdef splanar
             end
             % initialize the splanar
             %------------------------
-            obj=varargin{1}.prototype;obj.prototype=obj;
+            obj=prototypize(varargin{1});
             if nconst==n
                 obj.func=if_elseif(constants{:});
                 obj.number_of_columns=numel(obj.func);
@@ -282,7 +282,7 @@ classdef splanar
         function obj=mpower(a,b)
             % mpower - overloads mpower for splanar
             [a,b]=splanarize(a,b);
-            obj=a.prototype;obj.prototype=obj;
+            obj=prototypize(a);
             if is_zero(b)
                 % x^0 = 1
                 obj.func=1;
@@ -308,7 +308,7 @@ classdef splanar
                 % x/1 = x
                 obj=a;
             elseif is_zero(a)
-                obj=a.prototype;obj.prototype=obj;
+                obj=prototypize(a);
                 obj.func=0;
             elseif strcmp(a.func,'uminus')
                 if strcmp(b.func,'uminus')
@@ -342,7 +342,7 @@ classdef splanar
             elseif (isnum_a && is_zero(a))||(isnum_b && is_zero(b))
                 % 0 * x = 0
                 % x * 0 = 0
-                obj=a.prototype;obj.prototype=obj;
+                obj=prototypize(a);
                 obj.func=0;% obj.func=0*ones(1,maxcols);
                 obj.number_of_columns=1;%obj.number_of_columns=maxcols>1;
             elseif isnum_a && is_one(a) % maxcols==1 &&
@@ -444,7 +444,7 @@ classdef splanar
             % uminus - overloads uminus for splanar
             if strcmp(a.func,'uminus')
                 % Simplify -(-x) in x
-                obj=a.prototype;obj.prototype=obj;
+                obj=prototypize(a);
                 if strcmp(class(a.args{1}),'splanar')
                     obj=a.args{1};
                 else
@@ -534,10 +534,10 @@ classdef splanar
             if isempty(x.incidence)
                 % numbers/vectors and variables which are not part of differentiation
                 % automatically receive 0 as derivative
-                d=x.prototype;d.prototype=d;d.func=0;
+                d=prototypize(x);d.func=0;
             elseif isempty(x.args)
                 % variables that are part of differentiation
-                d=x.prototype;d.prototype=d;
+                d=prototypize(x);
                 d.func=double(x.incidence(wrt));
                 d.number_of_columns=numel(d.func);
                 % why do we need to double it?
@@ -583,7 +583,7 @@ classdef splanar
                     case {'lt','gt','le','ge','eq','ne','or','and','sign',...
                             'steady_state'}
                         % derivatives are zero
-                        d=x.prototype; d.prototype=d; d.func=0;
+                        d=prototypize(x); d.func=0;
                     case 'if_then_else'
                         d=if_then_else(x.args{1},d_args{2},d_args{3});
                     case 'if_elseif'
@@ -756,7 +756,7 @@ classdef splanar
                 error('repeated variable names in var_list')
             end
             proto_incidence=false(1,nwrt);
-            proto_=splanar();
+%             proto_=splanar();
             for ivar=1:nvlist
                 vname=var_list{ivar};
                 loc=find(strcmp(vname,wrt_list));
@@ -766,12 +766,19 @@ classdef splanar
                     incid_(loc)=true;
                     var_list{ivar}=set(var_list{ivar},'incidence',sparse(incid_));
                 end
-                var_list{ivar}=set(var_list{ivar},'prototype',proto_);
+%                 var_list{ivar}=set(var_list{ivar},'prototype',proto_);
             end
         end
         varargout=differentiate(varargin)
         varargout=print(varargin)
     end
+end
+
+function obj=prototypize(obj)
+obj.func=[];
+obj.args=[];
+obj.incidence=[];
+obj.number_of_columns=[];
 end
 
 function varargout=splanarize(varargin)
@@ -782,14 +789,14 @@ guy_is_planar=false(1,n);
 for iarg=1:n
     guy_is_planar(iarg)=strcmp(class(varargin{iarg}),'splanar');
     if isempty(obj) && guy_is_planar(iarg)
-        obj=varargin{iarg}.prototype;
-        obj.prototype=obj;
+        obj=prototypize(varargin{iarg});
     end
 end
 for iarg=find(~guy_is_planar)
     tmp=varargout{iarg};
     varargout{iarg}=obj; 
     varargout{iarg}.func=tmp;
+    varargout{iarg}.number_of_columns=numel(tmp);
 end
 end
 
@@ -797,7 +804,7 @@ function obj=do_trivariate(x,mu,sd,func)
 [x,mu,sd]=splanarize(x,mu,sd);
 % initialize the splanar
 %------------------------
-obj=x.prototype; obj.prototype=obj;
+obj=prototypize(x);
 if isnumeric(x.func) && isnumeric(mu.func) && isnumeric(sd.func)
     obj.func=feval(func,x.func,mu.func,sd.func);
     obj.number_of_columns=numel(obj.func);
@@ -833,7 +840,7 @@ if re_splanarize
 end
 % initialize the splanar
 %------------------------
-obj=a.prototype; obj.prototype=obj;
+obj=prototypize(a);
 if isnumeric(a.func) && isnumeric(b.func)
     if any(strcmp(func,{'mtimes','mrdivide','mpower'}))
         func=func(2:end);
@@ -858,7 +865,7 @@ end
 function obj=do_univariate(a,func)
 % initialize the splanar
 %------------------------
-obj=a.prototype;obj.prototype=obj;
+obj=prototypize(a);
 if isnumeric(a.func)
     obj.func=feval(func,a.func);
     obj.number_of_columns=numel(obj.func);
