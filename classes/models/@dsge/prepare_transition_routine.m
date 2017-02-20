@@ -30,7 +30,7 @@ if obj.is_endogenous_switching_model
     defs=mean([obj.solution.definitions{:}],2);
     Vargs={[],obj.solution.ss{1},mean(M,2),defs,[],[]};%Q{3}={[],obj.solution.ss{1},mean(M,2),[],[],[],[]};
     % account for log vars
-    is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+    is_log_var=obj.log_vars;
     Qfunc=memoizer(obj.routines.transition_matrix,is_log_var,Vargs{:});
 else
     Qfunc=prepare_transition_routine@generic_switch(obj);

@@ -59,7 +59,7 @@ steady_state=obj.solution.ss;
 new_order=ov;
 state_vars_location=obj.locations.after_solve.t.pb;
 
-log_vars=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+log_vars=obj.log_vars;
         
 % update T and steady state
 %--------------------------

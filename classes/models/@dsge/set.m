@@ -71,6 +71,7 @@ resolve_only=bingo.resolve_only;
 is_resolve=false;
 is_setup_change=false;
 shock_horizon_id=[];
+solve_log_approx_vars_id=[];
 use_disc_id=[];
 nn=length(varargin);
 is_discard=false(1,nn);
@@ -81,6 +82,12 @@ for ii=1:2:nn
             error('Not possible to set "solve_shock_horizon" in a dsge-var model')
         end
         shock_horizon_id=[ii,ii+1];
+        is_discard([ii,ii+1])=true;
+    elseif strcmp(this_option,'solve_log_approx_vars') 
+        if any([obj.is_dsge_var_model])
+            error('Not possible to set "solve_log_approx_vars" in a dsge-var model')
+        end
+        solve_log_approx_vars_id=[ii,ii+1];
         is_discard([ii,ii+1])=true;
     elseif strcmp(this_option,'solve_function_mode')
         use_disc_id=[ii,ii+1];
@@ -95,6 +102,7 @@ for ii=1:2:nn
 end
 solve_shock_horizon=varargin(shock_horizon_id);
 solve_function_mode=varargin(use_disc_id);
+solve_log_approx_vars=varargin(solve_log_approx_vars_id);
 varargin(is_discard)=[];
 % do not remove the disc property since that option has to be visible
 % unlike the shocks horizon. varargin(use_disc_id)=[];
@@ -131,6 +139,17 @@ if ~isempty(shock_horizon_id)
             obj(ii)=set_shock_horizon(obj(ii));
         end
     end
+end
+
+if ~isempty(solve_log_approx_vars_id)
+        % turn into struct if cell
+        %---------------------------
+        solve_log_approx_vars=solve_log_approx_vars{2};
+        % do this one at a time
+        %-----------------------
+        for ii=1:nobj
+            obj(ii)=set_log_approx_vars(obj(ii));
+        end
 end
 
 if ~isempty(solve_function_mode)
@@ -173,6 +192,16 @@ end
                 end
             end
         end
+    end
+
+    function this=set_log_approx_vars(this)
+        
+        this.endogenous.is_log_expanded(1,:)=false;
+        
+        pos=locate_variables(solve_log_approx_vars,this.endogenous.name);
+        
+        this.endogenous.is_log_expanded(pos)=true;
+        
     end
 
     function this=set_shock_horizon(this)
@@ -231,6 +260,7 @@ end
             end
         end
     end
+
 end
 
 function value=process_cell(value)

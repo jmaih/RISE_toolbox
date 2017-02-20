@@ -853,7 +853,7 @@ for ireg=1:reg_nbr
     Tsig{ireg}=real(Tsig{ireg})+imag(Tsig{ireg});
 end
 
-logvars=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+logvars=obj.log_vars;
 
 [smoothed_variables,smoothed_shocks,dn]=load_smooth();
 

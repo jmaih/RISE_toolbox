@@ -110,7 +110,7 @@ dd=cell2mat(strcat(dd,';'));
 
 dd=dd(1:end-1);
 
-is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+is_log_var=obj.log_vars;
 
 % inputs and missing inputs
 %---------------------------

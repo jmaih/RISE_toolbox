@@ -75,8 +75,11 @@ if retcode
 end
 
 is_log_var=[];
+
 if isa(obj,'dsge')
-    is_log_var=obj.endogenous.is_log_var;
+    
+    is_log_var=obj.log_vars;
+    
 end
 
 % initial conditions for endogenous

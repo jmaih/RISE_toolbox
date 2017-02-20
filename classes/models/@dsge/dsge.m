@@ -74,6 +74,12 @@ classdef dsge < generic_switch % & gogetter
         
     end
     
+    properties (Dependent,Hidden)
+        
+        log_vars
+        
+    end
+    
     properties (SetAccess = private, Hidden = true)
         auxiliary_variables % variables for which the user does not need to solve for the steady state
         
@@ -496,6 +502,12 @@ classdef dsge < generic_switch % & gogetter
                 obj=add_to_routines(obj,'likelihood',likelihood);
                 
             end
+            
+        end
+        
+        function w=get.log_vars(obj)
+            
+            w=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
             
         end
         

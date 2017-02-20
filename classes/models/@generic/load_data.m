@@ -214,7 +214,7 @@ end
 
     function v=do_log(v,vnames)
         
-        is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+        is_log_var=obj.log_vars;
         
         silent=true;
         

@@ -32,7 +32,7 @@ db=struct();
 
 endo_names=obj.endogenous.name;
 
-is_log_var=obj.endogenous.is_log_var|obj.endogenous.is_log_expanded;
+is_log_var=obj.log_vars;
 
 fields=fieldnames(odb);
 
