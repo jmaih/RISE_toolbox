@@ -82,9 +82,6 @@ else
             'betainv'}))
         c=cell2mat(strcat(args,','));
         c=[the_func,'(',c(1:end-1),')'];
-% % % % % % 		if any(strcmp(the_func,{'if_elseif','if_then_else'}))
-% % % % % % 	        c=['utils.functional_programming.',c];
-% % % % % % 		end
     else
         switch the_func
             case 'uplus'
