@@ -706,39 +706,6 @@ classdef splanar
         end
     end
     methods(Static)
-        function deriv=derivatives2functions(deriv,args,optimize)
-            % derivatives2functions - turns splanar derivatives into
-            % functions
-            if nargin<3
-                optimize=false;
-            end
-            if ischar(args)
-                args=cellstr(args);
-            end
-            args=args(:)';
-            % put into analytical form
-            %--------------------------
-            deriv.derivatives=parser.analytical_symbolic_form(deriv.derivatives,args,'analytic');
-            % remove unnecessary parentheses
-            %-------------------------------
-            if optimize
-                word='\w+';
-                word_par='\w+\(\d+\)';
-                deriv.derivatives=regexprep(deriv.derivatives,...
-                    ['(?<!\w+)(\()(',word,'|',word_par,')(\))'],'$2');
-            end
-            
-            
-            % build the functions
-            %--------------------
-            args=cell2mat(strcat(args,','));
-            main_string=['@(',args(1:end-1),')'];
-            nrows=numel(deriv.derivatives);
-            for irow=1:nrows
-                irow_deriv=deriv.derivatives{irow};
-                deriv.derivatives{irow}=str2func([main_string,irow_deriv]);
-            end
-        end
         function var_list=initialize(var_list,wrt_list)
             % initialize - initializes splanar objects for differentiation
             if ischar(var_list)
