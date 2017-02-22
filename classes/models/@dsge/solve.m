@@ -401,6 +401,28 @@ if solve_order>0 && ~retcode && resolve_it
         end
         
         if ~retcode
+            
+            if obj.is_optimal_policy_model||obj.is_optimal_simple_rule_model
+                
+                planner=structural_matrices.planner;
+                
+                % change the ordering of the weight for the user. OSR will use
+                % the structural matrices, which are ordered according to
+                % order_var
+                iov=obj.inv_order_var;
+                
+                for s00=1:h
+                    
+                    planner.weights{s00}=planner.weights{s00}(iov,iov);
+                    
+                end
+                
+                obj=set_planner_derivatives(obj,planner);
+                
+                clear planner
+                
+            end
+
             % expand solution to account for loose commitment
             %------------------------------------------------
             [obj,T]=expand_optimal_policy_solution(obj,T,loose_com_col);

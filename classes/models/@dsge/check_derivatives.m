@@ -144,7 +144,8 @@ end
                         
                         fprintf('* discrep of derivatives relative to automatic : %s :: %s \n',dv,test)
                         
-                        if obj(imod).is_optimal_policy_model && io==1
+                        if (obj(imod).is_optimal_policy_model||...
+                                obj(imod).is_optimal_simple_rule_model) && io==1
                             
                             test=do_test('weights',3);
                             

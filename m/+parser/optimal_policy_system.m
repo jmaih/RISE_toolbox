@@ -74,17 +74,15 @@ verbose=false;
 tic
 
 [derivs,args]=take_derivatives(eqtns,symb_list,wrt,order,verbose);
-dic.planner_system.osr=[];
-if dic.is_optimal_simple_rule_model
-    Lost_equations=[];
-    osr_derivs=splanar.print(derivs);
-    osr_derivs=osr_derivs(2);
-    [osr_derivs.derivatives]=cleanup(osr_derivs.derivatives,true);
-    % parse as steady state
-    %------------------------
-    osr_derivs.wrt=wrt;
-    dic.planner_system.osr=osr_derivs;
-else
+
+dic.planner_system.utils_derivs=[];
+
+Lost_equations=[];
+
+do_utility_differentiation();
+
+if ~dic.is_optimal_simple_rule_model
+    
     proto=splanar();
     % create map of derivatives according to... the map
     %---------------------------------------------------
@@ -210,6 +208,52 @@ end
 
 jac_toc=toc;
 
+    function []=do_utility_differentiation()
+        
+        wrt_new=wrt;
+        
+        if dic.is_optimal_simple_rule_model
+            
+            utils_derivs=splanar.print(derivs);
+            
+%             utils_derivs=utils_derivs(2);
+%             
+%             [utils_derivs.derivatives]=cleanup(utils_derivs.derivatives,true);
+%             
+%             % parse as steady state
+%             %------------------------
+%             utils_derivs.wrt=wrt;
+%             
+%             dic.planner_system.osr=utils_derivs;
+            
+        else
+            % At this stage, the last equation is the utility. But to be on
+            % the safe side, let's collect it from the model itself.
+            % Let's differentiate it separately twice...
+            %--------------------------------------------------------------
+            % make sure the differentation is taken with respect to the
+            % contemporaneous endogenous variables only
+            wrt_new=dic.endogenous_list;
+            
+            [utils_derivs]=take_derivatives(eqtns(end),symb_list,wrt_new,2,verbose);
+            
+            utils_derivs=splanar.print(utils_derivs);
+            
+        end
+        
+        utils_derivs=utils_derivs(2);
+        
+        [utils_derivs.derivatives]=cleanup(utils_derivs.derivatives,true);
+        
+        % parse as steady state
+        %------------------------
+        utils_derivs.wrt=wrt_new;
+        
+        dic.planner_system.utils_derivs=utils_derivs;
+        
+        
+    end
+
     function [eqtns,wrt,occur,nleads,ncurrent,numVars]=get_equations_to_differentiate()
         
         wrt_lags=cell(1,nvars);
@@ -314,18 +358,29 @@ jac_toc=toc;
     end
 
     function [x,old_size]=cleanup(x,remove_time)
+        
         if nargin<2
+            
             remove_time=false;
+            
         end
+        
         x=strrep(x,'.*','*');
+        
         x=strrep(x,'.^','^');
+        
         x=strrep(x,'./','/');
         
         if remove_time
+            
             x=regexprep(x,'(\w+)(_XLEAD_|_XLAG_)(\d+)','$1');
+            
         else
+            
             try_again=@do_it_again; %#ok<NASGU>
+            
             x=regexprep(x,'(\w+)(_XLEAD_|_XLAG_)(\d+)','$1${try_again($2,$3)}');
+            
         end
         
         % add ;
@@ -343,7 +398,9 @@ jac_toc=toc;
         % add a column of nan at the beginning and a column of opt pol at the end
         %-------------------------------------------------------------------------
         old_size=size(x);
+        
         x=x(:);
+        
         nlost=size(x,1);
         
         x=[repmat({nan},nlost,1),...
@@ -351,6 +408,7 @@ jac_toc=toc;
             repmat({'optimal policy eqtns'},nlost,1)];
         
         [x,dic]=parser.capture_equations(dic,x,'model');
+        
     end
 
 end

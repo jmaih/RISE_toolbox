@@ -242,25 +242,31 @@ do_parameter_restrictions();
 
 %% Lump together the model and steady-state model
 static_mult_equations=[];
+utils_derivatives=[];
 if dictionary.is_optimal_policy_model
+    
     static_mult_equations=dictionary.planner_system.static_mult_equations{1};
+    
 end
-osr_derivatives=[];
-if dictionary.is_optimal_simple_rule_model
-    osr_derivatives=dictionary.planner_system.osr.derivatives;
+
+if dictionary.is_model_with_planner_objective
+
+    utils_derivatives=dictionary.planner_system.utils_derivs.derivatives;
+    
 end
+
 AllModels=[Model_block
     SteadyStateModel_block
     auxiliary_steady_state_equations
     PlannerObjective_block
-    osr_derivatives
+    utils_derivatives
     static_mult_equations];
 % steady state equations (including auxiliary) are identified by number 5
 aux_ss_eq_nbr=size(auxiliary_steady_state_equations,1);
 ss_eq_nbr=size(SteadyStateModel_block,1);
 % dictionary.planner_system objective equations are identified by number 6
 planobj_eq_nbr=size(PlannerObjective_block,1);
-osr_derivs_eqn_nbr=size(osr_derivatives,1);
+osr_derivs_eqn_nbr=size(utils_derivatives,1);
 % mult steady state identified by number 7
 stat_mult_eq_nbr=size(static_mult_equations,1);
 equation_type=[equation_type
@@ -491,18 +497,17 @@ if dictionary.is_model_with_planner_objective
             dictionary.planner_system.static_mult_equations(2:end);
         dictionary.planner_system=rmfield(dictionary.planner_system,...
             'static_mult_equations');
-    else
-        osr_=dictionary.planner_system.osr;
-        endo_names={dictionary.endogenous.name};
-        ordered_endo_names=endo_names(dictionary.order_var);
-        der_reo=locate_variables(ordered_endo_names,osr_.wrt);
-        routines.planner_osr_support=struct('derivatives_re_order',der_reo,...
-            'partitions',osr_.partitions,...
-            'map',cell2mat(osr_.map(:,2)),'size',osr_.size);
-        % we take the second column since the first column with the
-        % equation numbers do not matter: originally we had only one equation
-        clear osr_
     end
+    osr_=dictionary.planner_system.utils_derivs;
+    endo_names={dictionary.endogenous.name};
+    ordered_endo_names=endo_names(dictionary.order_var);
+    der_reo=locate_variables(osr_.wrt,ordered_endo_names);
+    routines.planner_osr_support=struct('derivatives_re_order',der_reo,...
+        'partitions',osr_.partitions,'nwrt',osr_.nwrt,...
+        'map',cell2mat(osr_.map(:,2)),'size',osr_.size);
+    % we take the second column since the first column with the
+    % equation numbers do not matter: originally we had only one equation
+    clear osr_
     % add the loss, the commitment degree and discount
     %-------------------------------------------------
     routines.planner_loss_commitment_discount=utils.code.code2func(planner_shadow_model,dictionary.input_list);

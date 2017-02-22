@@ -530,6 +530,8 @@ classdef dsge < generic_switch % & gogetter
 % % % %         varargout=get(varargin): TODO
         varargout=is_stationary_system(varargin)
         
+        varargout=loss(varargin)
+        
         varargout=monte_carlo_filtering(varargin)
         
         varargout=pull_objective(varargin)

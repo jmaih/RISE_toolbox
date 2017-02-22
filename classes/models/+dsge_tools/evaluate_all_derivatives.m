@@ -238,7 +238,7 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
         'weights',{cell(1,h)}...
         );
     
-    orig_endo_nbr=obj.endogenous.number;
+    endo_nbr=obj.endogenous.number;
     
     for s0=1:h
         
@@ -263,21 +263,7 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
                 
                 planner.discount{s0}=lcd(3);
                 
-                if obj.is_optimal_simple_rule_model
-                    
-                    ww=zeros(obj.routines.planner_osr_support.size);
-                    
-                    ww(obj.routines.planner_osr_support.map)=lcd(4:end);
-                    
-                    ww=ww(obj.routines.planner_osr_support.partitions);
-                    
-                    ww=reshape(ww,orig_endo_nbr,orig_endo_nbr);
-                    
-                    good_order=obj.routines.planner_osr_support.derivatives_re_order;
-                    
-                    planner.weights{s0}=sparse(ww(good_order,good_order));
-                    
-                end
+                planner.weights{s0}=calculate_weights(lcd);
                 
             end
             
@@ -287,25 +273,29 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
     
     structural_matrices.planner=planner;
     
-    if obj.is_optimal_simple_rule_model
-        % change the ordering of the weight for the user. OSR will use
-        % the structural matrices, which are ordered according to
-        % order_var
-        iov=obj.inv_order_var;
+end
+
+    function w=calculate_weights(lcd)
         
-        for s0=1:h
-            
-            planner.weights{s0}=planner.weights{s0}(iov,iov);
-            
-        end
+        ww=zeros(obj.routines.planner_osr_support.size);
+        
+        ww(obj.routines.planner_osr_support.map)=lcd(4:end);
+        
+        ww=ww(obj.routines.planner_osr_support.partitions);
+        
+        nwrt=obj.routines.planner_osr_support.nwrt;
+        
+        ww=reshape(ww,nwrt,nwrt);
+        
+        w=zeros(endo_nbr);
+        
+        good_order=obj.routines.planner_osr_support.derivatives_re_order;
+        
+        w(good_order,good_order)=ww;
+        
+        w=sparse(w);
         
     end
-    
-    obj=set_planner_derivatives(obj,planner);
-    
-    clear planner
-    
-end
 
     function [ys,nind]=forms_used_in_computation_of_derivatives()
         
