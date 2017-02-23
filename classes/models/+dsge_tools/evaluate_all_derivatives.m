@@ -454,6 +454,7 @@ vals(types==3)=ss(pos(types==3));
 vals(types==4)=def(pos(types==4));
 
 toks=[tokens(:),num2cell(vals(:))];
+
 % Take automatic derivatives
 %----------------------------
 der=aplanar.diff({f},toks(isactive,:),toks(~isactive,:),2);
