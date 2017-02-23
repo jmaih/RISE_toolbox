@@ -277,21 +277,37 @@ end
 
     function w=calculate_weights(lcd)
         
-        ww=zeros(obj.routines.planner_osr_support.size);
+        if symbolic_type
+            
+            ww=zeros(obj.routines.planner_osr_support.size);
+            
+            ww(obj.routines.planner_osr_support.map)=lcd(4:end);
+            
+            ww=ww(obj.routines.planner_osr_support.partitions);
+            
+            nwrt=obj.routines.planner_osr_support.nwrt;
+            
+            ww=reshape(ww,nwrt,nwrt);
+            
+            w=zeros(endo_nbr);
+            
+            good_order=obj.routines.planner_osr_support.derivatives_re_order;
+            
+            w(good_order,good_order)=ww;
         
-        ww(obj.routines.planner_osr_support.map)=lcd(4:end);
-        
-        ww=ww(obj.routines.planner_osr_support.partitions);
-        
-        nwrt=obj.routines.planner_osr_support.nwrt;
-        
-        ww=reshape(ww,nwrt,nwrt);
-        
-        w=zeros(endo_nbr);
-        
-        good_order=obj.routines.planner_osr_support.derivatives_re_order;
-        
-        w(good_order,good_order)=ww;
+        elseif automatic_type
+            
+            w=automatic_policy_weigths(obj,...
+                ssdata(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
+            
+        else
+            
+            iov=obj.inv_order_var;
+            
+            w(iov,iov)=utils.numdiff.hessian(obj.routines.planner_objective{1},...
+                ssdata(:,s0),[],xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
+            
+        end
         
         w=sparse(w);
         
@@ -354,5 +370,100 @@ end
         end
         
     end
+
+end
+
+function W=automatic_policy_weigths(obj,y,xss,ss,params,def,s0,s1) %#ok<INUSL,INUSD>
+
+sm=func2str(obj.routines.planner_objective{1});
+
+rp=find(sm==')',1,'first');
+
+sm=sm(rp+1:end);
+
+sm=parser.symbolic_model(sm);
+
+tokens=regexp(sm,'\<(((y|param|ss)_\d+)|s0|s1)\>','match');
+
+f=parser.cell2matize(tokens);
+
+f=strrep(f,'|',',');
+
+f=str2func(['@',f,sm]);
+
+nt=numel(tokens);
+
+pos=nan(nt,1);
+
+types=nan(nt,1);
+
+isactive=false(1,nt);
+
+for ii=1:nt
+    
+    tok=tokens{ii};
+    
+    if strcmp(tok(1),'y')
+        
+        pos(ii)=str2double(tok(3:end));
+        
+        types(ii)=1;
+        
+        isactive(ii)=true;
+        
+    elseif strcmp(tok(1),'p')
+        
+        pos(ii)=str2double(tok(7:end));
+        
+        types(ii)=2;
+        
+    elseif strcmp(tok(1),'s')
+        
+        pos(ii)=str2double(tok(4:end));
+        
+        types(ii)=3;
+        
+    elseif strcmp(tok(1),'d')
+        
+        pos(ii)=str2double(tok(5:end));
+        
+        types(ii)=4;
+        
+    else
+        
+        disp([tok,': unrecognized'])
+        
+    end
+    
+end
+
+ping=pos(types==1);
+
+n=numel(ping);
+
+% push values
+%-------------
+vals=nan(nt,1);
+
+vals(types==1)=y(ping);
+
+vals(types==2)=params(pos(types==2),1);
+
+vals(types==3)=ss(pos(types==3));
+
+vals(types==4)=def(pos(types==4));
+
+toks=[tokens(:),num2cell(vals(:))];
+% Take automatic derivatives
+%----------------------------
+der=aplanar.diff({f},toks(isactive,:),toks(~isactive,:),2);
+
+W=zeros(obj.endogenous.number);
+
+W(ping,ping)=reshape(full(der{2}),n,n);
+
+ov=obj.order_var;
+
+W=W(ov,ov);
 
 end
