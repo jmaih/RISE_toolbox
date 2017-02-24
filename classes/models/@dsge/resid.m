@@ -32,8 +32,11 @@ function r=resid(obj,varargin)
 % See also:
 
 if isempty(obj)
-    r=struct();
+    
+    r=cell(0,4);
+    
     return
+    
 end
 
 [~,structural_matrices]=compute_steady_state(obj,varargin{:});
@@ -41,14 +44,23 @@ end
 r=full(structural_matrices.user_resids);
 
 [eqtns_nbr,number_of_regimes]=size(r);
+
 add_on=repmat('%0.4g ',1,number_of_regimes);
+
 if nargout==0
+    
     disp(' ')
+    
     for ieqtn=1:eqtns_nbr
+        
         these_resids=num2cell(r(ieqtn,:));
+        
         fprintf(1,['equation #%0.0f : ',add_on,' \n'],ieqtn,these_resids{:});
+        
     end
+    
     clear r
+    
 end
 
 end

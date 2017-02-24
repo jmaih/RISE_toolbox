@@ -21,7 +21,7 @@ function db=dbminusdb(obj,odb,cdb)
 
 if isempty(obj)
 
-    db=struct();
+    db=cell(0,4);
 
     return
 

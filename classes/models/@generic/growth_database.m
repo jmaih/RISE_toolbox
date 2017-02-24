@@ -21,7 +21,7 @@ function db=growth_database(obj,endhist_date,end_sample,growth_type)
 
 if isempty(obj)
 
-    db=struct();
+    db=cell(0,4);
 
     return
 

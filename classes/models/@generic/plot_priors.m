@@ -45,8 +45,18 @@ function [pdata,hdl]=plot_priors(obj,parlist,varargin)
 
 
 if isempty(obj)
-    % For the computation of check plots, priors and posteriors
-    pdata=struct('prior_discretize',20);
+    
+    mydefaults=the_defaults();
+    
+    if nargout
+        
+        pdata=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
     
     return
     
@@ -268,5 +278,18 @@ end
         [~,legend_,tex_name]=utils.plot.prior_posterior(ppdata.(pname),vargs{:});
         
     end
+
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={
+    'prior_discretize',20,@(x)num_fin_int(x),...
+    'prior_discretize must be a finite and positive integer'
+    };
 
 end

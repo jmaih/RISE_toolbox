@@ -57,52 +57,71 @@ function obj=set(obj,varargin)
 % See also: generic_switch.set
 
 if isempty(obj)
+    
     obj=set@generic_switch(obj);
     % add other fields here if necessary
     return
+    
 end
 
-% the options warranting setup change also imply the resolving of the model
-%--------------------------------------------------------------------------
-[~,bingo]=solve(dsge.empty(0));
-change_setup_and_resolve=union(bingo.change_setup_and_resolve,'debug');     
-resolve_only=bingo.resolve_only;
-
-is_resolve=false;
-is_setup_change=false;
 shock_horizon_id=[];
+
 solve_log_approx_vars_id=[];
+
 use_disc_id=[];
+
 nn=length(varargin);
+
 is_discard=false(1,nn);
+
 for ii=1:2:nn
+   
     this_option=varargin{ii};
+    
     if strcmp(this_option,'solve_shock_horizon')
+        
         if any([obj.is_dsge_var_model])
+            
             error('Not possible to set "solve_shock_horizon" in a dsge-var model')
+        
         end
+        
         shock_horizon_id=[ii,ii+1];
+        
         is_discard([ii,ii+1])=true;
+    
     elseif strcmp(this_option,'solve_log_approx_vars') 
+        
         if any([obj.is_dsge_var_model])
+           
             error('Not possible to set "solve_log_approx_vars" in a dsge-var model')
+        
         end
+        
         solve_log_approx_vars_id=[ii,ii+1];
+        
         is_discard([ii,ii+1])=true;
+        
     elseif strcmp(this_option,'solve_function_mode')
+        
         use_disc_id=[ii,ii+1];
+        
     elseif any(strcmpi(this_option,{'priors','estim_priors'}))
+        
         obj=setup_priors(obj,varargin{ii+1});
+        
         is_discard([ii,ii+1])=true;
+        
     end
-    is_setup_change=is_setup_change||...
-        any(strcmp(this_option,change_setup_and_resolve));
-    is_resolve=is_resolve||is_setup_change||...
-        any(strcmp(this_option,resolve_only));
+    
 end
+
 solve_shock_horizon=varargin(shock_horizon_id);
+
 solve_function_mode=varargin(use_disc_id);
+
 solve_log_approx_vars=varargin(solve_log_approx_vars_id);
+
 varargin(is_discard)=[];
 % do not remove the disc property since that option has to be visible
 % unlike the shocks horizon. varargin(use_disc_id)=[];
@@ -113,22 +132,14 @@ varargin(is_discard)=[];
 obj=set@generic_switch(obj,varargin{:});
 
 nobj=numel(obj);
-% do this one at a time
-%-----------------------
-for ii=1:nobj
-    if is_resolve
-        % the model will be resolved
-        %----------------------------
-        obj(ii).warrant_resolving=true;
-    end
-    if is_setup_change
-        obj(ii).warrant_setup_change=true;
-    end
-end
+
 if ~isempty(shock_horizon_id)
+    
     if numel(shock_horizon_id)==1
         % display the options
+        
         error('something should be implemented in this case: contact junior.maih@gmail.com')
+    
     else
         % turn into struct if cell
         %---------------------------
@@ -136,9 +147,13 @@ if ~isempty(shock_horizon_id)
         % do this one at a time
         %-----------------------
         for ii=1:nobj
+            
             obj(ii)=set_shock_horizon(obj(ii));
+        
         end
+        
     end
+    
 end
 
 if ~isempty(solve_log_approx_vars_id)
@@ -148,8 +163,11 @@ if ~isempty(solve_log_approx_vars_id)
         % do this one at a time
         %-----------------------
         for ii=1:nobj
+            
             obj(ii)=set_log_approx_vars(obj(ii));
+        
         end
+        
 end
 
 if ~isempty(solve_function_mode)
@@ -157,8 +175,11 @@ if ~isempty(solve_function_mode)
     % do this one at a time
     %-----------------------
     for ii=1:nobj
+        
         obj(ii)=swap_routines(obj(ii));
+    
     end
+    
 end
 
     function this=swap_routines(this)
@@ -205,75 +226,142 @@ end
     end
 
     function this=set_shock_horizon(this)
+        
         chain_names=this.markov_chains.chain_names;
+        
         regimes=cell2mat(this.markov_chains.regimes(2:end,2:end));
+        
         % this has to be done one at a time
         %-----------------------------------
+        
         if isa(value,'double') && numel(value)==1
+            
             value=round(abs(value));
+            
             this.exogenous.shock_horizon(:,~this.exogenous.is_observed)=value;
+        
         elseif isstruct(value)
+            
             fields=fieldnames(value);
+            
             shock_locs=locate_variables(fields,this.exogenous.name);
+            
             obs_status=this.exogenous.is_observed(shock_locs);
+            
             if any(obs_status)
+                
                 disp(fields(obs_status))
+                
                 error('the shocks above are deterministic and there horizon cannot be set')
+            
             end
+            
             for ifield=1:numel(fields)
+                
                 shock=fields{ifield};
+                
                 process_regime_horizon(value.(shock),shock_locs(ifield));
+            
             end
+            
         else
+            
             error('value must be a scalar or a structure')
+        
         end
+        
         function process_regime_horizon(vin,shockpos)
+            
             if isa(vin,'double') && numel(vin)==1
+                
                 this.exogenous.shock_horizon(:,shockpos)=vin;
+            
             elseif isa(vin,'cell') && size(vin,2)==2
+                
                 nrows=size(vin,1);
+                
                 for irow=1:nrows
+                
                     if ischar(vin{irow,1})
+                    
                         chain_state=vin{irow,1};
+                    
                     elseif ischar(vin{irow,2})
+                    
                         chain_state=vin{irow,2};
+                    
                     end
+                    
                     if isa(vin{irow,1},'double')
+                    
                         v=vin{irow,1};
+                    
                     elseif isa(vin{irow,2},'double')
+                    
                         v=vin{irow,2};
+                    
                     end
+                    
                     chain_state1=regexprep(chain_state,'(\w+)\((\d+)\)','$1_$2');
+                    
                     if ~ismember(chain_state1,this.markov_chains.state_names)
+                    
                         error([chain_state,' is not recognized as a state'])
+                    
                     end
+                    
                     unders=find(chain_state1=='_');
+                    
                     cn=chain_state1(1:unders-1);
+                    
                     state=str2double(chain_state1(unders+1:end));
+                    
                     chainloc=strcmp(cn,chain_names);
+                    
                     state_pos= regimes(:,chainloc)==state;
+                    
                     this.exogenous.shock_horizon(state_pos,shockpos)=v;
+                
                 end
+                
             else
+                
                 disp(vin)
+                
                 error('wrong format for the shock horizon')
+            
             end
+            
         end
+        
     end
 
 end
 
 function value=process_cell(value)
+
 if iscell(value)
+    
     if size(value,2)~=2
+               
         error('when setting the shock horizon as a cell, the cell must have two columns')
+    
     end
+    
     ff=value(:,1);
+    
     check=cellfun(@isvarname,ff,'uniformOutput',false);
+    
     check=all([check{:}]);
+    
     if ~check
+    
         error('when setting the shock horizon as a cell, the first column should have valid variable names')
+    
     end
+    
     value=cell2struct(value(:,2),ff,1);
+
 end
+
 end

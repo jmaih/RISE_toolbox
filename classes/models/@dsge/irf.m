@@ -21,10 +21,22 @@ function out=irf(obj,varargin)
 
 if isempty(obj)
     
-    out=irf@generic_switch(obj);
+    mydefaults=irf@generic_switch(obj);
     
-    out=utils.miscellaneous.mergestructures(out,...
-        struct('irf_anticipate',true));%,'irf_risk',true
+    mydefaults=[mydefaults
+        {'irf_anticipate',true,@(x)islogical(x),...
+        'irf_anticipate must be true or false'}];
+        
+    if nargout
+        
+        out=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
+
     
     return
     

@@ -165,8 +165,11 @@ function [Reply,retcode]=get(obj,PropertyName)
 % ,'mean','median','post_sim_mode',,
 
 if isempty(obj)
-    Reply=struct();
+    
+    Reply=cell(0,4);
+    
     return
+    
 end
 
 if numel(obj)>1

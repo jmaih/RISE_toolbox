@@ -23,21 +23,18 @@ nobj=numel(obj);
 
 if nobj==0
     
-    if nargout>1
+    mydefaults=the_defaults();
+    
+    if nargout
         
-        error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
+        lnprior=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
         
     end
     
-    lnprior=struct('prior_trunc',1e-10,...
-        'prior_endogenous',false);
-    % alternatives are 
-    %           []: same as false --> no endogenous priors
-    %           true: endogenous priors with all observables and
-    %                 strength=sample size
-    %           struct('targets',target_names,'prior_sample',integer): the
-    %                 listed target variables must be observable and the 
-    %                 prior sample represents the strength of the beliefs
     return
     
 end
@@ -101,15 +98,7 @@ if ~isempty(param)
             end
             
         end
-        
-%         if ~isempty(obj.estimation.endogenous_priors) && obj.markov_chains.regimes_number==1 % not provided for switching models yet
-%             [endo_priors_func,vargs]=utils.code.user_function_to_rise_function(obj.estimation.endogenous_priors);
-%             [lnprior,obj.user_endo_priors_info,retcode]=endo_priors_func(obj,obj.user_endo_priors_info,vargs{:});
-%             if retcode
-%                 retcode=309;
-%             end
-%         end
-        
+                
     end
     
 end
@@ -148,5 +137,15 @@ for kk=1:numel(obj.estim_distributions)
     end
     
 end
+
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+d={
+    'prior_trunc',1e-10,@(x)num_fin(x) && x>0 && x<1,'prior_trunc must be in (0,1)'
+    };
 
 end

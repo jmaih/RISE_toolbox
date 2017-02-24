@@ -172,31 +172,31 @@ function obj=estimate(obj,varargin)
 % See also:
 
 nobj=numel(obj);
-if nobj==0
-    if nargout>1
-        error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-    end
-    main_defaults=struct('estim_parallel',1,... % number of starting values
-        'estim_start_from_mode',[],...
-        'estim_start_date','',...
-        'estim_end_date','',...
-        'estim_max_trials',500,... % maximum number of trials when generating admissible starting values
-        'estim_start_vals',[],...
-        'estim_general_restrictions',[],... % holds a function that takes as input the model object and returns the
-        'estim_linear_restrictions',[],...
-        'estim_nonlinear_restrictions',[],...
-        'estim_blocks',[],...
-        'estim_endogenous_priors',[],...
-        'estim_penalty',1e+8,...
-        'estim_penalty_factor',10,...
-        'estim_optimizer_hessian',false,...
-        'estim_barrier',false);
-    % violations of the restrictions in a vector for instance in order to impose the max operator ZLB, Linde and Maih
-    obj=utils.miscellaneous.mergestructures(optimization.estimation_engine(),...
-        main_defaults);
+
+if nobj==0 % same as isempty(obj)
+    
+    mydefaults=the_defaults();
+    
+    mydefaults=[mydefaults
+        optimization.estimation_engine()];
     %         load_data(obj),...
+    
+    if nargout
+        
+        obj=mydefaults;
+        
+    else
+        
+        clear obj
+        
+        disp_defaults(mydefaults);
+        
+    end
+    
     return
+    
 end
+
 nn=length(varargin);
 if nn
     if rem(nn,2)~=0
@@ -344,4 +344,60 @@ for ii=1:nobj
 end
 % disp Estimation results
 print_estimation_results(obj);
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={
+    'estim_barrier',false,@(x)islogical(x),...
+    'estim_barrier must be a logical'
+    
+    'estim_start_from_mode',[],@(x)islogical(x),...
+    'estim_start_from_mode must be a logical'
+    
+    'estim_penalty_factor',10,@(x)num_fin(x) && x >0,...
+    'estim_penalty_factor must be a finite and positive scalar'
+    
+    'estim_penalty',1e+8,@(x)num_fin(x) && x >0,...
+    'estim_penalty must be a finite and positive scalar'
+    
+    'estim_max_trials',500,@(x)num_fin_int(x) && x >0,...
+    'estim_max_trials must be a finite and positive integer'
+    
+    'estim_parallel',1,@(x)num_fin_int(x) && x>0,...
+    'estim_parallel must be a positive integer' % number of starting values
+    
+    'estim_start_date','',@(x)isempty(x)||is_date(x)||is_serial(x),...
+    'estim_start_date must be a valid date'
+    
+    'estim_end_date','',@(x)isempty(x)||is_date(x)||is_serial(x),...
+    'estim_end_date must be a valid date'
+    
+    'estim_optimizer_hessian',false,@(x)islogical(x),...
+    'estim_optimizer_hessian must be a logical'
+    
+    'estim_start_vals',[],@(x)isstruct(x),...
+    'estim_start_vals must be a struct'
+    
+    'estim_general_restrictions',[],...
+    @(x)ischar(x)||iscell(x)||isa(x,'function_handle'),...
+    'estim_general_restrictions must be a char, a cell or a function handle' % holds a function that takes as input the model object and returns the
+    
+    'estim_linear_restrictions',[],@(x)iscell(x)&&size(x,2)==2,...
+    'estim_linear_restrictions must be a two-column cell'
+    
+    'estim_nonlinear_restrictions',[],@(x)iscellstr(x),...
+    'estim_nonlinear_restrictions must be a cell array of strings'
+    
+    'estim_blocks',[],@(x)iscell(x),...
+    'estim_blocks must be a cell array with groupings of parameter names'
+    
+    'estim_endogenous_priors',[],@(x)isa(x,'function_handle'),...
+    'estim_endogenous_priors must be a functio handle'
+    };
+
 end

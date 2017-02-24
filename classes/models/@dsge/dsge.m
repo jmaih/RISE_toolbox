@@ -24,7 +24,6 @@ classdef dsge < generic_switch % & gogetter
     % log_marginal_data_density -   H1 line
     % log_posterior_kernel -   H1 line
     % log_prior_density -   H1 line
-    % monte_carlo_filtering -   H1 line
     % posterior_marginal_and_prior_densities -   H1 line
     % print_estimation_results -   H1 line
     % print_solution -  print the solution of a model or vector of models
@@ -532,8 +531,6 @@ classdef dsge < generic_switch % & gogetter
         
         varargout=loss(varargin)
         
-        varargout=monte_carlo_filtering(varargin)
-        
         varargout=pull_objective(varargin)
         
         varargout=print_solution(varargin)
@@ -567,6 +564,8 @@ classdef dsge < generic_switch % & gogetter
     methods(Access=protected,Hidden=true)
         
         varargout=re_order_output_rows(varargin)
+        
+        varargout=check_property(varargin)
         
     end
     

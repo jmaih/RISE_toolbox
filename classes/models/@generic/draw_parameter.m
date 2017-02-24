@@ -39,8 +39,11 @@ function [draw,obj]=draw_parameter(obj,simulation_folder)
 % See also:
 
 if isempty(obj)
-    draw=struct();
+    
+    draw=cell(0,4);
+    
     return
+    
 end
 
 if nargin<2

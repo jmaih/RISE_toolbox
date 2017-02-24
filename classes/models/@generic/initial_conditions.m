@@ -2,7 +2,7 @@ function db=initial_conditions(obj,endhist_date,growth_type,ncond,~)
 
 if isempty(obj)
     
-    db=struct();
+    db=cell(0,4);
     
     return
     

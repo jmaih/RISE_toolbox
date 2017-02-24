@@ -13,7 +13,7 @@ function [init,retcode]=filter_initialization(obj,varargin)
 % - **obj** [rise|dsge]: model object
 %
 % - **varargin** [name,value]: valid pairwise options with the most
-% relevant beeing: 
+% relevant beeing:
 %
 %   - **kf_ergodic** [{true}|false]: initialization at the ergodic
 %       distribution
@@ -35,7 +35,7 @@ function [init,retcode]=filter_initialization(obj,varargin)
 %
 %   - **kf_user_algo** [{''}|char|function handle]: User-defined filtering
 %   algorithm. It should have the same inputs and outputs as e.g.
-%   switching_divided_difference_filter.m. 
+%   switching_divided_difference_filter.m.
 %
 %   - **kf_householder_chol** [{false}|true]: if true, return the cholesky
 %   decomposition when taking the householder transformation. This option
@@ -70,27 +70,26 @@ function [init,retcode]=filter_initialization(obj,varargin)
 % unit roots and the sample is short...
 
 if isempty(obj)
-    if nargout>1
-        error([mfilename,':: with no input argument, the number of output arguments cannot exceed 1'])
+    
+    mydefaults=the_defaults();
+    
+    mydefaults=[mydefaults
+        lyapunov_equation()];
+    
+    if nargout
+        
+        init=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
     end
-    defaults=struct(...
-        'kf_ergodic',true,... 
-        'kf_init_variance',[],... 
-        'kf_presample',0,...
-        'kf_user_init',[],...
-        'kf_algorithm','lwz',...%     alternative is kn (Kim and Nelson)
-        'kf_tol',1e-20,...
-        'kf_filtering_level',3,...
-        'kf_riccati_tol',1e-6,...
-        'kf_nsteps',1,...
-        'kf_user_algo','',...
-        'kf_nan_future_obs_means_missing',true,...
-        'kf_householder_chol',false);
-    lyap_options=lyapunov_equation();
-    defaults=utils.miscellaneous.mergestructures(defaults,lyap_options);
-    init=defaults;
+    
     return
+    
 end
+
 if ~isempty(varargin)
     obj=set(obj,varargin{:});
 end
@@ -141,7 +140,7 @@ end
         obs_id(obs_id==0)=[];
         % turn into the correct order
         obs_id=iov(obs_id);
-        % If possible, trim solution for Minimum state filtering 
+        % If possible, trim solution for Minimum state filtering
         %---------------------------------------------------------
         [grand_order_var_state]=Minimum_state_variable_filtration();
         
@@ -213,26 +212,26 @@ end
             % take the real part in order to avoid mixing up with growth
             %-------------------------------------------------------------
             Tsig_star=real(Tsig_star);
-%             if is_old
-                a0=ss_star;
-                if any(abs(Tsig_star)>1e-7)
-                    Ix=eye(endo_nbr);
-                    Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;
-                    a0=a0+pinv(Ix)*Tsig_star;
-                end
-%             else
-%                 a0=zeros(endo_nbr,1);
-%                 a0(stat_ind)=ss_star(stat_ind);
-%                 nstat=sum(stat_ind);
-%                 if nstat && any(abs(Tsig_star)>1e-7)
-%                     %--------------
-%                     cols_ind=is_stat_state_var(state_vars_location);
-%                     %--------------
-%                     Ix=eye(nstat);
-%                     Ix(:,is_stat_state_var)=Ix(:,is_stat_state_var)-Tx_star(stat_ind,cols_ind);
-%                     a0(stat_ind)=a0(stat_ind)+pinv(Ix)*Tsig_star(stat_ind);
-%                 end
-%             end
+            %             if is_old
+            a0=ss_star;
+            if any(abs(Tsig_star)>1e-7)
+                Ix=eye(endo_nbr);
+                Ix(:,state_vars_location)=Ix(:,state_vars_location)-Tx_star;
+                a0=a0+pinv(Ix)*Tsig_star;
+            end
+            %             else
+            %                 a0=zeros(endo_nbr,1);
+            %                 a0(stat_ind)=ss_star(stat_ind);
+            %                 nstat=sum(stat_ind);
+            %                 if nstat && any(abs(Tsig_star)>1e-7)
+            %                     %--------------
+            %                     cols_ind=is_stat_state_var(state_vars_location);
+            %                     %--------------
+            %                     Ix=eye(nstat);
+            %                     Ix(:,is_stat_state_var)=Ix(:,is_stat_state_var)-Tx_star(stat_ind,cols_ind);
+            %                     a0(stat_ind)=a0(stat_ind)+pinv(Ix)*Tsig_star(stat_ind);
+            %                 end
+            %             end
             
             if a0_given
                 % correct the previous entries.
@@ -270,9 +269,9 @@ end
                         P0=utils.cov.symmetrize(P0);
                     end
                 else
-                
-                P0=zeros(endo_nbr);
-                
+                    
+                    P0=zeros(endo_nbr);
+                    
                     rows_ind=is_stat_state_var;
                     cols_ind=is_stat_state_var(state_vars_location);
                     LxTx=Tx_star(rows_ind,cols_ind);
@@ -389,5 +388,50 @@ end
         x(grand_order_var_state)=y(1:nxy,1);
         [varargout{1:nargout}]=gfunc(x(iov));
     end
+end
+
+function mydefaults=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+mydefaults={
+    'kf_ergodic',true,@(x)islogical(x),'kf_ergodic must be true or false'
+    
+    'kf_init_variance',[],...
+    @(x)isempty(x)||(num_fin(x) && x>0),...
+    'kf_init_variance must be a positive scalar'
+    
+    'kf_presample',0,@(x)num_fin_int(x),...
+    'kf_presample must be zero or a positive integer'
+    
+    'kf_user_init',[],@(x)isempty(x)||(iscell(x) && numel(x)<=3),...
+    'kf_user_init must be a cell with number of entries <=3'
+    
+    'kf_tol',1e-20,@(x)num_fin(x) && x>=0,'kf_tol must be >=0'
+    
+    'kf_filtering_level',3,@(x)any(x==(0:3)),...
+    'kf_filtering_level must be 0,1,2 or 3'
+    
+    'kf_riccati_tol',1e-6,@(x)num_fin(x) && x>=0,...
+    'kf_riccati_tol must be >=0'
+    
+    'kf_nsteps',1,@(x)num_fin_int(x) && x>=1,...
+    'kf_nsteps must be an integer >=1'
+    
+    'kf_user_algo','',...
+    @(x)isempty(x)||iscell(x)||ischar(x)||isa(x,'function_handle'),...
+    'kf_user_algo must be a char, a cell, or a function handle'
+    
+    'kf_nan_future_obs_means_missing',true,...
+    @(x)islogical(x),...
+    'kf_nan_future_obs_means_missing must be a logical'
+    
+    'kf_householder_chol',false,...
+    @(x)islogical(x),...
+    'kf_householder_chol must be a logical'
+    };
+
 end
 

@@ -16,10 +16,26 @@ function obj=estimate(obj,varargin)
 
 if isempty(obj)
     
-    obj=estimate@generic_switch(obj,varargin{:});
+    mydefaults=estimate@generic_switch(obj,varargin{:});
     
-    obj=utils.miscellaneous.mergestructures(obj,...
-        struct('estim_priors',[]));
+    mydefaults=[mydefaults
+        {'estim_priors',[],@(x)isstruct(x),...
+        'estim_priors must be a structure'}];
+        
+    if nargout
+        
+        obj=mydefaults;
+        
+    else
+        
+        clear obj
+        
+        disp_defaults(mydefaults);
+        
+    end
+
+    
+    return
     
 else
     % Initially set the filtering/smoothing flag to false (during estimation).

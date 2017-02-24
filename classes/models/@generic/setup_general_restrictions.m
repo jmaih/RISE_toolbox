@@ -35,19 +35,12 @@ nobj=numel(obj);
 for ii=1:nobj
     
     if ~isempty(obj(ii).options.estim_general_restrictions)
+
+		[genrestr,vargs]=utils.code.user_function_to_rise_function(...
+                    obj(ii).options.estim_general_restrictions);
         
-        if iscell(obj(ii).options.estim_general_restrictions)
+        obj(ii).general_restrictions_data=@(x)genrestr(x,vargs{:});
             
-            obj(ii).general_restrictions_data=...
-                @(x)obj(ii).options.estim_general_restrictions{1}(x,...
-                obj(ii).options.estim_general_restrictions{2:end});
-            
-        else
-            
-            obj(ii).general_restrictions_data=obj(ii).options.estim_general_restrictions;
-            
-        end
-        
     end
     
     % check the filtering level required under estimation

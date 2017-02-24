@@ -27,62 +27,96 @@ function [P,retcode,good]=doubling_solve(A,B,C,options)
 %
 % See also: 
 
-thresh=@(x)isscalar(x) && isreal(x) && x>0 && ceil(x)==floor(x);
-defaults={
-    'lyapunov_double_stationary',false,@(x)islogical(x),...
-    'lyapunov_double_stationary must be true or false'
-    
-    'lyapunov_double_stationary_threshold',5000,@(x)thresh(x),...
-    'lyapunov_double_stationary_threshold must be a positive integer'
-    };
+mydefaults=the_defaults();
+
 if nargin==0
-	if nargout>1
-		error([mfilename,':: number of output arguments cannot exceed 1 if there are no inputs'])
-	end
-    P=cell2struct(defaults(:,2),defaults(:,1),1);
-    retcode=defaults;
-	return
+    
+    if nargout
+        
+        P=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
+    
+%     retcode=defaults;
+
+    return
+    
 end
 
 if nargin<4
+    
     options=[];
+    
     if nargin<3
+        
         error([mfilename,':: at least 3 arguments should be provided'])
+    
     end
+    
 end
+
+default_solve=disp_defaults(mydefaults);
+
 if isempty(B),B=A';end
+
 if isempty(A),A=B';end
 
 if isempty(options)
-    options=doubling_solve();
+    
+    options=default_solve;
+    
 else
-    for itype=1:size(defaults,1)
-        name=defaults{itype,1};
+    
+    fnames=fieldnames(default_solve);
+    
+    for itype=1:size(mydefaults,1)
+        
+        name=fnames{itype};
+        
         if ~isfield(options,name)
-            options.(name)=defaults{itype,2};
+            
+            options.(name)=default_solve.(name);
+            
         end
+        
     end
+    
 end
-[lyapunov_double_stationary,lyapunov_double_stationary_threshold]=...
-    parse_arguments(defaults,...
-    'lyapunov_double_stationary',options.lyapunov_double_stationary,...
-    'lyapunov_double_stationary_threshold',options.lyapunov_double_stationary_threshold);
+
+lyapunov_double_stationary=options.lyapunov_double_stationary;
+
+lyapunov_double_stationary_threshold=options.lyapunov_double_stationary_threshold;
 
 P0=C;
+
 symmetric=isequal(A,B');
+
 Gl=A;
+
 if ~symmetric
+    
     Gr=B;
+    
 end
 
 [P,~,retcode]=fix_point_iterator(@iterator,P0,options);
 
 if retcode
+    
     if lyapunov_double_stationary
+        
         do_stationary_variables_only()
+        
     end
+    
 else
+    
     good=true(size(P,1),1);
+    
 end
 
     function do_stationary_variables_only()
@@ -114,5 +148,19 @@ end
         end
         Gl=Gl*Gl;
         F0=P-P0;
-   end
+    end
+
+end
+
+function d=the_defaults()
+
+thresh=@(x)isscalar(x) && isreal(x) && x>0 && ceil(x)==floor(x);
+d={
+    'lyapunov_double_stationary',false,@(x)islogical(x),...
+    'lyapunov_double_stationary must be true or false'
+    
+    'lyapunov_double_stationary_threshold',5000,@(x)thresh(x),...
+    'lyapunov_double_stationary_threshold must be a positive integer'
+    };
+
 end

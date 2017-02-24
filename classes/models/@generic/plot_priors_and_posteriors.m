@@ -53,7 +53,7 @@ function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,parlist,n
 
 if isempty(obj)
     
-    ppdata=struct();
+    ppdata=cell(0,4);
     
     return
     

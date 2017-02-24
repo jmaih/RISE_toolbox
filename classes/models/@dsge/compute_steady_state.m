@@ -104,7 +104,7 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 
 if isempty(obj)
     
-    obj=struct();
+    obj=cell(0,4);
 
     return
     

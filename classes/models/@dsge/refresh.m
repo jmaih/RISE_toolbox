@@ -1,4 +1,4 @@
-function newobj=refresh(obj)
+function varargout=refresh(obj)
 % REFRESH - refresh the options of an old object with a newer version of
 %   the software
 %
@@ -14,14 +14,21 @@ function newobj=refresh(obj)
 % See also: RISE_GENERIC.REFRESH
 
 if ~isempty(obj)
+    
     nregs=obj.markov_chains.regimes_number;
+    
     if nregs>1
+        
         if size(obj.exogenous.shock_horizon,1)==1
+            
             obj.exogenous.shock_horizon=obj.exogenous.shock_horizon(ones(nregs,1),:);
+            
         end
+        
     end
+    
 end
 
-newobj=refresh@generic_switch(obj);
+[varargout{1:nargout}]=refresh@generic_switch(obj);
 
 end

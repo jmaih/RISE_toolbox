@@ -39,7 +39,7 @@ if isempty(obj)
     if nargout>1
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
     end
-    obj=struct();
+    obj=cell(0,4);
     return
 end
 

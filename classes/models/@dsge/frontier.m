@@ -54,7 +54,7 @@ function f=frontier(obj,lambda_name,lambda_vals,simul,seed)
 
 if isempty(obj)
     
-    f=struct();
+    f=cell(0,4);
     
 else
     

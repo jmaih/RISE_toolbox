@@ -49,7 +49,7 @@ function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,varargin)
 
 if isempty(obj)
     
-    pdata=struct();
+    pdata=cell(0,4);
     
     return
     

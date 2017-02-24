@@ -19,26 +19,19 @@ function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_bloc
 %
 % See also:
 
-
-opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify | notify-detailed | final | final-detailed ]
-    'MaxFunEvals',inf,...% [ positive scalar ]
-    'MaxIter',1000,...%: [ positive scalar ]
-    'TolFun',sqrt(eps),...%: [ positive scalar ]
-    'TolX',sqrt(eps),...%: [ positive scalar ]
-    'MaxNodes',20,...%: [ positive scalar | {1000*numberOfVariables} ]
-    'UseParallel','never',...%: [ always | {never} ]
-    'MaxTime',3600);%: [ positive scalar | {7200} ]
-opt.optimizer='fmincon'; % default is fmincon
-
+mydefaults=the_defaults();
+    
 if nargin==0
     
-    if nargout>1
+    if nargout
         
-        error([mfilename,':: number of output arguments cannot exceed 1 when there are no input arguments'])
-    
+        xbest=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
     end
-    
-    xbest=opt;
     
     return
     
@@ -56,6 +49,8 @@ if nargin<3
     
 end
 
+opt=disp_defaults(mydefaults);
+
 OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
 
 if isempty(PROBLEM.solver)
@@ -66,7 +61,7 @@ end
 
 for ii=1:numel(OtherProblemFields)
     
-    if ~isfield(PROBLEM,OtherProblemFields{ii});
+    if ~isfield(PROBLEM,OtherProblemFields{ii})
         
         PROBLEM.(OtherProblemFields{ii})=[];
         
@@ -358,4 +353,29 @@ end
 % the interior.
 % I probably should revisit the way I impose constraints in abc: this
 % should be obsolete by now
+
+function d=the_defaults()
+
+opt.optimset=optimset('Display','iter',...%[ off | iter | iter-detailed | notify | notify-detailed | final | final-detailed ]
+    'MaxFunEvals',inf,...% [ positive scalar ]
+    'MaxIter',1000,...%: [ positive scalar ]
+    'TolFun',sqrt(eps),...%: [ positive scalar ]
+    'TolX',sqrt(eps),...%: [ positive scalar ]
+    'MaxNodes',20,...%: [ positive scalar | {1000*numberOfVariables} ]
+    'UseParallel','never',...%: [ always | {never} ]
+    'MaxTime',3600);%: [ positive scalar | {7200} ]
+
+opt.optimizer='fmincon'; % default is fmincon
+
+d={
+    'optimset',opt.optimset,@(x)isstruct(x),...
+    'optimset must be a structure'
+    
+    'optimizer',opt.optimizer,...
+    @(x)ischar(x)||iscell(x)||isa(x,'function_handle'),...
+    'optimizer must be a char, a cell or a function handle'
+    
+    };
+
+end
 

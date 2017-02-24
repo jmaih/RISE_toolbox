@@ -73,7 +73,7 @@ max_while_loops=20;
 
 if isempty(m)
     
-    result=struct();
+    result=cell(0,4);
     
 else
     

@@ -39,11 +39,23 @@ function [obj,retcode]=bvar_dsge(obj,varargin)
 % See also:
 
 if isempty(obj)
-    obj=struct('dsgevar_lag',4,... # lags
-        'dsgevar_constant',true,... VAR admits constant
-        'dsgevar_var_regime',true,... use the var for irf, forecasting and simulation
-        'dsgevar_inner_param_uncertainty',false); %
+    
+    mydefaults=the_defaults();
+    
+    if nargout
+        
+        obj=mydefaults;
+        
+    else
+        
+        clear obj
+        
+        disp_defaults(mydefaults);
+        
+    end
+    
     return
+    
 end
 
 if ~obj.is_dsge_var_model
@@ -199,4 +211,25 @@ end
 dsge_var=struct('YY',Y'*Y,'YX',Y'*X,...
     'XX',X'*X,'XY',X'*Y,'T',smpl,...
     'n',n,'p',p,'constant',const);
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={'dsgevar_lag',4,@(x)num_fin_int(x) && x>=1,...
+    'dsgevar_lag must be an integer >=1'% # lags
+    
+    'dsgevar_constant',true,@(x)islogical(x),...
+    'dsgevar_constant must be true or false' % VAR admits constant
+    
+    'dsgevar_var_regime',true,@(x)islogical(x),...
+    'dsgevar_var_regime must be true or false'% use the var for irf, forecasting and simulation
+    
+    'dsgevar_inner_param_uncertainty',false,@(x)islogical(x),...
+    'dsgevar_inner_param_uncertainty must be true or false'
+    }; %
+
 end

@@ -84,118 +84,172 @@ function myirfs=irf(obj,varargin)
 
 too_small=1e-9;
 
-num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
-num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
-mydefaults={'irf_shock_list','',@(x)ischar(x)||iscellstr(x),'irf_shock_list must be char or cellstr'
-        'irf_var_list','',@(x)ischar(x)||iscellstr(x),'irf_var_list must be char or cellstr'
-        'irf_periods',40,@(x)num_fin_int(x),'irf_periods must be a finite and positive integer'
-        'irf_shock_sign',1,@(x)num_fin(x) && x~=0,'irf_shock_sign must be a numeric scalar different from 0'
-        'irf_draws',50,@(x)num_fin_int(x),'irf_draws must be a finite and positive integer'
-        'irf_type','irf',@(x)any(strcmp(x,{'irf','girf'})),'irf_type must be irf or girf'
-        'irf_regime_specific',true,@(x)islogical(x),'irf_regime_specific must be a logical'
-        'irf_use_historical_data',false,@(x)islogical(x),'irf_use_historical_data must be a logical'
-        'irf_to_time_series',true,@(x)islogical(x),'irf_to_time_series must be a logical'
-        };
 if isempty(obj)
-    myirfs=cell2struct(mydefaults(:,2),mydefaults(:,1),1);
+    
+    mydefaults=the_defaults();
+    
+    if nargout
+        
+        myirfs=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
+    
     return
+    
 end
 
 nobj=numel(obj);
+
 obj=set(obj,varargin{:});
 
 myirfs=cell(1,nobj);
+
 % check that the models are consistent
 check_irf_consistency(obj)
+
 for ii=1:nobj
+    
     myirfs{ii}=irf_intern(obj(ii));
+    
 end
 
 myirfs=format_irf_output(myirfs);
 
     function dsge_irfs=irf_intern(obj)
+        
         if nobj>1
+            
             obj.options.irf_to_time_series=true;
+            
         end
-        [irf_shock_list,irf_var_list,irf_periods,irf_shock_sign,irf_draws,...
-            irf_type,irf_regime_specific,irf_use_historical_data,...
-            irf_to_time_series]=parse_arguments(mydefaults,...
-            'irf_shock_list',obj.options.irf_shock_list,...
-            'irf_var_list',obj.options.irf_var_list,...
-            'irf_periods',obj.options.irf_periods,...
-            'irf_shock_sign',obj.options.irf_shock_sign,...
-            'irf_draws',obj.options.irf_draws,...
-            'irf_type',obj.options.irf_type,...
-            'irf_regime_specific',obj.options.irf_regime_specific,...
-            'irf_use_historical_data',obj.options.irf_use_historical_data,...
-            'irf_to_time_series',obj.options.irf_to_time_series);
+        
         is_dsge=isa(obj,'dsge');
         
+        irf_shock_list=obj.options.irf_shock_list;
+        irf_var_list=obj.options.irf_var_list;
+        irf_periods=obj.options.irf_periods;
+        irf_shock_sign=obj.options.irf_shock_sign;
+        irf_draws=obj.options.irf_draws;
+        irf_type=obj.options.irf_type;
+        irf_regime_specific=obj.options.irf_regime_specific;
+        irf_use_historical_data=obj.options.irf_use_historical_data;
+        irf_to_time_series=obj.options.irf_to_time_series;
+                
         % automatically enable deviations from balanced growth
         %-----------------------------------------------------
         obj.options.simul_bgp_deviation=true;
         
         obj.options.simul_periods=irf_periods;
+        
         obj.options.simul_burn=0;
+        
         if ~irf_use_historical_data
+            
             obj.options.simul_historical_data=ts.empty(0);
+            
             obj.options.simul_history_end_date='';
+        
         end
+        
         exo_nbr=sum(obj.exogenous.number);
         
         if isempty(irf_var_list)
+            
             if is_dsge
+                
                 irf_var_list=get(obj,'endo_list(original)');
+                
             else
                 irf_var_list=get(obj,'endo_list');
+                
             end
+            
         elseif ischar(irf_var_list)
+            
             irf_var_list=cellstr(irf_var_list);
+            
         end
         
         detList=get(obj,'exo_list(observed)');
+        
         exoList=get(obj,'exo_list');
+        
         if isempty(irf_shock_list)
+            
             irf_shock_list=get(obj,'exo_list(~observed)');
+            
         end
+        
         if ischar(irf_shock_list)
+            
             irf_shock_list=cellstr(irf_shock_list);
+            
         end
         % sort in case the user has not listed the shocks in the alphabetic
         % order
         %------------------------------------------------------------------
         irf_shock_list=sort(irf_shock_list);
+        
         position=locate_variables(irf_shock_list,exoList,true);
+        
         if any(isnan(position))
+            
             disp(irf_shock_list(isnan(position)))
+            
             if isa(obj,'rfvar')
+                
                 error(['The reduced-form var has been identified. ',...
                     'List the structural shocks instead of the reduced-form ones'])
+                
             else
+                
                 error('The above list of shocks cannot be used in irf')
+                
             end
+            
         end
+        
         if any(ismember(irf_shock_list,get(obj,'exo_list(observed)')))
+            
             error('cannot compute irfs of observed shocks')
+            
         end
+        
         which_shocks=false(1,exo_nbr);
+        
         which_shocks(position)=true;
+        
         nshocks=sum(which_shocks);
+        
         det_shocks=false(1,exo_nbr);
+        
         det_pos=locate_variables(detList,exoList,true);
+        
         det_shocks(det_pos)=true;
+        
         [obj,retcode]=solve(obj);
+        
         % note that the solving of the model may change the perturbation
         % order. More explicitly optimal policy irfs will be computed for a
         % perturbation of order 1 no matter what order the user chooses.
         % This is because we have not solved the optimal policy problem
         % beyond the first order.
         if retcode
+            
             error('model cannot be solved')
+            
         end
+        
         solve_order=1;
+        
         if is_dsge
+            
             solve_order=obj.options.solve_order;
+            
         end
        
         h=obj.markov_chains.regimes_number;
@@ -224,8 +278,11 @@ myirfs=format_irf_output(myirfs);
         y0=Initcond.y;
 
         number_of_threads=h;
+        
         if ~irf_regime_specific||isfield(Initcond,'occbin')
+            
             number_of_threads=1;
+        
         end
         
         % further options
@@ -236,10 +293,15 @@ myirfs=format_irf_output(myirfs);
             'simul_shock_uncertainty',irf_shock_uncertainty
             'girf',girf
             };
+        
         for irow=1:size(further_options,1)
+            
             opname=further_options{irow,1};
+            
             opval=further_options{irow,2};
+            
             Initcond.(opname)=opval;
+        
         end
         % the shocks drawn in the initial conditions will be ignored
         
@@ -247,39 +309,60 @@ myirfs=format_irf_output(myirfs);
         % variables. This is so that the time series object does not squeak
         %------------------------------------------------------------------
         endo_nbr=obj.endogenous.number;
+        
         Impulse_dsge=zeros(endo_nbr,Initcond.nsteps+1,nshocks,irf_draws,...
             number_of_threads)+1i;
+        
         % select only the relevant rows in case we are dealing with
         % a VAR with many lags a BVAR_DSGE
         %----------------------------------------------------------
         relevant=1:endo_nbr;
+        
         max_rows=endo_nbr;
+        
         if Initcond.do_dsge_var
+            
             max_rows=obj.observables.number(1);
+            
             relevant=obj.inv_order_var(obj.observables.state_id);
+        
         end
         
         retcode=0;
+        
         for istate=1:number_of_threads
+            
             if ~retcode
+                
                 if h==1||number_of_threads==h
+                    
                     y0.rcond.data(:)=istate;
+                    
                     y0.y=full(Initcond.log_var_steady_state{istate});
+                
                 end
+                
                 [xxxx,retcode]=utils.forecast.irf(y0,Initcond.T,...
                     Initcond.log_var_steady_state,...
                     Initcond.state_vars_location,which_shocks,det_shocks,Initcond);
+                
                 % subtract the initial conditions if not girf. For the girf, the
                 % subtraction is already done
                 %------------------------------------------------------------------
                
                 xxxx2=xxxx(1:max_rows,:,:,:);
+                
                 if ~girf
+                    
                     xxxx2=xxxx2-y0.y(relevant,ones(Initcond.nsteps+1,1),...
                         ones(nshocks,1),ones(irf_draws,1));
+                
                 end
+                
                 Impulse_dsge(relevant,:,:,:,istate)=xxxx2;
+            
             end
+            
         end
         
         % set to 0 the terms that are too tiny
@@ -289,7 +372,9 @@ myirfs=format_irf_output(myirfs);
         % exponentiate before doing anything: is_log_var is in the order_var order
         %-------------------------------------------------------------------------
         if ~isempty(Initcond.is_log_var)
+            
             Impulse_dsge(Initcond.is_log_var,:,:,:,:)=exp(Impulse_dsge(Initcond.is_log_var,:,:,:,:));
+        
         end
 
         % re-order the variables according to the inv_order_var;
@@ -308,35 +393,62 @@ myirfs=format_irf_output(myirfs);
         dsge_irfs=distribute_irfs();
         
         function dsge_irfs=distribute_irfs()
+            
             startdate=0;
+            
             if number_of_threads>1
+                
                 RegimeNames=strcat('regime_',num2str((1:h)'));
+            
             else
+                
                 RegimeNames=irf_type;
+            
             end
+            
             RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
+            
             if irf_to_time_series
+                
                 dsge_irfs=struct();
+                
                 vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
+                
                 for ishock=1:nshocks
+                    
                     shock_name=irf_shock_list{ishock};
+                    
                     for vv=1:numel(irf_var_list)
+                        
                         if ishock==1 && vv==1
+                            
                             tmp=ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),...
                                 ishock)),RegimeNames);
+                        
                         else
+                            
                             try
+                                
                                 tmp=reset_data(tmp,squeeze(Impulse_dsge(:,:,vlocs(vv),...
                                     ishock)));
+                            
                             catch
+                                
                                 tmp=ts(startdate,squeeze(Impulse_dsge(:,:,vlocs(vv),...
                                     ishock)),RegimeNames);
+                            
                             end
+                            
                         end
+                        
                         dsge_irfs.(shock_name).(irf_var_list{vv})=tmp;
+                    
                     end
+                    
                 end
+                
             else
+                
                 dsge_irfs={Impulse_dsge,...
                     {
                     '1=time',Initcond.nsteps+1
@@ -345,9 +457,13 @@ myirfs=format_irf_output(myirfs);
                     '4= shock names',irf_shock_list
                     }
                     };
+            
             end
+            
         end
+        
     end
+
 end
 
 function check_irf_consistency(obj)
@@ -443,5 +559,24 @@ else
     dsge_irfs=tmp;
     
 end
+
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={'irf_shock_list','',@(x)ischar(x)||iscellstr(x),'irf_shock_list must be char or cellstr'
+    'irf_var_list','',@(x)ischar(x)||iscellstr(x),'irf_var_list must be char or cellstr'
+    'irf_periods',40,@(x)num_fin_int(x),'irf_periods must be a finite and positive integer'
+    'irf_shock_sign',1,@(x)num_fin(x) && x~=0,'irf_shock_sign must be a numeric scalar different from 0'
+    'irf_draws',50,@(x)num_fin_int(x),'irf_draws must be a finite and positive integer'
+    'irf_type','irf',@(x)any(strcmp(x,{'irf','girf'})),'irf_type must be irf or girf'
+    'irf_regime_specific',true,@(x)islogical(x),'irf_regime_specific must be a logical'
+    'irf_use_historical_data',false,@(x)islogical(x),'irf_use_historical_data must be a logical'
+    'irf_to_time_series',true,@(x)islogical(x),'irf_to_time_series must be a logical'
+    };
 
 end

@@ -75,6 +75,8 @@ classdef generic
         
         restrictions_are_absorbed=false
         
+        spec_checker
+        
     end
     
     properties(Hidden = true)
@@ -218,6 +220,8 @@ classdef generic
         
         varargout=add_to_routines(varargin)
         
+        varargout=check_property(varargin)
+        
         varargout=complementarity_memoizer(varargin)
         
         varargout=do_names(varargin)
@@ -257,6 +261,8 @@ classdef generic
         varargout=setup_restrictions(varargin)
         
         varargout=stationary_index(varargin)
+        
+        varargout=unclassified(varargin)
         
     end
     

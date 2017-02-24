@@ -42,7 +42,7 @@ if isempty(obj)
         
     end
     
-    retcode=struct();
+    retcode=cell(0,4);
     
     return
     

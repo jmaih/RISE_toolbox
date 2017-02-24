@@ -32,12 +32,23 @@ function opt=reselect_options(options,fn)
 % See also: 
 
 if ischar(fn)
+    
     fn=str2func(fn);
+    
 end
 
 defaults=fn();
+
+if ~isstruct(defaults)
+    
+    defaults=disp_defaults(defaults);
+    
+end
+
 fn_fields=fieldnames(defaults);
+
 opt_fields=fieldnames(options);
+
 opt=rmfield(options,opt_fields-fn_fields);
 
 end

@@ -40,26 +40,28 @@ function [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargi
 %
 % See also: 
 
-default_solve=struct('fix_point_explosion_limit',1e+6,...
-    'fix_point_TolFun',sqrt(eps),...
-    'fix_point_maxiter',1000,...
-    'fix_point_verbose',false);
-
+mydefaults=the_defaults();
+    
 if nargin==0
     
-    if nargout>1
+    if nargout
         
-        error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
+        T=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
         
     end
-    
-    T=default_solve;
     
     return
     
 end
 
+default_solve=disp_defaults(mydefaults);
+
 options=utils.miscellaneous.setfield(default_solve,options);
+
 % solving for T
 F0=0.1*options.fix_point_explosion_limit;
 
@@ -134,6 +136,30 @@ if retcode==0 && ~utils.error.valid(T)
     
     keyboard
     
+end
+
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={
+    'fix_point_TolFun(r)',sqrt(eps),@(x)num_fin(x)&& x>0,...
+    'fix_point_TolFun must be a finite and positive scalar'
+    
+    'fix_point_maxiter',1000,@(x)num_fin_int(x),...
+    'fix_point_maxiter must be a finite and positive integer'
+    
+    'fix_point_verbose(r)',false,@(x)islogical(x),...
+    'fix_point_verbose must be a logical'
+    
+    'fix_point_explosion_limit(r)',1e+12,@(x)num_fin_int(x),...
+    'fix_point_explosion_limit must be a finite and positive integer'
+    };
+
 end
 
 

@@ -31,7 +31,7 @@ if isempty(obj)
     if nargout>1
         error([mfilename,':: number of output arguments cannot exceed 1 when the object is empty'])
     end
-    T=struct();
+    T=cell(0,4);
     return
 end
 

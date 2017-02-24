@@ -77,41 +77,65 @@ function cond_fkst_db=forecast(obj,varargin)
 % See also: RISE_GENERIC/SIMULATE, RSCF.FORECAST
 
 if isempty(obj)
-    if nargout>1
-        error([mfilename,':: number of output arguments cannot exceed 1 when the object is empty'])
-    end
-    cond_fkst_db=struct('forecast_start_date','',...
-        'forecast_shock_uncertainty',false,...
-        'forecast_nsteps',12,...
-        'forecast_cond_endo_vars','',...
-        'forecast_cond_exo_vars','',...
-        'forecast_endo_exo_vars','',...
-        'forecast_to_time_series',true);
-    cond_fkst_db=utils.miscellaneous.mergestructures(cond_fkst_db,...
-        utils.forecast.rscond.forecast());
+    
+    mydefaults=the_defaults();
+    
+    mydefaults=[mydefaults
+        utils.forecast.rscond.forecast()];
+    
     % the following options are set elsewhere
-    cond_fkst_db=rmfield(cond_fkst_db,{'debug','simul_shock_uncertainty'});
+    badrows=ismember(mydefaults(:,1),{'debug','simul_shock_uncertainty'});
+    
+    mydefaults(badrows,:)=[];
+    
+    if nargout
+        
+        cond_fkst_db=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
+    
     return
+    
 end
-%% pass the options
+
+% pass the options
+%--------------------
 obj=set(obj,varargin{:});
 
-%% pass some options to the simulate method
+% pass some options to the simulate method
+%--------------------------------------------
 if isempty(obj.options.forecast_start_date)
+    
     if isempty(obj.options.estim_end_date)
+        
         error('cannot find a date to start the forecast')
+        
     end
+    
     obj=set(obj,'forecast_start_date',serial2date(date2serial(obj.options.estim_end_date)+1));
+
 end
 
 end_date='';
+
 if ~isempty(obj.options.forecast_start_date)
+    
     end_date=serial2date(date2serial(obj.options.forecast_start_date)-1);
+    
 end
+
 fkstdata='';
+
 if ~isempty(obj.options.data)
+    
     fkstdata=obj.options.data;
+    
 end
+
 obj=set(obj,...
     'simul_periods',obj.options.forecast_nsteps,...
     'simul_history_end_date',end_date,...
@@ -122,5 +146,33 @@ obj=set(obj,...
 obj.options.simul_to_time_series=obj.options.forecast_to_time_series;
 
 cond_fkst_db=simulate(obj);
+
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={
+    'forecast_cond_endo_vars','',@(x)ischar(x)||iscellstr(x),...
+    'forecast_cond_endo_vars must be char or cellstr'
+    
+    'forecast_cond_exo_vars','',@(x)ischar(x)||iscellstr(x),...
+    'forecast_cond_exo_vars must be char or cellstr'
+    
+    'forecast_endo_exo_vars','',@(x)ischar(x)||iscellstr(x),...
+    'forecast_endo_exo_vars must be char or cellstr'
+    
+    'forecast_to_time_series',true,@(x)islogical(x),...
+    'forecast_to_time_series must be a logical'
+    
+    'forecast_nsteps',12,@(x)num_fin_int(x) && x>0,...
+    'forecast_nsteps must be a finite and positive integer'
+    
+    'forecast_shock_uncertainty',false,@(x)islogical(x),...
+    'forecast_shock_uncertainty must be a logical'
+    };
 
 end

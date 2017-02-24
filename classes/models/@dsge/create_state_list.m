@@ -36,8 +36,11 @@ function [final_list,kept]=create_state_list(m,orders,compact_form)
 % See also: 
 
 if isempty(m)
-    final_list=struct();
+    
+    final_list=cell(0,4);
+    
     return
+    
 end
 
 if nargin<3

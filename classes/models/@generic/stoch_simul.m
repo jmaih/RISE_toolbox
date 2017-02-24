@@ -21,7 +21,7 @@ function [oo_]=stoch_simul(obj,var_list,varargin)%,omega
 
 if isempty(obj)
     
-    oo_=struct('stoch_sim_hpfilter_lambda',false);
+    oo_=cell(0,4);
     
     return
     
@@ -95,8 +95,11 @@ end
 [obj,retcode] = solve(obj);
 
 if retcode
+    
     utils.error.decipher(retcode);
+    
     return
+    
 end
 
 % if ~obj.options.noprint
@@ -194,12 +197,19 @@ end
     end
 
     function db_names=disp_moments(db)
+        
         if isempty(var_list)
+            
             var_list=get(obj,'endo_list(original)');
+            
         end
-        stoch_sim_hpfilter_lambda=obj.options.stoch_sim_hpfilter_lambda;
+        
+        stoch_sim_hpfilter_lambda=obj.options.simul_hpfilter_lambda;
+        
         if ~isa(db,'ts')
+            
             db=ts.collect(db);
+            
         end
         
         db_names=db.varnames;
@@ -210,11 +220,10 @@ end
         % warning off
         %
         
-        if stoch_sim_hpfilter_lambda
-            [oo_.hp_trend,oo_.hp_cycle] = hpfilter(db,stoch_sim_hpfilter_lambda);
-            db=oo_.hp_cycle;
-        else
+        if isempty(stoch_sim_hpfilter_lambda)
+            
             db = bsxfun(db,@minus,oo_.mean);
+            
         end
         oo_.vcov=cov(db);
         oo_.skewness=skewness(db);
@@ -225,22 +234,30 @@ end
         
         % if options_.nomoments == 0
         title='MOMENTS OF SIMULATED VARIABLES';
-        if stoch_sim_hpfilter_lambda
+        
+        if ~isempty(stoch_sim_hpfilter_lambda)
+            
             title = [title,'(HP filter, lambda = ',num2str(stoch_sim_hpfilter_lambda),')'];
+            
         end
+        
         data=[{'VARIABLE','MEAN','STD. DEV.','VARIANCE','SKEWNESS','KURTOSIS'}
             [var_list(:),num2cell([ oo_.mean(ivar)',oo_.stdev(ivar)',...
             oo_.variance(ivar)',oo_.skewness(ivar)',oo_.kurtosis(ivar)'])]
             ];
+        
         reprint(data,title);
         
         % if options_.nocorr == 0
         %     if options_.noprint == 0
         title = 'CORRELATION OF SIMULATED VARIABLES';
+        
         if stoch_sim_hpfilter_lambda
             title = [title ' (HP filter, lambda = ' ...
                 num2str(stoch_sim_hpfilter_lambda) ')'];
+            
         end
+        
         data=[[{'VARIABLE'},var_list(:)']
             [var_list(:),num2cell(oo_.corrcoef(ivar,ivar))]
             ];

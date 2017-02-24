@@ -29,18 +29,27 @@ function g=evaluate_general_restrictions(obj)
 % See also:
 
 nobj=numel(obj);
+
 if nobj==0
-    g=struct();
+    
+    g=cell(0,4);
+    
 else
+    
     g=cell(1,nobj);
+    
     for iobj=1:nobj
+        
         if ~isempty(obj(iobj).options.estim_general_restrictions)
             % take the absolute value: the violations are the non-zero
             % elements
             %-------------------------------------------------------------
             g{iobj}=abs(obj(iobj).general_restrictions_data(obj(iobj)));
+            
         end
+        
     end
+    
 end
 
 end

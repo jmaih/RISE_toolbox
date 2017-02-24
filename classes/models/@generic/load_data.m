@@ -37,11 +37,21 @@ function [obj,issue,retcode]=load_data(obj,varargin)
 %
 % See also:
 
-
 if isempty(obj)
     
-    obj=struct('data',ts,...
-        'data_demean',false);
+    mydefaults=the_defaults();
+    
+    if nargout
+        
+        obj=mydefaults;
+        
+    else
+        
+        clear obj
+        
+        disp_defaults(mydefaults);
+        
+    end
     
     return
     
@@ -90,8 +100,6 @@ for ii=1:nobj
 end
 
 end
-
-
 
 function [obj,issue,retcode]=load_data_intern(obj,varargin)
 
@@ -324,6 +332,17 @@ for t=1:smpl
 end
 
 d.last_good_conditional_observation=last_non_nan;
+
+end
+
+function d=the_defaults()
+
+d={'data',ts,@(x)isa(x,'ts')||iscellstr(x),...
+    'data must be a ts or a structure of ts'
+    
+    'data_demean',false,@(x)islogical(x),...
+    'data_demean must be a logical'
+    };
 
 end
 

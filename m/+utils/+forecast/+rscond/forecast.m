@@ -65,20 +65,36 @@ function [shocks,regimes,PAI,retcode,cfkst]=forecast(model,y0,ycond,econd,option
 % See also: RSCF.LOOP_FORECAST
 
 if nargin==0
-    PAI=[];retcode=[];cfkst=[];
+    
     [s1,def1]=utils.forecast.rscond.form_system();
+    
     [s2,def2]=utils.forecast.rscond.density_shocks();
+    
     remove_duplicates();
-    regimes=[def1;def2];
-    shocks=utils.miscellaneous.mergestructures(s1,s2);
+    
+    if nargout
+        
+        shocks=[def1;def2];
+        
+    else
+        
+        disp_defaults([def1;def2]);
+        
+    end
+    
+    return
+    
 else
     narginchk(5,6)
     
     if nargin<6
+        
         regimes=[];
+        
     end
     
     nsteps=options.nsteps;
+    
     [M,~,regimes,PAI]=utils.forecast.rscond.stochastic_impact_cumulator(model,y0,nsteps,ycond.pos,...
         econd.pos,regimes);
     
@@ -95,25 +111,42 @@ else
     % Compute forecasts
     %--------------------
     cfkst=[];
+    
     if ~retcode && nargout>3
+        
         cfkst=utils.forecast.rscond.condition_on_shocks(model.T,model.sstate,y0,regimes,...
             model.state_cols,model.k,options.nsteps,shocks,options.debug);
         
         is_hard=~isempty(ycond.data) && max(max(abs(ycond.data(:,:,3)-ycond.data(:,:,2))))<1e-8;
+        
         if is_hard && options.debug
+            
             cy=size(ycond.data,2);
+            
             max_discrep=max(max(abs(cfkst(ycond.pos,1+(1:cy))-ycond.data(:,:,1))));
+            
             fprintf('Checking hard conditions max discrep = %0.8f\n\n',max_discrep)
+        
         end
+        
     end
+    
 end
 
     function remove_duplicates()
+        
         fields1=fieldnames(s1);
+        
         fields2=fieldnames(s2);
+        
         bad=ismember(fields1,fields2);
+        
         bad_list=fields1(bad);
+        
         s1=rmfield(s1,bad_list);
+        
         def1=def1(~bad,:);
+        
     end
+
 end

@@ -30,7 +30,7 @@ if nobj==0
         
     end
     
-    log_post=struct();
+    log_post=cell(0,4);
     
     return
     

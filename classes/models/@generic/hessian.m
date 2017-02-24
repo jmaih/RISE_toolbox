@@ -44,23 +44,36 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 
 nobj=numel(obj);
 if nobj==0
+    
     if nargout>1
+        
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
+        
     end
+    
     obj=utils.hessian.numerical();
+    
     return
+    
 end
 
 if nargin<2||isempty(x)
+    
     if ~isfield(obj.estimation.posterior_maximization,'mode')||...
             isempty(obj.estimation.posterior_maximization.mode)
+        
         error('vector of parameters should be specified when model has not been estimated')
+        
     end
+    
    x=obj.estimation.posterior_maximization.mode; 
+   
 end
 
 if ~isempty(varargin)
+    
     obj=set(obj,varargin{:});
+    
 end
 
 fh=pull_objective(obj);

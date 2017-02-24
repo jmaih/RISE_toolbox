@@ -34,8 +34,11 @@ function flag=is_stationary_system(obj)
 % See also: RISE_GENERIC/IS_STABLE_SYSTEM
 
 if isempty(obj)
-    flag=struct();
+    
+    flag=cell(0,4);
+    
     return
+    
 end
 
 flag=isempty(get(obj,'endo_list(~stationary)'));

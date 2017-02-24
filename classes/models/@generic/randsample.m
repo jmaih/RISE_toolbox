@@ -41,7 +41,7 @@ function db=randsample(obj,N,K,varargin)
 
 if isempty(obj)
     
-    db=struct();
+    db=cell(0,4);
     
     return
     

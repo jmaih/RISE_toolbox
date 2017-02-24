@@ -26,11 +26,21 @@ function [sims,retcode]=simulate_nonlinear(obj,varargin)
 % more conditions than the number of equations to solve for
 
 if isempty(obj)
-    sims=struct('simul_stack_solve_algo','sparse',...
-        'simul_recursive',false,...
-        'simul_exogenous_func','',...
-        'simul_sparse',true);
+    
+    mydefaults=the_defaults();
+    
+    if nargout
+        
+        sims=mydefaults;
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
+    
     return
+    
 end
 
 sims=[];
@@ -909,4 +919,20 @@ for icol=1:3
     
 end
 
+end
+
+function d=the_defaults()
+
+d={'simul_exogenous_func','',@(x)isa(x,'function_handle'),...
+    'simul_exogenous_func must be a function handle' 
+    
+    'simul_stack_solve_algo','sparse',...
+    @(x)ismember(x,{'fsolve','lsqnonlin','sparse','lbj'}),...
+    'simul_stack_solve_algo must be ''fsolve'',''lsqnonlin'',''sparse'' or ''lbj'''
+    
+    'simul_recursive',false,@(x)islogical(x),'simul_recursive must be a logical'
+    
+    'simul_sparse',true,@(x)islogical(x),'simul_sparse must be a logical'
+    };
+ 
 end

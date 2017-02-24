@@ -78,7 +78,7 @@ welf=[]; V=[]; d=[];
 
 if isempty(obj)
     
-    welf=struct();
+    welf=cell(0,4);
     
     return
     

@@ -58,9 +58,13 @@ function outcell=print_solution(obj,varlist,orders,compact_form,precision,equati
 
 
 if isempty(obj)
-    outcell=struct();
+    
+    outcell=cell(0,4);
+    
     return
+    
 end
+
 if nargin<7
     file2save2=[];
     if nargin<6

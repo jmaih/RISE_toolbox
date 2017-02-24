@@ -32,8 +32,11 @@ function obj=assign_estimates(obj,params)
 % this is the routine called during estimation for assigning new estimates
 % to the model
 if isempty(obj)
-    obj=struct();
+    
+    obj=cell(0,4);
+    
     return
+    
 end
 
 if ~isempty(params)
@@ -42,4 +45,7 @@ if ~isempty(params)
     % ensure the model will be re-solved no matter what
     %---------------------------------------------------
     obj.warrant_resolving = true;
+    
+end
+
 end

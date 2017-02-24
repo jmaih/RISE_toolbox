@@ -2,11 +2,20 @@ function varargout=simulate(obj,varargin)
 
 if isempty(obj)
     
-    out=simulate@generic_switch(obj);
+    mydefaults=the_defaults();
     
-    [varargout{1:nargout}]=utils.miscellaneous.mergestructures(out,...
-        struct('simul_sig',1,'simul_pruned',false,'simul_order',[],...
-        'simul_fbs_horizon',0));
+    mydefaults=[mydefaults
+        simulate@generic_switch(obj)];
+    
+    if nargout
+        
+        varargout={mydefaults};
+        
+    else
+        
+        disp_defaults(mydefaults);
+        
+    end
     
     return
     
@@ -19,5 +28,23 @@ end
 % with order of approximation higher than 1  
 
 [varargout{1:nargout}]=simulate@generic_switch(obj,varargin{:});
+
+end
+
+function d=the_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+d={
+    'simul_sig',1,@(x)num_fin_in(x) && x>=0,'simul_sig must be >=0'
+    
+    'simul_pruned',false,@(x)islogical(x),'simul_pruned must be a logical'
+    
+    'simul_order',[],@(x)num_fin_int(x) && x>=1,'simul_order must be a positive integer'
+    
+    'simul_fbs_horizon',0,@(x)num_fin_int(x),'simul_fbs_horizon must be a finite and positive integer'
+    };
 
 end

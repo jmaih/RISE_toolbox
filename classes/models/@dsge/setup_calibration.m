@@ -40,7 +40,9 @@ function obj=setup_calibration(obj,Calibration)
 % See also: 
 
 if isempty(Calibration)
+    
     return
+    
 end
 
 obj=setup_calibration@generic_switch(obj,Calibration);
