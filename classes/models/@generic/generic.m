@@ -143,6 +143,8 @@ classdef generic
         
         varargout=print_estimation_results(varargin)
         
+        varargout=print_estimation_results_legacy(varargin)
+        
         varargout=pull_objective(varargin)
         
         varargout=randsample(varargin)

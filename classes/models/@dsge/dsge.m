@@ -27,6 +27,7 @@ classdef dsge < generic_switch % & gogetter
     % posterior_marginal_and_prior_densities -   H1 line
     % print_estimation_results -   H1 line
     % print_solution -  print the solution of a model or vector of models
+    % print_solution_legacy -  old form of print_solution
     % prior_plots -   H1 line
     % refresh -  refresh the options of an old object with a newer version of
     % report - assigns the elements of interest to a rise_report.report object
@@ -534,6 +535,8 @@ classdef dsge < generic_switch % & gogetter
         varargout=pull_objective(varargin)
         
         varargout=print_solution(varargin)
+        
+        varargout=print_solution_legacy(varargin)
         
         varargout=refresh(varargin)
         

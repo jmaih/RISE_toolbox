@@ -1,6 +1,44 @@
 function table_displayer(the_data,colnames,rownames,prologue,epilogue,indent,fullChar)
 
+if nargin < 7
+    
+    fullChar = false;
+    
+    if nargin < 6
+        
+        indent = 4;
+        
+        if nargin <5
+            
+            epilogue=[];
+            
+            if nargin<4
+                
+                prologue=[];
+                
+            end
+            
+        end
+        
+    end
+    
+end
+
+cell_style=iscell(the_data);
+
+if cell_style
+    
+    NumberOfObservations=size(the_data{1},1);
+    
+    NumberOfVariables=numel(the_data);
+    
+    NumberOfPages=1;
+    
+else
+    
 [NumberOfObservations,NumberOfVariables,NumberOfPages]=size(the_data);
+
+end
 
 between = indent;
 
@@ -51,13 +89,22 @@ is_many_pages=NumberOfPages>1;
 
 for iiii=1:numel(prologue)
     
-    fprintf(1,prologue{iiii});
+    fprintf(1,'%s \n',prologue{iiii});
     
 end
 
 for ip=1:NumberOfPages
     
-    data=mat2cell(the_data(:,:,ip),NumberOfObservations,ones(1,NumberOfVariables));
+    if cell_style
+        
+        data=the_data;
+        
+    else
+        
+        data=mat2cell(the_data(:,:,ip),NumberOfObservations,...
+            ones(1,NumberOfVariables));
+        
+    end
     
     if is_many_pages
         
@@ -71,7 +118,7 @@ end
 
 for iiii=1:numel(epilogue)
     
-    fprintf(1,epilogue{iiii});
+    fprintf(1,'%s \n',epilogue{iiii});
     
 end
 

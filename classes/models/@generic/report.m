@@ -208,7 +208,7 @@ end
                 
                 end
                 
-                solution=print_solution(obj,varlist,precision);
+                solution=print_solution_legacy(obj,varlist,precision);
                 
                 destination_root.table('title','Model Solution','log',solution,...
                     'longtable',true)
