@@ -38,6 +38,14 @@ function [output,has_macro]=preparse(FileName,parsing_definitions)
 %     Y_@{co}=rho_@{co}*Y_@{co}{-1}+sig_@{co}*E_@{co};
 %     @#end
 % 
+% @#for co=1:someNumber (where someNumber is defined outside...)
+%     Y_@{co}=rho_@{co}*Y_@{co}{-1}+sig_@{co}*E_@{co};
+%     @#end
+% 
+% @#for co=1:someNumber (where someNumber is defined outside...)
+%     Y_@{co}=rho_@{co}*Y_@{@{co}+2}{-1}; % evaluate @{co} then @{@{co}+2}
+%     @#end
+% 
 % @#for co=1:8
 %     @#for coo={ca,fr,de,be}
 %         Y_@{co}_@{coo}=rho_@{co}_@{coo}*Y_@{co}_@{coo}{-1}+sig_@{co}_@{coo}*E_@{co}_@{coo};
@@ -131,6 +139,12 @@ process_include()
 
 [rawfile,has_macro]=process_flow_controls(rawfile,definitions,has_macro);
 
+% evaluate remaining @{function} if possible
+%--------------------------------------------
+myevaluate=@reevaluate; %#ok<NASGU>
+
+rawfile(:,1)=regexprep(rawfile(:,1),'(@\{[^\}]+\})','${myevaluate($1)}');
+
 % % process keywords last
 % rawfile(:,1)=process_keywords(rawfile(:,1));
 
@@ -218,6 +232,32 @@ output=[output;rawfile];
         
     end
 
+    function string=reevaluate(string)
+        
+        left=find(string=='{');
+        
+        right=find(string=='}');
+        
+        middle=string(left+1:right-1);
+        
+        try
+            
+            middle=eval_action(definitions,middle);
+            
+            if ~isnan(middle)
+                
+                string=sprintf('%0.15g',middle);
+                
+            end
+            
+        catch me
+            
+            warning(me.message)
+            
+        end
+        
+    end
+
 end
 
 %--------------------------------------------------------------------------
@@ -296,6 +336,18 @@ end
                     if numel(sset)==2
                         
                         sset=[sset(1),'1',sset(2)];
+                        
+                    end
+                    
+                    for iii=1:numel(sset)
+                        
+                        if ~all(isstrprop(sset{iii},'digit'))
+                            
+                            sset{iii}=eval_action(definitions,sset{iii});
+                            
+                            sset{iii}=sprintf('%0.0g',sset{iii});
+                            
+                        end
                         
                     end
                     
