@@ -29,8 +29,13 @@ dic.auxiliary_variables.model=[dic.auxiliary_variables.model,...
 
 end
 
-function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcessLags(dic,...
-    modelBlock,listing,new_auxvars,ilist)
+function varargout=getRidOfExcessLags(varargin)
+% function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcessLags(dic,...
+%     modelBlock,listing,new_auxvars,ilist)
+
+[varargout{1:nargout}]=getRidOfExcess(varargin{:},'-');
+
+return
 
 newMaxLeadOrLag=-1;
 
@@ -116,8 +121,13 @@ new_auxvars=new_auxvars(1:ilist);
 
 end
 
-function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcessLeads(...
-    dic,modelBlock,listing,new_auxvars,ilist)
+function varargout=getRidOfExcessLeads(varargin)
+% function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcessLeads(...
+%     dic,modelBlock,listing,new_auxvars,ilist)
+
+[varargout{1:nargout}]=getRidOfExcess(varargin{:},'+');
+
+return
 
 newMaxLeadOrLag=1;
 
@@ -327,3 +337,115 @@ end
 
 end
 
+function [dic,modelBlock,listing,new_auxvars,ilist]=getRidOfExcess(dic,...
+    modelBlock,listing,new_auxvars,ilist,the_type)
+
+switch the_type
+    
+    case '+'
+        
+        newMaxLeadOrLag=1;
+        
+        evalfunc=@le;
+        
+        update=@(x)x-1;
+        
+        theOne=1;
+        
+        relev_col=3;
+        
+    case '-'
+        
+        newMaxLeadOrLag=-1;
+        
+        evalfunc=@ge;
+        
+        update=@(x)x+1;
+        
+        theOne=-1;
+        
+        relev_col=2;
+
+end
+
+for irow=1:size(modelBlock,1)
+    
+    maxLag=modelBlock{irow,relev_col};
+    
+    if evalfunc(maxLag,newMaxLeadOrLag)
+        
+        continue
+        
+    end
+    
+    eqtn=modelBlock{irow,1};
+    
+    endog=dic.endogenous;
+        
+    for icol0=1:size(eqtn,2)
+        
+        theLag=eqtn{2,icol0};
+        
+        if isempty(theLag)||evalfunc(theLag,newMaxLeadOrLag)
+            
+            continue
+            
+        end
+        
+        endo_names={endog.name};
+        
+        vname=eqtn{1,icol0};
+        
+        newVname=parser.create_auxiliary_name(vname,update(theLag),true);
+        
+        eqtn{1,icol0}=newVname;
+        
+        eqtn{2,icol0}=newMaxLeadOrLag;
+        
+        pos=strcmp(vname,endo_names);
+        
+        is_log_var=endog(pos).is_log_var;
+        
+        endog(pos).max_lag=newMaxLeadOrLag;
+        
+        oldguy=vname;
+        
+        %----------------------------------------
+        for item=1:abs(theLag)-1
+            
+            newguy=parser.create_auxiliary_name(vname,theOne*item,true);
+            
+            if ~any(strcmp(newguy,endo_names))
+                
+                endog=parser.update_variable_lead_lag(endog,newguy,theOne,...
+                    is_log_var,vname);
+                
+                newthing=sprintf('%s = %s{%s1};',newguy,oldguy,the_type);
+                
+                ilist=ilist+1;
+                
+                listing(ilist,:)={nan,newthing,'auxiliary equations'};
+                
+                endo_names={endog.name};
+                
+                new_auxvars{ilist}=newguy;
+            end
+            
+            oldguy=newguy;
+            
+        end
+        %----------------------------------------
+        
+    end
+    
+    dic.endogenous=endog;
+    
+    modelBlock{irow,1}=eqtn;
+      
+end
+
+listing=listing(1:ilist,:);
+
+new_auxvars=new_auxvars(1:ilist);
+
+end
