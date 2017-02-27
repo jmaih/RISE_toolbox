@@ -118,7 +118,7 @@ if numel(W0)==1 && h>1
     
 end
 
-W=reshape(cell2mat(W0(:).'),[n,n,h]);
+W=reshape(full(cell2mat(W0(:).')),[n,n,h]);
 
 V0 = W; % V0=zeros(n,n,h);
 
