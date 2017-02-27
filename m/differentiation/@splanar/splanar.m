@@ -235,10 +235,12 @@ classdef splanar
                 end
             end
         end
+        
         function obj=if_then_else(a,b,c)
             % if_then_else - overloads if_then_else for splanar
             obj=if_elseif(a,b,~a,c);
         end
+        
         function obj=le(a,b)
             % le - overloads le for splanar
             obj=do_bivariate(a,b,'le');
@@ -745,7 +747,7 @@ function obj=prototypize(obj)
 obj.func=[];
 obj.args=[];
 obj.incidence=[];
-obj.number_of_columns=[];
+% obj.number_of_columns=[];
 end
 
 function varargout=splanarize(varargin)
