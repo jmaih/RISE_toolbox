@@ -57,14 +57,25 @@ for kk=1:numel(obj)
     is_dsge=isa(obj(kk),'dsge');
     
     myprologue={sprintf('\n%s',['MODEL ',string,' ESTIMATION RESULTS'])};
+    
+    mode_std=obj(kk).estimation.posterior_maximization.mode_stdev;
         
     the_data={
         char(upper({obj(kk).estimation.priors.prior_distrib})),...
         [obj(kk).estimation.priors.start].',...
-        obj(kk).estimation.posterior_maximization.mode,...
-        obj(kk).estimation.posterior_maximization.mode_stdev};
+        obj(kk).estimation.posterior_maximization.mode};
     
-    colnames={'distribution','initval','mode','mode_std'};
+    colnames={'distribution','initval','mode'};
+    
+    is_hessian=~all(isnan(mode_std));
+    
+    if is_hessian
+        
+        the_data=[the_data,{mode_std}];
+        
+        colnames=[colnames,{'mode_std'}];
+        
+    end
     
     rownames={obj(kk).estimation.priors.name};
     
@@ -77,10 +88,14 @@ for kk=1:numel(obj)
         'numberOfActiveInequalities',obj(kk).estimation.posterior_maximization.active_inequalities_number)
         };
     
-    myepilogue=[myepilogue
-        {sprintf('%s %8.7f','log-MDD(Laplace)',...
-        obj(kk).estimation.posterior_maximization.log_marginal_data_density_laplace)}
-        ];
+    if is_hessian
+        
+        myepilogue=[myepilogue
+            {sprintf('%s %8.7f','log-MDD(Laplace)',...
+            obj(kk).estimation.posterior_maximization.log_marginal_data_density_laplace)}
+            ];
+        
+    end
     
     if is_dsge && ~obj.is_optimal_simple_rule_model
         

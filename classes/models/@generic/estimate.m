@@ -139,10 +139,6 @@ function obj=estimate(obj,varargin)
 %       - **exitflag**: a flag similar to the ones provided by matlab's
 %       optimization functions.
 %
-% - **estim_optimizer_hessian** [{false}|true]: Use the hessian computed by
-% the optimizer. Else, store the hessian returned by the optimizer, but
-% also compute and use the numerical hessian.
-%
 % - **estim_barrier** [{false}|true]: never allow constraints to be
 % violated in no circumstances.
 %
@@ -331,7 +327,7 @@ for ii=1:nobj
     % Marginal data density and other variable outputs that can be calculated separately
     %-----------------------------------------------------------------------------------
     post_max=generic_tools.posterior_maximization_variable_quantities(...
-        post_max,linear_restricts.a_func,obj(ii).options.estim_optimizer_hessian);
+        post_max,linear_restricts.a_func);
     
     obj(ii).estimation.posterior_maximization=post_max;
     
@@ -376,9 +372,6 @@ d={
     
     'estim_end_date','',@(x)isempty(x)||is_date(x)||is_serial(x),...
     'estim_end_date must be a valid date'
-    
-    'estim_optimizer_hessian',false,@(x)islogical(x),...
-    'estim_optimizer_hessian must be a logical'
     
     'estim_start_vals',[],@(x)isstruct(x),...
     'estim_start_vals must be a struct'

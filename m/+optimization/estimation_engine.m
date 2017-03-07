@@ -1,4 +1,4 @@
-function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_blocks)
+function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,estim_blocks)
 % H1 line
 %
 % Syntax
@@ -19,6 +19,8 @@ function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,hessian_type,estim_bloc
 %
 % See also:
 
+issue='';
+
 mydefaults=the_defaults();
     
 if nargin==0
@@ -37,15 +39,9 @@ if nargin==0
     
 end
 
-if nargin<3
+if nargin<2
     
     estim_blocks=[];
-    
-    if nargin<2
-        
-        hessian_type=[];
-        
-    end
     
 end
 
@@ -87,23 +83,9 @@ ub=PROBLEM.ub;
 
 optim_opt=PROBLEM.options;
 
-estim_optimizer_hessian=PROBLEM.estim_optimizer_hessian;
-
-% Try not to upset Matlab
-%-------------------------
-PROBLEM=rmfield(PROBLEM,'estim_optimizer_hessian');
-
 options=opt.optimset;
 
 options=utils.miscellaneous.setfield(options,optim_opt);
-
-if isempty(hessian_type)
-    
-    hessian_type=utils.hessian.numerical();
-    
-	hessian_type=hessian_type.hessian_type;
-    
-end
 
 block_flag=~isempty(estim_blocks);
 
@@ -156,7 +138,7 @@ end
 %---------
 d=numel(x0);
 
-H=nan(d,d,2);
+H=nan(d);
 
 if block_flag
     
@@ -188,7 +170,7 @@ else
             
         elseif nout>=4
             
-            [xfinal,ffinal,exitflag,H(:,:,1)]=optimizer(fh,x0,lb,ub,options,vargs{:});
+            [xfinal,ffinal,exitflag,H]=optimizer(fh,x0,lb,ub,options,vargs{:});
         
         else
             
@@ -206,21 +188,6 @@ xbest=xfinal;
 fbest=ffinal;
 
 TranslateOptimization(exitflag);
-
-% compute the numerical hessian only if the user wants it or if the
-% optimizer hessian is not available
-%---------------------------------------------------------------------
-estim_optimizer_hessian=estim_optimizer_hessian && ~any(isnan(vec(H(:,:,1))));
-
-if estim_optimizer_hessian
-
-    issue='';
-
-else
-    
-    [H(:,:,2),issue]=utils.hessian.numerical(fh,xbest,hessian_type);
-    
-end
 
 end
 

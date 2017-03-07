@@ -43,6 +43,7 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 % See also:
 
 nobj=numel(obj);
+
 if nobj==0
     
     if nargout>1
@@ -80,6 +81,13 @@ fh=pull_objective(obj);
 
 [H,issue]=utils.hessian.numerical(fh,x,obj.options.hessian_type);
 
-obj.estimation.posterior_maximization.hessian(:,:,2)=H;
+post_max=obj.estimation.posterior_maximization;
+
+post_max.hessian=H;
+
+post_max=generic_tools.posterior_maximization_variable_quantities(post_max,...
+    obj.linear_restrictions_data.a_func);
+
+obj.estimation.posterior_maximization=post_max;
 
 end

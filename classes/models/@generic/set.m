@@ -371,30 +371,7 @@ end
                 
             end
             
-            if strcmp(propname,'estim_optimizer_hessian')
-                                
-                if isfield(obj.estimation,'posterior_maximization') && ...
-                        ~isempty(obj.estimation.posterior_maximization.hessian)
-                    
-                    Old_hess=obj.estimation.posterior_maximization.hessian;
-                    
-                    if propval==true && any(isnan(vec(Old_hess(:,:,2))))
-                        % recompute the numerical hessian since it was not
-                        % computed
-                        obj=hessian(obj);
-                    
-                    end
-                    
-                    post_max=obj.estimation.posterior_maximization;
-                    
-                    post_max=generic_tools.posterior_maximization_variable_quantities(...
-                        post_max,obj.linear_restrictions_data.a_func,propval);
-                    
-                    obj.estimation.posterior_maximization=post_max;
-                
-                end
-                
-            elseif strcmp(propname,'optimset')
+            if strcmp(propname,'optimset')
                 
                 [obj.options.(propname),missing]=utils.miscellaneous.setfield(obj.options.(propname),propval);
                 
