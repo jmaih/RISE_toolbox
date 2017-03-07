@@ -35,21 +35,30 @@ function post_max=posterior_maximization_variable_quantities(post_max,...
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 H=post_max.hessian;
 
-if ~is_valid_hessian(H)
-    
-    warning('invalid hessian')
+d=size(H,1);
 
+flag=is_valid_hessian(H);
+
+Hinv=nan(size(H));
+
+if flag
+    
+    Hinv=H\eye(d);
+    
+else
+    
+    disp('-----------------------------------------------------')
+    disp([mfilename,upper(':: gentle warning: the hessian is invalid')])
+    disp('-----------------------------------------------------')
+    
 end
 
 % compute marginal data density based on the short hessian
 %----------------------------------------------------------
-d=size(H,1);
-
-Hinv=H\eye(d);
 
 post_max.log_marginal_data_density_laplace=...
     utils.marginal_data_density.laplace_mdd(post_max.log_post,Hinv);
