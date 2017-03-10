@@ -83,6 +83,8 @@ classdef generic_switch < generic
             
         end
         
+        varargout=describe_regimes(varargin)
+        
     end
     
     methods(Access=private)

@@ -23,7 +23,7 @@ function outcell=print_solution(obj,varlist,orders,compact_form)
 % - **compact_form** [{true}|false] : if true, only the solution of unique
 %   tuples (i,j,k) such that i<=j<=k is presented. If false, the solution
 %   of all combinations is presented. i.e.
-%   (i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)  
+%   (i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)
 %
 % Outputs
 % --------
@@ -98,9 +98,9 @@ for iobj=1:nobj
         fprintf(1,'\n%s\n',['MODEL ',string,' SOLUTION']);
         
     end
-
+    
     print_solution_engine(obj(iobj),varlist,compact_form,orders);
-
+    
 end
 
 end
@@ -130,58 +130,28 @@ endo_names=obj.endogenous.name;
 ids=locate_variables(varlist,obj.endogenous.name);
 
 var_names=endo_names(ids);
+
+the_regimes=generic_switch.describe_regimes(obj.markov_chains);
+
+solver=obj.options.solver;
+
+if isnumeric(solver)
     
-    the_regimes=obj.markov_chains.regimes;
+    solver=int2str(solver);
     
-    nregs=obj.markov_chains.regimes_number;
+end
+
+fprintf(1,'SOLVER :: %s\n',solver);
+
+h=obj.markov_chains.regimes_number;
+
+for ii=1:h
     
-    nchains=obj.markov_chains.chains_number;
+    myprologue={sprintf('\n%s %4.0f : %s','Regime',ii,the_regimes{ii})};
     
-    chain_names=obj.markov_chains.chain_names;
+    build_printing_array(ii,myprologue);
     
-    tmp=cell(1,nregs);
-    
-    for ireg=1:nregs
-        
-        for ichain=1:nchains
-            
-            new_item=[chain_names{ichain},' = ',sprintf('%0.0f',the_regimes{ireg+1,ichain+1})];
-            
-            if ichain==1
-                
-                tmp{ireg}=new_item;
-                
-            else
-                
-                tmp{ireg}=[tmp{ireg},' & ',new_item];
-                
-            end
-            
-        end
-        
-    end
-    
-    the_regimes=tmp;
-    
-    solver=obj.options.solver;
-    
-    if isnumeric(solver)
-        
-        solver=int2str(solver);
-        
-    end
-    
-    fprintf(1,'SOLVER :: %s\n',solver);
-    
-    h=obj.markov_chains.regimes_number;
-    
-    for ii=1:h
-        
-        myprologue={sprintf('\n%s %4.0f : %s','Regime',ii,the_regimes{ii})};
-        
-        build_printing_array(ii,myprologue);
-        
-    end
+end
 
     function build_printing_array(regime_index,myprologue)
         
@@ -197,13 +167,13 @@ var_names=endo_names(ids);
             if ~isequal(orders,unique(orders))
                 
                 error('the orders specified are duplicated')
-            
+                
             end
             
             if orders(end)>obj.options.solve_order
                 
                 error('highest order requested exceeds solve_order')
-            
+                
             end
             
             regular=isequal(orders(:).',1:orders(end));
@@ -215,7 +185,7 @@ var_names=endo_names(ids);
                 state_names=[state_names,'steady state','bal. growth']; %#ok<*AGROW>
                 
                 kept_states=[true(2,1);kept_states(:)]; % add steady state and bal. growth
-            
+                
             else
                 
                 kept_states=[false(2,1);kept_states(:)];
@@ -230,7 +200,7 @@ var_names=endo_names(ids);
         
         Tzname='T';
         
-		ifact=1./cumprod(1:orders(end));
+        ifact=1./cumprod(1:orders(end));
         
         for io=1:orders(end)
             
@@ -264,9 +234,9 @@ var_names=endo_names(ids);
         
         % now process and print
         these_states=state_names(keep_rows);
-                
+        
         table_displayer(bigtime,var_names,these_states,myprologue)
-                
+        
     end
 
 end
