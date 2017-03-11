@@ -261,6 +261,8 @@ markov_chain_info=orderfields(markov_chain_info);
             
             ns=markov_chains(ii).number_of_states;
             
+            % fake news: just to be able to use some algorithm later on
+            %-----------------------------------------------------------
             transition_matrices.(cname)=repmat({sprintf('1/%0.0f',ns)},ns,ns);
             
         end
