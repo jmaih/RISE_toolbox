@@ -1,10 +1,8 @@
 function act=check_property(obj,propname,propval)
 
-action=check_property@generic(obj,propname,propval);
-% The following does not work although we inherit directly from
-% generic_switch we have to go through the original superclass...
-%
-% action=check_property@generic_switch(obj,propname,propval);
+action=check_property@generic_switch(obj,propname,propval);
+
+%%% action=check_property@generic(obj,propname,propval);
 
 if nargout
     
