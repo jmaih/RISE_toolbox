@@ -60,7 +60,7 @@ is_legend=abs(nargout(plotfunc))>1;
 
 warnState=warning('query');
 
-warning('off') %#ok<WNOFF>
+warning('off') 
 
 for fig=1:nfig
     
