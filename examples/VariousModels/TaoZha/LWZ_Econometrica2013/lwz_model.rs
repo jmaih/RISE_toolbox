@@ -70,7 +70,7 @@ sig_Eps_a, sig_Eps_phi, sig_Eps_psi, sig_Eps_z, sig_Eps_v, sig_Eps_q, sig_Eps_mu
 %--------------------------------------------------------------------
 %-- Model specification
 %--------------------------------------------------------------------
-model(linear)
+model
 	# g = g_trans/100 + 1;
 	# lambda_qbar = 0.01*lambda_qbar_trans + 1;
 	# lambda_kbar = g*lambda_qbar; %See second sentence of first full paragraph of page 9
