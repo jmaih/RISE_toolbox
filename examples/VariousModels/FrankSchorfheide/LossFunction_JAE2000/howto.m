@@ -69,8 +69,15 @@ profile off
 profile viewer
 
 %% do posterior simulation
-[obj,postSims]=posterior_simulator(m,'mcmc_number_of_simulations',1000,...
-    'mcmc_number_of_parallel_chains',1);
+[objective,lb,ub,x0,SIG]=pull_objective(m);
+
+SIG=utils.cov.nearest(SIG);
+
+draws_mcmc = 1000; % number of parameter draws through MCMC.
+ndraws_burnin = floor(0.1*draws_mcmc);
+mcmc_options=struct('burnin',ndraws_burnin,'N',draws_mcmc,'thin',1);
+Results=mh_sampler(objective,lb,ub,mcmc_options,x0,SIG);
+
 %% update the description of the parameters
 m=set(m,'tex_name',...
     {
@@ -85,13 +92,13 @@ m=set(m,'tex_name',...
     });
 %% plot priors, posteriors, priors and posteriors
 plot_priors(m)
-plot_posteriors(m,postSims)
-plot_priors_and_posteriors(m,postSims)
+plot_posteriors(m,Results.pop)
+plot_priors_and_posteriors(m,Results.pop)
 %% plot priors, posteriors, priors and posteriors for a subset of parameters
 myparams={'alp','gam','psi'};
 plot_priors(m,myparams)
 plot_posteriors(m,postSims,myparams)
-plot_priors_and_posteriors(m,postSims,myparams)
+plot_priors_and_posteriors(m,Results.pop,myparams)
 %% check curvature at the mode
 mode_curvature(m)
 
