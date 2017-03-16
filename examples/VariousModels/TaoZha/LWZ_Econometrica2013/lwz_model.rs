@@ -195,13 +195,22 @@ model
 	C = (chOY/(chOY+ceOY))*Ch + (ceOY/(chOY+ceOY))*Ce;
 	
 	%--- Observer equations
-	DLogQl = (Ql - Ql(-1) + log(g) + G_Lambda);
-	DLogQ =  (G_Q + log(lambda_qbar));
-	DLogC = ((chOY/(chOY+ceOY))*(Ch - Ch(-1)) + (ceOY/(chOY+ceOY))*(Ce - Ce(-1)) + log(g) + G_Lambda); 
-	DLogI = (I - I(-1) + log(g) + G_Lambda); 
-	DLogB = (B - B(-1) + log(g) + G_Lambda);
+	DLogQl = Ql - Ql(-1) + log(g) + G_Lambda;
+	DLogQ =  G_Q + log(lambda_qbar);
+	DLogC = (chOY/(chOY+ceOY))*(Ch - Ch(-1)) + (ceOY/(chOY+ceOY))*(Ce - Ce(-1)) + log(g) + G_Lambda; 
+	DLogI = I - I(-1) + log(g) + G_Lambda; 
+	DLogB = B - B(-1) + log(g) + G_Lambda;
 	LogL = N + log(n);
 	
 	%--- Auxillary variables
+	DLogGDP = iy*DLogI + (1-iy)*DLogC;
+
+steady_state_model	
+	DLogQl = log(g);
+	DLogQ = log(lambda_qbar);
+	DLogC = log(g); 
+	DLogI = log(g); 
+	DLogB = log(g);
+	LogL = log(n);
 	DLogGDP = iy*DLogI + (1-iy)*DLogC;
 	

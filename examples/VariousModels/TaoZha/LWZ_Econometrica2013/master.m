@@ -2,7 +2,7 @@
 close all
 clc
 %% rise the model
-m=rise('lwz_model');
+m=rise('lwz_model','solve_linear',true);
 
 %% get the parameters
 
@@ -20,10 +20,9 @@ profile off
 profile on
 ms=estimate(m,'data',data,...
     'estim_priors',priors,...
-	'solve_linear',true,...
     'kf_presample',3,...
-    'kf_init_variance',10,...
-    'optimizer','bee_gate',...
-    'optimset',optimset('MaxTime',30*60));
+    'kf_init_variance',10);
 profile off
 profile viewer
+
+% 'optimizer','bee_gate','optimset',struct('MaxTime',30*60)
