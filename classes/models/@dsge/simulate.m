@@ -38,7 +38,7 @@ num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
 
 d={
-    'simul_sig',1,@(x)num_fin_in(x) && x>=0,'simul_sig must be >=0'
+    'simul_sig',1,@(x)num_fin_int(x) && x>=0,'simul_sig must be >=0'
     
     'simul_pruned',false,@(x)islogical(x),'simul_pruned must be a logical'
     
