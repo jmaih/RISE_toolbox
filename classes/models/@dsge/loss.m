@@ -90,7 +90,19 @@ if ~(obj.is_optimal_policy_model||obj.is_optimal_simple_rule_model)
     
 end
 
-[obj,retcode]=solve(obj,varargin{:});
+callers=dbstack;
+
+callers={callers.name};
+
+if any(strcmp(callers,'estimate'))
+    
+    retcode=0;
+    
+else
+    
+    [obj,retcode]=solve(obj,varargin{:});
+    
+end
 
 if retcode
     
