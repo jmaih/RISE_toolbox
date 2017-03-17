@@ -51,6 +51,12 @@ end
 
 log_vars=obj.endogenous.is_log_var;
 
+if isempty(obj.solution)||~isfield(obj.solution,'bgp')
+    
+    error('The model needs to be solved first')
+    
+end
+
 bgp=cell2mat(obj.solution.bgp);
 
 checklog=@(x)~any(abs(bgp(x,:)-1)>too_small);
