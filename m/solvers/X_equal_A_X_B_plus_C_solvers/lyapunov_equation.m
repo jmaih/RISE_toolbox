@@ -1,4 +1,4 @@
-function [V,retcode]=lyapunov_equation(T,Q,options)
+function [V,retcode]=lyapunov_equation(T,Q,options,stationary)
 % lyapunov_equation solves the equation V=T*V*T'+Q
 %
 % Syntax
@@ -35,9 +35,6 @@ function [V,retcode]=lyapunov_equation(T,Q,options)
 
 mydefaults=the_defaults();
 
-mydefaults=[mydefaults
-    doubling_solve()];
-
 if nargin==0
     
     if nargout
@@ -56,37 +53,71 @@ end
 
 defaults=disp_defaults(mydefaults);
 
-if nargin<3
+if nargin<4
     
-    options=[];
+    stationary=[];
+    
+    if nargin<3
+        
+        options=struct();
+        
+    end
     
 end
 
-if isfield(options,'lyapunov_algo')
+n=size(T,1);
+
+if isempty(stationary)
     
-    algo=options.lyapunov_algo;
-    
-else
-    
-    algo=defaults.lyapunov_algo;
+    stationary=true(1,n);
     
 end
 
-switch algo
+fnames=fieldnames(defaults);
+
+for ii=1:numel(fnames)
     
-    case 'schur'
+    if ~isfield(options,fnames{ii})
         
-        error('Schur algorithms are under revision')
+        options.(fnames{ii})=defaults.(fnames{ii});
         
-    case 'doubling'
-        
-        [V,retcode]=doubling_solve(T,[],Q,options);
-        
-    otherwise
-        
-        error([mfilename,':: unknown lyapunov algorithm option ',algo])
-        
+    end
+    
 end
+
+algo=options.lyapunov_algo;
+
+% variance of nonstationary terms
+%--------------------------------
+V=diag(options.lyapunov_diffuse_factor*ones(n,1));
+
+V(stationary,stationary)=lyapunov_engine(T(stationary,stationary),Q(stationary,stationary));
+
+    function v=lyapunov_engine(T,Q)
+        
+        % locate_state_variables
+        %-----------------------
+        t_pb=any(T,1);
+        
+        switch algo
+            
+            case 'schur'
+                
+                error('Schur algorithms are under revision')
+                
+            case 'doubling'
+                
+                [v,retcode]=doubling_solve(T(t_pb,t_pb),[],Q(t_pb,t_pb),options);
+                
+            otherwise
+                
+                error([mfilename,':: unknown lyapunov algorithm option ',algo])
+                
+        end
+        
+        v=T(:,t_pb)*v*T(:,t_pb).'+Q;
+        
+    end
 
 end
 
@@ -98,7 +129,7 @@ d={
     'lyapunov_algo','doubling',@(x)ismember(x,{'doubling','schur'}),...
     'lyapunov_algo must be doubling or schur'
     
-    'lyapunov_diffuse_factor',0,@(x)num_fin(x) && x>=0,...
+    'lyapunov_diffuse_factor',1,@(x)num_fin(x) && x>=0,...
     'lyapunov_diffuse_factor must be >=0'
     
     'fix_point_verbose(r)',false,@(x)islogical(x),'fix_point_verbose must be a logical'
