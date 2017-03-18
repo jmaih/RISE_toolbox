@@ -49,11 +49,19 @@ end
 % same way as for level variables. Hence log_expanded variables do not belong
 % in the list below
 
-log_vars=obj.endogenous.is_log_var;
-
 if isempty(obj.solution)||~isfield(obj.solution,'bgp')
     
     error('The model needs to be solved first')
+    
+end
+
+n=obj.endogenous.number;
+
+ind=true(1,n);
+
+if ~obj.options.solve_bgp
+    
+    return
     
 end
 
@@ -63,9 +71,7 @@ checklog=@(x)~any(abs(bgp(x,:)-1)>too_small);
 
 checklev=@(x)~any(abs(bgp(x,:))>too_small);
 
-n=obj.endogenous.number;
-
-ind=false(1,n);
+log_vars=obj.endogenous.is_log_var;
 
 for ivar=1:n
     
