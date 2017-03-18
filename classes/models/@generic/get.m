@@ -316,7 +316,7 @@ end
     function Reply=load_state_variables()
         if isa(obj,'dsge')
             s1=get(obj,'endo_list(state)');
-        elseif isa(obj,'svar');
+        elseif isa(obj,'svar')
             % vars and svars
             s1=obj.endogenous.name;
         end
