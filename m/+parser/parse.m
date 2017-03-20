@@ -504,7 +504,7 @@ if dictionary.is_model_with_planner_objective
     der_reo=locate_variables(osr_.wrt,ordered_endo_names);
     routines.planner_osr_support=struct('derivatives_re_order',der_reo,...
         'partitions',osr_.partitions,'nwrt',osr_.nwrt,...
-        'map',cell2mat(vec(osr_.map(:,2).')),'size',osr_.size);
+        'map',vec(cell2mat(osr_.map(:,2).')),'size',osr_.size);
     % we take the second column since the first column with the
     % equation numbers do not matter: originally we had only one equation
     clear osr_
