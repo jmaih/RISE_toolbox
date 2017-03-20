@@ -276,8 +276,19 @@ blocks(modelBlock).listing=parser.process_keywords(...
 %--------------------------------------------------------------------------
 
     function block=construct_list(block,rawline_,tokk)
+        
         current_list={block.listing.name};
-        end_game=~isempty(strfind(rawline_,';'));
+        
+        try
+            
+            end_game= contains(rawline_,';');
+            
+        catch
+            
+            end_game=~isempty(strfind(rawline_,';')); %#ok<STREMP>
+            
+        end
+        
         if end_game
             warning(['ending declaration listings with a'';'' is no longer required. In ',...
                 file_name,' at line ',sprintf('%0.0f',line_number)])
