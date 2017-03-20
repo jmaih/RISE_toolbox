@@ -360,8 +360,51 @@ recreate_code();
             
             repl=[stderr_name,'_$1*$1'];
             
-            warning('The stdev replacements must be done in the model blocks only!!!')
-            rise_code=regexprep(rise_code,expre,repl);
+            blocks=parser.initialize_blocks();
+            
+            block_names=cell2mat(strcat(blocks(:,1).','|'));
+            
+            block_names=['\<(',block_names(1:end-1),')\>'];
+            
+            [start,finish]=regexp(rise_code,block_names,'start','end');
+            
+            for ii=numel(finish):-1:1
+                
+                item=rise_code(start(ii):finish(ii));
+                
+                if ~strcmp(item,'model')
+                    
+                    continue
+                    
+                end
+                
+                pre=rise_code(1:start(ii)-1);
+                
+                post='';
+                
+                if ii==numel(finish)
+                    
+                    middle=rise_code(start(ii):end);
+                    
+                else
+                    
+                    middle=rise_code(start(ii):start(ii+1)-1);
+                    
+                end
+                
+                tmp=regexprep(middle,expre,repl);
+                
+                % remove/comment out potential model tags
+                %-----------------------------------------
+                tmp=strrep(tmp,'''','%''');
+                
+                % remove nonlinear equations
+                %----------------------------
+                tmp=regexprep(tmp,'=\s*#','=');
+                
+                rise_code=[pre,tmp,post];
+                
+            end
             
             % create the list of stdev and add them to the model in a new
             % parameter block
