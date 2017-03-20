@@ -52,13 +52,10 @@ swp=switching_status_of_parameters(dictionary);
 nblks=0;
 blocks_to_discard_coz_they_are_defs=false(nblks,1);
 definitions_loc=struct();
-% profile off
-% profile on
+
 for ii=1:nlist
     [block,equation]=capture_equations_engine(block,listing(ii,:),block_name,equation);
 end
-% profile off
-% profile viewer
 
 if dictionary.definitions_inserted
     block=block(~blocks_to_discard_coz_they_are_defs,:);
