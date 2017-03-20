@@ -1,4 +1,5 @@
-function [dictionary,PlannerObjective_block]=planner_objective(dictionary,listing)
+function [dictionary,PlannerObjective_block,Model_block]=planner_objective(...
+    dictionary,listing,Model_block)
 % H1 line
 %
 % Syntax
@@ -132,19 +133,112 @@ tmp={line_number_,Objective,fichier_name_; % policy objective
 
 [PlannerObjective_block,dictionary]=parser.capture_equations(dictionary,tmp,'planner_objective');
 
-% now make sure there are variables and there is no time in the variables
-time_vars=cell2mat(PlannerObjective_block{1,1}(2,~cellfun(@isempty,PlannerObjective_block{1,1}(2,:))));
-
-if isempty(time_vars)
-    
-    error([mfilename,':: Planner objective must include variables. Check ',fichier_name_,' at line(s) ',mat2str(line_number_)])
-
-elseif any(time_vars)
-    
-    error([mfilename,':: leads or lags not allowed in planner_objective block. Check ',fichier_name_,' at line(s) ',mat2str(line_number_)])
-
-end
+PlannerObjective_block(1,:)=remove_leads_and_lags(PlannerObjective_block(1,:));
 
 dictionary.planner_system.model={Objective;Commitment;Discount};
 
+    function in=remove_leads_and_lags(in)
+        
+        time_vars=cell2mat(in(2:3));
+        
+        if isempty(time_vars)
+            
+            error([mfilename,':: Planner objective must include variables. Check ',fichier_name_,' at line(s) ',mat2str(line_number_)])
+            
+        end
+        
+        if any(time_vars~=0)
+            
+            ilist=0;
+            
+            myListing=cell(50,3);
+            
+            new_auxvars=cell(1,50);
+            
+            eqtn=in{1};
+            
+            endog=dictionary.endogenous;
+            
+            for iii=1:size(in{1},2)
+                
+                lagOrLead=eqtn{2,iii};
+                
+                if isempty(lagOrLead)||(lagOrLead==0)
+                    
+                    continue
+                    
+                end
+                
+                endo_names={endog.name};
+                
+                vname=eqtn{1,iii};
+                
+                newVname=parser.create_auxiliary_name(vname,lagOrLead,true);
+                
+                eqtn{1,iii}=newVname;
+                
+                eqtn{2,iii}=0;
+                
+                pos=strcmp(vname,endo_names);
+                
+                is_log_var=endog(pos).is_log_var;
+                
+                endog(pos).max_lag=min(lagOrLead,endog(pos).max_lag);
+                
+                endog(pos).max_lead=max(lagOrLead,endog(pos).max_lead);
+                
+                if ~any(strcmp(newVname,endo_names))
+                    
+                    endog=parser.update_variable_lead_lag(endog,newVname,...
+                        0,is_log_var,vname); % 0 is the new lag and lead for the new variable
+                    
+                    addstr='';
+                    
+                    if lagOrLead>0
+                        
+                        addstr='+';
+                        
+                    end
+                    
+                    the_type=sprintf('%s%0.0f',addstr,lagOrLead);
+                    
+                    newthing=sprintf('%s = %s{%s};',newVname,vname,the_type);
+                    
+                    ilist=ilist+1;
+                    
+                    myListing(ilist,:)={nan,newthing,'auxiliary equations'};
+                    
+                    new_auxvars{ilist}=newVname;
+                    
+                end
+                
+            end
+            
+            myListing=myListing(1:ilist,:);
+            
+            % push the modified equation
+            %---------------------------
+            in{1}=eqtn;
+            
+            % reset max leads and lags... or rather keep them as is to
+            % remember what they were
+            %-----------------------------------------------------------
+            % in{2}=0; in{3}=0;
+            
+            dictionary.endogenous=endog;
+            
+            % add the equations to the model block
+            [aux,dictionary]=parser.capture_equations(dictionary,myListing,'model');
+            
+            Model_block=[Model_block;aux];
+                        
+            % sweep once more to remove leads and lags that were pushed
+            % into auxiliary equations...            
+            [dictionary,Model_block]=parser.create_auxiliary_equations(dictionary,Model_block);
+            
+        end
+        
+    end
+
 end
+

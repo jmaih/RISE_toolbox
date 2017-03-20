@@ -41,15 +41,16 @@ numberOfAdditionalEquations=numel(Policy_vars);
 dic.auxiliary_variables.model=[dic.auxiliary_variables.model,Policy_vars];
 % add utility and welfare
 %-------------------------
+nc=size(constraints,1);
+
 for iv=1:numberOfAdditionalEquations
     
     dic.endogenous(end+1)=parser.listing('name',Policy_vars{iv});
     %%%%%dic.auxiliary_variables{end+1}=Policy_vars{iv};
     
-    [tmp,dic]=parser.capture_equations(dic,Policy_equations(iv,:),'model');
+    [constraints(nc+iv,:),dic]=parser.capture_equations(dic,...
+        Policy_equations(iv,:),'model');
     
-    constraints=[constraints
-        tmp]; %#ok<*AGROW>
 end
 
 neqtns=size(constraints,1);
@@ -275,17 +276,7 @@ jac_toc=toc;
         
         if dic.is_optimal_simple_rule_model
             
-            utils_derivs=splanar.print(derivs);
-            
-%             utils_derivs=utils_derivs(2);
-%             
-%             [utils_derivs.derivatives]=cleanup(utils_derivs.derivatives,true);
-%             
-%             % parse as steady state
-%             %------------------------
-%             utils_derivs.wrt=wrt;
-%             
-%             dic.planner_system.osr=utils_derivs;
+            utils_derivs=derivs;
             
         else
             % At this stage, the last equation is the utility. But to be on
@@ -298,10 +289,10 @@ jac_toc=toc;
             
             [utils_derivs]=take_derivatives(eqtns(end),symb_list,wrt_new,2,verbose);
             
-            utils_derivs=splanar.print(utils_derivs);
-            
         end
         
+        utils_derivs=splanar.print(utils_derivs);
+            
         utils_derivs=utils_derivs(2);
         
         [utils_derivs.derivatives]=cleanup(utils_derivs.derivatives,true);
