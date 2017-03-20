@@ -63,6 +63,10 @@ rise_code = strrep(rise_code,'!!','#');
 rise_code = strrep(rise_code,'...','');				   
 rise_code=regexprep(rise_code,'(&|\$)(\w+)(?!\$)','\$($2)');
 
+rblks=parser.initialize_blocks();
+
+rblks=rblks(:,1);
+        
 % replace the remaining exclamation signs... (preparsing)
 rise_code = strrep(rise_code,'!','@# ');
 
@@ -290,9 +294,7 @@ recreate_code();
 
     function plist=create_std_parameters()
         
-        rblks=parser.initialize_blocks();
-        
-        [posL,posR]=blocks_locator(rise_code,rblks(:,1));
+        [posL,posR]=blocks_locator(rise_code,rblks);
         
         loc_subs=find(strcmp(posR,'exogenous'));
         
@@ -360,9 +362,7 @@ recreate_code();
             
             repl=[stderr_name,'_$1*$1'];
             
-            blocks=parser.initialize_blocks();
-            
-            block_names=cell2mat(strcat(blocks(:,1).','|'));
+            block_names=cell2mat(strcat(rblks.','|'));
             
             block_names=['\<(',block_names(1:end-1),')\>'];
             
@@ -389,6 +389,8 @@ recreate_code();
                 else
                     
                     middle=rise_code(start(ii):start(ii+1)-1);
+                    
+                    post=rise_code(start(ii+1):end);
                     
                 end
                 
