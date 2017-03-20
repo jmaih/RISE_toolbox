@@ -43,17 +43,29 @@ function c=print(deriv,args,asfunc,long,optimize)
 %
 % See also:
 if nargin<5
+    
     optimize=[];
+    
     if nargin<4
+        
         long=[];
+        
         if nargin<3
+            
             asfunc=[];
+            
             if nargin<2
+                
                 args=[];
+                
             end
+            
         end
+        
     end
+    
 end
+
 Defaults={
     'deriv',[],@(x)isstruct(x) && all(isfield(x,{'derivatives','nwrt','order','nnz_derivs','partitions'}))
     'args',[],@(x)ischar(x)||iscellstr(x)
@@ -68,16 +80,25 @@ Defaults={
 nderivs=numel(deriv);
 
 if nderivs>1
+    
     c=deriv(1:0);
+    
     c=update_fieldnames(c,args);
+    
     for id=1:nderivs
+        
         c(id)=splanar.print(deriv(id),args,asfunc,long,optimize);
+        
     end
+    
     return
+    
 end
 
 c=[];
+
 cmap=[];
+
 if ~isempty(deriv.derivatives)
     % char the derivatives
     %-----------------------
@@ -93,23 +114,29 @@ if ~isempty(deriv.derivatives)
     
     % transform to functions if arguments are provided
     %--------------------------------------------------
-    do_functions()
+    c=do_functions(c,args,asfunc);
     
     % map the derivatives to their location in the compact matrix
     %-------------------------------------------------------------
     cmap=[deriv.derivatives.location];
+    
     cmapl=cmap(1:2:end);
+    
     cmapr=cmap(2:2:end);
+    
     cmap=[cmapl(:),cmapr(:)];
     
     % do expansion in case the derivatives are vectorized later on
     %-------------------------------------------------------------
     do_expansion()
+    
 end
 % format output
 %---------------
 deriv.derivatives=c;
+
 c=deriv;
+
 c.map=cmap;
 
 % update field names
@@ -151,57 +178,87 @@ c=update_fieldnames(c,args);
     end
 
     function do_optimize()
+        
         if optimize
+            
             word='\w+';
+            
             word_par='\w+\(\d+\)';
+            
             c=regexprep(c,['(?<!\w+)(\()(',word,'|',word_par,')(\))'],'$2');
+        
         end
+        
     end
 
-    function do_functions()
-        if asfunc && ~isempty(args) && ~isempty(c)
-            % this assumes the args are already in correct order/format
-            % from the do_analytic part
-            
-            % build the @() part
-            %--------------------
-            args=cell2mat(strcat(args,','));
-            main_string=['@(',args(1:end-1),')'];
-            
-            % concatenante
-            %--------------
-            c=strcat(main_string,c);
-            char_type=ischar(c);
-            if char_type
-                c={c};
-            end
-            
-            % build the functions
-            %--------------------
-            c=cellfun(@(x)str2func(x),c,'uniformOutput',false);
-            if char_type
-                c=c{1};
-            end
-        end
+end
+
+function c=do_functions(c,args,asfunc)
+
+if asfunc && ~isempty(args) && ~isempty(c)
+    % this assumes the args are already in correct order/format
+    % from the do_analytic part
+    
+    % build the @() part
+    %--------------------
+    args=cell2mat(strcat(args,','));
+    
+    main_string=['@(',args(1:end-1),')'];
+    
+    % concatenante
+    %--------------
+    c=strcat(main_string,c);
+    
+    char_type=ischar(c);
+    
+    if char_type
+        
+        c={c};
+        
     end
+    
+    % build the functions
+    %--------------------
+    c=cellfun(@(x)str2func(x),c,'uniformOutput',false);
+    
+    if char_type
+        
+        c=c{1};
+        
+    end
+    
+end
+
 end
 
 function c=update_fieldnames(c,args)
 % reference: http://blogs.mathworks.com/loren/2010/05/13/rename-a-field-in-a-structure-array/
 newField='functions';
+
 oldField='derivatives';
 
 if ~isempty(args)
+    
     try
+        
         [c.(newField)] = c.(oldField);
+    
     catch
         % the thing above does not work when c is empty
         try
+            
             [c(:).(newField)] = deal(c.(oldField));
+        
         catch
+            
             [c(:).(newField)] = deal({});
+        
         end
+        
     end
+    
     c = rmfield(c,oldField);
+
 end
+
 end

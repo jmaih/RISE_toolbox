@@ -66,11 +66,17 @@ classdef splanar
         func
         args
         incidence % tells which variable appears
-        number_of_columns=1
         lineage={} % will serve to trace back all generations of derivatives
 %         prototype
         location % will hold position (column) where the derivative will be stored
     end
+    
+    properties(Dependent)
+        
+        number_of_columns=1
+        
+    end
+    
     methods
         % constructor
         %------------
@@ -116,12 +122,41 @@ classdef splanar
                         end
                         obj.args={a};
                     end
-                    if isnumeric(f)
-                        obj.number_of_columns= numel(f);
-                    end
                 end
             end
         end
+        
+        function n=get.number_of_columns(obj)
+            
+            if isnumeric(obj.func)
+                
+            n=numel(obj.func);
+            
+            elseif isempty(obj.args)
+                
+                n=1;
+                
+            else
+                
+                n=1;
+                
+                for ii=1:numel(obj.args)
+                    
+                    n=max(n,...
+                        sub_number_of_columns(obj.args{ii}));
+                    
+                end
+                
+            end
+            
+            function n=sub_number_of_columns(obj)
+                
+                n=obj.number_of_columns;
+                
+            end
+            
+        end
+        
         % overloaded operators
         %---------------------
         function obj=abs(a)
@@ -219,12 +254,10 @@ classdef splanar
             obj=prototypize(varargin{1});
             if nconst==n
                 obj.func=if_elseif(constants{:});
-                obj.number_of_columns=numel(obj.func);
             else
                 obj.func='if_elseif';
                 obj.args=varargin;
                 for iarg=1:n
-                    obj.number_of_columns=max(obj.number_of_columns,varargin{iarg}.number_of_columns);
                     if ~isempty(varargin{iarg}.incidence)
                         if isempty(obj.incidence)
                             obj.incidence=varargin{iarg}.incidence;
@@ -288,14 +321,12 @@ classdef splanar
             if is_zero(b)
                 % x^0 = 1
                 obj.func=1;
-                %	obj.number_of_columns=numel(obj.func);
             elseif is_one(b)
                 % x^1 = x
                 obj=a;
             elseif is_one(a)
                 % 1^x = 1
                 obj.func=1;
-                %	obj.number_of_columns=numel(obj.func);
             else
                 obj=do_bivariate(a,b,'mpower',false);
             end
@@ -329,7 +360,6 @@ classdef splanar
             [a,b]=splanarize(a,b);
             isnum_a=isnumeric(a);
             isnum_b=isnumeric(b);
-            %             maxcols=max([a.number_of_columns,b.number_of_columns]);
             if strcmp(a.func,'uminus')
                 if strcmp(b.func,'uminus')
                     % (-x) * (-y) = x * y
@@ -346,7 +376,6 @@ classdef splanar
                 % x * 0 = 0
                 obj=prototypize(a);
                 obj.func=0;% obj.func=0*ones(1,maxcols);
-                obj.number_of_columns=1;%obj.number_of_columns=maxcols>1;
             elseif isnum_a && is_one(a) % maxcols==1 &&
                 % 1 * x = x
                 obj=b;
@@ -502,7 +531,6 @@ classdef splanar
             if obj.number_of_columns>1
                 if isnumeric(obj) && numel(obj.func)>1
                     obj.func=obj.func(pointer);
-                    obj.number_of_columns=1; % or numel(obj.func)
                 elseif ~isempty(obj.args)
                     for iarg=1:numel(obj.args)
                         if ~isa(obj.args{iarg},'splanar')
@@ -541,7 +569,6 @@ classdef splanar
                 % variables that are part of differentiation
                 d=prototypize(x);
                 d.func=double(x.incidence(wrt));
-                d.number_of_columns=numel(d.func);
                 % why do we need to double it?
                 % we need to carry around vectors in order to be able to do
                 % higher-order derivatives
@@ -554,7 +581,6 @@ classdef splanar
                 for iarg=1:nargs
                     if ~isempty(pointer) && isnumeric(x.args{iarg}) && numel(x.args{iarg}.func)>1
                         x.args{iarg}.func=x.args{iarg}.func(pointer);
-                        x.args{iarg}.number_of_columns=1;
                     end
                     if (if_elseif_flag && rem(iarg,2))||(iarg==1 && if_then_else_flag)
                         continue
@@ -747,7 +773,6 @@ function obj=prototypize(obj)
 obj.func=[];
 obj.args=[];
 obj.incidence=[];
-% obj.number_of_columns=[];
 end
 
 function varargout=splanarize(varargin)
@@ -765,7 +790,6 @@ for iarg=find(~guy_is_planar)
     tmp=varargout{iarg};
     varargout{iarg}=obj; 
     varargout{iarg}.func=tmp;
-    varargout{iarg}.number_of_columns=numel(tmp);
 end
 end
 
@@ -776,7 +800,6 @@ function obj=do_trivariate(x,mu,sd,func)
 obj=prototypize(x);
 if isnumeric(x.func) && isnumeric(mu.func) && isnumeric(sd.func)
     obj.func=feval(func,x.func,mu.func,sd.func);
-    obj.number_of_columns=numel(obj.func);
 else
     obj.func=func;
     obj.args={x,mu,sd};
@@ -795,7 +818,6 @@ else
             obj.incidence=obj.incidence|sd.incidence;
         end
     end
-    obj.number_of_columns=max([x.number_of_columns,mu.number_of_columns,sd.number_of_columns]);
 end
 end
 
@@ -815,11 +837,9 @@ if isnumeric(a.func) && isnumeric(b.func)
         func=func(2:end);
     end
     obj.func=feval(func,a.func,b.func);
-    obj.number_of_columns=numel(obj.func);
 else
     obj.func=func;
     obj.args={a,b};
-    obj.number_of_columns=max([a.number_of_columns,b.number_of_columns]);
     obj.incidence=a.incidence;
     if ~isempty(b.incidence)
         if isempty(obj.incidence)
@@ -837,11 +857,9 @@ function obj=do_univariate(a,func)
 obj=prototypize(a);
 if isnumeric(a.func)
     obj.func=feval(func,a.func);
-    obj.number_of_columns=numel(obj.func);
 else
     obj.func=func;
     obj.args={a};
     obj.incidence=a.incidence;
-    obj.number_of_columns=a.number_of_columns;
 end
 end
