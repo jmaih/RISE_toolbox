@@ -1,11 +1,12 @@
 %% housekeeping
-clear all
+clear
 close all
 clc
 %% RISE the model and assign the steady state file
 linear=~true;
 if linear
-    m=rise('emosp_linear','rise_flags',{'original',false});
+    m=rise('emosp_linear','rise_flags',{'original',false},...
+        'solve_linear',true);
     % N.B: original =false removes the variables that are both
     % predetermined and forward-looking, making it easier for Peter Ireland
     % to set up the matrices of his system.

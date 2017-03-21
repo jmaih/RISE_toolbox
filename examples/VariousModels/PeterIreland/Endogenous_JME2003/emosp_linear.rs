@@ -20,7 +20,7 @@ parameters g delta rho_x sig_x phi_p_trans phi_k_trans
 		   gam eta beta	rho_z  sig_z alpha theta mu_ss_trans rho_v sig_v
 		   omega_r omega_mu	omega_pai omega_y
 		   
-model(linear)
+model
 
 	# z_ss=z_ss_trans*10000;
 	# phi_p = 100*abs(phi_p_trans);
