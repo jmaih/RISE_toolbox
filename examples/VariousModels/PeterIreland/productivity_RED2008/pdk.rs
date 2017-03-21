@@ -48,16 +48,16 @@ model
 		(I_@{ii}{+1}/K_@{ii}-kappa_@{ii})^2)*K_@{ii}^theta_@{ii}*(Z_@{ii}{+1}*H_@{ii}{+1})^(1-theta_@{ii});
 
 	XI_@{ii}=LAMBDA_I
-		@#if strcmp(ii,'I')
+		@#if strcmp('@{ii}','I')
 			*(1
 		@#end
 		+phik_@{ii}*
-		@#if strcmp(ii,'C')
+		@#if strcmp('@{ii}','C')
 			LAMBDA_@{ii}*
 		@#end
 		(1-phih_@{ii}/2*(AG{-1}*H_@{ii}/H_@{ii}{-1}-eta_@{ii})^2)*
 			(I_@{ii}/K_@{ii}{-1}-kappa_@{ii})*K_@{ii}{-1}^(theta_@{ii}-1)*(Z_@{ii}*H_@{ii})^(1-theta_@{ii})
-		@#if strcmp(ii,'I')
+		@#if strcmp('@{ii}','I')
 			)
 		@#end
 		;
