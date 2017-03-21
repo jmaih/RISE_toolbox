@@ -82,6 +82,8 @@ while iline<NumberOfLines
     [is_trigger,last_block_id]=check_block(tok,trigger_map,last_block_id);
     current_block_name=blocks(last_block_id).name;
     switch current_block_name
+        case 'Legend'
+            % do nothing
         case {'log_vars','endogenous','exogenous','parameters','observables',...
                 'level_variables'}
             blocks(last_block_id)=construct_list(blocks(last_block_id),rawline,tok);

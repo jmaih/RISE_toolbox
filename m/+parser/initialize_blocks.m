@@ -34,6 +34,7 @@ blocks={
     'planner_objective'     ,'planner_objective'          ,cell(0,3)
     'exogenous_definition'  ,'exogenous_definition'       ,cell(0,3)
     'parameter_restrictions','parameter_restrictions'     ,cell(0,3)
+    'Legend'                ,'Legend'                     ,[]
     };
 
 end
