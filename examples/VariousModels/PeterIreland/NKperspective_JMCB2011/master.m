@@ -1,5 +1,5 @@
 %% housekeeping
-clear all
+clear
 close all
 clc
 %% RISE the model
@@ -36,18 +36,18 @@ close all
 %     'EPS_Z','Technology'
 %     'EPS_A','Preference'
 %     });
+tex=get(m,'tex');
+
 figure('name','Impulse responses');
 myvars={'Y','PAI','R','X'};
 nvars=numel(myvars);
 iter=0;
 for ivar=1:nvars
     vname=myvars{ivar};
-    vpos=locate_variables(vname,mest.endogenous.name);
-    vtex=mest.endogenous.tex_name{vpos};
+    vtex=tex.(vname);
     for ishock=1:mest.exogenous.number(1)
         shock=mest.exogenous.name{ishock};
-        vpos=locate_variables(shock,mest.exogenous.name);
-        shock_tex=mest.exogenous.tex_name{vpos};
+        shock_tex=tex.(shock);
         iter=iter+1;
         subplot(4,4,iter)
         plot('0:20',100*myirfs.(shock).(vname),'linewidth',2)
@@ -61,8 +61,7 @@ mydec=variance_decomposition(mest);
 myvars={'G','PAI','R','X'};
 for ivar=1:numel(myvars)
     vname=myvars{ivar};
-    vpos=locate_variables(vname,mest.endogenous.name);
-    vtex=mest.endogenous.tex_name{vpos};
+    vtex=tex.(vname);
     dec=mydec.conditional.(vname)('1,4,8,12,20,40');
     if ivar==1
         shock_pos=locate_variables(mest.exogenous.name,dec.varnames);

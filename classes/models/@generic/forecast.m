@@ -173,6 +173,9 @@ d={
     
     'forecast_shock_uncertainty',false,@(x)islogical(x),...
     'forecast_shock_uncertainty must be a logical'
+    
+    'forecast_start_date','',@(x)is_date(x)||is_serial(x),...
+    'forecast_start_date must be a valid date'
     };
 
 end
