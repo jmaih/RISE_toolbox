@@ -88,7 +88,7 @@ for iobj=1:nobj
         
     end
     
-    if ~isfield(obj.solution,'Tz')||isempty(obj.solution.Tz{1})
+    if ~isfield(obj(iobj).solution,'Tz')||isempty(obj(iobj).solution.Tz{1})
         
         fprintf(1,'\n%s\n',['MODEL ',string,...
             ' HAS NOT BEEN SOLVED AT LEAST UP TO THE FIRST ORDER']);
@@ -97,9 +97,9 @@ for iobj=1:nobj
         
         fprintf(1,'\n%s\n',['MODEL ',string,' SOLUTION']);
         
+        print_solution_engine(obj(iobj),varlist,compact_form,orders);
+        
     end
-    
-    print_solution_engine(obj(iobj),varlist,compact_form,orders);
     
 end
 
