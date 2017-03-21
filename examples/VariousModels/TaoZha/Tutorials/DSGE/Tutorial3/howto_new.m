@@ -1,7 +1,7 @@
 %%
 % RISE Tutorial by Dr. Tao Zha
 %% housekeeping
-clear all
+clear
 close all
 clc
 % This tutorial needs:
@@ -73,7 +73,8 @@ for imod=1:nmodels
     % replace "for" by "parfor" if you want to use parallel computation
     estim_models{imod}=rise(model_names{imod},... % name of the file to read
         'saveas',true,... % we ask rise to write the expanded model to disk
-        'data',mydata... % we may assign the data now or later
+        'data',mydata,... % we may assign the data now or later
+        'solve_linear',true... take advantage of the fact that the models are conditionally linear
         );
     % a model with multiple files inserted can be difficult to read. The
     % expanded model could be useful for understanding what RISE does and
@@ -87,7 +88,7 @@ close all
 % one go
 % parpool(nmodels)
 % parfor imod=1:nmodels %
-for imod=1:nmodels %
+parfor imod=1:nmodels %
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
     disp(['*-----Estimation of ',model_names{imod},' model-------*'])
@@ -100,7 +101,7 @@ end
 %% Simulation of the posterior distribution
 % obj below is a rise object with the simulation statistics included in
 % obj{imod}.estimation.posterior_simulation for imod=1:nmodels
-do_store_mcmc_to_disk=false;
+clc
 Results=cell(1,nmodels);
 objective=cell(1,nmodels);
 lb=cell(1,nmodels);
@@ -109,7 +110,7 @@ ndraws_mcmc         = 1500;  % number of parameter draws through MCMC.
 ndraws_burnin       = floor(0.1*ndraws_mcmc); % number of parameter draws to be burned
 mcmc_options=struct('burnin',ndraws_burnin,'N',ndraws_mcmc,'thin',1);
 
-for imod=1:nmodels
+parfor imod=1:nmodels
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
     disp(['*----------- MCMC for ',model_names{imod},' model-------------*'])
@@ -124,7 +125,7 @@ for imod=1:nmodels
 end
 %% Marginal Likelihood
 lmdd=cell(1,nmodels);
-do_log_marginal_data_density=false;
+do_log_marginal_data_density=~false;
 if do_log_marginal_data_density
     for imod=1:nmodels
         % replace "for" by "parfor" if you want to use parallel computation
