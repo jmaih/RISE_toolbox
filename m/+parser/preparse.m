@@ -303,7 +303,7 @@ end
             
             middle=rawfile(locs(1)+1:locs(end)-1,:);
             
-            info=regexp(arobase(1).action,'(?<stud>\w+)\s*=\s*(?<set>.+)','names');
+            info=regexp(arobase(1).action,'(?<stud>\w+)\s*(=|in)\s*(?<set>.+)','names');
             
             update_set()
             
@@ -356,6 +356,19 @@ end
                     sset=num2cell(sset);
                     
                     sset=cellfun(@(x)num2str(x),sset,'uniformOutput',false);
+                    
+                else % evaluate the set
+                    
+                    sset=eval_action(definitions,sset);
+                    
+                    % the set is not necessarily a cellstr and so we have
+                    % to apply some checking/correction
+                    
+                    if ~iscellstr(sset)
+                        
+                        sset=cellfun(@(x)num2str(x),sset,'uniformOutput',false);
+                        
+                    end
                     
                 end
                 
