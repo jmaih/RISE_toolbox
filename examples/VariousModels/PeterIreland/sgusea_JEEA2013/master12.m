@@ -16,11 +16,11 @@ clc
 ncp_shocks=true;
 m=rise('sgusea12',...
     'rise_flags',struct('CountryNames',{{'H','F'}},'ncp_shocks',ncp_shocks),...
-    'rise_save_macro',true);
+    'saveas',true);
 
 %% Assign steady state file
 
-m=set(m,'steady_state_file','sstate_model12');
+m=set(m,'steady_state_file','sstate_model12b');
 
 %% create parameters
 

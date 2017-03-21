@@ -54,7 +54,7 @@ m_hf_ss
 @#for cc in CountryNames
 	eta_@{cc},
 	rho_m_@{cc}@{cc}, rho_z_@{cc}@{cc}, rho_v_@{cc}@{cc}, rho_g_@{cc}@{cc}, 
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		 rho_m_@{cc}F,rho_z_@{cc}F, rho_v_@{cc}F, rho_g_@{cc}F, 
 	@#else
 		rho_m_@{cc}H, rho_z_@{cc}H, rho_v_@{cc}H, rho_g_@{cc}H
@@ -62,7 +62,7 @@ m_hf_ss
 	@#end
 	mss_@{cc}, zss_@{cc}, vss_@{cc}, gss_@{cc}
 	sig_g_@{cc}	sig_v_@{cc}	sig_z_@{cc} sig_m_@{cc}
-	@#if ncp_shocks	&& strcmp(cc,'F')
+	@#if ncp_shocks	&& strcmp('@{cc}','F')
 		kappa_m_@{cc} kappamhtr
 	@#end
 @#end
@@ -77,7 +77,7 @@ model
 	@#end
 @#for cc in CountryNames
 	W_@{cc}*L_@{cc}+Q_@{cc}*K_@{cc}{-1}+D_@{cc}{-1}
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		/P_F
 	@#end
 	= C_@{cc}+X_@{cc}*I_@{cc}+TAU_@{cc}+
@@ -85,7 +85,7 @@ model
 		M_@{cc}*
 	@#end
 	V_@{cc}^(alpha/(1-alpha))*Z_@{cc}*D_@{cc}/(
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		P_F*
 	@#end
 	R)+phi_d/2*
@@ -177,17 +177,17 @@ model
 		M_@{cc}*
 	@#end
 	V_@{cc}^(alpha/(1-alpha))*Z_@{cc})^(1-mu*(1-gam))*LAMBDA_@{cc}*(1/(
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		P_F*
 	@#end
 	R)+phi_d*D_@{cc})=beta*LAMBDA_@{cc}{+1}
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		/P_F{+1}
 	@#end
 	;
 
 	K_@{cc}{-1}^alpha*(Z_@{cc}*L_@{cc})^(1-alpha)=
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		Y_A
 	@#else
 		Y_B
@@ -195,37 +195,37 @@ model
 	;
 		
 	alpha*	
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		P_A*Y_A
 	@#else
 		P_B*Y_B
 	@#end
 		=
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		P_F*
 	@#end
 		Q_@{cc}*K_@{cc}{-1};
 		
 	(1-alpha)*	
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		P_A*Y_A
 	@#else
 		P_B*Y_B
 	@#end
 		=
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		P_F*
 	@#end
 		W_@{cc}*L_@{cc};
 
 	(
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		(1-omega)
 	@#else
 		omega
 	@#end
 	^(1/theta)*A_@{cc}^((theta-1)/theta)+
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		omega
 	@#else
 		(1-omega)
@@ -235,23 +235,23 @@ model
 	X_@{cc} = 1/V_@{cc};
 
 		P_A
-	@#if strcmp(cc,'F')
+	@#if strcmp('@{cc}','F')
 		/P_F
 	@#end
 		= (
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		(1-omega)
 	@#else
 		omega
 	@#end
 		^(1/theta)*A_@{cc}^((theta-1)/theta)+
-	@#if strcmp(cc,'H')
+	@#if strcmp('@{cc}','H')
 		omega
 	@#else
 		(1-omega)
 	@#end
 		^(1/theta)*B_@{cc}^((theta-1)/theta))^(1/(theta-1))*
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		(1-omega)
 	@#else
 		omega
@@ -259,23 +259,23 @@ model
 		^(1/theta)*A_@{cc}^(-1/theta);
 
 		P_B
-	@#if strcmp(cc,'F')
+	@#if  strcmp('@{cc}','F')
 		/P_F
 	@#end
 		= (
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		(1-omega)
 	@#else
 		omega
 	@#end
 		^(1/theta)*A_@{cc}^((theta-1)/theta)+
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		omega
 	@#else
 		(1-omega)
 	@#end
 		^(1/theta)*B_@{cc}^((theta-1)/theta))^(1/(theta-1))*
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		omega
 	@#else
 		(1-omega)
@@ -308,7 +308,7 @@ model
 	ITILDE_@{cc} = I_@{cc};
 
 	log(M_@{cc}/mss_@{cc})=rho_m_@{cc}@{cc}*log(M_@{cc}{-1}/mss_@{cc})+ 	
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		rho_m_HF*log(M_F{-1}/mss_F)
 	@#else
 		rho_m_FH*log(M_H{-1}/mss_H)
@@ -319,7 +319,7 @@ model
 	+sig_m_@{cc}*EM_@{cc};
 
 	log(Z_@{cc}/zss_@{cc})=rho_z_@{cc}@{cc}*log(Z_@{cc}{-1}/zss_@{cc})	
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		+ rho_z_HF*log(Z_F{-1}/zss_F)
 	@#else
 		+ rho_z_FH*log(Z_H{-1}/zss_H)
@@ -327,7 +327,7 @@ model
 	+kappa_z_@{cc}*log(Z_HF/z_hf_ss)+sig_z_@{cc}*EZ_@{cc};
 
 	log(V_@{cc}/vss_@{cc})=rho_v_@{cc}@{cc}*log(V_@{cc}{-1}/vss_@{cc})	
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		+ rho_v_HF*log(V_F{-1}/vss_F)
 	@#else
 		+ rho_v_FH*log(V_H{-1}/vss_H)
@@ -335,7 +335,7 @@ model
 	+kappa_v_@{cc}*log(V_HF/v_hf_ss)+sig_v_@{cc}*EV_@{cc};
 
 	log(G_@{cc}/gss_@{cc})=rho_g_@{cc}@{cc}*log(G_@{cc}{-1}/gss_@{cc})	
-	@#if strcmp(cc,'H')
+	@#if  strcmp('@{cc}','H')
 		+ rho_g_HF*log(G_F{-1}/gss_F)
 	@#else
 		+ rho_g_FH*log(G_H{-1}/gss_H)
