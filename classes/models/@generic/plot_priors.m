@@ -180,7 +180,16 @@ lb=vertcat(obj.estimation.priors(plocs).lower_bound);
 
 ub=vertcat(obj.estimation.priors(plocs).upper_bound);
 
-hypers=obj.estim_priors_data.estim_hyperparams(plocs,:);
+try
+    
+    hypers=obj.estim_priors_data.estim_hyperparams(plocs,:);
+    
+catch
+    % backward compatibility
+    %-----------------------
+    hypers=[[obj.estimation.priors.a].',[obj.estimation.priors.b].'];
+    
+end
 
 npar=numel(lb);
 
