@@ -73,7 +73,7 @@ for ishock=1:exo_nbr
                         %------------------------------------------
 %                         shocks(inherited_shocks)=0;
                         y02.econd.data=shocks(:,:,ones(3,1));
-                        y02.rcond.data=states1;
+                        y02.rcond.data=nan(size(states1));
                         % ensure that the shocks are not updated in the
                         % alternative scenario
                         %-----------------------------------------------
