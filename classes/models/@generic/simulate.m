@@ -30,11 +30,11 @@ function [db,states,retcode] = simulate(obj,varargin)
 %
 %   - **simul_regime** [integer|vector|function handle|{[]}]: regimes for
 %       which the model is simulated. When it is a function handle, then it
-%       should accept as inputs y (new proposal), rt(current regime),
+%       should accept as inputs y (array over all regimes),
 %       regimes_1_t_1(regimes from 1 to t-1), sims_1_t_1(the simulated
 %       series up to t-1),varargin (possibly further arguments to the
-%       function handle). The output is a logical that is true if the
-%       simulation (vector y) is feasible/accepted and false otherwise.
+%       function handle). The output is a logical vector that is true for
+%       the columns that are acceptable/feasible and false otherwise.
 %
 %   - **simul_update_shocks_handle** [function handle]: we may want to
 %       update the shocks if some condition on the state of the economy is
@@ -374,8 +374,12 @@ d={
     'simul_history_end_date','',@(x)is_date(x)||is_serial(x),...
     'simul_history_end_date must be a valid date'
     
-    'simul_regime',[],@(x)num_fin_int(x) && x>=1,...
-    'simul_regime must be a finite and positive integer'
+    'simul_regime',[],@(x)isa(x,'function_handle')||...
+    (isa(x,'cell')&& isa(x{1},'function_handle'))||...
+    (num_fin_int(x) && x>=1),...
+    ['simul_regime must be a finite and positive integer OR ',...
+    'a function handle OR ',...
+    'a cell array whose first element is a function handle']
     
     'simul_bgp_deviation',false,@(x)islogical(x),...
     'simul_bgp_deviation must be a logical'

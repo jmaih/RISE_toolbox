@@ -412,19 +412,6 @@ regimes=regimes(options.burn+1:end);
         
         function one_step()
             
-            cp=rebuild_cp();
-            
-            if isnan(rt)
-                
-                lucky=find(cp>rand,1,'first')-1;
-                
-                rt=state_list(lucky);
-            
-            end
-            % use the solution prescribed by simul_anticipate_zero
-            y1=utils.forecast.one_step_fbs(Tstar(:,rt),y00,ss{rt},state_vars_location,...
-                options.simul_sig,shocks_t,options.simul_order);
-            
             ok = true;
             
             if ~isempty(switch_rule)
@@ -434,12 +421,53 @@ regimes=regimes(options.burn+1:end);
                     switch_rule={switch_rule};
                     
                 end
+                % evaluate all regimes
+                %---------------------
+                ysr=y00(ones(1,h));
                 
-                ok=switch_rule{1}(y1.y(inv_order_var),rt,...
+                for ireg=1:h
+                    
+                    ysr(ireg)=utils.forecast.one_step_fbs(Tstar(:,ireg),...
+                        y00,ss{ireg},state_vars_location,...
+                        options.simul_sig,shocks_t,options.simul_order);
+                    
+                end
+                
+                ysry=[ysr.y];
+                
+                ok=switch_rule{1}(ysry(inv_order_var,:),rt,...
                     regimes(1:t-1),...
                     sims(inv_order_var,1:t-1),switch_rule{2:end});
                 
-            elseif ~isempty(options.complementarity) && ~options.complementarity(y1.y)
+                % zero probability for offenders
+                %-------------------------------
+                PAI(~ok)=0;
+                
+            end
+            
+            cp=rebuild_cp();
+            
+            if isnan(rt)
+                
+                lucky=find(cp>rand,1,'first')-1;
+                
+                rt=state_list(lucky);
+                
+                if ~isempty(switch_rule)
+                    
+                    y1=ysr(rt);
+                    
+                    return
+                    
+                end
+            
+            end
+            % use the solution prescribed by simul_anticipate_zero
+            y1=utils.forecast.one_step_fbs(Tstar(:,rt),y00,ss{rt},...
+                state_vars_location,options.simul_sig,shocks_t,...
+                options.simul_order);
+                
+            if ~isempty(options.complementarity) && ~options.complementarity(y1.y)
                 
                 if options.simul_honor_constraints_through_switch
                     
