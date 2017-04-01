@@ -453,15 +453,16 @@ regimes=regimes(options.burn+1:end);
                 
                 rt=state_list(lucky);
                 
-                if ~isempty(switch_rule)
-                    
-                    y1=ysr(rt);
-                    
-                    return
-                    
-                end
-            
             end
+            
+            if ~isempty(switch_rule)
+                
+                y1=ysr(rt);
+                
+                return
+                
+            end
+            
             % use the solution prescribed by simul_anticipate_zero
             y1=utils.forecast.one_step_fbs(Tstar(:,rt),y00,ss{rt},...
                 state_vars_location,options.simul_sig,shocks_t,...
