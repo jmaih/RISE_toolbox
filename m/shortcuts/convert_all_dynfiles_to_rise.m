@@ -1,4 +1,16 @@
-function convert_all_dynfiles_to_rise()
+function convert_all_dynfiles_to_rise(skip_done)
+
+if nargin==0
+    
+    skip_done=[];
+    
+end
+
+if isempty(skip_done)
+    
+    skip_done=false;
+    
+end
 
 is_dyn_file=@(x)length(x)>3 &&...
     (strcmp(x(end-3:end),'.mod')||strcmp(x(end-3:end),'.dyn'));
@@ -41,6 +53,12 @@ cd(root)
     function convert_in_one_folder(thisPath)
         
         cd(thisPath)
+        
+        if skip_done && exist(rise_folder_name,'dir')
+            
+            return
+            
+        end
         
         W=dir(thisPath); % W=what(allpaths{ipath})
         

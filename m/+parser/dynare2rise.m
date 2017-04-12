@@ -184,9 +184,9 @@ write_parameter_file()
 
     function raw_code=stepwise_removal_of_block_comments(raw_code)
         
-        starts=strfind(raw_code,'/*');
+        starts=regexp(raw_code,'^/\*','start'); % starts=regexp(raw_code,'(?<!/)/\*','start'); % starts=strfind(raw_code,'/*');
         
-        finishes=strfind(raw_code,'*/');
+        finishes=regexp(raw_code,'^\*/','start'); % finishes=strfind(raw_code,'*/');
         
         if numel(starts)~=numel(finishes)
             
