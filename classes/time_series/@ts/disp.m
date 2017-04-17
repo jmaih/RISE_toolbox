@@ -24,6 +24,12 @@ end
 
 epilogue=index(t);
 
+if NumberOfVariables==1
+    
+    epilogue=[t.description,{''},epilogue];
+    
+end
+
 rownames=serial2date(t.date_numbers);
 
 colnames=t.varnames;

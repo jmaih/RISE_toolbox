@@ -153,6 +153,8 @@ classdef ts < gogetter
         
         start_date_number
         
+        description
+        
     end
     
     methods
@@ -168,8 +170,8 @@ classdef ts < gogetter
             %   self=ts() : construct a time series with no observations
             %   self=ts(start_date,data)
             %   self=ts(start_date,data,varnames)
-            %   self=ts(start_date,data,varnames,sorting)
-            %   self=ts(start_date,data,varnames,sorting,trailnans)
+            %   self=ts(start_date,data,varnames,description)
+            %   self=ts(start_date,data,varnames,description,trailnans)
             %
             % Inputs
             % -------
@@ -187,8 +189,8 @@ classdef ts < gogetter
             %   - **npages** is the number of pages (3rd dimension)
             % - **varnames** [char|cellstr] : names of the variables in the
             %   database
-            % - **sorting** [true|{false}]: sort the columns of data
-            %   according to the alphabetical order of the variable names
+            % - **description** [char|cellstr|{''}]: comments on each
+            %   variable in the database
             % - **trailnans** [true|{false}]: keep or remove nans (missing
             %   observations)
             %
@@ -219,7 +221,7 @@ classdef ts < gogetter
                     
                     start_date=date2serial(varargin{1});
                     
-                    [datax,vnames,sorting,trailnans]=dispatch_options();
+                    [datax,vnames,dscrpt,trailnans]=dispatch_options();
                     
                     siz_data=ts.check_size(datax);
                     
@@ -227,9 +229,9 @@ classdef ts < gogetter
                     
                     nvars=siz_data(2);
                     
-                    tags=1:nvars;
+                    do_names(vnames,'varnames')
                     
-                    do_names()
+                    do_names(expanded_description(),'description',false)
                     
                     if smpl
                         
@@ -269,7 +271,7 @@ classdef ts < gogetter
                         
                         do_dates()
                         
-                        datax=datax(first_good:last_good,tags,:);
+                        datax=datax(first_good:last_good,:,:);
                         
                     end
                     
@@ -279,7 +281,31 @@ classdef ts < gogetter
                 
             end
             
-            function do_names()
+            function out=expanded_description()
+                
+                out=repmat({''},1,nvars);
+                
+                if ischar(dscrpt)
+                    
+                    out(:) = {dscrpt};
+                    
+                else
+                    
+                    if numel(dscrpt)~=nvars
+                        
+                        error('number of descriptions does not match # variables')
+                        
+                    end
+                    
+                    out(:) = dscrpt(:);
+                    
+                end
+                
+            end
+            
+            function do_names(vnames,field,check)
+                
+                if nargin<3,check=true; end
                 
                 if isempty(vnames),vnames={}; end
                 
@@ -293,31 +319,38 @@ classdef ts < gogetter
                     
                     if numel(vnames)~=nvars
                         
-                        error('number of columns of data should be the same as the number of variables')
+                        error(['number of columns of data should be the ',...
+                            'same as the number of "',field,'"'])
                         
                     end
                     
-                    for ivar=1:nvars
+                    if check
                         
-                        thisname=vnames{ivar};
-                        
-                        if ~isvarname(thisname)
+                        for ivar=1:nvars
                             
-                            warning([thisname,' is not a valid variable name'])
+                            thisname=vnames{ivar};
+                            
+                            if ~isvarname(thisname)
+                                
+                                warning([thisname,' is not a valid variable name'])
+                                
+                            end
+                            
+                            loc=strcmp(thisname,vnames(ivar+1:end));
+                            
+                            if sum(loc)>0
+                                
+                                error(['variable name "',thisname,'" is duplicated'])
+                                
+                            end
                             
                         end
                         
                     end
                     
-                    if sorting
-                        
-                        [vnames,tags]=sort(vnames);
-                        
-                    end
-                    
                 end
                 
-                self.varnames=vnames(:)';
+                self.(field)=vnames(:)';
                 
             end
             
@@ -347,13 +380,13 @@ classdef ts < gogetter
                 
             end
             
-            function [datax,vnames,sorting,trailnans]=dispatch_options()
+            function [datax,vnames,dscrpt,trailnans]=dispatch_options()
                 
                 datax=[];
                 
                 vnames='';
                 
-                sorting=false;
+                dscrpt='';
                 
                 trailnans=false;
                 
@@ -363,17 +396,23 @@ classdef ts < gogetter
                     
                     if vlen>2
                         
-                        vnames=varargin{3};
+                        if ~isempty(varargin{3}),vnames=varargin{3};end
                         
                         if vlen>3
                             
-                            if ~islogical(varargin{4})
+                            v4=varargin{4};
+                            
+                            if ~isempty(v4)
                                 
-                                error('sorting (arg # 4) must be true or false')
+                                if ~(ischar(v4)||iscellstr(v4))
+                                    
+                                    error('dscrpt (arg # 4) must be a char or a cellstr')
+                                    
+                                end
+                                
+                                dscrpt=v4;
                                 
                             end
-                            
-                            sorting=varargin{4};
                             
                             if vlen>4
                                 
@@ -384,6 +423,13 @@ classdef ts < gogetter
                                 end
                                 
                                 trailnans=varargin{5};
+                                
+                                if vlen>5
+                                    
+                                    error('too many input arguments')
+                                    
+                                end
+                                
                                 
                             end
                             
@@ -563,6 +609,7 @@ classdef ts < gogetter
         varargout=aggregate(varargin)
         varargout=and(varargin)
         varargout=cat(varargin)
+        varargout=chowlin(varargin)
         varargout=decompose_series(varargin)
         varargout=drop(varargin)
         varargout=dust_up(varargin)

@@ -1,4 +1,4 @@
-function this=reset_data(this,newdata)
+function this=reset_data(this,newdata,newnames)
 % H1 line
 %
 % Syntax
@@ -21,8 +21,36 @@ function this=reset_data(this,newdata)
 %
 % See also:
 
+if nargin<3
+    
+    newnames=this.varnames;
+    
+end
+
+if ischar(newnames)
+    
+    newnames=cellstr(newnames);
+    
+end
+
+n=numel(newnames);
+
+if ~all(cellfun(@isempty,newnames,'uniformOutput',true)) && numel(unique(newnames))~=n
+    
+    error('some duplicated names')
+    
+end
+
+if size(newdata,2)~=n
+    
+    error('number of names does not match number of new variables')
+    
+end
+
 ts.check_size(newdata);
 
 this.data=newdata;
+
+this.varnames=newnames;
 
 end
