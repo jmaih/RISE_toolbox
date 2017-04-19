@@ -60,9 +60,9 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 
 check_inputs()
 
-fh=freq2freq(get(Xh0,'frequency'));
+fh=utils.time_series.freq2freq(get(Xh0,'frequency'));
 
-fl=freq2freq(get(y0,'frequency'));
+fl=utils.time_series.freq2freq(get(y0,'frequency'));
 
 s=fh/fl;
 
@@ -147,33 +147,5 @@ yh=reset_data(Xh0,res.y,'');
         end
         
     end
-
-end
-
-function k=freq2freq(freq)
-
-k=1;
-
-if isempty(freq),return,end
-
-switch freq
-    
-    case 'Q'
-        
-        k=4;
-        
-    case 'H'
-        
-        k=2;
-        
-    case 'M'
-        
-        k=12;
-        
-    case 'W'
-        
-        k=52;
-        
-end
 
 end
