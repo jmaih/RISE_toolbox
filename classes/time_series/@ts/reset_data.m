@@ -21,9 +21,13 @@ function this=reset_data(this,newdata,newnames)
 %
 % See also:
 
+nd=size(newdata,2);
+
+comments=repmat({''},1,nd);
+
 if nargin<3
     
-    newnames=this.varnames;
+    newnames=comments;
     
 end
 
@@ -52,5 +56,7 @@ ts.check_size(newdata);
 this.data=newdata;
 
 this.varnames=newnames;
+
+this.description=comments;
 
 end
