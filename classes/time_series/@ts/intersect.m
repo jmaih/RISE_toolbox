@@ -57,8 +57,8 @@ vname1=this1.varnames;
 
 vname2=this2.varnames;
 
-this1=ts(C,this1.data(I1,:,:),vname1,false,true);
+this1=ts(C,this1.data(I1,:,:),vname1);
 
-this2=ts(C,this2.data(I2,:,:),vname2,false,true);
+this2=ts(C,this2.data(I2,:,:),vname2);
 
 end
