@@ -529,6 +529,7 @@ classdef ts < gogetter
         varargout=index(varargin)
         varargout=interpolate(varargin)
         varargout=intersect(varargin)
+        varargout=ma_filter(varargin)
         varargout=moments(varargin)
         varargout=regress(varargin)
         varargout=rolling(varargin)
