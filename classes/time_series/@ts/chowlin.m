@@ -22,15 +22,15 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 % - **Xh0** [ts|struct] : high-frequency right-hand-side explanatory
 %       variables
 % - **aggreg_type** ['flow'|{'average'}|'index'|'last'|'first'] : type of
-%   aggregation: 
-%   - 'flow' (or 1) is the sum, 
-%   - 'average','index' (or 2) is the average, 
-%   - 'last' (or 3) is the last element, 
-%   - 'first' (or 4) is the first element, 
+%   aggregation:
+%   - 'flow' (or 1) is the sum,
+%   - 'average','index' (or 2) is the average,
+%   - 'last' (or 3) is the last element,
+%   - 'first' (or 4) is the first element,
 % - **estim_method** [{0}|1|2] : estimation method
-%   - 0 : Generalized/Weighted Least squares (with grid) 
-%   - 1 : Maximum Likelihood (with grid), 
-%   - 2 : Maximum Likelihood (without grid) using fmincon as optimizer 
+%   - 0 : Generalized/Weighted Least squares (with grid)
+%   - 1 : Maximum Likelihood (with grid),
+%   - 2 : Maximum Likelihood (without grid) using fmincon as optimizer
 % - **ngrid** [integer|{250}] : number of grid points
 %
 % Outputs
@@ -49,14 +49,14 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 % See also:
 % ---------
 %
-% REFERENCES: 
+% REFERENCES:
 % -----------
-% - Chow, G. and Lin, A.L. (1971) "Best linear unbiased 
-% distribution and extrapolation of economic time series by related 
+% - Chow, G. and Lin, A.L. (1971) "Best linear unbiased
+% distribution and extrapolation of economic time series by related
 % series", Review of Economic and Statistics, vol. 53, n. 4, p. 372-375.
 % - Bournay, J. y Laroque, G. (1979) "Reflexions sur la methode
 % d'elaboration  des comptes trimestriels", Annales de l'INSEE, n. 36, p.
-% 3-30. 
+% 3-30.
 
 check_inputs()
 
@@ -79,7 +79,7 @@ yh=reset_data(Xh0,res.y,'');
         if ~isa(y0,'ts')||get(y0,'NumberOfVariables')~=1
             
             error('first input must be a scalar ts object')
-        
+            
         end
         
         if ~isa(Xh0,'ts')
@@ -142,8 +142,8 @@ yh=reset_data(Xh0,res.y,'');
         
         if n>3
             
-        error('too many input arguments')
-        
+            error('too many input arguments')
+            
         end
         
     end
