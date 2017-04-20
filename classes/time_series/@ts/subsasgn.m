@@ -17,47 +17,58 @@ function obj=subsasgn(obj,s,b)% subsasgn
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
-
-switch s.type
+if numel(s)>1 
     
-    case '.'
+    if ~strcmp(s(1).type,'.')
+       
+        error('Unknown form of subsasgn')
         
-        % subs = character string
-        obj=builtin(mfilename,obj,s,b);
+    end
+    
+    obj.(s(1).subs)=builtin(mfilename,obj.(s(1).subs),s(2:end),b);
+    
+else
+    
+    switch s.type
         
-    case {'()','{}'}
-        
-        [date_numbers,datta,...
-            rows_dates,varloc,pages]=process_subs(obj,s.subs,mfilename);
-        %         date_numbers=date_numbers(rows_dates);
-        
-        if isvector(rows_dates)
+        case '.'
             
-            if isscalar(b)
+            % subs = character string
+            obj=builtin(mfilename,obj,s,b);
+            
+        case {'()','{}'}
+            
+            [date_numbers,datta,rows_dates,varloc,pages]=...
+                process_subs(obj,s.subs,mfilename);
+            
+            if isvector(rows_dates)
                 
-                datta(rows_dates,varloc,pages)=b;
+                if isscalar(b)
+                    
+                    datta(rows_dates,varloc,pages)=b;
+                    
+                else
+                    
+                    datta(rows_dates,varloc,pages)=b;
+                    
+                end
                 
             else
                 
-                datta(rows_dates,varloc,pages)=b;
+                datta(rows_dates)=b;
                 
             end
             
-        else
+            obj=ts(date_numbers(:),datta,obj.varnames,obj.description);
             
-            datta(rows_dates)=b;
+        otherwise
             
-        end
-        
-%         datta=datta(rows_dates,varloc,pages);
-        obj=ts(date_numbers(:),datta,obj.varnames,obj.description);
-        
-    otherwise
-        
-        error(['unexpected type "',s.type,'"'])
-        
+            error(['unexpected type "',s.type,'"'])
+            
+    end
+    
 end
 
 end
