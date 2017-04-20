@@ -531,6 +531,8 @@ classdef ts < gogetter
         varargout=intersect(varargin)
         varargout=ma_filter(varargin)
         varargout=moments(varargin)
+        varargout=npdecomp(varargin)
+        varargout=pdecomp(varargin)
         varargout=regress(varargin)
         varargout=rolling(varargin)
         varargout=spectrum(varargin)
@@ -646,6 +648,7 @@ classdef ts < gogetter
         varargout=set_locations(varargin)
         varargout=unary_operation(varargin)
         varargout=check_size(varargin)
+        varargout=decomp_format_output(varargin)
     end
     
     methods(Access=private)
