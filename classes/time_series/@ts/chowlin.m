@@ -60,6 +60,10 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 
 check_inputs()
 
+dnl=y0.date_numbers;
+
+dnh=Xh0.date_numbers;
+
 fh=utils.time_series.freq2freq(get(Xh0,'frequency'));
 
 fl=utils.time_series.freq2freq(get(y0,'frequency'));
@@ -68,11 +72,87 @@ s=fh/fl;
 
 y=double(y0);
 
+[startl,starth]=find_start();
+
+if startl~=1
+    
+    dnl=y0.date_numbers;
+    
+    start_date=parser.any2str(serial2date(dnl(startl)));
+    
+    error(['Start date for low frequency does not match the high-frequency ',...
+        'information. You may want to discard the first ',int2str(startl-1),...
+        ' observations in the low-frequency database or more specifically ',...
+        'start the low-frequency database in ',start_date])
+    
+end
+
 Xh=double(Xh0);
+
+% Low frequencies without corresponding high frequency discarded
+%----------------------------------------------------------------
+Xh(1:starth-1,:)=[];
+
+if any(isnan(y0(:)))||any(isnan(Xh(:)))
+    
+    error('nan in the data')
+    
+end
 
 res=utils.time_series.mychowlin(y,Xh,s,varargin{:});
 
 yh=reset_data(Xh0,res.y,'');
+
+    function [startl,starth]=find_start()
+        
+        [decl,~]=decompose_date(y0.date_numbers);
+        
+        [dech,~]=decompose_date(Xh0.date_numbers);
+        
+        year_l=[decl.year];
+        
+        Period_l=[decl.period]*s;
+        
+        year_h=[dech.year];
+        
+        Period_h=[dech.period];
+        
+        if (year_l(end)>year_h(end))||...
+                (year_l(end)==year_h(end) && ...
+                Period_l(end)>Period_h(end))
+            
+            end_datel=parser.any2str(serial2date(dnl(end)));
+    
+            end_dateh=parser.any2str(serial2date(dnh(end)));
+    
+            error(['Low-frequency database cannot end (',end_datel,')',...
+                ' after the high-frequency database (',end_dateh,')'])
+            
+        end
+            
+        
+        feasible=false;
+        
+        startl=0;
+        
+        while ~feasible
+            
+            startl=startl+1;
+            
+            ystart=find(year_h==year_l(startl) & Period_h==Period_l(startl),1);
+            
+            if ~isempty(ystart)
+                
+                starth=find(year_h==year_h(ystart) & ...
+                    Period_h==Period_h(ystart)-s+1, 1);
+                
+                feasible=~isempty(starth);
+            
+            end
+            
+        end
+        
+    end
 
     function check_inputs()
         

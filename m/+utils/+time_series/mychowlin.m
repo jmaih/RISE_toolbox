@@ -98,12 +98,12 @@ C = aggreg_matrix();
 
 % -----------------------------------------------------------
 % Expanding the aggregation matrix to perform
-% extrapolation if needed.
+% extrapolation if needed
 
-pred=n-s*N; % Number of required extrapolations
+pred=max(0,n-s*N); % Number of required extrapolations
 
-C=[C zeros(N,pred)];
-   
+C=[C,zeros(N,pred)];
+
 % -----------------------------------------------------------
 % Temporal aggregation of the indicators
 
