@@ -293,7 +293,15 @@ classdef ts < gogetter
                     
                     if numel(dscrpt)~=nvars
                         
+                        if numel(dscrpt)==1
+                            
+                            out(:) = dscrpt;
+                            
+                        else
+                        
                         error('number of descriptions does not match # variables')
+                        
+                        end
                         
                     end
                     
@@ -549,6 +557,7 @@ classdef ts < gogetter
         varargout=median(varargin)
         varargout=mode(varargin)
         varargout=prctile(varargin)
+        varargout=rmse(varargin)
         varargout=skewness(varargin)
         varargout=std(varargin)
         varargout=sum(varargin)

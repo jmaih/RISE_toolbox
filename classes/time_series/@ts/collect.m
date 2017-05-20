@@ -143,7 +143,21 @@ while ~isempty(varargin)
             
             celldata{offset}=db_i.(fields{jj});
             
-            celldescription=[celldescription,db_i.(fields{jj}).description];
+            newdescrip=db_i.(fields{jj}).description;
+            
+            if isempty(newdescrip)
+                
+                newdescrip={''};
+                
+            end
+            
+            if ischar(newdescrip)
+                
+                newdescrip=cellstr(newdescrip);
+                
+            end
+            
+            celldescription=[celldescription,newdescrip(:).'];
             
         end
         
