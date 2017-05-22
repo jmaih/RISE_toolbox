@@ -292,6 +292,7 @@ myirfs=format_irf_output(myirfs);
             'impulse',1*irf_shock_sign
             'simul_shock_uncertainty',irf_shock_uncertainty
             'girf',girf
+            'girf_regime_uncertainty',obj.options.irf_girf_regime_uncertainty
             };
         
         for irow=1:size(further_options,1)
@@ -577,6 +578,7 @@ d={'irf_shock_list','',@(x)ischar(x)||iscellstr(x),'irf_shock_list must be char 
     'irf_regime_specific',true,@(x)islogical(x),'irf_regime_specific must be a logical'
     'irf_use_historical_data',false,@(x)islogical(x),'irf_use_historical_data must be a logical'
     'irf_to_time_series',true,@(x)islogical(x),'irf_to_time_series must be a logical'
+    'irf_girf_regime_uncertainty',true,@(x)islogical(x),'irf_girf_regime_uncertainty must be a logical'
     };
 
 end
