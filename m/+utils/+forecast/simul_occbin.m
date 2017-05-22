@@ -46,18 +46,19 @@ c=options.occbin.c;
 
 ref_state=options.solve_occbin;
 
-other_state=setdiff(1:h,ref_state);
+map_regime=double.empty;
 
-if numel(other_state)>1
+if iscell(ref_state)
     
-    error('occbin can only handle one constraint')
+    map_regime=ref_state{2};
+    
+    ref_state=ref_state{1};
     
 end
 
 nstate_vars=numel(state_vars_location);
 
 endo_nbr=size(y0.y,1);
-% exo_nbr=size(B{1},2);
 
 span=options.nsteps+options.burn;
 
@@ -79,14 +80,12 @@ retcode=0;
 
 y0.econd.data=shocks(:,:,ones(3,1));
 
-bigt=0; Ht0=[]; Gt0=[]; kt0=[];
-
 % initialize with nans in order to see if/when simulation breaks down
 sim1=nan(endo_nbr,span);
 
 regimes=ref_state*ones(span,1);
 
-reference=true;
+next_state=ref_state;
 
 Tfunc_ref=@(t)T{ref_state};
 
@@ -108,10 +107,6 @@ do_one_occbin_path()
         
         y00=y0.y;
         
-        % accelerate things by preparing the longest possible stretch
-        %-------------------------------------------------------------
-        [Ht0,Gt0,kt0]=resolve_occbin(span-1);
-        
         t=0;
         
         while t<span
@@ -126,15 +121,15 @@ do_one_occbin_path()
             
             t=t+1;
             
-            if reference
+            if next_state==ref_state
                 
                 regimes(t)=ref_state;
                 
                 % 1-step forecast
-                [sim1(:,t),viol_last]=forecaster(y00,Tfunc_ref,1,t);
+                [sim1(:,t),next_state]=forecaster(y00,Tfunc_ref,ref_state,t);
                 
-                if viol_last
-                    
+                if next_state~=ref_state
+                    % last step failed
                     t=t-1;
                     
                 end
@@ -149,19 +144,23 @@ do_one_occbin_path()
                 
                 place_holder=[];
                 
+                the_path=zeros(1,0);
+                                
                 while keep_going
                     
                     t=t+1;
                     
-                    regimes(t)=other_state;
+                    the_path(end+1)=next_state; %#ok<AGROW>
                     
                     bigt=t-t0+1;
                     
-                    [Ht,Gt,kt]=load_solutions(bigt);
+                    regimes(t:t+bigt-1)=the_path;
+                    
+                    [Ht,Gt,kt]=load_solutions(the_path);
                     
                     Tfunc=@(t)[Ht(:,state_vars_location,t),kt(:,t),Gt(:,:,t)];
                     % bigt-step forecast
-                    [sim1(:,t0:t),viol_last]=forecaster(y00,Tfunc,bigt,t);
+                    [sim1(:,t0:t),next_state]=forecaster(y00,Tfunc,the_path,t);
                     
                     if isempty(place_holder)
                         
@@ -179,17 +178,28 @@ do_one_occbin_path()
                         
                     end
                     
-                    keep_going=t+bigt<span && ~viol_last;
+                    keep_going=t+bigt<span && (next_state~=ref_state);
                     
-                end
-                
-                if viol_last
-                    
-                    t=t-1;
-                    
-                    if t>=t0
+                    if keep_going
                         
-                        sim1(:,t0:t)=place_holder{1};
+                        if next_state~=the_path(end)
+                            % last step failed
+                            t=t-1;
+                            
+                            % shorten the path since the step is to be redone
+                            the_path(end)=[];
+                            
+                        end
+                        
+                    elseif next_state==ref_state
+                        % last step failed
+                        t=t-1;
+                        
+                        if t>=t0
+                            
+                            sim1(:,t0:t)=place_holder{1}(:,1:t-t0+1);
+                            
+                        end
                         
                     end
                     
@@ -199,22 +209,16 @@ do_one_occbin_path()
             
             y00=sim1(:,max(1,t));
             
-            if viol_last
-                
-                reference=~reference;
-                
-            end
-            
         end
         
     end
 
-    function [sim1,is_viol]=forecaster(y00,Tfunc,nsteps,t)
+    function [sim1,r,is_viol]=forecaster(y00,Tfunc,the_path,t)
+        
+        nsteps=numel(the_path);
         
         sim1=y00(:,ones(1,nsteps));
-        
-        is_viol=false;
-        
+                
         for istep=1:nsteps
             
             y00_s=y00-ss{1}; % steady state is the same???
@@ -231,19 +235,23 @@ do_one_occbin_path()
                 
             end
             
-            if check_viol(y00)
-                
-                is_viol=true;
-                
-                break
-                
-            end
+            r0=the_path(istep);
+            
+            [is_viol,r]=check_viol(y00,r0);
+            
+%             if is_viol && istep<nsteps
+%                 
+%                 error('violation before end or road')
+%                 
+%             end
             
         end
         
-        function v=check_viol(x)
+        function [v,r]=check_viol(x,r0)
             
             test=sep_compl(x);
+            
+            disp(test)
             
             if numel(test)==1
                 
@@ -251,35 +259,39 @@ do_one_occbin_path()
                 
             end
             
-            if reference
+            if isempty(map_regime)
                 
-                test=test(1);
+                if numel(test)~=2
+                    
+                    error('A function generalizing occbin is needed')
+                    
+                end
+                
+                v=test(r0)<0;
+                
+                if v
+                    
+                    r=setdiff(1:h,r0); 
+                
+                else
+                    
+                    r=r0; 
+                
+                end
                 
             else
                 
-                test=test(2);
-                
+                [v,r]=map_regime(test,r0);
+                                
             end
-            
-            v=test<0;
             
         end
         
     end
 
-    function [Ht,Gt,kt]=load_solutions(bigt)
-                                
-        stretch=span-bigt:span-1;
+    function [Ht,Gt,kt]=load_solutions(the_path)
         
-        Ht=Ht0(:,:,stretch);
-        
-        Gt=Gt0(:,:,stretch);
-        
-        kt=kt0(:,stretch);
-        
-    end
-
-    function [Ht,Gt,kt]=resolve_occbin(bigt)
+        bigt=numel(the_path);
         
         wingspan=bigt+1;
         
@@ -291,23 +303,25 @@ do_one_occbin_path()
         
         for t=bigt:-1:1
             
+            st=the_path(t);
+            
             if use_pinv
                 
-                AHAi=-pinv(Aplus(:,:,other_state)*Ht(:,:,t+1)+...
-                    A0(:,:,other_state));
+                AHAi=-pinv(Aplus(:,:,st)*Ht(:,:,t+1)+...
+                    A0(:,:,st));
                 
             else
                 
-                AHAi=-(Aplus(:,:,other_state)*Ht(:,:,t+1)+...
-                    A0(:,:,other_state))\eye(endo_nbr);
+                AHAi=-(Aplus(:,:,st)*Ht(:,:,t+1)+...
+                    A0(:,:,st))\eye(endo_nbr);
                 
             end
             
-            Ht(:,:,t)=AHAi*Aminus(:,:,other_state);
+            Ht(:,:,t)=AHAi*Aminus(:,:,st);
             
-            Gt(:,:,t)=AHAi*B{other_state};
+            Gt(:,:,t)=AHAi*B{st};
             
-            kt(:,t)=AHAi*(c(:,other_state)+Aplus(:,:,other_state)*kt(:,t+1));
+            kt(:,t)=AHAi*(c(:,st)+Aplus(:,:,st)*kt(:,t+1));
             
         end
             
