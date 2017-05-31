@@ -85,7 +85,7 @@ if nobj>1
         
     end
     
-    ts_rmse=utils.time_series.concatenate_series_from_different_models(ts_rmse);
+    ts_rmse=ts.concatenator(ts_rmse{:});
     
     % I probably should not do it this way since the unobservable variables
     % will never be the same.

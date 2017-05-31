@@ -349,7 +349,7 @@ else
         
     end
     
-    sim_data=utils.time_series.concatenate_series_from_different_models(sim_data);
+    sim_data=ts.concatenator(sim_data{:});
     
 end
 

@@ -640,6 +640,7 @@ classdef ts < gogetter
     end
     
     methods(Static)
+        varargout=concatenator(varargin)
         varargout=collect(varargin)
         varargout=dummy(varargin)
         varargout=fold(varargin)

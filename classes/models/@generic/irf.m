@@ -519,46 +519,8 @@ else
         
     end
     
-    shockList=fieldnames(dsge_irfs{1});
-    
-    for mm=2:nobj
+    dsge_irfs=ts.concatenator(dsge_irfs{:});
         
-        shockList2=fieldnames(dsge_irfs{mm});
-        
-        oldShockList=shockList;
-        
-        shockList=intersect(shockList,shockList2);
-        
-        discarded=union(shockList2,oldShockList)-shockList;
-        
-        if ~isempty(discarded)
-            
-            disp('The following shocks do not belong to the intersection')
-            
-            disp(discarded(:).')
-            
-        end
-        
-    end
-        
-    tmp=struct();
-    
-    shock_models=cell(1,nobj);
-    
-    for ishock=1:numel(shockList)
-        
-        for mm=1:nobj
-            
-            shock_models{mm}=dsge_irfs{mm}.(shockList{ishock});
-            
-        end
-        
-        tmp.(shockList{ishock})=utils.time_series.concatenate_series_from_different_models(shock_models);
-        
-    end
-    % aggregate
-    dsge_irfs=tmp;
-    
 end
 
 end
