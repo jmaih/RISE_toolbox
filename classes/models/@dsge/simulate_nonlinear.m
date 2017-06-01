@@ -358,7 +358,7 @@ sims=pages2struct(sims);
             
             Y=build_lead_current_lag_matrix(BIGX);
             
-            d=utils.code.evaluate_functions(dynamic_model,Y,...
+            d=residuals(dynamic_model,Y,...
                 x(:,1:nsyst),ss,param,def,s0,s1);
             
             C=cell(nsyst,1);
@@ -451,7 +451,7 @@ sims=pages2struct(sims);
                         
             Y=build_lead_current_lag_matrix(BIGX);
             
-            resid=utils.code.evaluate_functions(dynamic_model,Y,...
+            resid=residuals(dynamic_model,Y,...
                 x(:,1:nsyst),ss,param,def,s0,s1);
             
             if is_linear
@@ -503,7 +503,7 @@ sims=pages2struct(sims);
         
         iter=0;
         
-        while s>0 && ~utils.error.valid(update_residuals(s));
+        while s>0 && ~utils.error.valid(update_residuals(s))
             
             s=0.9*s;
             
@@ -532,7 +532,7 @@ sims=pages2struct(sims);
             
             Y1=build_lead_current_lag_matrix(BIGX1);
             
-            resid1=utils.code.evaluate_functions(dynamic_model,Y1,...
+            resid1=residuals(dynamic_model,Y1,...
                 x(:,1:nsyst),ss,param,def,s0,s1);
             
         end
@@ -581,7 +581,7 @@ sims=pages2struct(sims);
         
         Y=build_lead_current_lag_matrix(X);
         
-        resid=utils.code.evaluate_functions(dynamic_model,Y,x(:,1:nsyst),...
+        resid=residuals(dynamic_model,Y,x(:,1:nsyst),...
             ss,param,def,s0,s1);
         
         resid=resid(:);
@@ -814,6 +814,16 @@ sims=pages2struct(sims);
             end
             
         end
+        
+    end
+
+    function resid=residuals(varargin)
+        % due to a change in behavior in evaluate_functions, a special
+        % reshaping is needed here. If the behavior is undone, changing
+        % this will be necessary as well.
+        resid=utils.code.evaluate_functions(varargin{:});
+        
+        resid=reshape(resid,[],endo_nbr).';
         
     end
 
