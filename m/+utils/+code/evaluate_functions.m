@@ -45,7 +45,8 @@ if iscell(xcell)
     
     varargout{1}=main_engine();
     
-    varargout{1}=sparse(vec(cell2mat(varargout{1}.'))); % <-- varargout{1}=sparse(cell2mat(varargout{1}));
+    varargout{1}=sparse(cell2mat(varargout{1}));
+    % varargout{1}=sparse(vec(cell2mat(varargout{1}.'))); % <-- 
 
 elseif isstruct(xcell)
     

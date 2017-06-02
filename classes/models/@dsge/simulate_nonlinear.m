@@ -638,14 +638,14 @@ sims=pages2struct(sims);
                 offset_cols=offset_cols+endo_nbr;
                 
             end
-                        
-            if isyst==1
                 
-                J(1:endo_nbr,offset_cols+a0_ap_1)=[A0,Aplus];
-                
-            elseif isyst==nsyst
+            if isyst==nsyst
                 
                 J(offset_rows+(1:endo_nbr),offset_cols+am_a0_end)=[Aminus,A0];
+                        
+            elseif isyst==1
+                
+                J(1:endo_nbr,offset_cols+a0_ap_1)=[A0,Aplus];
                 
             else
                 
@@ -823,7 +823,7 @@ sims=pages2struct(sims);
         % this will be necessary as well.
         resid=utils.code.evaluate_functions(varargin{:});
         
-        resid=reshape(resid,[],endo_nbr).';
+% % % % %         resid=reshape(resid,[],endo_nbr).';
         
     end
 
