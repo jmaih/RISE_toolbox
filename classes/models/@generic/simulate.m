@@ -169,7 +169,7 @@ end
 
 % use the steady state with possibly loglinear variables
 
-[y,states,retcode,~,myshocks]=utils.forecast.multi_step(y0(1),...
+[y,states,retcode,Qt,myshocks]=utils.forecast.multi_step(y0(1),...
     Initcond.log_var_steady_state,Initcond.T,...
     Initcond.state_vars_location,Initcond);
 
@@ -182,7 +182,7 @@ end
 % add initial conditions: (only the actual data on the first page)
 % ONLY IF THERE WAS NO BURN-IN
 %---------------------------------------------------------------
-[nr,nc,npy]=size(y);
+npy=size(y,3);
 
 if Initcond.burn==0
     % we include history
@@ -196,9 +196,10 @@ else
     
 end
 
+smply=size(y,2);
+
 % recompose the output if we have a dsge-var
 %-------------------------------------------
-smply=size(y,2);
 
 if Initcond.do_dsge_var
     
@@ -240,25 +241,38 @@ smpl_states=size(states,1);
 
 [states_,markov_chains]=regimes2states(states);
 
+nchains=numel(markov_chains);
+
+[all_Q,all_names_i_j,nshifts]=set_transition_probabilities();
+
 [exo_nbr,smplx,npx]=size(myshocks);
 
 myshocks=cat(2,zeros(exo_nbr,y0cols,npx),myshocks);
 
 smplx=smplx+y0cols;
 
-vnames=[obj.endogenous.name,obj.exogenous.name,'regime',markov_chains];
+vnames=[obj.endogenous.name,obj.exogenous.name,'regime',markov_chains,all_names_i_j];
 
 endo_nbr=obj.endogenous.number;
 
 smpl=max(smplx,smply);
 
-yy=nan(smpl,endo_nbr+exo_nbr+1+numel(markov_chains),max(npx,npy));
+npxy=max(npx,npy);
+
+% expand Q as necessary
+all_Q=[nan(nshifts,y0cols),all_Q];
+
+all_Q=all_Q(:,:,ones(1,npxy));
+
+yy=nan(smpl,endo_nbr+exo_nbr+1+nchains+nshifts,npxy);
 
 yy(1:smply,1:endo_nbr,1:npy)=permute(y(1:endo_nbr,:,:),[2,1,3]);
 
 yy(1:smplx,endo_nbr+(1:exo_nbr),1:npx)=permute(myshocks,[2,1,3]);
 
-yy(y0cols+1:smply,endo_nbr+exo_nbr+1:end,1:npy)=cat(2,states,states_);
+yy(y0cols+1:smply,endo_nbr+exo_nbr+(1:nchains+1),1:npy)=cat(2,states,states_);
+
+yy(y0cols+1:smply,endo_nbr+exo_nbr+nchains+1+(1:nshifts),:)=permute(all_Q,[2,1,3]);
 
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
@@ -279,6 +293,57 @@ else
         }
         };
 end
+
+    function [all_Q,all_names_i_j,nshifts]=set_transition_probabilities()
+        nregs=obj.markov_chains.regimes_number;
+        spanq=size(Qt,3);
+        bigq=nan(nregs^2,spanq);
+        regimes_i_j=cell(1,nregs^2);
+        iter=0;
+        for i_reg=1:nregs
+            for j_reg=1:nregs
+                iter=iter+1;
+                bigq(iter,:)=squeeze(Qt(i_reg,j_reg,:));
+                regimes_i_j{iter}=sprintf('regime_%0.0f_%0.0f',i_reg,j_reg);
+            end
+        end
+        
+        regimes=obj.markov_chains.regimes;
+        states_i_j=cell(1,nchains);
+        smallq=cell(nchains,1);
+        for ic=1:nchains
+            cn=markov_chains{ic};
+            loc=strcmp(cn,regimes(1,:));
+            states_ic=cell2mat(regimes(2:end,loc));
+            nstates=numel(unique(states_ic));
+            states_i_j_k=cell(1,nstates^2);
+            smallq_k=zeros(nstates^2,spanq);
+            iter=0;
+            for s0=1:nstates
+                for s1=1:nstates
+                    iter=iter+1;
+                    states_i_j_k{iter}=sprintf('%s_%0.0f_%0.0f',cn,s0,s1);
+                    puskas0=find(states_ic==s0);
+                    puskas1=find(states_ic==s1);
+                    for ii=1:numel(puskas0)
+                        this_regime=sprintf('regime_%0.0f_%0.0f',...
+                            puskas0(ii),puskas1(ii));
+                        bingo=strcmp(this_regime,regimes_i_j);
+                    smallq_k(iter,:)=smallq_k(iter,:)+bigq(bingo,:);
+                    end
+                end
+            end
+            smallq{ic}=smallq_k;
+            states_i_j{ic}=states_i_j_k;
+        end
+        states_i_j=[states_i_j{:}];
+        smallq=cell2mat(smallq); 
+        % merge them all
+        %----------------
+        all_Q=[bigq;smallq];
+        all_names_i_j=[regimes_i_j,states_i_j];
+        nshifts=numel(all_names_i_j);
+    end
 
     function [states,markov_chains]=regimes2states(regimes_history)
         
