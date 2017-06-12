@@ -361,6 +361,12 @@ end
                     
                     sset=eval_action(definitions,sset);
                     
+                    if isa(sset,'double')
+                        
+                        sset=num2cell(sset);
+                        
+                    end
+                    
                     % the set is not necessarily a cellstr and so we have
                     % to apply some checking/correction
                     
