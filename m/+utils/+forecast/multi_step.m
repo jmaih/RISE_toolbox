@@ -539,6 +539,10 @@ regimes=regimes(options.burn+1:end);
             [sims,regimes,retcode]=utils.forecast.simul_occbin(y0,T,ss,state_vars_location,...
                 options,shocks);
             
+            Q=Qfunc(y0.y);
+            
+            Qt=Q(:,:,ones(1,numel(regimes)-options.burn));
+            
             sims=sims(:,options.burn+1:end);
         
         end

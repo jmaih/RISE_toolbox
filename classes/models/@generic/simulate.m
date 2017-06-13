@@ -260,7 +260,7 @@ smpl=max(smplx,smply);
 npxy=max(npx,npy);
 
 % expand Q as necessary
-all_Q=[nan(nshifts,y0cols),all_Q];
+% % % all_Q=[nan(nshifts,y0cols),all_Q];
 
 all_Q=all_Q(:,:,ones(1,npxy));
 
@@ -272,7 +272,7 @@ yy(1:smplx,endo_nbr+(1:exo_nbr),1:npx)=permute(myshocks,[2,1,3]);
 
 yy(y0cols+1:smply,endo_nbr+exo_nbr+(1:nchains+1),1:npy)=cat(2,states,states_);
 
-yy(y0cols+1:smply,endo_nbr+exo_nbr+nchains+1+(1:nshifts),:)=permute(all_Q,[2,1,3]);
+yy(y0cols+1:end,endo_nbr+exo_nbr+nchains+1+(1:nshifts),:)=permute(all_Q,[2,1,3]);
 
 if obj.options.simul_to_time_series
     % store the simulations in a database: use the date for last observation in
