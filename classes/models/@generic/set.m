@@ -367,7 +367,7 @@ end
             
             if ~forced
                 
-                check_property(obj,propname,propval)
+                [~,obj]=check_property(obj,propname,propval);
                 
             end
             
