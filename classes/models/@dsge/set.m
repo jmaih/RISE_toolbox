@@ -270,6 +270,8 @@ end
         
         end
         
+        [~,this]=check_property(this,'solve_shock_horizon',value);
+        
         function process_regime_horizon(vin,shockpos)
             
             if isa(vin,'double') && numel(vin)==1
