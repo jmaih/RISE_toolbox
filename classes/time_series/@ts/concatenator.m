@@ -50,7 +50,7 @@ for ii=1:numel(fnames)
         
     else
         
-        myirfs.(pointer)=concatenator(newbatch{:});
+        myirfs.(pointer)=ts.concatenator(newbatch{:});
         
     end
     
