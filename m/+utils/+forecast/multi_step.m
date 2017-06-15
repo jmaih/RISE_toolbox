@@ -384,7 +384,7 @@ regimes=regimes(options.burn+1:end);
                     
                     if isempty(y1)
                         
-                        error('I could not find a feasible path')
+                        retcode=701; % error('I could not find a feasible path')
                         
                     end
                     
