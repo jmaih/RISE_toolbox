@@ -151,7 +151,11 @@ end
 % beyond the first order.
 if retcode
     
-    error('model cannot be solved')
+    db=[];
+    
+    states=[];
+    
+    return
     
 end
 
