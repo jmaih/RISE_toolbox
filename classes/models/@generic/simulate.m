@@ -149,11 +149,10 @@ end
 % perturbation of order 1 no matter what order the user chooses.
 % This is because we have not solved the optimal policy problem
 % beyond the first order.
+    
+db=[]; states=[];
+    
 if retcode
-    
-    db=[];
-    
-    states=[];
     
     return
     
@@ -179,7 +178,7 @@ end
 
 if retcode
     
-    error(decipher(retcode))
+    return %error(decipher(retcode))
     
 end
 
