@@ -478,6 +478,8 @@ regimes=regimes(options.burn+1:end);
                         
                         warning(sprintf(['forced to apply solution %0.0f ',...
                             'but cannot find a feasible path',regimes(t)])) 
+                        
+                        retcode=703; 
                                             
                     end
                     
@@ -581,6 +583,7 @@ regimes=regimes(options.burn+1:end);
             end
         end
     end
+
 end
 
 function c=recreate_conditions(c,hard)
