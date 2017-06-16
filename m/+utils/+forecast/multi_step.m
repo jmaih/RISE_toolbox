@@ -476,8 +476,9 @@ regimes=regimes(options.burn+1:end);
                     
                     if ~isnan(regimes(t))
                         
-                        error(sprintf('forced to apply solution %0.0f but cannot find a feasible path',regimes(t))) %#ok<SPERR>
-                    
+                        warning(sprintf(['forced to apply solution %0.0f ',...
+                            'but cannot find a feasible path',regimes(t)])) 
+                                            
                     end
                     
                     ok = false;
@@ -524,8 +525,8 @@ regimes=regimes(options.burn+1:end);
                 
                 if any(isnan(PAI00))
                     
-                    error('I could not find a feasible path')
-                
+                    retcode=703;
+                    
                 end
                 
                 cp=cumsum(PAI00);
