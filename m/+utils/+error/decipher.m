@@ -109,6 +109,8 @@ switch code
         msg='forecast: constraint violation';
     case 702
         msg='rank deficiency in null and column spaces';
+    case 703
+        msg='Simulation: No feasible path';
     otherwise
         error([mfilename,':: Unknown error code'])
 end
