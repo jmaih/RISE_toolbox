@@ -386,6 +386,8 @@ regimes=regimes(options.burn+1:end);
                         
                         retcode=701; % error('I could not find a feasible path')
                         
+                        return
+                        
                     end
                     
                     if isnan(regimes(t))
