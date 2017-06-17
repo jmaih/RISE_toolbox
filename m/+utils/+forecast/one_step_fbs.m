@@ -29,7 +29,6 @@ n=nargin;
 
 myzero=-sqrt(eps);
 
-
 y1k=y0(:,ones(1,kplus1+1));
 
 if n==7

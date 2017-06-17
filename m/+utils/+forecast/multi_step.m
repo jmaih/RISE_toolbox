@@ -167,26 +167,37 @@ end
 
 regimes=regimes(options.burn+1:end);
 
-
-
     function nonlinear_conditional_forecasting_tools()
         % here we do not substract the steady state as we do in the linear
         % case
         %------------------------------------------------------------------
         EndogenousConditions=recreate_conditions(y_conditions);
+        
         ct=EndogenousConditions{1};
+        
         horizon=options.k_future+1;
+        
 %         nap=horizon;
         shocks_=shocks;
+        
         ncols_shocks=size(shocks_,2);
+        
         ncols_ct=size(ct,2);
+        
         if strcmpi(forecast_conditional_hypothesis,'nas')
+            
             shocks_=shocks_(:,1:horizon);
+            
             ct=ct(:,1:min(ncols_ct,horizon));
+            
             ncols_shocks=size(shocks_,2);
+            
             ncols_ct=size(ct,2);
+            
         end
+        
         needed_shocks=options.nsteps+options.k_future;
+        
         missing_shocks=max(0,needed_shocks-ncols_shocks);%<--missing_shocks=max(0,ncsp-ncols_shocks);
         % set shocks beyond the shocks availability to zero.
         myshocks=[shocks_,zeros(nx,missing_shocks)];
@@ -203,6 +214,7 @@ regimes=regimes(options.burn+1:end);
         % trim the conditional information up to the number of steps
         %-----------------------------------------------------------
         endo_horizon=min(ncols_ct,options.nsteps);
+        
         ct=ct(:,1:endo_horizon);
         
         % the non-nan elements are the targets to hit
@@ -226,19 +238,28 @@ regimes=regimes(options.burn+1:end);
         condition_on_shocks_only(myshocks);
         
         function crit=model_distance(ex0)
+            
             ex=myshocks;
+            
             ex(estim_shocks)=ex0;
+            
             condition_on_shocks_only(ex);
+            
             yf=sims(endo_restricted_rows,:);
+            
             crit=yf(targets)-ct(targets);
+            
             bad=isinf(crit);
+            
             crit(bad)=penalty*sign(crit(bad));
+            
             bad=isnan(crit);
+            
             crit(bad)=penalty;
+            
         end
+        
     end
-
-
 
     function standard_conditional_forecasting_tools()
         
@@ -291,8 +312,6 @@ regimes=regimes(options.burn+1:end);
         
     end
 
-
-
     function shocks=condition_on_shocks_only(shocks)
         
         if isfield(options,'occbin') && ~isempty(options.occbin)
@@ -337,9 +356,9 @@ regimes=regimes(options.burn+1:end);
                 
                 if ~retcode
                     
-                    rt=regimes(t);
+                    smallrt=regimes(t);
                     
-                    if isnan(rt)
+                    if isnan(smallrt)
                         % the state is not known
                         if t==1
                             % draw from initial distribution
@@ -373,7 +392,7 @@ regimes=regimes(options.burn+1:end);
                     
                     iter=0;
                     
-                    while isempty(y1) && iter < h
+                    while (isempty(y1) && iter < h) && ~retcode
                         % draw state and compute forecast
                         %--------------------------------
                         one_step();
@@ -384,7 +403,11 @@ regimes=regimes(options.burn+1:end);
                     
                     if isempty(y1)
                         
-                        retcode=703; 
+                        retcode=703;
+                        
+                    end
+                    
+                    if retcode
                         
                         return
                         
@@ -392,7 +415,7 @@ regimes=regimes(options.burn+1:end);
                     
                     if isnan(regimes(t))
                         
-                        regimes(t)=rt;
+                        regimes(t)=smallrt;
                         
                     end
                     
@@ -437,7 +460,7 @@ regimes=regimes(options.burn+1:end);
                 
                 ysry=[ysr.y];
                 
-                ok=switch_rule{1}(ysry(inv_order_var,:),rt,...
+                ok=switch_rule{1}(ysry(inv_order_var,:),smallrt,...
                     regimes(1:t-1),...
                     sims(inv_order_var,1:t-1),switch_rule{2:end});
                 
@@ -449,26 +472,34 @@ regimes=regimes(options.burn+1:end);
             
             cp=rebuild_cp();
             
-            if isnan(rt)
-                
-                lucky=find(cp>rand,1,'first')-1;
-                
-                rt=state_list(lucky);
-                
-            end
-            
-            if ~isempty(switch_rule)
-                
-                y1=ysr(rt);
+            if retcode
                 
                 return
                 
             end
             
-            % use the solution prescribed by simul_anticipate_zero
-            y1=utils.forecast.one_step_fbs(Tstar(:,rt),y00,ss{rt},...
+            if isnan(smallrt)
+                
+                lucky=find(cp>rand,1,'first')-1;
+                
+                smallrt=state_list(lucky);
+                
+            end
+            
+            if ~isempty(switch_rule)
+                
+                y1=ysr(smallrt);
+                
+                return
+                
+            end
+            
+            myorder={Tstar(:,smallrt),y00,ss{smallrt},...
                 state_vars_location,options.simul_sig,shocks_t,...
-                options.simul_order);
+                options.simul_order};
+            
+            % use the solution prescribed by simul_anticipate_zero
+            y1=utils.forecast.one_step_fbs(myorder{:});
                 
             if ~isempty(options.complementarity) && ~options.complementarity(y1.y)
                 
@@ -488,7 +519,7 @@ regimes=regimes(options.burn+1:end);
                 else
                     % use the normal solution
                     %-------------------------
-                    [y1,~,retcode,shocks_t1]=utils.forecast.one_step_fbs(T(:,rt),y00,ss{rt},state_vars_location,...
+                    [y1,~,retcode,shocks_t1]=utils.forecast.one_step_fbs(T(:,smallrt),y00,ss{smallrt},state_vars_location,...
                         options.simul_sig,shocks_t,options.simul_order,...
                         options.sep_compl,cond_shocks_id);
                     
@@ -511,9 +542,9 @@ regimes=regimes(options.burn+1:end);
             
             if ~ok
                 
-                state_list(state_list==rt)=[];
+                state_list(state_list==smallrt)=[];
                 
-                rt=nan;
+                smallrt=nan;
                 
                 y1=[];
                 
@@ -554,56 +585,92 @@ regimes=regimes(options.burn+1:end);
         
     end
 
-
-
     function NotAnt_T=no_anticipation_solution()
         
         NotAnt_T=T;
+        
         if options.k_future==0
+            
             return
+            
         end
                 
         nz=size(NotAnt_T{1,1},2);
+        
         zproto=false(1,nz);
+        
         offset=nsv+1+nx;
+        
         bad=1:nx;
+        
         for iplus=1:options.k_future
+            
             bad_locs=offset+bad;
+            
             zproto(bad_locs)=true;
+            
             offset=offset+nx;
+            
         end
+        
         zkz=zproto;
         
         for io=1:solve_order
+            
             for ireg_=1:h
+                
                 NotAnt_T{io,ireg_}(:,zkz)=0;
+                
             end
+            
             if io<solve_order
+                
                 zkz=logical(kron(zkz,zproto));
+                
             end
+            
         end
+        
     end
 
 end
 
 function c=recreate_conditions(c,hard)
+
 if nargin<2
+    
     hard=true;
+    
 end
+
 % remove the possibly singleton dimension
 c=c(:,:);
+
 % keep only the good rows
 good=any(~isnan(c),2);
+
 rest_id=find(good);
+
 c=c(good,:);% <---c=permute(c(good,:),[2,1]);
+
 if hard
+    
     lb=c;
+    
     ub=c;
+    
 else
+    
     lb=-inf(size(c));
+    
     ub=inf(size(c));
+    
 end
+
 lbub=struct('LB',lb,'UB',ub);
+
 OMG =[];
+
 c={c,OMG,lbub,rest_id};
+
 end
