@@ -67,8 +67,6 @@ retcode=0;
 
 penalty=1e+6;
 
-do_Qt=nargout>3;
-
 span=options.nsteps+options.burn;
 
 sims=nan(endo_nbr,options.nsteps);
@@ -356,6 +354,18 @@ regimes=regimes(options.burn+1:end);
                 
                 if ~retcode
                     
+                    if t==1
+                        
+                        Qt=Q(:,:,ones(1,options.nsteps));
+                        
+                    end
+                    
+                    if t>options.burn && t<span
+                        
+                        Qt(:,:,t-options.burn)=Q;
+                        
+                    end
+                    
                     smallrt=regimes(t);
                     
                     if isnan(smallrt)
@@ -365,22 +375,6 @@ regimes=regimes(options.burn+1:end);
                         else
                             % draw conditional on yesterday's state
                             PAI=Q(regimes(t-1),:);
-                            
-                        end
-                        
-                        if do_Qt
-                            
-                            if t==1
-                                
-                                Qt=Q(:,:,ones(1,options.nsteps));
-                                
-                            end
-                            
-                            if t>options.burn && t<span
-                                
-                                Qt(:,:,t-options.burn)=Q;
-                                
-                            end
                             
                         end
                         
