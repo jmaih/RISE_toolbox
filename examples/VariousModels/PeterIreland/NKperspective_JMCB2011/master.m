@@ -106,7 +106,6 @@ db=pages2struct(ts.collect(db,dbshocks));
 for irecess=1:numel(recessions)
     recess=recessions{irecess};
     serials=date2serial(recess);
-    serials=serials(1):serials(2);
     nsteps=numel(serials)-1;
     figure('name',['Counterfactual output paths for ',recess,' recession'])
     for ishock=1:nshocks
