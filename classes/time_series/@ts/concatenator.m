@@ -133,13 +133,17 @@ else
     
     myts=struct();
     
+    s=struct('type','()','subs','hallo');
+    
     for jjj=1:nnames
         
         v=vnames{jjj};
         
         for iii=1:nn
             
-            batch{iii}=varargin{iii}(v);
+            %batch{iii}=varargin{iii}(v);
+            s.subs={v};
+            batch{iii}=subsref(varargin{iii},s);
             
         end
         
