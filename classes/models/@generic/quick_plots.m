@@ -101,22 +101,48 @@ end
 
     function [texname,theLegend]=plotfunc(var_name)
         
-        theLegend=batch.(var_name).varnames;
+        if ischar(var_name)
+            
+            var_name=cellstr(var_name);
+            
+        end
         
-        if numel(theLegend)==1||...
-                all(cellfun(@(x)isempty(x),theLegend,'uniformOutput',true))
+        nnames=numel(var_name);
+        
+        theLegend=cell(1,nnames); texname=cell(1,nnames); theIrf=cell(1,nnames);
+        
+        for ii=1:nnames
+            
+            [theLegend{ii},texname{ii},theIrf{ii}]=extract_one(var_name{ii});
+            
+        end
+        
+        if nnames>1||any(cellfun(@(x)isempty(x),theLegend,'uniformOutput',true))
             
             theLegend='';
             
         end
+               
+        plot(xrange{:},[theIrf{:}],'linewidth',2)
         
-        var_tex=description.(var_name);
-        
-        texname=[var_tex,'(',var_name,')'];
-        
-        theIrf=batch.(var_name);
-        
-        plot(xrange{:},theIrf,'linewidth',2)
+        function [theLegend,texname,theIrf]=extract_one(vname)
+            
+            theLegend=batch.(vname).varnames;
+            
+            if numel(theLegend)==1||...
+                    all(cellfun(@(x)isempty(x),theLegend,'uniformOutput',true))
+                
+                theLegend='';
+                
+            end
+            
+            var_tex=description.(vname);
+            
+            texname=[var_tex,'(',vname,')'];
+            
+            theIrf=batch.(vname);
+            
+        end
         
     end
 

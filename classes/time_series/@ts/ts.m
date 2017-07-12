@@ -348,7 +348,7 @@ classdef ts < gogetter
                             
                             if sum(loc)>0
                                 
-                                error(['variable name "',thisname,'" is duplicated'])
+                                warning(['variable name "',thisname,'" is duplicated'])
                                 
                             end
                             
