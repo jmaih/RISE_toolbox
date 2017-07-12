@@ -58,7 +58,8 @@ nendo=numel(dictionary.endogenous);
 
 if nendo<neqtns
 
-    error('More equations than the number of endogenous variables')
+    error(['More equations (',int2str(neqtns),') than the number of ',...
+        'endogenous variables (',int2str(nendo),') '])
 
 end
 
