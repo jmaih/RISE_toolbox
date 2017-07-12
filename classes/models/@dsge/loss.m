@@ -5,9 +5,9 @@ function [welf,retcode,V,d]=loss(obj,simuls,varargin)
 % Syntax
 % -------
 % ::
-%   [welf,V,d]=loss(obj)
-%   [welf,V,d]=loss(obj,simuls)
-%   [welf,V,d]=loss(obj,simuls,varargin)
+%   [welf,retcode,V,d]=loss(obj)
+%   [welf,retcode,V,d]=loss(obj,simuls)
+%   [welf,retcode,V,d]=loss(obj,simuls,varargin)
 %
 % Inputs
 % -------
@@ -228,6 +228,8 @@ end
             welf=welf+xt.'*V(:,:,rt)*xt+d(rt);
             
         end
+        
+        welf=welf/span;
         
     end
 
