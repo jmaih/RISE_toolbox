@@ -205,6 +205,9 @@ end
             routines_dir=[MainFolder,filesep,'routines'];
             for irout=1:numel(routines_names)
                 r_name=routines_names{irout};
+                if strcmp(r_name,'planner_osr_support')
+                    continue
+                end
                 fname=[r_name,'_',solve_function_mode,'__'];
                 rcode=utils.code.code2file(this.online_routines.(r_name),fname);
                 if ~rcode
