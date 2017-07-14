@@ -356,6 +356,8 @@ regimes=regimes(options.burn+1:end);
                     
                     if t==1
                         
+                        Q=full(Q);
+                        
                         Qt=Q(:,:,ones(1,options.nsteps));
                         
                     end
@@ -569,7 +571,7 @@ regimes=regimes(options.burn+1:end);
             [sims,regimes,retcode]=utils.forecast.simul_occbin(y0,T,ss,state_vars_location,...
                 options,shocks);
             
-            Q=Qfunc(y0.y);
+            Q=full(Qfunc(y0.y));
             
             Qt=Q(:,:,ones(1,numel(regimes)-options.burn));
             
