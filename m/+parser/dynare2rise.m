@@ -237,15 +237,17 @@ write_parameter_file()
         
         pnames={str.name};
         
+        pvals={str.value};
+        
+        % add shock standard deviations
+        shock_standard_deviations();
+        
         % taking care of recursive computations
         xpress=['\<',parser.cell2matize(pnames),'\>'];
         
         repl='p.$1';
         
-        pvals=regexprep({str.value},xpress,repl);
-        
-        % add shock standard deviations
-        shock_standard_deviations();
+        pvals=regexprep(pvals,xpress,repl);
         
         pvals=cellfun(@(x)x(~isspace(x)),pvals,'uniformOutput',false);
         
