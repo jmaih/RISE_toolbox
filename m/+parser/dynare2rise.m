@@ -141,6 +141,8 @@ do_replace_time=false;
 model_eqtns = extract_other_blocks('model;',do_replace_time);
 % replace STEADY_STATE
 model_eqtns=regexprep(model_eqtns,'STEADY_STATE','steady_state');
+% replace ln with log
+model_eqtns=regexprep(model_eqtns,'\<ln\(','log(');
 
 % take care of predetermined variables
 do_predetermined();
@@ -269,16 +271,25 @@ write_parameter_file()
             
             par_i=est(ip);
             
-            newline=sprintf('priors.%s={%s, %s, %s, ''%s''',...
-                par_i.name,par_i.start,par_i.mean,par_i.sd,par_i.distr);
-            
-            if ~isempty(par_i.lb)
+            if strcmp(par_i.distr,'uniform')
                 
-                newline=sprintf('%s, %s',newline,par_i.lb);
+                newline=sprintf('priors.%s={%s, %s, %s',...
+                    par_i.name,par_i.start,par_i.lb,par_i.ub);
                 
-                if ~isempty(par_i.ub)
+            else
+                
+                newline=sprintf('priors.%s={%s, %s, %s, ''%s''',...
+                    par_i.name,par_i.start,par_i.mean,par_i.sd,par_i.distr);
+                
+                if ~isempty(par_i.lb)
                     
-                    newline=sprintf('%s, %s',newline,par_i.ub);
+                    newline=sprintf('%s, %s',newline,par_i.lb);
+                    
+                    if ~isempty(par_i.ub)
+                        
+                        newline=sprintf('%s, %s',newline,par_i.ub);
+                        
+                    end
                     
                 end
                 
@@ -809,7 +820,7 @@ for irow=1:n
     
     iter=1;
     
-    if ischar(rawline{1})
+    if ~isempty(rawline{1}) && isstrprop(rawline{1}(1),'alpha')
         
         iter=5;
         
