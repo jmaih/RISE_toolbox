@@ -281,13 +281,15 @@ blocks(modelBlock).listing=parser.process_keywords(...
         
         current_list={block.listing.name};
         
+        rawline_without_description=parser.remove_description(rawline_);
+        
         try
             
-            end_game= contains(rawline_,';');
+            end_game= contains(rawline_without_description,';');
             
         catch
             
-            end_game=~isempty(strfind(rawline_,';')); %#ok<STREMP>
+            end_game=~isempty(strfind(rawline_without_description,';')); 
             
         end
         
