@@ -283,7 +283,7 @@ end
             
             for jj=1:h
                 
-                F(:,:,ii)=Q(ii,jj)*Tx{ii}.'*V(:,:,jj)*Tx{ii};
+                F(:,:,ii)=F(:,:,ii)+Q(ii,jj)*Tx{ii}.'*V(:,:,jj)*Tx{ii};
                 
             end
             
