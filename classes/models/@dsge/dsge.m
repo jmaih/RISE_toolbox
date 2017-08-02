@@ -588,6 +588,8 @@ classdef dsge < generic_switch % & gogetter
         
         varargout=problem_reduction(varargin)
         
+        varargout=riff_erize(varargin)
+        
         varargout=set_z_eplus_horizon(varargin)
         
         varargout=growth_component_solver(varargin)
