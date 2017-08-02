@@ -89,7 +89,7 @@ rise_code = regexprep(rise_code,express,'¤$1¤');
 rise_code=strrep(rise_code,'$','"');
 
 % replace all endif or endfor with end
-%----------------------------
+%-------------------------------------
 rise_code=regexprep(rise_code,'(#\s*)\<end(if|for)\>','$1end');
 
 % add space to all # signs
@@ -113,7 +113,7 @@ is_endo_decl=true;
 %-----------------------------
 [exo_block,exo_list]=extract_declaration_block('varexo','exogenous');
 
-% extract block of exogenous
+% extract block of parameters
 %-----------------------------
 [param_block,par_list]=extract_declaration_block('parameters');
 
@@ -137,8 +137,18 @@ param_block=[param_block,' ',newparams];
 % model equations
 %-----------------
 rise_code = regexprep(rise_code,'model\(linear\)','model');
+
+% replace weird numbers that RISE does not parse yet
+%---------------------------------------------------
+rise_code = regexprep(rise_code,'(\d+)?(\.\d+)?e(\+|\-)(\d+)','$1$2*10^($3$4)');
+
+rise_code = regexprep(rise_code,'(\+\s*\-|\-\s*\+)','-');
+
 do_replace_time=false;
 model_eqtns = extract_other_blocks('model;',do_replace_time);
+% comment out equation tags and push the equation to the next line
+%-----------------------------------------------------------------
+model_eqtns=regexprep(model_eqtns,'(\[name=[^\]]*\])\s*','% $1\n');
 % replace STEADY_STATE
 model_eqtns=regexprep(model_eqtns,'STEADY_STATE','steady_state');
 % replace ln with log
@@ -149,7 +159,13 @@ do_predetermined();
 
 % steady state model equations
 %------------------------------
-ssmodel_eqtns = extract_other_blocks('steady_state_model;');
+ssmodel_eqtns = extract_other_blocks('(steady_state_model;|initval;)');
+
+if ~isempty(ssmodel_eqtns)
+    
+    ssmodel_eqtns=strrep(ssmodel_eqtns,'initval;','');
+    
+end
 
 % push standard deviations into equations directly
 %-------------------------------------------------
@@ -531,7 +547,7 @@ write_parameter_file()
             
             tmp=regexprep(tmp,'¤\s*@\s*#\s*[^¤\n]+¤','');
             
-            list=regexp(tmp,'\w+[^\s]*','match');
+            list=regexp(tmp,'\<\w+\>','match'); % list=regexp(tmp,'\w+[^\s]*','match');
             
             function description_removal()
                 
@@ -815,6 +831,8 @@ est0=cell(n,10);
 for irow=1:n
     
     rawline=regexp(splits{irow},',','split');
+    
+    rawline=cellfun(@(x)x(~isspace(x)),rawline,'uniformOutput',false);
     
     est0(irow,1)=rawline(1);
     
