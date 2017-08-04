@@ -1,4 +1,4 @@
-function [M,ufkst,states,PAI,TT]=stochastic_impact_cumulator(model,y0,nsteps,...
+function [M,ufkst,states,PAI,TT,Q]=stochastic_impact_cumulator(model,y0,nsteps,...
     y_pos,e_pos,states)
 % STOCHASTIC_IMPACT_CUMULATOR -- creates impact matrix for contemporaneous
 % and future shocks
@@ -15,7 +15,7 @@ function [M,ufkst,states,PAI,TT]=stochastic_impact_cumulator(model,y0,nsteps,...
 %
 %   M=STOCHASTIC_IMPACT_CUMULATOR(model,y0,nsteps,y_pos,e_pos,states)
 %
-%   [M,ufkst,states]=STOCHASTIC_IMPACT_CUMULATOR(...)
+%   [M,ufkst,states,PAI,TT,Q]=STOCHASTIC_IMPACT_CUMULATOR(...)
 %
 % Inputs
 % -------
@@ -64,6 +64,8 @@ function [M,ufkst,states,PAI,TT]=stochastic_impact_cumulator(model,y0,nsteps,...
 %
 % - **TT** [matrix]: convolution of autoregressive terms for the
 % restrictions
+%
+% - **Q** [h x h x nsteps array]: Time series of transition matrices
 %
 % More About
 % ------------
@@ -179,11 +181,13 @@ ufkst=y0(:,ones(1,nsteps+1));
 
 PAI=zeros(h,nsteps);
 
+Q=nan(h,h,nsteps);
+
 for jstep=1:nsteps
     
     % pick the state
     %----------------
-    st=pick_a_regime();
+    [st,Q(:,:,jstep)]=pick_a_regime();
     
     % deal with the constant
     %------------------------
@@ -209,7 +213,7 @@ for jstep=1:nsteps
         
         iter=iter+1;
         
-        if isempty(ProtoR{iter});
+        if isempty(ProtoR{iter})
             
             ProtoR{iter}=zeros(ny,nshocks);
             
@@ -262,7 +266,11 @@ M=struct('R',R(:,3:end),'ufkst',R(:,2),'const',R(:,1),'S',S,...
         
     end
 
-    function reg=pick_a_regime()
+    function [reg,Q]=pick_a_regime()
+        
+        % compute the transition matrix irrespective of whether the regimes
+        % are preset or not
+        Q=Qfunc(y0);
         
         if isnan(states(jstep))
             
@@ -273,8 +281,6 @@ M=struct('R',R(:,3:end),'ufkst',R(:,2),'const',R(:,1),'S',S,...
                 PAI(:,jstep)=1;
                 
             else
-                
-                Q=Qfunc(y0);
                 
                 if jstep==1
                     

@@ -1,4 +1,4 @@
-function [shocks,regimes,PAI,retcode,cfkst]=forecast(model,y0,ycond,econd,options,regimes)
+function [shocks,regimes,PAI,retcode,cfkst,Qt]=forecast(model,y0,ycond,econd,options,regimes)
 % FORECAST - conditional forecast for regime-switching models
 %
 % Syntax
@@ -56,6 +56,8 @@ function [shocks,regimes,PAI,retcode,cfkst]=forecast(model,y0,ycond,econd,option
 %
 % - **cfkst** [n x (nsteps+1) matrix]: conditional forecasts
 %
+% - **Qt** [h x h x nsteps array]: time series of transition matrices
+%
 % More About
 % ------------
 %
@@ -95,9 +97,9 @@ else
     
     nsteps=options.nsteps;
     
-    [M,~,regimes,PAI]=utils.forecast.rscond.stochastic_impact_cumulator(model,y0,nsteps,ycond.pos,...
+    [M,~,regimes,PAI,~,Qt]=utils.forecast.rscond.stochastic_impact_cumulator(model,y0,nsteps,ycond.pos,...
         econd.pos,regimes);
-    
+        
     % expand the data and chop them if necessary
     %--------------------------------------------
     [R_S,mu_lb_ub]=utils.forecast.rscond.form_system(M,ycond,econd,nsteps,...

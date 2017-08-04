@@ -284,12 +284,12 @@ regimes=regimes(options.burn+1:end);
             
             if h==1||~(isempty(regimes)||any(isnan(regimes)))
                 
-                [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.forecast(model,y0.y,...
+                [myshocks,regimes,PAI,retcode,cfkst,Qt]=utils.forecast.rscond.forecast(model,y0.y,...
                     y0.ycond,y0.econd,opt,regimes);
                 
             else
                 
-                [myshocks,regimes,PAI,retcode,cfkst]=utils.forecast.rscond.loop_forecast(model,y0.y,...
+                [myshocks,regimes,PAI,retcode,cfkst,Qt]=utils.forecast.rscond.loop_forecast(model,y0.y,...
                     y0.ycond,y0.econd,opt,regimes);
                 
             end
