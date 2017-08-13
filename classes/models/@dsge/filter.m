@@ -119,8 +119,6 @@ if retcode
     return
 
 end
-%% re-inflate everything in order to store filters if necessary
-init=re_inflator(init,obj.options.kf_filtering_level);
 
 %% extract data and update the position of observables
 %------------------------------------------------------
@@ -386,51 +384,4 @@ ff=@my_one_step;
         end
         varargout{1}=varargout{1}.y;
     end
-end
-
-function init=re_inflator(init,kf_filtering_level)
-m_orig=size(init.a{1},1);
-if kf_filtering_level
-    is_det_shock=init.is_det_shock;
-    exo_nbr=numel(is_det_shock);
-    horizon=init.horizon;
-    nshocks=exo_nbr*horizon;
-    h=numel(init.PAI00);
-    nstates=numel(init.state_vars_location);
-    for st=1:h
-        init.a{st}=[init.a{st};zeros(nshocks,1)];
-        init.steady_state{st}=[init.steady_state{st};zeros(nshocks,1)];
-        init.P{st}=[init.P{st},zeros(m_orig,nshocks)
-            zeros(nshocks,m_orig),eye(nshocks)];
-        for io=1:size(init.T,1)
-            ncols=size(init.T{io,st},2);
-            batch=zeros(nshocks,ncols);
-            if io==1
-                % place the identities
-                batch(:,nstates+2:end)=eye(nshocks);
-            end
-            init.T{io,st}=[init.T{io,st};batch];
-            if io==1
-                % collect the Te and Te_det instead of recomputing them
-                %-------------------------------------------------------
-                Te_all=reshape(full(init.T{io,st}(:,nstates+2:end)),...
-                    [m_orig+nshocks,exo_nbr,horizon]);
-                init.Te{st}=Te_all(:,~is_det_shock,:);
-                init.Te_det{st}=Te_all(:,is_det_shock,:);
-                
-            end
-        end
-        % decoupled first order
-        %----------------------
-        init.Tx{st}=[init.Tx{st};zeros(nshocks,nstates)];
-        init.Tsig{st}=[init.Tsig{st};zeros(nshocks,1)];
-        
-        Te_Te=init.Te{st}(:,:)*init.Te{st}(:,:).';
-        Te_Te(1:m_orig,1:m_orig)=init.Te_Te_prime{st};
-        init.Te_Te_prime{st}=Te_Te;
-    end
-end
-init.m_orig=m_orig;
-init.m=size(init.a{1},1);
-
 end

@@ -1,0 +1,268 @@
+function varargout=observables_decomposition(obj,select,varargin)
+% OBSERVABLES_DECOMPOSITION - decomposes all variables of a DSGE model in
+% terms of observables.
+%
+% Syntax
+% -------
+% ::
+%
+%   weights=observables_decomposition(obj,select,db)
+%
+%   [weights,dec1,...,decn]=observables_decomposition(obj,select,db1,...,dbn)
+%
+% Inputs
+% -------
+%
+% - **obj** [rise|dsge]: scalar model object
+%
+% - **select** [{[]}|'a'|'att'|'alpha'|'v'|'r'|'epsilon'|'eta']: type of
+% decomposition to perform
+%   - **a** : filter
+%   - **att** : update
+%   - **alpha** : smooth
+%   - **v** : forecast errors
+%   - **r** : variables calculated during the smoothing process
+%   - **epsilon** : measurement errors
+%   - **eta** : structural shocks
+%   - **[]** : all the above
+%
+% - **db** [ts]: database with the data to be used in the decomposition
+%
+% Outputs
+% --------
+%
+% - **weights** [struct]: weights for the different elements requested from
+% the variable **select**
+%
+% - **dec1** [struct]: hyper structure containing the time series for the
+% various decomposition types and variables
+%
+% More About
+% ------------
+%
+% - if **select** is empty, all the decompositions are performed
+%
+% - After doing the decomposition of different variables, one can take the
+% differences in the decomposition to perform, e.g., the decomposition of
+% forecast errors in terms of observables.
+%
+% Examples
+% ---------
+%
+% See also: HISTORICAL_DECOMPOSITION
+
+if isempty(obj)
+        
+    if nargout
+        
+        varargout={struct.empty};
+                
+    end
+    
+    return
+    
+end
+
+nobj=numel(obj);
+
+if nobj>1
+    
+    error('this function cannot be vectorized')
+    
+end
+
+ndatasets=numel(varargin);
+
+if ndatasets==0
+    
+    error('at least one dataset should be provided')
+    
+end
+
+dataOut=cell(1,ndatasets);
+
+for ii=1:ndatasets
+    
+    [dataOut{ii},~,start_date,~,retcode]=data_prerequest(obj,varargin{ii});
+    
+    if retcode
+        
+        error(decipher(retcode))
+        
+    end
+    
+    dataOut{ii}=dataOut{ii}.y;
+    
+end
+
+[obj,retcode]=solve(obj);
+
+if retcode
+    
+    if obj(1).options.debug
+        
+        error(decipher(retcode))
+        
+    end
+    
+    return
+    
+end
+
+[syst,retcode]=filter_initialization(obj);
+
+if retcode
+    
+    error(decipher(retcode))
+    
+end
+
+nout=nargout;
+
+[varargout{1:nout}]=main_engine(syst,select,dataOut{:});
+
+obsnames=obj.observables.name;
+vnames=struct();
+vnames.a=obj.endogenous.name(obj.order_var);
+vnames.att=vnames.a;
+vnames.alpha=vnames.a;
+vnames.r=vnames.a;
+vnames.epsilon=obsnames;
+vnames.eta=obj.exogenous.name;
+vnames.v=obsnames;
+
+proto=ts(start_date,zeros(1,obj.observables.number(1)));
+
+for jj=2:nout
+    
+    varargout{jj}=time_serize(varargout{jj});
+    
+end
+
+    function vout=time_serize(vin)
+        
+        fields=fieldnames(vin);
+        
+        vout=struct();
+        
+        for iii=1:numel(fields)
+        
+            ff=fields{iii};
+            
+            inames=vnames.(ff);
+            
+            for jjj=1:numel(inames)
+                
+                newdata=vin.(ff)(:,:,jjj);
+            
+                vout.(fields{iii}).(inames{jjj})=reset_data(proto,...
+                    newdata,obsnames);
+            
+            end
+            
+        end
+            
+    end
+
+end
+
+function varargout=main_engine(syst,select,varargin)
+
+ndatasets=numel(varargin);
+
+if nargout>ndatasets+1
+    
+    error('too many output arguments')
+    
+end
+
+[T,R,Z,H,Q,init]=dsge.state_space_wrapper(syst);
+
+first_dataset=varargin{1};
+
+[nvobs,nobs]=size(first_dataset);
+
+for id=2:length(varargin)
+    
+    if ~isequal(size(varargin{id}),[nvobs,nobs])
+        
+        error('all datasets should have the same size')
+        
+    end
+    
+end
+
+ff=obsw.missing_observations_kalman_filter(first_dataset,T,R,Z,H,Q,init);
+
+w=obsw.observation_weights(Z,T,H,Q,R,ff,select);
+
+% update selection in case it was empty above
+%--------------------------------------------
+select=fieldnames(w);
+
+varargout=cell(1,ndatasets+1);
+
+varargout{1}=w;
+
+m=size(T,1);
+
+nv=struct('a',m,'att',m,'alpha',m,'v',nvobs,'r',m,'epsilon',nvobs,'eta',size(R,2));
+
+for id=1:numel(ndatasets)
+    
+    varargout{1+id}=do_one(varargin{id});
+    
+end
+
+    function out=do_one(y)
+        
+        out=struct();
+        
+        for ii=1:numel(select)
+            
+            field=select{ii};
+            
+            out.(field)=do_one_field(field);
+            
+        end
+        
+        function VV=do_one_field(field)
+            
+            way=bsxfun(@times,w.(field),y(:).');
+            
+            [r,c]=size(way);
+            
+            % aggregate contributions of each variable across time
+            n=c/nvobs;
+            
+            V=0;
+            
+            for jj=1:n
+                
+                cols=(jj-1)*nvobs+1:jj*nvobs;
+                
+                V=V+way(:,cols);
+                
+            end
+            
+            nvf=nv.(field);
+            
+            n=r/nvf;
+            
+            VV=zeros(n,nvobs,nvf);
+            
+            % separate variables
+            %-------------------
+            for iv=1:nvf
+                
+                stretch=iv:nvf:r;
+                
+                VV(:,:,iv)=V(stretch,:);
+                
+            end
+            
+        end
+        
+    end
+
+end

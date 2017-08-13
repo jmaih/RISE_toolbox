@@ -532,6 +532,8 @@ classdef dsge < generic_switch % & gogetter
         
         varargout=loss(varargin)
         
+        varargout=observables_decomposition(varargin)
+        
         varargout=pull_objective(varargin)
         
         varargout=print_solution(varargin)
@@ -595,6 +597,12 @@ classdef dsge < generic_switch % & gogetter
         varargout=growth_component_solver(varargin)
         
         varargout=set_planner_derivatives(varargin)
+        
+    end
+    
+    methods(Static,Hidden)
+        
+        varargout=state_space_wrapper(varargin)
         
     end
     

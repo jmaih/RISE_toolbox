@@ -256,6 +256,8 @@ classdef generic
         
         varargout=load_data(varargin)
         
+        varargout=data_prerequest(varargin)
+        
         varargout=quick_irfs(varargin)
         
         varargout=quick_plots(varargin)
