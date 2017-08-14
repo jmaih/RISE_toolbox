@@ -168,7 +168,7 @@ end
 
 function varargout=main_engine(syst,select,varargin)
 
-ndatasets=numel(varargin);
+ndatasets=length(varargin);
 
 if nargout>ndatasets+1
     
@@ -182,7 +182,7 @@ first_dataset=varargin{1};
 
 [nvobs,nobs]=size(first_dataset);
 
-for id=2:length(varargin)
+for id=2:ndatasets
     
     if ~isequal(size(varargin{id}),[nvobs,nobs])
         
@@ -208,7 +208,7 @@ m=size(T,1);
 
 nv=struct('a',m,'att',m,'alpha',m,'v',nvobs,'r',m,'epsilon',nvobs,'eta',size(R,2));
 
-for id=1:numel(ndatasets)
+for id=1:ndatasets
     
     varargout{1+id}=do_one(varargin{id});
     
