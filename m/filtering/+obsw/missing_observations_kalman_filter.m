@@ -61,7 +61,7 @@ the_smoother()
         
 %         f.C=zeros(m,p,n);
         
-%         f.r=zeros(m,n+1);
+        f.r=zeros(m,n+1);
         
         for t=n:-1:1
             
@@ -96,7 +96,7 @@ the_smoother()
             % = Zt'*ut+Tt'*rt
             % = Zt'*(f.iF(:,:,t)*f.v(:,t)-Kt.'*rt)+Tt'*rt
             
-%             f.r(:,t)=rt;
+            f.r(:,t)=rt;
             
             Nt=Zt.'*f.iF(:,:,t)*Zt+Lt.'*Nt*Lt;
             
@@ -117,6 +117,8 @@ the_smoother()
     end
 
     function the_filter(a,P)
+        
+        l2pi=log(2*pi);
         
         for t=1:n
             
@@ -146,11 +148,16 @@ the_smoother()
             
             iF=F\eye(pstar);
             
+            f.incr(t)=-0.5*(pstar*l2pi+log(det(F))+v.'*iF*v);
+%             f.incr(t)=-pstar/2*log(2*pi)-1/2*(log(det(F))+v.'*iF*v);
+            
             update()
             
             forecast()
             
         end
+        
+        f.log_lik=sum(f.incr);
         
         function update()
             
@@ -249,6 +256,10 @@ the_smoother()
         f.v=zeros(p,n);
         
         f.K=zeros(m,p,n);
+        
+        f.incr=nan(n,1);
+        
+        f.log_lik=nan;
         
     end
 

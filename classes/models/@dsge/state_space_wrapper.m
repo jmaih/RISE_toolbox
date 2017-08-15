@@ -1,4 +1,4 @@
-function [T,R,Z,H,Q,init]=state_space_wrapper(syst)
+function [T,R,Z,H,Q,sstate,init]=state_space_wrapper(syst)
 
 T=zeros(syst.m);
 
@@ -19,5 +19,7 @@ if isempty(H)
 end
 
 Q=eye(size(R,2));
+
+sstate=syst.steady_state{1};
 
 end

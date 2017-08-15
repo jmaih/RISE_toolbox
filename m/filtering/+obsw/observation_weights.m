@@ -1,12 +1,20 @@
-function w=observation_weights(Z,T,H,Q,R,f,select)
+function w=observation_weights(Z,T,H,Q,R,f,select,y)
 
-if nargin<7
+if nargin<8
     
-    select=[];
+    y=[];
+    
+    if nargin<7
+        
+        select=[];
+        
+    end
     
 end
 
-narginchk(6,7)
+debug=~isempty(y);
+
+narginchk(6,8)
 
 finalList={'a','att','v','r','alpha','epsilon','eta'};
 
@@ -98,8 +106,13 @@ w=rmfield(w,badFields);
             
         end
         
-        % check
-        % reshape(w.a*y(:),m,[])-f.a
+        if debug
+            
+            disp('wa*y-a')
+            
+            disp(max(max(abs(reshape(w.a*y(:),m,[])-f.a))))
+            
+        end
     end
 
     function do_v()
@@ -136,8 +149,13 @@ w=rmfield(w,badFields);
             
         end
         
-        % check
-        % reshape(w.v*y(:),p,[])-f.v
+        if debug
+            
+            disp('wv*y-v')
+            
+            disp(max(max(abs(reshape(w.v*y(:),p,[])-f.v))))
+            
+        end
         
     end
 
@@ -171,8 +189,14 @@ w=rmfield(w,badFields);
             
         end
         
-        % check
-        % reshape(w.att*y(:),m,[])-f.att
+        if debug
+            
+            disp('watt*y-att')
+            
+            disp(max(max(abs(reshape(w.att*y(:),m,[])-f.att))))
+            
+        end
+        
     end
 
     function do_r()
@@ -208,8 +232,14 @@ w=rmfield(w,badFields);
             
         end
         
-        % check
-        % reshape(w.r*y(:),m,[])-f.r
+        if debug
+            
+            disp('wr*y-r')
+            
+            disp(max(max(abs(reshape(w.r*y(:),m,[])-f.r))))
+            
+        end
+        
     end
 
     function do_alpha()
@@ -230,8 +260,13 @@ w=rmfield(w,badFields);
             
         end
         
-        % check
-        % reshape(w.alpha*y(:),m,[])-f.alpha
+        if debug
+            
+            disp('walpha*y-alpha')
+            
+            disp(max(max(abs(reshape(w.alpha*y(:),m,[])-f.alpha))))
+            
+        end
     end
 
     function do_epsilon()
@@ -254,8 +289,13 @@ w=rmfield(w,badFields);
             
         end
         
-        % check
-        % reshape(w.epsilon*y(:),p,[])-f.epsilon
+        if debug
+            
+            disp('wepsilon*y-epsilon')
+            
+            disp(max(max(abs(reshape(w.epsilon*y(:),p,[])-f.epsilon))))
+            
+        end
         
     end
 

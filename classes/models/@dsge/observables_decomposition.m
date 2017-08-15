@@ -63,6 +63,8 @@ if isempty(obj)
     
 end
 
+do_demean=true;
+
 nobj=numel(obj);
 
 if nobj>1
@@ -119,7 +121,7 @@ end
 
 nout=nargout;
 
-[varargout{1:nout}]=main_engine(syst,select,dataOut{:});
+[varargout{1:nout}]=main_engine(syst,select,do_demean,obj.options.debug,dataOut{:});
 
 obsnames=obj.observables.name;
 vnames=struct();
@@ -166,7 +168,7 @@ end
 
 end
 
-function varargout=main_engine(syst,select,varargin)
+function varargout=main_engine(syst,select,do_demean,debug,varargin)
 
 ndatasets=length(varargin);
 
@@ -176,7 +178,7 @@ if nargout>ndatasets+1
     
 end
 
-[T,R,Z,H,Q,init]=dsge.state_space_wrapper(syst);
+[T,R,Z,H,Q,sstate,init]=dsge.state_space_wrapper(syst);
 
 first_dataset=varargin{1};
 
@@ -192,9 +194,35 @@ for id=2:ndatasets
     
 end
 
-ff=obsw.missing_observations_kalman_filter(first_dataset,T,R,Z,H,Q,init);
+ybar=sstate(Z);
 
-w=obsw.observation_weights(Z,T,H,Q,R,ff,select);
+dy=ybar-sstate(Z);
+
+m=size(T,1);
+
+ca=(eye(m)-T)*sstate;
+
+if do_demean
+    
+    first_dataset=bsxfun(@minus,first_dataset,sstate(Z));
+    
+    ca=zeros(size(ca));
+    
+    dy=zeros(size(dy));
+    
+    init.a=zeros(size(init.a));
+    
+end
+
+ff=obsw.missing_observations_kalman_filter(first_dataset,T,R,Z,H,Q,init,dy,ca);
+
+if ~debug
+    
+    first_dataset=[];
+    
+end
+
+w=obsw.observation_weights(Z,T,H,Q,R,ff,select,first_dataset);
 
 % update selection in case it was empty above
 %--------------------------------------------
@@ -210,7 +238,15 @@ nv=struct('a',m,'att',m,'alpha',m,'v',nvobs,'r',m,'epsilon',nvobs,'eta',size(R,2
 
 for id=1:ndatasets
     
-    varargout{1+id}=do_one(varargin{id});
+    datai=varargin{id};
+    
+    if do_demean
+        
+        datai=bsxfun(@minus,datai,sstate(Z));
+        
+    end
+    
+    varargout{1+id}=do_one(datai);
     
 end
 
