@@ -149,7 +149,7 @@ else
     
     % check the validity of the calculations
     %----------------------------------------
-    if ~utils.error.valid(ys)
+    if ~utils.error.valid(ys)||any(abs(ys)>100000)
         retcode=1;
     else
         % push the calculations

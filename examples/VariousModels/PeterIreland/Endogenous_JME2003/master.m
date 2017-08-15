@@ -11,7 +11,8 @@ if linear
     % predetermined and forward-looking, making it easier for Peter Ireland
     % to set up the matrices of his system.
 else
-    m=rise('emosp','steady_state_file','sstate_file');
+    m=rise('emosp','steady_state_file','sstate_file',...
+        'steady_state_imposed',true);
 end
 %% Select the model
 
