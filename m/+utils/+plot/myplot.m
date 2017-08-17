@@ -146,15 +146,14 @@ end
             ineg=uall<0;
             upos(ipos)=uall(ipos);
             uneg(ineg)=uall(ineg);
-            bar(pp.xdatenums,upos,'stack') %  area(this_pos)
+            b1=bar(pp.xdatenums,upos,'stack'); %  area(this_pos)
             hold on
-            bar(pp.xdatenums,uneg,'stack') % area(this_neg)
+            b2=bar(pp.xdatenums,uneg,'stack'); % area(this_neg)
             hold on
             plot(pp.xdatenums,sum(uall,2),'k-','linewidth',2);
             axis tight;
             hold off
-            bb=gca();
-            set(bb.Children(2:end),'edgeColor','k')
+            set([b1,b2],'edgeColor','k')
             set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
             vout={gca()};
         else % : plot, plotyy, bar, etc.
