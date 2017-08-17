@@ -261,6 +261,22 @@ for id=1:ndatasets
     
     datai=varargin{id};
     
+    missing=isnan(datai);
+    
+    if id==1
+        
+        missing1=missing;
+        
+    else
+        
+        if any(vec(missing-missing1)~=0)
+            
+            error('datasets should have the same missing structure')
+            
+        end
+        
+    end
+    
     if do_demean
         
         datai=bsxfun(@minus,datai,sstate(Z));
@@ -272,6 +288,10 @@ for id=1:ndatasets
 end
 
     function out=do_one(y)
+        
+        % ensure that the multiplication works
+        %--------------------------------------
+        y(isnan(y))=0;
         
         out=struct();
         
