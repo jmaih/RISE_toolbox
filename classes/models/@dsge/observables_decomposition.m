@@ -1,4 +1,4 @@
-function varargout=observables_decomposition(obj,select,varargin)
+function varargout=observables_decomposition(obj,select,xrange,varargin)
 % OBSERVABLES_DECOMPOSITION - decomposes all variables of a DSGE model in
 % terms of observables.
 %
@@ -6,9 +6,9 @@ function varargout=observables_decomposition(obj,select,varargin)
 % -------
 % ::
 %
-%   weights=observables_decomposition(obj,select,db)
+%   weights=observables_decomposition(obj,select,xrange,db)
 %
-%   [weights,dec1,...,decn]=observables_decomposition(obj,select,db1,...,dbn)
+%   [weights,dec1,...,decn]=observables_decomposition(obj,select,xrange,db1,...,dbn)
 %
 % Inputs
 % -------
@@ -25,6 +25,9 @@ function varargout=observables_decomposition(obj,select,varargin)
 %   - **epsilon** : measurement errors
 %   - **eta** : structural shocks
 %   - **[]** : all the above
+%
+% - **xrange** [{[]}|vector|cell array]: start date and end date for the
+% decomposition 
 %
 % - **db** [ts]: database with the data to be used in the decomposition
 %
@@ -82,6 +85,24 @@ if ndatasets==0
 end
 
 dataOut=cell(1,ndatasets);
+
+if ~isempty(xrange)
+    
+    if isa(xrange,'double')
+        
+        xrange=num2cell(xrange);
+    
+    end
+    
+    if numel(xrange)<2
+        
+        error('third input for the range should have at least two elements')
+    
+    end
+    
+    obj=set(obj,'estim_start_date',xrange{1},'estim_end_date',xrange{end});
+    
+end
 
 for ii=1:ndatasets
     
@@ -210,7 +231,7 @@ if do_demean
     
     dy=zeros(size(dy));
     
-    init.a=zeros(size(init.a));
+    init.a=init.a-sstate;
     
 end
 
