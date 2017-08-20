@@ -71,8 +71,7 @@ if nargout>1
         
         for jj=1:pv
             
-            journal{ii,jj}=[Regimes(ii,:) % <-- today's regime
-                Regimes(jj,:)]; % <-- tomorrow's regime
+            journal{ii,jj}=Regimes([ii,jj],:);
             
         end
         
