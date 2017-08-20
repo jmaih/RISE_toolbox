@@ -62,7 +62,8 @@ for ichain=1:chains_number
         
         for jcol=1:ncols
             
-            JJ{irow,jcol}=[sprintf('%0.f',irow),';',sprintf('%0.f',jcol)];
+%             JJ{irow,jcol}=[sprintf('%0.f',irow),';',sprintf('%0.f',jcol)];
+            JJ{irow,jcol}=[irow;jcol];
             
         end
         
@@ -163,11 +164,9 @@ markov_chain_info=orderfields(markov_chain_info);
                 
                 for jo=1:siz0(2)
                     
-                    semicol=find(Jtmp{io,jo}==';');
+                    TODAY_=Jtmp{io,jo}(1,:);
                     
-                    TODAY_=Jtmp{io,jo}(1:semicol-1);
-                    
-                    TOMORROW_=Jtmp{io,jo}(semicol+1:end);
+                    TOMORROW_=Jtmp{io,jo}(2,:);
                     
                     for i1=1:siz1(1)
                         
@@ -177,13 +176,11 @@ markov_chain_info=orderfields(markov_chain_info);
                             
                             cc=(jo-1)*siz1(2)+j1;
                             
-                            semicol=find(jnl{i1,j1}==';');
+                            today_=jnl{i1,j1}(1,:);
                             
-                            today_=jnl{i1,j1}(1:semicol-1);
+                            tomorrow_=jnl{i1,j1}(2,:);
                             
-                            tomorrow_=jnl{i1,j1}(semicol+1:end);
-                            
-                            Journal{rr,cc}=[TODAY_,',',today_,';',TOMORROW_,',',tomorrow_];
+                            Journal{rr,cc}=[[TODAY_,today_];[TOMORROW_,tomorrow_]];
                             
                         end
                         
