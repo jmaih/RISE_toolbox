@@ -47,7 +47,7 @@ function [db,states,retcode] = simulate(obj,varargin)
 %       setting it to true.
 %
 %   - **simul_do_update_shocks** [true|{false}]: update the shocks based on
-%       **simul_update_shocks_handle** or not. 
+%       **simul_update_shocks_handle** or not.
 %
 %   - **simul_to_time_series** [{true}|false]: if true, the output is a
 %       time series, else a cell array with a matrix and information on
@@ -101,7 +101,7 @@ function [db,states,retcode] = simulate(obj,varargin)
 % Examples
 % ---------
 %
-% See also: 
+% See also:
 
 if isempty(obj)
     
@@ -149,9 +149,9 @@ end
 % perturbation of order 1 no matter what order the user chooses.
 % This is because we have not solved the optimal policy problem
 % beyond the first order.
-    
+
 db=[]; states=[];
-    
+
 if retcode
     
     return
@@ -246,7 +246,7 @@ smpl_states=size(states,1);
 
 nchains=numel(markov_chains);
 
-[all_Q,all_names_i_j,nshifts]=set_transition_probabilities();
+[all_Q,all_names_i_j,nshifts]=set_transition_probabilities(Qt,obj.markov_chains);
 
 [exo_nbr,smplx,npx]=size(myshocks);
 
@@ -297,57 +297,6 @@ else
         };
 end
 
-    function [all_Q,all_names_i_j,nshifts]=set_transition_probabilities()
-        nregs=obj.markov_chains.regimes_number;
-        spanq=size(Qt,3);
-        bigq=nan(nregs^2,spanq);
-        regimes_i_j=cell(1,nregs^2);
-        iter=0;
-        for i_reg=1:nregs
-            for j_reg=1:nregs
-                iter=iter+1;
-                bigq(iter,:)=squeeze(Qt(i_reg,j_reg,:));
-                regimes_i_j{iter}=sprintf('regime_%0.0f_%0.0f',i_reg,j_reg);
-            end
-        end
-        
-        regimes=obj.markov_chains.regimes;
-        states_i_j=cell(1,nchains);
-        smallq=cell(nchains,1);
-        for ic=1:nchains
-            cn=markov_chains{ic};
-            loc=strcmp(cn,regimes(1,:));
-            states_ic=cell2mat(regimes(2:end,loc));
-            nstates=numel(unique(states_ic));
-            states_i_j_k=cell(1,nstates^2);
-            smallq_k=zeros(nstates^2,spanq);
-            iter=0;
-            for s0=1:nstates
-                for s1=1:nstates
-                    iter=iter+1;
-                    states_i_j_k{iter}=sprintf('%s_%0.0f_%0.0f',cn,s0,s1);
-                    puskas0=find(states_ic==s0);
-                    puskas1=find(states_ic==s1);
-                    for ii=1:numel(puskas0)
-                        this_regime=sprintf('regime_%0.0f_%0.0f',...
-                            puskas0(ii),puskas1(ii));
-                        bingo=strcmp(this_regime,regimes_i_j);
-                    smallq_k(iter,:)=smallq_k(iter,:)+bigq(bingo,:);
-                    end
-                end
-            end
-            smallq{ic}=smallq_k;
-            states_i_j{ic}=states_i_j_k;
-        end
-        states_i_j=[states_i_j{:}];
-        smallq=cell2mat(smallq); 
-        % merge them all
-        %----------------
-        all_Q=[bigq;smallq];
-        all_names_i_j=[regimes_i_j,states_i_j];
-        nshifts=numel(all_names_i_j);
-    end
-
     function [states,markov_chains]=regimes2states(regimes_history)
         
         regimes_tables=obj.markov_chains.regimes;
@@ -379,6 +328,78 @@ end
         
     end
 
+end
+
+function [all_Q,all_names_i_j,nshifts]=set_transition_probabilities(Qt,MC)
+nregs=MC.regimes_number;
+spanq=size(Qt,3);
+bigq=nan(nregs^2,spanq);
+regimes_i_j=cell(1,nregs^2);
+iter=0;
+for i_reg=1:nregs
+    for j_reg=1:nregs
+        iter=iter+1;
+        bigq(iter,:)=squeeze(Qt(i_reg,j_reg,:));
+        regimes_i_j{iter}=sprintf('regime_%0.0f_%0.0f',i_reg,j_reg);
+    end
+end
+
+regimes=MC.regimes;
+Journal=MC.journal;
+% Legacy
+if ischar(Journal{1,1})
+    journalize=@(x)eval(['[',x,']']);
+    for jj=1:numel(Journal)
+        Journal{jj}=journalize(Journal{jj});
+    end
+end
+
+states_i_j=cell(1,MC.chains_number);
+smallq=cell(MC.chains_number,1);
+for ic=1:MC.chains_number
+    cn=MC.chain_names{ic};
+    loc=strcmp(cn,regimes(1,:));
+    states_ic=cell2mat(regimes(2:end,loc));
+    nstates=numel(unique(states_ic));
+    states_i_j_k=cell(1,nstates^2);
+    smallq_k=zeros(nstates^2,spanq);
+    iter=0;
+    for s0=1:nstates
+        for r=1:nregs
+            if Journal{r,1}(ic)==s0
+                break
+            end
+        end
+        Jr=Journal(r,:);
+        
+        for s1=1:nstates
+            iter=iter+1;
+            states_i_j_k{iter}=sprintf('%s_%0.0f_%0.0f',cn,s0,s1);
+            for ii=1:nregs
+                if Jr{ii}(2,ic)==s1
+                    this_regime=sprintf('regime_%0.0f_%0.0f',r,ii);
+                    bingo=strcmp(this_regime,regimes_i_j);
+                    smallq_k(iter,:)=smallq_k(iter,:)+bigq(bingo,:);
+                end
+            end
+        end
+    end
+    
+    if any(smallq_k(:)<0)||any(smallq_k(:)>1.0000000001)
+        
+        error('wrong probabilities')
+        
+    end
+    smallq{ic}=smallq_k;
+    states_i_j{ic}=states_i_j_k;
+end
+states_i_j=[states_i_j{:}];
+smallq=cell2mat(smallq);
+% merge them all
+%----------------
+all_Q=[bigq;smallq];
+all_names_i_j=[regimes_i_j,states_i_j];
+nshifts=numel(all_names_i_j);
 end
 
 function y=do_hp_filter(y,lambda)
@@ -454,7 +475,7 @@ d={
     
     'simul_anticipate_zero',false,@(x)islogical(x),...
     'simul_anticipate_zero must be a logical'
-
+    
     'simul_honor_constraints_through_switch',false,@(x)islogical(x),...
     'simul_honor_constraints_through_switch must be a logical'
     
@@ -475,7 +496,7 @@ d={
     
     'simul_update_shocks_handle',[],@(x)isa(x,'function_handle'),...
     'simul_update_shocks_handle must be a function handle'
-
+    
     'simul_hpfilter_lambda',[],@(x)num_fin(x) && x>0,...
     ' simul_hpfilter_lambda must be >0'
     };
