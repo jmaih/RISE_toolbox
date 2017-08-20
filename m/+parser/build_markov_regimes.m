@@ -62,7 +62,6 @@ for ichain=1:chains_number
         
         for jcol=1:ncols
             
-%             JJ{irow,jcol}=[sprintf('%0.f',irow),';',sprintf('%0.f',jcol)];
             JJ{irow,jcol}=[irow;jcol];
             
         end
