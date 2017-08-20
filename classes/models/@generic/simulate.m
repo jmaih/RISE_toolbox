@@ -385,11 +385,6 @@ for ic=1:MC.chains_number
         end
     end
     
-    if any(smallq_k(:)<0)||any(smallq_k(:)>1.0000000001)
-        
-        error('wrong probabilities')
-        
-    end
     smallq{ic}=smallq_k;
     states_i_j{ic}=states_i_j_k;
 end
