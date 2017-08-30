@@ -74,32 +74,62 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 
 
 bee_fields= properties('bee');
+
 bee_options=struct();
+
 for ii=1:numel(bee_fields)
+    
     fi=bee_fields{ii};
+    
     if isfield(options,fi)
+        
         bee_options.(fi)=options.(fi);
+    
     end
+    
+end
+
+f0=[];
+
+if iscell(x0)
+    
+    if numel(x0)~=2
+        
+        error('when x0 is a cell, it should have two elements')
+        
+    end
+    
+    f0=x0{2};
+    
+    x0=x0{1};
+    
 end
 
 % if license('checkout','Distrib_Computing_Toolbox') && matlabpool('size') &&...
 % 	(isfield(options,'UseParallel') && strcmp(options.UseParallel,'always'))
 %     obj=par_bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
 % else
-    obj=bee(Objective,x0,[],lb,ub,bee_options,varargin{:});
+    obj=bee(Objective,x0,f0,lb,ub,bee_options,varargin{:});
 % end
 
 x=obj.best;
+
 f=obj.best_fval;
+
 nx=numel(x);
+
 H=nan(nx);
 
 if obj.iterations>=obj.MaxIter || ...
         obj.funcCount>=obj.MaxFunEvals || ...
         etime(obj.finish_time,obj.start_time)>=obj.MaxTime
+    
     exitflag=0; % disp('Too many function evaluations or iterations.')
+
 else
+    
     exitflag=-1; % disp('Stopped by output/plot function.')
+    
 end
         
                     

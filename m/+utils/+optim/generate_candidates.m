@@ -1,5 +1,5 @@
-function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,max_trials,...
-    restrictions,penalty,varargin)
+function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,...
+    max_trials,restrictions,opt,penalty,varargin)
 % generate_candidates -- generate candidates for optimization
 %
 % Syntax
@@ -25,6 +25,12 @@ function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,max_trials,..
 %
 % - **restrictions** [empty|function_handle]: function evaluating the
 % violations
+%
+% - **opt** [struct]: structure with fields
+%   - **restrictions_in_objective** [true|false]:
+%   - **returns_retcode** [true|false]: 
+%   - **restrictions_same_weights** [true|{false}]: 
+%   - **allow_restrictions_violations** [true|{false}]: 
 %
 % - **penalty** [numeric]: value functions exceeding this value in
 % absolute value are assigned this value 
@@ -77,26 +83,49 @@ viol=zeros(1,n);
 funevals=0;
 
 % can we get 2 outputs?
-success=false;
 
-try %#ok<TRYNC>
+if isempty(opt)
     
-    c=lb+(ub-lb).*rand(npar,1);
+    opt=struct('restrictions_in_objective',false,...
+    'returns_retcode',false,...
+    'restrictions_same_weights',false,...
+    'allow_restrictions_violations',false);
+
+end
+
+if opt.restrictions_in_objective
     
-    [~,rcode]=objective(c,varargin{:});
+    opt.returns_retcode=true;
+    
+else
     
     try %#ok<TRYNC>
         
-        msg=decipher(rcode);
+        xtest=lb+(ub-lb).*rand(npar,1);
         
-        success=true;
+        [~,rcode]=objective(xtest,varargin{:});
+        
+        try %#ok<TRYNC>
+            
+            if isnumeric(rcode) && isscalar(rcode)
+                
+                msg=decipher(rcode);
+                
+                opt.returns_retcode=true;
+                
+            end
+            
+        end
         
     end
-    
+
 end
 
 % success=nargout(objective)>=2;
 msg='';
+
+myinvalid=@(v,mess,f)(~opt.allow_restrictions_violations && m>0)...
+                ||~isempty(mess)||f>=penalty;
 
 the_loop=@loop_body;
 
@@ -131,31 +160,21 @@ funevals=funevals+sum(fcount);
             
             iter2=0;
             
-            while iter2<max_trials && (violi>0||~isempty(msg))
+            invalid=myinvalid(violi,msg,fi);
+            
+            while iter2<max_trials && invalid
                 
                 iter2=iter2+1;
                 
-                [c,fc,violc]=draw_and_evaluate_vector();
+                [xi,fi,violi]=draw_and_evaluate_vector();
                 
                 fcount=fcount+1;
                 
-                if violc<violi
-                    
-                    xi=c;
-                    
-                    fi=fc;
-                    
-                    violi=violc;
-                    
-                end
+                invalid=myinvalid(violi,msg,fi);
                 
             end
             
-            if fi<penalty
-                
-                invalid=false;
-                
-            else
+            if invalid
                 
                 fprintf(1,'%5s %3.0d/%3.0d %8s %5.0d %8s %5.0d %8s %s \n',...
                     'warrior #',ii,n,'iter',iter,'interm runs',iter2,'pb',msg);
@@ -172,20 +191,10 @@ funevals=funevals+sum(fcount);
         
         c=lb+(ub-lb).*rand(npar,1);
         
-        if success
-            
-            [fc,o4]=objective(c,varargin{:});
-            
-            msg=utils.error.decipher(o4);
-            
-        else
-            
-            fc=objective(c,varargin{:});
-            
-        end
-        
-        viol=utils.estim.penalize_violations(restrictions(c));
+        [fc,viol,msg]=utils.estim.eval_objective_and_restrictions(c,...
+            objective,restrictions,opt,varargin{:});
         
     end
+
 
 end
