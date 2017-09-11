@@ -1481,8 +1481,12 @@ memo=@memo_engine;
         
         retcode=0;
         
-        if any(isnan(varargout{1}))||any(isinf(varargout{1}))
+        % the steady state function may return both the steady state and
+        % the balance growth path
+        if any(isnan(varargout{1}(:)))||any(isinf(varargout{1}(:)))
+            
             retcode=1;
+            
         end
         
         varargout{3}=retcode;
