@@ -555,6 +555,12 @@ function [x,f,viol_strength,funevals,fit,trial]=new_bees(objective,lb,ub,n,...
 [x,f,viol_strength,funevals]=utils.optim.generate_candidates(objective,lb,...
     ub,n,max_trials,nonlcon,opt,penalty,varargin{:});
 
+if f>=penalty
+    
+    viol_strength = penalty;
+    
+end
+
 trial=zeros(1,n);
 
 fit=utils.optim.compute_fitness(f);
@@ -589,6 +595,12 @@ mutant(change)=utils.optim.recenter(mutant(change),obj.lb(change),obj.ub(change)
 
 [f_mut,viol_strength]=utils.estim.eval_objective_and_restrictions(mutant,...
     obj.Objective,obj.nonlcon,obj.restrictions_options);
+
+if f_mut>=obj.penalty
+    
+    viol_strength=obj.penalty;
+    
+end
 
 obj.funcCount=obj.funcCount+1;
 
