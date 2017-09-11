@@ -488,13 +488,21 @@ else
     tmp=deb_selection(obj,1,obj.best_viol_strength,obj.best,...
         obj.best_fitness,obj.best_fval);
     
-    if isempty(obj.best_fval)||obj.ff(1)<obj.best_fval
+    tmpviol=tmp.violation_strength(1);
+    
+    tmpf=tmp.ff(1);
+    
+    tmpx=tmp.xx(:,1);
+    
+    if isempty(obj.best_fval)||...
+            (tmpviol<obj.best_viol_strength) || ...
+            (tmpviol==obj.best_viol_strength && tmpf<obj.best_fval)
         
-        obj.best_fval=tmp.ff(1);
+        obj.best_fval=tmpf;
         
-        obj.best=tmp.xx(:,1);
+        obj.best=tmpx;
         
-        obj.best_viol_strength=obj.violation_strength(1);
+        obj.best_viol_strength=tmpviol;
         
     end
     
