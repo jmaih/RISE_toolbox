@@ -1,4 +1,4 @@
-function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level)
+function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level,nstep)
 % MISSING_OBSERVATIONS_KALMAN_FILTER -- Kalman filter for
 % non-regime-switching models
 %
@@ -35,6 +35,8 @@ function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level)
 %       if level==2, updates are returned in addition to level 1 
 %       if level==3, smoothed values are returned in addition to level 2 
 %
+%   - **nstep** [integer|{1}]: Number of forecast steps 
+%
 % Outputs
 % --------
 %
@@ -43,8 +45,8 @@ function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level)
 %       downs  
 %       - **incr** [vector]: likelihood in each period
 %       - **log_lik** [scalar]: log likelihood  
-%       - **a** [m x n+1 matrix]: filtered stated (available if level >0)  
-%       - **P** [m x m x n+1]: Covariance matrix of filtered state
+%       - **a** [m x n+1 x nstep]: filtered stated (available if level >0)  
+%       - **P** [m x m x n+1 x nstep]: Covariance matrix of filtered state
 %       (available if level >0) 
 %       - **att** [m x n]: Updated state vector  (available if level >1)
 %       - **Ptt** [m x m x n]: Covariance matrix for updates (available if
@@ -72,6 +74,10 @@ function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level)
 %
 % See also: 
 
+if nargin < 11
+    
+    nstep=[];
+
 if nargin<10
     
     level=[];
@@ -96,11 +102,11 @@ if nargin<10
     
 end
 
-if isempty(level)
-    
-    level=3;
-    
 end
+
+if isempty(nstep), nstep=1; end
+
+if isempty(level),level=3; end
 
 if ~any(level==[0,1,2,3])
     
@@ -163,7 +169,7 @@ end
             
             Tt=T(:,:,sp.T(t));
             
-            Pt=f.P(:,:,t);
+            Pt=f.P(:,:,t,1);
             
             Kt=f.K(:,:,t); % Tt*Pt*Zt.'*f.iF(:,:,t);
             
@@ -179,7 +185,7 @@ end
             
             Nt=Zt.'*f.iF(:,:,t)*Zt+Lt.'*Nt*Lt;
             
-            f.alpha(:,t)=f.a(:,t)+Pt*rt;
+            f.alpha(:,t)=f.a(:,t,1)+Pt*rt;
             
             f.V(:,:,t)=Pt-Pt*Nt*Pt;
             
@@ -258,19 +264,23 @@ end
             
             if Z_is_selector
                 
-                Kt=Tt*P(:,Zt)*iF; % Ref. page 85
+                PZiF=P(:,Zt)*iF;
                 
-                a=a+P(:,Zt)*iF*v;
+                Kt=Tt*PZiF; % Ref. page 85
                 
-                P=P-P(:,Zt)*iF*P(Zt,:);
+                a=a+PZiF*v;
+                
+                P=P-PZiF*P(Zt,:);
                 
             else
                 
-                Kt=Tt*P*Zt.'*iF; % Ref. page 85
+                PZiF=P*Zt.'*iF;
                 
-                a=a+P*Zt.'*iF*v;
+                Kt=Tt*PZiF; % Ref. page 85
                 
-                P=P-P*Zt.'*iF*Zt*P;
+                a=a+PZiF*v;
+                
+                P=P-PZiF*Zt*P;
                 
             end
             
@@ -304,9 +314,30 @@ end
             
             if level>0
                 
-                f.a(:,t+1)=a;
+                f.a(:,t+1,1)=a;
                 
-                f.P(:,:,t+1)=P;
+                f.P(:,:,t+1,1)=P;
+                
+                for ii=2:nstep
+                    
+                    [f.a(:,t+1,ii),f.P(:,:,t+1,ii)]=...
+                        hairy(f.a(:,t+1,ii-1),f.P(:,:,t+1,ii-1));
+                    
+                end
+                
+            end
+            
+            function [a,P]=hairy(a,P)
+                
+                tau=t+ii-1;
+                
+                Tt2=T(:,:,sp.T(tau));
+                
+                Rt2=R(:,:,sp.R(tau));
+                
+                a=Tt2*a+ca(:,tca(tau));
+                
+                P=Tt2*P*Tt2.'+Rt2*Q(:,:,sp.Q(tau))*Rt2.';
                 
             end
             
@@ -360,9 +391,17 @@ end
         
         if level>0
             
-            f.a=zeros(m,n+1); f.a(:,1)=a1;
+            f.a=zeros(m,n+1,nstep); f.a(:,1,1)=a1;
             
-            f.P=zeros(m,m,n+1); f.P(:,:,1)=P1;
+            f.P=zeros(m,m,n+1,nstep); f.P(:,:,1,1)=P1;
+            
+            for istep=2:nstep
+                
+                f.a(:,1,istep)=a1;
+                
+                f.P(:,:,1,istep)=P1;
+                
+            end
             
             if level>1
                 
