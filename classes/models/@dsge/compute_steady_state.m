@@ -105,7 +105,7 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 if isempty(obj)
     
     obj=cell(0,4);
-
+    
     return
     
 end
@@ -202,7 +202,7 @@ if obj.options.steady_state_unique
         
         [y(:,1),g(:,1),~,p_unic,retcode]=run_one_regime(y0(:,1),g0(:,1),p_unic,x,...
             def_unic,sscode,unsolved,blocks);
-       
+        
         % exit if there is a problem (retcode>0) or if we have converged
         %----------------------------------------------------------------
         converged=retcode||max(abs(y0(:,1)-y(:,1)))<=obj.options.fix_point_TolFun;
@@ -246,7 +246,7 @@ else
         [y(:,istate),g(:,istate),r(:,istate),p(:,istate),retcode]=...
             run_one_regime(y0(:,istate),g0(:,istate),p(:,istate),x,...
             d{istate},sscode,unsolved,blocks);
-
+        
         if retcode
             
             break
@@ -388,12 +388,23 @@ if ~isempty(sscode)
         
         [y,g,r,retcode]=loop_over(y0,g0,sscode.subset);
         
+        if solve_bgp
+            
+            r=r(1:numel(y));
+            
+        end
+        
     else
         
         [y,g,p,r,retcode]=grand_sscode(y0,g0,p,d);
         
-        
         if sscode.is_imposed_steady_state || check_residuals(r,optimopt.TolFun)
+            
+            if solve_bgp
+                
+                r=r(1:numel(y));
+                
+            end
             
             return
             
@@ -424,7 +435,7 @@ if ~isempty(sscode)
 else
     
     [y,g,p,r,retcode]=divide_and_conquer(y0,g0,p,x,d,unsolved,dq_blocks);
-        
+    
 end
 
 
@@ -453,7 +464,7 @@ end
             
             ssc0=[ssc0;g0(subset)];
             
-            log_status=[log_status,log_status]; 
+            log_status=[log_status,log_status];
             
         end
         
@@ -470,7 +481,7 @@ end
             
             ssc(log_status) = exp(ssc(log_status));
             
-            ytmp=y0; 
+            ytmp=y0;
             
             ytmp(subset)=ssc(1:nv);
             
@@ -506,23 +517,41 @@ end
         
         if check_residuals(r,optimopt.TolFun)
             
-            y=y0;
+            can_proceed=true;
             
-            g=g0;
-            
-            retcode=0;
-            
-            % possibly update the parameter
-            %------------------------------
-            if any(sscode.is_param_changed)
+            if dq_blocks.solve_bgp
                 
-                [~,p,retcode]=sscode.func(y,p,d);
+                yshift=create_shift(y0,g0,is_log_var,dq_blocks.solve_bgp_shift);
+                
+                rs2=evaluate_all_residuals(dq_blocks.residcode,yshift,g0,x,p,d,swapping_func);
+                
+                r=[r;rs2];
+                
+                can_proceed=check_residuals(rs2,optimopt.TolFun);
                 
             end
             
-            if retcode==0
+            if can_proceed
                 
-                return
+                y=y0;
+                
+                g=g0;
+                
+                retcode=0;
+                
+                % possibly update the parameter
+                %------------------------------
+                if any(sscode.is_param_changed)
+                    
+                    [~,p,retcode]=sscode.func(y,p,d);
+                    
+                end
+                
+                if retcode==0
+                    
+                    return
+                    
+                end
                 
             end
             
@@ -553,14 +582,26 @@ end
             g=yg(:,2);
             
         end
-                
+        
         if retcode
             
-            r=ones(size(y));
+            nyg=(1+dq_blocks.solve_bgp)*size(y,1);
+            
+            r=ones(nyg,1);
             
         else
             
             r=evaluate_all_residuals(dq_blocks.residcode,y,g,x,p,d,swapping_func);
+            
+            if dq_blocks.solve_bgp
+                
+                yshift=create_shift(y,g,is_log_var,dq_blocks.solve_bgp_shift);
+                
+                rs2=evaluate_all_residuals(dq_blocks.residcode,yshift,g,x,p,d,swapping_func);
+                
+                r=[r;rs2];
+                
+            end
             
         end
         
@@ -573,30 +614,48 @@ end
 function [y,g,p,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,blocks)
 
 optimopt=blocks.optimopt;
-        
+
 swapping_func=blocks.swapping_func;
+
+solve_bgp=blocks.solve_bgp;
 
 % try a quick exit
 %-----------------
 r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
 
+shift=blocks.solve_bgp_shift;
+
+is_log_var=blocks.is_log_var;
+
 if check_residuals(r,optimopt.TolFun)
     
-    retcode=0;
+    can_proceed=true;
     
-    return
+    if solve_bgp
+        
+        yshift=create_shift(y,g,is_log_var,shift);
+        
+        rs2=evaluate_all_residuals(blocks.residcode,yshift,g,x,p,d,swapping_func);
+        
+        can_proceed=check_residuals(rs2,optimopt.TolFun);
+        
+        r=[r;rs2];
+        
+    end
+    
+    if can_proceed
+        
+        retcode=0;
+        
+        return
+        
+    end
     
 end
 
 sseqtns=blocks.sseqtns;
 
 ssjacobians=blocks.ssjacobians;
-
-is_log_var=blocks.is_log_var;
-
-solve_bgp=blocks.solve_bgp;
-
-shift=blocks.solve_bgp_shift;
 
 debug=blocks.debug;
 
@@ -708,7 +767,7 @@ for iblock=1:nblocks
 end
 
 r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
- 
+
     function [orig_varblk,varblk,nv,fixed_level,fixed_growth]=load_relevant()
         
         varblk=blocks.variables{iblock};
@@ -759,7 +818,7 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
             r2=r+shift*Ay*g;
             
             yg=[y;g]-pinv(full([J;Ay,shift*Ay+Ag]))*[r;r2];
-
+            
             yg(abs(yg)<optimopt.TolFun)=0;
             
             y=yg(1:ny);
@@ -777,7 +836,7 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
         resnorm=norm(rupdate);
         
         exitflag=utils.optim.exitflag(1,[y;g],resnorm);
-
+        
         retcode=1-(exitflag==1);
         
     end
@@ -788,10 +847,10 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
         
         if ~isempty(yshift)
             
-        J2=utils.code.evaluate_functions(func,yshift,g,x,p,d);
-        
-        J=[J;J2];
-        
+            J2=utils.code.evaluate_functions(func,yshift,g,x,p,d);
+            
+            J=[J;J2];
+            
         end
         
     end
@@ -809,34 +868,42 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
             g(growth_vars)=zyg(nvl+1:end);
             
         end
-                
+        
         rs=evaluate_all_residuals(sseqtns{iblock},y,g,x,p,d,swapping_func);
         
         yshift=[];
         
         if solve_bgp
             
-            yshift=y;
-            
-            yshift(~is_log_var)=y(~is_log_var)+shift*g(~is_log_var);
-            
-            yshift(is_log_var)=y(is_log_var).*g(is_log_var).^shift;
+            yshift=create_shift(y,g,is_log_var,shift);
             
             rs2=evaluate_all_residuals(sseqtns{iblock},yshift,g,x,p,d,swapping_func);
             
             rs=[rs;rs2];
             
         end
-            
+        
         if is_jac
             
             Jac=solve_jacobian(ssjacobians{iblock},y,yshift,g);
             
         end
         
-%         if any(~isfinite(rs)),rs=10000*ones(size(rs));end
+        %         if any(~isfinite(rs)),rs=10000*ones(size(rs));end
         
     end
+
+end
+
+
+
+function yshift=create_shift(y,g,is_log_var,shift)
+
+yshift=y;
+
+yshift(~is_log_var)=y(~is_log_var)+shift*g(~is_log_var);
+
+yshift(is_log_var)=y(is_log_var).*g(is_log_var).^shift;
 
 end
 
@@ -917,7 +984,7 @@ if obj.warrant_setup_change
     obj.steady_state_2_model_communication=[];
     
 end
-        
+
 % steady state file
 %------------------
 sscode=[];
@@ -939,7 +1006,7 @@ if isempty(obj.steady_state_2_model_communication)
         end
         
         sscode=struct();
-                
+        
         % memo will follow
         %------------------
         sscode.func=obj.options.steady_state_file;
@@ -959,7 +1026,7 @@ if isempty(obj.steady_state_2_model_communication)
         end
         
         sscode.is_param_changed=isUpdate;
-                        
+        
         user_endo_ids=locate_variables(var_names,obj.endogenous.name);
         
         sscode.solved=ismember(obj.endogenous.name,var_names);
@@ -1025,7 +1092,7 @@ if isempty(obj.steady_state_2_model_communication)
                 sscode.is_loop_steady_state) && ...
                 any(sscode.is_param_changed)
             
-%             error(errmsg)
+            %             error(errmsg)
             
         end
         
@@ -1067,7 +1134,7 @@ if isempty(obj.steady_state_2_blocks_optimization)
     % there is no solution, it may take forever so we change the default
     % number of iterations from 1000 to 20
     %---------------------------------------------------------------
-%     optimopt.MaxIter=20;
+    %     optimopt.MaxIter=20;
     
     optimopt.Algorithm=obj.options.steady_state_algorithm;
     
@@ -1333,13 +1400,13 @@ obj.routines.shadow_steady_state_auxiliary_growth_rate_eqtns=...
         
         [derivs]=parser.differentiate_system(myfunc,list,wrt,order);
         
-%         if iblk==1
-%             
-%             bad_fields=fieldnames(derivs)-derivative_fields;
-%             
-%         end
-%         
-%         theJacobs{iblk}=rmfield(derivs,bad_fields);
+        %         if iblk==1
+        %
+        %             bad_fields=fieldnames(derivs)-derivative_fields;
+        %
+        %         end
+        %
+        %         theJacobs{iblk}=rmfield(derivs,bad_fields);
         
         theJacobs{iblk}=derivs;
         
@@ -1432,7 +1499,7 @@ n=nargin;
 sf=@swap_engine;
 
 es=@extend_swaps;
-    
+
     function [y,p]=swap_engine(y,p)
         
         if n>0
@@ -1509,7 +1576,7 @@ memo=@engine;
         [varargout{1:nargout}]=ssfilecode(obj,y,...
             vector2struct(pnames,p),...
             vector2struct(defnames,d),id);
-     
+        
         % the second output includes changed parameters and it has to be
         % dealt with consequently. In particular, we want to make it so
         % that there is no difference between ssfile and ssmodel
@@ -1566,7 +1633,7 @@ auxcode=@auxiliary_evaluation;
         
         if ~isempty(aux_ssfunc) && (isa(aux_ssfunc,'function_handle')||...
                 (isstruct(aux_ssfunc)&&~isempty(aux_ssfunc.code)))
-
+            
             y=utils.code.evaluate_functions(aux_ssfunc,y,g,x,p,d);
             
             if is_growth
