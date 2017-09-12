@@ -199,7 +199,7 @@ if nargout>ndatasets+1
     
 end
 
-[T,R,Z,H,Q,sstate,init]=dsge.state_space_wrapper(syst);
+[T,R,Z,H,Q,sstate,init,growth]=dsge.state_space_wrapper(syst);
 
 first_dataset=varargin{1};
 
@@ -222,6 +222,12 @@ dy=ybar-sstate(Z);
 m=size(T,1);
 
 ca=(eye(m)-T)*sstate;
+
+if any(growth~=0)
+    
+    ca = ca+growth;
+    
+end
 
 if do_demean
     

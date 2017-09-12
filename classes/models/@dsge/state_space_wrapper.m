@@ -1,4 +1,4 @@
-function [T,R,Z,H,Q,sstate,init]=state_space_wrapper(syst)
+function [T,R,Z,H,Q,sstate,init,growth]=state_space_wrapper(syst)
 
 T=zeros(syst.m);
 
@@ -21,5 +21,13 @@ end
 Q=eye(size(R,2));
 
 sstate=syst.steady_state{1};
+
+growth=imag(syst.Tsig{1});
+
+if max(abs(growth))<1e-9
+    
+    growth=0;
+    
+end
 
 end
