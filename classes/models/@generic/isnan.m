@@ -27,6 +27,26 @@ if isempty(obj)
     
 end
 
+nobj=numel(obj);
+
+if nobj>1
+    
+    params=cell(1,nobj);
+    
+    for iobj=1:numel(obj)
+        
+        params{iobj}=isnan(obj(iobj));
+        
+        disp(['====== model ',int2str(iobj),' ======'])
+        
+        disp(params{iobj})
+        
+    end
+    
+    return
+    
+end
+
 pp=obj.parameter_values;
 
 regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
