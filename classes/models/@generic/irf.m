@@ -409,11 +409,11 @@ myirfs=format_irf_output(myirfs);
             
             RegimeNames=cellfun(@(x)x(~isspace(x)),cellstr(RegimeNames),'uniformOutput',false);
             
+            vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
+                
             if irf_to_time_series
                 
                 dsge_irfs=struct();
-                
-                vlocs=locate_variables(irf_var_list,get(obj,'endo_list'));
                 
                 for ishock=1:nshocks
                     
@@ -450,7 +450,7 @@ myirfs=format_irf_output(myirfs);
                 
             else
                 
-                dsge_irfs={Impulse_dsge,...
+                dsge_irfs={Impulse_dsge(:,:,vlocs,:),...
                     {
                     '1=time',Initcond.nsteps+1
                     '2=regime names',RegimeNames
