@@ -374,7 +374,7 @@ myirfs=format_irf_output(myirfs);
         %-------------------------------------------------------------------------
         if ~isempty(Initcond.is_log_var)
             
-            Impulse_dsge(Initcond.is_log_var,:,:,:,:)=exp(Impulse_dsge(Initcond.is_log_var,:,:,:,:));
+%             Impulse_dsge(Initcond.is_log_var,:,:,:,:)=exp(Impulse_dsge(Initcond.is_log_var,:,:,:,:));
         
         end
 
