@@ -9,24 +9,25 @@ classdef bee %< handle
     properties
         stopping_created=false;
         start_time
-        MaxNodes=20;
+        MaxNodes=20
         lb
         ub
         x0
         f0
         violation_strength_0
         fitness_0
-        iterations=0;
-        funcCount=0;
-        MaxIter=1000;
-        MaxTime=3600;
-        MaxFunEvals=inf;
+        iterations=0
+        funcCount=0
+        MaxIter=1000
+        MaxTime=3600
+        MaxFunEvals=inf
         rand_seed=[]
-        penalty=1e+8;
-        verbose=10;
+        penalty=1e+8
+        verbose=10
         % optimizer-specific properties
-        max_trials=100;
+        max_trials=100
         nonlcon
+        max_genes_change = 1 % number of genes change
     end
     %     properties(Constant, Hidden = true)
     %     end
@@ -586,10 +587,12 @@ end
 mutant=obj.xx(:,ii);
 
 % %     pick the parameters to change in the new solution
-change=min(fix(rand*obj.number_of_parameters)+1,obj.number_of_parameters);
+nch=min(randi(ceil(0.5*obj.number_of_parameters)),obj.max_genes_change);
+
+change=min(fix(rand(nch,1)*obj.number_of_parameters)+1,obj.number_of_parameters);
 
 mutant(change)=mutant(change)+(mutant(change)-...
-    obj.xx(change,donor_id))*2.*(rand(numel(change),1)-.5);
+    obj.xx(change,donor_id))*2.*(rand(nch,1)-.5);
 
 mutant(change)=utils.optim.recenter(mutant(change),obj.lb(change),obj.ub(change));
 
