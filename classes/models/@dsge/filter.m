@@ -51,18 +51,42 @@ end
 
 nobj=numel(obj);
 
-Incr=[];
-
 if nobj>1
     
     retcode=nan(1,nobj);
     
     LogLik=nan(1,nobj);
     
+    Incr=cell(1,nobj);
+    
+    nincr=nan(1,nobj);
+
     for iobj=1:nobj
         
-        [obj(iobj),LogLik(iobj),~,retcode(iobj)]=filter(obj(iobj),varargin{:});
+        [obj(iobj),LogLik(iobj),Incr{iobj},retcode(iobj)]=filter(obj(iobj),varargin{:});
+        
+        nincr(iobj)=numel(Incr{iobj});
+        
+    end
     
+    good=retcode==0;
+    
+    nincrGood=nincr(good);
+    
+    if ~isempty(nincrGood) && all(nincrGood==nincrGood(1))
+        
+        if any(retcode)
+            
+            for iobj=find(retcode)
+                
+                Incr{iobj}=nan(nincrGood(1),1);
+                
+            end
+            
+        end
+        
+        Incr=cell2mat(Incr);
+        
     end
     
     return
