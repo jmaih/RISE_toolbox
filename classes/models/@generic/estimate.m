@@ -191,27 +191,53 @@ if nobj==0 % same as isempty(obj)
     
     return
     
+elseif nobj>1
+    
+    NumWorkers=utils.parallel.get_number_of_workers();
+    
+    parfor (ii=1:nobj,NumWorkers)
+        
+        obj(ii)=estimate(obj(ii),varargin{:}); %#ok<PFBNS>
+        
+    end
+    
+    return
+    
 end
 
 nn=length(varargin);
+
 if nn
+    
     if rem(nn,2)~=0
+        
         error([mfilename,':: arguments must come in pairs'])
+        
     end
+    
     if ~isempty(varargin)
+        
         for jj=1:nobj
+            
             obj(jj)=set(obj(jj),varargin{:});
+            
         end
+        
     end
+    
 end
 
 estim_start_time=clock;
+
 for jj=1:nobj
+    
     if isempty(obj(jj).estimation.posterior_maximization.estim_start_time)
         % maybe we used several optimizers one after the other. In that
         % case the start of the estimation should not change
         obj(jj).estimation.posterior_maximization.estim_start_time=estim_start_time;
+        
     end
+    
 end
 
 estim_start_from_mode=obj(1).options.estim_start_from_mode;
@@ -221,57 +247,96 @@ estim_start_from_mode=obj(1).options.estim_start_from_mode;
 param_names={obj(1).estimation.priors.name};
 % Load the function that computes the likelihood
 for ii=1:nobj
+    
     if ~isequal(param_names,{obj(ii).estimation.priors.name})
+        
         error([mfilename,':: optimization parameters should be the same across all models and ordered in the same way'])
+    
     end
     % this will be useful when deciding to check for stability in the markov switching model
     obj(ii).estimation_under_way=true;
     % load the mode
     obj(ii)=load_mode(obj(ii));
+
 end
 
 % this will record the different problems encounter during estimation
 list_of_issues=cell(0);
 
 if ~isempty(estim_start_from_mode) && ~islogical(estim_start_from_mode)
+    
     estim_start_from_mode=logical(estim_start_from_mode);
+    
 end
 
 [obj,issue,retcode]=load_data(obj);
+
 if retcode
+    
     if ~all([obj.is_optimal_simple_rule_model])
+        
         error([mfilename,':: ',utils.error.decipher(retcode)])
+    
     end
+    
 end
+
 if ~isempty(issue)
+    
     list_of_issues=[list_of_issues;{issue}];
+    
 end
 
 xmode=obj(1).estimation.posterior_maximization.mode;
+
 response='n';
+
 if ~isempty(xmode)
+    
     if ~isempty(estim_start_from_mode)
+        
         if estim_start_from_mode
+            
             response='y';
+            
         else
+            
             response='n';
+            
         end
+        
     else
+        
         response='';
+        
         while ~ismember(response,{'y','n'})
+            
             response=input('previous estimation found. Do you want to load the mode? [y/n]','s');
+        
         end
+        
     end
+    
 end
+
 switch response
+    
     case 'y'
+        
         x0=xmode;
+    
     case 'n'
+        
         x0=[obj(1).estimation.priors.start];
+    
     otherwise
+        
 end
+
 x0=x0(:);
+
 lb=[obj(1).estimation.priors.lower_bound]; lb=lb(:);
+
 ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 
 % transform initial conditions
@@ -285,17 +350,22 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 % extend the output but not the short hessian
 %---------------------------------------------
 linear_restricts=obj(1).linear_restrictions_data;
+
 x1 = linear_restricts.a_func(x1);
+
 x0 = linear_restricts.a_func(x0); %#ok<NASGU>
 % H=linear_restricts.a_func(H,true);
 
 numberOfActiveInequalities=numel(viol);
 
 if ~isempty(issue)
+    
     list_of_issues=[list_of_issues;{issue}];
+
 end
 
 estim_end_time=clock;
+
 for ii=1:nobj
     % set the filtering/smoothing flag to 3 in order to get out the final
     % outputs with the smoothed and filtered variables (if feasible)
@@ -304,6 +374,7 @@ for ii=1:nobj
     % compute the penalties for the restrictions violations
     %-------------------------------------------------------
     g=evaluate_general_restrictions(obj(ii));
+    
     nonlin_penalty=utils.estim.penalize_violations(g{1},obj(ii).options.estim_penalty_factor);
     
     post_max=obj(ii).estimation.posterior_maximization;
@@ -334,12 +405,16 @@ for ii=1:nobj
     obj(ii).list_of_issues=list_of_issues;
     
     if isdir(obj(ii).options.results_folder)
+        
         save([obj(ii).options.results_folder,filesep,'estimation',filesep,...
             'estimated_model'],'obj','x1','x0','f1','f0','H')
+    
     end
+    
 end
 % disp Estimation results
 print_estimation_results(obj);
+
 end
 
 function d=the_defaults()
