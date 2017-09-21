@@ -65,6 +65,13 @@ if ~retcode
             +sum(gammaln(.5*((1+lambda)*T-k+1-(1:n))))...
             -sum(gammaln(.5*(lambda*T-k+1-(1:n))));
     end
+    
+    if isnan(LogLik)||isinf(LogLik)||~isreal(LogLik)
+        
+        retcode=300002;
+        
+    end
+    
     if obj.options.kf_filtering_level
         % now we filter the data, provided, the parameters
         % estimated using the dsge-var do not have a low density as

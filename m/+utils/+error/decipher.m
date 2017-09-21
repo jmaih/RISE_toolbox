@@ -73,7 +73,7 @@ switch code
     case 30002
         msg='Nans or Inf in initial covariance matrix';
     case 300002
-        msg='Nans or Inf in likelihood';
+        msg='Nans or Inf or complex likelihood';
     case 303
         msg='Explosion limit reached in Lyapunov solution';
     case 304
