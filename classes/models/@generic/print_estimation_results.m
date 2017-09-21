@@ -97,7 +97,7 @@ for kk=1:numel(obj)
         
     end
     
-    if is_dsge && ~obj.is_optimal_simple_rule_model
+    if is_dsge && ~obj(kk).is_optimal_simple_rule_model
         
         start_date=obj(kk).options.estim_start_date;
         
