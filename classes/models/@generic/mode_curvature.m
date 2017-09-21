@@ -188,7 +188,7 @@ end
             
         end
         
-        forbidden=pp.log_lik<=-obj.options.estim_penalty;
+        forbidden=pp.log_post<=-obj.options.estim_penalty;
         
         pp.log_post(forbidden)=nan;
         
