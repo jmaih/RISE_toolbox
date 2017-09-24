@@ -468,7 +468,7 @@ else
     
     if do_bvar_dsge
         
-        obj=bvar_dsge(obj);
+        [obj,retcode]=bvar_dsge(obj);
         
     end
     

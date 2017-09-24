@@ -81,9 +81,13 @@ dsge_var=create_dsge_var_tank(obj);
 % load the elements computed in load_data, using the Schorfheide notation
 %-------------------------------------------------------------------------
 p=dsge_var.p;% the var order
+
 T=dsge_var.T;% the sample size
+
 const=dsge_var.constant; % flag for constant
+
 n=dsge_var.n; % number of variables
+
 k=const+n*p;
 
 % theoretical autocovariances: impose that 
@@ -91,16 +95,21 @@ k=const+n*p;
 %--------------------------------------------------------------------
 [A,retcode]=theoretical_autocovariances(obj,'autocov_ar',p,...
     'autocov_model_resolve',false);
+
 if ~retcode
     % VAR approximation of the DSGE model
     %-------------------------------------
     ids=obj.observables.state_id;
+    
     steady_state=obj.solution.ss{1}(ids);
+    
     [PHI_theta,SIG_theta,GXX,GYX,GXY,GYY,retcode]=var_approximation_to_the_dsge(steady_state,A(ids,ids,:),const);
+    
     if ~retcode
         % the prior weight is given by the dsge model
         %---------------------------------------------
         lambda=obj.parameter_values(obj.dsge_prior_weight_id,1);
+        
         if lambda*T>k+n
             % load the empirical moment matrices
             %-----------------------------------
@@ -113,9 +122,16 @@ if ~retcode
             % through the empirical moments
             [PHIb,SIGb,ltgxx,ltgxxi]=bvar_dsge_mode();
             
+        else
+            
+            retcode=261;
+            
         end
+        
         store_dsge_var();
+        
     end
+    
 end
 
     function store_dsge_var()
