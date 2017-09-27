@@ -32,8 +32,6 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 %   - **c_range** [vector|{}]: range of variation of c
 %   - **thin** [integer|{1}]: number of thinning simulations. 1 means we
 %   keep every draw, 2 means we keep every second, 3 every third, etc.
-%   - **retune_cov_every** [integer|{100}]: frequence for the retuning of
-%   the scale parameter
 %   - **penalty** [numeric|{1e+8}]: worst possible function value
 %   - **nchain** [integer|{1}]: number of parallel chains
 %   - **rwm_exp** [numeric|{0.6}]: tuning hyper-parameter for scale and
@@ -85,6 +83,9 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 % ---------
 %
 % See also:	CONSTANT_BVAR_SAMPLER, RRF_SAMPLER
+
+%   - **retune_cov_every** [integer|{100}]: frequence for the retuning of
+%   the scale parameter
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 
