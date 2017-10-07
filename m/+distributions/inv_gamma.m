@@ -168,6 +168,7 @@ end
             moments=[m;sig];
         end
     end
+
     function icdf=inverse_cdf(u,a,b,junk1,junk2)
         if matlab_gamma_definition
             icdf=1./(b*gammaincinv(1-u,a));
@@ -175,6 +176,7 @@ end
             icdf=b./gammaincinv(1-u,a);
         end
     end
+
     function lpdf=log_density(theta,a,b,junk1,junk2)
         if matlab_gamma_definition
             lpdf=-a.*log(b)-gammaln(a)-(a+1).*log(theta)-1./(b.*theta);
@@ -184,6 +186,7 @@ end
         target=theta>0;
         lpdf(~target)=-inf;
     end
+
     function cdf=cumulative_density_function(theta,a,b,junk1,junk2)
         if ~isequal(size(a),size(b))
             error([mfilename,':: size of a must match size of b'])
@@ -199,6 +202,7 @@ end
         target=theta>0;
         cdf(~target)=nan;
     end
+
     function d=draws(a,b,n,c,d)
         % this function needs to be inside here in order to use inverse_cdf
         if nargin<5
@@ -212,6 +216,7 @@ end
         end
         d=inverse_cdf(rand(n,1),a,b,c,d);
     end
+
 end
 
 function [violation,space]=hyperparameters(hyper)
