@@ -74,6 +74,10 @@ rise_code = regexprep(rise_code,'(//|%)(.*?\n)','\n');
 lrise=length(rise_code);
 fprintf(1,'Removing comment lines: Old(%0.0f), New(%0.0f)\n',lrise_old,lrise);
 
+% replace E-015 with 10^15
+%-------------------------
+rise_code = regexprep(rise_code,'(\d+)(E-0)','$1/10^');
+
 % replace y ${y}$ (long_name='output') with y "{y}(output)"
 %----------------------------------------------------------
 rise_code=replace_descriptions(rise_code);
@@ -202,9 +206,9 @@ write_parameter_file()
 
     function raw_code=stepwise_removal_of_block_comments(raw_code)
         
-        starts=regexp(raw_code,'^/\*','start'); % starts=regexp(raw_code,'(?<!/)/\*','start'); % starts=strfind(raw_code,'/*');
+        starts=strfind(raw_code,'/*'); %starts=regexp(raw_code,'^/\*','start'); % starts=regexp(raw_code,'(?<!/)/\*','start'); 
         
-        finishes=regexp(raw_code,'^\*/','start'); % finishes=strfind(raw_code,'*/');
+        finishes=strfind(raw_code,'*/');%finishes=regexp(raw_code,'^\*/','start'); % 
         
         if numel(starts)~=numel(finishes)
             
