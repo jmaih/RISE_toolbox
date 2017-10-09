@@ -1,0 +1,92 @@
+endogenous Y "Output" R "Interest rate" PI "Gross Inflation rate" MC "Marginal costs" M "stochastic discount factor" C "Consumption" W "real wage"
+MUZ "Growth rate of technology" N "Labor" R_TAYLOR LAMBDA "Lagr Mult on Budget constraint" PIND "Inflation index" DLOG_Y "Output growth"
+A "Cons. Pref shock process" RR "Real interest rate" 
+
+exogenous EA "Cons. pref. shock" EZ "Technology shock" ER "Monetary Policy shock" EPI "Cost-push shock"
+
+parameters sigma "inv. intertemp elast of subst" kappa "coeff on labor in utility" kappa1 "reaction to inflation" kappa2 "reaction to output growth"
+epsilon phi eta "inv. Frisch elasticity of labor" beta "discount factor" rho_r "interest rate smoothing" rho_a "AR cons pref"
+pi_ss "sstate inflation" xi "share of infl in infl index" h "habit persistence" gz "sstate growth of technology"
+d "preference parameter" sig_pi "stdev cost push" sig_a "stdev cons. pref" sig_z "stdev techn" sig_r "stdev mon pol"
+
+parameters r_zlb ocb_tp_1_2 ocb_tp_2_1
+
+parameters(ocb,2) bind
+
+model
+
+	? R>=1;
+
+	R = bind*r_zlb + (1-bind)*R_TAYLOR;
+
+	LAMBDA = A*(C - h*C(-1)/MUZ)^(-sigma);
+
+	M = beta*d*LAMBDA(+1)/(MUZ{+1}*PI(+1)*LAMBDA);
+
+	1/R = M;
+
+	(epsilon/(epsilon - 1))*MC - 1*exp(sig_pi*EPI) - (phi/(epsilon-1))*PI*(PI - PIND) + (phi/(epsilon-1))*M*PI{+1}^2*(PI{+1} - PIND{+1})*MUZ{+1}*Y{1}/Y = 0;
+
+	R_TAYLOR = R_TAYLOR{-1}^rho_r*( steady_state(R_TAYLOR)*(PI/steady_state(PI))^kappa1*(Y/Y{-1})^kappa2 )^(1-rho_r)*exp(sig_r*ER);
+
+	Y = C + (phi/2)*Y*(PI - PIND)^2;
+
+	MC = W;    
+
+	MUZ = exp(log(steady_state(MUZ)) + sig_z*EZ);
+
+	log(A) = rho_a*log(A{-1}) + sig_a*EA;
+
+	W = kappa*N^eta/LAMBDA;
+
+	W = MC*Y/N;
+
+	PIND = PI{-1}^xi*steady_state(PI)^(1-xi);
+
+	DLOG_Y = log(Y) - log(Y{-1}) + log(MUZ);
+
+	RR = R/PI{+1};
+
+%steady_state_model
+%	PI = pi_ss;
+%	MUZ = exp(gz);
+%	R_TAYLOR = pi_ss*exp(gz)/beta;
+%	R = R_TAYLOR;
+%	A = 1;
+%	Y = 1;
+%	C = 1;
+%	LAMBDA = (C - h*C/MUZ)^(-sigma);
+%	PIND = PI;
+%	M = 1/R;
+%	MC = (epsilon - 1)/epsilon;
+%	N = 1;
+%	W = MC;
+%	kappa = LAMBDA*W/(N^eta);
+%	PIND = PI;
+%	DLOG_Y = log(MUZ);
+%	RR = R/PI;
+%
+%parameterization
+%	h , 0.8;
+%	gz , 0.001;
+%	pi_ss , 1.005;
+%	beta , 0.9975;
+%	kappa1 , 5;
+%	kappa2 , 0.5;
+%	epsilon , 6;
+%	phi , 10;
+%	eta , 2;
+%	xi , 0.5;
+%	rho_r , 0.8;
+%	rho_a , 0.9;
+%	sig_r , 0.01;
+%	sig_a , 0.01;
+%	sig_pi , 0.01;
+%	sig_z , 0.01;
+%	sigma , 2;
+%	d , 1;
+%	r_zlb , 1;
+%	bind(ocb,1),0;
+%	bind(ocb,2),1;
+%	ocb_tp_1_2,0;
+%	ocb_tp_2_1,0;

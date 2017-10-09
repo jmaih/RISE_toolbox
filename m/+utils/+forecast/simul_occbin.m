@@ -21,7 +21,13 @@ function [sim1,regimes,retcode]=simul_occbin(y0,T,ss,state_vars_location,...
 %
 % See also:
 
-use_pinv=true;
+% evaluate stretch t:t+n
+% evaluate t+n+1 with reference regime
+% if no violations continue to t+n+2 from t+n+1
+% if violations: extend the batch with the new conditions i.e. the
+% violating regimes
+
+use_pinv=false;
 
 % find the first-order approximation of the system
 %--------------------------------------------------
@@ -46,13 +52,27 @@ c=options.occbin.c;
 
 ref_state=options.solve_occbin;
 
-map_regime=double.empty;
-
 if iscell(ref_state)
     
-    map_regime=ref_state{2};
+    restr_map=ref_state{2};
+    
+    my_regimes=ref_state{3}(:,2:end);
     
     ref_state=ref_state{1};
+    
+    fields=fieldnames(restr_map);
+    
+    mycols=locate_variables(fields,my_regimes(1,:));
+    
+    my_regimes=cell2mat(my_regimes(2:end,mycols));
+    
+    ref_regime=my_regimes(ref_state,:);
+    
+else
+    
+    ref_regime=ref_state;
+    
+    my_regimes=(1:2).';
     
 end
 
@@ -64,7 +84,7 @@ span=options.nsteps+options.burn;
 
 if isempty(options.sep_compl)
     
-    sep_compl=@(x)ones(2,1);
+    sep_compl=@(x)1;
     
 else
     
@@ -76,6 +96,9 @@ end
 %--------------------------------------------
 [H,G,k]=reference_solution();
 
+% reference solution
+Tref=@(varagin)[H(:,state_vars_location),k,G];
+
 retcode=0;
 
 y0.econd.data=shocks(:,:,ones(3,1));
@@ -84,10 +107,6 @@ y0.econd.data=shocks(:,:,ones(3,1));
 sim1=nan(endo_nbr,span);
 
 regimes=ref_state*ones(span,1);
-
-next_state=ref_state;
-
-Tfunc_ref=@(t)T{ref_state};
 
 do_one_occbin_path()
 
@@ -106,6 +125,8 @@ do_one_occbin_path()
     function do_one_occbin_path()
         
         y00=y0.y;
+                
+        next_state=ref_state;
         
         t=0;
         
@@ -113,176 +134,154 @@ do_one_occbin_path()
             
             if retcode
                 
-                %retcode=701;
-                
                 return
                 
             end
             
             t=t+1;
             
-            if next_state==ref_state
+            [y1,regs1]=simulate_forecast(y00,shocks(:,t));
+            
+            rest_t=span-t+1;
+            
+            ny1=min(size(y1,2),rest_t);
+            
+            y1=y1(:,1:ny1);
+            
+            regs1=regs1(1:ny1);
+            
+            future_shocks=shocks(:,t+1:end);
+            
+            if isempty(future_shocks)||all(vec(future_shocks(:))==0)
                 
-                regimes(t)=ref_state;
+                sim1(:,t:t+ny1-1)=y1;
                 
-                % 1-step forecast
-                [sim1(:,t),next_state]=forecaster(y00,Tfunc_ref,ref_state,t);
+                regimes(t:t+ny1-1)=regs1;
                 
-                if next_state~=ref_state
-                    % last step failed
-                    t=t-1;
-                    
-                end
+                t=t+ny1-1;
                 
             else
                 
-                t0=t;
+                sim1(:,t)=y1(:,1);
                 
-                t=t-1;
-                
-                keep_going=true;
-                
-                place_holder=[];
-                
-                the_path=zeros(1,0);
-                                
-                while keep_going
-                    
-                    t=t+1;
-                    
-                    the_path(end+1)=next_state; %#ok<AGROW>
-                    
-                    bigt=t-t0+1;
-                    
-                    regimes(t:t+bigt-1)=the_path;
-                    
-                    [Ht,Gt,kt]=load_solutions(the_path);
-                    
-                    Tfunc=@(t)[Ht(:,state_vars_location,t),kt(:,t),Gt(:,:,t)];
-                    % bigt-step forecast
-                    [sim1(:,t0:t),next_state]=forecaster(y00,Tfunc,the_path,t);
-                    
-                    if isempty(place_holder)
-                        
-                        place_holder={sim1(:,t0:t),[]};
-                        
-                    elseif isempty(place_holder{2})
-                        
-                        place_holder{2}=sim1(:,t0:t);
-                        
-                    else
-                        
-                        place_holder{1}=place_holder{2};
-                        
-                        place_holder{2}=sim1(:,t0:t);
-                        
-                    end
-                    
-                    keep_going=t+bigt<span && (next_state~=ref_state);
-                    
-                    if keep_going
-                        
-                        if next_state~=the_path(end)
-                            % last step failed
-                            t=t-1;
-                            
-                            % shorten the path since the step is to be redone
-                            the_path(end)=[];
-                            
-                        end
-                        
-                    elseif next_state==ref_state
-                        % last step failed
-                        t=t-1;
-                        
-                        if t>=t0
-                            
-                            sim1(:,t0:t)=place_holder{1}(:,1:t-t0+1);
-                            
-                        end
-                        
-                    end
-                    
-                end
+                regimes(t)=regs1(1);
                 
             end
             
-            y00=sim1(:,max(1,t));
+            % initial conditions for next step
+            y00=sim1(:,t);
+            
+        end
+                
+        function [y1,the_path]=simulate_forecast(y0,shkt)
+            
+            % steady state is the same irrespective of the regime followed
+            y00_s=y0-ss{1};
+            
+            state=[y00_s(state_vars_location);1;shkt];
+            
+            y1=ss{1}+Tref()*state;
+            
+            next_state=map_regime(y1);
+            
+            if next_state==ref_state
+                
+                the_path=ref_state;
+                
+                return
+                
+            end
+            
+            good=false;
+            
+            nsteps=0;
+            
+            the_path=zeros(1,0);
+            
+            while ~good
+                
+                nsteps=nsteps+1;
+                
+                the_path(nsteps)=next_state;
+                                
+                [Ht,Gt,kt]=load_solutions(the_path);
+                
+                Tfunc=@(t)[Ht(:,state_vars_location,t),kt(:,t),Gt(:,:,t)];
+                
+                y01=y0(:,ones(1,nsteps));
+                
+                new_y0=y0;
+                
+                shkti=shkt;
+                
+                for istep=1:nsteps
+                    
+                    y00_s=new_y0-ss{1};
+                    
+                    state=[y00_s(state_vars_location);1;shkti];
+                    
+                    y01(:,istep)=ss{1}+Tfunc(istep)*state;
+                    
+                    if istep==1
+                        % change the shocks going forward
+                        shkti=0*shkt;
+                        
+                    end
+                    
+                    % next step
+                    new_y0=y01(:,istep);
+                    
+                end
+                
+                % do one clean step to check we are back to normal times
+                y00_s=new_y0-ss{1};
+                
+                state=[y00_s(state_vars_location);1;shkti];
+                
+                ytest=ss{1}+Tref()*state;
+                
+                next_state=map_regime(ytest);
+                
+                good=next_state==ref_state;
+                
+            end
+            
+            % format new output
+            %------------------
+            y1=y01;
             
         end
         
     end
 
-    function [sim1,r,is_viol]=forecaster(y00,Tfunc,the_path,t)
+    function r=map_regime(x)
         
-        nsteps=numel(the_path);
+        test=sep_compl(x);
         
-        sim1=y00(:,ones(1,nsteps));
+        test=test(:,1);
+        
+        this_regime=ref_regime;
+        
+        r=ref_state;
+        
+        for ii=1:size(my_regimes,2)
+            
+            if test(ii)<0
                 
-        for istep=1:nsteps
-            
-            y00_s=y00-ss{1}; % steady state is the same???
-            
-            state=[y00_s(state_vars_location);1;shocks(:,t+istep-1)];
-            
-            sim1(:,istep)=ss{1}+Tfunc(istep)*state;
-            
-            y00=sim1(:,istep);
-            
-            if any(~isfinite(y00))||~isreal(y00)
-                
-                error('non-real or infinite values in simulation')
+                this_regime(ii)=setdiff([1,2],this_regime(ii));
                 
             end
-            
-            r0=the_path(istep);
-            
-            [is_viol,r]=check_viol(y00,r0);
-            
-%             if is_viol && istep<nsteps
-%                 
-%                 error('violation before end or road')
-%                 
-%             end
             
         end
         
-        function [v,r]=check_viol(x,r0)
+        for ii=1:size(my_regimes,1)
             
-            test=sep_compl(x);
-            
-            disp(test)
-            
-            if numel(test)==1
+            if all(my_regimes(ii,:)-this_regime==0)
                 
-                test=[test,-test];
+                r=ii;
                 
-            end
-            
-            if isempty(map_regime)
+                break
                 
-                if numel(test)~=2
-                    
-                    error('A function generalizing occbin is needed')
-                    
-                end
-                
-                v=test(r0)<0;
-                
-                if v
-                    
-                    r=setdiff(1:h,r0); 
-                
-                else
-                    
-                    r=r0; 
-                
-                end
-                
-            else
-                
-                [v,r]=map_regime(test,r0);
-                                
             end
             
         end
@@ -300,6 +299,12 @@ do_one_occbin_path()
         Gt=G(:,:,ones(1,wingspan));
         
         kt=k(:,ones(1,wingspan));
+        
+        if all(the_path==ref_state)
+            % quick exit if we are in the reference state
+            return
+            
+        end
         
         for t=bigt:-1:1
             
@@ -324,7 +329,7 @@ do_one_occbin_path()
             kt(:,t)=AHAi*(c(:,st)+Aplus(:,:,st)*kt(:,t+1));
             
         end
-            
+        
     end
 
 end
