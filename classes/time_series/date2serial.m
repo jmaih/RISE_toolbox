@@ -83,7 +83,7 @@ end
         %-------------------------------------------------------
         [dat,is_colon]=char2num(dat,true);
         
-        if ischar(dat)||iscellstr(dat);
+        if ischar(dat)||iscellstr(dat)
             
             [dec,flag]=decompose_wmqh_date(dat);
             
