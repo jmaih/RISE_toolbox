@@ -96,6 +96,8 @@ end
 %-------------------------------
 LogLik=-obj.options.estim_penalty;
 
+Incr=[];
+
 if ~isempty(varargin)
     
     obj=set(obj,varargin{:});
