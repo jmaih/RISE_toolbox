@@ -37,7 +37,7 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %   - **center_at_mean** [{false}|true]: if true, the distribution is
 %   centered at the mean. Else, it is centered at the mode, which should be
 %   the maximum of the log posterior kernel in theta_draws
-%   - **algorithm** [{mhm}|swz|mueller|bridge|is|ris|cj]: 
+%   - **algorithm** [{mhm}|swz|mueller|bridge|is|ris|cj|laplace|laplace_mcmc]: 
 %       - **mhm** is the modified harmonic mean
 %       - **swz** is the Sims, Waggoner and Zha (2008) algorithm
 %       - **mueller** is the unpublished Mueller algorithm (see Liu,
