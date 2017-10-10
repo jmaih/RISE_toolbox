@@ -166,6 +166,12 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % approximation. Hence by default, we do not invoke the use of the true
 % jacobian.
 %
+% - **steady_state_endo_param_swap** [cell array|{}]: When not empty, it is
+% a cell array with n rows and 3 columns, where n is the number of
+% restrictions, the first column gathers the names of the endogenous
+% variables whose values are given in the second column, the third column
+% includes the parameters names that are endogenized.
+%
 % Outputs
 % --------
 %
