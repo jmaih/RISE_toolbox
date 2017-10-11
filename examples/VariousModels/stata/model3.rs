@@ -5,6 +5,8 @@ exogenous EG EZ
 
 parameters beta delta phi1 phi2 eta alpha rhoz rhog sigz sigg
 
+observables  Y % R
+
 model
 
 	C = C{+1}-(1-beta+beta*delta)*R{+1};

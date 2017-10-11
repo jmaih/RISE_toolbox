@@ -4,40 +4,21 @@ close all
 clc
 
 %% load and transform the data
-M=importdata('FEDFUNDS.csv');
+db=xlsread('rates2.xlsx');
 
-Q=importdata('GDPDEF.csv');
+db=ts('1947Q1',db(:,1:2),{'gdpdef','r'});
 
-db=struct();
+db=pages2struct(db);
 
-db.GDPDEF=ts('1947Q1',Q.data);
+db.P=400*log(db.gdpdef/db.gdpdef{-1});
 
-db.FEDFUNDS=aggregate(ts('1954M7',M.data),'Q');
+db.R=db.r;
 
-db.P=400*log(db.GDPDEF/db.GDPDEF{-1});
-
-db.R=db.FEDFUNDS;
-
-%% 
+%% Rise the madel
 
 m=rise('model1');
 
-%% calibration and irfs
-p=struct();
-p.beta=0.5112881;
-p.kappa=0.1696296;
-p.rhou=0.6989189;
-p.rhog=.9556407;
-p.sigu=2.317589;
-p.sigg=.6147348;
-
-myirfs=irf(m,'parameters',p);
-
-%%
-
-quick_irfs(m,myirfs,[],[],[3,2])
-
-%%
+%% Estimate the madel
 
 priors=struct();
 
@@ -50,3 +31,17 @@ priors.sigg={0.5,0.0001,5};
 
 mest=estimate(m,'priors',priors,'data_demean',true,'data',db,...
     'estim_start_date','1954Q3','estim_end_date','2016Q4');
+
+%% print solution at the mode
+
+print_solution(mest)
+
+%% irfs at the mode
+
+% myirfs=irf(m,'parameters',get(mest,'parameters'));
+
+myirfs=irf(mest);
+
+%%
+
+quick_irfs(m,myirfs,[],[],[3,2])
