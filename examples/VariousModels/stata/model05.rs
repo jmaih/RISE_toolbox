@@ -5,6 +5,8 @@ exogenous  E EW
 
 parameters h sige gam rho sigw
 
+observables C N
+
 model
 
 	C = (1-h)*W+h*C{+1}+sige*E;

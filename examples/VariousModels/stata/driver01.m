@@ -1,22 +1,20 @@
 %% housekeeping
-clear
+gentle_clear()
 close all
 clc
 
 %% load and transform the data
 db=xlsread('rates2.xlsx');
 
-db=ts('1947Q1',db(:,1:2),{'gdpdef','r'});
+db=ts('1947Q1',db(:,1:2),{'gdpdef','R'});
 
 db=pages2struct(db);
 
 db.P=400*log(db.gdpdef/db.gdpdef{-1});
 
-db.R=db.r;
-
 %% Rise the madel
 
-m=rise('model1');
+m=rise('model01');
 
 %% Estimate the madel
 

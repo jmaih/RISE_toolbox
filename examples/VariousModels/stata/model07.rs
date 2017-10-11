@@ -5,6 +5,8 @@ exogenous EZ EU
 
 parameters beta kappa rhoz1 rhoz2 sigz sigu rhou
 
+observables P R
+
 model
 
 	P = beta*P{+1}+kappa*Y;

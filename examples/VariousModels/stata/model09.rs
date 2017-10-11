@@ -5,6 +5,8 @@ exogenous  ER EW
 
 parameters h gam rhow sigw sigr b1
 
+observables N C
+
 model
 
 	N = b1*N{-2} + W - gam*C;

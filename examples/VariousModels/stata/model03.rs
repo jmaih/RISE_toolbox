@@ -5,7 +5,7 @@ exogenous EG EZ
 
 parameters beta delta phi1 phi2 eta alpha rhoz rhog sigz sigg
 
-observables  Y % R
+observables  Y 
 
 model
 

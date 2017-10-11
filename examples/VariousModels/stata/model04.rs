@@ -3,12 +3,11 @@ endogenous	X R P G U I E
 
 exogenous EG EU	EE
 
-parameters beta kappa sigu sigg sige rhou rhog rhoe chi
+parameters beta kappa sigu sigg sige rhou rhog rhoe chi	psi
 
+observables P I R
 
 model
-
-	# psi = 1/beta;
 
 	P = beta*P{+1}+kappa*X;
 	

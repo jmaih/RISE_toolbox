@@ -1,22 +1,18 @@
 %% housekeeping
-clear
+gentle_clear()
 close all
 clc
 
 %% load and transform the data
 db=xlsread('usmacro2.xlsx');
 
-db=ts('1955Q1',db(:,4:end),{'y','p','r','c','n','i','e'});
+db=ts('1955Q1',db(:,4:end),{'Y','P','R','C','N','I','E'});
 
 db=pages2struct(db);
 
-db.Y=db.y;
-
-% db.R=db.r;
-
 %% Rise the madel
 
-m=rise('model3');
+m=rise('model03');
 
 %% fixed parameters
 
