@@ -503,8 +503,8 @@ regimes=regimes(options.burn+1:end);
                     
                     if ~isnan(regimes(t))
                         
-                        warning(sprintf(['forced to apply solution %0.0f ',...
-                            'but cannot find a feasible path',regimes(t)])) 
+                        warning(['forced to apply solution %0.0f ',...
+                            'but cannot find a feasible path'],regimes(t)) 
                         
                         retcode=703; 
                                             
