@@ -19,8 +19,8 @@ m=solve(m,'solve_occbin',{1,restr_map,m.markov_chains.regimes},...
     'steady_state_imposed',true);
 
 %% simulate the model (honoring the constraints)
-
-mysims=simulate(m,'simul_honor_constraints',true,'simul_periods',1000);
+rng(1900)
+mysims=simulate(m,'simul_honor_constraints',true,'simul_periods',300);
 
 %% plot the simulations
 close all
@@ -30,5 +30,7 @@ for ii=1:numel(vnames)
     v=vnames{ii};
     subplot(3,3,ii)
     plot(mysims.(v),'linewidth',2)
+%     plot('115:200',mysims.(v),'linewidth',2)
     title(v)
+    axis tight
 end
