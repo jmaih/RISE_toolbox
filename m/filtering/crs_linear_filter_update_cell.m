@@ -32,7 +32,9 @@ function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell(...
 cutoff=-sqrt(eps);
 
 if nargin<6
+    
     impose_conditions=false;
+    
 end
 % data
 %-----
@@ -45,29 +47,44 @@ first=syst.start;
 % regime-wise anticipation
 %--------------------------
 k=syst.k(:).';
+
 has_fire=k>0;
 
 % state matrices
 %---------------
 ff=syst.ff;
+
 T=syst.Tx;
+
 Tbig=syst.T;
+
 R=syst.Te;
+
 H=syst.H;
+
 Qfunc=syst.Qfunc;
+
 sep_compl=syst.sep_compl;
+
 cond_shocks_id=syst.anticipated_shocks;
+
 ss=syst.steady_state;
+
 xlocs=syst.state_vars_location;
 
 % initial conditions
 %-------------------
 a=syst.a;
+
 P=syst.P;
+
 PAItt=syst.PAI00;
+
 RR=syst.Te_Te_prime;
 % current size of the system after expansion
+
 m=syst.m; % size(T{1},1);
+
 % size of the system prior to expansion
 m_orig=syst.m_orig;
 
@@ -76,49 +93,74 @@ m_orig=syst.m_orig;
 clear syst
 
 Q=Qfunc(a{1});
+
 PAI=transpose(Q)*PAItt;
 
 % matrices' sizes
 %----------------
 [p0,smpl,npages]=size(data_y);
+
 h=numel(T);
+
 [~,exo_nbr,horizon]=size(R{1});
+
 shocks=zeros(exo_nbr,horizon);
+
 % deterministic variables only if rows present
 %----------------------------------------------
 tmax_u=size(U,2)*(size(U,1)>0);
+
 if tmax_u
     % update the state (a_{1|0} with the deterministic variables
     %------------------------------------------------------------
     Ut=U(:,0+1);
+    
     for splus=1:h
+        
         [a{splus}]=ff(splus,a{splus},shocks,Ut);
+        
     end
+    
 end
 
 myshocks=cell(1,h);
 
 h_last=0;
+
 if ~isempty(H{1})
+    
     h_last=size(H{1},3);
+    
 end
+
 rqr_last=size(RR{1},3);
+
 if rqr_last>1
+    
     error('time-varying impact matrices not supported in this filter')
+    
 end
 
 % definitions and options
 %------------------------
 twopi=2*pi;
+
 store_filters=options.kf_filtering_level;
+
 if store_filters
+    
     nsteps=options.kf_nsteps;
+    
     if store_filters>2
+        
         R_store=struct();
+        
     end
+    
 else
     % do not do multi-step forecasting during estimation
     nsteps=1;
+    
 end
 
 kalman_tol=options.kf_tol;
@@ -130,13 +172,17 @@ Rt=cell(1,h);
 % few transformations
 %--------------------
 Tt=T;
+
 for st=1:h
+    
     Tt{st}=transpose(T{st}); % permute(T,[2,1,3]); % transpose
+    
 end
 
 % initialization of matrices
 %-----------------------------
 loglik=[];
+
 Incr=nan(smpl,1);
 
 [Filters]=utils.filtering.initialize_storage(a,P,PAI,Q,p0,exo_nbr,horizon,nsteps,smpl,store_filters);
@@ -148,7 +194,9 @@ twopi_p_dF=nan(1,h);
 % missing or not and so it is better to have them in cells rather than
 % matrices
 iF=cell(1,h);
+
 v=cell(1,h);
+
 % This also changes size but we need to assess whether we reach the steady state fast or not
 K=zeros(m,p0,h); % <---K=cell(1,h);
 
@@ -159,16 +207,23 @@ expected_shocks=cell(1,h);
 % no problem
 %-----------
 retcode=0;
+
 is_steady=false;
 
 % update the options for conditional forecasting
 %------------------------------------------------
 options.PAI=1;
+
 options.states=ones(horizon,1);
+
 options.Qfunc=Qfunc;
+
 options.y=[];
+
 options.burn=0;
+
 options.k_future=horizon-1;
+
 % forecast all the way...
 options.nsteps=horizon;
 
@@ -182,6 +237,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
     [p,occur,obsOccur,no_more_missing]=z(t);
+    
     y=data_y(occur,t,1);
     
     log_f01 = nan(h,1);
@@ -197,21 +253,35 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         v{st}=y-yf;
         
         if ~is_steady
+            
             PZt=P{st}(:,obsOccur); % PZt=<-- P{st}*Z';
             
             Fst=PZt(obsOccur,:); % <--- F=Z*PZt+H{st}(occur,occur);
+            
             if h_last>0
+                
                 Fst=Fst+H{st}(occur,occur,min(t,h_last));
+                
             end
+            
             detF=det(Fst);
+            
             failed=detF<=0;
+            
             if ~failed
+                
                 iF{st}=Fst\eye(p);
+                
                 failed=any(isnan(iF{st}(:)));
+                
             end
+            
             if failed
+                
                 retcode=305;
+                
                 return
+                
             end
             
             % Kalman gain (for update)
@@ -223,17 +293,24 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             P{st}=P{st}-K(:,occur,st)*PZt.';%<---P{st}=P{st}-K(:,occur,st)*P{st}(obsOccur,:);
             
             twopi_p_dF(st)=twopi^p*detF;
+            
         end
         % state update (att=a+K*v)
         %-------------------------
         if impose_conditions
+            
             [a{st},retcode,myshocks{st}]=state_update_without_test(a{st},K(:,occur,st)*v{st},st);
+        
         else
+            
             [a{st},retcode,myshocks{st}]=state_update_with_test(a{st},K(:,occur,st)*v{st},st);
             % <--- a{st}=a{st}+K(:,occur,st)*v{st};
         end
+        
         if retcode
+            
             return
+            
         end
         
         log_f01(st)=-0.5*(...
@@ -254,20 +331,37 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     PAItt=sum(PAI01_tt,2);
     
     if store_filters>1
+        
         store_updates();
+        
     end
     
     % endogenous probabilities (conditional on time t information)
     %-------------------------------------------------------------
     att=a;
+    
     if ~is_steady
+        
         Ptt=P;
+        
     end
     
     if h>1
-        [Q,retcode]=Qfunc(att{1});
+        
+        att_all=att{1}*PAItt(1);
+        
+        for rt=2:h
+            
+            att_all=att_all+att{rt}*PAItt(rt);
+            
+        end
+        
+        [Q,retcode]=Qfunc(att_all);
+        
         if retcode
+            
             return
+            
         end
         
         % Probabilities predictions

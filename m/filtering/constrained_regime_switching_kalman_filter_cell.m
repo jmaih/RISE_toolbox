@@ -295,7 +295,15 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     
     if h>1
         
-        [Q,retcode]=Qfunc(att{1});
+        att_all=att{1}*PAItt(1);
+        
+        for rt=2:h
+            
+            att_all=att_all+att{rt}*PAItt(rt);
+            
+        end
+        
+        [Q,retcode]=Qfunc(att_all);
         
         if retcode
             
