@@ -344,6 +344,8 @@ regimes=regimes(options.burn+1:end);
                 shocks_t=shocks(:,t+(0:options.k_future));
                 
                 if ~isempty(simul_update_shocks_handle) && simul_do_update_shocks
+                    % these lines and the associated options are to be
+                    % removed.
                     
                     shocks_t=simul_update_shocks_handle(shocks_t,y00.y);
                     
