@@ -20,8 +20,13 @@ function plot_handle=plot_decomp(varargin)
 % See also: 
 
 plot_handle0=utils.plot.myplot(@plot_decomp,varargin{:});
+
 if nargout
+    
     plot_handle=plot_handle0;
+    
+end
+
 end
 
 %{
