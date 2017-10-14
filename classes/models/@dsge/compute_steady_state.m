@@ -299,7 +299,7 @@ if ~retcode
     
     bad=any(abs(bsxfun(@minus,ss_tvp,ss_tvp(:,1)))>1e-9,2);
     
-    if any(bad)
+    if any(bad) && obj.options.debug
         
         bad_endo_vars=get(obj,'endo_list(affect_trans_probs)');
         
@@ -307,7 +307,7 @@ if ~retcode
         
         disp(bad_endo_vars)
         
-        error(['The variables above affect the transition probabilities but ',...
+        warning(['The variables above affect the transition probabilities but ',...
             'do not have the same steady state in each regime'])
         
     end
@@ -1085,14 +1085,14 @@ if isempty(obj.steady_state_2_model_communication)
         %----------------------------------------------------------------
         
         errmsg=['With an initial guess for the steady state, ',...
-            'the parameters cannot be modified in the steady state ',...
+            'the parameters should not be modified in the steady state ',...
             'model or file'];
         
         if ~(sscode.is_imposed_steady_state||...
                 sscode.is_loop_steady_state) && ...
                 any(sscode.is_param_changed)
             
-            %             error(errmsg)
+            warning(errmsg)
             
         end
         
