@@ -49,17 +49,17 @@ for iv=1:self.nvars
         
         if self.nregs==1
             
-            vd.infinity.(self.endogenous{iv})=reset_data(proto_inf,data_inf);
+            vd.infinity.(self.endogenous{iv})=reset_data(proto_inf,data_inf,shock_names);
             
-            vd.conditional.(self.endogenous{iv})=reset_data(proto_cond,data_cond);
+            vd.conditional.(self.endogenous{iv})=reset_data(proto_cond,data_cond,shock_names);
             
         else
             
             regime=sprintf('regime_%0.0f',ireg);
             
-            vd.infinity.(self.endogenous{iv}).(regime)=reset_data(proto_inf,data_inf);
+            vd.infinity.(self.endogenous{iv}).(regime)=reset_data(proto_inf,data_inf,shock_names);
             
-            vd.conditional.(self.endogenous{iv}).(regime)=reset_data(proto_cond,data_cond);
+            vd.conditional.(self.endogenous{iv}).(regime)=reset_data(proto_cond,data_cond,shock_names);
             
         end
         
