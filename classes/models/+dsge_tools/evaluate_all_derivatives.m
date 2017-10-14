@@ -10,6 +10,8 @@ if nargin < 3
     
 end
 
+solve_time_consistent_switch=obj.options.solve_time_consistent_switch;
+
 solve_order=obj.options.solve_order;
 
 h=obj.markov_chains.small_markov_chain_info.regimes_number;
@@ -59,7 +61,7 @@ if size(ssdata,1)~=size(ss,1)
     
 end
 
-[ys,nind]=forms_used_in_computation_of_derivatives();
+[ys,nind,lead_pos]=forms_used_in_computation_of_derivatives();
 
 if is_has_data
     % update residuals with the data
@@ -69,9 +71,11 @@ if is_has_data
         
         s1=ireg;
         
+        ys01=yvector(s0,s1);
+        
         structural_matrices.user_resids(:,ireg)=utils.code.evaluate_functions(...
             obj.routines.probs_times_dynamic,...
-            ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
+            ys01,xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
         
     end
     
@@ -130,6 +134,8 @@ for s1=1:h
     
     for s0=1:h
         
+         ys01=yvector(s0,s1);
+        
         if ~retcode
             % Note: G(s0,s1) =: ps0(s0,s1)*F(s0)
             if symbolic_type
@@ -151,7 +157,7 @@ for s1=1:h
                 end
                 
                 [G01{1:solve_order}]=utils.code.evaluate_functions(obj.routines.probs_times_dynamic_derivatives,...
-                    ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
+                    ys01,xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                 
             elseif automatic_type
                 
@@ -174,7 +180,7 @@ for s1=1:h
                 G01=utils.code.evaluate_automatic_derivatives(...
                     obj.routines.symbolic.probs_times_dynamic,...
                     solve_order,engine,...
-                    ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
+                    ys01,xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                 
             else
                 
@@ -194,7 +200,7 @@ for s1=1:h
                 end
                 
                 [G01{1:1}]=utils.code.evaluate_jacobian_numerically(obj.routines.probs_times_dynamic,...
-                    ys(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
+                    ys01,xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
                 % The columns are to be put in the order_var order
                 
                 G01{1}(:,1:nind)=G01{1}(:,reordering);
@@ -263,7 +269,7 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
                 
                 planner.discount{s0}=lcd(3);
                 
-                planner.weights{s0}=calculate_weights(lcd);
+                planner.weights{s0}=calculate_weights(lcd,s0);
                 
             end
             
@@ -275,7 +281,19 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
     
 end
 
-    function w=calculate_weights(lcd)
+    function y01=yvector(s0,s1)
+        
+        y01=ys(:,s0);
+        
+        if solve_time_consistent_switch
+            
+            y01(lead_pos)=ys(lead_pos,s1);
+            
+        end
+        
+    end
+
+    function w=calculate_weights(lcd,s0)
         
         if symbolic_type
             
@@ -313,12 +331,19 @@ end
         
     end
 
-    function [ys,nind]=forms_used_in_computation_of_derivatives()
+    function [ys,nind,lead_positions,lag_positions]=...
+            forms_used_in_computation_of_derivatives()
         
         % spit out the forms to be used for the computation of derivatives
         %-----------------------------------------------------------------
         [the_leads,the_lags,nind]=...
             dsge_tools.create_endogenous_variables_indices(obj.lead_lag_incidence.before_solve);
+        
+        lead_positions=1:numel(the_leads);
+        
+        curr=1:size(ssdata,1);
+        
+        lag_positions=numel(the_leads)+numel(curr)+(1:numel(the_lags));
         
         ys=zeros(nind,h);
         % derivatives taken wrt y+|y0|y-|shocks

@@ -144,6 +144,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % efficient algorithms for solving the steady state when the original model
 % is truly linear.
 %
+% - **solve_time_consistent_switch** [true|{false}]: if true, at the
+% evaluation of the derivatives, leads are evaluated at the steady state of
+% the future regime
+%
 % - **steady_state_file** [char|function_handle|{''}]:
 %
 % - **steady_state_use_steady_state_model** [false|{true}]:
@@ -710,6 +714,8 @@ end
 end
 
 function mydefaults=the_defaults()
+% s: implies setup change
+% r: implies re-solving of the model
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
 
@@ -733,6 +739,8 @@ algotype=@(x)functype(x)||iscell(x);
         'solve_sstate_blocks(sr)',false,@(x)islogical(x),'solve_sstate_blocks must be true or false'
         
         'solve_linear(sr)',false,@(x)islogical(x),'solve_linear must be true or false'
+        
+        'solve_time_consistent_switch(r)',false,@(x)islogical(x),'solve_time_consistent_switch must be true or false'
         
         'steady_state_file(sr)','',@(x)functype(x),...
         'steady_state_file must be empty or char or a function handle'
