@@ -96,20 +96,26 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %   - **mn_full** : full version of mn, that does not exploit sparsity
 %   - **fwz** : Farmer, Waggoner and Zha (2011) solver
 %   - **user_defined** : In this case the function must take as inputs:
-%       - **Gplus01** [h x h cell]: each cell contains the matrices of
-%       forward-looking terms associated with moving from one regime to
-%       another.
-%       - **A0** [square matrix]: matrix of contemporaneous variables
-%       - **Aminus** [square matrix]: matrix of backward-looking terms
+%       - **Gplus01** [n x n x h x h array]: where the 3rd dimension
+%       represent the current regime and the 4th dimension is the future
+%       regime.
+%       - **A0** [n x n x h array]: matrix of contemporaneous variables
+%       - **Aminus** [n x n x h array]: matrix of backward-looking terms
 %       - **Q** [square matrix]: transition matrix, in which the rows are
 %       the current period and the columns the next period
-%       - **T0** [square matrix]: initial guess of the solution
+%       - **T0** [n x h x h array]: initial guess of the solution
+%       - **tol** [scalar]: A tolerance criterion
+%       - **maxiter** [scalar]: the maximum number of iterations
 %     The function should return as outputs
-%       - **Tz_pb** [square matrix]: solution of the problem given the
+%       - **Tz_pb** [n x h x h array]: solution of the problem given the
 %       inputs
 %       - **eigenvalues** [empty|vector]: optional vector of eigenvalues of
 %       the problem
 %       - **retcode** : 0 if no problem found when solving the problem
+%    The function can be passed along as a string, a function handle or a
+%    cell array in which case the first element of the cell contains the
+%    function itself and the remaining cells contain further arguments
+%    required by the function but unknown to RISE.
 %
 % - **solve_log_approx_vars** [char|cellstr|{[]}]: List of variables for
 % which we want to take a log expansion (x_t-x_ss)/x_ss, which approximates
