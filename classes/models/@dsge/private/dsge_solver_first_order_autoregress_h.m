@@ -120,6 +120,11 @@ switch model_class
             
             T0=inverse_solution_func(T0);
             
+        elseif any(strcmpi(options.solver,{'rise_1','klein','aim','sims'}))
+            
+            % don't do anything this is just so that does not flag the
+            % solvers above
+            
         else
             
             is_known=false;
