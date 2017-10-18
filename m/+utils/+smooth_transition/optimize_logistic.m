@@ -16,7 +16,7 @@ function ab=optimize_logistic(x1,p1,x2,p2,op)
 %
 % - **p1,p2** [scalars] : probability values for x1 and x2
 %
-% - **op** [{'+'}|'-'] : decides whether b is to be multiplied by 1 or by
+% - **op** ['+'|{'-'}] : decides whether b is to be multiplied by 1 or by
 %   -1 in the evaluation the logistic function.
 %
 % Outputs
@@ -37,7 +37,7 @@ function ab=optimize_logistic(x1,p1,x2,p2,op)
 
 if nargin<5
     
-    op='+';
+    op='-';
     
 end
     
