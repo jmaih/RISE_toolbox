@@ -85,6 +85,10 @@ classdef generic
         
         online_routines=struct()
         
+        % helps return the likelihood instead of the posterior when the
+        % computation of the Fisher information matrix is needed.
+        is_fisher=false
+        
     end
     
     methods(Abstract, Hidden = true)
@@ -110,6 +114,8 @@ classdef generic
         varargout=evaluate_general_restrictions(varargin)
         
         varargout=estimate(varargin)
+        
+        varargout=fisher(varargin)
         
         varargout=forecast(varargin)
         

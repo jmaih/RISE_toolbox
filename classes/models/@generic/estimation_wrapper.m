@@ -151,9 +151,13 @@ end
             % imposing a barrier that will be difficult to cross if the initial
             % constraints are not satified, we use a penalty function approach.
             for mo=1:nobj
-                [fval(mo),~,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
+                [fval(mo),loglik,~,~,retcode,obj(mo)]=log_posterior_kernel(obj(mo),x);
                 if retcode
                     break
+                end
+                if obj.is_fisher
+                    % return the likelihood only
+                    fval(mo)=loglik;
                 end
             end
         end
