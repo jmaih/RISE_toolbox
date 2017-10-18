@@ -46,32 +46,55 @@ function Initcond=set_simulation_initial_conditions(obj)
 [sep_compl,complementarity]=complementarity_memoizer(obj);
 
 simul_pruned=false;
+
 simul_sig=0;
+
 simul_order=1;
+
 nlags=1;
+
 k_future=0;
+
 do_dsge_var=false;
+
 if isa(obj,'svar')
+    
     nlags=obj.nlags;
+    
 elseif isa(obj,'dsge')
+    
     k_future=max(obj.exogenous.shock_horizon(:));
+    
     simul_sig=obj.options.simul_sig;
+    
     simul_pruned=obj.options.simul_pruned;
+    
     if isempty(obj.options.simul_order)
+        
         simul_order=obj.options.solve_order;
+        
     else
+        
         simul_order=obj.options.simul_order;
+        
     end
+    
     do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
+    
 else
+    
     error(['model of class ',class(obj),' not ready for simulation'])
+    
 end
 
 % one initial condition despite multiple regimes
 %------------------------------------------------
 [PAI,retcode]=initial_markov_distribution(obj.solution.transition_matrices.Q);
+
 if retcode
+    
     error(decipher(retcode))
+    
 end
 
 is_log_var=[];
@@ -87,9 +110,13 @@ end
 ss=cell2mat(obj.solution.ss);
 
 ss=sum(bsxfun(@times,ss,PAI(:).'),2);
+
 if do_dsge_var
+    
     nlags=obj.options.dsgevar_lag;
+    
     ss=ss(obj.observables.state_id,1);
+    
 end
 
 y0=struct('y',[],'y_lin',[],'ycond',[],'econd',[],'switch_rule',[],...
@@ -98,25 +125,40 @@ y0=struct('y',[],'y_lin',[],'ycond',[],'econd',[],'switch_rule',[],...
 y0(1).y=vec(ss(:,ones(1,nlags)));
 
 exo_nbr=sum(obj.exogenous.number);
+
 simul_history_end_date=0;
+
 simul_historical_data=obj.options.simul_historical_data;
 
 is_conditional_forecasting=false;
+
 has_data=~isempty(simul_historical_data);
+
 if has_data
     % no burn-in with historical data
     %----------------------------------
     obj.options.simul_burn=0;
+    
     if isstruct(simul_historical_data)
+        
         simul_historical_data=ts.collect(simul_historical_data);
+        
     end
+    
     if ~isa(simul_historical_data,'ts')
+        
         error('historical database must be a ts')
+        
     end
+    
     simul_history_end_date=obj.options.simul_history_end_date;
+    
     if isempty(simul_history_end_date)
+        
         simul_history_end_date=simul_historical_data.finish;
+        
     end
+    
 end
 
 % set the endogenous variables
@@ -133,20 +175,32 @@ if ~simul_pruned
     y0=rmfield(y0,'y_lin');
 end
 if ~isfield(obj.options,'simul_update_shocks_handle')
+    
     obj.options.simul_update_shocks_handle=[];
+    
 end
+
 if ~isfield(obj.options,'simul_do_update_shocks')
+    
     obj.options.simul_do_update_shocks=[];
+    
 end
 
 % shock structure: initial+anticipate
 shock_structure=false(exo_nbr,k_future);
+
 if k_future
+    
     for iexo=1:exo_nbr
+        
 		maxlength=max(obj.exogenous.shock_horizon(:,iexo));
+        
         shock_structure(iexo,1:maxlength)=true;
+        
     end
+    
 end
+
 shock_structure=[false(exo_nbr,1),shock_structure];
 
 % load the options for utils.forecast.rscond.forecast
@@ -166,13 +220,21 @@ Initcond.simul_shock_uncertainty=obj.options.simul_shock_uncertainty;
 Initcond.simul_update_shocks_handle=obj.options.simul_update_shocks_handle;
 Initcond.simul_do_update_shocks=obj.options.simul_do_update_shocks;
 Initcond.simul_frwrd_back_shoot=obj.options.simul_frwrd_back_shoot;
+
 if isa(obj,'dsge')
+    
     Initcond.simul_fbs_horizon=obj.options.simul_fbs_horizon;
+    
     if ~isempty(obj.options.solve_occbin)
+        
         Initcond.occbin=obj.options.occbin;
+        
         Initcond.solve_occbin=obj.options.solve_occbin;
+        
     end
+    
 end
+
 Initcond.is_log_var=is_log_var;
 
 Initcond.is_endogenous_exo_vars=ismember(obj.exogenous.name,...
