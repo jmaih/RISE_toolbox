@@ -73,23 +73,23 @@ if ncols>1
 end
 
 
-try
-    
-    func{1}(xxp,varargin{:});
-    
-    col_by_col=false;
-    
-catch
-    
-    col_by_col=true;
-    
-end
+% try
+%     
+%     func{1}(xxp,varargin{:});
+%     
+%     col_by_col=false;
+%     
+% catch
+%     
+%     col_by_col=true;
+%     
+% end
 
 J=cell(nrows,1);
 
 for irow=1:nrows
     
-    if col_by_col
+%     if col_by_col
         
         for icol=1:n
             
@@ -106,11 +106,11 @@ for irow=1:nrows
             
         end
         
-    else
-        
-        J{irow}=func{irow}(xxp,varargin{:})-func{irow}(xxm,varargin{:});
-        
-    end
+%     else
+%         
+%         J{irow}=func{irow}(xxp,varargin{:})-func{irow}(xxm,varargin{:});
+%         
+%     end
     
     nrows_i=size(J{irow},1);
     
