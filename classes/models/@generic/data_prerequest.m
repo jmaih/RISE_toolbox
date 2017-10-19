@@ -58,10 +58,14 @@ if data_provided
     dataOut.y=verdier(obs_id(is_endogenous_obs),:,:);
     
     dataOut.x=verdier(obs_id(~is_endogenous_obs),:,:);
+
+	dataOut.ymean=[];
     
     if obj.options.data_demean
         
-        dataOut.y=bsxfun(@minus,dataOut.y,utils.stat.nanmean(dataOut.y(:,:,1),2));
+		dataOut.ymean=utils.stat.nanmean(dataOut.y(:,:,1),2);
+    
+        dataOut.y=bsxfun(@minus,dataOut.y,dataOut.ymean);
         
     end
     
