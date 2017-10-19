@@ -7,7 +7,13 @@ clc
 
 noclearall=true;
 
-w=what(pwd);
+txt=which('driver_all');
+
+lastsep=find(txt==filesep,1,'last');
+
+folder=txt(1:lastsep-1);
+
+w=what(folder);
 
 w=regexp(w.m,'driver\d{2}','match');
 
