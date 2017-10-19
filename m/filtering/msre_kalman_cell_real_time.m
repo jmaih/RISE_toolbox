@@ -69,7 +69,15 @@ ss=syst.steady_state;
 %---------------
 clear syst
 
-Q=Qfunc(a{1});
+att_all=a{1}*PAItt(1);
+
+for rt=2:h
+    
+    att_all=att_all+a{rt}*PAItt(rt);
+    
+end
+
+Q=Qfunc(att_all);
 
 PAI=transpose(Q)*PAItt;
 

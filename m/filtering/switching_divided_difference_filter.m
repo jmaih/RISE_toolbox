@@ -165,7 +165,15 @@ Incr = zeros(T,1);
 
 loglik=[];
 
-Q=Qfunc(x0{1});
+att_all=x0{1}*pi0(1);
+
+for rt=2:h
+    
+    att_all=att_all+x0{rt}*pi0(rt);
+    
+end
+
+Q=Qfunc(att_all);
 
 pi0=transpose(Q)*pi0;
 
