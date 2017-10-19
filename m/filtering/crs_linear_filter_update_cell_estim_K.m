@@ -143,6 +143,8 @@ m_orig=syst.m_orig;
 %---------------
 clear syst
 
+h=numel(T);
+
 att_all=a{1}*PAItt(1);
 
 for rt=2:h
@@ -158,8 +160,6 @@ PAI=transpose(Q)*PAItt;
 % matrices' sizes
 %----------------
 [p0,smpl,npages]=size(data_y);
-
-h=numel(T);
 
 [~,exo_nbr,horizon]=size(R{1});
 

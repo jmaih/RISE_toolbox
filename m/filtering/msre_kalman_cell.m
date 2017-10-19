@@ -65,6 +65,8 @@ RR=init.RR;
 %---------------
 clear data_info syst init
 
+h=numel(T);
+
 att_all=a{1}*PAItt(1);
 
 for rt=2:h
@@ -84,8 +86,6 @@ PAI=transpose(Q)*PAItt;
 smpl=min(smpl,find(include_in_likelihood,1,'last'));
 
 m=size(T{1},1);
-
-h=numel(T);
 
 nshocks=size(R{1},2);
 

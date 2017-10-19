@@ -103,6 +103,8 @@ m=syst.m; % size(T{1},1);
 %---------------
 clear syst
 
+h=numel(a);
+
 att_all=a{1}*PAItt(1);
 
 for rt=2:h
@@ -118,8 +120,6 @@ PAI=transpose(Q)*PAItt;
 % matrices' sizes
 %----------------
 [p0,smpl]=size(data_y);
-
-h=size(Q,1);
 
 [~,exo_nbr,horizon]=size(R{1});
 

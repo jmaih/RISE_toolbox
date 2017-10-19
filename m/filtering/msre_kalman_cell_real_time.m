@@ -69,6 +69,8 @@ ss=syst.steady_state;
 %---------------
 clear syst
 
+h=numel(T);
+
 att_all=a{1}*PAItt(1);
 
 for rt=2:h
@@ -96,8 +98,6 @@ restr_z_id_in_state=real(e_data{2});
 % matrices' sizes
 %----------------
 [p0,smpl,npages]=size(data_y);
-
-h=numel(T);
 
 [~,exo_nbr,horizon]=size(R{1});
 
