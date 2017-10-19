@@ -120,7 +120,7 @@ if isempty(obj.options.forecast_start_date)
 
 end
 
-end_date='';
+end_date=obj.options.simul_history_end_date;
 
 if ~isempty(obj.options.forecast_start_date)
     
@@ -128,9 +128,9 @@ if ~isempty(obj.options.forecast_start_date)
     
 end
 
-fkstdata='';
+fkstdata=obj.options.simul_historical_data;
 
-if ~isempty(obj.options.data)
+if isempty(fkstdata) && ~isempty(obj.options.data)
     
     fkstdata=obj.options.data;
     

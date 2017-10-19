@@ -12,6 +12,14 @@ if nargin < 3
     
 end
 
+if isempty(t)
+    
+    disp('empty ts object')
+    
+    return
+    
+end
+
 NumberOfVariables=t.NumberOfVariables;
 
 NumberOfObservations=t.NumberOfObservations;

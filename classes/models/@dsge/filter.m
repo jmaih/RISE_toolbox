@@ -244,6 +244,8 @@ if obj.options.kf_filtering_level && ~retcode
         'atT','PtT','eta'
         };
     
+    my=data_info.ymean;
+    
     for ifield=1:size(table_map,1)
         
         if isfield(Filters,table_map{ifield,1})
@@ -255,6 +257,12 @@ if obj.options.kf_filtering_level && ~retcode
             cc=table_map{ifield,3};
             
             for st=1:h
+                % remean if necessary
+                if ~isempty(my)
+                    
+                    Filters.(aa){st}(obs_id,:,:)=bsxfun(@plus,Filters.(aa){st}(obs_id,:,:),my);
+                    
+                end
                 % in terms of shocks we only save the first-step forecast
                 [Filters.(aa){st},Filters.(bb){st},Filters.(cc){st}]=...
                     utils.filtering.squasher(Filters.(aa){st},Filters.(bb){st},init.m_orig);
@@ -366,8 +374,11 @@ function ff=do_one_step_forecast(T,ss,compl,cond_shocks_id,xloc,sig,...
 % is_active_shock : location of shocks required to satisfy the constraints.
 % sig: perturbation parameter
 order=size(T,1);
+
 nstoch=sum(~is_det_shock);
+
 exo_nbr=numel(is_det_shock);
+
 nx=numel(xloc);
 
 ff=@my_one_step;
@@ -375,39 +386,61 @@ ff=@my_one_step;
     function varargout=my_one_step(rt,y0,stoch_shocks,det_shocks)
         % [y1,is_active_shock,retcode,shocks]=my_one_step(rt,y0,shocks)
         if nargin<4
+            
             det_shocks=[];
+        
         end
+        
         shocks=zeros(exo_nbr,horizon);
+        
         shocks(~is_det_shock,:)=reshape(stoch_shocks,nstoch,horizon);
+        
         if ~isempty(det_shocks)
+            
             span_det=size(det_shocks,2);
+            
             shocks(is_det_shock,1:span_det)=det_shocks;
+        
         end
+        
         nout=nargout;
+        
         if isempty(compl)
+            
             if all(shocks(:)==0) && order==1
                 % quick exit if possible
                 %------------------------
                 y_yss=y0-ss{rt};
+                
                 y1.y=ss{rt}+T{1,rt}(:,1:nx)*y_yss(xloc)+...
                     real(T{1,rt}(:,nx+1))*sig+...
                     imag(T{1,rt}(:,nx+1)); % growth term
+            
             else
                 % if shocks and/or higher orders, do it the hard way
                 %----------------------------------------------------
                 y0=struct('y',y0);
                 y1=utils.forecast.one_step_engine(T(:,rt),y0,ss{rt},xloc,sig,...
                     shocks,order);
+            
             end
+            
             outputs={y1,false(1,exo_nbr),0,shocks};
+            
             varargout=outputs(1:nout);
+        
         else
             % if restrictions, this is unavoidable
             %--------------------------------------
             y0=struct('y',y0);
+            
             [varargout{1:nout}]=utils.forecast.one_step_fbs(T(:,rt),y0,...
                 ss{rt},xloc,sig,shocks,order,compl,cond_shocks_id);
+       
         end
+        
         varargout{1}=varargout{1}.y;
+    
     end
+
 end

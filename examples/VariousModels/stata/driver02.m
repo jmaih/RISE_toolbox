@@ -43,7 +43,7 @@ fs=mest.filtering.smoothed_variables;
 ff=mest.filtering.filtered_variables;
 
 figure('name','Inflation vs predicted (one-step) inflation')
-% The mean should be added back to the observables but currently it is not
+% The mean is added back to the observables after filtering
 plot([fs.P,ff.P])
 
 
