@@ -1,4 +1,4 @@
-classdef dsge < generic_switch % & gogetter
+classdef dsge < generic % & gogetter
     % dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
     %
     % dsge Methods:
@@ -268,7 +268,7 @@ classdef dsge < generic_switch % & gogetter
             %
             % See also:
             
-            obj=obj@generic_switch();
+            obj=obj@generic();
             
             % obj=obj@gogetter();
             

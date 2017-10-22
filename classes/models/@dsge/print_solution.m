@@ -131,7 +131,7 @@ ids=locate_variables(varlist,obj.endogenous.name);
 
 var_names=endo_names(ids);
 
-the_regimes=generic_switch.describe_regimes(obj.markov_chains);
+the_regimes=generic.describe_regimes(obj.markov_chains);
 
 solver=obj.options.solver;
 

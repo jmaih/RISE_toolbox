@@ -21,7 +21,7 @@ function out=irf(obj,varargin)
 
 if isempty(obj)
     
-    mydefaults=irf@generic_switch(obj);
+    mydefaults=irf@generic(obj);
     
     mydefaults=[mydefaults
         {'irf_anticipate',true,@(x)islogical(x),...
@@ -50,6 +50,6 @@ for iobj=1:numel(obj)
     
 end
 
-out=irf@generic_switch(obj);
+out=irf@generic(obj);
 
 end

@@ -29,6 +29,6 @@ if ~isempty(obj)
     
 end
 
-[varargout{1:nargout}]=refresh@generic_switch(obj);
+[varargout{1:nargout}]=refresh@generic(obj);
 
 end

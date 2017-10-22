@@ -21,7 +21,7 @@ function varargout=load_data(obj)
 
 just_starting=isempty(obj);
 
-[varargout{1:nargout}]=load_data@generic_switch(obj);
+[varargout{1:nargout}]=load_data@generic(obj);
 
 if just_starting
     

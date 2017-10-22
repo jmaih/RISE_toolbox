@@ -19,6 +19,6 @@ if ~isempty(obj)
     
 end
 
-[varargout{1:nargout}]=pull_objective@generic_switch(obj,varargin{:});
+[varargout{1:nargout}]=pull_objective@generic(obj,varargin{:});
 
 end

@@ -16,7 +16,7 @@ function obj=estimate(obj,varargin)
 
 if isempty(obj)
     
-    mydefaults=estimate@generic_switch(obj,varargin{:});
+    mydefaults=estimate@generic(obj,varargin{:});
     
     mydefaults=[mydefaults
         {'estim_priors',[],@(x)isstruct(x),...
@@ -44,7 +44,7 @@ else
     % on.
     obj=set(obj,'kf_filtering_level',0);
     
-    obj=estimate@generic_switch(obj,varargin{:});
+    obj=estimate@generic(obj,varargin{:});
     
 end
 

@@ -73,7 +73,7 @@ end
 
 epilogue=[];
 
-the_regimes=generic_switch.describe_regimes(obj.markov_chain_info);
+the_regimes=generic.describe_regimes(obj.markov_chain_info);
 
 sol=solve(obj);
 

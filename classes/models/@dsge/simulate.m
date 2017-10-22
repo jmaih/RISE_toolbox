@@ -5,7 +5,7 @@ if isempty(obj)
     mydefaults=the_defaults();
     
     mydefaults=[mydefaults
-        simulate@generic_switch(obj)];
+        simulate@generic(obj)];
     
     if nargout
         
@@ -27,7 +27,7 @@ end
 % create problems with optimal policy if the user tries to simulate an optimal policy model
 % with order of approximation higher than 1  
 
-[varargout{1:nargout}]=simulate@generic_switch(obj,varargin{:});
+[varargout{1:nargout}]=simulate@generic(obj,varargin{:});
 
 end
 

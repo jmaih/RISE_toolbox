@@ -45,6 +45,12 @@ classdef generic
         
     end
     
+    properties(SetAccess=protected)
+        % information on markov chains, regimes and related items
+        markov_chains
+        
+    end
+        
     properties(SetAccess = protected, Hidden = true)%(SetAccess=protected)
         
         data
@@ -94,6 +100,22 @@ classdef generic
     methods(Abstract, Hidden = true)
         % methods that must be implemented by the subclasses
         varargout=conclude_estimation(varargin)
+        
+    end
+    
+    methods(Abstract)
+        % methods that must be implemented by the subclasses
+        varargout=solve(varargin)
+        
+        % methods that must be implemented by the subclasses
+        varargout=set_solution_to_companion(varargin)
+        
+    end
+    
+    methods(Abstract, Hidden = true)
+        % methods that must be implemented by the subclasses
+        
+        varargout=problem_reduction(varargin)
         
     end
     
@@ -165,6 +187,16 @@ classdef generic
         
         varargout=stoch_simul(varargin)
         
+        varargout=historical_decomposition(varargin)
+        
+        varargout=is_stable_system(varargin)
+        
+        varargout=theoretical_autocorrelations(varargin)
+        
+        varargout=theoretical_autocovariances(varargin)
+        
+        varargout=variance_decomposition(varargin)
+        
     end
     
     methods(Static,Hidden=true)
@@ -196,7 +228,38 @@ classdef generic
             
             obj=do_names(obj,observs,'observables');
             
+            mark_parameters()
+            
+            markchains=varargin{4};
+            
+            % the markov chains will set the parameters
+            %------------------------------------------
+            obj=add_markov_chains_and_parameters(obj,markchains);
+            
+            function mark_parameters()
+                
+                n=obj.parameters.number;
+                
+                obj.parameters.is_switching=false(1,n);
+                
+                obj.parameters.is_trans_prob=false(1,n);
+                
+                obj.parameters.governing_chain=ones(1,n);
+                
+                % re-tag the transition probabilities
+                %------------------------------------
+                for iparam=1:n
+                    
+                    obj.parameters.is_trans_prob(iparam)=...
+                        parser.is_transition_probability(obj.parameters.name{iparam});
+                    
+                end
+                
+            end
+            
         end
+        
+        varargout=describe_regimes(varargin)
         
     end
     
@@ -249,6 +312,18 @@ classdef generic
         varargout=transform_parameters(varargin)
         
         varargout=unstransform_parameters(varargin)
+        
+    end
+    
+    methods(Access=private)
+        
+        varargout=add_markov_chains_and_parameters(varargin)
+        
+    end
+    
+    methods(Hidden=true)
+        
+        varargout=prepare_transition_routine(varargin)
         
     end
     

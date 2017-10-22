@@ -1,6 +1,6 @@
 function [act,obj]=check_property(obj,propname,propval)
 
-action=check_property@generic_switch(obj,propname,propval);
+action=check_property@generic(obj,propname,propval);
 
 act=action;
     
