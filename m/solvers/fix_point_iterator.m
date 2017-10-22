@@ -90,7 +90,7 @@ while max(conv_T,conv_F)>options.fix_point_TolFun && ...
     
     if fix_point_verbose
         
-        fprintf(1,'iter # %0.0f : conv(x)=%0.4f, conv(F(x))=%0.4f\n',iter,full(conv_T),conv_F); 
+        fprintf(1,'iter # %0.0f : conv(x)=%0.8f, conv(F(x))=%0.8f\n',iter,full(conv_T),conv_F); 
         
     end
     
