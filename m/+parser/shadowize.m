@@ -93,6 +93,7 @@ stat.shadow_fast_ssmodel(fast_ss_not_provided)=stat.shadow_model(fast_ss_not_pro
 %-------------------------------
 dyn.shadow_model=parser.replace_steady_state_call(dyn.shadow_model);
 shadow_complementarity=parser.replace_steady_state_call(shadow_complementarity);
+shadow_tvp=parser.replace_steady_state_call(shadow_tvp);
 % replace the steady state calls and remove the useless call to ss
 %---------------------------------------------------------------------
 stat.shadow_model=parser.replace_steady_state_call(stat.shadow_model);
