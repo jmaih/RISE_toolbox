@@ -187,33 +187,48 @@ if obj.options.steady_state_unique
     converged=false;
     
     iloop=0;
+        
+    p_start=p(:,1);
+    
+    def_start=d{1};
+    
+    TransMat=[];
     
     while ~converged
         
         iloop=iloop+1;
         
-        [p_unic,def_unic,TransMat,retcode]=ergodic_parameters(y0(:,1));
-        
-        if retcode
-            
-            break
-            
-        end
-        
-        [y(:,1),g(:,1),~,p_unic,retcode]=run_one_regime(y0(:,1),g0(:,1),p_unic,x,...
-            def_unic,sscode,unsolved,blocks);
+        [y(:,1),g(:,1),~,p_start,retcode]=run_one_regime(y0(:,1),g0(:,1),p_start,x,...
+            def_start,sscode,unsolved,blocks);
         
         % exit if there is a problem (retcode>0) or if we have converged
         %----------------------------------------------------------------
         converged=retcode||max(abs(y0(:,1)-y(:,1)))<=obj.options.fix_point_TolFun;
         
-        y0(:,1)=y(:,1);
-        
-        g0(:,1)=g(:,1);
+        if ~retcode
+            
+            [p_unic,def_unic,TransMat,retcode]=ergodic_parameters(y(:,1));
+            
+            if retcode
+                
+                break
+                
+            end
+            
+            y0(:,1)=y(:,1);
+            
+            g0(:,1)=g(:,1);
+            
+            p_start=p_unic;
+            
+            def_start=def_unic;
+            
+        end
         
     end
     
     if ~retcode
+        
         % swap for the output
         %---------------------
         [y(:,1),p_unic]=swapping_func(y(:,1),p_unic);
