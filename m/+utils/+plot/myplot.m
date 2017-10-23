@@ -153,7 +153,7 @@ end
             plot(pp.xdatenums,sum(uall,2),'k-','linewidth',2);
             axis tight;
             hold off
-            set([b1,b2],'edgeColor','k')
+%             set([b1,b2],'edgeColor','k')
             set(gca,'xlim',pp.xlim,'XTick',pp.tickLocs,'XtickLabel',pp.xtick_labels)
             vout={gca()};
         else % : plot, plotyy, bar, etc.
