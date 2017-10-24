@@ -150,6 +150,9 @@ end
             hold on
             b2=bar(pp.xdatenums,uneg,'stack'); % area(this_neg)
             hold on
+            for ii=1:numel(b1)
+                set(b2(ii),'FaceColor',b1(ii).FaceColor)
+            end
             plot(pp.xdatenums,sum(uall,2),'k-','linewidth',2);
             axis tight;
             hold off
