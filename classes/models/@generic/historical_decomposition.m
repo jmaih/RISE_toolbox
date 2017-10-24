@@ -164,7 +164,7 @@ for v=1:numel(order_var_endo_names)
         
     else
         
-        proto=reset_data(proto,D(:,:,v));
+        proto=reset_data(proto,D(:,:,v),contrib_names);
         
     end
     
@@ -288,6 +288,10 @@ ny=size(Ty{1},1);
 
 [nx,nt,np]=size(shocks);
 
+% shock columns and rows may have been added in the state matrices during
+% filtering. Get rid of them
+retrim()
+
 nz=1+1+1+1+nx;
 
 y0_id=1;
@@ -348,6 +352,34 @@ for t=1:nt
     
 end
 
+    function retrim()
+        
+        my=numel(y0);
+        
+        if my==ny
+            
+            return
+            
+        end
+        
+        % remove the shocks
+        ny=my;
+        
+        xrange=1:my;
+        
+        for ireg=1:np
+             Ty{ireg}=Ty{ireg}(xrange,xrange);
+             
+             Te{ireg}=Te{ireg}(xrange,:);
+             
+             Tsig{ireg}=Tsig{ireg}(xrange,:);
+             
+             ss{ireg}=ss{ireg}(xrange,:);
+             
+        end
+        
+    end
+
     function sh=get_shocks()
         
         sh0=bsxfun(@times,Te{st},shocks(:,t,st).');
@@ -385,6 +417,7 @@ end
         Css=(I-Ty{st})*ss{st};
         
     end
+
 end
 
 
