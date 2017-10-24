@@ -41,9 +41,15 @@ function f=memoize(g,order,varargin)
 f=@engine;
 
     function varargout=engine(x)
+        
         if ~isempty(order)
+            
             x=x(order);
+            
         end
+        
         [varargout{1:nargout}]=g(x,varargin{:});
+        
     end
+
 end
