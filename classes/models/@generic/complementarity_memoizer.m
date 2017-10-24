@@ -134,17 +134,19 @@ for inp=2:ninp
     
 end
 
-[sep_cf, cf]=do_memo(dd, is_log_var,additional_inputs{:});
+[sep_cf, cf]=do_memo(dd, is_log_var,obj.options.simul_restrictions_lb,...
+    additional_inputs{:});
 
 end
 
-function [sep_cf, cf]=do_memo(dd, is_log_var, varargin)
+function [sep_cf, cf]=do_memo(dd, is_log_var,simul_restrictions_lb,varargin)
 
 args=cell2mat(strcat(parser.input_list,','));
 
 sep_cf0=str2func(['@(',args(1:end-1),')[',dd,']']);
 
-cf0=str2func(['@(',args(1:end-1),')all([',dd,']>=0)']);
+cf0=str2func(['@(',args(1:end-1),')all([',dd,']>=',...
+    num2str(simul_restrictions_lb),')']);
 
 sep_cf=@engine_sepcf;
 
