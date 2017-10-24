@@ -244,7 +244,11 @@ if obj.options.kf_filtering_level && ~retcode
         'atT','PtT','eta'
         };
     
-    my=data_info.ymean;
+    try
+        my=data_info.ymean;
+    catch
+        my=[];
+    end
     
     for ifield=1:size(table_map,1)
         

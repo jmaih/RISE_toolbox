@@ -38,7 +38,9 @@ function [a,P,eta]=squasher(a,P,m)
 % See also: 
 
 eta=a(m+1:end,1,:);
+
 a=a(1:m,:,:); % second dimension is the real-time forecasting steps
+
 P=P(1:m,1:m,:);
 
 end
