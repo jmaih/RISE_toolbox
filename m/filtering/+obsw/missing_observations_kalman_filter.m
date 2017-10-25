@@ -67,7 +67,7 @@ function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level,nstep
 %
 % The system is of the form
 %   alpha(t+1) = T*alpha(t) + ca(t) + R(t)*eta(t),  eta ~ N(0, Q)
-%   y(t) =   Z*alpha(t) + epsilon(t),  epsilon ~ N(0,H)
+%   y(t) =   Z*alpha(t) + dy(t) + epsilon(t),  epsilon ~ N(0,H)
 %                    
 % Examples
 % ---------
