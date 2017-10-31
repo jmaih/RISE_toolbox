@@ -4,7 +4,7 @@ if isa(m,'abstvar')
     
     [~,~,~,f]=filter(m);
     
-    the_regimes=generic_switch.describe_regimes(m.markov_chain_info);
+    the_regimes=generic.describe_regimes(m.markov_chain_info);
     
     data=m.data;
     
@@ -16,7 +16,7 @@ else
     
     f=m.filtering;
     
-    the_regimes=generic_switch.describe_regimes(m.markov_chains);
+    the_regimes=generic.describe_regimes(m.markov_chains);
     
     endog=m.observables.name;
     
