@@ -147,9 +147,15 @@ classdef generic
         
         varargout=hessian(varargin)
         
+        varargout=historical_decomposition(varargin)
+        
+        varargout=hd(varargin)
+        
         varargout=initial_conditions(varargin)
         
         varargout=irf(varargin)
+        
+        varargout=is_stable_system(varargin)
         
         varargout=isnan(varargin)
         
@@ -186,10 +192,6 @@ classdef generic
         varargout=simulate(varargin)
         
         varargout=stoch_simul(varargin)
-        
-        varargout=historical_decomposition(varargin)
-        
-        varargout=is_stable_system(varargin)
         
         varargout=theoretical_autocorrelations(varargin)
         
