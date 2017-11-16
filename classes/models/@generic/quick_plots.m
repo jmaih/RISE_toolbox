@@ -115,6 +115,18 @@ end
             
             [theLegend{ii},texname{ii},theIrf{ii}]=extract_one(var_name{ii});
             
+            if iscellstr(theLegend{ii})
+                
+                if nnames~=1
+                    
+                    error('multiple legends per variable and multiple variables')
+                    
+                end
+                
+                theLegend=theLegend{ii};
+                
+            end
+            
         end
         
         if nnames>1||any(cellfun(@(x)isempty(x),theLegend,'uniformOutput',true))

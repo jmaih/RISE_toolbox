@@ -73,6 +73,12 @@ if isempty(shock_list)
     
 end
 
+if ischar(shock_list)
+    
+    shock_list=cellstr(shock_list);
+    
+end
+
 description=get(m(1),'tex(long)');
 
 nshocks=numel(shock_list);
