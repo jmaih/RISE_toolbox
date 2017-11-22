@@ -14,7 +14,7 @@ scatter_cutoff=.01;
 
 %% rise the model
 
-tnt=rise('trinity');
+m=rise('trinity');
 
 %% we need a function describing the behavior
 % the function will take as first argument, the rise object and possibly
@@ -29,23 +29,34 @@ tnt=rise('trinity');
 clc
 type price_puzzle
 %%
-% the parameters that are consistent with the price puzzle behavior
-tnt=set(tnt,'monte_carlo_behavioral_function',@price_puzzle);
-%% Now we can go ahead and run the Monte Carlo Filtering
-[xparam,retcode,could_solve,behave]=monte_carlo_filtering(tnt);
+parameter_names={m.estimation.priors.name};
+lb=vertcat(m.estimation.priors.lower_bound);
+ub=vertcat(m.estimation.priors.upper_bound);
+
+%%
+nsim_or_draws=1000; %price_puzzle
+
+check_behavior=@(x)is_has_solution(m,parameter_names,x);
+
+procedure='latin_hypercube';
+
+obj=mcf(check_behavior,nsim_or_draws,lb,ub,parameter_names,procedure);
+
+%% smirnov test for equality of distributions
+
+% hfig=utils.plot.multiple(@(x)cdf_plot(obj,x),parameter_names,...
+%     'Smirnov test of equality of distributions',3,3)
+% 
+cdf_plot(obj)
+
 %% correlation patterns in the behavior sample
-parameter_names={tnt.estimation.priors.name};
-lb=vertcat(tnt.estimation.priors.lower_bound);
-ub=vertcat(tnt.estimation.priors.upper_bound);
 
-hh=mcf.plot_correlation_patterns(xparam(:,could_solve),...
-    parameter_names,pattern_cutoff,'behavior');
+correlation_patterns_plot(obj,[],'behave')
 
-%% correlation patterns in the non-behavior sample
-hh2=mcf.plot_correlation_patterns(xparam(:,~could_solve),...
-    parameter_names,pattern_cutoff,'non-behavior');
-%% Smirnov test for equality of distributions 
-mcf.plot_smirnov(xparam,could_solve,lb,ub,parameter_names,4,3)
+%% correlation patterns in the behavior sample
+
+correlation_patterns_plot(obj,[],'non-behave')
+
 %% scatter plot of the significant correlations
-mcf.plot_correlation_scatter(xparam,could_solve,parameter_names,...
-    scatter_cutoff,4,3)
+
+scatter(obj,[],'non-behave')

@@ -6,7 +6,7 @@ parameters pc_beta, d_y_lead, d_r,
 mp_i_lag, mp_pai, mp_y, gyss, iss,
 pc_pai_lead, pc_y, paiss, sigi, sigpai, sigy
 
-model(linear)
+model
 	% Phillips curve
    PAI=pc_beta*pc_pai_lead*PAI(+1)+(1-pc_pai_lead)*PAI(-1)+pc_y*Y(-1)+sigpai*EPAI;
 
