@@ -32,6 +32,14 @@ function obj=setup_priors(obj,MyPriors,error_control)
 %       P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound};
 %   - Same as above except for adding a hard upper bound
 %       P.pname={start_value,lower_quantile,lower_quantile,'distribution(prob)',lower_bound,upper_bound};
+%   - Dirichlet
+%       Denote by dirichlet_j, the jth dirichlet distribution, j=1,2,... we
+%       have P.dirichlet_j={sd_ii,pname1,m1,pname2,m2,...,pnamen,mn} where
+%       - sd_ii: is the standard deviation of the diagonal element (a
+%       parameter never listed by RISE) of the dirichlet distribution.   
+%       - pname1, pname2,...,pnamen: are the names of the off diagonal
+%       parameters
+%       - m1, m2,...,mn: are the means of each parameters   
 %
 % - **error_control** [empty|cell]: element constructed by RISE for
 % controling the syntax used in the model file.
