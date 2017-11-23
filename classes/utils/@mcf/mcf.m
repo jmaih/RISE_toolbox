@@ -613,12 +613,18 @@ classdef mcf < handle
             
             names_id=locate_variables(names,obj.parameter_names);
             
-            if isempty(type),type=''; end
-            
-            if ~any(strcmp(type,{'behave','non-behave'}))
-            
-                error('type must be one of the following: behave, non-behave, ''''')
-            
+            if isempty(type)
+                
+                type='';
+                
+            else
+                
+                if ~any(strcmp(type,{'behave','non-behave'}))
+                    
+                    error('type must be one of the following: behave, non-behave, ''''')
+                    
+                end
+                
             end
             
             switch type
@@ -919,7 +925,7 @@ classdef mcf < handle
                 
                 nsim_=obj.nsim;
                 
-                parfor (isim=1:obj.nsim,NumWorkers)
+                parfor (isim=1:obj.nsim,NumWorkers) % for isim=1:obj.nsim 
                 
                     draw=samples_(:,isim);
                     
