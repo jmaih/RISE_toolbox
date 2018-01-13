@@ -239,6 +239,8 @@ end
         if is_var
             
             x=y0(xloc,end:-1:1);% flip around if we have many lags
+            
+            x=x(:);
         
         else
             
