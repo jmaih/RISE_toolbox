@@ -52,11 +52,31 @@ for jj=1:kreps
     
     load_params();
     
-    vartools.check_factorization(Rj,params(jpar).S)
+    try
+        
+        vartools.check_factorization(Rj,params(jpar).S)
+        
+    catch
+        
+        warning('factorization fails')
+        
+    end
     
     jshk=min(jj,shocks_replic);
     
-    fkst(:,:,jj)=vartools.simulate(y0,xdet,Aj,Rj,shocks(:,:,jshk));
+    shocksj=permute(shocks(:,:,jshk,:),[1,2,4,3]);
+    
+    shocksj2=cell(size(shocksj,3),1);
+    
+    for ic=1:size(shocksj,3)
+        
+        shocksj2{ic}=shocksj(:,:,ic);
+        
+    end
+    
+    shocksj2=cell2mat(shocksj2);
+    
+    fkst(:,:,jj)=vartools.simulate(y0,xdet,Aj,Rj,shocksj2);
     
 end
 
@@ -93,7 +113,7 @@ info={'nvars','length','nrepetitions'};
             
         end
         
-        [nys,nper,sreplic]=size(shocks);
+        [nys,nper,sreplic,ncountries]=size(shocks);
         
         if nper==1 && nys==1 && sreplic==1
             % length of forecasts only
@@ -101,7 +121,7 @@ info={'nvars','length','nrepetitions'};
             
             nperiods=shocks;
             
-        elseif nys==nvars && nper>1
+        elseif nys*ncountries==nvars && nper>1
             % shocks given
             nperiods=nper;
             

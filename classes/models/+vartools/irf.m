@@ -14,21 +14,25 @@ end
 
 kreps=numel(params);
 
-nshocks=kdata.nvars;
+nshocks=kdata.nvars*kdata.ng;
+
+nvars=kdata.nvars*kdata.ng;
+
+nx=kdata.nx*kdata.ng;
 
 h=size(params(1).B,3);
 
-myirfs=zeros(kdata.nvars,irf_periods,nshocks,kreps,h);
+myirfs=zeros(nvars,irf_periods,nshocks,kreps,h);
 
-shocks0=zeros(kdata.nvars,irf_periods);
+shocks0=zeros(nshocks,irf_periods);
 
-y0=zeros(kdata.nvars,kdata.nlags);
+y0=zeros(nvars,kdata.nlags);
 
 failed=false(1,kreps);
 
 % feed in zeros for deterministic variables
 %-------------------------------------------
-xdet=zeros(kdata.nx,irf_periods);
+xdet=zeros(nx,irf_periods);
 
 for jj=1:kreps
     
@@ -46,7 +50,7 @@ for jj=1:kreps
     
     vartools.check_factorization(Rj,params(jj).S)
         
-    for ishock=1:kdata.nvars
+    for ishock=1:nshocks
         
         for ireg=1:h
             

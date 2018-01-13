@@ -30,7 +30,7 @@ if kdata.nvars*kdata.ng~=size(y,1)
     
 end
 
-kdata.nlags=nlags;
+% kdata.nlags=nlags;
 
 kdata.Y=y(:,nlags+1:end,:);
 
