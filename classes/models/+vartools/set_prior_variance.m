@@ -128,10 +128,13 @@ end
         % add a constant to the regression
         %----------------------------------
         x=ones(1,nt_np);
+            
+        kdatai=struct('nlags',kdata.nlags,'ng',1,...
+            'nvars',1,'nx',1,'linres',[]);
         
         for iii = 1:kdata.nvars
             % expand for (homogenous) panel...
-            kdatai = rfvar.embed(Yraw(iii,:),x,kdata.nlags);
+            kdatai = rfvar.embed(kdatai,Yraw(iii,:),x);
             
             mlei=vartools.ols(kdatai);
             
