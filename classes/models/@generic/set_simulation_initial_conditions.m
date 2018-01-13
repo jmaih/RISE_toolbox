@@ -180,12 +180,6 @@ if ~isfield(obj.options,'simul_update_shocks_handle')
     
 end
 
-if ~isfield(obj.options,'simul_do_update_shocks')
-    
-    obj.options.simul_do_update_shocks=[];
-    
-end
-
 % shock structure: initial+anticipate
 shock_structure=false(exo_nbr,k_future);
 
@@ -217,8 +211,6 @@ Initcond.simul_history_end_date=simul_history_end_date;
 Initcond.simul_sig=simul_sig;
 Initcond.simul_order=simul_order;
 Initcond.simul_shock_uncertainty=obj.options.simul_shock_uncertainty;
-Initcond.simul_update_shocks_handle=obj.options.simul_update_shocks_handle;
-Initcond.simul_do_update_shocks=obj.options.simul_do_update_shocks;
 Initcond.simul_frwrd_back_shoot=obj.options.simul_frwrd_back_shoot;
 
 if isa(obj,'dsge')

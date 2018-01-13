@@ -51,10 +51,6 @@ if options.k_future
     
 end
 
-simul_update_shocks_handle=options.simul_update_shocks_handle;
-
-simul_do_update_shocks=options.simul_do_update_shocks;
-
 forecast_conditional_hypothesis=options.forecast_conditional_hypothesis;
 
 options=rmfield(options,{'PAI','Qfunc','y'});
@@ -343,13 +339,6 @@ regimes=regimes(options.burn+1:end);
                 %----------------
                 shocks_t=shocks(:,t+(0:options.k_future));
                 
-                if ~isempty(simul_update_shocks_handle) && simul_do_update_shocks
-                    % these lines and the associated options are to be
-                    % removed.
-                    
-                    shocks_t=simul_update_shocks_handle(shocks_t,y00.y);
-                    
-                end
                 % compute transition matrix and switching probabilities
                 %------------------------------------------------------
                 [Q,retcode]=Qfunc(y00.y);

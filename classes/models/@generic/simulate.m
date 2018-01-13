@@ -36,19 +36,6 @@ function [db,states,retcode] = simulate(obj,varargin)
 %       function handle). The output is a logical vector that is true for
 %       the columns that are acceptable/feasible and false otherwise.
 %
-%   - **simul_update_shocks_handle** [function handle]: we may want to
-%       update the shocks if some condition on the state of the economy is
-%       satisfied. For instance, shock monetary policy to keep the interest
-%       rate at the floor for an extented period of time if we already are
-%       at the ZLB/ZIF. simul_update_shocks_handle takes as inputs the
-%       current shocks and the state vector (all the endogenous variables)
-%       and returns the updated shocks. But for all this to be put into
-%       motion, the user also has to turn on **simul_do_update_shocks** by
-%       setting it to true.
-%
-%   - **simul_do_update_shocks** [true|{false}]: update the shocks based on
-%       **simul_update_shocks_handle** or not.
-%
 %   - **simul_to_time_series** [{true}|false]: if true, the output is a
 %       time series, else a cell array with a matrix and information on
 %       elements that help reconstruct the time series.
@@ -492,12 +479,6 @@ d={
     
     'simul_honor_constraints',false,@(x)islogical(x),...
     'simul_honor_constraints must be a logical'
-    
-    'simul_do_update_shocks',false,@(x)islogical(x),...
-    'simul_do_update_shocks must be a logical'
-    
-    'simul_update_shocks_handle',[],@(x)isa(x,'function_handle'),...
-    'simul_update_shocks_handle must be a function handle'
     
     'simul_hpfilter_lambda',[],@(x)num_fin(x) && x>0,...
     ' simul_hpfilter_lambda must be >0'
