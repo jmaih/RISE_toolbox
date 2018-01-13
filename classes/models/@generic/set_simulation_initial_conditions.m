@@ -172,8 +172,11 @@ set_shocks_and_states()
 Qfunc=prepare_transition_routine(obj);
 
 if ~simul_pruned
+    
     y0=rmfield(y0,'y_lin');
+
 end
+
 if ~isfield(obj.options,'simul_update_shocks_handle')
     
     obj.options.simul_update_shocks_handle=[];
