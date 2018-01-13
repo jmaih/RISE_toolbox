@@ -1,8 +1,10 @@
-function [T,R,eigvals]=companion(B,ShockImpact,nz)
+function [T,R,C,eigvals]=companion(B,ShockImpact,nz)
 
 % the VBR has the form y=C*z+B1*y{-1}+B2*y{-2}+...+Bp*y{-p}+ShockImpact*u
 % so that B=[C,B1,B2,...,Bp];
 % nz: number of deterministic terms
+
+C=B(:,1:nz);
 
 B=B(:,nz+1:end);
 
@@ -23,7 +25,9 @@ if ~isempty(ShockImpact)
 	
 end
 
-if nargout>2
+C=[C;zeros(dd,nz)];
+
+if nargout>3
     
     eigvals=abs(eig(T));
     
