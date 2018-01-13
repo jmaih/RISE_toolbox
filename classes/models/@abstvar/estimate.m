@@ -6,6 +6,20 @@ if nargin < 2
     
 end
 
+nobj=numel(self);
+
+if nobj>1
+    
+    for ii=1:nobj
+        
+        self(ii)=estimate(self(ii),date_range,varargin{:});
+        
+    end
+    
+    return
+    
+end
+
 self=set(self,varargin{:});%self=setOptions(self,varargin{:});
 
 % set the prime-time restrictions that are associated with the
