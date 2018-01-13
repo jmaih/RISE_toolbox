@@ -66,41 +66,44 @@ function BaseColors=InterpolateColors(ci,maincolor)
 ci=ci(:);
 n=numel(ci);
 
-switch maincolor
-    case {'y',[1 1 0]} % yellow
-        BaseColors=ci*[1 1 0];
-    case {'m',[1 0 1]} % magenta
-        BaseColors=ci*[1 0 1];
-    case {'c',[0 1 1]} % cyan
-        BaseColors=ci*[0 1 1];
-    case {'r',[1 0 0]} % red
-        BaseColors=ci*[1 0 0];
-    case {'g',[0 1 0]} %green
-        BaseColors=ci*[0 1 0];
-    case {'b',[0 0 1]} %blue
-        BaseColors=ci*[0 0 1];
-    case {'w',[1 1 1]} %white
-        BaseColors=ci*[1 1 1];
-    case {'nb'}
-        BaseColors=[
-            1 123 182
-            65 156 200
-            128 189 219
-            192 222 237]/255;
-        if n~=4
-            error('number of elements in confidence region expected to be 4')
-        end
-    otherwise
-        if isnumeric(maincolor) && size(maincolor,2)==3
-            if size(maincolor,1)==1
-                maincolor=ci*maincolor;
-            elseif size(maincolor,1)~=n
-                error('number of elements in confidence region different from the number of rows of the color map')
+if isnumeric(maincolor) && size(maincolor,2)==3
+    
+    if size(maincolor,1)==1
+        maincolor=ci*maincolor;
+    elseif size(maincolor,1)~=n
+        error('number of elements in confidence region different from the number of rows of the color map')
+    end
+    BaseColors=maincolor;
+elseif ischar(maincolor)
+    switch maincolor
+        case {'y',[1 1 0]} % yellow
+            BaseColors=ci*[1 1 0];
+        case {'m',[1 0 1]} % magenta
+            BaseColors=ci*[1 0 1];
+        case {'c',[0 1 1]} % cyan
+            BaseColors=ci*[0 1 1];
+        case {'r',[1 0 0]} % red
+            BaseColors=ci*[1 0 0];
+        case {'g',[0 1 0]} %green
+            BaseColors=ci*[0 1 0];
+        case {'b',[0 0 1]} %blue
+            BaseColors=ci*[0 0 1];
+        case {'w',[1 1 1]} %white
+            BaseColors=ci*[1 1 1];
+        case {'nb'}
+            BaseColors=[
+                1 123 182
+                65 156 200
+                128 189 219
+                192 222 237]/255;
+            if n~=4
+                error('number of elements in confidence region expected to be 4')
             end
-            BaseColors=maincolor;
-        else
-            error([mfilename,':: Bad color specification'])
-        end
+        otherwise
+            error('wrong color')
+    end
+else
+            error('wrong color')
 end
 
 end
