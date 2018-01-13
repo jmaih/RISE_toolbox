@@ -42,7 +42,7 @@ end
         
         [C,R,info]=vartools.autocorr(param.B,...
             Rfunc(param),...
-            self.nx,max_periods);
+            self.nx*self.ng,max_periods);
         
     end
 
