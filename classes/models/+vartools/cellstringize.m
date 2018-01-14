@@ -1,4 +1,10 @@
-function x=cellstringize(x)
+function x=cellstringize(x,allowDuplicates)
+
+if nargin<2
+    
+    allowDuplicates=false;
+    
+end
 
 if ischar(x)
     
@@ -54,7 +60,23 @@ if n>numel(ux)
     
     disp(badx)
     
-    error('the above variables are duplicated')
+    msg='the atoms above are declared more than once';
+    
+    if allowDuplicates
+        
+        warning(msg)
+        
+    else
+        
+        error(msg)
+        
+    end
+    
+end
+
+if allowDuplicates
+    
+    x=ux;
     
 end
 
