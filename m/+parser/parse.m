@@ -146,7 +146,7 @@ if logic
 elseif hasname
     newname=DefaultOptions.saveas;
     thedot=strfind(newname,'.');
-    if isempty(thedot)
+    if isempty(thedot) %#ok<STREMP>
         newname=[newname,'.dsge'];
     end
 end
@@ -329,7 +329,7 @@ static.shadow_steady_state_model=cell(0,1);
 fsolve_nbr=0;
 for ii=1:numel(old_shadow_steady_state_model)
     eq_i=old_shadow_steady_state_model{ii};
-    if ~isempty(strfind(eq_i,'argzero'))
+    if ~isempty(strfind(eq_i,'argzero')) %#ok<STREMP>
         eq_i=strrep(eq_i,'argzero','fsolve');
         static.shadow_steady_state_model=[static.shadow_steady_state_model;{eq_i}];
         eq_i={'retcode=1-(exitflag==1);'};
@@ -378,16 +378,27 @@ routines.steady_state_model=struct('code',cell2mat(routines.steady_state_model(:
 % the Trans mat will go into the computation of derivatives
 % dictionary=parser.transition_probabilities(dictionary,shadow_tvp);
 bug_fix_shadow_defs=[];
+
 if ~isempty(dictionary.definitions)
+    
     bug_fix_shadow_defs=dictionary.definitions.shadow;
+    
 end
+
 probability_of_commitment=[];
+
 if ~isempty(dictionary.planner_system.shadow_model)
+    
     probability_of_commitment=dictionary.planner_system.shadow_model{2};
+    
     probability_of_commitment=strrep(probability_of_commitment,'commitment-','');
+    
     probability_of_commitment=strrep(probability_of_commitment,';','');
+    
     probability_of_commitment=probability_of_commitment(2:end-1);
+    
 end
+
 [~,...
     routines.transition_matrix,...
     dictionary.markov_chains,...
@@ -396,11 +407,11 @@ end
     dictionary.input_list,...
     {dictionary.parameters.name},dictionary.markov_chains,...
     shadow_tvp,bug_fix_shadow_defs,probability_of_commitment);
+
 % flag for endogenous probabilities
 %---------------------------------
 dictionary.is_endogenous_switching_model=any(dictionary.markov_chains.chain_is_endogenous);
 %% Computation of derivatives
-%
 
 disp(' ')
 disp('Now computing symbolic derivatives...')
@@ -426,24 +437,37 @@ routines.dynamic=utils.code.code2func(dynamic.shadow_model);
     dictionary.lead_lag_incidence.before_solve,exo_nbr,[]);
 %----------------------
 if dictionary.parse_debug
+    
     profile off
+    
     profile on
+    
 end
+
 routines.probs_times_dynamic=parser.burry_probabilities(dynamic.shadow_model,myifelseif);
+
 [routines.probs_times_dynamic_derivatives,numEqtns,numVars,jac_toc,...
     original_funcs]=parser.differentiate_system(...
     routines.probs_times_dynamic,...
     dictionary.input_list,...
     wrt,...
     max_deriv_order);
+
 routines.probs_times_dynamic=utils.code.code2func(routines.probs_times_dynamic);
+
 if dictionary.parse_debug
+
     profile off
+    
     profile viewer
+    
     keyboard
+
 else
+    
     disp([mfilename,':: Derivatives of dynamic model wrt y(+0-), x and theta up to order ',sprintf('%0.0f',max_deriv_order),'. ',...
         sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+
 end
 %----------------------
 routines.symbolic.probs_times_dynamic={original_funcs,wrt};
@@ -465,23 +489,37 @@ routines.symbolic.probs_times_dynamic={original_funcs,wrt};
 % dynamic model wrt param
 %------------------------
 if parameter_differentiation
+    
     param_nbr = numel(dictionary.parameters);
+    
     wrt=dynamic_differentiation_list([],0,1:param_nbr);
+    
     ppdd=@(x)x;%dynamic.shadow_model;
+    
     if ~dictionary.definitions_inserted
+    
         if DefaultOptions.definitions_in_param_differentiation
+        
             ppdd=@(x)parser.replace_definitions(x,shadow_definitions);
+        
         else
+            
             disp([mfilename,':: definitions not taken into account in the computation of derivatives wrt parameters'])
+        
         end
+        
     end
+    
     [routines.parameter_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
         parser.differentiate_system(...
         ppdd(dynamic.shadow_model),...
         dictionary.input_list,wrt,1);
+    
     routines.symbolic.parameters={original_funcs,wrt};
+    
     disp([mfilename,':: first-order derivatives of dynamic model wrt param. ',...
         sprintf('%0.0f',numEqtns),' equations and ',sprintf('%0.0f',numVars),' variables :',sprintf('%0.4f',jac_toc),' seconds'])
+
 end
 %% optimal policy and optimal simple rules routines
 %-----------------------------------------

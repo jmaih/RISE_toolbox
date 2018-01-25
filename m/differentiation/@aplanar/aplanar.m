@@ -843,8 +843,7 @@ classdef aplanar
             end
             % now create output matrices
             %----------------------------
-            ss=memory;
-            max_bytes=ss.MaxPossibleArrayBytes/8;
+            max_bytes=utils.windows_mac.maxbytes()/8;
             % MemAvailableAllArrays = MaxPossibleArrayBytes so we divide by
             % 8 above to be economical...
             C=cell(1,order);
