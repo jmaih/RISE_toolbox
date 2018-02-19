@@ -141,36 +141,47 @@ classdef aplanar
         function obj = abs(g)
             obj=apply_to_all(g,@times,sign(g.x));
         end
+        
         function obj = acos(g)
             obj=0.5*pi-asin(g);
         end
+        
         function obj = acosh(g)
             obj=2*log(sqrt(.5*(g+1))+sqrt(.5*(g-1)));
         end
+        
         function obj = asin(g)
             obj=-1i*log(1i*g+sqrt(1-g^2));
         end
+        
         function obj = asinh(g)
             obj=log(g+sqrt(1+g^2));
         end
+        
         function obj = atan(g)
             obj=-1i*log((1+1i*g)*sqrt(1/(1+g^2)));
         end
+        
         function obj = atanh(g)
             obj=.5*(log(1+g)-log(1-g));
         end
+        
         function obj = cos(g)
             obj=sine_cosine(g,'cos');
         end
+        
         function obj = cosh(g)
             obj=.5*(exp(g)+exp(-g));
         end
+        
         function obj = cot(g)
             obj=1/tan(g);
         end
+        
         function obj = coth(g)
             obj = cosh(g)/sinh(g);
         end
+        
         function obj = erf(g)
             obj=reinitialize(g);
             f=erf(g.x);
@@ -204,15 +215,18 @@ classdef aplanar
                     end
                 end
             end
+            
             function do_second_order()
                 obj.dxx(1,ii,jj)=2*(g.dxx(1,ii,jj)*f-g.dx(1,jj)*obj.dx(1,ii));
             end
+            
             function do_third_order()
                 obj.dxxx(1,ii,jj,kk)=2*(g.dxxx(1,ii,jj,kk)*f...
                     +g.dxx(1,ii,jj)*obj.dx(1,kk)...
                     -g.dxx(1,jj,kk)*obj.dx(1,ii)...
                     -g.dx(1,jj)*g.dxx(1,ii,kk));
             end
+            
             function do_fourth_order()
                 obj.dxxxx(1,ii,jj,kk,ll)=2*(...
                     g.dxxx(1,ii,jj,kk,ll)*f...
@@ -225,6 +239,7 @@ classdef aplanar
                     -g.dx(1,jj)*obj.dxxx(1,ii,kk,ll)...
                     );
             end
+            
             function do_fifth_order()
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=2*(...
                     g.dxxxx(1,ii,jj,kk,ll,mm)*f...
@@ -245,7 +260,9 @@ classdef aplanar
                     -g.dx(1,jj)*obj.dxxxx(1,ii,kk,ll,mm)...
                     );
             end
+            
         end
+        
         function obj = exp(g)
             obj=reinitialize(g);
             f=exp(g.x);
@@ -279,15 +296,18 @@ classdef aplanar
                     end
                 end
             end
+            
             function do_second_order()
                 obj.dxx(1,ii,jj)=g.dxx(1,ii,jj)*f+g.dx(1,ii)*obj.dx(1,jj);
             end
+            
             function do_third_order()
                 obj.dxxx(1,ii,jj,kk)=g.dxxx(1,ii,jj,kk)*f+...
                     g.dxx(1,ii,jj)*obj.dx(1,kk)+...
                     g.dxx(1,ii,kk)*obj.dx(1,jj)+...
                     g.dx(1,ii)*obj.dxx(1,jj,kk);
             end
+            
             function do_fourth_order()
                 obj.dxxxx(1,ii,jj,kk,ll)=g.dxxxx(1,ii,jj,kk,ll)*f+...
                     g.dxxx(1,ii,jj,kk)*obj.dx(1,ll)+...
@@ -298,6 +318,7 @@ classdef aplanar
                     g.dxx(1,kk,ll)*obj.dxx(1,ii,jj)+...
                     g.dx(1,kk)*obj.dxxx(1,ii,jj,ll);
             end
+            
             function do_fifth_order()
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=g.dxxxxx(1,ii,jj,kk,ll,mm)*f+...
                     g.dxxxx(1,ii,jj,kk,ll)*obj.dx(1,mm)+...
@@ -316,7 +337,9 @@ classdef aplanar
                     g.dxx(1,kk,mm)*obj.dxxx(1,ii,jj,ll)+...
                     g.dx(1,kk)*obj.dxxxx(1,ii,jj,ll,mm);
             end
+            
         end
+        
         function obj = log(g)
             obj=reinitialize(g);
             obj.x=log(g.x);
@@ -350,9 +373,11 @@ classdef aplanar
                     end
                 end
             end
+            
             function do_second_order()
                 obj.dxx(1,ii,jj)=igx*g.dxx(1,ii,jj)-obj.dx(1,ii)*obj.dx(1,jj);
             end
+            
             function do_third_order()
                 obj.dxxx(1,ii,jj,kk)=igx*(g.dxxx(1,ii,jj,kk)-g.dxx(1,ii,jj)*obj.dx(1,kk))...
                     -(...
@@ -360,6 +385,7 @@ classdef aplanar
                     +obj.dxx(1,ii,kk)*obj.dx(1,jj)...
                     );
             end
+            
             function do_fourth_order()
                 obj.dxxxx(1,ii,jj,kk,ll)=igx*(...
                     g.dxxxx(1,ii,jj,kk,ll)...
@@ -372,6 +398,7 @@ classdef aplanar
                     +obj.dxx(1,jj,kk)*obj.dxx(1,ii,ll)...
                     +obj.dxx(1,jj,ll)*obj.dxx(1,ii,kk));
             end
+            
             function do_fifth_order()
                 a1=g.dxxxxx(1,ii,jj,kk,ll,mm)-g.dxxxx(1,ii,jj,kk,ll)*obj.dx(1,mm);
                 
@@ -399,31 +426,41 @@ classdef aplanar
                 
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=igx*(a1-a2-a3+a4-a5)-a6;
             end
+            
         end
+        
         function obj = log10(g)
             obj=log(g)/log(10);
         end
+        
         function obj = sign(g)
             obj=zero_derivatives(@sign,g);
         end
+        
         function obj = sin(g)
             obj=sine_cosine(g,'sin');
         end
+        
         function obj = sinh(g)
             obj=.5*(exp(g)-exp(-g));
         end
+        
         function obj = sqrt(g)
             obj=g^0.5;
         end
+        
         function obj = steady_state(g)
             obj=zero_derivatives(@steady_state,g);
         end
+        
         function obj = tan(g)
             obj = sin(g)/cos(g);
         end
+        
         function obj = tanh(g)
             obj = sinh(g)/cosh(g);
         end
+        
         function obj = uminus(g)
             obj=g;
             index=obj.deriv_names;
@@ -433,6 +470,7 @@ classdef aplanar
                 obj.(ff)=-g.(ff);
             end
         end
+        
         function obj = uplus(g)
             obj=g;
         end
@@ -442,21 +480,27 @@ classdef aplanar
         function obj = and(g,h)
             obj=zero_derivatives(@and,g,h);
         end
+        
         function obj = eq(g,h)
             obj=zero_derivatives(@eq,g,h);
         end
+        
         function obj = ge(g,h)
             obj=zero_derivatives(@ge,g,h);
         end
+        
         function obj = gt(g,h)
             obj=zero_derivatives(@gt,g,h);
         end
+        
         function obj = le(g,h)
             obj=zero_derivatives(@le,g,h);
         end
+        
         function obj = lt(g,h)
             obj=zero_derivatives(@lt,g,h);
         end
+        
         function obj = max(g,h)
             g_dbl=isa(g,'double');
             h_dbl=isa(h,'double');
@@ -480,9 +524,11 @@ classdef aplanar
                 end
             end
         end
+        
         function obj = min(g,h)
             obj = -max(-g,-h);
         end
+        
         function obj = minus(g,h)
             g_dbl=isa(g,'double');
             h_dbl=isa(h,'double');
@@ -502,38 +548,24 @@ classdef aplanar
                 end
             end
         end
+        
         function obj = mpower(g,h)
-            bad_flag=false;
+            small=1e-32;
             g_dbl=isa(g,'double');
             if ~g_dbl
-                bad_flag=g.x<=0||~isreal(g.x);
                 if g.x==0
-                    g.x=eps*1i;
+                    g.x=small;
                 end
             elseif g_dbl && g==0
-                g=eps*1i;
-                bad_flag=true;
+                g=small;
             end
             obj=exp(h*log(g));
-            if bad_flag
-                myreal();
-            end
-            function myreal()
-                if isa(obj,'double')
-                    obj=real(obj);
-                else
-                    obj.x=real(obj.x);
-                    xxx=repmat('x',1,obj.order);
-                    for io=1:obj.order
-                        dv=['d',xxx(1:io)];
-                        obj.(dv)=real(obj.(dv));
-                    end
-                end
-            end
         end
+        
         function obj = mrdivide(g,h)
             obj=g*h^(-1);
         end
+        
         function obj = mtimes(g,h)
             g_dbl=isa(g,'double');
             h_dbl=isa(h,'double');
@@ -576,12 +608,14 @@ classdef aplanar
                     end
                 end
             end
+            
             function do_second_order()
                 obj.dxx(1,ii,jj)=g.dxx(1,ii,jj)*h.x...
                     +g.dx(1,ii)*h.dx(1,jj)...
                     +g.dx(1,jj)*h.dx(1,ii)...
                     +g.x*h.dxx(1,ii,jj);
             end
+            
             function do_third_order()
                 obj.dxxx(1,ii,jj,kk)=g.dxxx(1,ii,jj,kk)*h.x...
                     +g.dxx(1,ii,jj)*h.dx(1,kk)...
@@ -592,6 +626,7 @@ classdef aplanar
                     +g.dx(1,kk)*h.dxx(1,ii,jj)...
                     +g.x*h.dxxx(1,ii,jj,kk);
             end
+            
             function do_fourth_order()
                 obj.dxxxx(1,ii,jj,kk,ll)=g.dxxxx(1,ii,jj,kk,ll)*h.x...
                     +g.dxxx(1,ii,jj,kk)*h.dx(1,ll)...
@@ -610,6 +645,7 @@ classdef aplanar
                     +g.dx(1,ii)*h.dxxx(1,jj,kk,ll)...
                     +g.x*h.dxxxx(1,ii,jj,kk,ll);
             end
+            
             function do_fifth_order()
                 obj.dxxxxx(1,ii,jj,kk,ll,mm)=g.dxxxxx(1,ii,jj,kk,ll,mm)*h.x...
                     +g.dxxxx(1,ii,jj,kk,ll)*h.dx(1,mm)...
@@ -644,13 +680,17 @@ classdef aplanar
                     +g.dx(1,mm)*h.dxxxx(1,ii,jj,kk,ll)...
                     +g.x*h.dxxxxx(1,ii,jj,kk,ll,mm);
             end
+            
         end
+        
         function obj = ne(g,h)
             obj=zero_derivatives(@ne,g,h);
         end
+        
         function obj = or(g,h)
             obj=zero_derivatives(@or,g,h);
         end
+        
         function obj = plus(g,h)
             g_dbl=isa(g,'double');
             h_dbl=isa(h,'double');
@@ -670,12 +710,15 @@ classdef aplanar
                 end
             end
         end
+        
         function obj = power(g,h)
             obj=mpower(g,h);
         end
+        
         function obj = rdivide(g,h)
             obj=mrdivide(g,h);
         end
+        
         function obj = times(g,h)
             obj=mtimes(g,h);
         end
@@ -706,9 +749,11 @@ classdef aplanar
                 error('could not find a valid statement in if_elseif')
             end
         end
+        
         function obj = if_then_else(a,b,c)
             obj = if_elseif(a,b,1-a,c);
         end
+        
         function obj = normcdf(x,mu,sig)
             if nargin<3
                 sig=[];
@@ -724,6 +769,7 @@ classdef aplanar
             end
             obj=0.5*(1+erf((x-mu)/(sig*sqrt(2))));
         end
+        
         function obj = normpdf(x,mu,sig)
             if nargin<3
                 sig=[];
@@ -739,9 +785,11 @@ classdef aplanar
             end
             obj=exp(-.5*((x-mu)/sig)^2)/(sig*sqrt(2*pi));
         end
+        
     end
     
     methods(Access=private)
+        
         function obj=apply_to_all(obj,func,const)
             obj.x=func(obj.x,const);
             index=obj.deriv_names;
@@ -750,6 +798,7 @@ classdef aplanar
                 obj.(ff)=func(obj.(ff),const);
             end
         end
+        
         function obj=zero_derivatives(func,a,b)
             a_aplanar = isa(a,'aplanar');
             if nargin==3
@@ -774,8 +823,11 @@ classdef aplanar
                 obj.(index{ii})(:)=0;
             end
         end
+        
     end
+    
     methods(Static)
+        
         function C=diff(func,active,inactive,order)
             n=numel(func);
             proto_rows=cell(1,order);
@@ -894,6 +946,7 @@ classdef aplanar
                 arg_list= regexp(fstr,',','split');
             end
         end
+        
     end
 end
 

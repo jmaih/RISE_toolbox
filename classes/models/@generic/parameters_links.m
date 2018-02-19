@@ -37,15 +37,20 @@ relinkings=nan(nrows1,2);
 
 nest=numel(estim_names);
 
+param_names=obj.parameters.name;
+
+governing_chain=obj.parameters.governing_chain;
+
+markov_chains=obj.markov_chains;
+
 for iest=1:nest
     
     est_name=estim_names{iest};
     
     % decompose the name into ploc,chain_loc,state
-    %----------------------------------------------
-    initialize=iest==1;
-    
-    [ip,regime_states]=decompose_parameter_name(obj,est_name,initialize);
+    %----------------------------------------------    
+    [ip,regime_states]=generic.decompose_parameter_name(est_name,...
+        markov_chains,param_names,governing_chain);
 
     % create and store the link between the estimated parameter and the
     % parameter_values matrix

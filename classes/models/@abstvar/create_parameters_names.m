@@ -1,8 +1,8 @@
-function p=create_parameters_names(nvars,lags,constant,nd,mcChains)
+function p=create_parameters_names(nvars,lags,constant,nd,additional_params)
 
 if nargin<4
     
-    mcChains=[];
+    additional_params=[];
     
 end
 
@@ -36,6 +36,6 @@ else
     
 end
 
-p=vartools.param_creator(nvars,lags,constant,nd,mcChains,prefix,is_svar);
+p=vartools.param_creator(nvars,lags,constant,nd,additional_params,prefix,is_svar);
 
 end

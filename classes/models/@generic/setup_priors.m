@@ -96,6 +96,13 @@ if isempty(fields)
     
 end
 
+param_names=obj.parameters.name;
+
+governing_chain=obj.parameters.governing_chain;
+
+markov_chains=obj.markov_chains;
+
+
 disp(' ')
 disp('Now computing the hyperparameters for estimation...')
 disp(' ')
@@ -126,6 +133,8 @@ obj.estimation_restrictions=parameters_links(obj,estnames);
 new_dirichlet=utils.distrib.dirichlet_shortcuts();
 
 est_id=0;
+
+prior_trunc=obj.options.prior_trunc;
 
 while est_id < numel(estnames)
     
@@ -158,20 +167,31 @@ warning(warnstate)
 obj.estimation.priors=priors;
 
     function do_the_dirichlet()
+        
         d1=dirichlet(1);
+        
         est_id=est_id-1;
-        prior_trunc=obj.options.prior_trunc;
+        
         for ii_=1:d1.n_1
+            
             fildname=d1.names{ii_};
-            [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
+            
+            [position,~,pname,chain,state]=generic.decompose_parameter_name(...
+                fildname,markov_chains,param_names,governing_chain);
+            
             if isempty(position)
+                
                 error([fildname,' is not recognized as a parameter'])
+                
             end
             % We set 0 and 1 as lower and upper bounds
             %------------------------------------------
             bounds=[prior_trunc,1-prior_trunc];
+            
             est_id=est_id+1;
+            
             mean_i=d1.moments.mean(ii_);
+            
             est_struct=struct('name',pname,'chain',chain,'state',state,...
                 'start',mean_i,'lower_quantile',nan,...
                 'upper_quantile',nan,'prior_mean',mean_i,...
@@ -181,20 +201,30 @@ obj.estimation.priors=priors;
                 'upper_bound',bounds(2),...
                 'tex_name',param_tex_names{position},'id',est_id,...
                 'prior_trunc',prior_trunc,'a',d1.a(ii_),'b',d1.b(ii_));
+            
             if est_id==1
+            
                 priors=est_struct;
+            
             else
+                
                 priors(est_id)=est_struct;
+            
             end
+            
             priors(est_id)=format_estimated_parameter_names(priors(est_id),param_tex_names{position});
             
             disp([' parameter: ',upper(pname),', density:',upper('dirichlet'),...
                 ', hyperparameters: [',num2str(d1.a(ii_)),' ',num2str(d1.b(ii_)),'],',...
                 'convergence ',num2str(0)])
+        
         end
-        new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(dirichlet(1).a,...
-            dirichlet(1).location,[],[],dirichlet(1).s);
+        
+        new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(d1.a,...
+            d1.location,[],[],d1.s);
+        
         dirichlet=dirichlet(2:end);
+    
     end
 
     function do_one_typical()
@@ -203,7 +233,8 @@ obj.estimation.priors=priors;
         
         tmp=MyPriors.(fildname);
         
-        [position,~,pname,chain,state]=decompose_parameter_name(obj,fildname,est_id==1);
+        [position,~,pname,chain,state]=generic.decompose_parameter_name(...
+            fildname,markov_chains,param_names,governing_chain);
         
         if isempty(position)
             
@@ -217,7 +248,7 @@ obj.estimation.priors=priors;
         block=format_estimated_parameter_names(block,param_tex_names{position});
         % hyperparameters and other things
         %--------------------------------
-        priors=utils.prior.prior_setting_engine(priors,block,est_id,obj.options.prior_trunc);
+        priors=utils.prior.prior_setting_engine(priors,block,est_id,prior_trunc);
     end
 end
 
@@ -246,8 +277,7 @@ is_dirichlet=strncmp(fields,'dirichlet',9);
 
 fields=fields(:).';
 
-dirichlet=struct('a',{},'b',{},'moments',{},'n_1',{},...
-    'pointers',{},'location',{},'names',{},'s',{});
+dirichlet=utils.estim.format_dirichlet();
 
 ndirich=sum(is_dirichlet);
 
@@ -283,44 +313,9 @@ if ndirich
             
             vals=MyPriors.(dname);
             
-            s02=vals{1}.^2;
+            dirichlet=utils.estim.format_dirichlet(dirichlet,vals);
             
-            vals=reshape(vals(2:end),2,[]);
-            
-            pnames=vals(1,:);
-            
-            m_main=cell2mat(vals(2,:));
-            
-            m0=1-sum(m_main);
-            
-            a_sum=m0*(1-m0)/s02-1;
-            
-            if a_sum<=0
-                
-                error(['dirichlet # ',int2str(dirich_count),...
-                    ' appears to have a too big standard deviation'])
-                
-            end
-            
-            m=[m_main(:);m0];
-            
-            h=numel(m);
-            
-            a=a_sum*m;
-            
-            [dirichlet(dirich_count).a,dirichlet(dirich_count).b,...
-                dirichlet(dirich_count).moments,...
-                dirichlet(dirich_count).fval,...
-                dirichlet(dirich_count).space]=distributions.dirichlet(a);
-            
-            dirichlet(dirich_count).pointers=1:numel(pnames);
-            
-            dirichlet(dirich_count).n_1=h-1;
-            
-            dirichlet(dirich_count).names=pnames;
-            
-            % Un-normalized weight of the diagonal term.
-            dirichlet(dirich_count).s=utils.distrib.dirichlet_sum_weights(h);
+            pnames=dirichlet.names;
             
         else
             

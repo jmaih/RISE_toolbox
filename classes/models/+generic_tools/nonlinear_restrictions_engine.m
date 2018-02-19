@@ -1,6 +1,6 @@
 function [nonlinear_restrictions,is_linear_restriction,derived_params]=...
     nonlinear_restrictions_engine(...
-    endo_names,param_names,regimes,chain_names,governing_chain,RestrictionsBlock)
+    param_names,regimes,chain_names,governing_chain,RestrictionsBlock)
 
 isnonlin=@(x)any(x=='<')||any(x=='>');
 
@@ -10,20 +10,14 @@ n_restr=numel(RestrictionsBlock);
 
 is_linear_restriction=true(1,n_restr);
 
-[expr1,repl1,convcoef]=regexp_setup1(endo_names);  %#ok<ASGLU>
-
 [expr,replace,convert_the_guy]=regexp_setup2(param_names,...
     governing_chain,chain_names,regimes);
 
 for irow=1:n_restr
-    % remove any coef(...), turning it into "pname" or
-    % "pname(chain,state)"
-    %---------------------------------------------------
-    eqtn=regexprep(RestrictionsBlock{irow},expr1,repl1);
     
     % change pname_chain_state into pname(chain,state)
     %-------------------------------------------------
-    eqtn=parser.param_name_to_param_texname(eqtn,chain_names);
+    eqtn=parser.param_name_to_param_texname(RestrictionsBlock{irow},chain_names);
     
     if isnonlin_not_allowed(eqtn)
         
@@ -84,71 +78,6 @@ nonlinear_restrictions=reprocess_nonlinear_restrictions(RestrictionsBlock(:).');
         [~,aloc,col]=convert_the_guy(pname_lhs,cn,statepos);
         
         eqtn={aloc,col(:).',str2func(['@(M)',rhs])};
-        
-    end
-
-end
-
-function [expr,replace,convcoef]=regexp_setup1(endo_names)
-% let nc = no capture
-replace='${convcoef($1,$2,$3,$4,$5)}';
-nc1='(?:coef\()';
-eqtn_='(\w+)'; %1
-nc2='(?:,)?';
-vbl='(\w+)?'; %2
-nc3='(?:,)?';
-lag='(\d+)?'; %3
-nc4='(?:,)?';
-chain='(\w+)?'; %4
-nc5='(?:,)?';
-state='(\d+)?'; %5
-nc6='(?:\))';
-
-expr=[nc1,eqtn_,nc2,vbl,nc3,lag,nc4,chain,nc5,state,nc6];
-
-convcoef=@coef_converter;
-    
-    function out=coef_converter(eqtn_,vbl,lag,chain,state)
-        
-        lag=str2double(lag);
-        
-        if isempty(vbl)
-            
-            out=eqtn_;
-            
-            if ~isvarname(out)
-                
-                error('nonlinear restriction badly specified')
-            
-            end
-            
-        else
-            
-            if isnan(lag)
-                
-                error('nonlinear restriction badly specified')
-            
-            end
-            % don't go it all the way. Because then we create
-            % pname_chain_state. What we actually want is
-            % pname(chain,state).
-            vv={eqtn_,vbl,lag};
-            
-            out=coef.create_parameter_name(vv,endo_names);
-            
-            if ~isempty(chain)
-                
-                if isempty(state)
-                    
-                    error('nonlinear restriction badly specified')
-                
-                end
-                
-                out=[out,'(',chain,',',state,')'];
-            
-            end
-            
-        end
         
     end
 

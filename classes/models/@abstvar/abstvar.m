@@ -5,48 +5,53 @@ classdef (Abstract) abstvar < gogetter
         endogenous
         exogenous
         parameters
+        nonvar_parameters = cell(1,0)
         members
-        linear_restrictions
-        data
         constant
         homogeneity
         debug=false
         markov_chains
-        date_range
-        estim_param
-        prior 
+        is_time_varying_trans_prob=false
+        is_switching=false
+        is_panel=false
+        nlags
+        nx
+        ng
+        nvars 
     end
     
     properties(SetAccess=protected,Hidden)
         
+        % you cannot set those and they are hidden
         linear_restrictions_prime_time = cell(1,0)
         
         markov_chain_info
         
-    end
-    
-    properties(SetAccess=protected,Hidden)
-        % you cannot set those and they are hidden
-        % kdata
-        nlags
-        nx
-        ng
-        nvars
-        Y
-        X
-        K % number of estimated parameters per equation
-        T % number of observations after treating the lags
-        sampler
+        probability_parameters
+        
         mapping
-        linres
-        nonlinres
+        
+        param_guide
+        
+        % estimation related
+        estim_= struct('linear_restrictions',[],...
+            'data',[],...
+            'date_range',[],...
+            'estim_param',[],...
+            'prior',[],...
+            'Y',[],...% matrix of lhs variables
+            'X',[],...% matrix of rhs variables
+            'K',[],...% number of estimated parameters per equation
+            'T',[],...% number of observations after treating the lags
+            'sampler',[],...
+            'linres',[],...
+            'nonlinres',[])
+            
     end
     
     properties(Dependent)
-        is_panel
         nparams
         nregs
-        is_switching
     end
     
     properties(Constant)
@@ -77,6 +82,8 @@ classdef (Abstract) abstvar < gogetter
     end
     
     methods(Access=protected,Hidden)
+        
+        varargout=set_inputs(varargin)
         
         varargout=prime_time(varargin)
         
@@ -111,6 +118,8 @@ classdef (Abstract) abstvar < gogetter
     
     methods(Static,Hidden)
         
+        varargout=build_model(varargin)
+        
         varargout=embed(varargin)
         
         varargout=create_variable_names(varargin)
@@ -119,7 +128,17 @@ classdef (Abstract) abstvar < gogetter
         
         varargout=create_parameters_names(varargin)
         
+        varargout=encode_map(varargin)
+        
+        varargout=format_transition_probabilities(varargin)
+        
         varargout=map_estimation(varargin)
+        
+        varargout=parameter_parsing_tool(varargin)
+        
+        varargout=parameters_solution_mapper(varargin)
+        
+        varargout=problist(varargin)
         
         varargout=recreate_parameters(varargin)
         
@@ -143,21 +162,17 @@ classdef (Abstract) abstvar < gogetter
                 
                 check_inputs()
                 
-                self.endogenous=endog(:)';
-                
-                self.exogenous=exog(:)';
-                
-                self.members=panel.members(:)';
-                
-                self.homogeneity=panel.homogeneity;
-                
                 self.markov_chains=markov_chains;
+                
+                self.is_switching=~isempty(markov_chains);
                 
                 self.constant=const;
                 
                 ng=numel(panel.members);
                 
                 ng=max(1,ng);
+                
+                self.is_panel=ng>1;
                 
                 nx=numel(exog)+self.constant;
                 
@@ -173,25 +188,27 @@ classdef (Abstract) abstvar < gogetter
             
             function set_defaults()
                 
-                if n<6
-                    
-                    markov_chains=[];
-                    
-                    if n<5
+                    if n<6
                         
-                        panel=[];
+                        markov_chains=[];
                         
-                        if n<4
+                        if n<5
                             
-                            const=[];
+                            panel=[];
                             
-                            if n<3
+                            if n<4
                                 
-                                nlags=[];
+                                const=[];
                                 
-                                if n<2
+                                if n<3
                                     
-                                    exog=[];
+                                    nlags=[];
+                                    
+                                    if n<2
+                                        
+                                        exog=[];
+                                        
+                                    end
                                     
                                 end
                                 
@@ -200,8 +217,6 @@ classdef (Abstract) abstvar < gogetter
                         end
                         
                     end
-                    
-                end
                 
                 if isempty(const),const=true; end
                 
@@ -217,7 +232,11 @@ classdef (Abstract) abstvar < gogetter
                 
                 endog=cellstring_check(endog,'endogenous',false);
                 
+                self.endogenous=endog(:)';
+                
                 exog=cellstring_check(exog,'exogenous',true);
+                
+                self.exogenous=exog(:)';
                 
                 badvars=intersect(exog,endog);
                 
@@ -240,7 +259,9 @@ classdef (Abstract) abstvar < gogetter
                     panel.homogeneity='pooled';
                     
                 end
-                    
+
+				warning('This should be expanded with the country names in case of panel')
+				
                 check_lags()
                 
                 check_constant(const,'constant (4th input)')
@@ -297,6 +318,10 @@ classdef (Abstract) abstvar < gogetter
                         
                     end
                     
+                    self.members=panel.members(:)';
+                    
+                    self.homogeneity=panel.homogeneity;
+                    
                 end
                 
                 function check_markov_chains()
@@ -307,8 +332,10 @@ classdef (Abstract) abstvar < gogetter
                         
                     end
                     
-                    expected_fields=sort({'name','states_expected_duration',...
-                        'controlled_parameters'});
+                    expected_fields=sort({'name',...
+                        'number_of_states','controlled_parameters',...
+                        'endogenous_probabilities',...
+                        'probability_parameters'});
                     
                     ff=sort(fieldnames(markov_chains));
                     
@@ -323,15 +350,76 @@ classdef (Abstract) abstvar < gogetter
                     
                     mcNames={markov_chains.name};
                     
-                    if numel(unique(mcNames))~=numel(mcNames)
+                    nchains=numel(mcNames);
+                    
+                    if numel(unique(mcNames))~=nchains
                         
                         error('several markov chains with the same name')
                         
                     end
                     
+                    probparams={markov_chains.probability_parameters};
+                    
+                    self.probability_parameters=cellstring_check(...
+                        [probparams{:}],'probability_parameters',true);
+                    
+                    if ~isempty(self.probability_parameters) && ...
+                            any(parser.is_transition_probability(self.probability_parameters))
+
+                        error('forbidden to declare transition probabilities')
+                        
+                    end
+                    
+                    self.nonvar_parameters=self.probability_parameters;
+                    
+                    lowestn=2; % minimum number of states
+                    
+                    for ic=1:nchains
+                        
+                        cn=mcNames{ic};
+                        
+                        msg=['markov chain ',cn,...
+                            ' badly defined for the number of states'];
+                        
+                        check_finite_scalar_integer(...
+                            markov_chains(ic).number_of_states,...
+                            lowestn,...
+                            msg)
+                        
+                        if isempty(markov_chains(ic).endogenous_probabilities)
+                            
+                            probnames=abstvar.problist(cn,markov_chains(ic).number_of_states);
+                        
+                        self.nonvar_parameters=...
+                            [self.nonvar_parameters,probnames(:).'];
+                                                    
+                        end
+                        
+                    end
+                    
+                end
+                                
+                function check_finite_scalar_integer(n,lowestn,msg)
+                    
+                    ok=isnumeric(n) && isscalar(n) && isfinite(n) &&...
+                        (floor(n)==ceil(n)) && n>=lowestn;
+                    
+                    if ~ok
+                        
+                        error(msg)
+                        
+                    end
+                    
                 end
                 
-                function x=cellstring_check(x,inpName,emptyPossible)
+                function x=cellstring_check(x,inpName,emptyPossible,...
+                        allowDuplicates)
+                    
+                    if nargin<4
+                        
+                        allowDuplicates=false;
+                        
+                    end
                     
                     if isempty(x)
                         
@@ -345,7 +433,7 @@ classdef (Abstract) abstvar < gogetter
                         
                     end
                     
-                    x=vartools.cellstringize(x);
+                    x=vartools.cellstringize(x,allowDuplicates);
                         
                 end
                 
@@ -395,19 +483,7 @@ classdef (Abstract) abstvar < gogetter
             n=size(self.mapping.regimes,1)-1;
             
         end
-        
-        function ok=get.is_panel(self)
-            
-            ok=self.ng>1;
-            
-        end
-        
-        function ok=get.is_switching(self)
-            
-            ok=numel(self.markov_chains)>1;
-            
-        end
-                
+                        
         varargout=filter(varargin)
                 
         varargout=solve(varargin)
@@ -415,6 +491,8 @@ classdef (Abstract) abstvar < gogetter
         varargout=autocov(varargin)
                 
         varargout=estimate(varargin)
+        
+        varargout=posterior_mode(varargin)
         
         varargout=print_solution(varargin)
                 

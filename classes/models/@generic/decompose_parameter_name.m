@@ -1,5 +1,6 @@
 function [position,regime_states,pname,chain,state]=...
-    decompose_parameter_name(obj,pname,initialize)
+    decompose_parameter_name(pname,markov_chains,param_names,...
+    governing_chain)
 % H1 line
 %
 % Syntax
@@ -20,25 +21,10 @@ function [position,regime_states,pname,chain,state]=...
 %
 % See also: 
 
-persistent regimes chain_names param_names governing_chain
 
-if nargin<3
-    
-    initialize=false;
-    
-end
+regimes=cell2mat(markov_chains.regimes(2:end,2:end));
 
-if isempty(regimes)||initialize
-    
-    regimes=cell2mat(obj.markov_chains.regimes(2:end,2:end));
-    
-    chain_names=obj.markov_chains.regimes(1,2:end);
-    
-    param_names=obj.parameters.name;
-    
-    governing_chain=obj.parameters.governing_chain;
-    
-end
+chain_names=markov_chains.regimes(1,2:end);
 
 position=find(strcmp(pname,param_names));
 

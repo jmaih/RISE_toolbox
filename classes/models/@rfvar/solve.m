@@ -16,7 +16,7 @@ resolve();
         
         nx=self.nx; ng=self.ng; h=size(sol.Q.Q,1); nvars=self.nvars; nlags=self.nlags;
         
-        [kng,T0]=size(self.X);
+        [kng,T0]=size(self.estim_.X);
         
         % number of coefficients per equation if we had a plain VAR
         k=kng/ng;
@@ -66,7 +66,7 @@ resolve();
             for ih=1:h
                 
                 % residuals
-                ri=self.Y-sol.B(:,:,ih)*self.X;
+                ri=self.estim_.Y-sol.B(:,:,ih)*self.estim_.X;
                                 
                 for g=1:self.ng
                     
@@ -104,7 +104,7 @@ resolve();
             for ih=1:h
                 
                 % residuals
-                ri=self.Y-sol.B(:,:,ih)*self.X;
+                ri=self.estim_.Y-sol.B(:,:,ih)*self.estim_.X;
                 
                 S=cell(1,ng);
                 
@@ -141,7 +141,7 @@ resolve();
                 sol.B(:,:,ih)=replace(sol.B(:,:,ih),B,batch_rows,batch_cols);
                 
                 % residuals
-                ri=self.Y-sol.B(:,:,ih)*self.X;
+                ri=self.estim_.Y-sol.B(:,:,ih)*self.estim_.X;
                 
                 S=0;
                 

@@ -40,6 +40,8 @@ for its=1:ndatasets
     end
 end
 
+[datta,date_numbers,sizdata]=stretch_data(datta,date_numbers,sizdata);
+
 % collect the linewidth info for the horizontal and vertical lines and
 % possibly plotyy
 %-----------------------------------------------------------------
@@ -221,4 +223,51 @@ end
         end
     end
 
+end
+
+function [datta,date_numbers,sizdata]=stretch_data(datta,date_numbers,sizdata)
+
+n=numel(datta);
+
+if n==1
+    
+    return
+    
+end
+
+lowestdn=inf;
+
+highestdn=-inf;
+
+for its=1:n
+    
+    lowestdn=min(lowestdn,date_numbers{its}(1));
+    
+    highestdn=max(highestdn,date_numbers{its}(end));
+    
+end
+
+dn=lowestdn:highestdn;
+
+T=numel(dn);
+
+for its=1:n
+    
+    start=find(date_numbers{its}(1)==dn,1,'first');
+    
+    final=find(date_numbers{its}(end)==dn,1,'last');
+    
+    % override the first dimension
+    sizdata{its}(1)=T;
+    
+    newdata=nan(sizdata{its});
+    
+    newdata(start:final,:,:,:)=datta{its};
+    
+    datta{its}=newdata;
+    
+    date_numbers{its}=dn;
+    
+end
+    
 end

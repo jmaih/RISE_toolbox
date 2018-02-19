@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains2(markov_chains)
+function [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains2(markov_chains,switch_prior)
 % create_restrictions_and_markov_chains2 -- creates restrictions and
 % markov chains for the SVAR model in which Coefficients and variances have
 % different chains, different regimes, and different durations
@@ -57,15 +57,19 @@ function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_c
 if nargin==0||isempty(markov_chains)
     
     markov_chains=struct('name',{},...
-    'states_expected_duration',{},...
-    'controlled_parameters',{});
+        'number_of_states',{},...
+        'controlled_parameters',{},...
+        'endogenous_probabilities',{},...
+        'probability_parameters',{});
+    
+    switch_prior=struct();
     
 end
 
 % We borrow both the restrictions and the markov chains from the model in
 % which all coefficients across all equations switch in lockstep.
 %--------------------------------------------------------------------------
-[lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains1(markov_chains);
+[restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains1(markov_chains,switch_prior);
 
 % Then we add another chain controling all variances across all equations
 %-------------------------------------------------------------------------
@@ -73,7 +77,21 @@ end
 last=numel(markov_chains);
 
 markov_chains(last+1)=struct('name','syncvol',...
-    'states_expected_duration',[2+1i,2+1i,2+1i],...
+    'number_of_states',3,...
+    'endogenous_probabilities',[],...
+    'probability_parameters',[],...
     'controlled_parameters',{{'s'}});
+
+% FIRST ATTEMPT
+% switch_prior.syncvol_tp_1_2={0.5000,0.1000,0.3000,'beta'};
+% switch_prior.syncvol_tp_1_3={0.5000,0.1000,0.3000,'beta'};
+% switch_prior.syncvol_tp_2_1={0.5000,0.1000,0.3000,'beta'};
+% switch_prior.syncvol_tp_2_3={0.5000,0.1000,0.3000,'beta'};
+% switch_prior.syncvol_tp_3_1={0.5000,0.1000,0.3000,'beta'};
+% switch_prior.syncvol_tp_3_2={0.5000,0.1000,0.3000,'beta'};
+
+switch_prior.dirichlet_1={0.1,'syncvol_tp_1_2',0.2,'syncvol_tp_1_3',0.2};
+switch_prior.dirichlet_2={0.1,'syncvol_tp_2_1',0.2,'syncvol_tp_2_3',0.2};
+switch_prior.dirichlet_3={0.1,'syncvol_tp_3_1',0.2,'syncvol_tp_3_2',0.2};
 
 end

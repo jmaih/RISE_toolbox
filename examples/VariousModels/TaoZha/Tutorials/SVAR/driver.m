@@ -14,7 +14,8 @@ scale=100;
 
 varlist=fieldnames(varlist0);
 %% Choose a model type: see cell "create the structural VAR model" below
-model_type=4;
+
+model_type=0;
 
 %% set up the restrictions
 close()
@@ -24,33 +25,35 @@ close()
 switch model_type
     case 0 
         % constant-parameter model
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains0();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains0();
     case 1 
         % Coefficients are switching regimes across all equations
         % (synchronized case) 
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains1();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains1();
     case 2 
         % Coefficients and variances have different chains, different
         % regimes, and different durations 
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains2();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains2();
     case 3 
         % Only coefficients in monetary policy equation are changing
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains3();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains3();
     case 4 
         % Only variance in monetary policy equation is changing
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains4();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains4();
     case 5 
         % Both coefficients and variances in monetary policy equation
         % change with two independent Markov processes 
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains5();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains5();
     case 6 % ok
         % Only variances in ALL three equations switch
-        [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains6();
+        [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains6();
     otherwise
         error('the coded model types are 0, 1, 2, 3, 4 and 6')
 end
 
 %% Create the VAR
+
+clc
 
 nlags=2;
 
@@ -64,33 +67,36 @@ constant=true;
 % ------------------------------------
 sv0=svar(varlist,exog,nlags,constant,panel,markov_chains);
 
-%% set priors
+%% set priors % prior=[];
 
-prior=svar.prior_template();
+var_prior=svar.prior_template();
 
-prior.type='sz';
+var_prior.type='sz';
 
-% prior.L1=0.1/2;
-% 
-% prior.coefprior=0.5;
+prior=struct('var',var_prior,'nonvar',switch_prior);
 
-is_prior=~true;
+is_prior=true;
+
+if ~is_prior
+    
+    prior=rmfield(prior,'var');
+    
+end
 
 %% Find posterior mode
 clc
 
 sv=sv0;
 
-if is_prior
-    
-    sv=set(sv,'prior',prior);
-    
-end
+sv=estimate(sv,db,{'1960Q1','2015Q2'},prior,restrictions);
 
-sv=estimate(sv,{'1960Q1','2015Q2'},'data',db,...
-    'linear_restrictions',[lin_restr;nonlin_restr]);
+%% estimates
+clc
+
+pmode=posterior_mode(sv)
 
 %% Printing estimates
+clc
 
 print_structural_form(sv)
 
@@ -100,7 +106,7 @@ clc
 print_solution(sv)
 
 %% plot smoothed state and regime probabilities
-
+clc
 close all
 
 plot_probabilities(sv)
@@ -108,7 +114,7 @@ plot_probabilities(sv)
 %% plots probabilities against data
 close all
 
-plot_data_against_probabilities(sv,'state')
+plot_data_against_probabilities(sv,'regime')
 
 %% Impulse responses
 

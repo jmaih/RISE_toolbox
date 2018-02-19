@@ -51,13 +51,13 @@ end
                 
                 this.(prop)=v;
                 
-            case 'prior'
-                
-                check_prior(v)
-                
-                this.(prop)=v;
-                
-                
+%             case 'prior'
+%                 
+%                 check_prior(v)
+%                 
+%                 this.(prop)=v;
+%                 
+%                 
             case 'linear_restrictions'
                 
                 if ischar(v),v=cellstr(v); end

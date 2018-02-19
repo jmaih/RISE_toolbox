@@ -2,11 +2,11 @@ function out = ols(kdata)
 
 nv=kdata.nvars*kdata.ng;
 
-Y=kdata.Y;
+Y=kdata.estim_.Y;
 
-X=kdata.X;
+X=kdata.estim_.X;
 
-if isempty(kdata.linres)
+if isempty(kdata.estim_.linres)
 
 B=Y/X; % <- Y*X'*inv(X*X')
 
@@ -18,9 +18,9 @@ end
 
 Resids=vartools.residuals(kdata,B);
 %
-T=kdata.T;
+T=kdata.estim_.T;
 
-K=kdata.K;
+K=kdata.estim_.K;
 
 Sigma=(1/(T-K))*(Resids*Resids.');
 %
@@ -30,13 +30,13 @@ out=struct('B',B,'Sigma',Sigma);%,'Resids',Resids
         
         Z=kron(X.',speye(nv));
         
-        y=Y(:)-Z*kdata.linres.d;
+        y=Y(:)-Z*kdata.estim_.linres.d;
         
-        Z=Z*kdata.linres.K;
+        Z=Z*kdata.estim_.linres.K;
         
         a2tilde=Z\y;
         
-        B=reshape(kdata.linres.a2tilde_to_a(a2tilde),nv,[]);
+        B=reshape(kdata.estim_.linres.a2tilde_to_a(a2tilde),nv,[]);
 
     end
 

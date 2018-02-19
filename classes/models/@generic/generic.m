@@ -269,6 +269,8 @@ classdef generic
         
         varargout=load_mode(varargin)
         
+        varargout=add_markov_chains_and_parameters(varargin)
+        
     end
     
     methods(Access=protected)
@@ -317,9 +319,9 @@ classdef generic
         
     end
     
-    methods(Access=private)
+    methods(Static,Hidden=true)
         
-        varargout=add_markov_chains_and_parameters(varargin)
+        varargout=decompose_parameter_name(varargin)
         
     end
     
@@ -334,8 +336,6 @@ classdef generic
         varargout=assign_estimates(varargin)
         
         varargout=back_door(varargin)
-        
-        varargout=decompose_parameter_name(varargin)
         
         varargout=load_data(varargin)
         

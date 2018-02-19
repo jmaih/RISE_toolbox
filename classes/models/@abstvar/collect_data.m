@@ -1,4 +1,4 @@
-function [d,x,date_range]=collect_data(self,date_range)
+function [y,x,date_range]=collect_data(self,date_range)
 
 ynames=self.endogenous;
 
@@ -10,52 +10,45 @@ ng=max(1,numel(self.members));%self.kdata.ng;
 
 if ng==1
     
-    dx=collectdata(self.data,yxnames);
+    yx=collectdata(self.estim_.data,yxnames);
     
 else
     
-    dx=collectdata(self.data.(self.members{1}),yxnames);
+    yx=collectdata(self.estim_.data.(self.members{1}),yxnames);
     
-    dx=dx(:,:,ones(1,ng));
+    yx=yx(:,:,ones(1,ng));
     
     for ig=2:ng
         
-        dx(:,:,ig)=collectdata(self.data.(self.members{ig}),yxnames);
+        yx(:,:,ig)=collectdata(self.estim_.data.(self.members{ig}),yxnames);
         
     end
     
 end
 
 % split d and x
+yloc=locate_variables(ynames,yxnames);
 
-ny=numel(ynames);
+xloc=locate_variables(xnames,yxnames);
 
-d=dx(1:ny,:,:);
+y=yx(yloc,:,:);
 
-x=dx(ny+1:end,:,:);
+x=yx(xloc,:,:);
 
 add_constants()
 
 if ng>1
     % do the senguesse
     %-----------------
-    d=xpand_panel(d);
+    y=vartools.xpand_panel(y);
     
-    x=xpand_panel(x);
+    x=vartools.xpand_panel(x);
     
 end
 
-    function d=xpand_panel(d)
-        % going from nvar x T x npages to nvar*npages x T
-        d=permute(d,[2,3,1]);
-        
-        d=d(:,:)';
-        
-    end
-
     function add_constants()
         
-        sd=size(d,2);
+        sd=size(yx,2);
         
         if self.constant
             

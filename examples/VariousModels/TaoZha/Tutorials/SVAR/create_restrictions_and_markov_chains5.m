@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains5(markov_chains)
+function [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains5(markov_chains,switch_prior)
 % create_restrictions_and_markov_chains5 -- creates restrictions and
 % markov chains for the SVAR model in which both coefficients and variance
 % for the monetary policy equation are changing with two independent Markov
@@ -58,20 +58,24 @@ function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_c
 if nargin==0||isempty(markov_chains)
     
     markov_chains=struct('name',{},...
-    'states_expected_duration',{},...
-    'controlled_parameters',{});
+        'number_of_states',{},...
+        'controlled_parameters',{},...
+        'endogenous_probabilities',{},...
+        'probability_parameters',{});
+    
+    switch_prior=struct();
     
 end
 
 % The parameter restrictions are identical to those in the model
 % with regime switching in the policy coefficients only. Hence the mp_coef
 % markov chain will also be common to those two models.
-[lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains3(markov_chains);
+[restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains3(markov_chains,switch_prior);
 
 % We add the volatility Markov chain from the model in which only the
 % volatility of the monetary policy equation changes. N.B: In the process,
 % we want to make sure we do not over-write the restrictions above!
 %--------------------------------------------------------------------------
-[~,~,markov_chains]=create_restrictions_and_markov_chains4(markov_chains);
+[~,markov_chains,switch_prior]=create_restrictions_and_markov_chains4(markov_chains,switch_prior);
 
 end

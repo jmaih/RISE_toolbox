@@ -1,4 +1,4 @@
-function self=setup_nonlinear_restrictions(self)
+function self=setup_nonlinear_restrictions(self,express,rplfunc)
 % setup_nonlinear_restrictions - sets nonlinear restrictions
 %
 % Syntax
@@ -39,7 +39,7 @@ function self=setup_nonlinear_restrictions(self)
 %
 % See also: 
 
-RestrictionsBlock=self.linear_restrictions;
+RestrictionsBlock=self.estim_.linear_restrictions;
 
 nc=numel(RestrictionsBlock);
 
@@ -54,7 +54,7 @@ end
 
 RestrictionsBlock=RestrictionsBlock(is_inequality);
 
-self.linear_restrictions(is_inequality)=[];
+self.estim_.linear_restrictions(is_inequality)=[];
 
 if isempty(RestrictionsBlock)
     
@@ -71,6 +71,10 @@ end
 RestrictionsBlock=cellfun(@(x)x(~isspace(x)),RestrictionsBlock,...
     'uniformOutput',false);
 
+% put in symbolic form right here right now
+%------------------------------------------
+RestrictionsBlock=regexprep(RestrictionsBlock,express,'${rplfunc($1,$2,$3,$4,$5,$6)}');
+
 param_names=self.parameters;
 
 nparams=numel(param_names);
@@ -85,7 +89,8 @@ for ii=1:numel(self.markov_chains)
     
 end
 
-chain_names=self.markov_chain_info.small_markov_chain_info.chain_names;
+% chain_names=self.markov_chain_info.small_markov_chain_info.chain_names;
+chain_names=self.markov_chain_info.small_markov_chain_info.regimes(1,2:end);
 
 regimes=cell2mat(self.markov_chain_info.small_markov_chain_info.regimes(2:end,2:end));
 
@@ -93,9 +98,9 @@ endo_names=self.endogenous;
 
 RestrictionsBlock=parameterize(RestrictionsBlock);
 
-[self.nonlinres,~,derived_parameters]=...
+[self.estim_.nonlinres,~,derived_parameters]=...
     generic_tools.nonlinear_restrictions_engine(...
-    endo_names,param_names,regimes,chain_names,governing_chain,...
+    param_names,regimes,chain_names,governing_chain,...
     RestrictionsBlock);
 
 if ~isempty(derived_parameters)

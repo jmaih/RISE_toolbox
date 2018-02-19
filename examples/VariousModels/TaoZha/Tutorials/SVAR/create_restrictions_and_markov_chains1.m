@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains1(markov_chains)
+function [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains1(markov_chains,switch_prior)
 % create_lin_restrictions_and_markov_chains1 -- creates restrictions and
 % markov chains for the SVAR model in which coefficients are switching
 % across all equations (synchronized case)
@@ -57,8 +57,12 @@ function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_c
 if nargin==0||isempty(markov_chains)
     
     markov_chains=struct('name',{},...
-    'states_expected_duration',{},...
-    'controlled_parameters',{});
+        'number_of_states',{},...
+        'controlled_parameters',{},...
+        'endogenous_probabilities',{},...
+        'probability_parameters',{});
+    
+    switch_prior=struct();
     
 end
 
@@ -67,15 +71,20 @@ end
 % N.B: The chain controls the coefficients of all equations but not the
 % variance, which remains constant.
 markov_chains(end+1)=struct('name','syncoef',...
-    'states_expected_duration',[3+1i,3+1i],...
-    'controlled_parameters',{{'c','a0','a1','a2'}});
+    'number_of_states',2,...
+    'controlled_parameters',{{'c','a0','a1','a2'}},...
+    'endogenous_probabilities',[],...
+    'probability_parameters',[]);
+
+switch_prior.syncoef_tp_1_2={0.5,0.1,0.3,'beta'};
+switch_prior.syncoef_tp_2_1={0.5,0.1,0.3,'beta'};
 
 % syntax is coef(eqtn,vname,lag,chain_name,state)
 %------------------------------------------------
 lin_restr=cell(0,1);
 nonlin_restr=cell(0,1);
 
-numberOfStates=numel(markov_chains(end).states_expected_duration);
+numberOfStates=markov_chains(end).number_of_states;
 
 for istate=1:numberOfStates
     
@@ -114,5 +123,7 @@ for istate=1:numberOfStates
         }
         ]; %#ok<AGROW>
 end
+
+restrictions=[lin_restr;nonlin_restr];
 
 end

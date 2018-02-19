@@ -42,7 +42,7 @@ for ip=1:np
     
 end
 
-start_date=serial2date(self.date_range(1)+self.nlags);
+start_date=serial2date(self.estim_.date_range(1)+self.nlags);
 
 if ng==1
     

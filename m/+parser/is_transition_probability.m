@@ -56,7 +56,7 @@ diagonal=false;
 
 chain_name='';
 
-max_state=[];
+max_state=0;
 
 if isletter(name(1))
 

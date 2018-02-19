@@ -130,13 +130,21 @@ myirfs=format_irf_output(myirfs);
         is_dsge=isa(obj,'dsge');
         
         irf_shock_list=obj.options.irf_shock_list;
+        
         irf_var_list=obj.options.irf_var_list;
+        
         irf_periods=obj.options.irf_periods;
+        
         irf_shock_sign=obj.options.irf_shock_sign;
+        
         irf_draws=obj.options.irf_draws;
+        
         irf_type=obj.options.irf_type;
+        
         irf_regime_specific=obj.options.irf_regime_specific;
+        
         irf_use_historical_data=obj.options.irf_use_historical_data;
+        
         irf_to_time_series=obj.options.irf_to_time_series;
                 
         % automatically enable deviations from balanced growth
@@ -340,6 +348,14 @@ myirfs=format_irf_output(myirfs);
                     y0.rcond.data(:)=istate;
                     
                     y0.y=full(Initcond.log_var_steady_state{istate});
+                    
+                    if Initcond.do_dsge_var
+                        
+                        y0.y=reshape(y0.y,obj.dsge_var.n,obj.dsge_var.p);
+                        
+                        Initcond.log_var_steady_state{1}=Initcond.log_var_steady_state{1}(1:obj.dsge_var.n);
+                        
+                    end
                 
                 end
                 

@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains3(markov_chains)
+function [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains3(markov_chains,switch_prior)
 % create_restrictions_and_markov_chains3 -- creates restrictions and
 % markov chains for the SVAR model in which only the parameters for the
 % monetary policy equation are changing.
@@ -57,8 +57,12 @@ function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_c
 if nargin==0||isempty(markov_chains)
     
     markov_chains=struct('name',{},...
-    'states_expected_duration',{},...
-    'controlled_parameters',{});
+        'number_of_states',{},...
+        'controlled_parameters',{},...
+        'endogenous_probabilities',{},...
+        'probability_parameters',{});
+    
+    switch_prior=struct();
     
 end
 
@@ -69,20 +73,23 @@ end
 last=numel(markov_chains);
 
 markov_chains(last+1)=struct('name','mpcoef',...
-    'states_expected_duration',[3+1i,3+1i],...
-    'controlled_parameters',{{'c(1)','a0(1)','a1(1)','a2(1)'}});
+    'number_of_states',2,...
+    'controlled_parameters',{{'c(1)','a0(1)','a1(1)','a2(1)'}},...
+    'endogenous_probabilities',[],...
+    'probability_parameters',[]);
+
+switch_prior.mpcoef_tp_1_2={0.5,0.1,0.3,'beta'};
+switch_prior.mpcoef_tp_2_1={0.5,0.1,0.3,'beta'};
 
 % syntax is coef(eqtn,vname,lag,chain_name,state)
 %------------------------------------------------
 lin_restr=cell(0,1);
 
-numberOfStates=numel(markov_chains(end).states_expected_duration);
-
 nonlin_restr={'a0(3,FFR)>=0'};
 
 % first equation or "FFR" equation: 
 %----------------------------------
-for istate=1:numberOfStates
+for istate=1:markov_chains(end).number_of_states
     
     mystate=int2str(istate);
     
@@ -122,5 +129,7 @@ lin_restr=[lin_restr
     'a0(3,pi)+a0(3,FFR)=0'
     }
     ];
+
+restrictions=[lin_restr;nonlin_restr];
 
 end

@@ -5,7 +5,7 @@ astar=vartools.set_prior_mean(kdata,prior_hyperparams);
 
 [~,V] = vartools.set_prior_variance(Yraw,SIGu,kdata,prior_hyperparams);
 
-[abar,SIGu,sampler]=vartools.normal_wishart_posterior(kdata.X,...
-    SIGu,V,astar,kdata.Y(:),kdata.linres);
+[abar,SIGu,sampler]=vartools.normal_wishart_posterior(kdata.estim_.X,...
+    SIGu,V,astar,kdata.estim_.Y(:),kdata.linres);
 
 end

@@ -1,8 +1,8 @@
 function [Resids,Fits]=residuals(kdata,B)
 
-Y=kdata.Y;
+Y=kdata.estim_.Y;
 
-X=kdata.X;
+X=kdata.estim_.X;
 
 nregs=size(B,3);
 

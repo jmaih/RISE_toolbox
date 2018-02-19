@@ -2,16 +2,30 @@ function varargout=filter(self,param)
 
 if nargin<2,param=[]; end
 
-if isempty(param),param=self.estim_param; end
+if isempty(param),param=self.estim_.estim_param; end
 
 nout=nargout;
 
 outCell=cell(1,nout);
 
-[outCell{1:nout}]=vartools.likelihood(param,self.mapping,...
-    self,self.markov_chains);
+%------------------------------------
+XX=self.estim_.X;
+                
+YY=self.estim_.Y;
 
-start_date=self.date_range(1);
+M=vartools.estim2states(param,...
+    self.estim_.links.theMap,...
+    self.mapping.nparams,...
+    self.mapping.nregimes);
+
+[outCell{1:nout}]=vartools.likelihood(M,self.mapping,...
+    YY,XX,self.is_time_varying_trans_prob,...
+    self.markov_chains);
+%------------------------------------
+
+% We need to shift the date to account for the fact that the VAR starts
+% after its lags...
+start_date=self.estim_.date_range(1)+self.nlags;
 
 for ix=1:nout
     

@@ -4,7 +4,7 @@ function kdata = data(mydata,nlags,constant)
 
 row_wise=true;
 %
-X = embed(mydata,nlags+1,row_wise);
+X = another_embed(mydata,nlags+1,row_wise);
 
 Y = X(1:nvars,:); % mydata(:,nlags+1:end);
 
@@ -25,7 +25,7 @@ kdata=struct('Y',Y,'X',X,'nvars',nvars,'K',K,'T',T,...
 
 end
 
-function b=embed(a,n,row_wise)
+function b=another_embed(a,n,row_wise)
 
 if nargin<3
     

@@ -1,4 +1,10 @@
-function theStruct=load_priors(theStruct,priors,new_dirichlet)
+function theStruct=load_priors(theStruct,priors,new_dirichlet,prilocs)
+
+if nargin<4
+    
+    prilocs=[];
+    
+end
 
 % for efficiency, this should be done at estimation time?...
 if ~isempty(priors)
@@ -9,11 +15,31 @@ if ~isempty(priors)
         
         effective_distributions=unique(tmp);
         
-        distr_locs=cell(1,numel(effective_distributions));
+        ned=numel(effective_distributions);
         
-        for ii=1:numel(effective_distributions)
+        distr_locs=cell(1,ned);
+        
+        if ~isempty(prilocs)
+            
+            prilocs=prilocs(:).';
+            
+        end
+        
+        for ii=1:ned
             
             distr_locs{ii}=find(strcmp(effective_distributions{ii},tmp));
+            
+            distr_locs{ii}=distr_locs{ii}(:).';
+            
+            if isempty(prilocs)
+                
+                distr_locs{ii}=distr_locs{ii}+distr_locs{ii}*1i;
+                
+            else
+                
+                distr_locs{ii}=distr_locs{ii}+prilocs(distr_locs{ii})*1i;
+                
+            end
             
             % get the handle on the distributions but not for the
             % dirichlet: they need to be processed separately.

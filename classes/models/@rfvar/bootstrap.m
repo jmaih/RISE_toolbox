@@ -8,7 +8,7 @@ end
 
 if isempty(boot),boot=1000; end
 
-if ~isempty(self.prior)
+if ~isempty(self.estim_.prior)
     
     warning('No bootstrapping for models estimated using Bayesian techniques')
     
@@ -20,7 +20,7 @@ if ~isempty(self.prior)
         
         warning('switching to analytical sampling algorithms for constant-parameter BVARs')
         
-        RepsRun=self.sampler(boot);
+        RepsRun=self.estim_.sampler(boot);
         
     end
     
@@ -30,19 +30,19 @@ sol=solve(self);
 
 B=sol.B;
 
-Resids=self.Y(:,:)-B*self.X(:,:);
+Resids=self.estim_.Y(:,:)-B*self.estim_.X(:,:);
 
-nv=self.nvars;
+% nv=self.nvars;
+% 
+% nt=self.estim_.T;
+% 
+% ng=self.ng;
 
-nt=self.T;
+Y=self.estim_.Y;
 
-ng=self.ng;
+X=self.estim_.X;
 
-Y=self.Y;
-
-X=self.X;
-
-T=self.T;
+T=self.estim_.T;
 
 % K=kdata.K;
 
@@ -101,9 +101,9 @@ fprintf('bootstrapping reps finished, %s\n', datestr(now));
         
         function k=update_base_data(k,X,Y)
             
-            k.X=X;
+            k.estim_.X=X;
             
-            k.Y=Y;
+            k.estim_.Y=Y;
             
         end
         

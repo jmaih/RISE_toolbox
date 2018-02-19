@@ -5,7 +5,11 @@ n=nargin;
 
 set_defaults()
 
-self=set(self,'data',histdb);
+if ~isempty(histdb)
+    
+    self.estim_.data=histdb;
+    
+end
 
 nreplic=numel(params);
 
@@ -182,6 +186,21 @@ format_output()
         % constant, if any, is already added by collect_data
         
         if ~isempty(x)
+            % expand the exogenous from the last observation if necessary
+            ncols=size(x,2);
+            
+            if ncols<nsteps
+                
+                n_n=nsteps-ncols;
+                
+                xx=x(:,ncols*ones(1,n_n),:);
+                
+                x=cat(2,x,xx);
+                
+                warning(['Not enough observations on exogenous over the ',...
+                    'forecast horizon. Last observation replicated'])
+                
+            end
             % there is a third dimension if we have panel...
             x=x(:,1:nsteps,:);
             
@@ -258,7 +277,7 @@ format_output()
         
         params=solve(self,params);
         
-        if isempty(date_start),date_start=self.date_range(2)+1; end
+        if isempty(date_start),date_start=self.estim_.date_range(2)+1; end
         
         date_start=date2serial(date_start);
         

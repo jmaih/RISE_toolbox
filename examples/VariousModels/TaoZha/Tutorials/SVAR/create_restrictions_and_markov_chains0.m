@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains0(markov_chains)
+function [restrictions,markov_chains,switch_priors]=create_restrictions_and_markov_chains0(markov_chains,switch_priors)
 % create_restrictions_and_markov_chains0 -- creates restrictions for
 % the constant-parameter SVAR model 
 %
@@ -56,8 +56,12 @@ function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_c
 if nargin==0||isempty(markov_chains)
 
     markov_chains=struct('name',{},...
-    'states_expected_duration',{},...
-    'controlled_parameters',{});
+    'number_of_states',{},...
+    'controlled_parameters',{},...
+    'endogenous_probabilities',{},...
+    'probability_parameters',{});
+    
+    switch_priors=struct();
     
 end
 
@@ -91,5 +95,7 @@ nonlin_restr={
     'a1(1,FFR)>=0'
     'a1(1,FFR)<=1'
     };
+
+restrictions=[lin_restr;nonlin_restr];
 
 end

@@ -27,7 +27,7 @@ end
 
 tmp=struct();
 
-start_date=self.date_range(1)+self.nlags;
+start_date=self.estim_.date_range(1)+self.nlags;
 
 contrib_names=cell(1,size(hd,2));
 
@@ -52,7 +52,7 @@ hd=tmp;
         [R,retcode]=Rfunc(param);
         
         [hd,info,contrib_names]=vartools.historical_decomposition(param.B,...
-            R,self.nx*self.ng,self.X,Resids);
+            R,self.nx*self.ng,self.estim_.X,Resids);
         
     end
 

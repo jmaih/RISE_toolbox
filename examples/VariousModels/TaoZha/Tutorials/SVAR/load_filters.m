@@ -6,7 +6,7 @@ if isa(m,'abstvar')
     
     the_regimes=generic.describe_regimes(m.markov_chain_info);
     
-    data=m.data;
+    data=m.estim_.data;
     
     endog=m.endogenous;
     

@@ -1,0 +1,272 @@
+function [mc,switch_prior,restr]=build_model(m,vnames)
+
+% this function creates inputs for model setting and estimation of a
+% structural VAR identified by Choleski restrictions.
+% the inputs are:
+% - m [string] nvmc or nvABCmc, where n is the number of states for the
+% variances, m the number of states for the coefficients. A, B, C are the
+% equations identified by variable names.
+% - vnames [cellstr]: list of the endogenous variables ordered according
+% to their position in the VAR
+% 
+% the outputs are
+% - mc [struct]: structure containing information about the markov chains
+%
+% - switch_prior [struct] structure containing the priors on the transition
+% probabilities
+%
+% - restr
+
+% models={'1v1c','2v1c','3v1c','1v2c','2v2c','3v2c',...
+%     '3vS2c','3vSC2c','3vSCP2c','3vSRM2c','3vRM2c','3vRMC2c'};
+
+mc=struct('name',{},...
+    'number_of_states',{},...
+    'controlled_parameters',{},...
+    'endogenous_probabilities',{},...
+    'probability_parameters',{});
+
+restr=[];
+
+variances=m(1:2);
+
+coefs=m(end-1:end);
+
+whichcoefs=strrep(strrep(m,variances,''),coefs,'');
+
+switch_prior=struct();
+
+ndirich=0;
+
+do_variances()
+
+do_coefs()
+
+    function do_variances()
+        
+        nv=str2double(variances(1));
+        
+        if nv==1
+            
+            return
+            
+        end
+        
+        mcname='syncvol';
+        
+        mc(end+1)=struct('name',mcname,...
+            'number_of_states',nv,...
+            'controlled_parameters',{{'s'}},...
+            'endogenous_probabilities',[],...
+            'probability_parameters',[]);
+        
+        do_priors(mcname,nv);
+        
+    end
+
+    function do_coefs()
+        
+        nc=str2double(coefs(1));
+        
+        if nc==1
+            
+            do_restrictions([],1)
+            
+            return
+            
+        end
+        
+        eqtns=set_equations();
+        
+        [c,a]=create_controls(eqtns,'c','a');
+        
+        mcname='synccoef';
+        
+        mc(end+1)=struct('name',mcname,...
+            'number_of_states',nc,...
+            'controlled_parameters',{{c,a}},...
+            'endogenous_probabilities',[],...
+            'probability_parameters',[]);
+        
+        do_priors(mcname,nc);
+        
+        do_restrictions(mcname,nc,eqtns)
+        
+        function varargout=create_controls(eqtns,varargin)
+            
+            varargout=varargin;
+            
+            if isempty(eqtns)
+                
+                return
+                
+            end
+            
+            n=numel(eqtns);
+            
+            eqtns=num2cell(eqtns(:).');
+            
+            eqtns=cellfun(@(x)int2str(x),eqtns,'uniformOutput',false);
+            
+            eqtns=cell2mat(strcat(eqtns,','));
+            
+            eqtns=eqtns(1:end-1);
+            
+            if n>1
+                
+                eqtns=['[',eqtns,']'];
+                
+            end
+            
+            for ii=1:length(varargin)
+                
+                varargout{ii}=[varargin{ii},'(',eqtns,')'];
+                    
+            end
+            
+        end
+        
+        function do_restrictions(mcname,nstates,eqtns)
+            
+            restr=cell(0,1);
+            
+            % set the Choleski identification
+            %--------------------------------
+            neqtns=numel(vnames);
+            
+            for ieqtn=1:neqtns
+                
+                for jeqtn=ieqtn+1:neqtns
+                    
+                    left=sprintf('a0(%0.0f,%s',ieqtn,vnames{jeqtn});
+                    
+                    if isempty(mcname)||...
+                            (~isempty(eqtns) && ~ismember(ieqtn,eqtns))
+                        
+                        batch={[left,')=0']};
+                        
+                    else
+                        
+                        batch=cell(0,1);
+                        
+                        for istate=1:nstates
+                            
+                            batch=[batch
+                                {sprintf('%s,%s,%0.0f)=0',left,mcname,istate)}]; %#ok<AGROW>
+                            
+                        end
+                        
+                    end
+                    
+                    restr=[restr
+                        batch]; %#ok<AGROW>
+                    
+                end
+                
+            end
+            
+            % set the normalization : no need as the diagonal elements are
+            % already unity
+            %-------------------------------------------------------------
+            
+        end
+        
+        function eqtns=set_equations()
+            
+            vbls=whichcoefs;
+            
+            eqtns=[];
+            
+            while ~isempty(vbls)
+                
+                eqtn=vbls(1);
+                
+                pos=find(strcmp(eqtn,vnames));
+                
+                if isempty(pos)
+                    
+                    error(['variable "',eqtn,'" not in the list of endogenous variables'])
+                    
+                end
+                
+                eqtns=[eqtns,pos]; %#ok<AGROW>
+                
+                vbls=vbls(2:end);
+                
+            end
+            
+        end
+        
+    end
+
+    function do_priors(mc,nstates)
+        
+        is_dirichlet=nstates>2;
+        
+        if is_dirichlet
+            
+            weight_diag=0.6;
+            
+            std_diag=0.1;
+            
+            common_mean=(1-weight_diag)/(nstates-1);
+            
+        else
+            
+            weight_diag=0.8;
+            
+            std_off_diag=0.2;
+            
+        end
+        
+        for ii=1:nstates
+            
+            if is_dirichlet
+                
+                ndirich=ndirich+1;
+                
+                dname=sprintf('dirichlet_%0.0f',ndirich);
+                
+                space=cell(2,nstates-1);
+                
+            end
+            
+            diter=0;
+            
+            for jj=1:nstates
+                
+                if ii==jj,continue,end
+                
+                tp=sprintf('%s_tp_%0.0f_%0.0f',mc,ii,jj);
+                
+                if is_dirichlet
+                    
+                    diter=diter+1;
+                    
+                    space{1,diter}=tp;
+                    
+                    space{2,diter}=common_mean;
+                    
+                else
+                    
+                    dname=tp;
+                    
+                    space={1-weight_diag,1-weight_diag,std_off_diag,'beta'};
+                    
+                end
+                
+            end
+            
+            if is_dirichlet
+                
+                space=[{std_diag},space(:).'];
+                
+            end
+            
+            switch_prior.(dname)=space;
+            
+        end
+        
+    end
+
+end

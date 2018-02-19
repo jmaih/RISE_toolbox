@@ -11,15 +11,17 @@ ybar=mean(Yraw(:,:),2); % stretch for panel
 % RISE forbids the modification of kdata/self and so we have to create an
 % auxiliary
 
-SZkdata=struct('X',kdata.X,'Y',kdata.Y,'linres',kdata.linres);
+SZkdata=struct();
 
-SZkdata.X=[SZkdata.X(:,:),X];
+SZkdata.estim_.X=[kdata.estim_.X(:,:),X];
 
-SZkdata.Y=[SZkdata.Y(:,:),Y];
+SZkdata.estim_.Y=[kdata.estim_.Y(:,:),Y];
 
-SZkdata.T=size(SZkdata.Y,2);
+SZkdata.estim_.T=size(SZkdata.estim_.Y,2);
 
-[abar,SIGu,sampler]=vartools.sims_zha_posterior(SZkdata.X,...
-    SIGu,prior_hyperparams.L5,SZkdata.Y(:),SZkdata.linres);
+SZkdata.estim_.linres=kdata.estim_.linres;
+
+[abar,SIGu,sampler]=vartools.sims_zha_posterior(SZkdata.estim_.X,...
+    SIGu,prior_hyperparams.L5,SZkdata.estim_.Y(:),SZkdata.estim_.linres);
 
 end

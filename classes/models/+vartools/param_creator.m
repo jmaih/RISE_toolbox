@@ -1,4 +1,4 @@
-function p=param_creator(nvars,lags,constant,nd,mcChains,prefix,is_svar)
+function p=param_creator(nvars,lags,constant,nd,additional_params,prefix,is_svar)
 
 % constant is the number of constants, which could be more than 1 in the
 % case of a panel!!!
@@ -116,56 +116,27 @@ shadow(bad)=[];
 
 start(bad)=[];
 
-% adding transition probabilities
-iter=numel(pnames);
+% adding additional parameters (transition probabilities and others)
+%-------------------------------------------------------------------
+nadd=numel(additional_params);
 
-for iarg=1:length(mcChains)
+if nadd
     
-    chain_name=mcChains(iarg).name;
+    pnames=[pnames(:);additional_params(:)];
     
-    duration=mcChains(iarg).states_expected_duration;
+    lb=[lb(:);nan(nadd,1)];
     
-    nstates=numel(duration); % nstates=mcChains(iarg).nstates;
+    ub=[ub(:);nan(nadd,1)];
     
-    if nstates<2
-        
-        error(['markov chain "',chain_name,'" should have at least 2 states'])
-        
-    end
+    shadow=[shadow(:);nan(nadd,1)];
     
-    for ii=1:nstates
-        
-        for jj=1:nstates
-            
-            if ii==jj
-                
-                continue
-                
-            end
-            
-            iter=iter+1;
-            
-            pnames{iter}=sprintf('%s_tp_%0.0f_%0.0f',chain_name,ii,jj);
-            
-            lb(iter,1)=0;
-            
-            ub(iter,1)=1;
-            
-            start(iter,1)=0;
-            
-        end
-        
-    end
+    start=[start(:);nan(nadd,1)];
     
 end
-
-miss=numel(pnames)-numel(shadow);
-
-shadow=[shadow;nan(miss,1)];
 
 p=struct('pnames',{pnames},'shadow',shadow,'lb',lb,'ub',ub,'start',start,...
     'var_terms',nvars*(nlags*nvars+nd+constant),...
     's_terms',nvars*is_svar+(1-is_svar)*sum(1:nvars),...
-    'tp_terms',miss);
+    'tp_terms',sum(parser.is_transition_probability(pnames)));
 
 end

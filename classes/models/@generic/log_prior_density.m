@@ -49,46 +49,23 @@ lnprior=0;
 %
 retcode=0;
 
+epdata=obj.estim_priors_data;
+
 if ~isempty(param)
     
     if isnumeric(param)
         
-        % do the uncorrelated guys
-        %--------------------------
-        [lnprior,retcode]=evaluate_uncorrelated_priors(obj.estim_priors_data,param,lnprior);
+        [lnprior,retcode]=utils.estim.prior_evaluation_engine(epdata,param,...
+            lnprior);
         
-        % do the dirichlet guys
-        %-----------------------
-        if ~retcode && ~isempty(obj.estim_priors_data.estim_dirichlet)
-            
-            ndirich=numel(obj.estim_priors_data.estim_dirichlet);
-            
-            for id=1:ndirich
-                
-                loc=obj.estim_dirichlet(id).location;
-                
-                lnprior=lnprior+obj.estim_priors_data.estim_dirichlet(id).lpdfn(param(loc));
-                
-                if (isnan(lnprior)||isinf(lnprior)||~isreal(lnprior))
-                    
-                    retcode=307;
-                    
-                    break
-                    
-                end
-                
-            end
-            
-        end
-        
-    elseif ischar(param) 
+    elseif ischar(param)
         
         if ~isempty(obj.estimation.endogenous_priors)
             % do the uncorrelated guys
             %--------------------------
             pp=obj.options.estim_endogenous_priors(obj);
             
-            [lnprior,retcode]=evaluate_uncorrelated_priors(...
+            [lnprior,retcode]=utils.estim.prior.evaluate_uncorrelated(...
                 obj.estim_endogenous_priors_data,pp,lnprior);
 
             if retcode
@@ -99,41 +76,6 @@ if ~isempty(param)
             
         end
                 
-    end
-    
-end
-
-end
-
-function [lnprior,retcode]=evaluate_uncorrelated_priors(obj,param,lnprior)
-
-retcode=0;
-
-for kk=1:numel(obj.estim_distributions)
-    
-    if ischar(obj.estim_distributions{kk})
-        
-        % that is the dirichlet,skip it
-        continue
-        
-    end
-    
-    loc=obj.estim_distrib_locations{kk};
-    
-    a=obj.estim_hyperparams(loc,1);
-    
-    b=obj.estim_hyperparams(loc,2);
-    
-    ld=obj.estim_distributions{kk}(param(loc),a,b);
-        
-    lnprior=lnprior+sum(ld);
-    
-    if (isnan(lnprior)||isinf(lnprior)||~isreal(lnprior))
-        
-        retcode=307;
-        
-        break
-        
     end
     
 end

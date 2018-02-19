@@ -1,40 +1,14 @@
-function varargout=likelihood(params,mapping,kdata,markov_chains)%
+function varargout=likelihood(M,mapping,y,x,is_time_varying_trans_prob,...
+    markov_chains)
 
-[sol,M,retcode]=vartools.solve(mapping,params);
+% solve the model (more precisely the time-varying transition matrix) with
+% the first observation 
+first_obs=vartools.xpand_panel(y(:,1,:));
 
-n=size(M,3);
+[sol,retcode]=vartools.solve(mapping,M,first_obs);
 
-small_penalty=zeros(1,n);
-
-if ~isempty(kdata.nonlinres)
-    
-    for iii=1:n
-        
-        if retcode(iii)
-            
-            continue
-            
-        end
-        
-        viol=kdata.nonlinres(M(:,:,iii));
-        
-        good_ones=viol<=0;
-        
-        good=all(good_ones);
-        
-        if ~good
-            
-            small_penalty(iii)=uminus(1000*sum(viol(~good_ones)));
-            
-%             retcode(iii)=7;
-            
-        end
-        
-    end
-    
-end
-
-ns=numel(sol);
+% number of solutions = number of parameter vectors = number of matrices
+%-----------------------------------------------------------------------
 
 nout=nargout;
 
@@ -42,13 +16,13 @@ outCell=cell(1,nout);
 
 types=cell(1,nout);
 
+ns=numel(sol);
+
 for isol=1:ns
     
-    [outCell{1:nargout}]=main_engine(sol(isol),mapping,kdata,...
-        markov_chains,retcode(isol));
-    
-    outCell{1}=outCell{1}+small_penalty(isol);
-    
+    [outCell{1:nargout}]=main_engine(sol(isol),M(:,:,isol),mapping,...
+        y,x,is_time_varying_trans_prob,markov_chains,retcode(isol));
+        
     if ns==1||isol==1
         
         varargout=outCell;
@@ -119,7 +93,7 @@ end
     end
 
 end
-
+    
 function y=drill(y,x,ns,sol_id)
 
 if isstruct(x)
@@ -148,8 +122,8 @@ end
 
 end
 
-function [LogLik,Incr,retcode,filtering]=main_engine(sol,mapping,kdata,...
-    markov_chains,retcode)
+function [LogLik,Incr,retcode,filtering]=main_engine(sol,M,mapping,...
+    y,x,is_time_varying_trans_prob,markov_chains,retcode)
 
 big_penalty=uminus(1e+8);
 
@@ -173,17 +147,31 @@ SIG=sol.S;
 
 Q0=sol.Q.Q;
 
-y=kdata.Y(:,:); % stretch for panel
+y=y(:,:); % stretch for panel
 
-x=kdata.X(:,:); % stretch for panel
+x=x(:,:); % stretch for panel
 
-n=size(y,1);
+[n,T]=size(y);
 
 In=eye(n);
 
-T=kdata.T;
-
 Q=Q0(:,:,ones(T+1,1));
+
+% before seeing the data...
+Q(:,:,1)=1/h;
+
+% after seeing the data
+if is_time_varying_trans_prob
+    
+    for tau=1:T
+        
+        fQ=mapping.solution.transition_matrix(M(:,1),y(:,tau));
+        
+        Q(:,:,tau+1)=fQ.Q;
+        
+    end
+    
+end
 
 [Incr,ut,prob_update,prob_filt]=msvar_likelihood(B,SIG);
 % sample to be used in the computation of the likelihood
@@ -232,9 +220,13 @@ state_filtration()
 % shocks and storage
 %--------------------
 nshocks=size(ut{1},1);
+
 exo_names=cell(1,nshocks);
+
 for ishock=1:nshocks
+    
     exo_names{ishock}=sprintf('shock_%0.0f',ishock);
+    
 end
 
 filtering.smoothed_shocks=store_item(exo_names,ut);
@@ -243,7 +235,6 @@ Expected_smoothed_shocks=utils.filtering.expectation(prob_smooth,ut,true);
 
 filtering.Expected_smoothed_shocks=store_item(exo_names,...
     {Expected_smoothed_shocks});
-
 
     function regime_filtration()
         

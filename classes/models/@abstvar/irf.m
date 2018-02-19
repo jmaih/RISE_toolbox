@@ -14,29 +14,69 @@ shock_names=abstvar.create_variable_names(self.nvars,'shock',shock_names);
 
 for ishock=1:self.nvars
     
+    sname=shock_names{ishock};
+    
+    batchShock=(ishock-1)*self.ng+1:ishock*self.ng;
+        
     for iv=1:self.nvars
         
-        data=permute(myirfs(iv,:,ishock,:,:),[2,5,4,1,3]);
+        vname=self.endogenous{iv};
         
-        data=squeeze(data);
+        batchVars=(iv-1)*self.ng+1:iv*self.ng;
         
-        if ishock==1 && iv==1
+        for ishock2=1:numel(batchShock)
             
-            if self.nregs==1
+            possh=batchShock(ishock2);
+            
+            if self.is_panel
+            
+            C1=self.members{ishock2};
+            
+            end
+            
+            for iv2=1:numel(batchVars)
                 
-                proto=ts(1,data);
+                posv=batchVars(iv2);
                 
-            else
+                if self.is_panel
                 
-                regimeNames=abstvar.create_variable_names(self.nregs,'regime');
+                C2=self.members{iv2};
                 
-                proto=ts(1,data,regimeNames);
+                end
+                
+                data=permute(myirfs(posv,:,possh,:,:),[2,5,4,1,3]);
+                
+                data=squeeze(data);
+                
+                if ishock==1 && iv==1 && ishock2==1 && iv2==1
+                    
+                    if self.nregs==1
+                        
+                        proto=ts(1,data);
+                        
+                    else
+                        
+                        regimeNames=abstvar.create_variable_names(self.nregs,'regime');
+                        
+                        proto=ts(1,data,regimeNames);
+                        
+                    end
+                    
+                end
+                
+                if self.is_panel
+                    
+                    tmp.(sname).(C1).(vname).(C2)=reset_data(proto,data);
+                    
+                else
+                    
+                    tmp.(sname).(vname)=reset_data(proto,data);
+                    
+                end
                 
             end
             
         end
-        
-        tmp.(shock_names{ishock}).(self.endogenous{iv})=reset_data(proto,data);
         
     end
     

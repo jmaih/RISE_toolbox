@@ -1,8 +1,20 @@
-function [sol,M]=solve(self,param)
+function [sol,retcode]=solve(self,param,yt)
 
-if nargin<2,param=[]; end
+if nargin<3
+    
+    yt=[]; % data needed for endogenous probabilities
+    
+    if nargin<2
+        
+        param=[];
+        
+    end
+    
+end
 
-if isempty(param),param=self.estim_param; end
+retcode=0;
+        
+if isempty(param),param=self.estim_.estim_param; end
 
 if isstruct(param)
     
@@ -10,8 +22,6 @@ if isstruct(param)
         % these are the core fields. There will be others in a SVAR
         
         sol=param;
-        
-        M=[];
         
         return
         
@@ -23,7 +33,20 @@ if isstruct(param)
     
 end
 
-[sol,M]=vartools.solve(self.mapping,param);
+if isempty(yt)
+    
+    first_obs=vartools.xpand_panel(self.estim_.Y(:,1,:));
+    
+    yt=first_obs;
+    
+end
+
+M=vartools.estim2states(param,...
+    self.estim_.links.theMap,...
+    self.mapping.nparams,...
+    self.mapping.nregimes);
+        
+[sol,retcode]=vartools.solve(self.mapping,M,yt);
 
 end
 

@@ -1,8 +1,31 @@
-function self=estimate(self,date_range,varargin)
+function self=estimate(self,varargin)
 
-if nargin < 2
+% data,date_range,prior,restrictions,
+data=[];date_range=[];prior=[];restrictions=[];
+
+n=length(varargin);
+
+if n
     
-    date_range=[];
+    data=varargin{1};
+    
+    if n>1
+        
+        date_range=varargin{2};
+        
+        if n>2
+            
+            prior=varargin{3};
+            
+            if n>3
+                
+                restrictions=varargin{4};
+                
+            end
+            
+        end
+        
+    end
     
 end
 
@@ -12,7 +35,7 @@ if nobj>1
     
     for ii=1:nobj
         
-        self(ii)=estimate(self(ii),date_range,varargin{:});
+        self(ii)=estimate(self(ii),data,date_range,prior,restrictions);
         
     end
     
@@ -20,15 +43,26 @@ if nobj>1
     
 end
 
-self=set(self,varargin{:});%self=setOptions(self,varargin{:});
-
 % set the prime-time restrictions that are associated with the
 % construction of the model
 self=prime_time(self);
 
-[y,x,self.date_range]=collect_data(self,date_range);
+self=set_inputs(self,'linear_restrictions',restrictions,...
+    'data',data,'prior',prior);
 
+[y,x,self.estim_.date_range]=collect_data(self,date_range);
+
+% N.B: yx does not include the constant while x may include it.
 self = abstvar.embed(self,y,x);
+
+% self.mapping
+links=struct();
+
+[links.estimList,links.start,links.elb,links.eub,links.theMap,...
+    links.transProbs]=abstvar.map_estimation(self.markov_chains,...
+    self.mapping.regimes,self.param_guide);
+
+self.estim_.links=links;
 
 % process the restrictions above + additional ones set by the user
 self=process_linear_restrictions(self);
@@ -47,38 +81,96 @@ end
 
 function self=switching_parameter_estimation(self,y)
 
-[kdata,Tprior]=load_priors();
+prior_trunc=1e-10;
 
-linres=self.linres;
+penalty=1000;
+
+[Dummies,epdata]=load_priors();
+
+XX0=[self.estim_.X,Dummies.X];
+                
+YY0=[self.estim_.Y,Dummies.Y];
+                
+T0=Dummies.T;
+
+is_time_varying_trans_prob=self.is_time_varying_trans_prob;
+
+nonlinres=self.estim_.nonlinres;
+
+mapping=self.mapping;
+
+markov_chains=self.markov_chains;
+                
+linres=self.estim_.linres;
+
+theMap=self.estim_.links.theMap;
 
 objfun=@engine;
 
 % using the linres, transform x0, lb and ub
 
-x0=transform(self.mapping.start);
+x0=transform(self.estim_.links.start);
 
 % I am not sure about the transformations on the bounds but in case there
 % is an issue, one can always check the bounds after the transformations,
 % possibly penalizing the objective function in case of a violation.
 
-lb=transform(self.mapping.elb);
+lb=transform(self.estim_.links.elb);
 
-ub=transform(self.mapping.eub);
+ub=transform(self.estim_.links.eub);
 
 options=struct();
 options.Display='iter';
-options.MaxFunEvals=50000;
+options.MaxFunEvals=50000*6;
+options.MaxIter=50000;
 
 out=fmincon(objfun,x0,[],[],[],[],lb,ub,[],options);
 
-self.estim_param=untransform(out);
+self.estim_.estim_param=untransform(out);
 
     function varargout=engine(params0)
         
         params1=untransform(params0);
         
-        [varargout{1:nargout}]=vartools.likelihood(params1,...
-            kdata.mapping,kdata,kdata.markov_chains);
+        M=vartools.estim2states(params1,theMap,mapping.nparams,...
+            mapping.nregimes);
+        
+        pen=utils.estim.penalize_violations2(M,nonlinres,penalty);
+        
+        [LogLik,Incr,retcode]=vartools.likelihood(M,mapping,...
+            YY0,XX0,is_time_varying_trans_prob,...
+            markov_chains);
+        
+        Lpost=uminus(1e+8);
+        
+        if ~retcode
+            
+            Lprior=0;
+            
+            if T0
+                
+                LogLik0=sum(Incr(1:end-T0));
+                
+                Lprior=LogLik-LogLik0;
+                
+                LogLik=LogLik0;
+                
+            end
+            
+            [Lprior,retcode]=utils.estim.prior_evaluation_engine(epdata,...
+                params1,Lprior);
+            
+            if ~retcode
+                
+                Lpost=LogLik+Lprior+pen;
+                
+            end
+            
+        end
+        
+        vout={Lpost,Incr,retcode};
+        
+        varargout=vout(1:nargout);
         
         % negative of likelihood
         varargout{1}=-varargout{1};
@@ -107,58 +199,180 @@ self.estim_param=untransform(out);
         
     end
 
-    function [kdata,Tprior]=load_priors()
+    function [Dummies,indPriors]=load_priors()
         
-        kdata=self;
+        Dummies=do_var_prior();
         
-        if isempty(self.prior)
+        indPriors=do_nonvar_priors();
+        
+        function newpri=do_nonvar_priors()
             
-            Tprior=0;
+            estimList=self.estim_.links.estimList;
             
-            return
+            nest=numel(estimList);
+            
+            processed=true(1,nest);
+            
+            nonvar_id=locate_variables(self.nonvar_parameters,estimList);
+            
+            processed(nonvar_id)=false;
+            
+            newpri=[];
+            
+            pri=[];
+            
+            d=[]; shortcut_d=[];
+            
+            if ~isfield(self.estim_.prior,'nonvar')||...
+                    isempty(self.estim_.prior.nonvar)
+                
+                return
+                
+            end
+            
+            nonvar=self.estim_.prior.nonvar;
+            
+            estnames=fieldnames(nonvar);
+            
+            is_dirichlet=strncmp(estnames,'dirichlet',9);
+
+            for est_id=1:numel(estnames)
+                
+                fildname=estnames{est_id};
+                
+                position=find(strcmp(fildname,estimList));
+                
+                tmp=nonvar.(fildname);
+                
+                if isempty(position)
+                    
+                    if ~is_dirichlet(est_id)
+                        
+                        error(['unknown parameter "',fildname,'"'])
+                        
+                    end
+                    
+                    [d,shortcut_d]=utils.estim.format_dirichlet(d,tmp,...
+                        estimList,shortcut_d);
+                    
+                    lastlocs=d(end).location;
+                    
+                    if any(processed(lastlocs))
+                        
+                        disp(estimList(lastlocs))
+                        
+                        error('the parameters above appear to be set multiple times')
+                        
+                    end
+                    
+                    self.estim_.links.elb(lastlocs)=0;
+                    
+                    self.estim_.links.start(lastlocs)=...
+                        d(end).moments.mean(d(end).pointers);
+                    
+                    self.estim_.links.eub(lastlocs)=1;
+                    
+                    processed(lastlocs)=true;
+            
+                else
+                    
+                    if processed(position)
+                        % this cannot happen since it is a field name but
+                        % if the user sets a VAR parameter, this is where
+                        % he will be caught
+                        
+                        error(['parameter "',fildname,'" is duplicated'])
+                        
+                    end
+                    
+                    block=utils.prior.cell2block(tmp,fildname,'const',1,'');
+                    
+                    pri=utils.prior.prior_setting_engine(pri,block,est_id,...
+                        prior_trunc);
+                    
+                    self.estim_.links.elb(position)=pri(end).lower_bound;
+                    
+                    self.estim_.links.start(position)=pri(end).start;
+                    
+                    self.estim_.links.eub(position)=pri(end).upper_bound;
+                    
+                    processed(position)=true;
+                    
+                end
+                
+            end
+            
+            nonprocessed_params=estimList(~processed);
+            
+            if ~isempty(nonprocessed_params)
+                
+                disp(nonprocessed_params)
+                
+                error('Missing priors for the parameters above')
+                
+            end
+            % Not all parameters are estimated and so the location may be
+            % off, it has to be corrected
+            
+            if ~isempty(pri)
+                
+                prilocs=locate_variables({pri.name},self.estim_.links.estimList);
+                
+                newpri=utils.prior.load_priors(struct(),pri,shortcut_d,prilocs);
+                
+            end
             
         end
         
-        switch self.prior.type
+        function D=do_var_prior()
             
-            case 'minnesota'
+            D=struct('T',0);
+            
+            if ~isfield(self.estim_.prior,'var')||...
+                    isempty(self.estim_.prior.var)
                 
-                error(['prior "',self.prior.type,'" not ready']);
+                return
                 
-            case {'normal-wishart','nw'}
+            end
+            
+            var_prior=self.estim_.prior.var;
+            
+            switch var_prior.type
                 
-                error(['prior "',self.prior.type,'" not ready']);
-                
-            case {'indep-normal-wishart','inw'}
-                
-                error(['prior "',self.prior.type,'" not ready']);
-                
-            case {'sims-zha','sz'}
-                
-                sig=std(y,[],2);
-                
-                ybar=mean(y,2);
-                
-                [Y,X]=vartools.sims_zha_dummies(kdata.prior,...
-                    kdata.nvars*kdata.ng,kdata.nx*kdata.ng,kdata.nlags,...
-                    sig,ybar);
-                
-                Tprior=size(Y,2);
-                
-                kdata.X=[kdata.X,X];
-                
-                kdata.Y=[kdata.Y,Y];
-                
-                kdata.T=size(kdata.Y,2);
-                
-            case 'jeffrey'
-                
-                error(['prior "',self.prior.type,'" not ready']);
-                
-            otherwise
-                
-                error(['unknown prior type ',self.prior.type])
-                
+                case {'sims-zha','sz'}
+                    
+                    sig=std(y,[],2);
+                    
+                    ybar=mean(y,2);
+                    
+                    [D.Y,D.X]=vartools.sims_zha_dummies(var_prior,...
+                        self.nvars*self.ng,self.nx*self.ng,self.nlags,...
+                        sig,ybar);
+                    
+                    D.T=size(D.Y,2);
+                    
+                case 'minnesota'
+                    
+                    error(['prior "',var_prior.type,'" not ready']);
+                    
+                case {'normal-wishart','nw'}
+                    
+                    error(['prior "',var_prior.type,'" not ready']);
+                    
+                case {'indep-normal-wishart','inw'}
+                    
+                    error(['prior "',var_prior.type,'" not ready']);
+                    
+                case 'jeffrey'
+                    
+                    error(['prior "',var_prior.type,'" not ready']);
+                    
+                otherwise
+                    
+                    error(['unknown prior type ',var_prior.type])
+                    
+            end
+            
         end
         
     end
@@ -169,7 +383,7 @@ function self=constant_parameter_estimation(self,y)
 
 warmup= vartools.ols(self);
 
-if isempty(self.prior)
+if ~isfield(self.estim_.prior,'var')||isempty(self.estim_.prior.var)
     
     B = warmup.B;
     
@@ -177,33 +391,35 @@ if isempty(self.prior)
     
 else
     
-    switch self.prior.type
+    var_prior=self.estim_.prior.var;
+    
+    switch var_prior.type
         
         case 'minnesota'
             
-            [abar,SIG,self.sampler]=vartools.minnesota_prior(...
-                self,y,warmup.Sigma,self.prior);
+            [abar,SIG,self.estim_.sampler]=vartools.minnesota_prior(...
+                self,y,warmup.Sigma,var_prior);
             
             B = reshape(abar,self.nvars,[]);
             
         case {'normal-wishart','nw'}
             
-            [abar,SIG,self.sampler]=vartools.normal_wishart_prior(...
-                self,y,warmup.Sigma,self.prior);
+            [abar,SIG,self.estim_.sampler]=vartools.normal_wishart_prior(...
+                self,y,warmup.Sigma,var_prior);
             
             B = reshape(abar,self.nvars,[]);
             
         case {'indep-normal-wishart','inw'}
             
-            [abar,SIG,self.sampler]=vartools.independent_normal_wishart_prior(...
-                self,y,warmup.Sigma,self.prior);
+            [abar,SIG,self.estim_.sampler]=vartools.independent_normal_wishart_prior(...
+                self,y,warmup.Sigma,var_prior);
             
             B = reshape(abar,self.nvars,[]);
             
         case {'sims-zha','sz'}
             
-            [abar,SIG,self.sampler]=vartools.sims_zha_prior(...
-                self,y,warmup.Sigma,self.prior);
+            [abar,SIG,self.estim_.sampler]=vartools.sims_zha_prior(...
+                self,y,warmup.Sigma,var_prior);
             
             B = reshape(abar,self.nvars,[]);
             
@@ -213,12 +429,12 @@ else
             
         otherwise
             
-            error(['unknown prior type ',self.prior.type])
+            error(['unknown prior type ',var_prior.type])
             
     end
     
 end
 
-self.estim_param=[B(:);vech(SIG)];
+self.estim_.estim_param=[B(:);vech(SIG)];
 
 end

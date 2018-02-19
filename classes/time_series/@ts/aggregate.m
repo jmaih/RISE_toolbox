@@ -35,6 +35,12 @@ if ~ismember(newfreq,{'','Q','M','H','W','D'})
     
 end
 
+if strcmp(FREQ,newfreq)
+    
+    return
+    
+end
+
 [first,last,number]=first_last_number(FREQ,newfreq);
 
 the_nans=isnan(this);
@@ -169,7 +175,7 @@ switch oldfreq
         
         if newfreq==4 %'Q'
             
-            first=[1,4,7,11]; last=[3,6,9,12];
+            first=[1,4,7,10]; last=[3,6,9,12];
             
         elseif newfreq==2%,'H'
             

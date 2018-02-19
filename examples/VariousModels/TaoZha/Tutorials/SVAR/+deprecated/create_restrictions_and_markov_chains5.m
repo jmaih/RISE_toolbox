@@ -1,5 +1,5 @@
-function [restr,tpl]=create_restrictions_and_markov_chains5(tpl)
-% create_restrictions_and_markov_chains5 -- creates linear restrictions and
+function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains5(markov_chains)
+% create_restrictions_and_markov_chains5 -- creates restrictions and
 % markov chains for the SVAR model in which both coefficients and variance
 % for the monetary policy equation are changing with two independent Markov
 % processes
@@ -8,35 +8,38 @@ function [restr,tpl]=create_restrictions_and_markov_chains5(tpl)
 % -------
 % ::
 %
-%   [restr,tpl]=create_restrictions_and_markov_chains5(tpl)
+%   [lin_restr,nonlin_restr,tpl]=create_restrictions_and_markov_chains5(tpl)
 %
 % Inputs
 % -------
 %
-% - **tpl** [struct]: template created for SVAR objects
+% - **markov_chains** [empty|struct]: structure of previously defined
+% markov chains
 %
 % Outputs
 % --------
 %
-% - **restr** [cell]: two column-cell (see below). The first column
-% contains COEF objects or linear combinations of COEF objects, which are
-% themselves COEF objects.
+% - **lin_restr** [cell]: cell array of restrictions (see below). 
 %
-% - **tpl** [struct]: modified template
+% - **nonlin_restr** [cell]: cell array of inequality restrictions 
+%
+% - **markov_chains** [struct]: modified markov chains
 %
 % More About
 % ------------
 %
-% - The syntax to construct an advanced COEF object is
-% a=coef(eqtn,vname,lag,chain_name,state)
-%   - **eqtn** [integer|char]: integer or variable name
-%   - **vname** [integer|char]: integer or variable name
-%   - **lag** [integer]: integer or variable name
+% - The syntax to construct a restriction
+%   --> ai(eqtn)
+%   --> ai(eqtn,vbl)
+%   --> ai(eqtn,vbl,chain_name,state)
+%   --> a(eqtn)
+%   --> a(eqtn,vbl)
+%   --> a(eqtn,vbl,chain_name,state)
+%   - **eqtn** [integer]: integer 
+%   - **vbl** [integer|char]: integer or variable name
+%   - **i** [integer]: lag
 %   - **chain_name** [char]: name of the markov chain
 %   - **state** [integer]: state number
-%
-% - RISE sorts the endogenous variables alphabetically and use this order
-% to tag each equation in SVAR and RFVAR models.
 %
 % - The lag coefficients are labelled a0, a1, a2,...,ak, for a model with k
 % lags. Obviously, a0 denotes the contemporaneous coefficients.
@@ -44,30 +47,31 @@ function [restr,tpl]=create_restrictions_and_markov_chains5(tpl)
 % - The constant terms labelled c_1_1, c_2_2,...,c_n_n, for a model with n
 % endogenous variables.
 %
-% - The standard deviations labelled sig_1_1, sig_2_2,...,sig_n_n, for a
+% - The standard deviations labelled s_1_1, s_2_2,...,s_n_n, for a
 % model with n endogenous variables.
 %
 % Examples
 % ---------
-% coef('pi','ygap',0,'policy',1)
-%
-% coef(2,3,0,'policy',1)
-%
-% coef(2,'ygap',0,'policy',1)
-%
-% coef('pi',3,0,'policy',1)
 %
 % See also:
+
+if nargin==0||isempty(markov_chains)
+    
+    markov_chains=struct('name',{},...
+    'states_expected_duration',{},...
+    'controlled_parameters',{});
+    
+end
 
 % The parameter restrictions are identical to those in the model
 % with regime switching in the policy coefficients only. Hence the mp_coef
 % markov chain will also be common to those two models.
-[restr,tpl]=create_restrictions_and_markov_chains3(tpl);
+[lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains3(markov_chains);
 
 % We add the volatility Markov chain from the model in which only the
 % volatility of the monetary policy equation changes. N.B: In the process,
 % we want to make sure we do not over-write the restrictions above!
 %--------------------------------------------------------------------------
-[~,tpl]=create_restrictions_and_markov_chains4(tpl);
+[~,~,markov_chains]=create_restrictions_and_markov_chains4(markov_chains);
 
 end

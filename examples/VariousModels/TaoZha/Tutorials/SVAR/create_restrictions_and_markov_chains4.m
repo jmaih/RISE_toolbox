@@ -1,4 +1,4 @@
-function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains4(markov_chains)
+function [restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains4(markov_chains,switch_prior)
 % create_restrictions_and_markov_chains4 -- creates restrictions and
 % markov chains for the SVAR model in which only the variance for the
 % monetary policy equation are changing.
@@ -57,8 +57,12 @@ function [lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_c
 if nargin==0||isempty(markov_chains)
     
     markov_chains=struct('name',{},...
-    'states_expected_duration',{},...
-    'controlled_parameters',{});
+        'number_of_states',{},...
+        'controlled_parameters',{},...
+        'endogenous_probabilities',{},...
+        'probability_parameters',{});
+    
+    switch_prior=struct();
     
 end
 
@@ -68,11 +72,25 @@ end
 last=numel(markov_chains);
 
 markov_chains(last+1)=struct('name','mpvol',...
-    'states_expected_duration',[2+1i,2+1i,2+1i],...
-    'controlled_parameters',{{'s(1)'}});
+    'number_of_states',3,...
+    'controlled_parameters',{{'s(1)'}},...
+    'endogenous_probabilities',[],...
+    'probability_parameters',[]);
+
+% we can't use a beta distribution
+% switch_prior.mpvol_tp_1_2={};
+% switch_prior.mpvol_tp_1_3={};
+% switch_prior.mpvol_tp_2_1={};
+% switch_prior.mpvol_tp_2_3={};
+% switch_prior.mpvol_tp_3_1={};
+% switch_prior.mpvol_tp_3_2={};
+
+switch_prior.dirichlet_1={0.1,'mpvol_tp_1_2',0.2,'mpvol_tp_1_3',0.2};
+switch_prior.dirichlet_2={0.1,'mpvol_tp_2_1',0.2,'mpvol_tp_2_3',0.2};
+switch_prior.dirichlet_3={0.1,'mpvol_tp_3_1',0.2,'mpvol_tp_3_2',0.2};
 
 % The parameter restrictions are identical to those in the basic model
 % without regime switching
-[lin_restr,nonlin_restr,markov_chains]=create_restrictions_and_markov_chains0(markov_chains);
+[restrictions,markov_chains,switch_prior]=create_restrictions_and_markov_chains0(markov_chains,switch_prior);
 
 end
