@@ -139,7 +139,23 @@ end
         
         function [theLegend,texname,theIrf]=extract_one(vname)
             
-            theLegend=batch.(vname).varnames;
+            bv=batch.(vname);
+            
+            if isstruct(bv)
+                
+                theLegend=bv.regime_1.varnames;
+                
+                theIrf=bv.regime_1;
+                
+                warning('Multiple regimes detected. extracting first only')
+                
+            else
+                
+                theLegend=bv.varnames;
+                
+                theIrf=bv;
+                
+            end
             
             if numel(theLegend)==1||...
                     all(cellfun(@(x)isempty(x),theLegend,'uniformOutput',true))
@@ -151,8 +167,6 @@ end
             var_tex=description.(vname);
             
             texname=[var_tex,'(',vname,')'];
-            
-            theIrf=batch.(vname);
             
         end
         
