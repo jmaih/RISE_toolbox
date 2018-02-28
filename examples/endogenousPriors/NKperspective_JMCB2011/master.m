@@ -35,6 +35,10 @@ mest=estimate(m);
 
 mest2=estimate(m,'estim_endogenous_priors',@cov_endo_priors);
 
+%% How well did we do?
+
+cov_endo_priors(mest2)
+
 %% Impulse response functions
 myirfs=irf([mest,mest2]);
 

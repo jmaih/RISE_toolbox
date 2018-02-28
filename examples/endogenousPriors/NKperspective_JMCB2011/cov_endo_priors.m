@@ -4,6 +4,8 @@ function v=cov_endo_priors(obj)
 
 myList={'GHAT','PAIHAT','RHAT'};
 
+tight=1;
+
 if nargin==0
     
     sd=struct();
@@ -22,7 +24,7 @@ if nargin==0
         
         vname=myList{ii};
         
-        v{ii}={sd.(vname),0.0015,'gamma'};
+        v{ii}={sd.(vname),0.0015*tight,'normal'};
         
     end
     
@@ -36,7 +38,17 @@ else
     
     % setting the number of autocovariances to 0 such that only the
     % variances are computed.
-    ac=theoretical_autocovariances(obj,'autocov_ar',0);
+    [ac,retcode]=theoretical_autocovariances(obj,'autocov_ar',0);
+    
+    if retcode
+        
+        n=numel(myList);
+        
+        v=1000*ones(n,1);
+        
+        return
+        
+    end
     
     variances=diag(ac(pos,pos,1));
     
