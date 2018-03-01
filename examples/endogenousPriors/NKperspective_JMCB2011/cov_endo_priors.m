@@ -37,8 +37,10 @@ else
     pos=locate_variables(myList,obj.endogenous.name);
     
     % setting the number of autocovariances to 0 such that only the
-    % variances are computed.
-    [ac,retcode]=theoretical_autocovariances(obj,'autocov_ar',0);
+    % variances are computed. We assume that the model does not need to be
+    % resolved
+    [ac,retcode]=theoretical_autocovariances(obj,'autocov_ar',0,...
+        'autocov_model_resolve',false);
     
     if retcode
         
