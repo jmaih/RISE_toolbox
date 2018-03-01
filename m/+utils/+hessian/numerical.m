@@ -69,7 +69,7 @@ switch lower(hessian_type)
         
         H = utils.hessian.outer_product(fh,xbest);
         
-        if any(any(isnan(H(:,:,2))))||any(any(isinf(H(:,:,2))))
+        if any(isnan(H(:)))
             
             issue='OPG unstable and inaccurate for calculation of Hessian, switched to finite differences';
             
