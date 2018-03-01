@@ -4,15 +4,15 @@ function obj=estimate(obj,varargin)
 % More About
 % ------------
 %
-% - ESTIMATE is the same as GENERIC_SWITCH/ESTIMATE except for options that
+% - ESTIMATE is the same as GENERIC/ESTIMATE except for options that
 % only apply to dsge or rise models. Those options are:
 %   - **estim_priors** [{[]}|struct]: This provides an alternative to
 %   setting priors inside the rise/dsge model file. Each field of the
 %   structure must be the name of an estimated parameter. Each field will
 %   hold a cell array whose structure is described in help
-%   RISE_GENERIC/setup_priors.
+%   GENERIC/setup_priors.
 %
-% See also: GENERIC_SWITCH/ESTIMATE, GENERIC_SWITCH/SETUP_PRIORS
+% See also: GENERIC/ESTIMATE, GENERIC/SETUP_PRIORS
 
 if isempty(obj)
     
