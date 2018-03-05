@@ -65,7 +65,7 @@ if nargin==0||isempty(markov_chains)
     
 end
 
-% syntax is coef(eqtn,vname,lag)
+% syntax is alag(eqtn,vname)
 %-------------------------------
 lin_restr={
     % first equation or "FFR" equation

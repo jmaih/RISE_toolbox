@@ -30,6 +30,6 @@ function sum_aij=dirichlet_sum_weights(h)
 %
 % See also: 
 
-sum_aij=1*(h-1);
+sum_aij=1; % sum_aij=1*(h-1);
 
 end

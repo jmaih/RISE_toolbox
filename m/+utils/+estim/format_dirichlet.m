@@ -81,9 +81,6 @@ d(last_id).n_1=h-1;
 
 d(last_id).names=pnames;
 
-% Un-normalized weight of the diagonal term.
-d(last_id).s=utils.distrib.dirichlet_sum_weights(h);
-
 if ~isempty(estim_names)
     % where the estimates will be pushed
     loc=locate_variables(pnames,estim_names);
@@ -91,7 +88,7 @@ if ~isempty(estim_names)
     d(last_id).location=loc;
     
     shortcut_d(last_id)=utils.distrib.dirichlet_shortcuts(d(last_id).a,...
-        d(last_id).location,[],[],d(last_id).s);
+        d(last_id).location,[],[]);
     
 end
 
@@ -100,7 +97,7 @@ end
 function [d,newd]=template()
 
 d=struct('a',{},'b',{},'moments',{},'n_1',{},...
-    'pointers',{},'location',{},'names',{},'s',{});
+    'pointers',{},'location',{},'names',{});
 
 newd=utils.distrib.dirichlet_shortcuts();
 

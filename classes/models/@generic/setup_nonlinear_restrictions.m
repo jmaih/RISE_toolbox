@@ -22,11 +22,6 @@ function obj=setup_nonlinear_restrictions(obj)
 %   - 'f(p1,p2,...,pn)<h(p1,p2,...,pn)' 
 %   - 'pj=h(p1,p2,...,pn)' 
 %
-% - In some cases, the explicit name for some parameter pj is not known in
-% advance. In that case the name has to be formed explicitly as follows:
-%   - pj=coef(eqtn,vbl,lag)
-%   - pj=coef(eqtn,vbl,lag,chain,state)
-%
 % - In the statements above,
 %   - eqtn [digits|variable name]
 %   - vbl [digits|variable name]

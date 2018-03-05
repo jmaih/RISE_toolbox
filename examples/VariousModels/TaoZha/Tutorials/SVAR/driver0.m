@@ -30,7 +30,7 @@ sv0=svar(varlist,exog,nlags,constant);
 
 %% set up restrictions
 
-% syntax is coef(eqtn,vname,lag)
+% syntax is alag(eqtn,vname)
 %-------------------------------
 lin_restr={
     % first equation or "FFR" equation

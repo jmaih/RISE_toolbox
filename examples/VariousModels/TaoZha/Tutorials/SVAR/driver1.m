@@ -46,7 +46,7 @@ sv0=svar(varlist,exog,nlags,constant,panel,markov_chains);
 
 %% set up restrictions
 
-% syntax is coef(eqtn,vname,lag,chain_name,state)
+% syntax is alag(eqtn,vname,chain_name,state)
 %------------------------------------------------
 lin_restr=cell(0,1);
 nonlin_restr=cell(0,1);

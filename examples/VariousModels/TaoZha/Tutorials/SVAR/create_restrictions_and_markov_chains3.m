@@ -81,7 +81,7 @@ markov_chains(last+1)=struct('name','mpcoef',...
 switch_prior.mpcoef_tp_1_2={0.5,0.1,0.3,'beta'};
 switch_prior.mpcoef_tp_2_1={0.5,0.1,0.3,'beta'};
 
-% syntax is coef(eqtn,vname,lag,chain_name,state)
+% syntax is alag(eqtn,vname,chain_name,state)
 %------------------------------------------------
 lin_restr=cell(0,1);
 

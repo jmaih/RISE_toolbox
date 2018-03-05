@@ -221,7 +221,7 @@ obj.estimation.priors=priors;
         end
         
         new_dirichlet(end+1)=utils.distrib.dirichlet_shortcuts(d1.a,...
-            d1.location,[],[],d1.s);
+            d1.location,[],[]);
         
         dirichlet=dirichlet(2:end);
     

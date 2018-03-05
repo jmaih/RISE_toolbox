@@ -79,7 +79,7 @@ markov_chains(end+1)=struct('name','syncoef',...
 switch_prior.syncoef_tp_1_2={0.5,0.1,0.3,'beta'};
 switch_prior.syncoef_tp_2_1={0.5,0.1,0.3,'beta'};
 
-% syntax is coef(eqtn,vname,lag,chain_name,state)
+% syntax is alag(eqtn,vname,chain_name,state)
 %------------------------------------------------
 lin_restr=cell(0,1);
 nonlin_restr=cell(0,1);
