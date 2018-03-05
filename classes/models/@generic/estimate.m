@@ -64,9 +64,7 @@ function obj=estimate(obj,varargin)
 %   exogeneity or to impose other forms of linear restrictions. When not
 %   empty, **estim_linear_restrictions** must be a 2-column cell:
 %   - Each row of the first column represents a particular linear
-%   combination of the estimated parameters. Those linear combinations are
-%   constructed using the **coef** class. Check help for coef.coef for more
-%   details.
+%   combination of the estimated parameters. 
 %   - Each row of the second column holds the value of the linear
 %   combination.
 %
@@ -351,10 +349,14 @@ ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
 %---------------------------------------------
 linear_restricts=obj(1).linear_restrictions_data;
 
-x1 = linear_restricts.a_func(x1);
-
-x0 = linear_restricts.a_func(x0); %#ok<NASGU>
+% x1 = linear_restricts.a_func(x1);
+% 
+% x0 = linear_restricts.a_func(x0); %#ok<NASGU>
 % H=linear_restricts.a_func(H,true);
+
+x1=unstransform_parameters(obj(1),x1);
+
+x0=unstransform_parameters(obj(1),x0); %#ok<NASGU>
 
 numberOfActiveInequalities=numel(viol);
 

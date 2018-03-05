@@ -127,9 +127,27 @@ do_covariance()
     end
 
     function do_initial_conditions()
-        % Apply possible linear restrictions
-        %-----------------------------------
-        x0=linear_restricts.a2tilde_func(x0);
+        % Here the dirichlet are unweighted i.e. xj-->xj*s. In order to
+        % remain consistent with linear restrictions, the coefficients on
+        % the dirichlet have to be divided by s.
+        if ~isempty(x0)
+            % transform the dirichlet
+            %------------------------
+            for id=1:numel(obj.estim_priors_data.estim_dirichlet)
+                
+                di=obj.estim_priors_data.estim_dirichlet(id);
+                
+                pos=di.location;
+                
+                x0(pos)=utils.distrib.dirichlet_transform(x0(pos),...
+                    di.sum_aij);
+                
+            end
+            % Apply possible linear restrictions
+            %-----------------------------------
+            x0=linear_restricts.a2tilde_func(x0);
+            
+        end
         
     end
 

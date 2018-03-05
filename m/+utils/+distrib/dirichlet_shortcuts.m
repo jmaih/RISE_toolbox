@@ -1,4 +1,4 @@
-function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
+function d=dirichlet_shortcuts(a,location,lpdfn,rndfn,sum_aij)
 % dirichlet_shortcuts -- memoizer for some dirichlet routines
 %
 % Syntax
@@ -10,6 +10,8 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 %   d=dirichlet_shortcuts(a,location)
 %
 %   d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
+%
+%   d=dirichlet_shortcuts(a,location,lpdfn,rndfn,sum_aij)
 %
 % Inputs
 % -------
@@ -25,6 +27,8 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 % - **rndfn** [function_handle]: function handle for random draws of the
 % dirichlet distribution
 %
+% - **sum_aij** [numeric]: sum of the weights including the diagonal term
+%
 % Outputs
 % --------
 %
@@ -35,6 +39,7 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 %   draws of the dirichlet distribution
 %   - **location** [vector]: location of the parameters of interest in the
 %   vector of estimated parameters
+%   - **sum_aij** [numeric]: sum of the weights including the diagonal term
 %
 % More About
 % ------------
@@ -46,15 +51,31 @@ function d=dirichlet_shortcuts(a,location,lpdfn,rndfn)
 
 if nargin==0
     
-    d=struct('lpdfn',{},'rndfn',{},'location',{});
+    d=struct('lpdfn',{},'rndfn',{},'location',{},'sum_aij',{});
     
 else
             
+    if nargin<5
+        
+        sum_aij=[];
+        
         if nargin<4
             
             rndfn=[];
             
         end
+        
+    end
+		
+    if isempty(sum_aij)
+	
+        h=numel(a); 
+        % Get the un-normalized weight of the diagonal term. But here we
+        % use the default settings for p_ii_min and a_ij_max
+		
+        sum_aij=utils.distrib.dirichlet_sum_weights(h);
+		
+    end
                 
     if isempty(rndfn)
         
@@ -62,7 +83,8 @@ else
         
     end
     
-    d=struct('lpdfn',@logdensity,'rndfn',@dirich_draw,'location',location);
+    d=struct('lpdfn',@logdensity,'rndfn',@dirich_draw,'location',location,...
+        'sum_aij',sum_aij);
     
 end
 
