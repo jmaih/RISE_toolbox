@@ -28,10 +28,15 @@ function obj=setup_restrictions(obj)
 % RISE_GENERIC.SETUP_GENERAL_RESTRICTIONS 
 
 if ~obj.restrictions_are_absorbed
+    
     obj=setup_linear_restrictions(obj);
+    
     obj=setup_nonlinear_restrictions(obj);
+    
     obj=setup_general_restrictions(obj);
+    
     obj.restrictions_are_absorbed=true;
+    
 end
 
 end

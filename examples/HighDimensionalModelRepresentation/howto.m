@@ -1,5 +1,5 @@
 %% housekeeping
-clear all
+clearvars
 close all
 clc
 
