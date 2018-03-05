@@ -130,39 +130,43 @@ self.estim_.estim_param=untransform(out);
 
     function varargout=engine(params0)
         
+        Lpost=uminus(1e+8); Lprior=0; Incr=[];
+        
         params1=untransform(params0);
         
-        M=vartools.estim2states(params1,theMap,mapping.nparams,...
-            mapping.nregimes);
-        
-        pen=utils.estim.penalize_violations2(M,nonlinres,penalty);
-        
-        [LogLik,Incr,retcode]=vartools.likelihood(M,mapping,...
-            YY0,XX0,is_time_varying_trans_prob,...
-            markov_chains);
-        
-        Lpost=uminus(1e+8);
+        % Evaluate prior first and only evaluate the likelihood if prior
+        % does not fail.
+        [Lprior,retcode]=utils.estim.prior_evaluation_engine(epdata,...
+            params1,Lprior);
         
         if ~retcode
             
-            Lprior=0;
+            M=vartools.estim2states(params1,theMap,mapping.nparams,...
+                mapping.nregimes);
             
-            if T0
-                
-                LogLik0=sum(Incr(1:end-T0));
-                
-                Lprior=LogLik-LogLik0;
-                
-                LogLik=LogLik0;
-                
-            end
+            pen=utils.estim.penalize_violations2(M,nonlinres,penalty);
             
-            [Lprior,retcode]=utils.estim.prior_evaluation_engine(epdata,...
-                params1,Lprior);
+            [LogLik,Incr,retcode]=vartools.likelihood(M,mapping,...
+                YY0,XX0,is_time_varying_trans_prob,...
+                markov_chains);
             
             if ~retcode
                 
-                Lpost=LogLik+Lprior+pen;
+                if T0
+                    
+                    LogLik0=sum(Incr(1:end-T0));
+                    
+                    Lprior=Lprior+(LogLik-LogLik0);
+                    
+                    LogLik=LogLik0;
+                    
+                end
+                
+                if ~retcode
+                    
+                    Lpost=LogLik+Lprior+pen;
+                    
+                end
                 
             end
             
