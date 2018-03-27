@@ -31,55 +31,92 @@ estim_names=get_estimated_parameter_names(obj);
 LR=obj.options.estim_linear_restrictions;
 
 a_func=@(x,~)x;
+
 a2tilde_func=@(x,~)x;
 
 nparam=numel(estim_names);
+
 na2=nparam;
+
 R1i_r_0=0;
+
 R1i_R2_I2=speye(nparam);
+
 ievec=1:nparam;
+
 if ~isempty(LR)
+    
     lhs=[LR{:,1}];
+    
     lhs=lhs(:);
+    
     b=[LR{:,2}];
+    
     b=b(:);
+    
     [A,b]=linear_restrictions(lhs,b,obj,estim_names);
     % remove the rows with no restrictions
     bad_rows=~any(A,2);
+    
     if any(bad_rows)
+        
         disp(find(bad_rows))
+        
         if any(b(bad_rows))
+            
             error('no-restrictions rows with non-zero rhs')
+        
         end
+        
         warning('The no-restriction rows above are removed')
+        
         A=A(~bad_rows,:);
+        
         b=b(~bad_rows);
+        
     end
+    
     nrest=size(A,1);
+    
     if rank(full(A))~=nrest
+        
         error('Linear restriction matrix R (R*a=r) not of full rank. Probably some redundant restrictions')
+    
     end
+    
     [Q,R,evec]=qr(A,'vector');
+    
     ievec=evec;
+    
     ievec(evec)=1:nparam;
     
     r=Q'*b;
     % partitioning
     %-------------
     na1=nrest;
+    
     na2=nparam-na1;
+    
     R1=R(:,1:nrest);
+    
     R2=R(:,nrest+1:end);
+    
     if any(r)
+        
         R1i_r_0=[R1\r;zeros(na2,1)];
+        
     end
+    
     R1i_R2_I2=[-R1\R2;eye(na2)];
     
     % finally memoize everything
     %---------------------------
     a_func=@get_alpha;
+    
     a2tilde_func=@get_alpha2_tilde;
+    
 end
+
 obj.linear_restrictions_data=struct('R1i_r_0',R1i_r_0,...
     'R1i_R2_I2',R1i_R2_I2,...
     'ievec',ievec,...
@@ -89,40 +126,65 @@ obj.linear_restrictions_data=struct('R1i_r_0',R1i_r_0,...
     'npar_short',na2);
 
     function a=get_alpha(a2tilde,covflag)
+        
         if nargin<2
+            
             covflag=false;
+            
         end
         % get atilde first then re-order it
         %----------------------------------
         if covflag
             % the covariance may have several pages...
             npages=size(a2tilde,3);
+            
             nn=numel(ievec);
+            
             a=nan(nn,nn,npages);
+            
             for ii=1:npages
+                
                 atilde=R1i_R2_I2*a2tilde(:,:,ii)*R1i_R2_I2';
+                
                 a(:,:,ii)=atilde(ievec,ievec);
+                
             end
+            
         else
+            
             atilde=R1i_r_0+R1i_R2_I2*a2tilde;
+            
             a=atilde(ievec);
+            
         end
+        
     end
 
     function a2tilde=get_alpha2_tilde(a,covflag)
+        
         if nargin<2
+            
             covflag=false;
+            
         end
         % get atilde first then extract the relevant part
         %------------------------------------------------
         if covflag
+            
             atilde=a(evec,evec);
+            
             a2tilde=atilde(na1+1:end,na1+1:end);
+            
         else
+            
             atilde=a(evec);
+            
             a2tilde=atilde(na1+1:end);
+            
         end
+        
     end
+
 end
 
 % function [obj,linear_restrictions]=apply_zero_restrictions(obj)
