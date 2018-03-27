@@ -174,8 +174,12 @@ end
 function out=functionalize(memo,out) %#ok<INUSL>
 
 for ii=1:numel(out)
-
-    out{ii}=eval(out{ii});% out{ii}=str2func(out{ii});
+    
+    if ischar(out{ii})
+        
+        out{ii}=eval(out{ii});% out{ii}=str2func(out{ii});
+        
+    end
     
 end
         
