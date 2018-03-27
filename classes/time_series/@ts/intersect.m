@@ -57,8 +57,14 @@ vname1=this1.varnames;
 
 vname2=this2.varnames;
 
-this1=ts(C,this1.data(I1,:,:),vname1);
+descr1=this1.description;
 
-this2=ts(C,this2.data(I2,:,:),vname2);
+descr2=this2.description;
+
+% if one series has nan and the other does not it is important to trail the
+% nans
+this1=ts(C,this1.data(I1,:,:),vname1,descr1,true);
+
+this2=ts(C,this2.data(I2,:,:),vname2,descr2,true);
 
 end
