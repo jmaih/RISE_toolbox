@@ -8,6 +8,8 @@ function [mc,switch_prior,restr]=build_model(m,vnames,options)
 % equations identified by variable names.
 % - vnames [cellstr]: list of the endogenous variables ordered according
 % to their position in the VAR
+% - options [struct|{}]: default options for beta and dirichlet
+% distributions
 % 
 % the outputs are
 % - mc [struct]: structure containing information about the markov chains
