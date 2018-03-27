@@ -115,9 +115,17 @@ end
             
         end
         
-        check_var_priors(v.var)
+        check_var_priors(v)
         
-        function check_var_priors(vprior)
+        function check_var_priors(v)
+            
+            if ~isfield(v,'var')
+                
+                return
+                
+            end
+            
+            vprior=v.var;
             
             fd=fieldnames(vprior);
             

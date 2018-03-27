@@ -87,11 +87,19 @@ penalty=1000;
 
 [Dummies,epdata]=load_priors();
 
-XX0=[self.estim_.X,Dummies.X];
-                
-YY0=[self.estim_.Y,Dummies.Y];
-                
+XX0=self.estim_.X;
+
+YY0=self.estim_.Y;
+
 T0=Dummies.T;
+
+if T0
+    
+    XX0=[XX0,Dummies.X];
+    
+    YY0=[YY0,Dummies.Y];
+    
+end
 
 is_time_varying_trans_prob=self.is_time_varying_trans_prob;
 
