@@ -36,30 +36,43 @@ function varargout=permute_tensor(A1_Ak,matsizes,varargin)
 persistent A1_Ak0 orig_order nmat rows_prod cols_prod
 
 if isempty(A1_Ak)
+    
     A1_Ak=A1_Ak0;
+    
 else
+    
     nmat=size(matsizes,1);
     
     rows_sizes=matsizes(:,1).';
+    
     rows_prod=prod(rows_sizes);
+    
     rowsizflip=fliplr(rows_sizes);
     
     cols_sizes=matsizes(:,2).';
+    
     cols_prod=prod(cols_sizes);
+    
     colsizflip=fliplr(cols_sizes);
     
     orig_order=fliplr(1:nmat);% nmat:-1:1
     
     A1_Ak=reshape(full(A1_Ak),[rowsizflip,colsizflip]);
+    
     A1_Ak0=A1_Ak;
+    
 end
 
 varargout=varargin;
 
 for iarg=1:length(varargin)
+    
     new_order=fliplr(varargin{iarg}(:).');
+    
     prows=orig_order(new_order);
+    
     pcols=prows+nmat;
+    
     varargout{iarg}=sparse(...
         reshape(...
         permute(A1_Ak,[prows,pcols]),...

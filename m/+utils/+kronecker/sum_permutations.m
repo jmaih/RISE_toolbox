@@ -53,43 +53,73 @@ default_options={
     };
 
 if isempty(options)
+    
     options=cell2struct(default_options(:,2),default_options(:,1),1);
+    
 else
+    
     if ~isstruct(options)
+        
         error('options must be a structure or empty')
+        
     end
+    
     options=parse_arguments(default_options,options);
+    
 end
 
 if length(varargin)==1 && iscell(varargin{1})
+    
     orders=varargin{1};
+    
 else
+    
     orders=varargin;
+    
 end
 
 P=ABCD;
+
 if options.skip_first
+    
     P=0*P;
+    
 end
 
 if options.use_old_algo
+    
     if options.use_grid
+        
         [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:},'grid');
+        
     else
+        
         [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:});
+        
     end
     
     for ii=1:size(irows,2)
+        
         P=P+ABCD(irows(:,ii),jcols(:,ii));
+        
     end
+    
 else
+    
     for ii=1:numel(orders)
+        
         P=P+utils.kronecker.permute_tensor(ABCD,matsizes,orders{ii});
+        
         if ii==1
+            
             ABCD=[];
+            
             matsizes=[];
+            
         end
+        
     end
+    
 end
 
 end
