@@ -33,7 +33,9 @@ function [lia,locb] = ismember(A,B)
 % See also:
 
 if size(A,2)~=size(B,2)
+    
     error('matrices should have the same number of columns')
+
 end
 
 % Duplicates within the sets are eliminated
@@ -46,7 +48,9 @@ end
 
 % Find matching entries
 d = sortuAuB(1:end-1,:)==sortuAuB(2:end,:);     % d indicates matching entries
+
 d = all(d,2);                                   % Finds the index of matching entries
+
 ndx1 = IndSortuAuB(d);                          % NDX1 are locations of repeats in C
 
 szuA = size(uA,1);
@@ -58,8 +62,11 @@ szuA = size(uA,1);
 locb(lia) = idx(locb(lia));
 
 d = find(d);
+
 newd = d(locb(lia));                    % NEWD is D for non-unique A
+
 where = ib(IndSortuAuB(newd+1)-szuA);   % Index values of uB through UNIQUE
+
 locb(lia) = where;                      % Return first or last occurrence of A within B
 
 end

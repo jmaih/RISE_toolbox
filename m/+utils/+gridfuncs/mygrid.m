@@ -40,7 +40,9 @@ function [Regimes,unique_regimes]=mygrid(v,vectorized)
 %
 % See also:
 if nargin<2
+    
     vectorized=true;
+    
 end
 
 n=numel(v);
@@ -48,7 +50,9 @@ n=numel(v);
 Regimes=[]; % first to v(1)th interval
 
 for p=1:n
+    
     Regimes=utils.gridfuncs.build_grid(Regimes,v(p),vectorized);
+    
 end
 
 if nargout>1
@@ -58,6 +62,9 @@ if nargout>1
     test2=Regimes(:,end:-1:1);
     % stamp the decreasing rows
     drow=test2(:,1:end-1)-test2(:,2:end);
+    
     keep=~any(drow<0,2);
+    
     unique_regimes=Regimes(keep,:);
+    
 end
