@@ -154,6 +154,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % evaluation of the derivatives, leads are evaluated at the steady state of
 % the future regime
 %
+% - **solve_derivatives_only** [true|{false}]: if true, the derivatives are
+% computed but the model is not solved. The derivatives can be collected in
+% the third output argument of the function.
+%
 % - **steady_state_file** [char|function_handle|{''}]:
 %
 % - **steady_state_use_steady_state_model** [false|{true}]:
@@ -318,6 +322,12 @@ retcode=solve_zeroth_order();
 if ~retcode
     
     [structural_matrices,retcode]=dsge_tools.evaluate_all_derivatives(obj,structural_matrices);
+    
+    if obj.options.solve_derivatives_only
+        
+        return
+        
+    end
     
 end
 
@@ -709,12 +719,19 @@ end
 end
 
 function do_it=do_occbin(occbin,nregs)
+
 do_it=@(x)true;
+
 if ~isempty(occbin)
+    
     if ~ismember(occbin,1:nregs)
+        
         error('solve_occbin cannot exceed the number of regimes')
+    
     end
+    
     do_it=@(x)x==occbin;
+    
 end
 
 end
@@ -827,6 +844,9 @@ algotype=@(x)functype(x)||iscell(x);
         
         'solve_reuse_solution',false,@(x)islogical(x),...
         'solve_reuse_solution must be true or false'
+        
+        'solve_derivatives_only',false,@(x)islogical(x),...
+        'solve_derivatives_only must be true or false'
         };
         
 end

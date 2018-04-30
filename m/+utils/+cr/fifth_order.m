@@ -72,7 +72,9 @@ function res=fifth_order(dvvvvv,dvvvv,dvvv,dvv,dv,vzzzzz,vzzzz,vzzz,vzz,vz,optio
 % See also:
 
 if nargin<11
+    
     options=[];
+    
 end
 
 default_options={
@@ -81,150 +83,215 @@ default_options={
     };
 
 if isempty(options)
+    
     options=cell2struct(default_options(:,2),default_options(:,1),1);
+    
 else
+    
     if ~isstruct(options)
+        
         error('options must be a structure or empty')
+        
     end
+    
     options=parse_arguments(default_options,options);
+    
 end
 
 nz=size(vz,2);
+
 nd=size(dv,1);
 
 template=sparse(nd,nz^5);
+
 res=template;
 
 is_computable=@utils.cr.is_computable;
 
-is_dv=is_computable(dv);
-is_dvv=false;
-is_dvvv=false;
-is_dvvvv=false;
-is_dvvvvv=false;
+res=res+dvvv_vz_vzz_vzz();
 
-if is_dv
-    is_dvv=is_computable(dvv);
-    if is_dvv
-        is_dvvv=is_computable(dvvv);
-        if is_dvvv
-            is_dvvvv=is_computable(dvvvv);
-            if is_dvvvv
-                is_dvvvvv=is_computable(dvvvvv);
-            end
-        end
-    end
-    if is_computable(vz)
-        if is_computable(vzz)
-            res=res+dvvv_vz_vzz_vzz();
-            res=res+dvvvv_vz_vz_vz_vzz();
-            if is_computable(vzzz)
-                res=res+dvvv_vz_vz_vzzz();
-                res=res+dvv_vzz_vzzz();
-                if is_computable(vzzzz)
-                    res=res+dvv_vz_vzzzz();
-                    if is_computable(vzzzzz)
-                        res=res+dv*vzzzzz;
-                    end
-                end
-            end
-        end
-        res=res+dvvvvv_vz_vz_vz_vz_vz();
-    end    
+res=res+dvvvv_vz_vz_vz_vzz();
+
+res=res+dvvv_vz_vz_vzzz();
+
+res=res+dvv_vzz_vzzz();
+
+res=res+dvv_vz_vzzzz();
+
+if is_computable(dv,vzzzzz)
+    
+    res=res+dv*vzzzzz;
+    
 end
 
+res=res+dvvvvv_vz_vz_vz_vz_vz();
+
     function res=dvv_vzz_vzzz()
+        
         res=template;
-        if is_dvv
+        
+        if is_computable(dvv,vzz,vzzz)
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(...
                     dvv,vzz,vzzz);
+                
             else
+                
                 res=dvv*kron(vzz,vzzz);
+                
             end
             
             if options.multiply
+                
                 res=res*cr.omega(nz,9);
+                
             else
+                
                 res=utils.cr.dv_vz_omega(res,nz,9);
+                
             end
+            
         end
+        
     end
 
     function res=dvv_vz_vzzzz()
+        
         res=template;
-        if is_dvv
+        
+        if is_computable(dvv,vz,vzzzz)
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(...
                     dvv,vz,vzzzz);
+                
             else
+                
                 res=dvv*kron(vz,vzzzz);
+                
             end
             
             if options.multiply
+                
                 res=res*cr.omega(nz,8);
+                
             else
+                
                 res=utils.cr.dv_vz_omega(res,nz,8);
+                
             end
+            
         end
+        
     end
 
     function res=dvvv_vz_vzz_vzz()
+        
         res=template;
-        if is_dvvv
+        
+        if is_computable(dvvv,vz,vzz,vzz)
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(...
                     dvvv,vz,vzz,vzz);
+                
             else
+                
                 res=dvvv*kronall(vz,vzz,vzz);
+                
             end
+            
             res=res*utils.cr.omega(nz,7);
+            
         end
+        
     end
 
     function res=dvvv_vz_vz_vzzz()
+        
         res=template;
-        if is_dvvv
+        
+        if is_computable(dvvv,vz,vz,vzzz)
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(...
                     dvvv,vz,vz,vzzz);
+                
             else
+                
                 res=dvvv*kronall(vz,vz,vzzz);
+                
             end
+            
             if options.multiply
+                
                 res=res*cr.omega(nz,6);
+                
             else
+                
                 res=utils.cr.dv_vz_omega(res,nz,6);
+                
             end
+            
         end
+        
     end
 
     function res=dvvvv_vz_vz_vz_vzz()
+        
         res=template;
-        if is_dvvvv
+        
+        if is_computable(dvvvv,vz,vz,vz,vzz)
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(...
                     dvvvv,vz,vz,vz,vzz);
+                
             else
+                
                 res=dvvvv*kronall(vz,vz,vz,vzz);
+                
             end
+            
             if options.multiply
+                
                 res=res*cr.omega(nz,5);
+                
             else
+                
                 res=utils.cr.dv_vz_omega(res,nz,5);
+                
             end
+            
         end
+        
     end
 
     function res=dvvvvv_vz_vz_vz_vz_vz()
+        
         res=template;
-        if is_dvvvvv
+        
+        if is_computable(dvvvvv,vz)
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(...
                     dvvvvv,vz,vz,vz,vz,vz);
+                
             else
+                
                 res=dvvvvv*utils.kronecker.kronall(vz,vz,vz,vz,vz);
+                
             end
+            
         end
+        
     end
+
 end

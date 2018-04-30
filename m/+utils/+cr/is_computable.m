@@ -30,12 +30,19 @@ function flag=is_computable(varargin)
 % See also:
 
 flag=true;
+
 ivar=0;
+
 nargs=length(varargin);
+
 while flag && ivar < nargs
+    
     ivar=ivar+1;
+    
     x=varargin{ivar};
+    
     flag=~isempty(x) && any(x(:)~=0);
+    
 end
 
 end

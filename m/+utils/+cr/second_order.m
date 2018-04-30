@@ -48,7 +48,9 @@ function res=second_order(dvv,dv,vzz,vz,options)
 % See also:
 
 if nargin<5
+    
     options=[];
+    
 end
 
 default_options={
@@ -57,44 +59,71 @@ default_options={
     };
 
 if isempty(options)
+    
     options=cell2struct(default_options(:,2),default_options(:,1),1);
+    
 else
+    
     if ~isstruct(options)
+        
         error('options must be a structure or empty')
+        
     end
+    
     options=parse_arguments(default_options,options);
+    
 end
 
 nz=size(vz,2);
+
 nd=size(dv,1);
 
 template=sparse(nd,nz^2);
+
 res=template;
 
 is_computable=@utils.cr.is_computable;
 
 is_dv=is_computable(dv);
+
 is_dvv=false;
 
 if is_dv
+    
     is_dvv=is_computable(dvv);
+    
     if is_computable(vz)
+        
         res=res+dvv_vz_vz();
+        
         if is_computable(vzz)
+            
             res=res+dv*vzz;
+            
         end
+        
     end
+    
 end
 
     function res=dvv_vz_vz()
+        
         res=template;
+        
         if is_dvv
+            
             if options.large
+                
                 res=utils.kronecker.A_times_kron_Q1_Qk(dvv,vz,vz);
+                
             else
+                
                 res=dvv*kron(vz,vz);
+                
             end
+            
         end
+        
     end
 
 end

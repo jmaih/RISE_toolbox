@@ -183,39 +183,73 @@ if ~isempty(solve_function_mode)
 end
 
     function this=swap_routines(this)
+        
         routines_names=fieldnames(this.online_routines);
+        
         routines_names=setdiff(routines_names,{'symbolic','likelihood'});
+        
         switch solve_function_mode
+        
             case {'explicit','amateur'}
+            
                 this.routines=this.online_routines;
+            
             case {'vectorized','professional'}
+            
                 vectorize_routines()
+            
             case 'disc'
+            
                 write_routines_to_disk();
+            
             otherwise
+                
         end
+        
         function vectorize_routines()
+        
             for irout=1:numel(routines_names)
+            
                 r_name=routines_names{irout};
+                
                 this.routines.(r_name)=utils.code.code2vector(this.online_routines.(r_name));
+            
             end
+            
         end
+        
         function write_routines_to_disk()
+        
             MainFolder=this.options.results_folder;
+            
             routines_dir=[MainFolder,filesep,'routines'];
+            
             for irout=1:numel(routines_names)
+            
                 r_name=routines_names{irout};
+                
                 if strcmp(r_name,'planner_osr_support')
+                
                     continue
+                
                 end
+                
                 fname=[r_name,'_',solve_function_mode,'__'];
+                
                 rcode=utils.code.code2file(this.online_routines.(r_name),fname);
+                
                 if ~rcode
+                
                     movefile([fname,'.m'],routines_dir,'f')
+                    
                     this.routines.(r_name)=utils.code.func2fhandle([routines_dir,filesep,fname]);
+                
                 end
+                
             end
+            
         end
+        
     end
 
     function this=set_log_approx_vars(this)

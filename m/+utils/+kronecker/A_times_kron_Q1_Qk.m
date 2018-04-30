@@ -39,24 +39,43 @@ function C=A_times_kron_Q1_Qk(A,varargin)
 % See also: 
 
 k=length(varargin);
+
 rq=zeros(1,k);
+
 cq=rq;
+
 for iq=1:k
+    
     [rq(iq),cq(iq)]=size(varargin{iq});
+
 end
+
 [~,ca]=size(A);
 
 for iq=1:k
+    
     Qi=varargin{iq};
+    
     if iq==1
+        
         r0=ca/rq(1);
+        
         C=utils.kronecker.A_times_kron_B_I(A,Qi,r0);
+    
     elseif iq==k
+        
         rk=prod(cq(1:k-1));
+        
         C=utils.kronecker.A_times_kron_I_B(C,Qi,rk);
+    
     else
+        
         r_right=prod(rq(iq+1:end));
+        
         r_left=size(C,2)/(rq(iq)*r_right);
+        
         C=utils.kronecker.A_times_kron_I_B_I(C,Qi,r_left,r_right);
+    
     end
+    
 end
