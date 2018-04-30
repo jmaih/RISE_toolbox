@@ -207,7 +207,7 @@ db=format_output();
             d=reshape(data(:,1,:,:),new_N,K,npages);
             % d=squeeze(data(:,1,:,:)); does not work well if K=1
             
-            prototype=ts(start_date,d,replic_list,false,true);
+            prototype=ts(start_date,d,replic_list,'',true);
             
             for ivar=1:numel(vnames)
                 
