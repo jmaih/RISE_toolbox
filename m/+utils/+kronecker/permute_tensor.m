@@ -65,6 +65,8 @@ end
 
 varargout=varargin;
 
+myoption=3;
+
 for iarg=1:length(varargin)
     
     new_order=fliplr(varargin{iarg}(:).');
@@ -73,11 +75,26 @@ for iarg=1:length(varargin)
     
     pcols=prows+nmat;
     
-    varargout{iarg}=sparse(...
-        reshape(...
-        permute(A1_Ak,[prows,pcols]),...
-        rows_prod,cols_prod)...
-        );
+    p_A1_Ak=permute(A1_Ak,[prows,pcols]);
+    
+    p_A1_Ak=reshape(p_A1_Ak,rows_prod,cols_prod);
+    
+    if myoption==1
+        
+        varargout{iarg}=p_A1_Ak;
+        
+    elseif myoption==2
+        
+        varargout{iarg}=sparse(p_A1_Ak);
+        
+    elseif myoption==3
+        
+        [ii,jj,ss]=find(p_A1_Ak);
+        
+        varargout{iarg}=sparse(ii,jj,ss,rows_prod,cols_prod,numel(ss));
+        
+    end
+    
 end
 
 end
