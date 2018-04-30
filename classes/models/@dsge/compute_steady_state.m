@@ -1135,7 +1135,8 @@ if ~isempty(sscode) && sscode.is_fixed_steady_state
     
 end
 
-if isempty(obj.steady_state_2_blocks_optimization)
+if isempty(obj.steady_state_2_blocks_optimization)||...
+        obj.warrant_setup_change
     
     % optimization setup
     %--------------------
