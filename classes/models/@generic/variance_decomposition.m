@@ -315,7 +315,7 @@ d={
 
     'vardec_theoretical',true,@(x)islogical(x),'vardec_theoretical must be a logical'
     
-    'vardec_ergodic',true,@(x)islogical(x),'vardec_ergodic must be a logical'
+    'vardec_ergodic',false,@(x)islogical(x),'vardec_ergodic must be a logical'
     };
 
 end
