@@ -25,23 +25,23 @@ and estimation of
 Features of the toolbox
 -----------------------------------
 
-`*` - Symbolic, automatic and numerical derivatives
+* Symbolic, automatic and numerical derivatives
 
-`*` - Time Series
+* Time Series
 
-`*` - Maximum Likelihood and Bayesian estimation
+* Maximum Likelihood and Bayesian estimation
 
-`*` - Derivative-free optimization algorithms
+* Derivative-free optimization algorithms
 
-`*` - Forecasting and conditional forecasting
+* Forecasting and conditional forecasting
 
-`*` - DSGE-VAR modeling
+* DSGE-VAR modeling
 
-`*` - Integrated SVAR modeling with short, long and mixed restrictions
+* Integrated SVAR modeling with short, long and mixed restrictions
 
-`*` - High Dimensional Model Representation and Monte Carlo Filtering
+* High Dimensional Model Representation and Monte Carlo Filtering
 
-`*` - Reporting	system
+* Reporting	system
 
 Installation
 -----
