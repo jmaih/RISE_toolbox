@@ -1,23 +1,19 @@
 function h=boxplot(varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 %  boxplot Displays box plots of multiple time series in a frame.

@@ -1,23 +1,19 @@
 function [f,xx]=empirical_cdf(x,lb,ub,N)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 if nargin<4

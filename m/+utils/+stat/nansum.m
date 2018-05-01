@@ -1,23 +1,19 @@
 function y = nansum(x,dim)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 x(isnan(x)) = 0;
 if nargin == 1 

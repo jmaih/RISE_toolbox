@@ -1,29 +1,25 @@
 function A=symmetrize(A)
 % symmetrize - makes a square matrix symmetric
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   A=symmetrize(A)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **A** [square matrix]
+%    - **A** [square matrix]
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **A** [square matrix]
+%    - **A** [square matrix]
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 A=.5*(A+A.');
 end

@@ -1,23 +1,19 @@
 function model=load_mode(model)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % reload the start values for the estimated parameters from a structure.
 

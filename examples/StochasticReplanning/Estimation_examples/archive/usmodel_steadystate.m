@@ -1,87 +1,83 @@
 function [y,newp,retcode]=usmodel_steadystate(obj,y,p,d,id) %#ok<INUSL>
 % sstate_model -- shows the way of writing a RISE steady state file
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [y,newp,retcode]=sstate_model(obj,y,p,d,id)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object (not always needed)
+%    - **obj** [rise|dsge]: model object (not always needed)
 %
-% - **y** [vector]: endo_nbr x 1 vector of initial steady state
+%    - **y** [vector]: endo_nbr x 1 vector of initial steady state
 %
-% - **p** [struct]: parameter structure
+%    - **p** [struct]: parameter structure
 %
-% - **d** [struct]: definitions
+%    - **d** [struct]: definitions
 %
-% - **id** [vector]: location of the variables to calculate
+%    - **id** [vector]: location of the variables to calculate
 %
-% Outputs
-% --------
-% 
-%   CASE 1: one input argument
+% Returns:
+%    :
 %
-% - **y** [cell array]: list of the variables for which the steady state
-% will be calculated within the steady state function
+%      CASE 1: one input argument
 %
-% - **newp** [cell array]: List of the parameters calculated inside the
-% steady state function
+%    - **y** [cell array]: list of the variables for which the steady state
+%    will be calculated within the steady state function
 %
-% - **retcode** [struct]: possible fields are "imposed", "unique", "loop".
-% The default value for all of those is false.
-%   - "imposed": This tells RISE not to check that this is actually solves
-%       the steady state. Hence, RISE will attempt to approximate the model
-%       around the chosen point
-%   - "unique": This tells RISE that the steady state is the same across
-%       all regimes. RISE will call the function only once but instead of
-%       using just any parameter vector, it will use the ergodic mean of
-%       the parameter vector (mean across all regimes).
-%   - "loop": This tells RISE that if the user was given the steady state
-%       values for some of the variables, he would be able to compute the
-%       steady state for the remaining variables. RISE will then exploit
-%       this information to optimize over the variables that the user needs
-%       for computing the steady state.
+%    - **newp** [cell array]: List of the parameters calculated inside the
+%    steady state function
 %
-%   CASE 2: More than one input argument
+%    - **retcode** [struct]: possible fields are "imposed", "unique", "loop".
+%    The default value for all of those is false.
+%      - "imposed": This tells RISE not to check that this is actually solves
+%          the steady state. Hence, RISE will attempt to approximate the model
+%          around the chosen point
+%      - "unique": This tells RISE that the steady state is the same across
+%          all regimes. RISE will call the function only once but instead of
+%          using just any parameter vector, it will use the ergodic mean of
+%          the parameter vector (mean across all regimes).
+%      - "loop": This tells RISE that if the user was given the steady state
+%          values for some of the variables, he would be able to compute the
+%          steady state for the remaining variables. RISE will then exploit
+%          this information to optimize over the variables that the user needs
+%          for computing the steady state.
 %
-% - **y** []: endo_nbr x 1 vector of updated steady state
+%      CASE 2: More than one input argument
 %
-% - **newp** [struct]: structure containing updated parameters if any
+%    - **y** []: endo_nbr x 1 vector of updated steady state
 %
-% - **retcode** [0|number]: return 0 if there are no problems, else return
-%   any number different from 0
+%    - **newp** [struct]: structure containing updated parameters if any
 %
-% More About
-% ------------
+%    - **retcode** [0|number]: return 0 if there are no problems, else return
+%      any number different from 0
 %
-% - If the user knows the steady state, it is always an advantage. If the
-% steady state is computed numerically, we don't know whether it is unique
-% or not. Not that it really matters but... some economists have a strong
-% aversion towards models with multiple equilibria.
+% Note:
 %
-% - If the user does not know the solution for all the variables in the
-% steady state, it is a good idea to take a log-linear approximation for
-% the variables that potentially have a nonzero steady state. Hence the
-% user should give that information to RISE.
+%    - If the user knows the steady state, it is always an advantage. If the
+%    steady state is computed numerically, we don't know whether it is unique
+%    or not. Not that it really matters but... some economists have a strong
+%    aversion towards models with multiple equilibria.
 %
-% - One can potentially improve on the above point by explicit bounds on
-% the variables. But this is not implemented.
+%    - If the user does not know the solution for all the variables in the
+%    steady state, it is a good idea to take a log-linear approximation for
+%    the variables that potentially have a nonzero steady state. Hence the
+%    user should give that information to RISE.
 %
-% - An alternative that potentially avoids taking a loglinearization is to
-% to reset the values proposed by the optimizer whenever they are in a bad
-% region. It is unclear whether this always works.
+%    - One can potentially improve on the above point by explicit bounds on
+%    the variables. But this is not implemented.
 %
-% - So be on the safe side, i.e. don't do like me: compute your steady
-% state analytically.
+%    - An alternative that potentially avoids taking a loglinearization is to
+%    to reset the values proposed by the optimizer whenever they are in a bad
+%    region. It is unclear whether this always works.
 %
-% Examples
-% ---------
+%    - So be on the safe side, i.e. don't do like me: compute your steady
+%    state analytically.
 %
-% See also:
+% Example:
+%
+%    See also:
 
 retcode=0;
 if nargin==1

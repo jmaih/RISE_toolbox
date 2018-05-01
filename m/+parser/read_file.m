@@ -1,23 +1,19 @@
 function RawFile=read_file(FileName)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 RawFile=cell(0,1);

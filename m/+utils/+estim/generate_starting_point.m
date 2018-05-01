@@ -1,23 +1,19 @@
 function [x,f,retcode]=generate_starting_point(objective,max_trials)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % this function attempts to reduce the number of rejection of randomly
 % drawn vectors in the presence of linear or nonlinear restrictions. When

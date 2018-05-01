@@ -1,25 +1,21 @@
 function [loglik,Incr,retcode,Filters]=msre_kalman_cell_real_time(...
-    syst,y_data,U,z,e_data,options)
+syst,y_data,U,z,e_data,options)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 
 % this filter assumes a state space of the form

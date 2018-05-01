@@ -2,34 +2,30 @@ function [equation_blocks,variable_blocks]=block_triangularize(Incidence,do_bloc
 % block_triangularize -- creates blocks of equation-variables so as to
 % permit a recursive solution
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [equation_blocks,variable_blocks]=block_triangularize(Incidence,do_blocks)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **Incidence** [sparse]: Incidence matrix where rows represent equations
-% and columns represent variables.
+%    - **Incidence** [sparse]: Incidence matrix where rows represent equations
+%    and columns represent variables.
 %
-% - **do_blocks** [false|{true}]: triggers the computation of blocks.
+%    - **do_blocks** [false|{true}]: triggers the computation of blocks.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **equation_blocks** [cell array]: blocks of equations IDs
+%    - **equation_blocks** [cell array]: blocks of equations IDs
 %
-% - **variable_blocks** [cell array]: blocks of variables IDs
+%    - **variable_blocks** [cell array]: blocks of variables IDs
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % References
 %-------------

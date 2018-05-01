@@ -1,23 +1,19 @@
 function a=smin(varargin)
 % smin smooth approximation of min(x,0)
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 a=utils.smooth_approximation.smin(varargin{:});
 end

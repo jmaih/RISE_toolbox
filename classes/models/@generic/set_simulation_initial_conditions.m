@@ -1,45 +1,41 @@
 function Initcond=set_simulation_initial_conditions(obj)
 % set_simulation_initial_conditions - sets the initial conditions for forecasting, simulation and irfs
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   Initcond=set_simulation_initial_conditions(obj)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|svar|rfvar]: model object
+%    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Initcond** [struct]: Initial conditions for simulation
+%    - **Initcond** [struct]: Initial conditions for simulation
 %
-% More About
-% ------------
+% Note:
 %
-% - if future values of endogenous are found, they are discarded the
-% variables are not explicitly declared as conditioning endogenous
-% variables.
+%    - if future values of endogenous are found, they are discarded the
+%    variables are not explicitly declared as conditioning endogenous
+%    variables.
 %
-% - if either endogenous or exogenous variables are declared as
-% conditioning variables, we automatically have a conditional forecasting
-% exercise.
+%    - if either endogenous or exogenous variables are declared as
+%    conditioning variables, we automatically have a conditional forecasting
+%    exercise.
 %
-% - if no variable is declared as conditioning, we have a simulation
-% exercise, in which case, there is a burn-in period.
+%    - if no variable is declared as conditioning, we have a simulation
+%    exercise, in which case, there is a burn-in period.
 %
-% - Initialization is always done at the steady state and the declared
-% endogenous variables merely override the steady state values. This means
-% that if a variable is not found in the database, it is initialized at its
-% steady state.
+%    - Initialization is always done at the steady state and the declared
+%    endogenous variables merely override the steady state values. This means
+%    that if a variable is not found in the database, it is initialized at its
+%    steady state.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 % complementarity: do it here so as to keep the memory light
 %-----------------------------------------------------------

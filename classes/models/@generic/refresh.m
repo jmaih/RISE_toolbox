@@ -2,29 +2,25 @@ function newobj=refresh(obj)
 % REFRESH - refresh the options of an old object with a newer version of
 %   the software
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   newobj=REFRESH(obj)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|svar|rfvar]: model object
+%    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **newobj** [rise|dsge|svar|rfvar]: refreshed model object
+%    - **newobj** [rise|dsge|svar|rfvar]: refreshed model object
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if isempty(obj)
     

@@ -1,23 +1,19 @@
 function [obs,flag_]=date2obs(start_date,new_date)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 [start_serial,start_frequency]=date2serial(start_date);
 

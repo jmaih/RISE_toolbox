@@ -1,23 +1,19 @@
 function [output,has_macro]=preparse(FileName,parsing_definitions)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % {'movave','movavg','movgeom','movprod','movsum','diff','difflog'}
 

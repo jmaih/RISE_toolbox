@@ -1,23 +1,19 @@
 function hh = rotateXLabels( ax, angle, varargin )
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % original code by Ben Tordoff at the Mathworks
 %

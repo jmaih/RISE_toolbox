@@ -1,33 +1,29 @@
 function varargout=exponential(lowerquantileORmean,upperquantileORstdev,prob,~,~)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% f(x,mu,s)=1/s*exp(-1/s*(x-mu))
+% Note:
 %
-% F(x,mu,s)=1-exp(-1/s*(x-mu))
+%    f(x,mu,s)=1/s*exp(-1/s*(x-mu))
 %
-% x=mu-s*log(1-F)
+%    F(x,mu,s)=1-exp(-1/s*(x-mu))
 %
-% E(x)=mu+s
+%    x=mu-s*log(1-F)
 %
-% V(x)=s^2
+%    E(x)=mu+s
 %
-% Examples
-% ---------
+%    V(x)=s^2
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d

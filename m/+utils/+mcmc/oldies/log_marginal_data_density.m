@@ -1,23 +1,19 @@
 function lmdd=log_marginal_data_density(obj,type,simulation_folder)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if isempty(obj)
 lmdd=struct();

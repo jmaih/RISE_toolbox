@@ -1,23 +1,19 @@
 function plot_handle=barh(varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 %     barh(X,db) draws the columns of the M-by-N matrix db as M groups of N

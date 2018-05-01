@@ -1,31 +1,27 @@
 function [P,retcode,good]=doubling_solve(A,B,C,options)
 % doubling_solve solves the linear equation X=A*X*B+C
 %
-% Syntax
-% -------
 % ::
+%
 %   [P,retcode]=doubling_solve(A,B,C)
 %   [P,retcode]=doubling_solve(A,B,C,options)
 %
-% Inputs
-% -------
-% - A :
-% - B :
-% - C :
-% - options :
-% 
-% Outputs
-% --------
-% - P :
-% - retcode :
+% Args:
+%    - A :
+%    - B :
+%    - C :
+%    - options :
 %
-% More About
-% ------------
-% 
-% Examples
-% ---------
+% Returns:
+%    :
+%    - P :
+%    - retcode :
 %
-% See also: 
+% Note:
+%
+% Example:
+%
+%    See also:
 
 mydefaults=the_defaults();
 

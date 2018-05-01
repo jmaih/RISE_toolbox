@@ -1,37 +1,33 @@
 function obj=set(obj,varargin)
 % set - sets options for RISE models
 %
-% Syntax
-% -------
 % ::
-%   
+%
+%
 %   obj=set(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|svar|rfvar]: model object
+%    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% - **varargin** : valid input arguments coming in pairs.
+%    - **varargin** : valid input arguments coming in pairs.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [rise|dsge|svar|rfvar]: model object
+%    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% More About
-% ------------
+% Note:
 %
-% - one can force a new field into the options by prefixing it with a '+'
-%   sign. Let's say yourfield is not part of the options and you would like
-%   to force it to be in the options because it is going to be used in some
-%   function or algorithm down the road. Then you can run
-%   m=set(m,'+yourfield',value). then m will be part of the new options.
+%    - one can force a new field into the options by prefixing it with a '+'
+%      sign. Let's say yourfield is not part of the options and you would like
+%      to force it to be in the options because it is going to be used in some
+%      function or algorithm down the road. Then you can run
+%      m=set(m,'+yourfield',value). then m will be part of the new options.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if isempty(obj)
     

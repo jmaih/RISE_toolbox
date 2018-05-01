@@ -1,23 +1,19 @@
 function [obj,T]=expand_optimal_policy_solution(obj,T,loose_com_col)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if obj.is_optimal_policy_model && ~isempty(loose_com_col)
     

@@ -1,9 +1,8 @@
 function p=penalize_violations(viol,c,restrictions_same_weights)
 % penalize_violations - penalizes the violation of general restrictions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   p=penalize_violations(viol)
 %
@@ -11,30 +10,27 @@ function p=penalize_violations(viol,c,restrictions_same_weights)
 %
 %   p=penalize_violations(viol,c,restrictions_same_weights)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **viol** [vector] : value of constraints expressed in the form g(x)<=0
+%    - **viol** [vector] : value of constraints expressed in the form g(x)<=0
 %
-% - **c** [scalar|{10}]: penalty factor
+%    - **c** [scalar|{10}]: penalty factor
 %
-% - **restrictions_same_weights** [true|{false}]: decides whether all
-% constraints are equivalent or not
+%    - **restrictions_same_weights** [true|{false}]: decides whether all
+%    constraints are equivalent or not
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **p** [scalar] : penalty
+%    - **p** [scalar] : penalty
 %
-% More About
-% ------------
+% Note:
 %
-% - restrictions are expected to be of the form g(x)<=0
+%    - restrictions are expected to be of the form g(x)<=0
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<3
     

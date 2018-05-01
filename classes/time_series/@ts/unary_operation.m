@@ -1,23 +1,19 @@
 function db=unary_operation(db,op_string)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if ischar(op_string)
     op_string=str2func(['@(x)',op_string,'(x)']);

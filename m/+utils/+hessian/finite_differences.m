@@ -1,33 +1,29 @@
 function H = finite_differences(Objective,params,varargin)
 % finite_differences - computes the hessian by finite differences
 %
-% Syntax
-% -------
 % ::
+%
 %
 %	H = finite_differences(Objective,params)
 %	H = finite_differences(Objective,params,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **Objective** [char|function handle]: function to differentiate
+%    - **Objective** [char|function handle]: function to differentiate
 %
-% - **params** [vector]: point at which the differentiation is taken
+%    - **params** [vector]: point at which the differentiation is taken
 %
-% - **varargin** : optional/further arguments of the objective function
+%    - **varargin** : optional/further arguments of the objective function
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **H** [matrix]: Hessian matrix
+%    - **H** [matrix]: Hessian matrix
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 H=utils.numdiff.hessian(Objective,params,[],varargin{:});

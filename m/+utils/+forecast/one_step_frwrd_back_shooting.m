@@ -1,25 +1,21 @@
 function [y1,is_active_shock,retcode]=one_step_frwrd_back_shooting(T,y0,ss,xloc,sig,...
-    shocks,order,compl,cond_shocks_id)
+shocks,order,compl,cond_shocks_id)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 narginchk(7,9)
 

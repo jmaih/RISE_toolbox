@@ -1,23 +1,19 @@
 function [year,period,freq,frequency]=date2year_period(date)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 [dec,success]=decompose_date(date);
 

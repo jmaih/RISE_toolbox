@@ -1,31 +1,27 @@
 function varargout=u_higher_order_moments(siz)
 % u_higher_order_moments -- computes moments Ekron(u,u,...,u)
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [M1,M2,M3,...,M5]=u_higher_order_moments(siz)
 %
-% Inputs
-% -------
+% Args:
 %
-% - siz : [struct] with fields
-%   - np: number of predetermined
-%   - nb: number of predetermined and forward-looking
-%   - ne: number of shocks
-%   - nz: (total) number of state variables (pred,bobth,sig,shocks)
+%    - siz : [struct] with fields
+%      - np: number of predetermined
+%      - nb: number of predetermined and forward-looking
+%      - ne: number of shocks
+%      - nz: (total) number of state variables (pred,bobth,sig,shocks)
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 shocks_id=siz.np+siz.nb+1+(1:siz.ne);
 

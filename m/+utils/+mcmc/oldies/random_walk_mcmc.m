@@ -1,24 +1,20 @@
 function [x1,f1,accepted,funevals,alpha_prob]=random_walk_mcmc(...
-    minus_log_post_func,x0,f0,drawfun,cCS,mcmc_delay_rejection,funevals)
+minus_log_post_func,x0,f0,drawfun,cCS,mcmc_delay_rejection,funevals)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 [theta_s,minusLogPost_s]=new_proposal();
 alpha_prob=utils.mcmc.alpha_probability(-minusLogPost_s,-f0);

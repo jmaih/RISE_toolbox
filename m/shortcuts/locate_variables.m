@@ -1,23 +1,19 @@
 function IDs=locate_variables(Variables,State,silent,NewAlgo)
 % locate_variables locate variables in an array
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<4
     

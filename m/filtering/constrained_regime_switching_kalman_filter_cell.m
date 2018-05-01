@@ -1,26 +1,22 @@
 function [loglik,Incr,retcode,Filters]=constrained_regime_switching_kalman_filter_cell(...
-    syst,data_y,U,z,options)%syst,data_info,state_trend,init,options
+syst,data_y,U,z,options)%syst,data_info,state_trend,init,options
 
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 % this filter assumes a state space of the form

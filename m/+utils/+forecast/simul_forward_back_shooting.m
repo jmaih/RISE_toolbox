@@ -1,27 +1,23 @@
 function [sims,myshocks,PAI,retcode]=simul_forward_back_shooting(T,ss,y0,state_vars_location,h,nx,Qfunc,regimes,options)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
-%   At present the restrictions are enforced only in the violating periods,
-%   which implies that the contemporaneous shocks are altered. But one can
-%   think of a scheme whereby only future shocks are changed, keeping the
-%   original/actual shocks unchanged.
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
+%      At present the restrictions are enforced only in the violating periods,
+%      which implies that the contemporaneous shocks are altered. But one can
+%      think of a scheme whereby only future shocks are changed, keeping the
+%      original/actual shocks unchanged.
 %
-% See also:
+% Example:
+%
+%    See also:
 
 cutoff=-1e-10;
 

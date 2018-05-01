@@ -1,23 +1,19 @@
-function [ff_,xx_]=kernel_density(data,lb,ub,kernel,n) 
+function [ff_,xx_]=kernel_density(data,lb,ub,kernel,n)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % kernel smoothing density estimation
 

@@ -1,29 +1,25 @@
 function C=kronall(varargin)
 % kronall -- multikronecker
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   C=kronall(A1,A2,...,An)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **Ai** [matrix]: input for the kronecker product
+%    - **Ai** [matrix]: input for the kronecker product
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **C** [matrix]: kron(A1,kron(A2,kron(A3,...)))
+%    - **C** [matrix]: kron(A1,kron(A2,kron(A3,...)))
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: tensorperm
+%    See also: tensorperm
 
 test=true;
 

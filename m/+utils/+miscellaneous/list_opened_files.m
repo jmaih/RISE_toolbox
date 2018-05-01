@@ -1,23 +1,19 @@
 function X=list_opened_files()
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % lists all the files currently opened in the editor
 X = matlab.desktop.editor.getAll;

@@ -1,23 +1,19 @@
 function c=minus(a,b)
 % minus -- overload minus for cell
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 if ischar(a)
     a=cellstr(a);

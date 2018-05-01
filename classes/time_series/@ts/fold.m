@@ -2,33 +2,29 @@ function this=fold(last_hist_date,varargin)
 % FOLD -- takes the first page of possibly several databases and adds
 % further pages using the information from a pivot date
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   this=FOLD(last_hist_date,obj)
 %
 %   this=FOLD(last_hist_date,obj1,obj2,...,objn)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **last_hist_date** [char|serial date]: 
+%    - **last_hist_date** [char|serial date]:
 %
-% - **obj** [ts]: time series
+%    - **obj** [ts]: time series
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **this** [ts]: folded time series
+%    - **this** [ts]: folded time series
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if ~(ischar(last_hist_date)||isnumeric(last_hist_date))
     error('pivot date should be a valid date or a serial date')

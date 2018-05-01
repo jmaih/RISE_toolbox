@@ -1,37 +1,33 @@
 function retcode=check_derivatives(obj,varargin)
 % check_derivatives - compares the derivatives and the solutions from various differentiation techniques
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   check_derivatives(obj)
 %   retcode=check_derivatives(obj)
-%   
-% Inputs
-% -------
 %
-% - **obj** [rise|dsge]: model object or vectors of model objects
+% Args:
 %
-% Outputs
-% --------
+%    - **obj** [rise|dsge]: model object or vectors of model objects
 %
-% - **retcode** [numeric]: 0 if no problem is encountered during the
-%   comparisons. Else the meaning of recode can be found by running
-%   decipher(retcode)
+% Returns:
+%    :
 %
-% More About
-% ------------
+%    - **retcode** [numeric]: 0 if no problem is encountered during the
+%      comparisons. Else the meaning of recode can be found by running
+%      decipher(retcode)
 %
-% - The derivatives computed are 'automatic', 'symbolic' or 'numerical'
+% Note:
 %
-% - The comparisons are done relative to automatic derivatives, which are
-%   assumed to be the most accurate.
+%    - The derivatives computed are 'automatic', 'symbolic' or 'numerical'
 %
-% Examples
-% ---------
+%    - The comparisons are done relative to automatic derivatives, which are
+%      assumed to be the most accurate.
 %
-% See also:
+% Example:
+%
+%    See also:
 
 
 if isempty(obj)

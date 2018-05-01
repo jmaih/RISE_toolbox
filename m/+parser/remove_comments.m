@@ -1,23 +1,19 @@
 function rawline_=remove_comments(rawline_)
 % remove_comments - removes comments of type "//", "%"
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 treat_double_quotes()
 
@@ -45,9 +41,9 @@ undo_double_quotes()
 
     function undo_double_quotes()
         
-        rawline_=strrep(rawline_,'¤','%');
+        rawline_=strrep(rawline_,'Â¤','%');
         
-        rawline_=strrep(rawline_,'§','/');
+        rawline_=strrep(rawline_,'Â§','/');
         
     end
 
@@ -68,10 +64,10 @@ undo_double_quotes()
             stretch=quotes(1):quotes(2);
             
             % should replace with exactly one character
-            rawline_(stretch)=strrep(rawline_(stretch),'%','¤');
+            rawline_(stretch)=strrep(rawline_(stretch),'%','Â¤');
             
             % should replace with exactly two character
-            rawline_(stretch)=strrep(rawline_(stretch),'//','§§');
+            rawline_(stretch)=strrep(rawline_(stretch),'//','Â§Â§');
             
             dbl_quotes=dbl_quotes(3:end);
             

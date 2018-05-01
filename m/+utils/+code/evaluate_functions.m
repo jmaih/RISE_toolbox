@@ -1,40 +1,36 @@
 function varargout=evaluate_functions(xcell,varargin)
 % evaluate_functions - evaluates functions in various formats
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   varargout=evaluate_functions(xcell,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **xcell** [cell|struct|fhandle]: function of interest
-%   - input is a cell array: each element in a cell is assumed to be a
-%     function handle
-%   - input is a struct:
-%     - if the field names are among: 'size','functions','map','partitions'
-%       then we are dealing with derivatives
-%     - if the field names are among: 'code','argins','argouts' then the
-%       function could not be written as a function handle and has to be
-%       evaluated using eval
-%   - input is a function handle : direct evaluation
+%    - **xcell** [cell|struct|fhandle]: function of interest
+%      - input is a cell array: each element in a cell is assumed to be a
+%        function handle
+%      - input is a struct:
+%        - if the field names are among: 'size','functions','map','partitions'
+%          then we are dealing with derivatives
+%        - if the field names are among: 'code','argins','argouts' then the
+%          function could not be written as a function handle and has to be
+%          evaluated using eval
+%      - input is a function handle : direct evaluation
 %
-% - **varargin** : input arguments to the function
+%    - **varargin** : input arguments to the function
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **varargout** : ouput arguments to the function
+%    - **varargout** : ouput arguments to the function
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 
 nout=nargout;

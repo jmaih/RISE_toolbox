@@ -1,23 +1,19 @@
 function this=pages2struct(this0)
 % pages2struct -- this function is a decoy
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if ~isstruct(this0)
     error('expecting a structure as an input')

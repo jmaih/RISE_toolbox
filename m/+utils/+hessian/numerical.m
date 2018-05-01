@@ -1,37 +1,33 @@
 function [H,issue]=numerical(fh,xbest,hessian_type)
 % numerical -- compute the hessian numerically
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [H,issue]=numerical(fh,xbest,hessian_type)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **fh** [char|function handle]: one-dimensional objective function
+%    - **fh** [char|function handle]: one-dimensional objective function
 %
-% - **xbest** [vector]: point at which the hessian has to be computed
+%    - **xbest** [vector]: point at which the hessian has to be computed
 %
-% - **hessian_type** [{'fd'}|'opg']: type of hessian computed : finite
-% differences or outer-product-gradient
+%    - **hessian_type** [{'fd'}|'opg']: type of hessian computed : finite
+%    differences or outer-product-gradient
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **H** [d x d matrix]: hessian
+%    - **H** [d x d matrix]: hessian
 %
-% - **issue** [''|char]: description of any problem encountered during the
-% calculation of the hessian.
+%    - **issue** [''|char]: description of any problem encountered during the
+%    calculation of the hessian.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if nargin==0
        

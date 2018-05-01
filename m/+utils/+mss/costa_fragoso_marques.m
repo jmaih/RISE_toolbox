@@ -2,41 +2,37 @@ function [flag,max_eig,C]=costa_fragoso_marques(T,Q,crit)
 % COSTA_FRAGOSO_MARQUES -- checks for Mean Square Stability using the
 % Costa, Fragoso and Marques algorithm.
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   C=COSTA_FRAGOSO_MARQUES(T,Q)
 %
 %   C=COSTA_FRAGOSO_MARQUES(T,Q,crit)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **T** [1 x h cell array]: Autoregressive part of the solution in each
-% regime
+%    - **T** [1 x h cell array]: Autoregressive part of the solution in each
+%    regime
 %
-% - **Q** [h x h matrix]: Transition matrix
+%    - **Q** [h x h matrix]: Transition matrix
 %
-% - **crit** [numeric]: tolerance criterion
+%    - **crit** [numeric]: tolerance criterion
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **flag** [true|false]: result of the investigation on whether there is
-% MSS or not.
+%    - **flag** [true|false]: result of the investigation on whether there is
+%    MSS or not.
 %
-% - **max_eig** [numeric]: maximum eigenvalue
+%    - **max_eig** [numeric]: maximum eigenvalue
 %
-% - **C** [matrix]: matrix in the criterion for checking stability
+%    - **C** [matrix]: matrix in the criterion for checking stability
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: GUPTA_MURRAY_HASSIBI
+%    See also: GUPTA_MURRAY_HASSIBI
 
 % References:
 % O.L.V. Costa, M.D. Fragoso and R.P. Marques (2004):

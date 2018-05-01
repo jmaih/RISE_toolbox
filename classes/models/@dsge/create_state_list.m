@@ -1,39 +1,35 @@
 function [final_list,kept]=create_state_list(m,orders,compact_form)
 % create_state_list creates the list of the state variables in the solution
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   final_list=create_state_list(m)
 %   final_list=create_state_list(m,orders)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **m** [dsge|rise] : model object
+%    - **m** [dsge|rise] : model object
 %
-% - **orders** [integer array|{1:m.options.solve_order}] : approximation
-%   orders
+%    - **orders** [integer array|{1:m.options.solve_order}] : approximation
+%      orders
 %
-% - **compact_form** [true|{false}] : if true, only unique combinations
-%   will be returned. Else, all combinations will be returned.
+%    - **compact_form** [true|{false}] : if true, only unique combinations
+%      will be returned. Else, all combinations will be returned.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **final_list** [cellstr] : list of the state variables
+%    - **final_list** [cellstr] : list of the state variables
 %
-% - **kept** [vector] : location of kept state variables (computed only if
-%   compact_form is set to true)
+%    - **kept** [vector] : location of kept state variables (computed only if
+%      compact_form is set to true)
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if isempty(m)
     

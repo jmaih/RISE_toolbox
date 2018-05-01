@@ -1,36 +1,32 @@
 function flag=exitflag(flag,x1,fx1,TolFun)
 % exitflag -- recast the exit flag from fsolve and lsqnonlin
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   flag=exitflag(flag,x1,fx1,TolFun)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **flag** [scalar]: exit flag from fsolve or lsqnonlin
+%    - **flag** [scalar]: exit flag from fsolve or lsqnonlin
 %
-% - **x1** [scalar|vector|matrix]: optimum of the function to set to zero
-%   (f(x)=0)
+%    - **x1** [scalar|vector|matrix]: optimum of the function to set to zero
+%      (f(x)=0)
 %
-% - **fx1** [scalar]: value or norm of f(x1)
+%    - **fx1** [scalar]: value or norm of f(x1)
 %
-% - **TolFun** [{sqrt(eps)}|scalar]: scalar or vector of model objects
+%    - **TolFun** [{sqrt(eps)}|scalar]: scalar or vector of model objects
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **flag** [scalar]: recomputed exitflag
+%    - **flag** [scalar]: recomputed exitflag
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<4
     

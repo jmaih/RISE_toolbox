@@ -1,9 +1,8 @@
 function hdl=quick_irfs(m,myirfs,var_list,shock_list,r0c0,xrange)
 % QUICK_IRFS -- quick plotting of impulse response functions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   hdl=quick_irfs(m,myirfs)
 %
@@ -15,33 +14,30 @@ function hdl=quick_irfs(m,myirfs,var_list,shock_list,r0c0,xrange)
 %
 %   hdl=quick_irfs(m,myirfs,var_list,shock_list,r0c0,xrange)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **m** [rise|dsge|svar|rfvar]: model object
+%    - **m** [rise|dsge|svar|rfvar]: model object
 %
-% - **myirfs** [struct]: structure with irfs
+%    - **myirfs** [struct]: structure with irfs
 %
-% - **var_list** [cellstr]: list of variables of interest
+%    - **var_list** [cellstr]: list of variables of interest
 %
-% - **shock_list** [cellstr]: list of shocks of interest
+%    - **shock_list** [cellstr]: list of shocks of interest
 %
-% - **r0c0** [vector|{[4,4]}]: number of rows and columns in figure
+%    - **r0c0** [vector|{[4,4]}]: number of rows and columns in figure
 %
-% - **xrange** [serial|char|{[]}]: range over which to plot
+%    - **xrange** [serial|char|{[]}]: range over which to plot
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **hdl** [handle]: handle to the plotted objects
+%    - **hdl** [handle]: handle to the plotted objects
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: QUICK_PLOTS
+%    See also: QUICK_PLOTS
 
 if nargin<6
     

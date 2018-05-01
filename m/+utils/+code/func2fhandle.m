@@ -1,33 +1,29 @@
 function varargout = func2fhandle(varargin)
 % func2fhandle - creates a handle to an m-file not on the matlab search path
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   hdl = func2fhandle(full_path/func)
 %   hdl = func2fhandle(relative_path/func)
 %   [hdl1,hdl2,...,hdln] = func2fhandle(p1,p2,...,pn)
 %   [hdl1,hdl2,...,hdln] = func2fhandle({p1,p2,...,pn})
 %
-% Inputs
-% -------
+% Args:
 %
-% - **pth** [char|cellstr] : path names to create handles for. The path
-%   could be relative to the current directory or absolute
+%    - **pth** [char|cellstr] : path names to create handles for. The path
+%      could be relative to the current directory or absolute
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **hdl** [function_handle] : function handle(s)
+%    - **hdl** [function_handle] : function handle(s)
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % restore the current directory when we are done
 currentDir = pwd;

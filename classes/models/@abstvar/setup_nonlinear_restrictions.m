@@ -1,38 +1,34 @@
 function self=setup_nonlinear_restrictions(self,express,rplfunc)
 % setup_nonlinear_restrictions - sets nonlinear restrictions
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% - uses estim_nonlinear_restrictions, which should be a cell array. Each
-% item of the array is a string of the form
-%   - 'f(p1,p2,...,pn)>=h(p1,p2,...,pn)' 
-%   - 'f(p1,p2,...,pn)>h(p1,p2,...,pn)' 
-%   - 'f(p1,p2,...,pn)<=h(p1,p2,...,pn)' 
-%   - 'f(p1,p2,...,pn)<h(p1,p2,...,pn)' 
-%   - 'pj=h(p1,p2,...,pn)' 
+% Note:
 %
-% - In the statements above,
-%   - eqtn [digits|variable name]
-%   - vbl [digits|variable name]
-%   - lag [digits]
-%   - chain [char]
-%   - state [digits]
+%    - uses estim_nonlinear_restrictions, which should be a cell array. Each
+%    item of the array is a string of the form
+%      - 'f(p1,p2,...,pn)>=h(p1,p2,...,pn)'
+%      - 'f(p1,p2,...,pn)>h(p1,p2,...,pn)'
+%      - 'f(p1,p2,...,pn)<=h(p1,p2,...,pn)'
+%      - 'f(p1,p2,...,pn)<h(p1,p2,...,pn)'
+%      - 'pj=h(p1,p2,...,pn)'
 %
-% Examples
-% ---------
+%    - In the statements above,
+%      - eqtn [digits|variable name]
+%      - vbl [digits|variable name]
+%      - lag [digits]
+%      - chain [char]
+%      - state [digits]
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 RestrictionsBlock=self.estim_.linear_restrictions;
 

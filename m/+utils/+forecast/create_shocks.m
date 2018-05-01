@@ -1,23 +1,19 @@
 function [shocks]=create_shocks(nx,shock_id,det_vars,options)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 % The shock will hit either in the current period,horizon_hit=0 or in a

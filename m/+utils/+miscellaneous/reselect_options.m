@@ -1,35 +1,31 @@
 function opt=reselect_options(options,fn)
 % reselect_options - discards the options not used by a function
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   opt=reselect_options(options,fn)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **options** [struct]: all options
+%    - **options** [struct]: all options
 %
-% - **fn** [char|function_handle]: function whose options we are interested
-% in.
+%    - **fn** [char|function_handle]: function whose options we are interested
+%    in.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **opt** [struct]: options of function fn
+%    - **opt** [struct]: options of function fn
 %
-% More About
-% ------------
+% Note:
 %
-% - the function of interest should be such that if called without inputs,
-% it returns its default options.
+%    - the function of interest should be such that if called without inputs,
+%    it returns its default options.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if ischar(fn)
     

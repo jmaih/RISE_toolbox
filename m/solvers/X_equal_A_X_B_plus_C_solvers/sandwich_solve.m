@@ -1,29 +1,25 @@
 function [X,retcode]=sandwich_solve(A,B,C)
 % sandwich_solve solves the linear equation X=A*X*B+C
 %
-% Syntax
-% -------
 % ::
+%
 %   [X,retcode]=sandwich_solve(A,B,C)
 %
-% Inputs
-% -------
-% - A :
-% - B :
-% - C :
+% Args:
+%    - A :
+%    - B :
+%    - C :
 %
-% Outputs
-% --------
-% - X :
-% - retcode :
-% 
-% More About
-% ------------
+% Returns:
+%    :
+%    - X :
+%    - retcode :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % 
 [U,R]=schur(B,'complex'); 

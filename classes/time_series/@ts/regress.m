@@ -1,51 +1,47 @@
 function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 % REGRESS -- Linear regression
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [B,BINT,R,RINT,STATS]=regress(this,this2)
 %   [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **this** [ts] : left-hand-side variable
+%    - **this** [ts] : left-hand-side variable
 %
-% - **this2** [ts] : right-hand-side variables
+%    - **this2** [ts] : right-hand-side variables
 %
-% - **varargin** [comma separated] : additional inputs for Matlab's REGRESS
-%   function
+%    - **varargin** [comma separated] : additional inputs for Matlab's REGRESS
+%      function
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **B**: vector of regression coefficients in the linear model Y = X*B.
-% - **BINT**: of 95% confidence intervals for B
-% - **R**: vector of residuals
-% - **RINT**: matrix of intervals that can be used to diagnose
-% outliers.  If RINT(i,:) does not contain zero, then the i-th
-% residual is larger than would be expected, at the 5%
-% significance level.  This is evidence that the I-th
-% observation is an  outlier.
-% - **STATS**: vector containing, in the following order, the R-square
-% statistic, the F statistic and p value for the full model,
-% and an estimate of the error variance.
+%    - **B**: vector of regression coefficients in the linear model Y = X*B.
+%    - **BINT**: of 95% confidence intervals for B
+%    - **R**: vector of residuals
+%    - **RINT**: matrix of intervals that can be used to diagnose
+%    outliers.  If RINT(i,:) does not contain zero, then the i-th
+%    residual is larger than would be expected, at the 5%
+%    significance level.  This is evidence that the I-th
+%    observation is an  outlier.
+%    - **STATS**: vector containing, in the following order, the R-square
+%    statistic, the F statistic and p value for the full model,
+%    and an estimate of the error variance.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% y=ts(1990,rand(100,1)); % random series
-% X=y(-1)&y(-2)&y(-3); % columns of lags
-% X=ones(X); % add a column of ones
-% [B,BINT,R,RINT,STATS]=regress(y,X)
+%    y=ts(1990,rand(100,1)); % random series
+%    X=y(-1)&y(-2)&y(-3); % columns of lags
+%    X=ones(X); % add a column of ones
+%    [B,BINT,R,RINT,STATS]=regress(y,X)
 %
-% See also: 
-%----------
+%    See also:
+%   ----------
 
 if isa(this,'ts') && isa(this2,'ts')
     

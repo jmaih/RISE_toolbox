@@ -1,23 +1,19 @@
 function [irfs,retcode]=irf(y0,T,ss,state_vars_location,which_shocks,det_vars,options)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 new_impulse=0;
 

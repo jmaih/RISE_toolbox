@@ -1,47 +1,43 @@
 function J=evaluate_jacobian_numerically(funcs,y,x,ss,param,def,s0,s1)
 % evaluate_jacobian_numerically - numerical evaluation of the jacobian of the objective function
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   J=evaluate_jacobian_numerically(funcs,y,x,ss,param,def,s0,s1)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **funcs** [fhandle|cell array]: function or functions to be
-%   differentiated
+%    - **funcs** [fhandle|cell array]: function or functions to be
+%      differentiated
 %
-% - **y** [vector]: values of endogenous variables
+%    - **y** [vector]: values of endogenous variables
 %
-% - **x** [vector]: values of exogenous variables
+%    - **x** [vector]: values of exogenous variables
 %
-% - **ss** [vector]: steady state 
+%    - **ss** [vector]: steady state
 %
-% - **param** [vector]: parameter vector 
+%    - **param** [vector]: parameter vector
 %
-% - **def** [vector]: values of definitions 
+%    - **def** [vector]: values of definitions
 %
-% - **s0** [scalar]: state today 
+%    - **s0** [scalar]: state today
 %
-% - **s1** [scalar]: state tomorrow 
+%    - **s1** [scalar]: state tomorrow
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **J** [matrix]: Numerical Jacobian of **funcs** at [y,x,sparam]
+%    - **J** [matrix]: Numerical Jacobian of **funcs** at [y,x,sparam]
 %
-% More About
-% ------------
+% Note:
 %
-% It is assumed that the inputs are y,x,ss,param,sparam,def,s0,s1 as
-% ordered in parser.input_list()
+%    It is assumed that the inputs are y,x,ss,param,sparam,def,s0,s1 as
+%    ordered in parser.input_list()
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 ny=size(y,1);
 nx=size(x,1);

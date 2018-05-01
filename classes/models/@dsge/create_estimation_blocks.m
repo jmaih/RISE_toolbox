@@ -1,42 +1,38 @@
 function blocks=create_estimation_blocks(obj,blocks)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% -**obj** [rise|dsge]: model object
+% Args:
 %
-% -**blocks** [cell array]: blocking information
+%    -**obj** [rise|dsge]: model object
 %
-% Outputs
-% --------
+%    -**blocks** [cell array]: blocking information
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% this function separates the parameters to estimate into blocks controlled
-% by one or several markov chains, depending on the information provided in
-% blocks
-% case 1: blocks={[1,3,5,7],[2,9,10],[6,20],...} The numbers represent the
-% order in which the estimated parameters are entered
-% case 2: blocks={{'alpha','beta'},'gam',{'delta','upsil','omicr'},...}. In
-%         this case, the first block includes alpha and beta, which are
-%         either parameter names or chain names. If they are parameters,
-%         then alpha and beta will be estimated simultaneously. If they are
-%         chain names, then all the parameters controlled by alpha and all
-%         the parameters controlled by beta will be estimated
-%         simultaneously
-% The estimated parameters that are controlled by a markov chain can be
-% entered either as pname(chain,state) or as pname_chain_state
+% Note:
 %
-% Examples
-% ---------
+%    this function separates the parameters to estimate into blocks controlled
+%    by one or several markov chains, depending on the information provided in
+%    blocks
+%    case 1: blocks={[1,3,5,7],[2,9,10],[6,20],...} The numbers represent the
+%    order in which the estimated parameters are entered
+%    case 2: blocks={{'alpha','beta'},'gam',{'delta','upsil','omicr'},...}. In
+%            this case, the first block includes alpha and beta, which are
+%            either parameter names or chain names. If they are parameters,
+%            then alpha and beta will be estimated simultaneously. If they are
+%            chain names, then all the parameters controlled by alpha and all
+%            the parameters controlled by beta will be estimated
+%            simultaneously
+%    The estimated parameters that are controlled by a markov chain can be
+%    entered either as pname(chain,state) or as pname_chain_state
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if isempty(obj)
     

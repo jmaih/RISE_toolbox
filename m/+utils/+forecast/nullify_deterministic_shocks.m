@@ -1,23 +1,19 @@
 function shocks=nullify_deterministic_shocks(shocks,det_vars)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if islogical(det_vars)
     det_vars=find(det_vars);

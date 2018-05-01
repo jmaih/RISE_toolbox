@@ -2,38 +2,34 @@ function [alpha_t]=smoothing_step_classical(T,att,Ptt,Ptplus1,alpha_plus,a_plus)
 
 % smoothing_step - smoothing step
 %
-% Syntax
-% -------
 % ::
-%   
+%
+%
 %   [atT,etat,rlag]=smoothing_step(a,r,K,P,T,R,Z,iF,v)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **att** [vector] : m x 1 updated state
+%    - **att** [vector] : m x 1 updated state
 %
-% - **Ptt** [matrix] : m x m covariance matrix of updated state
+%    - **Ptt** [matrix] : m x m covariance matrix of updated state
 %
-% - **Ptplus1** [matrix] : m x m covariance matrix of filtered state next
-% period
+%    - **Ptplus1** [matrix] : m x m covariance matrix of filtered state next
+%    period
 %
-% - **alpha_plus** [vector] : m x 1 smoothed state next period
+%    - **alpha_plus** [vector] : m x 1 smoothed state next period
 %
-% - **a_plus** [vector] : m x 1 filtered state next period
+%    - **a_plus** [vector] : m x 1 filtered state next period
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **alpha_t** [vector] : m x 1 smoothed state
+%    - **alpha_t** [vector] : m x 1 smoothed state
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 alpha_t=att;
 

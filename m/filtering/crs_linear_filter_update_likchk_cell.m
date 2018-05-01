@@ -1,26 +1,22 @@
 function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_likchk_cell(...
-    syst,data_y,U,z,options,impose_conditions)
+syst,data_y,U,z,options,impose_conditions)
 
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 
 % this filter assumes a state space of the form

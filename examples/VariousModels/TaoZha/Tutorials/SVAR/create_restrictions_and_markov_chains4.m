@@ -3,56 +3,52 @@ function [restrictions,markov_chains,switch_prior]=create_restrictions_and_marko
 % markov chains for the SVAR model in which only the variance for the
 % monetary policy equation are changing.
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [lin_restr,nonlin_restr,tpl]=create_restrictions_and_markov_chains4(tpl)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **markov_chains** [empty|struct]: structure of previously defined
-% markov chains
+%    - **markov_chains** [empty|struct]: structure of previously defined
+%    markov chains
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **lin_restr** [cell]: cell array of restrictions (see below). 
+%    - **lin_restr** [cell]: cell array of restrictions (see below).
 %
-% - **nonlin_restr** [cell]: cell array of inequality restrictions 
+%    - **nonlin_restr** [cell]: cell array of inequality restrictions
 %
-% - **markov_chains** [struct]: modified markov chains
+%    - **markov_chains** [struct]: modified markov chains
 %
-% More About
-% ------------
+% Note:
 %
-% - The syntax to construct a restriction
-%   --> ai(eqtn)
-%   --> ai(eqtn,vbl)
-%   --> ai(eqtn,vbl,chain_name,state)
-%   --> a(eqtn)
-%   --> a(eqtn,vbl)
-%   --> a(eqtn,vbl,chain_name,state)
-%   - **eqtn** [integer]: integer 
-%   - **vbl** [integer|char]: integer or variable name
-%   - **i** [integer]: lag
-%   - **chain_name** [char]: name of the markov chain
-%   - **state** [integer]: state number
+%    - The syntax to construct a restriction
+%      --> ai(eqtn)
+%      --> ai(eqtn,vbl)
+%      --> ai(eqtn,vbl,chain_name,state)
+%      --> a(eqtn)
+%      --> a(eqtn,vbl)
+%      --> a(eqtn,vbl,chain_name,state)
+%      - **eqtn** [integer]: integer
+%      - **vbl** [integer|char]: integer or variable name
+%      - **i** [integer]: lag
+%      - **chain_name** [char]: name of the markov chain
+%      - **state** [integer]: state number
 %
-% - The lag coefficients are labelled a0, a1, a2,...,ak, for a model with k
-% lags. Obviously, a0 denotes the contemporaneous coefficients.
+%    - The lag coefficients are labelled a0, a1, a2,...,ak, for a model with k
+%    lags. Obviously, a0 denotes the contemporaneous coefficients.
 %
-% - The constant terms labelled c_1_1, c_2_2,...,c_n_n, for a model with n
-% endogenous variables.
+%    - The constant terms labelled c_1_1, c_2_2,...,c_n_n, for a model with n
+%    endogenous variables.
 %
-% - The standard deviations labelled s_1_1, s_2_2,...,s_n_n, for a
-% model with n endogenous variables.
+%    - The standard deviations labelled s_1_1, s_2_2,...,s_n_n, for a
+%    model with n endogenous variables.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin==0||isempty(markov_chains)
     

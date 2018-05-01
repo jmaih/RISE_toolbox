@@ -1,23 +1,19 @@
 function db=rolling(db,func,window,varargin)%,min_periods
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 db=ts_roll_or_expand(db,func,window,varargin{:});

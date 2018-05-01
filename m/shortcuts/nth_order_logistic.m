@@ -1,23 +1,19 @@
 function varargout=nth_order_logistic(varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 [varargout{1:nargout}]=utils.smooth_transition.(mfilename)(varargin{:});
 

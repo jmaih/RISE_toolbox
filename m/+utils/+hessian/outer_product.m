@@ -1,23 +1,19 @@
 function [H,H2,grad]=outer_product(Objective,xparam,varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 % Objective is assumed to have at least two output arguments

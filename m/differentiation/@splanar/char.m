@@ -1,35 +1,31 @@
 function c=char(x,long)
 % char - transforms splanar derivatives to strings
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   c=char(x)
 %   c=char(x,long)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **x** [splanar|cell array of splanar] : scalar or vector of splanar
-%   objects or cell array of splanar objects 
+%    - **x** [splanar|cell array of splanar] : scalar or vector of splanar
+%      objects or cell array of splanar objects
 %
-% - **long** [true|{false}] : if true, all functions are written with their
-%   function names and not with their shorthand. e.g. a+b will be written
-%   plus(a,b)
+%    - **long** [true|{false}] : if true, all functions are written with their
+%      function names and not with their shorthand. e.g. a+b will be written
+%      plus(a,b)
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **c** [char|cellstr]: derivatives
+%    - **c** [char|cellstr]: derivatives
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if nargin<2
     

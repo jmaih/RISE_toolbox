@@ -1,48 +1,44 @@
 function [ss,newp,retcode]=fs2000_steadystate(obj,ss,pp,d,id) %#ok<INUSL>
 % fs2000_steadystate --  computes the steady state of fs2000 analytically
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [y,newp,retcode]=fs2000_steadystate(obj,y,p,d,id)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object (not always needed)
+%    - **obj** [rise|dsge]: model object (not always needed)
 %
-% - **y** [vector]: endo_nbr x 1 vector of initial steady state
+%    - **y** [vector]: endo_nbr x 1 vector of initial steady state
 %
-% - **pp** [struct]: parameter structure
+%    - **pp** [struct]: parameter structure
 %
-% - **d** [struct]: definitions
+%    - **d** [struct]: definitions
 %
-% - **id** [vector]: location of the variables to calculate
+%    - **id** [vector]: location of the variables to calculate
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **y** []: endo_nbr x 1 vector of updated steady state
+%    - **y** []: endo_nbr x 1 vector of updated steady state
 %
-% - **newp** [struct]: structure containing updated parameters if any
+%    - **newp** [struct]: structure containing updated parameters if any
 %
-% - **retcode** [0|number]: return 0 if there are no problems, else return
-%   any number different from 0
+%    - **retcode** [0|number]: return 0 if there are no problems, else return
+%      any number different from 0
 %
-% More About
-% ------------
+% Note:
 %
-% - this is new approach has three main advantages relative to the previous
-%   one:
-%   - The file is valid whether we have many regimes or not
-%   - The user does not need to know what regime is being computed
-%   - It is in sync with the steady state model
+%    - this is new approach has three main advantages relative to the previous
+%      one:
+%      - The file is valid whether we have many regimes or not
+%      - The user does not need to know what regime is being computed
+%      - It is in sync with the steady state model
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 retcode=0;
 if nargin==1

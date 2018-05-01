@@ -1,23 +1,19 @@
 function [dn,dn_max,dn_min,nvar,npages,freq]=decompose_series(this)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 dn=this.date_numbers;
 dn_max=max(dn);

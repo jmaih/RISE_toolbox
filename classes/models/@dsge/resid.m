@@ -1,35 +1,31 @@
 function r=resid(obj,varargin)
 % resid -- compute the residuals from the steady state
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   r=resid(obj)
 %
 %   r=resid(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object
+%    - **obj** [rise|dsge]: model object
 %
-% - **varargin** [pairs of arguments]: 
+%    - **varargin** [pairs of arguments]:
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **r** [vector|matrix]: residuals
+%    - **r** [vector|matrix]: residuals
 %
-% More About
-% ------------
+% Note:
 %
-% - if no output is requested, the residuals are printed on screen
+%    - if no output is requested, the residuals are printed on screen
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if isempty(obj)
     

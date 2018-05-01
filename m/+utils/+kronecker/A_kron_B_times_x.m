@@ -1,23 +1,19 @@
 function z=A_kron_B_times_x(A,B,x,cols_b,cols_a)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % computes the kron(A,B)*x
 if nargin<4

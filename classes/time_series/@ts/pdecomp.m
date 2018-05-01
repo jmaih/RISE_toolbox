@@ -2,44 +2,40 @@ function out=pdecomp(y0,doLog,dorder)
 % PDECOMP - Parametric decomposition into trend, seasonal and irregular
 % components
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   out=PDECOMP(y)
 %   out=PDECOMP(y,doLog)
 %   out=PDECOMP(y,doLog,dorder)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **y** [ts] : time series to decompose
+%    - **y** [ts] : time series to decompose
 %
-% - **doLog** [true|{false}] : if log, do a multiplicative decomposition
-%   otherwise the decomposition is additive
+%    - **doLog** [true|{false}] : if log, do a multiplicative decomposition
+%      otherwise the decomposition is additive
 %
-% - **dorder** [integer|{2}] : detrending order
+%    - **dorder** [integer|{2}] : detrending order
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **out** [struct] : 
-%   - **trend** [ts] : estimated trend
-%   - **sc**    [ts] : estimated seasonal component
-%   - **sa**    [ts] : seasonally adjusted data
-%   - **ic**    [ts] : estimated irregular component
+%    - **out** [struct] :
+%      - **trend** [ts] : estimated trend
+%      - **sc**    [ts] : estimated seasonal component
+%      - **sa**    [ts] : seasonally adjusted data
+%      - **ic**    [ts] : estimated irregular component
 %
-% More About
-% ------------
+% Note:
 %
-% If there are many variables and the variables are named, the first level
-% of the structure will be the names of the different variables.
+%    If there are many variables and the variables are named, the first level
+%    of the structure will be the names of the different variables.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: NPDECOMP
-% ---------
+%    See also: NPDECOMP
+%    ---------
 %
 
 n=nargin;

@@ -1,23 +1,19 @@
 function a=smax(varargin)
 % smax smooth approximation of max(x,0)
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 a=utils.smooth_approximation.smax(varargin{:});
 end

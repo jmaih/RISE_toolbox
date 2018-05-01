@@ -2,38 +2,34 @@ function [mvcb,my]=multivariate_chebyshev_box(y,gam,c)
 % multivariate_chebyshev_box - constructs chebyshev boxes for
 % multivariate-multiperiods densities
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   mvcb=multivariate_chebyshev_box(y,gam,c)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **y** [numeric] : N x T x G array, with
-%   - **N** [numeric] : number of simulations/replications
-%   - **T** [numeric] : sample length (time series dimension)
-%   - **G** [numeric] : number of variables
+%    - **y** [numeric] : N x T x G array, with
+%      - **N** [numeric] : number of simulations/replications
+%      - **T** [numeric] : sample length (time series dimension)
+%      - **G** [numeric] : number of variables
 %
-% - **gam** [scalar|vector] : percentile(s)
+%    - **gam** [scalar|vector] : percentile(s)
 %
-% - **c** [empty|scalar|vector] : precomputed chebyshev distances
+%    - **c** [empty|scalar|vector] : precomputed chebyshev distances
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **mvcb** [2 x T x G x numel(gam)] :  array of boxes
+%    - **mvcb** [2 x T x G x numel(gam)] :  array of boxes
 %
-% - **my** [1 x T x G] :  mean across simulations
+%    - **my** [1 x T x G] :  mean across simulations
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: chebyshev_distance, standardized_distance
+%    See also: chebyshev_distance, standardized_distance
 
 % References:
 % Dag Kolsrud (2015): "A time-simultaneous prediction box for a

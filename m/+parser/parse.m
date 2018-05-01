@@ -1,63 +1,59 @@
 function dictionary=parse(FileName,varargin)
 % parse -- parser for dsge models
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   dictionary=parse(FileName,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **FileName** [char|cellstr]: if "char", name of the model file. The
-% file should have extensions rs, rz or dsge. If "cellstr" each cell
-% contains the name of a separate model file. The files are then meant to
-% be combined into one single model.
+%    - **FileName** [char|cellstr]: if "char", name of the model file. The
+%    file should have extensions rs, rz or dsge. If "cellstr" each cell
+%    contains the name of a separate model file. The files are then meant to
+%    be combined into one single model.
 %
-% - **varargin** []: pairwise arguments with possiblities as follows:
-%   - **parameter_differentiation** [true|{false}]: compute or not
-%   parameter derivatives
-%   - **definitions_inserted** [true|{false}]: substitute definitions  
-%   - **definitions_in_param_differentiation** [true|{false}]: insert or
-%   not definitions in equations before differentiating with respect to
-%   parameters  
-%   - **saveas** [true|false|char|{''}]: save the possibly expanded model
-%   file. If "true", the name of the main original file is used appended with
-%   "_expanded.dsge". Alternatively, the user can provide a name under
-%   which he wants the file to be saved.
-%   - **max_deriv_order** [integer|{1}]: order for symbolic
-%   differentiation. It is recommended to set to 1, especially for large
-%   models in case one does not intend to solve higher-order approximations
-%   - **parse_debug** [true|{false}]: debugging in the parser
-%   - **add_welfare** [true|{false}]: add the welfare equation when doing
-%   optimal policy. N.B: The welfare variable, WELF is the true welfare
-%   multiplied by (1-discount). The within-period utility variable, UTIL is
-%   automatically added. The reason why welfare is not automatically added
-%   is that oftentimes models with that equation do not solve.
-%   - **rise_flags** [struct|cell]: instructions for the partial parsing of
-%   the rise file. In case of a cell, the cell should be a k x 2 cell,
-%   where the first column collects the conditional parsing names and the
-%   second column the values.
+%    - **varargin** []: pairwise arguments with possiblities as follows:
+%      - **parameter_differentiation** [true|{false}]: compute or not
+%      parameter derivatives
+%      - **definitions_inserted** [true|{false}]: substitute definitions
+%      - **definitions_in_param_differentiation** [true|{false}]: insert or
+%      not definitions in equations before differentiating with respect to
+%      parameters
+%      - **saveas** [true|false|char|{''}]: save the possibly expanded model
+%      file. If "true", the name of the main original file is used appended with
+%      "_expanded.dsge". Alternatively, the user can provide a name under
+%      which he wants the file to be saved.
+%      - **max_deriv_order** [integer|{1}]: order for symbolic
+%      differentiation. It is recommended to set to 1, especially for large
+%      models in case one does not intend to solve higher-order approximations
+%      - **parse_debug** [true|{false}]: debugging in the parser
+%      - **add_welfare** [true|{false}]: add the welfare equation when doing
+%      optimal policy. N.B: The welfare variable, WELF is the true welfare
+%      multiplied by (1-discount). The within-period utility variable, UTIL is
+%      automatically added. The reason why welfare is not automatically added
+%      is that oftentimes models with that equation do not solve.
+%      - **rise_flags** [struct|cell]: instructions for the partial parsing of
+%      the rise file. In case of a cell, the cell should be a k x 2 cell,
+%      where the first column collects the conditional parsing names and the
+%      second column the values.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **dictionary** [struct]: elements need by the dsge class for
-% constructing an instance.
+%    - **dictionary** [struct]: elements need by the dsge class for
+%    constructing an instance.
 %
-% More About
-% ------------
+% Note:
 %
-% - In RISE it is possible to declare exogenous and make them observable at
-% the same time. The exogenous that are observed are determisitic. This
-% is the way to introduce e.g. time trends. This strategy also opens the
-% door for estimating partial equilibrium models 
+%    - In RISE it is possible to declare exogenous and make them observable at
+%    the same time. The exogenous that are observed are determisitic. This
+%    is the way to introduce e.g. time trends. This strategy also opens the
+%    door for estimating partial equilibrium models
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 DefaultOptions=...
     struct('definitions_in_param_differentiation',false,...

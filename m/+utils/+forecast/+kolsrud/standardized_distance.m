@@ -1,33 +1,29 @@
 function z=standardized_distance(y)
 % standardized_distance - computes abs(y-mean(y))/std(y)
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   z=standardized_distance(y)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **y** [numeric] : N x T x G array, with
-%   - **N** [numeric] : number of simulations/replications
-%   - **T** [numeric] : sample length (time series dimension)
-%   - **G** [numeric] : number of variables
+%    - **y** [numeric] : N x T x G array, with
+%      - **N** [numeric] : number of simulations/replications
+%      - **T** [numeric] : sample length (time series dimension)
+%      - **G** [numeric] : number of variables
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **z** [numeric] : N x T x G array of standardized distances to the
-% hypercenter
+%    - **z** [numeric] : N x T x G array of standardized distances to the
+%    hypercenter
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: chebyshev_distance, multivariate_chebyshev_box
+%    See also: chebyshev_distance, multivariate_chebyshev_box
 
 % References:
 % Dag Kolsrud (2015): "A time-simultaneous prediction box for a

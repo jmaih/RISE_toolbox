@@ -1,34 +1,30 @@
 function [pname_out,capture_errors]=param_texname_to_param_name(pname)
 % PARAM_TEXNAME_TO_PARAM_NAME -- change the parameter names from
-% name(chain,state) to name_chain_state 
+% name(chain,state) to name_chain_state
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [pname_out,capture_errors]=PARAM_TEXNAME_TO_PARAM_NAME(pname)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **pname** [char|cellstring]: names of the parameter names to change
+%    - **pname** [char|cellstring]: names of the parameter names to change
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **pname_out** [char|cellstring]: names of the changed parameter names
+%    - **pname_out** [char|cellstring]: names of the changed parameter names
 %
-% - **capture_errors** [cellstring]: list of invalid parameter names. If
-% this output is not requested, an error is issued for the very first
-% offending parameter name.
+%    - **capture_errors** [cellstring]: list of invalid parameter names. If
+%    this output is not requested, an error is issued for the very first
+%    offending parameter name.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: PARSER.PARAM_NAME_TO_PARAM_TEXNAME
+%    See also: PARSER.PARAM_NAME_TO_PARAM_TEXNAME
 
 pname_out=parser.valid_names_in_text(pname);
 

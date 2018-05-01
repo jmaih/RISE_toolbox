@@ -1,23 +1,19 @@
 function [LogLik,Incr,retcode,obj]=likelihood_dsge_var(params,obj)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % N.B: This function assumes the likelihood is to be maximized
 

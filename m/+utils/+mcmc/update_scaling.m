@@ -1,11 +1,10 @@
 function log_c=update_scaling(log_c,accept_ratio,alpha_range,fixed_scaling,...
-    n,xi3,c3,c_range)
+n,xi3,c3,c_range)
 % update_scaling -- updates the log of the scaling parameter for mcmc
 % algorithms
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   log_c=update_scaling(log_c,accept_ratio,alpha_range,fixed_scaling,n,xi3)
 %
@@ -13,39 +12,36 @@ function log_c=update_scaling(log_c,accept_ratio,alpha_range,fixed_scaling,...
 %
 %   log_c=update_scaling(log_c,accept_ratio,alpha_range,fixed_scaling,n,xi3,c3,c_range)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **log_c** [numeric]: initial scaling 
+%    - **log_c** [numeric]: initial scaling
 %
-% - **accept_ratio** [numeric]: acceptance rate 
+%    - **accept_ratio** [numeric]: acceptance rate
 %
-% - **alpha_range** [interval|{[]}]: 
+%    - **alpha_range** [interval|{[]}]:
 %
-% - **fixed_scaling** [true|false]: 
+%    - **fixed_scaling** [true|false]:
 %
-% - **n** [integer]: iteration 
+%    - **n** [integer]: iteration
 %
-% - **xi3** [numeric]: appears in gam3 = c3*(n+1)^(-xi3). must lie in
-% (0.5,1) 
+%    - **xi3** [numeric]: appears in gam3 = c3*(n+1)^(-xi3). must lie in
+%    (0.5,1)
 %
-% - **c3** [numeric|{1}]: appears in gam3 = c3*(n+1)^(-xi3);
+%    - **c3** [numeric|{1}]: appears in gam3 = c3*(n+1)^(-xi3);
 %
-% - **c_range** [interval|{[sqrt(eps),100]}]: range of variation of the
-% scaling parameter (not its log!!!)
+%    - **c_range** [interval|{[sqrt(eps),100]}]: range of variation of the
+%    scaling parameter (not its log!!!)
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **log_c** [numeric]: updated scaling 
+%    - **log_c** [numeric]: updated scaling
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % Adapts formulae 20 in Blazej Miasojedow, Eric Moulines and Matti
 % Vihola (2012): "Adaptive Parallel Tempering Algorithm"

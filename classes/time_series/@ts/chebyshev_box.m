@@ -2,37 +2,33 @@ function [mvcb,gam_,my]=chebyshev_box(this,gam)
 % chebyshev_box - constructs chebyshev boxes for multivariate-multiperiods
 % densities
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   mvcb=chebyshev_box(this,gam)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **this** [ts|rts] : time series with many pages (number of simulations)
-% and potentially many columns (number of variables)
+%    - **this** [ts|rts] : time series with many pages (number of simulations)
+%    and potentially many columns (number of variables)
 %
-% - **gam** [scalar|vector] : percentile(s)
+%    - **gam** [scalar|vector] : percentile(s)
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **mvcb** [struct] : structure with time series in its fields. Each
-% field represents a particular variable
+%    - **mvcb** [struct] : structure with time series in its fields. Each
+%    field represents a particular variable
 %
-% - **gam_** [scalar|vector] : sorted percentile(s)
+%    - **gam_** [scalar|vector] : sorted percentile(s)
 %
-% - **my** [ts] : mean across simulations
+%    - **my** [ts] : mean across simulations
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 Y=double(this);
 Y=permute(Y,[3,1,2]);

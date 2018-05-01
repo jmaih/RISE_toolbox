@@ -2,23 +2,19 @@ function [modelBlock,dic,jac_toc]=optimal_policy_system(Utility,constraints,dic)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 [Policy_equations,sstate_Policy_equations,Policy_vars,...

@@ -1,23 +1,19 @@
 function [f,mvcb,c]=multivariate_chebyshev_fan(Y,cr,myvars,start_date)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 c=utils.forecast.kolsrud.chebyshev_distance(Y);
 

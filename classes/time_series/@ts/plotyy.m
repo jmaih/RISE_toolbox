@@ -1,23 +1,19 @@
-function varargout=plotyy(varargin) 
+function varargout=plotyy(varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 %  plotyy Graphs with y tick labels on the left and right

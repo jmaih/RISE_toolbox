@@ -1,36 +1,32 @@
 function J=jacobian(func,x,varargin)
 % jacobian - computes the jacobian of a function or a vector of functions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   J=jacobian(func,x,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **func** [fhandle|cell array]: function or functions to be
-%   differentiated
+%    - **func** [fhandle|cell array]: function or functions to be
+%      differentiated
 %
-% - **x** [n x 1 vector]: Vector of arguments for differentiation
+%    - **x** [n x 1 vector]: Vector of arguments for differentiation
 %
-% - **varargin** : extra arguments of func beyond **x**
+%    - **varargin** : extra arguments of func beyond **x**
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **J** [matrix]: Numerical Jacobian of **func** at **x**
+%    - **J** [matrix]: Numerical Jacobian of **func** at **x**
 %
-% More About
-% ------------
+% Note:
 %
-% The result of multiple functions is concatenated vertically.
+%    The result of multiple functions is concatenated vertically.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 tol=eps^(1/3);
 

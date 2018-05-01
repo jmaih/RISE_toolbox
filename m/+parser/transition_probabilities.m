@@ -1,26 +1,22 @@
 function [transition_matrix_symbolic,transition_matrix_shadow,markov_chain_info,myifelseif]=...
-    transition_probabilities(...
-    input_list,parameter_names,markov_chains,shadow_tvp,shadow_definitions,probability_of_commitment)
+transition_probabilities(...
+input_list,parameter_names,markov_chains,shadow_tvp,shadow_definitions,probability_of_commitment)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if ~isempty(shadow_definitions)
     

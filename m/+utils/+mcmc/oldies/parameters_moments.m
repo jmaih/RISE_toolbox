@@ -1,23 +1,19 @@
 function [theta_mean,theta_median,V0]=parameters_moments(simulation_folder)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 is_saved_to_disk=ischar(simulation_folder);
 if is_saved_to_disk

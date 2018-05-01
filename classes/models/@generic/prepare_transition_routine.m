@@ -1,23 +1,19 @@
 function Qfunc=prepare_transition_routine(obj)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 Qfunc=memoizer(obj.solution.transition_matrices.Q);

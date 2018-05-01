@@ -2,29 +2,25 @@ function n=get_number_of_workers()
 % get_number_of_workers -- get number of labs available for parallel
 % processing
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   n=get_number_of_workers()
 %
-% Inputs
-% -------
+% Args:
 %
-% none
+%    none
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **n** [integer]: number of labs available
+%    - **n** [integer]: number of labs available
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 v=ver;
 Names={v.Name};

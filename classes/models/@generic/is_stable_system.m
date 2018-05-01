@@ -2,40 +2,36 @@ function flag=is_stable_system(obj,varargin)
 % IS_STABLE_SYSTEM -- checks the stability of a linear markov switching
 % system.
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   flag=IS_STABLE_SYSTEM(obj)
 %
 %   flag=IS_STABLE_SYSTEM(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [dsge|rise|svar|rfvar]: model object
+%    - **obj** [dsge|rise|svar|rfvar]: model object
 %
-% - **varargin** [name,value]: pairwise valid options for RISE. The most
-% relevant in this case are
-%   - **stability_criterion** [numeric|{1.000001}]: stability criterion.
-%   All eigenvalues must be smaller than this criterion for the system to
-%   be MSS
-%   - **stability_algorithm** ['cfm'|{'hmg'}]: CFM stands for
-%   Costa-Fragoso-Marques while HMG stands for Hassibi-Murray-Gupta.
+%    - **varargin** [name,value]: pairwise valid options for RISE. The most
+%    relevant in this case are
+%      - **stability_criterion** [numeric|{1.000001}]: stability criterion.
+%      All eigenvalues must be smaller than this criterion for the system to
+%      be MSS
+%      - **stability_algorithm** ['cfm'|{'hmg'}]: CFM stands for
+%      Costa-Fragoso-Marques while HMG stands for Hassibi-Murray-Gupta.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **flag** [false|true]: result of the investigation on whether the
-% system is stable or not.
+%    - **flag** [false|true]: result of the investigation on whether the
+%    system is stable or not.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % this function checks that the solved system is
 % stable in the sense that its covariance matrix is

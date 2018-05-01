@@ -1,23 +1,19 @@
 function nmc=initialize_markov_chain(name,nstates,varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % parse the information in the name/value pairs
 pnames_defaults = {

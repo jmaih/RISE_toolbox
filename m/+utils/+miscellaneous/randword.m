@@ -1,27 +1,23 @@
 function word=randword(length)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 alphabet={'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 numbers={'0','1','2','3','4','5','6','7','8','9'};
-symbols={'_'}; %'§','@','£','#','$','&',
+symbols={'_'}; %'Â§','@','Â£','#','$','&',
 a_nbr=numel(alphabet);
 n_nbr=numel(numbers);
 s_nbr=numel(symbols);

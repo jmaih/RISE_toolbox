@@ -2,54 +2,50 @@ function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,parlist,n
 % plot_priors_and_posteriors -- computes posterior and prior densities for
 % estimated parameters
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   ppdata=plot_priors_and_posteriors(obj)
 %
 %   ppdata=plot_priors_and_posteriors(obj,simulation_folder)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar]: model object
+%    - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **simulation_folder** [empty|char|struct]: location of the simulations. If
-% empty, it is assumed that the simulations are saved to disc and are
-% located in the address found in obj.folders_paths.simulations. If it is a
-% "char", this corresponds to the location of the simulation. Otherwise, if
-% it is a struct, then it has to be the output of posterior_simulator.m
+%    - **simulation_folder** [empty|char|struct]: location of the simulations. If
+%    empty, it is assumed that the simulations are saved to disc and are
+%    located in the address found in obj.folders_paths.simulations. If it is a
+%    "char", this corresponds to the location of the simulation. Otherwise, if
+%    it is a struct, then it has to be the output of posterior_simulator.m
 %
-% - **parlist** [empty|char|cellstr]: list of the parameters for which one
-% wants to plot the priors and the posteriors
+%    - **parlist** [empty|char|cellstr]: list of the parameters for which one
+%    wants to plot the priors and the posteriors
 %
-% - **normalize2prior** [true|{false}]: if true, the range of the densities
-% is the same as that of the prior, else is the range of the posterior
+%    - **normalize2prior** [true|{false}]: if true, the range of the densities
+%    is the same as that of the prior, else is the range of the posterior
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **ppdata** [struct]: optional output argument, ppdata is a structure
-% containing the information needed to plot the posterior and prior
-% densities. The user can always plot those using
-% utils.plot.prior_posterior(ppdata.(pname)), where pname is the name of
-% one particular parameter of interest.
+%    - **ppdata** [struct]: optional output argument, ppdata is a structure
+%    containing the information needed to plot the posterior and prior
+%    densities. The user can always plot those using
+%    utils.plot.prior_posterior(ppdata.(pname)), where pname is the name of
+%    one particular parameter of interest.
 %
-% - **hdl** [vector]: optional output argument, placeholder for handles to
-% graphs
+%    - **hdl** [vector]: optional output argument, placeholder for handles to
+%    graphs
 %
-% More About
-% ------------
+% Note:
 %
-% - if there are no output arguments, figures with posterior and prior
-% marginal densities are plotted, but not saved!!!.
-% see also utils.plot.prior_posterior
+%    - if there are no output arguments, figures with posterior and prior
+%    marginal densities are plotted, but not saved!!!.
+%    see also utils.plot.prior_posterior
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if isempty(obj)
     

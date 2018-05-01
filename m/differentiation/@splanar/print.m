@@ -1,9 +1,8 @@
 function c=print(deriv,args,asfunc,long,optimize)
 % print - transforms the output of splanar.differentiate into char or functions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   c=splanar.print(deriv)
 %   c=splanar.print(deriv,args)
@@ -11,37 +10,34 @@ function c=print(deriv,args,asfunc,long,optimize)
 %   c=splanar.print(deriv,args,asfunc,long)
 %   c=splanar.print(deriv,args,asfunc,long,optimize)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **deriv** [output of differentiate]:
+%    - **deriv** [output of differentiate]:
 %
-% - **args** [cellstr|{[]}]: argument list to functions. If empty, print
-%   does not create functions. When creating functions, the field
-%   'derivatives' is renamed to functions.
+%    - **args** [cellstr|{[]}]: argument list to functions. If empty, print
+%      does not create functions. When creating functions, the field
+%      'derivatives' is renamed to functions.
 %
-% - **long** [true|{false}|[]]: if true, functions with shorthands are
-%   written with their file names e.g. a+b is written as plus(a,b)
+%    - **long** [true|{false}|[]]: if true, functions with shorthands are
+%      written with their file names e.g. a+b is written as plus(a,b)
 %
-% - **asfunc** [{true}|false|[]]: if true, the derivatives are put into
-%   anonymous functions. Else they are just returned as char or cellstr.
+%    - **asfunc** [{true}|false|[]]: if true, the derivatives are put into
+%      anonymous functions. Else they are just returned as char or cellstr.
 %
-% - **optimize** [true|{false}]: optimizes expression by removing e.g.
-%   redundant parentheses, etc. This does not work very well so far.
+%    - **optimize** [true|{false}]: optimizes expression by removing e.g.
+%      redundant parentheses, etc. This does not work very well so far.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **c** [structure with same format as deriv]: except that the
-%   derivatives field is transformed and the map is populated
+%    - **c** [structure with same format as deriv]: except that the
+%      derivatives field is transformed and the map is populated
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 if nargin<5
     
     optimize=[];

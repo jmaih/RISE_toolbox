@@ -2,27 +2,23 @@ function S = householder(A,do_cholesky,debug)
 
 % Householder - finds S from A such that S*S' = A*A' with S square and A not
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-%     S=triag(A) uses a Householder transformation of the rectangular
-%     matrix A to produce a square and upper triangular matrix S with
-%     the property S*S' = A*A'.
+% Note:
 %
-% Examples
-% ---------
+%        S=triag(A) uses a Householder transformation of the rectangular
+%        matrix A to produce a square and upper triangular matrix S with
+%        the property S*S' = A*A'.
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % HOUSEHOLDER
 % -----

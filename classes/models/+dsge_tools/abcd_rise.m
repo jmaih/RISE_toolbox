@@ -1,23 +1,19 @@
 function [test,A,B,C,D]=abcd_rise(m)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % function ABCD_test(M_,options_,oo_)
 %   computes ABCD Test statistics of Fernandez-Villaverde, Rubio-Ramirez,Sargent, 

@@ -1,26 +1,22 @@
 function [Tt,Rt,bt,Qt,Record]=state_matrices(T,R,mut,OMG,DPHI,DT,Record,ExpandedFlag)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<8
-    ExpandedFlag=0;
+ExpandedFlag=0;
 end
 ShockSpan=size(DPHI,2);
 
@@ -28,10 +24,10 @@ ShockSpan=size(DPHI,2);
 [mut,DPHI,DT,OMG]=remove_holes(mut(:),DPHI,DT,{OMG});
 
 if ~isempty(Record) && isequal(Record{1},DPHI)
-	M1=Record{2};
+M1=Record{2};
 else
-	[M1,M2,RM2i]=utils.forecast.rscond.null_and_column_spaces(DPHI);
-	Record={DPHI,M1,M2*RM2i};
+[M1,M2,RM2i]=utils.forecast.rscond.null_and_column_spaces(DPHI);
+Record={DPHI,M1,M2*RM2i};
 end
 
 MDPHIM=Record{3};
@@ -45,21 +41,21 @@ S(:,1:ex_nbrstar)=eye(ex_nbrstar);
 RSMDPHIM=R*S*MDPHIM;
 % adjusted state matrices
 if isempty(OMG)
-    OMG=DPHI*transpose(DPHI);
+OMG=DPHI*transpose(DPHI);
 end
 Qt=MDPHIM*OMG*transpose(MDPHIM)+M1*transpose(M1);
 wt=transpose(chol(Qt));
 if ExpandedFlag
-    Tt=[T-RSMDPHIM*DT,zeros(endo_nbr,ShockSpan)
-        -MDPHIM*DT,zeros(ShockSpan)];
-    bt=[RSMDPHIM
-        MDPHIM]*mut;
-    Rt=[R*S*wt
-        wt];
+Tt=[T-RSMDPHIM*DT,zeros(endo_nbr,ShockSpan)
+-MDPHIM*DT,zeros(ShockSpan)];
+bt=[RSMDPHIM
+MDPHIM]*mut;
+Rt=[R*S*wt
+wt];
 else
-    Tt=T-RSMDPHIM*DT;
-    bt=RSMDPHIM*mut;
-    Rt=R*S*wt;
+Tt=T-RSMDPHIM*DT;
+bt=RSMDPHIM*mut;
+Rt=R*S*wt;
 end
 
 end
@@ -67,23 +63,19 @@ end
 function [rstar,varargout]=remove_holes(rstar,varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 holes=isnan(rstar);
 rstar(holes,:)=[];

@@ -1,50 +1,46 @@
 function derivs=differentiate(eqtns,nwrt,order,verbose)
 % differentiate - differentiates vectors of splanar objects
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   derivs=splanar.differentiate(eqtns,nwrt)
 %   derivs=splanar.differentiate(eqtns,nwrt,order)
 %   derivs=splanar.differentiate(eqtns,nwrt,order,verbose)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **eqtns** [splanar|cell array]: vector or cell array of splanar objects
+%    - **eqtns** [splanar|cell array]: vector or cell array of splanar objects
 %
-% - **nwrt** [integer]: number of variables for which differentiation is
-%   taken
+%    - **nwrt** [integer]: number of variables for which differentiation is
+%      taken
 %
-% - **order** [integer|{1}]: order of differentiation
+%    - **order** [integer|{1}]: order of differentiation
 %
-% - **verbose** [true|{false}]: displays information about the process e.g.
-%   the amount of time it takes to differentiate each order
+%    - **verbose** [true|{false}]: displays information about the process e.g.
+%      the amount of time it takes to differentiate each order
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **derivs** [structure]: each element in the structure contains:
-%   - **size** [2-colum vector]: number of rows and number of columns of
-%     the compacted derivatives i.e. unique columns 
-%   - **derivatives** [vector of splanar]: derivatives 
-%   - **nwrt** [integer]: number of variables for which differentiation is
-%     taken
-%   - **order** [integer]: order of differentiation of the current
-%     structure
-%   - **nnz_derivs** [integer]: number of non-zero derivatives
-%   - **partitions** [vector]: vector that help reconstruct the
-%     expanded/grand derivative matrix.
-%   - **map** []: empty field that will be used in a later stage
+%    - **derivs** [structure]: each element in the structure contains:
+%      - **size** [2-colum vector]: number of rows and number of columns of
+%        the compacted derivatives i.e. unique columns
+%      - **derivatives** [vector of splanar]: derivatives
+%      - **nwrt** [integer]: number of variables for which differentiation is
+%        taken
+%      - **order** [integer]: order of differentiation of the current
+%        structure
+%      - **nnz_derivs** [integer]: number of non-zero derivatives
+%      - **partitions** [vector]: vector that help reconstruct the
+%        expanded/grand derivative matrix.
+%      - **map** []: empty field that will be used in a later stage
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<4
     verbose=false;

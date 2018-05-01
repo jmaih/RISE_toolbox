@@ -1,23 +1,19 @@
 function h=and(varargin)
 % and -- overload and for structures
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 nargs=length(varargin);
 h=struct();

@@ -1,25 +1,21 @@
 function [sim1,regimes,retcode]=simul_occbin(y0,T,ss,state_vars_location,...
-    options,shocks)
+options,shocks)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % evaluate stretch t:t+n
 % evaluate t+n+1 with reference regime

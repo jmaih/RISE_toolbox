@@ -1,33 +1,29 @@
 function [pop,tags]=sort_population(pop)
 % sort_population -- sorts population pf mcmc draws
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [pop,tags]=sort_population(pop)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **pop** [struct]: vector of individuals, each with fields 
-%   - **f** [numeric]: fitness level
-%   - **x** [vector]: parameters 
+%    - **pop** [struct]: vector of individuals, each with fields
+%      - **f** [numeric]: fitness level
+%      - **x** [vector]: parameters
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **pop** [struct]: sorted vector of individuals
+%    - **pop** [struct]: sorted vector of individuals
 %
-% - **tags** [vector]: reordering index
+%    - **tags** [vector]: reordering index
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 [~,tags]=sort([pop.f]);
 

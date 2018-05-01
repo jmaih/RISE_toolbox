@@ -1,270 +1,266 @@
 classdef dsge < generic % & gogetter
-    % dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
-    %
-    % dsge Methods:
-    % ----------------
-    %
-    % check_derivatives -  compares the derivatives and the solutions from various differentiation techniques
-    % check_optimum -   H1 line
-    % compute_steady_state -   H1 line
-    % create_estimation_blocks -   H1 line
-    % create_state_list - creates the list of the state variables in the solution
-    % draw_parameter -   H1 line
-    % dsge -   default options
-    % estimate -  estimates the parameters of a RISE model
-    % filter -   H1 line
-    % forecast -  computes forecasts for rise|dsge|svar|rfvar models
-    % forecast_real_time -  forecast from each point in time
-    % get -   H1 line
-    % historical_decomposition - Computes historical decompositions of a DSGE model
-    % irf -   H1 line
-    % is_stable_system -   H1 line
-    % isnan -   H1 line
-    % load_parameters -   H1 line
-    % log_marginal_data_density -   H1 line
-    % log_posterior_kernel -   H1 line
-    % log_prior_density -   H1 line
-    % posterior_marginal_and_prior_densities -   H1 line
-    % print_estimation_results -   H1 line
-    % print_solution -  print the solution of a model or vector of models
-    % print_solution_legacy -  old form of print_solution
-    % prior_plots -   H1 line
-    % refresh -  refresh the options of an old object with a newer version of
-    % report - assigns the elements of interest to a rise_report.report object
-    % resid -   H1 line
-    % set -  sets options for dsge|rise models
-    % set_solution_to_companion -   H1 line
-    % simulate -  simulates a RISE model
-    % simulate_nonlinear -   H1 line
-    % solve -   H1 line
-    % solve_alternatives -   H1 line
-    % stoch_simul -   H1 line
-    % theoretical_autocorrelations -   H1 line
-    % theoretical_autocovariances -   H1 line
-    % variance_decomposition -   H1 line
-    %
-    % dsge Properties:
-    % -------------------
-    %
-    % definitions -   values of auxiliary parameters defined in the model file with a #
-    % equations - of the system
-    % folders_paths -   paths for the different folders in which RISE stores information
-    % dsge_var -
-    % filename -   name of the rs/rz/dsge file read
-    % legend -   attribute for giving a tag to a specific version of a model
-    % endogenous -   information on endogenous variables (names, number, types, etc.)
-    % exogenous -   information on exogenous variables (names, number, types, etc.)
-    % parameters -   information on parameters (names, number, types, etc.)
-    % observables -   information on observable variables (names, number, types, etc.)
-    % markov_chains -   information on markov chains, regimes and related items
-    % options -   structure holding information on modifiable settings
-    % estimation -   information on estimation: posterior maximization and simulation
-    % solution -   model solution including steady state, definitions, etc.
-    % filtering -   structure holding predicted, updated and smoothed series
-    properties
-        % this is so that the user can tailor the information to pass
-        % around functions written by him but called by RISE
-        user_data
-        
-    end
-    
-    properties (Hidden = true)
-        
-        old_solution
-        
-    end
-    
-    properties (Dependent,Hidden)
-        
-        log_vars
-        
-    end
-    
-    properties (SetAccess = private, Hidden = true)
-        auxiliary_variables % variables for which the user does not need to solve for the steady state
-        
-        dates_filtering % those two options should be moved elsewhere so that they are visible...
-        
-        dates_smoothing
-        
-        hybrid_expectations_lambda_id
-        
-        is_dsge_var_model
-        
-        is_endogenous_switching_model
-        
-        is_hybrid_expectations_model
-        
-        is_hybrid_model
-        
-        is_in_use_parameter
-        
-        is_optimal_policy_model
-        
-        is_optimal_simple_rule_model
-        
-        is_purely_backward_looking_model
-        
-        is_purely_forward_looking_model
-        
-        lead_lag_incidence
-        
-        measurement_errors_restrictions
-        
-        model_derivatives
-        
-        planner_system
-        
-        raw_file
-        
-        rawfile_triggers
-        
-        sticky_information_lambda_id
-        
-        input_list
-        
-        % steady state solution facilitators
-        %------------------------------------
-        occurrence
-        
-        fast_sstate_occurrence
-        
-        steady_state_blocks
-        
-        steady_state_2_model_communication
-        
-        steady_state_2_blocks_optimization
-        
-        % steady state model characteristics
-        %------------------------------------
-        is_param_changed_in_ssmodel
-        
-        % statistics on the order of the variables
-        %--------------------------------------------
-        v
-        
-        locations
-        
-        siz
-        
-        order_var
-        
-        inv_order_var
-        
-        % provision for automatic differentiation
-        %----------------------------------------
-        steady_state_index
-        
-        % provision for functions, solving and resolving
-        %--------------------------------------------------
-        warrant_resolving = true;
-        
-        warrant_setup_change = true % initialization of functions, derivatives, etc.
-        
-        % dsge_var stuff
-        %---------------
-        dsge_var
-        
-        dsge_prior_weight_id
-        
-        % user information
-        %------------------
-        user_endogenous_priors_info
-        
-    end
-    
-    properties(SetAccess=protected)
-        % values of auxiliary parameters defined in the model file with a #
-        definitions
-        
-        % equations of the system
-        equations
-        
-        % paths for the different folders in which RISE stores information
-        folders_paths
-        
-        % name of the rs/rz/dsge file read
-        filename='';
-        
-    end
-    
-    methods
-        % constructor
-        %------------
-        function obj=dsge(model_filename,varargin)
-            % dsge -- constructor for dsge models
-            %
-            % Syntax
-            % -------
-            % ::
-            %
-            %   obj=dsge(model_filename,varargin)
-            %
-            % Inputs
-            % -------
-            %
-            % - **model_filename** [char]: name of the model file. The file
-            % should have extensions rs, rz or dsge
-            %
-            % - **varargin** []: pairwise arguments with possiblities as
-            % follows: 
-            %
-            %   - **parameter_differentiation** [true|{false}]: compute or
-            %   not parameter derivatives
-            %
-            %   - **definitions_inserted** [true|{false}]: substitute
-            %   definitions given in the model block. Necessary if the
-            %   definitions contain variables.
-            %
-            %   - **definitions_in_param_differentiation** [true|{false}]:
-            %   insert or not definitions in equations before
-            %   differentiating with respect to parameters
-            %
-            %   - **rise_save_macro** [true|{false}]: save the macro file
-            %   in case of insertions of sub-files
-            %
-            %   - **max_deriv_order** [integer|{2}]: order for symbolic
-            %   differentiation. It is recommended to set to 1, especially
-            %   for large models in case one does not intend to solve
-            %   higher-order approximations 
-            %
-            %   - **parse_debug** [true|{false}]: debugging in the parser
-            %
-            %   - **add_welfare** [true|{false}]: add the welfare equation
-            %   when doing optimal policy. N.B: The welfare variable, WELF
-            %   is the true welfare multiplied by (1-discount). The
-            %   within-period utility variable, UTIL is automatically
-            %   added. The reason why welfare is not automatically added 
-            %   is that oftentimes models with that equation do not solve.
-            %
-            %   - **rise_flags** [struct|cell]: instructions for the
-            %   partial parsing of the rise file. In case of a cell, the
-            %   cell should be a k x 2 cell, where the first column
-            %   collects the conditional parsing names and the second
-            %   column the values. 
-            %
-            % Outputs
-            % --------
-            %
-            % - **obj** [rise|dsge]: model object
-            %
-            % More About
-            % ------------
-            %
-            % - The pairwise options listed above are the ones that will be
-            % processed in the parser. Additional options related to
-            % specific methods can also be passed at this stage, but will
-            % only be applied or used when the specific method dealing with
-            % them is called.
-            %
-            % - In RISE it is possible to declare exogenous and make them
-            % observable at the same time. The exogenous that are observed
-            % are determisitic. This is the way to introduce e.g. time
-            % trends. This strategy also opens the door for estimating
-            % partial equilibrium models.
-            %
-            % Examples
-            % ---------
+% dsge Markov Switching Dynamic Stochastic General Equilibrium Modeling
+%
+% dsge Methods:
+% ----------------
+%
+% check_derivatives -  compares the derivatives and the solutions from various differentiation techniques
+% check_optimum -   H1 line
+% compute_steady_state -   H1 line
+% create_estimation_blocks -   H1 line
+% create_state_list - creates the list of the state variables in the solution
+% draw_parameter -   H1 line
+% dsge -   default options
+% estimate -  estimates the parameters of a RISE model
+% filter -   H1 line
+% forecast -  computes forecasts for rise|dsge|svar|rfvar models
+% forecast_real_time -  forecast from each point in time
+% get -   H1 line
+% historical_decomposition - Computes historical decompositions of a DSGE model
+% irf -   H1 line
+% is_stable_system -   H1 line
+% isnan -   H1 line
+% load_parameters -   H1 line
+% log_marginal_data_density -   H1 line
+% log_posterior_kernel -   H1 line
+% log_prior_density -   H1 line
+% posterior_marginal_and_prior_densities -   H1 line
+% print_estimation_results -   H1 line
+% print_solution -  print the solution of a model or vector of models
+% print_solution_legacy -  old form of print_solution
+% prior_plots -   H1 line
+% refresh -  refresh the options of an old object with a newer version of
+% report - assigns the elements of interest to a rise_report.report object
+% resid -   H1 line
+% set -  sets options for dsge|rise models
+% set_solution_to_companion -   H1 line
+% simulate -  simulates a RISE model
+% simulate_nonlinear -   H1 line
+% solve -   H1 line
+% solve_alternatives -   H1 line
+% stoch_simul -   H1 line
+% theoretical_autocorrelations -   H1 line
+% theoretical_autocovariances -   H1 line
+% variance_decomposition -   H1 line
+%
+% dsge Properties:
+% -------------------
+%
+% definitions -   values of auxiliary parameters defined in the model file with a #
+% equations - of the system
+% folders_paths -   paths for the different folders in which RISE stores information
+% dsge_var -
+% filename -   name of the rs/rz/dsge file read
+% legend -   attribute for giving a tag to a specific version of a model
+% endogenous -   information on endogenous variables (names, number, types, etc.)
+% exogenous -   information on exogenous variables (names, number, types, etc.)
+% parameters -   information on parameters (names, number, types, etc.)
+% observables -   information on observable variables (names, number, types, etc.)
+% markov_chains -   information on markov chains, regimes and related items
+% options -   structure holding information on modifiable settings
+% estimation -   information on estimation: posterior maximization and simulation
+% solution -   model solution including steady state, definitions, etc.
+% filtering -   structure holding predicted, updated and smoothed series
+properties
+% this is so that the user can tailor the information to pass
+% around functions written by him but called by RISE
+user_data
+
+end
+
+properties (Hidden = true)
+
+old_solution
+
+end
+
+properties (Dependent,Hidden)
+
+log_vars
+
+end
+
+properties (SetAccess = private, Hidden = true)
+auxiliary_variables % variables for which the user does not need to solve for the steady state
+
+dates_filtering % those two options should be moved elsewhere so that they are visible...
+
+dates_smoothing
+
+hybrid_expectations_lambda_id
+
+is_dsge_var_model
+
+is_endogenous_switching_model
+
+is_hybrid_expectations_model
+
+is_hybrid_model
+
+is_in_use_parameter
+
+is_optimal_policy_model
+
+is_optimal_simple_rule_model
+
+is_purely_backward_looking_model
+
+is_purely_forward_looking_model
+
+lead_lag_incidence
+
+measurement_errors_restrictions
+
+model_derivatives
+
+planner_system
+
+raw_file
+
+rawfile_triggers
+
+sticky_information_lambda_id
+
+input_list
+
+% steady state solution facilitators
+%------------------------------------
+occurrence
+
+fast_sstate_occurrence
+
+steady_state_blocks
+
+steady_state_2_model_communication
+
+steady_state_2_blocks_optimization
+
+% steady state model characteristics
+%------------------------------------
+is_param_changed_in_ssmodel
+
+% statistics on the order of the variables
+%--------------------------------------------
+v
+
+locations
+
+siz
+
+order_var
+
+inv_order_var
+
+% provision for automatic differentiation
+%----------------------------------------
+steady_state_index
+
+% provision for functions, solving and resolving
+%--------------------------------------------------
+warrant_resolving = true;
+
+warrant_setup_change = true % initialization of functions, derivatives, etc.
+
+% dsge_var stuff
+%---------------
+dsge_var
+
+dsge_prior_weight_id
+
+% user information
+%------------------
+user_endogenous_priors_info
+
+end
+
+properties(SetAccess=protected)
+% values of auxiliary parameters defined in the model file with a #
+definitions
+
+% equations of the system
+equations
+
+% paths for the different folders in which RISE stores information
+folders_paths
+
+% name of the rs/rz/dsge file read
+filename='';
+
+end
+
+methods
+% constructor
+%------------
+function obj=dsge(model_filename,varargin)
+% dsge -- constructor for dsge models
+%
+% ::
+%
+%
+%   obj=dsge(model_filename,varargin)
+%
+% Args:
+%              %
+%              % - **model_filename** [char]: name of the model file. The file
+%              % should have extensions rs, rz or dsge
+%              %
+%              % - **varargin** []: pairwise arguments with possiblities as
+%              % follows:
+%              %
+%              %   - **parameter_differentiation** [true|{false}]: compute or
+%              %   not parameter derivatives
+%              %
+%              %   - **definitions_inserted** [true|{false}]: substitute
+%              %   definitions given in the model block. Necessary if the
+%              %   definitions contain variables.
+%              %
+%              %   - **definitions_in_param_differentiation** [true|{false}]:
+%              %   insert or not definitions in equations before
+%              %   differentiating with respect to parameters
+%              %
+%              %   - **rise_save_macro** [true|{false}]: save the macro file
+%              %   in case of insertions of sub-files
+%              %
+%              %   - **max_deriv_order** [integer|{2}]: order for symbolic
+%              %   differentiation. It is recommended to set to 1, especially
+%              %   for large models in case one does not intend to solve
+%              %   higher-order approximations
+%              %
+%              %   - **parse_debug** [true|{false}]: debugging in the parser
+%              %
+%              %   - **add_welfare** [true|{false}]: add the welfare equation
+%              %   when doing optimal policy. N.B: The welfare variable, WELF
+%              %   is the true welfare multiplied by (1-discount). The
+%              %   within-period utility variable, UTIL is automatically
+%              %   added. The reason why welfare is not automatically added
+%              %   is that oftentimes models with that equation do not solve.
+%              %
+%              %   - **rise_flags** [struct|cell]: instructions for the
+%              %   partial parsing of the rise file. In case of a cell, the
+%              %   cell should be a k x 2 cell, where the first column
+%              %   collects the conditional parsing names and the second
+%              %   column the values.
+%              %
+% Returns:
+%    :
+%              %
+%              % - **obj** [rise|dsge]: model object
+%              %
+% Note:
+%              %
+%              % - The pairwise options listed above are the ones that will be
+%              % processed in the parser. Additional options related to
+%              % specific methods can also be passed at this stage, but will
+%              % only be applied or used when the specific method dealing with
+%              % them is called.
+%              %
+%              % - In RISE it is possible to declare exogenous and make them
+%              % observable at the same time. The exogenous that are observed
+%              % are determisitic. This is the way to introduce e.g. time
+%              % trends. This strategy also opens the door for estimating
+%              % partial equilibrium models.
+%              %
+% Example:
             %
             % See also:
             

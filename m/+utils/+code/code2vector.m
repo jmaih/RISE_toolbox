@@ -1,43 +1,39 @@
 function xout=code2vector(xcell,devect)
 % code2vector - transforms a set of function handles into a single function
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   xout=code2vector(xcell)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **xcell** [fhandle|cell|struct]:
-%   - if cell, it is assumed that all entries are anonymous functions
-%     sharing the same inputs. One anonymous function is returned in a cell
-%   - if fhandle, the same input is returned
-%   - if struct
-%       - derivatives are identified by the fields
-%         'size','functions','map','partitions' 
-%       - eval items are identified by the fields 'code','argins','argouts'
-%       - else it is assumed we have transition matrix, in which case the
-%           output is the same as the input
+%    - **xcell** [fhandle|cell|struct]:
+%      - if cell, it is assumed that all entries are anonymous functions
+%        sharing the same inputs. One anonymous function is returned in a cell
+%      - if fhandle, the same input is returned
+%      - if struct
+%          - derivatives are identified by the fields
+%            'size','functions','map','partitions'
+%          - eval items are identified by the fields 'code','argins','argouts'
+%          - else it is assumed we have transition matrix, in which case the
+%              output is the same as the input
 %
-% - **devect** [true|{false}]: de-vectorize functions.
+%    - **devect** [true|{false}]: de-vectorize functions.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **xout** : vectorized function handle
+%    - **xout** : vectorized function handle
 %
-% More About
-% ------------
+% Note:
 %
-% - The routine checks whether the input has ':' or not to writes a
-%   consistent unique function
+%    - The routine checks whether the input has ':' or not to writes a
+%      consistent unique function
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: UTILS.CODE.CODE2FUNC
+%    See also: UTILS.CODE.CODE2FUNC
 
 
 xout=xcell;

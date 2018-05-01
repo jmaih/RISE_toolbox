@@ -1,436 +1,428 @@
 classdef mcf < handle
-    % MCF Create a Monte Carlo Filtering
-    %
-    % mcf Methods:
-    % ---------------
-    %
-    % cdf - cumulative distribution function
-    % cdf_plot - plot of cdf
-    % correlation_patterns_plot - plot of correlation patterns
-    % kolmogorov_smirnov_test - test of equality of distributions
-    % mcf - creates an mcf object
-    % scatter - scatter plot of the data
-    %
-    % mcf Properties:
-    % ------------------
-    %
-    % lb -   lower bounds for the parameters
-    % ub -   upper bounds for the parameters
-    % nsim -   number of simulations
-    % procedure -   sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
-    % parameter_names -   names of the parameters
-    % samples - parameter draws
-    % is_behaved - boolean flag for behaved parameter vectors
-    % nparam - number of parameters
-    % is_sampled - true if draws are available
-    % check_behavior - checks whether the vectors should be true or false
-    % number_of_outputs - number of outputs to check_behavior
-    % user_outputs - sampled additional outputs
-    % known_procedures - known sampling procedures
-    properties
-        
-        graph_nrows=3
-        
-        graph_ncols=3
-    
-    end
-    
-    properties(SetAccess=protected)
-        % lower bounds for the parameters
-        lb
-        % upper bounds for the parameters
-        ub
-        % number of simulations
-        nsim=20000
-        % sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
-        procedure
-        % names of the parameters
-        parameter_names
-        % sampled draws
-        samples
-        % Boolean vector describing the draws
-        is_behaved
-        % number of parameters
-        nparam
-        % number of output of the behavior function
-        number_of_outputs
-        % user requested additional outputs
-        user_outputs
-    end
-    
-    properties(SetAccess=protected,Hidden)
-        
-        is_sampled = false
-        
-        check_behavior
-    
-    end
-    
-    properties(Constant)
-        % Default sampling procedures: 'uniform', 'latin_hypercube',
-        % 'sobol', 'halton'  
-        known_procedures={'uniform','latin_hypercube','sobol','halton'}
-    
-    end
-    
-    methods
-    
-        function obj=mcf(check_behavior,nsim_or_draws,lb,ub,names,procedure_)
-            % MCF -- Monte Carlo Filtering
-            %
-            % Syntax
-            % -------
-            % ::
-            %
-            %   obj=MCF(check_behavior,nsim_or_draws)
-            %
-            %   obj=MCF(check_behavior,nsim_or_draws,lb)
-            %
-            %   obj=MCF(check_behavior,nsim_or_draws,lb,ub)
-            %
-            %   obj=MCF(check_behavior,nsim_or_draws,lb,ub,names)
-            %
-            %   obj=MCF(check_behavior,nsim_or_draws,lb,ub,names,procedure_)
-            %
-            % Inputs
-            % -------
-            %
-            % - **check_behavior** [function_handle|cell|vector]: (i) when
-            % it is a function handle, the function takes as input a vector
-            % of parameters and returns in its first output a boolean that
-            % is true if the paramter satisfies the behavior and false
-            % otherwise. The procedure is going to check the number of
-            % output arguments that the function returns and collect all
-            % those extra output arguments while sampling. (ii) when it is
-            % a cell, it should be a two-element cell such that the first
-            % element is the function handle and the second is the number
-            % of outputs desired by the user. (iii) if it is a vector, all
-            % elements are either 0 or 1 or boolean, describing whether
-            % each parameter vector checks the behavior or not.
-            %
-            % - **nsim_or_draws** [integer|matrix]: When it is an integer,
-            % nsim_or_draws is the number of draws to sample. When it is a
-            % matrix, it is the draws. No further sampling will be
-            % performed.
-            %
-            % - **lb** [empty|vector]: lower bound of the search space
-            %
-            % - **ub** [empty|vector]: upper bound of the search space
-            %
-            % - **names** [empty|char|cellstr]: names of the parameters. If
-            % empty, the names are created as p_i, where "i" is the order
-            % of the parameter in the list.
-            %
-            % - **procedure_** [{'uniform'}|'latin_hypercube'|'sobol'|...
-            % 'halton'|user-defined]: when it is user-defined, it should be
-            % a function handle, and should take 3 inputs(lb, ub, nsim) and
-            % return a parameter draw.
-            %
-            % Outputs
-            % --------
-            %
-            % - **obj** [mcf object]: containing, among other things, the
-            % samples, a flag determining their behavior.
-            % 
-            % More About
-            % ------------
-            %
-            % Examples
-            % ---------
-            %
-            % See also:
+% MCF Create a Monte Carlo Filtering
+%
+% mcf Methods:
+% ---------------
+%
+% cdf - cumulative distribution function
+% cdf_plot - plot of cdf
+% correlation_patterns_plot - plot of correlation patterns
+% kolmogorov_smirnov_test - test of equality of distributions
+% mcf - creates an mcf object
+% scatter - scatter plot of the data
+%
+% mcf Properties:
+% ------------------
+%
+% lb -   lower bounds for the parameters
+% ub -   upper bounds for the parameters
+% nsim -   number of simulations
+% procedure -   sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
+% parameter_names -   names of the parameters
+% samples - parameter draws
+% is_behaved - boolean flag for behaved parameter vectors
+% nparam - number of parameters
+% is_sampled - true if draws are available
+% check_behavior - checks whether the vectors should be true or false
+% number_of_outputs - number of outputs to check_behavior
+% user_outputs - sampled additional outputs
+% known_procedures - known sampling procedures
+properties
 
-            if nargin
-        
-                if nargin<6
-                
-                    procedure_=[];
-                    
-                    if nargin<5
-                    
-                        names=[];
-                        
-                        if nargin<4
-                        
-                            ub=[];
-                            
-                            if nargin<3
-                            
-                                lb=[];
-                                
-                                if nargin<2
-                                
-                                    error('insufficient number of arguments')
-                                
-                                end
-                                
-                            end
-                            
-                        end
-                        
-                    end
-                    
-                end
-                % objective function
-                %--------------------
-                nout=[];
-            
-                check_behave_error='check_behavior must be a function handle, a vector of zeros and ones, or a vector of logicals';
-                
-                if iscell(check_behavior)
-                
-                    nout=check_behavior{2};
-                    
-                    check_behavior=check_behavior{1};
-                    
-                    assert(nout>0 && isfinite(nout) && ceil(nout)==floor(nout),'wrong specification of the number of output arguments')
-                
-                end
-                
-                if isnumeric(check_behavior)
-                
-                    if all(check_behavior==1|check_behavior==0)
-                   
-                        check_behavior=logical(check_behavior);
-                    
-                    else
-                        
-                        error(check_behave_error)
-                    
-                    end
-                    
-                end
-                
-                is_already_checked=islogical(check_behavior);
-                
-                if is_already_checked
-                
-                    nout=0;
-                
-                else
-                    
-                    if ~isa(check_behavior,'function_handle')
-                    
-                        error(check_behave_error)
-                    
-                    end
-                    
-                end
-                
-                if isempty(nout)
-                
-                    obj.number_of_outputs=nargout(check_behavior);
-                   
-                    if obj.number_of_outputs<1
-                    
-                        nout=0;
-                        
-                        for ii=1:4
-                        
-                            myout=cell(1,ii);
-                            
-                            try
-                            
-                                [myout{1:ii}]=check_behavior(0.5*(lb+ub)); %#ok<NASGU>
-                                
-                                nout=nout+1;
-                            
-                            catch
-                                
-                                break
-                            
-                            end
-                            
-                        end
-                        
-                        if nout==0
-                            
-                            error('not enough output arguments for the behavioral function')
-                            
-                        end
-                        
-                        obj.number_of_outputs=nout;
-                    
-                    end
-                    
-                else
-                    
-                    obj.number_of_outputs=nout;
-                
-                end
-                
-                obj.check_behavior=check_behavior;
-                % number of draws
-                %----------------
-                if isscalar(nsim_or_draws)
-                
-                    obj.nsim=nsim_or_draws;
-                
-                else
-                    
-                    [obj.nparam,obj.nsim]=size(nsim_or_draws);
-                   
-                    obj.samples=nsim_or_draws;
-                    
-                    obj.is_sampled=true;
-                    
-                    obj.nsim=size(nsim_or_draws,2);
-                
-                end
-                
-                if is_already_checked && obj.is_sampled
-                
-                    if obj.nsim~=numel(check_behavior)
-                    
-                        error('number of elements in check_behavior does not match the sample size')
-                    
-                    end
-                    
-                    obj.is_behaved=check_behavior(:).';
-                    
-                    obj.check_behavior=[];
-                
-                else
-                    
-                end
-                
-                % lower and upper bounds on the parameters
-                %-----------------------------------------
-                if obj.is_sampled
-                
-                    if isempty(lb)||isempty(ub)
-                    
-                        lb=min(obj.samples,[],2);
-                        
-                        ub=max(obj.samples,[],2);
-                    
-                    end
-                    
-                    nrows=numel(lb);
-                
-                else
-                    
-                    if isempty(lb)||isempty(ub)
-                    
-                        error('no samples provided and so lb and ub must be given')
-                    
-                    end
-                    
-                    [nrows,ncols]=size(lb);
-                    
-                    if ~isequal(size(ub),[nrows,ncols])
-                    
-                        error('upper and lower bounds must be of the same size')
-                    
-                    end
-                    
-                    if ~(all(isfinite(lb)) && all(isfinite(ub)))
-                    
-                        error('lower and upper bounds must be finite')
-                    
-                    end
-                    
-                    if any(ub<lb)
-                    
-                        error('ub cannot be lower than lb')
-                    
-                    end
-                    
-                end
-                
-                obj.nparam=nrows;
-                
-                obj.lb=lb;
-                
-                obj.ub=ub;
-                % create parameter names if empty!!!
-                %-----------------------------------
-                names=utils.char.create_names(names,'p',obj.nparam);
-                
-                if ischar(names),names=cellstr(names);end
-                
-                if ~iscellstr(names),error('names should be char or cellstr'),end
-                
-                if numel(names)~=obj.nparam
-                
-                    error('number of parameter names does not match the actual number of parameters')
-                
-                end
-                
-                obj.parameter_names=names(:).';
-                
-                if ~isempty(procedure_)
-                
-                    if isa(procedure_,'function_handle')
-                    
-                        try
-                        
-                            ntest=5;
-                            
-                            test=procedure_(obj.lb,obj.ub,ntest);
-                            
-                            assert(isequal(size(test),[obj.nparam,ntest]))
-                        
-                        catch ME
-                        
-                            error('A user-defined sampling procedure should accept 3 arguments which are lb, ub, nsim')
-                        
-                        end
-                        
-                    else
-                        
-                        if ~ischar(procedure_)||any(strcmp(procedure_,{obj.known_procedures}))
-                        
-                            disp(obj.known_procedures)
-                            
-                            error('specification procedure expected to be one of the above')
-                        
-                        end
-                        
-                    end
-                    
-                    obj.procedure=procedure_;
-                
-                else
-                    
-                    obj.procedure = obj.known_procedures{1};
-                
-                end
-                
-            end
-            
-            estimate(obj);
-        
-        end
-        
-        function d=cdf(obj,pname)
-            % cdf -- Cumulative distribution function
-            %
-            % Syntax
-            % -------
-            % ::
-            %
-            %   d=cdf(obj,pname)
-            %
-            % Inputs
-            % -------
-            %
-            % - **obj** [mcf object]: 
-            %
-            % - **pname** [char]: name of the parameter which one wants
-            % the cdf for.
-            %
-            % Outputs
-            % --------
-            %
-            % - **d** [struct]: with fields lb, ub, x, f_behave,
-            % f_non_behave, x_good, x_bad
-            % 
-            % More About
-            % ------------
-            %
-            % Examples
-            % ---------
+graph_nrows=3
+
+graph_ncols=3
+
+end
+
+properties(SetAccess=protected)
+% lower bounds for the parameters
+lb
+% upper bounds for the parameters
+ub
+% number of simulations
+nsim=20000
+% sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
+procedure
+% names of the parameters
+parameter_names
+% sampled draws
+samples
+% Boolean vector describing the draws
+is_behaved
+% number of parameters
+nparam
+% number of output of the behavior function
+number_of_outputs
+% user requested additional outputs
+user_outputs
+end
+
+properties(SetAccess=protected,Hidden)
+
+is_sampled = false
+
+check_behavior
+
+end
+
+properties(Constant)
+% Default sampling procedures: 'uniform', 'latin_hypercube',
+% 'sobol', 'halton'
+known_procedures={'uniform','latin_hypercube','sobol','halton'}
+
+end
+
+methods
+
+function obj=mcf(check_behavior,nsim_or_draws,lb,ub,names,procedure_)
+% MCF -- Monte Carlo Filtering
+%
+% ::
+%
+%
+%   obj=MCF(check_behavior,nsim_or_draws)
+%
+%   obj=MCF(check_behavior,nsim_or_draws,lb)
+%
+%   obj=MCF(check_behavior,nsim_or_draws,lb,ub)
+%
+%   obj=MCF(check_behavior,nsim_or_draws,lb,ub,names)
+%
+%   obj=MCF(check_behavior,nsim_or_draws,lb,ub,names,procedure_)
+%
+% Args:
+%              %
+%              % - **check_behavior** [function_handle|cell|vector]: (i) when
+%              % it is a function handle, the function takes as input a vector
+%              % of parameters and returns in its first output a boolean that
+%              % is true if the paramter satisfies the behavior and false
+%              % otherwise. The procedure is going to check the number of
+%              % output arguments that the function returns and collect all
+%              % those extra output arguments while sampling. (ii) when it is
+%              % a cell, it should be a two-element cell such that the first
+%              % element is the function handle and the second is the number
+%              % of outputs desired by the user. (iii) if it is a vector, all
+%              % elements are either 0 or 1 or boolean, describing whether
+%              % each parameter vector checks the behavior or not.
+%              %
+%              % - **nsim_or_draws** [integer|matrix]: When it is an integer,
+%              % nsim_or_draws is the number of draws to sample. When it is a
+%              % matrix, it is the draws. No further sampling will be
+%              % performed.
+%              %
+%              % - **lb** [empty|vector]: lower bound of the search space
+%              %
+%              % - **ub** [empty|vector]: upper bound of the search space
+%              %
+%              % - **names** [empty|char|cellstr]: names of the parameters. If
+%              % empty, the names are created as p_i, where "i" is the order
+%              % of the parameter in the list.
+%              %
+%              % - **procedure_** [{'uniform'}|'latin_hypercube'|'sobol'|...
+%              % 'halton'|user-defined]: when it is user-defined, it should be
+%              % a function handle, and should take 3 inputs(lb, ub, nsim) and
+%              % return a parameter draw.
+%              %
+% Returns:
+%    :
+%              %
+%              % - **obj** [mcf object]: containing, among other things, the
+%              % samples, a flag determining their behavior.
+%              %
+% Note:
+%              %
+% Example:
+%
+% See also:
+
+if nargin
+
+if nargin<6
+
+procedure_=[];
+
+if nargin<5
+
+names=[];
+
+if nargin<4
+
+ub=[];
+
+if nargin<3
+
+lb=[];
+
+if nargin<2
+
+error('insufficient number of arguments')
+
+end
+
+end
+
+end
+
+end
+
+end
+% objective function
+%--------------------
+nout=[];
+
+check_behave_error='check_behavior must be a function handle, a vector of zeros and ones, or a vector of logicals';
+
+if iscell(check_behavior)
+
+nout=check_behavior{2};
+
+check_behavior=check_behavior{1};
+
+assert(nout>0 && isfinite(nout) && ceil(nout)==floor(nout),'wrong specification of the number of output arguments')
+
+end
+
+if isnumeric(check_behavior)
+
+if all(check_behavior==1|check_behavior==0)
+
+check_behavior=logical(check_behavior);
+
+else
+
+error(check_behave_error)
+
+end
+
+end
+
+is_already_checked=islogical(check_behavior);
+
+if is_already_checked
+
+nout=0;
+
+else
+
+if ~isa(check_behavior,'function_handle')
+
+error(check_behave_error)
+
+end
+
+end
+
+if isempty(nout)
+
+obj.number_of_outputs=nargout(check_behavior);
+
+if obj.number_of_outputs<1
+
+nout=0;
+
+for ii=1:4
+
+myout=cell(1,ii);
+
+try
+
+[myout{1:ii}]=check_behavior(0.5*(lb+ub)); %#ok<NASGU>
+
+nout=nout+1;
+
+catch
+
+break
+
+end
+
+end
+
+if nout==0
+
+error('not enough output arguments for the behavioral function')
+
+end
+
+obj.number_of_outputs=nout;
+
+end
+
+else
+
+obj.number_of_outputs=nout;
+
+end
+
+obj.check_behavior=check_behavior;
+% number of draws
+%----------------
+if isscalar(nsim_or_draws)
+
+obj.nsim=nsim_or_draws;
+
+else
+
+[obj.nparam,obj.nsim]=size(nsim_or_draws);
+
+obj.samples=nsim_or_draws;
+
+obj.is_sampled=true;
+
+obj.nsim=size(nsim_or_draws,2);
+
+end
+
+if is_already_checked && obj.is_sampled
+
+if obj.nsim~=numel(check_behavior)
+
+error('number of elements in check_behavior does not match the sample size')
+
+end
+
+obj.is_behaved=check_behavior(:).';
+
+obj.check_behavior=[];
+
+else
+
+end
+
+% lower and upper bounds on the parameters
+%-----------------------------------------
+if obj.is_sampled
+
+if isempty(lb)||isempty(ub)
+
+lb=min(obj.samples,[],2);
+
+ub=max(obj.samples,[],2);
+
+end
+
+nrows=numel(lb);
+
+else
+
+if isempty(lb)||isempty(ub)
+
+error('no samples provided and so lb and ub must be given')
+
+end
+
+[nrows,ncols]=size(lb);
+
+if ~isequal(size(ub),[nrows,ncols])
+
+error('upper and lower bounds must be of the same size')
+
+end
+
+if ~(all(isfinite(lb)) && all(isfinite(ub)))
+
+error('lower and upper bounds must be finite')
+
+end
+
+if any(ub<lb)
+
+error('ub cannot be lower than lb')
+
+end
+
+end
+
+obj.nparam=nrows;
+
+obj.lb=lb;
+
+obj.ub=ub;
+% create parameter names if empty!!!
+%-----------------------------------
+names=utils.char.create_names(names,'p',obj.nparam);
+
+if ischar(names),names=cellstr(names);end
+
+if ~iscellstr(names),error('names should be char or cellstr'),end
+
+if numel(names)~=obj.nparam
+
+error('number of parameter names does not match the actual number of parameters')
+
+end
+
+obj.parameter_names=names(:).';
+
+if ~isempty(procedure_)
+
+if isa(procedure_,'function_handle')
+
+try
+
+ntest=5;
+
+test=procedure_(obj.lb,obj.ub,ntest);
+
+assert(isequal(size(test),[obj.nparam,ntest]))
+
+catch ME
+
+error('A user-defined sampling procedure should accept 3 arguments which are lb, ub, nsim')
+
+end
+
+else
+
+if ~ischar(procedure_)||any(strcmp(procedure_,{obj.known_procedures}))
+
+disp(obj.known_procedures)
+
+error('specification procedure expected to be one of the above')
+
+end
+
+end
+
+obj.procedure=procedure_;
+
+else
+
+obj.procedure = obj.known_procedures{1};
+
+end
+
+end
+
+estimate(obj);
+
+end
+
+function d=cdf(obj,pname)
+% cdf -- Cumulative distribution function
+%
+% ::
+%
+%
+%   d=cdf(obj,pname)
+%
+% Args:
+%              %
+%              % - **obj** [mcf object]:
+%              %
+%              % - **pname** [char]: name of the parameter which one wants
+%              % the cdf for.
+%              %
+% Returns:
+%    :
+%              %
+%              % - **d** [struct]: with fields lb, ub, x, f_behave,
+%              % f_non_behave, x_good, x_bad
+%              %
+% Note:
+%              %
+% Example:
             %
             % See also:
             d=struct();

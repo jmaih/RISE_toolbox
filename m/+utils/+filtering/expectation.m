@@ -1,35 +1,31 @@
 function E=expectation(probs,vals,straight)
 % EXPECTATION -- computes the expectation of variables from multiple regimes
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   E=expectation(probs,vals)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **probs** [k x T matrix]: matrix of probabilities
+%    - **probs** [k x T matrix]: matrix of probabilities
 %
-% - **vals** [1 x k cell]: matrix of values for which we want to take the
-% expectation
+%    - **vals** [1 x k cell]: matrix of values for which we want to take the
+%    expectation
 %
-% - **straight** [true|{false}]: decides whether permutations should be
-% taken or not.
+%    - **straight** [true|{false}]: decides whether permutations should be
+%    taken or not.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **E** [1 x T vector]: expecation
+%    - **E** [1 x T vector]: expecation
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<3
     % legacy for DSGE... could change in the future

@@ -1,77 +1,73 @@
 function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell_estim_K(...
-    syst,data_y,U,z,options,impose_conditions)
+syst,data_y,U,z,options,impose_conditions)
 
 % crs_linear_filter_update_cell_estim_K -- filter with update of K. gain
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell_estim_K(...
 %    syst,y,U,z,options)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **syst** [struct]: structure containing:
+%    - **syst** [struct]: structure containing:
 %
-%       - **PAI00** [vector]: initial probability distributions of regimes
+%          - **PAI00** [vector]: initial probability distributions of regimes
 %
-%       - **a** [cell]: initial conditions in each regime
+%          - **a** [cell]: initial conditions in each regime
 %
-%       - **Qfunc** [function handle]: transition matrix generator
+%          - **Qfunc** [function handle]: transition matrix generator
 %
-%       - **ff** [function handle]: ft=ff(rt,xt,et), where rt is the
-%       regime, xt is the vector of state variables and et the vector of
-%       shocks 
+%          - **ff** [function handle]: ft=ff(rt,xt,et), where rt is the
+%          regime, xt is the vector of state variables and et the vector of
+%          shocks
 %
-%       - **P** [cell]: initial covariance matrix of the states in each
-%       regime 
+%          - **P** [cell]: initial covariance matrix of the states in each
+%          regime
 %
-%       - **H** [cell]: Measurement error covariance matrices in each regime
+%          - **H** [cell]: Measurement error covariance matrices in each regime
 %
-%       - **SIGeta** [cell]: Covariance matrix of structural shocks.
+%          - **SIGeta** [cell]: Covariance matrix of structural shocks.
 %
-% - **y** [matrix]: ny x T x npages matrix of data
+%    - **y** [matrix]: ny x T x npages matrix of data
 %
-% - **U** [[]|matrix]: ndx x T matrix of exogenous data
+%    - **U** [[]|matrix]: ndx x T matrix of exogenous data
 %
-% - **z** [function handle|logical|vector]: linear connection of the
-% observables to the state.
+%    - **z** [function handle|logical|vector]: linear connection of the
+%    observables to the state.
 %
-% - **include_in_likelihood** [logical]: selector of increments to include
-% in the likelihood calculation
+%    - **include_in_likelihood** [logical]: selector of increments to include
+%    in the likelihood calculation
 %
-% - **options** [struct]: structure with various options
+%    - **options** [struct]: structure with various options
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **loglik** [scalar]: log likelihood
+%    - **loglik** [scalar]: log likelihood
 %
-% - **Incr** [vector]: increments of elements going into the likelihood
+%    - **Incr** [vector]: increments of elements going into the likelihood
 %
-% - **retcode** [{0}|integer]: flag for problems. 
+%    - **retcode** [{0}|integer]: flag for problems.
 %
-% - **Filters** [struct]: Filtered, updated and smoothed variables
+%    - **Filters** [struct]: Filtered, updated and smoothed variables
 %
-% More About
-% ------------
+% Note:
 %
-% - The filter checks for violations of constraints and uses the
-% information in the database to reset the offending variables to their
-% values in the database. When this occurs, the Kalman gain is recomputed
-% so that the traditional updating equation holds.
+%    - The filter checks for violations of constraints and uses the
+%    information in the database to reset the offending variables to their
+%    values in the database. When this occurs, the Kalman gain is recomputed
+%    so that the traditional updating equation holds.
 %
-% - This strategy is adopted so as to permit the use of the efficient
-% smoothing algorithm of Durbin and Koopman instead of the classical
-% smoothing algorithm which requires multiple inversions of a potentially
-% singular covariance matrix.
+%    - This strategy is adopted so as to permit the use of the efficient
+%    smoothing algorithm of Durbin and Koopman instead of the classical
+%    smoothing algorithm which requires multiple inversions of a potentially
+%    singular covariance matrix.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 
 % this filter assumes a state space of the form

@@ -1,27 +1,23 @@
 function [V,retcode]=theoretical_autocovariances(obj,varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% - The variances of the nonstationary variables are automatically set to
-%   1. The nonstationary variables are detected by the program when option
-%   "solve_bgp" is set to true.
+% Note:
 %
-% Examples
-% ---------
+%    - The variances of the nonstationary variables are automatically set to
+%      1. The nonstationary variables are detected by the program when option
+%      "solve_bgp" is set to true.
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if isempty(obj)
     

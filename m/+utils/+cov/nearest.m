@@ -2,23 +2,19 @@ function vcov=nearest(vcov0,debug,farthest)
 
 % nearest -- computes nearest covariance matrix
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 if nargin<3
     farthest=false;

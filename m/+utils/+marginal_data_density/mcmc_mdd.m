@@ -1,9 +1,8 @@
 function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 % MCMC_MDD -- computes various types of log marginal data density
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [log_mdd,extras] = MCMC_MDD(theta_draws)
 %
@@ -13,70 +12,67 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %
 %   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub,options)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **theta_draws** [struct]: with fields "f" and "x". Each parameter is
-% defined as a structure, which means that theta_draws is a vector of
-% structures. "x" is the parameter vector and "f" is the NEGATIVE of the
-% log posterior kernel evaluated at "x". In case "f" is instead the log
-% posterior kernel itself, option **maximization** below has to be set to
-% "true".
+%    - **theta_draws** [struct]: with fields "f" and "x". Each parameter is
+%    defined as a structure, which means that theta_draws is a vector of
+%    structures. "x" is the parameter vector and "f" is the NEGATIVE of the
+%    log posterior kernel evaluated at "x". In case "f" is instead the log
+%    posterior kernel itself, option **maximization** below has to be set to
+%    "true".
 %
-% - **lb** [empty|vector]: lower bound of the search space. Necessary only
-% for the swz algorithm. Conveniently replaced with the lower bounds of
-% theta_draws if empty.
+%    - **lb** [empty|vector]: lower bound of the search space. Necessary only
+%    for the swz algorithm. Conveniently replaced with the lower bounds of
+%    theta_draws if empty.
 %
-% - **ub** [empty|vector]: upper bound of the search space. Necessary only
-% for the swz algorithm. Conveniently replaced with the upper bounds of
-% theta_draws if empty.
+%    - **ub** [empty|vector]: upper bound of the search space. Necessary only
+%    for the swz algorithm. Conveniently replaced with the upper bounds of
+%    theta_draws if empty.
 %
-% - **options** [struct]: with possible fields
-%   - **log_post_kern** [function handle]: function computing the log
-%   posterior kernel for a given parameter vector
-%   - **center_at_mean** [{false}|true]: if true, the distribution is
-%   centered at the mean. Else, it is centered at the mode, which should be
-%   the maximum of the log posterior kernel in theta_draws
-%   - **algorithm** [{mhm}|swz|mueller|bridge|is|ris|cj|laplace|laplace_mcmc]: 
-%       - **mhm** is the modified harmonic mean
-%       - **swz** is the Sims, Waggoner and Zha (2008) algorithm
-%       - **mueller** is the unpublished Mueller algorithm (see Liu,
-%       Waggoner and Zha 2011). 
-%       - **bridge** is the Meng and Wong (1996) algorithm. 
-%       - **is** is the Importance sampling algorithm. 
-%       - **ris** is the reciprocal importance sampling algorithm. 
-%       - **cj** is the Chib and Jeliazkov (2001) algorithm. 
-%       - **laplace** is the laplace approximation 
-%       - **laplace_mcmc** is the laplace approximation using the
-%       covariance of the mcmc draws rather than the one obtain from
-%       computing and inverting the numerical hessian.
-%   - **L** [{500}|integer|struct]: number of IID draws or IID draws
-%   - **maximization** [{false}|true]: Informs the procedure about whether
-%   we have a maximization or a minimization problem.
-%   - **debug** [{false}|true]: print useful information during estimation.
-%   - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities
-%   for the MHM algorithm 
-%   - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
-%   bound in the SWZ algorithm
-%   - **bridge_TolFun** [numeric|{sqrt(eps)}]: convergence criterion in the
-%   BRIDGE algorithm
+%    - **options** [struct]: with possible fields
+%      - **log_post_kern** [function handle]: function computing the log
+%      posterior kernel for a given parameter vector
+%      - **center_at_mean** [{false}|true]: if true, the distribution is
+%      centered at the mean. Else, it is centered at the mode, which should be
+%      the maximum of the log posterior kernel in theta_draws
+%      - **algorithm** [{mhm}|swz|mueller|bridge|is|ris|cj|laplace|laplace_mcmc]:
+%          - **mhm** is the modified harmonic mean
+%          - **swz** is the Sims, Waggoner and Zha (2008) algorithm
+%          - **mueller** is the unpublished Mueller algorithm (see Liu,
+%          Waggoner and Zha 2011).
+%          - **bridge** is the Meng and Wong (1996) algorithm.
+%          - **is** is the Importance sampling algorithm.
+%          - **ris** is the reciprocal importance sampling algorithm.
+%          - **cj** is the Chib and Jeliazkov (2001) algorithm.
+%          - **laplace** is the laplace approximation
+%          - **laplace_mcmc** is the laplace approximation using the
+%          covariance of the mcmc draws rather than the one obtain from
+%          computing and inverting the numerical hessian.
+%      - **L** [{500}|integer|struct]: number of IID draws or IID draws
+%      - **maximization** [{false}|true]: Informs the procedure about whether
+%      we have a maximization or a minimization problem.
+%      - **debug** [{false}|true]: print useful information during estimation.
+%      - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities
+%      for the MHM algorithm
+%      - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
+%      bound in the SWZ algorithm
+%      - **bridge_TolFun** [numeric|{sqrt(eps)}]: convergence criterion in the
+%      BRIDGE algorithm
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **log_mdd** [numeric]: log marginal data density
+%    - **log_mdd** [numeric]: log marginal data density
 %
-% - **extras** [empty|struct]: further output from specific algorithms,
-% which will include the iid draws as they can be re-use in some other
-% algorithm.
+%    - **extras** [empty|struct]: further output from specific algorithms,
+%    which will include the iid draws as they can be re-use in some other
+%    algorithm.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
@@ -264,7 +260,7 @@ extras.iid_draws=iid_draws_;
     end
 
     function log_mdd=do_reciprocal_importance_sampling()
-        % Sylvia Frühwirth-Schnatter (2004): "Estimating marginal
+        % Sylvia FrÃ¼hwirth-Schnatter (2004): "Estimating marginal
         % likelihoods for mixture and Markov switching models using bridge
         % sampling techniques". Econometrics Journal 7(1) pp 143--167
         Logq_M=old_draws_in_weighting_function('RIS');
@@ -274,7 +270,7 @@ extras.iid_draws=iid_draws_;
     end
 
     function log_mdd=do_importance_sampling(LogPost_L,Logq_L)
-        % Sylvia Frühwirth-Schnatter (2004): "Estimating marginal
+        % Sylvia FrÃ¼hwirth-Schnatter (2004): "Estimating marginal
         % likelihoods for mixture and Markov switching models using bridge
         % sampling techniques". Econometrics Journal 7(1) pp 143--167
         if nargin<2
@@ -288,7 +284,7 @@ extras.iid_draws=iid_draws_;
     function log_mdd=do_bridge_1996()
         % Xiao-Li Meng and Wing Hung Wong (1996): " Simulating Ratios of
         % Normalizing Constants via a Simple Identity: A Theoretical
-        % Exploration". Statistica Sinica, 6, 831–860.
+        % Exploration". Statistica Sinica, 6, 831Â–860.
         
         % 1- draw L vectors and evaluate them at the posterior kernel and
         % at the weighting function

@@ -1,32 +1,28 @@
 function obj=setup_general_restrictions(obj)
 % setup_general_restrictions - sets up the general nonlinear restrictions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %	obj=setup_general_restrictions(obj)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar]: RISE object
+%    - **obj** [rise|dsge|rfvar|svar]: RISE object
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [rise|dsge|rfvar|svar]: RISE object
+%    - **obj** [rise|dsge|rfvar|svar]: RISE object
 %
-% More About
-% ------------
+% Note:
 %
-% - If present, the general restrictions should have been passed at an earlier stage
-%	See help for generic/estimate for further information
+%    - If present, the general restrictions should have been passed at an earlier stage
+%   	See help for generic/estimate for further information
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 % this can be useful also for checking restrictions such as explosive VARs,
 % etc. and not just restrictions on DSGEs

@@ -1,9 +1,8 @@
 function [pdata,hdl]=plot_priors(obj,parlist,varargin)
 % plot_priors -- computes prior densities for estimated parameters
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   ppdata=plot_priors(obj)
 %
@@ -11,37 +10,34 @@ function [pdata,hdl]=plot_priors(obj,parlist,varargin)
 %
 %   ppdata=plot_priors(obj,parlist,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar]: model object
+%    - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **parlist** [[]|char|cellstr]: list of the parameters for which one
-% wants to plot the priors
+%    - **parlist** [[]|char|cellstr]: list of the parameters for which one
+%    wants to plot the priors
 %
-% - **varargin** [pairwise plotting arguments]:
+%    - **varargin** [pairwise plotting arguments]:
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **pdata** [struct]: optional output argument, pdata is a structure
-% containing the information needed to plot the prior densities. The user
-% can always plot those using utils.plot.prior_posterior(ppdata.(pname)),
-% where pname is the name of one particular parameter of interest.
+%    - **pdata** [struct]: optional output argument, pdata is a structure
+%    containing the information needed to plot the prior densities. The user
+%    can always plot those using utils.plot.prior_posterior(ppdata.(pname)),
+%    where pname is the name of one particular parameter of interest.
 %
-% - **hdl** [vector]: optional output argument, placeholder for handles to
-% graphs
+%    - **hdl** [vector]: optional output argument, placeholder for handles to
+%    graphs
 %
-% More About
-% ------------
+% Note:
 %
-% - if there are no output arguments, figures with prior densities are
-% plotted, but not saved!!!.
+%    - if there are no output arguments, figures with prior densities are
+%    plotted, but not saved!!!.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: utils.plot.prior_posterior
+%    See also: utils.plot.prior_posterior
 
 
 if isempty(obj)

@@ -1,9 +1,8 @@
 function varargout=parse_arguments(args,varargin)
 % PARSE_ARGUMENTS -- arguments parser
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   varargout=PARSE_ARGUMENTS(args,varargin)
 %
@@ -11,38 +10,35 @@ function varargout=parse_arguments(args,varargin)
 %
 %   struct=PARSE_ARGUMENTS(args,struct,'-hopover')
 %
-% Inputs
-% -------
+% Args:
 %
-% - **args** [n x 3 or n x 4 cell]:
-%   - column 1: arguments' names
-%   - column 2: defaults values for the arguments
-%   - column 3: function handle checking the value of the arguments
-%   - column 4: message to be issued in case of error
+%    - **args** [n x 3 or n x 4 cell]:
+%      - column 1: arguments' names
+%      - column 2: defaults values for the arguments
+%      - column 3: function handle checking the value of the arguments
+%      - column 4: message to be issued in case of error
 %
-% - **varargin** []: pairwise arguments. Each first argument is a char and
-% the second is a value to be parsed for correctness
+%    - **varargin** []: pairwise arguments. Each first argument is a char and
+%    the second is a value to be parsed for correctness
 %
-% - **struct** [struct]: structure with the options to parse
+%    - **struct** [struct]: structure with the options to parse
 %
-% - **'-hopover'** []: if present, the options that are not found in args
-% are skipped. Else an error is issued
+%    - **'-hopover'** []: if present, the options that are not found in args
+%    are skipped. Else an error is issued
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **varargout** [list|struct]: if the second input argument is a struct,
-% a struct is return in varargout. Else a list is returned. In both cases,
-% only the elements relating to the function of interest (i.e. the elements
-% in **args**) are returned.
+%    - **varargout** [list|struct]: if the second input argument is a struct,
+%    a struct is return in varargout. Else a list is returned. In both cases,
+%    only the elements relating to the function of interest (i.e. the elements
+%    in **args**) are returned.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % {names,defaults,check_funcs,error_msg}
 assert(iscell(args) && any(size(args,2)==[3,4]),...

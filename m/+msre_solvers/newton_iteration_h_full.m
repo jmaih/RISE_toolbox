@@ -1,23 +1,19 @@
 function [T1,W1]=newton_iteration_h_full(T0,Gplus01,A0,Aminus,kron_method,options)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 [n,n,h]=size(A0);

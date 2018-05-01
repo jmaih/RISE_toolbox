@@ -2,44 +2,40 @@ function [welf,retcode,V,d]=loss(obj,simuls,varargin)
 
 % LOSS calculates welfare
 %
-% Syntax
-% -------
 % ::
+%
 %   [welf,retcode,V,d]=loss(obj)
 %   [welf,retcode,V,d]=loss(obj,simuls)
 %   [welf,retcode,V,d]=loss(obj,simuls,varargin)
 %
-% Inputs
-% -------
-% - **obj** [rise|dsge]: scalar or vector of model objects.
+% Args:
+%    - **obj** [rise|dsge]: scalar or vector of model objects.
 %
-% - **simuls** [ts|struct|empty]: if empty, the unconditional welfare is
-%   returned. if not empty the conditional welfare is calculated instead
+%    - **simuls** [ts|struct|empty]: if empty, the unconditional welfare is
+%      returned. if not empty the conditional welfare is calculated instead
 %
-% - **varargin** []: optional arguments coming in pairs
+%    - **varargin** []: optional arguments coming in pairs
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **welf** [scalar|vector]: conditional loss (scalar) or unconditional
-% loss (scalar if number of regimes = 1)
+%    - **welf** [scalar|vector]: conditional loss (scalar) or unconditional
+%    loss (scalar if number of regimes = 1)
 %
-% - **retcode** [scalar]: return code
+%    - **retcode** [scalar]: return code
 %
-% - **V** [n x n x h]: array of equilibrium matrices
+%    - **V** [n x n x h]: array of equilibrium matrices
 %
-% - **d** [h x 1 vector]: constant in loss
+%    - **d** [h x 1 vector]: constant in loss
 %
 %
-% More About
-% ------------
+% Note:
 %
-% The loss is such that v(x_t,r_t)=x_t.'*Vrt*x_t+drt
+%    The loss is such that v(x_t,r_t)=x_t.'*Vrt*x_t+drt
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % Note W,Tx are stored in alphabetical order for the convenience of the user
 %------------------------------------------------------------------------

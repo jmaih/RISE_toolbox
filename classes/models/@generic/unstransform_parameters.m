@@ -1,31 +1,27 @@
 function x=unstransform_parameters(obj,x)
 % UNTRANSFORM_PARAMETERS -- sets the transformed parameters back normal
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   x=UNTRANSFORM_PARAMETERS(obj,x)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar]: model object
+%    - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **x** [n x 1 vector]: original parameters
+%    - **x** [n x 1 vector]: original parameters
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **x** [n x 1 vector]: untransformed parameters
+%    - **x** [n x 1 vector]: untransformed parameters
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: TRANSFORM_PARAMETERS
+%    See also: TRANSFORM_PARAMETERS
 
 if isempty(obj)
     

@@ -1,23 +1,19 @@
 function [sims,regimes,retcode,Qt,myshocks]=multi_step(y0,ss,T,state_vars_location,options)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % Qt below may be used to get the time series of the transition matrix
 endo_nbr=size(y0.y,1);

@@ -1,23 +1,19 @@
 function [y0,T,steady_state]=aggregate_initial_conditions(PAI,y0,T,steady_state)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<4
     steady_state=[];

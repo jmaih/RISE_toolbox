@@ -1,34 +1,30 @@
 function g=group(this,varargin)
 % GROUP -- groups contributions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   g=GROUP(this,{group1,{v11,v12,...}},...,{groupn,{vn1,vn2,...}})
 %
-% Inputs
-% -------
+% Args:
 %
-% - **this** [ts]: time series of multiple variables
+%    - **this** [ts]: time series of multiple variables
 %
-% - **varargin** []: sequences of cell arrays with the following possible
-% formats:
-%   - {'supply','Ep'}
-%   - {'demand',{'Ey','Er'}}
+%    - **varargin** []: sequences of cell arrays with the following possible
+%    formats:
+%      - {'supply','Ep'}
+%      - {'demand',{'Ey','Er'}}
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **g** [ts]: new time series with grouped contributions
+%    - **g** [ts]: new time series with grouped contributions
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 
 n=length(varargin);

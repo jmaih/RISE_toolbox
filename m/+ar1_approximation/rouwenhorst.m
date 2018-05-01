@@ -1,46 +1,42 @@
 function [Thetai,y]=rouwenhorst(mu,rho,sigma,N,p,q)
-% rouwenhorst approximates and AR(1) process with a Markov chain 
+% rouwenhorst approximates and AR(1) process with a Markov chain
 %
-% Syntax
-% -------
 % ::
+%
 %   [Thetai,y]=rouwenhorst(mu,rho,sigma)
 %   [Thetai,y]=rouwenhorst(mu,rho,sigma,N)
 %   [Thetai,y]=rouwenhorst(mu,rho,sigma,N,p)
 %   [Thetai,y]=rouwenhorst(mu,rho,sigma,N,p,q)
 %
-% Inputs
-% -------
+% Args:
 %
-% - mu : [numeric] : unconditonal mean of the ar(1) process
+%    - mu : [numeric] : unconditonal mean of the ar(1) process
 %
-% - rho : [numeric] : autoregressive coefficient
+%    - rho : [numeric] : autoregressive coefficient
 %
-% - sigma : [numeric] : standard deviation of the shock
+%    - sigma : [numeric] : standard deviation of the shock
 %
-% - N : [numeric|{2}] : number of states of the markov chain
+%    - N : [numeric|{2}] : number of states of the markov chain
 %
-% - p : [numeric|{.5*(1+rho)}] : first parameter of the procedure
+%    - p : [numeric|{.5*(1+rho)}] : first parameter of the procedure
 %
-% - q : [numeric|{.5*(1+rho)}] : second parameter of the procedure
+%    - q : [numeric|{.5*(1+rho)}] : second parameter of the procedure
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - Thetai : [numeric] : NxN transition matrix
+%    - Thetai : [numeric] : NxN transition matrix
 %
-% - y : [numeric] : vector of nodes or states
+%    - y : [numeric] : vector of nodes or states
 %
-% More About
-% ------------
+% Note:
 %
-% - The process is assumed to be of the form
-%   x_t-mu=rho*(x_{t-1}-mu)+sigma*error_term where error_term ~ N(0,1)
+%    - The process is assumed to be of the form
+%      x_t-mu=rho*(x_{t-1}-mu)+sigma*error_term where error_term ~ N(0,1)
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 
 % Reference : Karen A. Kopecky, Richard M. H. Suen (2010): "Finite state

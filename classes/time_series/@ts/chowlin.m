@@ -1,62 +1,58 @@
 function [yh,res]=chowlin(y0,Xh0,varargin)
 % CHOWLIN - Temporal disaggregation using the Chow-Lin method
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [yh,res]=chowlin(y0,Xh0)
 %   [yh,res]=chowlin(y0,Xh0,aggreg_type)
 %   [yh,res]=chowlin(y0,Xh0,aggreg_type,estim_method)
 %   [yh,res]=chowlin(y0,Xh0,aggreg_type,estim_method,ngrid)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **y0** [ts] : low-frequency left-hand-side variable
-%   the time series. The following are admitted:
-%   - annual data : e.g. 1990 or '1990'
-%   - bi-annual data : e.g. '1990H1'
-%   - Quarterly data : e.g. '1990Q3'
-%   - monthly data : e.g. '1990M12'
-% - **Xh0** [ts|struct] : high-frequency right-hand-side explanatory
-%       variables
-% - **aggreg_type** ['flow'|{'average'}|'index'|'last'|'first'] : type of
-%   aggregation:
-%   - 'flow' (or 1) is the sum,
-%   - 'average','index' (or 2) is the average,
-%   - 'last' (or 3) is the last element,
-%   - 'first' (or 4) is the first element,
-% - **estim_method** [{0}|1|2] : estimation method
-%   - 0 : Generalized/Weighted Least squares (with grid)
-%   - 1 : Maximum Likelihood (with grid),
-%   - 2 : Maximum Likelihood (without grid) using fmincon as optimizer
-% - **ngrid** [integer|{250}] : number of grid points
+%    - **y0** [ts] : low-frequency left-hand-side variable
+%      the time series. The following are admitted:
+%      - annual data : e.g. 1990 or '1990'
+%      - bi-annual data : e.g. '1990H1'
+%      - Quarterly data : e.g. '1990Q3'
+%      - monthly data : e.g. '1990M12'
+%    - **Xh0** [ts|struct] : high-frequency right-hand-side explanatory
+%          variables
+%    - **aggreg_type** ['flow'|{'average'}|'index'|'last'|'first'] : type of
+%      aggregation:
+%      - 'flow' (or 1) is the sum,
+%      - 'average','index' (or 2) is the average,
+%      - 'last' (or 3) is the last element,
+%      - 'first' (or 4) is the first element,
+%    - **estim_method** [{0}|1|2] : estimation method
+%      - 0 : Generalized/Weighted Least squares (with grid)
+%      - 1 : Maximum Likelihood (with grid),
+%      - 2 : Maximum Likelihood (without grid) using fmincon as optimizer
+%    - **ngrid** [integer|{250}] : number of grid points
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **yh** [ts] : (disaggregated) high-frequency left-hand-side variable
+%    - **yh** [ts] : (disaggregated) high-frequency left-hand-side variable
 %
-% - **res** [struct] : structure with further details on the computations
+%    - **res** [struct] : structure with further details on the computations
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
-% ---------
+%    See also:
+%    ---------
 %
-% REFERENCES:
-% -----------
-% - Chow, G. and Lin, A.L. (1971) "Best linear unbiased
-% distribution and extrapolation of economic time series by related
-% series", Review of Economic and Statistics, vol. 53, n. 4, p. 372-375.
-% - Bournay, J. y Laroque, G. (1979) "Reflexions sur la methode
-% d'elaboration  des comptes trimestriels", Annales de l'INSEE, n. 36, p.
-% 3-30.
+%    REFERENCES:
+%    -----------
+%    - Chow, G. and Lin, A.L. (1971) "Best linear unbiased
+%    distribution and extrapolation of economic time series by related
+%    series", Review of Economic and Statistics, vol. 53, n. 4, p. 372-375.
+%    - Bournay, J. y Laroque, G. (1979) "Reflexions sur la methode
+%    d'elaboration  des comptes trimestriels", Annales de l'INSEE, n. 36, p.
+%    3-30.
 
 check_inputs()
 

@@ -1,60 +1,56 @@
 function [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,...
-    max_trials,restrictions,opt,penalty,varargin)
+max_trials,restrictions,opt,penalty,varargin)
 % generate_candidates -- generate candidates for optimization
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [x,f,viol,funevals]=generate_candidates(objective,lb,ub,n,...
 %       restrictions,penalty,varargin)
-%   
-% Inputs
-% -------
 %
-% - **objective** [function_handle]: objective to minimize
+% Args:
 %
-% - **lb** [vector]: lower bound of the search space
+%    - **objective** [function_handle]: objective to minimize
 %
-% - **ub** [vector]: upper bound of the search space
+%    - **lb** [vector]: lower bound of the search space
 %
-% - **n** [integer]: number of candidates to generate
+%    - **ub** [vector]: upper bound of the search space
 %
-% - **max_trials** [integer]: number of trials after which the procedure
-% crashes
+%    - **n** [integer]: number of candidates to generate
 %
-% - **restrictions** [empty|function_handle]: function evaluating the
-% violations
+%    - **max_trials** [integer]: number of trials after which the procedure
+%    crashes
 %
-% - **opt** [struct]: structure with fields
-%   - **restrictions_in_objective** [true|false]:
-%   - **returns_retcode** [true|false]: 
-%   - **restrictions_same_weights** [true|{false}]: 
-%   - **allow_restrictions_violations** [true|{false}]: 
+%    - **restrictions** [empty|function_handle]: function evaluating the
+%    violations
 %
-% - **penalty** [numeric]: value functions exceeding this value in
-% absolute value are assigned this value 
+%    - **opt** [struct]: structure with fields
+%      - **restrictions_in_objective** [true|false]:
+%      - **returns_retcode** [true|false]:
+%      - **restrictions_same_weights** [true|{false}]:
+%      - **allow_restrictions_violations** [true|{false}]:
 %
-% - **varargin** []: additional input arguments for the objective function
+%    - **penalty** [numeric]: value functions exceeding this value in
+%    absolute value are assigned this value
 %
-% Outputs
-% --------
+%    - **varargin** []: additional input arguments for the objective function
 %
-% - **x** [d x n matrix]: parameter vectors
+% Returns:
+%    :
 %
-% - **f** [row vector]: value function for each parameter vector
+%    - **x** [d x n matrix]: parameter vectors
 %
-% - **viol** [row vector]: violation penalty for each parameter vector
+%    - **f** [row vector]: value function for each parameter vector
 %
-% - **funevals** [integer]: number of function evaluations
+%    - **viol** [row vector]: violation penalty for each parameter vector
 %
-% More About
-% ------------
+%    - **funevals** [integer]: number of function evaluations
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if isempty(restrictions)
     

@@ -1,9 +1,8 @@
 function [Regimes,journal]=chain_grid(v)
 % CHAIN_GRID -- computes the regimes from one or multiple markov chains
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   Regimes=CHAIN_GRID(a); : one chain with "a" states
 %
@@ -11,40 +10,37 @@ function [Regimes,journal]=chain_grid(v)
 %   and "b" states for the second
 %
 %   Regimes=CHAIN_GRID([a1,a2,...,an]); : n chains with "a1" states for the
-%   first, "a2" states for the second,...,"an" states for the nth 
+%   first, "a2" states for the second,...,"an" states for the nth
 %
-%   [Regimes,Journal]=CHAIN_GRID(...);  
+%   [Regimes,Journal]=CHAIN_GRID(...);
 %
-% Inputs
-% -------
+% Args:
 %
-% - **a** [scalar|vector]: number of states in each one of the independent
-%           Markov chains
+%    - **a** [scalar|vector]: number of states in each one of the independent
+%              Markov chains
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Regimes** [matrix]: Combinations of all states. The matrix is of size
-%   prod([a1,a2,...,an]) x n
+%    - **Regimes** [matrix]: Combinations of all states. The matrix is of size
+%      prod([a1,a2,...,an]) x n
 %
-% - **Journal** [cell array]: Description of the transition matrix. Each
-%   cell contains a matrix in which the first row is the regime today and
-%   the second one is the regime tomorrow. The cell array is of size
-%   prod([a1,a2,...,an]) x prod([a1,a2,...,an])
+%    - **Journal** [cell array]: Description of the transition matrix. Each
+%      cell contains a matrix in which the first row is the regime today and
+%      the second one is the regime tomorrow. The cell array is of size
+%      prod([a1,a2,...,an]) x prod([a1,a2,...,an])
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% Regimes=chain_grid(10); : one chain with 10 regimes
+%    Regimes=chain_grid(10); : one chain with 10 regimes
 %
-% Regimes=chain_grid([10,5]) : 2 chains with 5 regimes for the second one
+%    Regimes=chain_grid([10,5]) : 2 chains with 5 regimes for the second one
 %
-% Regimes=chain_grid([10,5,3]): 3 chains with 3 regimes on the third one
+%    Regimes=chain_grid([10,5,3]): 3 chains with 3 regimes on the third one
 %
-% See also: 
+%    See also:
 
 % v is a vector of the number of states in each markov chain
 % Regimes is an prod(v) x NumberOfParameters matrix describing the different

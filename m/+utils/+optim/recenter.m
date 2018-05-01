@@ -1,42 +1,38 @@
 function Island=recenter(Island,lb,ub,flag)
 % RECENTER - reposition draws without their boundaries
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   Island=RECENTER(Island,lb,ub)
 %
 %   Island=RECENTER(Island,lb,ub,flag)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **Island** [vector]: draw to recenter
+%    - **Island** [vector]: draw to recenter
 %
-% - **lb** [vector]: lower bound of search space
+%    - **lb** [vector]: lower bound of search space
 %
-% - **ub** [vector]: upper bound of search space
+%    - **ub** [vector]: upper bound of search space
 %
-% - **flag** [{1}|2|3]:
-%   - **1**: set offending parameters to the bounds they exceed
-%   - **2**: set offending parameters to min(ub,2*lb-param) if they are
-%   below the lower bound and to max(lb,2*ub-param) if they exceed the
-%   upper bound.
-%   - **3**: set offending parameters to random draws withing the bounds
+%    - **flag** [{1}|2|3]:
+%      - **1**: set offending parameters to the bounds they exceed
+%      - **2**: set offending parameters to min(ub,2*lb-param) if they are
+%      below the lower bound and to max(lb,2*ub-param) if they exceed the
+%      upper bound.
+%      - **3**: set offending parameters to random draws withing the bounds
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Island** [vector]: recentered parameter vector
+%    - **Island** [vector]: recentered parameter vector
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if nargin<4
     flag=1;

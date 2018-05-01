@@ -1,30 +1,26 @@
 function [V,retcode]=lyapunov_equation(T,Q,options,stationary)
 % lyapunov_equation solves the equation V=T*V*T'+Q
 %
-% Syntax
-% -------
 % ::
+%
 %   [V,retcode]=lyapunov_equation(T,Q)
 %   [V,retcode]=lyapunov_equation(T,Q,options)
 %
-% Inputs
-% -------
-% - T :
-% - Q :
-% - options :
+% Args:
+%    - T :
+%    - Q :
+%    - options :
 %
-% Outputs
-% --------
-% - V :
-% - retcode :
+% Returns:
+%    :
+%    - V :
+%    - retcode :
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % example
 % we would like to compute the variance of the system

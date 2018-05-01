@@ -2,27 +2,23 @@ function y1=one_step_engine(T,y0,ss,xloc,sig,shocks,order)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% - It is expected that the solution of the first order also contains the
-% exogenous growth rate, which is nonzero for nonstationary models. That
-% component is the imaginary part of the column numel(xloc)+1.
+% Note:
 %
-% Examples
-% ---------
+%    - It is expected that the solution of the first order also contains the
+%    exogenous growth rate, which is nonzero for nonstationary models. That
+%    component is the imaginary part of the column numel(xloc)+1.
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % models with constants will have to be re-written as deviations from
 % steady state. One could also have a zero steady state and instead put the

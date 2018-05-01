@@ -1,35 +1,31 @@
 function names=create_names(names,prefix,n)
 % CREATE_NAMES -- creates default variable names
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   names=CREATE_NAMES(names,prefix,n)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **names** [empty|char|cellstr]: if empty, names will be created. If
-% not, they will be put to cellstr if necessary
+%    - **names** [empty|char|cellstr]: if empty, names will be created. If
+%    not, they will be put to cellstr if necessary
 %
-% - **prefix** [char]: prefix of default names to be created. Must be a
-% valid variable name
+%    - **prefix** [char]: prefix of default names to be created. Must be a
+%    valid variable name
 %
-% - **n** [integer]: number of variable names to be created
+%    - **n** [integer]: number of variable names to be created
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **names** [cellstr]: created or transformed names
+%    - **names** [cellstr]: created or transformed names
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if isempty(names)
     names=strcat({[prefix,'_']},cellstr(num2str((1:n)')));

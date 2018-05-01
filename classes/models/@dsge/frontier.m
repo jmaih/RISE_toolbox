@@ -2,55 +2,51 @@ function f=frontier(obj,lambda_name,lambda_vals,simul,seed)
 % frontier -- computes standard devations of the model for a grid over a
 % given parameter
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   f=frontier(obj,lambda_name,lambda_vals)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object
+%    - **obj** [rise|dsge]: model object
 %
-% - **lambda_name** [char]: name of the parameter to vary
+%    - **lambda_name** [char]: name of the parameter to vary
 %
-% - **lambda_vals** [vector]: 1 x 2 or 1 x N vector of values for the
-% parameter. When N=2, a grid of 50 points is constructed between the two
-% values. When N>2, lambda_vals is the grid.
+%    - **lambda_vals** [vector]: 1 x 2 or 1 x N vector of values for the
+%    parameter. When N=2, a grid of 50 points is constructed between the two
+%    values. When N>2, lambda_vals is the grid.
 %
-% - **simul** [true|{false}]: use simulation instead of theoretical
-% moments.
+%    - **simul** [true|{false}]: use simulation instead of theoretical
+%    moments.
 %
-% - **seed** [numeric|{1971}]: see for simulations
+%    - **seed** [numeric|{1971}]: see for simulations
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **f** [struct]: standard deviations of all variables in the model for
-% each value of lambda_name and some further information about the
-% simulation process under a substructure with name **stats__**. The fields
-% of the sub-structure are:
-%   - **lambda** [vector]: discretized values of lambda
-%   - **ngrid** [scalar]: number of grid points
-%   - **simul_periods** [integer]: number of simulations. If strictly
-%   positive, then simulation is used for computing the moments of the
-%   process
-%   - **retcode** [vector]: information on how successful each run in the
-%   grid is. if retcode=0, there is no problem. If retcode different from
-%   zero, then the information can be retrieved by running
-%   decipher(retcode)
+%    - **f** [struct]: standard deviations of all variables in the model for
+%    each value of lambda_name and some further information about the
+%    simulation process under a substructure with name **stats__**. The fields
+%    of the sub-structure are:
+%      - **lambda** [vector]: discretized values of lambda
+%      - **ngrid** [scalar]: number of grid points
+%      - **simul_periods** [integer]: number of simulations. If strictly
+%      positive, then simulation is used for computing the moments of the
+%      process
+%      - **retcode** [vector]: information on how successful each run in the
+%      grid is. if retcode=0, there is no problem. If retcode different from
+%      zero, then the information can be retrieved by running
+%      decipher(retcode)
 %
-% More About
-% ------------
+% Note:
 %
-% - improvements to consider are how to deal with regime switches or
-% nonlinear models in general. One solution is to use simulation
+%    - improvements to consider are how to deal with regime switches or
+%    nonlinear models in general. One solution is to use simulation
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if isempty(obj)
     

@@ -1,9 +1,8 @@
 function [mu,SIG]=update_moments(mu,SIG,x,n,xi2,c2,e)
 % update_moments -- updates the moments for mcmc algorithms
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [mu,SIG]=update_moments(mu,SIG,x,n,xi2)
 %
@@ -11,37 +10,34 @@ function [mu,SIG]=update_moments(mu,SIG,x,n,xi2,c2,e)
 %
 %   [mu,SIG]=update_moments(mu,SIG,x,n,xi2,c2,e)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **mu** [vector]: mean 
+%    - **mu** [vector]: mean
 %
-% - **SIG** [matrix]: covariance
+%    - **SIG** [matrix]: covariance
 %
-% - **x** [vector|matrix]: new parameter vectors
+%    - **x** [vector|matrix]: new parameter vectors
 %
-% - **n** [integer]: iteration 
+%    - **n** [integer]: iteration
 %
-% - **xi2** [numeric]: appears in gam2=c2*(n+1)^(-xi2). Must be in (0.5,1)
+%    - **xi2** [numeric]: appears in gam2=c2*(n+1)^(-xi2). Must be in (0.5,1)
 %
-% - **c2** [numeric|{1}]: appears in gam2=c2*(n+1)^(-xi2)
+%    - **c2** [numeric|{1}]: appears in gam2=c2*(n+1)^(-xi2)
 %
-% - **e** [numeric]: minimum eigenvalue of the updated covariance matrix 
+%    - **e** [numeric]: minimum eigenvalue of the updated covariance matrix
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **mu** [vector]: updated mean 
+%    - **mu** [vector]: updated mean
 %
-% - **SIG** [matrix]: updated covariance matrix
+%    - **SIG** [matrix]: updated covariance matrix
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % Applies formulae 23 and 24 in Blazej Miasojedow, Eric Moulines and Matti
 % Vihola (2012): "Adaptive Parallel Tempering Algorithm"

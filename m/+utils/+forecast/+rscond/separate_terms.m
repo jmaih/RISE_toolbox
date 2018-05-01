@@ -1,46 +1,42 @@
 function [Ty,Te,Tsig,C]=separate_terms(T,sstate,state_cols,k,nshocks)
 % SEPARATE_TERMS -- separate terms for conditional forecasting
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [Ty,Te,Tsig,C]=SEPARATE_TERMS(T,sstate,ny,nx,nshocks,k,h)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **T** [cell array]: solution impact
+%    - **T** [cell array]: solution impact
 %
-% - **sstate** [cell array]: steady state
+%    - **sstate** [cell array]: steady state
 %
-% - **state_cols** [vector]: location of state variables excluding shocks
+%    - **state_cols** [vector]: location of state variables excluding shocks
 %
-% - **k** [numeric]: number of forward steps (anticipation)
+%    - **k** [numeric]: number of forward steps (anticipation)
 %
-% - **nshocks** [numeric]: number of shocks
+%    - **nshocks** [numeric]: number of shocks
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Ty** [cell array]: includes square matrices for the impact of
-% endogenous variables
+%    - **Ty** [cell array]: includes square matrices for the impact of
+%    endogenous variables
 %
-% - **Te** [cell array]: includes matrices for the impact of shocks
+%    - **Te** [cell array]: includes matrices for the impact of shocks
 %
-% - **Tsig** [cell array]: includes vectors summing the impact of
-% uncertainty and the trend
+%    - **Tsig** [cell array]: includes vectors summing the impact of
+%    uncertainty and the trend
 %
-% - **C** [cell array]: includes vectors summing the impact of
-% uncertainty, the trend and the steady state
+%    - **C** [cell array]: includes vectors summing the impact of
+%    uncertainty, the trend and the steady state
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 h=numel(T);
 

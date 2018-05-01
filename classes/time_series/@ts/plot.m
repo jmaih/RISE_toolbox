@@ -1,9 +1,8 @@
 function varargout=plot(varargin)
 % PLOT -- plots a rise time series
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   PLOT(Y) plots the time series vector or matrix Y against its date
 %
@@ -13,7 +12,7 @@ function varargout=plot(varargin)
 %     - a string of dates. e.g. X='1990:2000', X='1990Q1:2000Q1',
 %     X='1990m1:2000m2'
 %     - serial dates. e.g. X=date2serial('1990Q1):date2serial('2000Q1')
-%     X='1990m1:2000m2' 
+%     X='1990m1:2000m2'
 %     - If X is a scalar, disconnected line objects are created and
 %     plotted as discrete points vertically at X.
 %
@@ -30,35 +29,32 @@ function varargout=plot(varargin)
 %      - A can be an integer between -1 and 31, again following Matlab's
 %       conventions.
 %
-% Inputs
-% -------
+% Args:
 %
-%   - **X** [char|serial date vector] : range over which to plot 
+%      - **X** [char|serial date vector] : range over which to plot
 %
-%   - **S** [char] : Matlab's line types, symbols and colors 
+%      - **S** [char] : Matlab's line types, symbols and colors
 %
-%   - **nticks** [integer|{8}] : number of tick marks on the x-axis 
+%      - **nticks** [integer|{8}] : number of tick marks on the x-axis
 %
-%   - **vline** [char|cellstr|serial dates|{''}] : vertical line(s) e.g.
-%   'vline' = '2000Q1'= '2000Q1,2003Q2' must be in the same frequency as
-%   the database to be plotted
+%      - **vline** [char|cellstr|serial dates|{''}] : vertical line(s) e.g.
+%      'vline' = '2000Q1'= '2000Q1,2003Q2' must be in the same frequency as
+%      the database to be plotted
 %
-%   - **hline** [integer|{''}] : horizontal line(s) 'hline' =1, =[1 5.5 2]
+%      - **hline** [integer|{''}] : horizontal line(s) 'hline' =1, =[1 5.5 2]
 %
-%   - **logy** [true|{false}] : log the database or not 
+%      - **logy** [true|{false}] : log the database or not
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-%   - **varargout** [scalar|vector] : handle to the lines of plot
+%      - **varargout** [scalar|vector] : handle to the lines of plot
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 %     plot(X,db) plots time series db versus vector of dates X. X can be of
 %     multiple forms and need not be of the same length as db:

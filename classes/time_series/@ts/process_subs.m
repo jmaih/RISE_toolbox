@@ -1,23 +1,19 @@
 function [date_numbers,datta,rows_dates,varloc,pages]=process_subs(obj,subs,caller)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 nsubs=numel(subs);

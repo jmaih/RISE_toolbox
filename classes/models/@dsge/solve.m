@@ -1,223 +1,219 @@
 function [obj,retcode,structural_matrices]=solve(obj,varargin)
 % solve - solves dsge model
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [obj,retcode,structural_matrices]=solve(obj)
 %
 %   [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: scalar or vector of model objects. The optional
-% options below come in pairs.
+%    - **obj** [rise|dsge]: scalar or vector of model objects. The optional
+%    options below come in pairs.
 %
-% - **solve_accelerate** [{false}|true]: Accelerate or do not accelerate
-% the solving
+%    - **solve_accelerate** [{false}|true]: Accelerate or do not accelerate
+%    the solving
 %
-% - **solve_check_stability** [{true}|false]: check stability of Markov
-% switching models while solving. The stability of constant-parameter
-% models is always checked whether that of markov-switching models is
-% optional. This is because (1) the procedure is computationally intensive
-% and (2) there is no define stability criterion under endogenous switching
+%    - **solve_check_stability** [{true}|false]: check stability of Markov
+%    switching models while solving. The stability of constant-parameter
+%    models is always checked whether that of markov-switching models is
+%    optional. This is because (1) the procedure is computationally intensive
+%    and (2) there is no define stability criterion under endogenous switching
 %
-% - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
-% derivatives
+%    - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
+%    derivatives
 %
-% - **solve_order** [integer|{1}]: order of approximation
+%    - **solve_order** [integer|{1}]: order of approximation
 %
-% - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
-% of shocks beyond the current period. When the input is :
-%   - an integer : all the shocks receive the same anticipation horizon
-%   - a struct : the fields are the names of the shocks whose horizon is to
-%   be modified. e.g. struct('ea',4,'eb',3) means shock ea has horizon 4
-%   while shock eb has horizon 3
-%   - a cell : the cell must have two colums. Each row in the first column
-%   holds the name of a particular shock and each row in the second column
-%   holds the horizon of the shock. e.g. {'ea',4;'eb',3}
+%    - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
+%    of shocks beyond the current period. When the input is :
+%      - an integer : all the shocks receive the same anticipation horizon
+%      - a struct : the fields are the names of the shocks whose horizon is to
+%      be modified. e.g. struct('ea',4,'eb',3) means shock ea has horizon 4
+%      while shock eb has horizon 3
+%      - a cell : the cell must have two colums. Each row in the first column
+%      holds the name of a particular shock and each row in the second column
+%      holds the horizon of the shock. e.g. {'ea',4;'eb',3}
 %
-% - **solve_alternatives_file2save2** [{[]}|char]: name of the file to
-% write the results of the alternative solutions
+%    - **solve_alternatives_file2save2** [{[]}|char]: name of the file to
+%    write the results of the alternative solutions
 %
-% - **solve_alternatives_nsim** [integer|{100}]: Number of initial guesses
-% for the solution sampled randomly, when attempting to find all possible
-% solutions.
+%    - **solve_alternatives_nsim** [integer|{100}]: Number of initial guesses
+%    for the solution sampled randomly, when attempting to find all possible
+%    solutions.
 %
-%  - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
-%   - in the **amateur** or **explicit** mode the functions are kept in
-%   cell arrays of anonymous functions and evaluated using for loops
-%   - in the **vectorized** or **professional** mode the functions are
-%   compacted into one long and unreadable function.
-%   - in the **disc** mode the functions are written to disc in a
-%   subdirectory called routines.
+%     - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
+%      - in the **amateur** or **explicit** mode the functions are kept in
+%      cell arrays of anonymous functions and evaluated using for loops
+%      - in the **vectorized** or **professional** mode the functions are
+%      compacted into one long and unreadable function.
+%      - in the **disc** mode the functions are written to disc in a
+%      subdirectory called routines.
 %
-% - **solve_initialization** [{'backward'}|'zeros'|'random']: Type of
-% initialization of the solution of switching models:
-%   - **backward** : the initial guess is the solution of the model without
-%   forward-looking terms
-%   - **zeros** : the initial guess is zero
-%   - **random** : the initial guess is random
+%    - **solve_initialization** [{'backward'}|'zeros'|'random']: Type of
+%    initialization of the solution of switching models:
+%      - **backward** : the initial guess is the solution of the model without
+%      forward-looking terms
+%      - **zeros** : the initial guess is zero
+%      - **random** : the initial guess is random
 %
-% - **solve_linsyst_user_algo** [{''}|cell|char]: user-defined solver for
-% linear systems. It should be possible to call the function as
-% [X,FLAG,RELRES,ITER,RESVEC] = bicgstabl(A,B,TOL,MAXIT,varargin). Hence,
-% the function should accept at least 4 inputs where:
-%   - **A** : matrix or function handle
-%   - **B** : right-hand side of system to solve
-%   - **TOL** : tolerance level
-%   - **MAXIT** : maximum number of iterations
-% The function must return 5 outputs as in Matlab's tfqmr, bicgstab,
-% bicgstabl, gmres, etc. :
-%   - **X** : the solution
-%   - **FLAG** : convergence flag
-%   - **RELRES** : relative residual NORM(B-A*X)/NORM(B)
-%   - **ITER** : iteration number
-%   - **RESVEC** : residual vector for various iterations
-% As far as the outputs are concerned, only the two first are relevant for
-% RISE and so the three last can be empty. But they must be returned by the
-% function all the same.
+%    - **solve_linsyst_user_algo** [{''}|cell|char]: user-defined solver for
+%    linear systems. It should be possible to call the function as
+%    [X,FLAG,RELRES,ITER,RESVEC] = bicgstabl(A,B,TOL,MAXIT,varargin). Hence,
+%    the function should accept at least 4 inputs where:
+%      - **A** : matrix or function handle
+%      - **B** : right-hand side of system to solve
+%      - **TOL** : tolerance level
+%      - **MAXIT** : maximum number of iterations
+%    The function must return 5 outputs as in Matlab's tfqmr, bicgstab,
+%    bicgstabl, gmres, etc. :
+%      - **X** : the solution
+%      - **FLAG** : convergence flag
+%      - **RELRES** : relative residual NORM(B-A*X)/NORM(B)
+%      - **ITER** : iteration number
+%      - **RESVEC** : residual vector for various iterations
+%    As far as the outputs are concerned, only the two first are relevant for
+%    RISE and so the three last can be empty. But they must be returned by the
+%    function all the same.
 %
-% - **solver** [{[]}|char|user_defined]: solver for the dsge model. The
-% following are possible:
-%   - **loose_commitment** : RISE automatically uses this when it detects
-%   an optimal policy model to be solved under commitment, discretion or
-%   loose commitment
-%   - **rise_1** : default solver for constant-parameter dsge models.
-%   Similar to the dynare solver.
-%   - **mfi** : functional interation solver: default for switching dsge
-%   models
-%   - **mnk** : newton solver with kronecker products
-%   - **mn** : newton solver without kronecker products
-%   - **mfi_full** : full version of mfi, that does not exploit sparsity
-%   - **mnk_full** : full version of mnk, that does not exploit sparsity
-%   - **mn_full** : full version of mn, that does not exploit sparsity
-%   - **fwz** : Farmer, Waggoner and Zha (2011) solver
-%   - **user_defined** : In this case the function must take as inputs:
-%       - **Gplus01** [n x n x h x h array]: where the 3rd dimension
-%       represent the current regime and the 4th dimension is the future
-%       regime.
-%       - **A0** [n x n x h array]: matrix of contemporaneous variables
-%       - **Aminus** [n x n x h array]: matrix of backward-looking terms
-%       - **Q** [square matrix]: transition matrix, in which the rows are
-%       the current period and the columns the next period
-%       - **T0** [n x h x h array]: initial guess of the solution
-%       - **tol** [scalar]: A tolerance criterion
-%       - **maxiter** [scalar]: the maximum number of iterations
-%     The function should return as outputs
-%       - **Tz_pb** [n x h x h array]: solution of the problem given the
-%       inputs
-%       - **eigenvalues** [empty|vector]: optional vector of eigenvalues of
-%       the problem
-%       - **retcode** : 0 if no problem found when solving the problem
-%    The function can be passed along as a string, a function handle or a
-%    cell array in which case the first element of the cell contains the
-%    function itself and the remaining cells contain further arguments
-%    required by the function but unknown to RISE.
+%    - **solver** [{[]}|char|user_defined]: solver for the dsge model. The
+%    following are possible:
+%      - **loose_commitment** : RISE automatically uses this when it detects
+%      an optimal policy model to be solved under commitment, discretion or
+%      loose commitment
+%      - **rise_1** : default solver for constant-parameter dsge models.
+%      Similar to the dynare solver.
+%      - **mfi** : functional interation solver: default for switching dsge
+%      models
+%      - **mnk** : newton solver with kronecker products
+%      - **mn** : newton solver without kronecker products
+%      - **mfi_full** : full version of mfi, that does not exploit sparsity
+%      - **mnk_full** : full version of mnk, that does not exploit sparsity
+%      - **mn_full** : full version of mn, that does not exploit sparsity
+%      - **fwz** : Farmer, Waggoner and Zha (2011) solver
+%      - **user_defined** : In this case the function must take as inputs:
+%          - **Gplus01** [n x n x h x h array]: where the 3rd dimension
+%          represent the current regime and the 4th dimension is the future
+%          regime.
+%          - **A0** [n x n x h array]: matrix of contemporaneous variables
+%          - **Aminus** [n x n x h array]: matrix of backward-looking terms
+%          - **Q** [square matrix]: transition matrix, in which the rows are
+%          the current period and the columns the next period
+%          - **T0** [n x h x h array]: initial guess of the solution
+%          - **tol** [scalar]: A tolerance criterion
+%          - **maxiter** [scalar]: the maximum number of iterations
+%        The function should return as outputs
+%          - **Tz_pb** [n x h x h array]: solution of the problem given the
+%          inputs
+%          - **eigenvalues** [empty|vector]: optional vector of eigenvalues of
+%          the problem
+%          - **retcode** : 0 if no problem found when solving the problem
+%       The function can be passed along as a string, a function handle or a
+%       cell array in which case the first element of the cell contains the
+%       function itself and the remaining cells contain further arguments
+%       required by the function but unknown to RISE.
 %
-% - **solve_log_approx_vars** [char|cellstr|{[]}]: List of variables for
-% which we want to take a log expansion (x_t-x_ss)/x_ss, which approximates
-% log(x_t/x_ss) for x_t/x_ss close to 1.
+%    - **solve_log_approx_vars** [char|cellstr|{[]}]: List of variables for
+%    which we want to take a log expansion (x_t-x_ss)/x_ss, which approximates
+%    log(x_t/x_ss) for x_t/x_ss close to 1.
 %
-% - **solve_automatic_differentiator** [function_handle|@aplanar.diff|{@aplanar_.idff}]:
-% automatic differentiator engine
+%    - **solve_automatic_differentiator** [function_handle|@aplanar.diff|{@aplanar_.idff}]:
+%    automatic differentiator engine
 %
-% - **solve_higher_order_solver** ['dsge_solver_ha'|{'dsge_solver_h'}]: The
-% two solvers only differ in the way they handle memory. The default
-% solver (dsge_solver_h) keeps lots of data in memory while the
-% alternative one (dsge_solver_ha) recomputes some of the variables in
-% order to economize on memory. It is not clear which one performs the best
+%    - **solve_higher_order_solver** ['dsge_solver_ha'|{'dsge_solver_h'}]: The
+%    two solvers only differ in the way they handle memory. The default
+%    solver (dsge_solver_h) keeps lots of data in memory while the
+%    alternative one (dsge_solver_ha) recomputes some of the variables in
+%    order to economize on memory. It is not clear which one performs the best
 %
-% - **solve_occbin** [integer|{empty}]: Solves the occasionally
-% binding constraints model ala Kulish (2013) or Guerrieri and
-% Iacoviello(2015). It is then assumed that the transition matrix is
-% diagonal. if not empty, the value entered is the reference regime.
+%    - **solve_occbin** [integer|{empty}]: Solves the occasionally
+%    binding constraints model ala Kulish (2013) or Guerrieri and
+%    Iacoviello(2015). It is then assumed that the transition matrix is
+%    diagonal. if not empty, the value entered is the reference regime.
 %
-% - **solve_bgp** [true|{false}]: Solves the model as non-stationary.
+%    - **solve_bgp** [true|{false}]: Solves the model as non-stationary.
 %
-% - **solve_sstate_blocks** [true|{false}]: blockwise solution of the
-% steady state.
+%    - **solve_sstate_blocks** [true|{false}]: blockwise solution of the
+%    steady state.
 %
-% - **solve_bgp_shift** [numeric|{5}]: shift/lead of the static model for
-% solving the balanced growth path.
+%    - **solve_bgp_shift** [numeric|{5}]: shift/lead of the static model for
+%    solving the balanced growth path.
 %
-% - **solve_reuse_solution** [false|{true}]: re-use previous solution as
-% initial conditions
+%    - **solve_reuse_solution** [false|{true}]: re-use previous solution as
+%    initial conditions
 %
-% - **solve_linear** [true|{false}]: set this to true in order to use more
-% efficient algorithms for solving the steady state when the original model
-% is truly linear.
+%    - **solve_linear** [true|{false}]: set this to true in order to use more
+%    efficient algorithms for solving the steady state when the original model
+%    is truly linear.
 %
-% - **solve_time_consistent_switch** [true|{false}]: if true, at the
-% evaluation of the derivatives, leads are evaluated at the steady state of
-% the future regime
+%    - **solve_time_consistent_switch** [true|{false}]: if true, at the
+%    evaluation of the derivatives, leads are evaluated at the steady state of
+%    the future regime
 %
-% - **solve_derivatives_only** [true|{false}]: if true, the derivatives are
-% computed but the model is not solved. The derivatives can be collected in
-% the third output argument of the function.
+%    - **solve_derivatives_only** [true|{false}]: if true, the derivatives are
+%    computed but the model is not solved. The derivatives can be collected in
+%    the third output argument of the function.
 %
-% - **steady_state_file** [char|function_handle|{''}]:
+%    - **steady_state_file** [char|function_handle|{''}]:
 %
-% - **steady_state_use_steady_state_model** [false|{true}]:
+%    - **steady_state_use_steady_state_model** [false|{true}]:
 %
-% - **steady_state_solver** [char|function_handle|{'lsqnonlin'}]:
+%    - **steady_state_solver** [char|function_handle|{'lsqnonlin'}]:
 %
-% - **steady_state_algorithm** [char|function_handle|{{'levenberg-marquardt',2*.005}}]:
+%    - **steady_state_algorithm** [char|function_handle|{{'levenberg-marquardt',2*.005}}]:
 %
-% - **steady_state_unique** [true|{false}]:
+%    - **steady_state_unique** [true|{false}]:
 %
-% - **steady_state_imposed** [true|{false}]:
+%    - **steady_state_imposed** [true|{false}]:
 %
-% - **steady_state_loop** [true|{false}]:
+%    - **steady_state_loop** [true|{false}]:
 %
-% - **steady_state_fixed** [true|{false}]:
+%    - **steady_state_fixed** [true|{false}]:
 %
-% - **steady_state_use_jacobian** [true|{false}]: In linear models, the
-% jacobian is always used. In the nonlinear case, however, the true
-% jacobian tends not to work as well as its finite differences
-% approximation. Hence by default, we do not invoke the use of the true
-% jacobian.
+%    - **steady_state_use_jacobian** [true|{false}]: In linear models, the
+%    jacobian is always used. In the nonlinear case, however, the true
+%    jacobian tends not to work as well as its finite differences
+%    approximation. Hence by default, we do not invoke the use of the true
+%    jacobian.
 %
-% - **steady_state_endo_param_swap** [cell array|{}]: When not empty, it is
-% a cell array with n rows and 3 columns, where n is the number of
-% restrictions, the first column gathers the names of the endogenous
-% variables whose values are given in the second column, the third column
-% includes the parameters names that are endogenized.
+%    - **steady_state_endo_param_swap** [cell array|{}]: When not empty, it is
+%    a cell array with n rows and 3 columns, where n is the number of
+%    restrictions, the first column gathers the names of the endogenous
+%    variables whose values are given in the second column, the third column
+%    includes the parameters names that are endogenized.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [rise|dsge]: scalar or vector of model objects
+%    - **obj** [rise|dsge]: scalar or vector of model objects
 %
-% - **retcode** [integer]: if 0, no problem was found when solving the
-% model. If positive, the reason for the problem can be obtained by running
-% decipher(retcode)
+%    - **retcode** [integer]: if 0, no problem was found when solving the
+%    model. If positive, the reason for the problem can be obtained by running
+%    decipher(retcode)
 %
-% - **structural_matrices** [struct]: Structure holding various types of
-% derivatives that are used in the computation of the solution
+%    - **structural_matrices** [struct]: Structure holding various types of
+%    derivatives that are used in the computation of the solution
 %
-% More About
-% ------------
+% Note:
 %
-% - constant-parameter models can also be solved using the procedures for
-% switching parameter models. There is no guarantee, however, any obtained
-% solution will be determinate (unique and stable)
+%    - constant-parameter models can also be solved using the procedures for
+%    switching parameter models. There is no guarantee, however, any obtained
+%    solution will be determinate (unique and stable)
 %
-% - determinacy is only checked for constant-parameter models. For
-% determinacy computations for switching dsge models with constant
-% transition matrices, see Cho(2014).
+%    - determinacy is only checked for constant-parameter models. For
+%    determinacy computations for switching dsge models with constant
+%    transition matrices, see Cho(2014).
 %
-% - In RISE we consider that it is in the nature of nonlinear models to
-% have many solutions. Obtaining even one of those solution is usually
-% difficult and a concept such as determinacy is NEVER used in the solving
-% of models with, say, global methods.
+%    - In RISE we consider that it is in the nature of nonlinear models to
+%    have many solutions. Obtaining even one of those solution is usually
+%    difficult and a concept such as determinacy is NEVER used in the solving
+%    of models with, say, global methods.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % I should formally check that all the variables that enter the calculation
 % of endogenous probabilities have a unique steady state. I can add a flag

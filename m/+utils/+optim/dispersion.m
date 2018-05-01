@@ -1,23 +1,19 @@
 function d=dispersion(X,lb,ub)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 ul=sqrt(eps)+ub-lb;
 X=sort(X,2);

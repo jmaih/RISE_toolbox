@@ -1,9 +1,8 @@
 function [shocks,regimes,PAI,retcode,cfkst,Qt]=forecast(model,y0,ycond,econd,options,regimes)
 % FORECAST - conditional forecast for regime-switching models
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   shocks=forecast(model,y0,ycond,econd,options)
 %
@@ -11,60 +10,57 @@ function [shocks,regimes,PAI,retcode,cfkst,Qt]=forecast(model,y0,ycond,econd,opt
 %
 %   [shocks,regimes,retcode,cfkst]=forecast(...)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **model** [struct]: structure with fields
-%   - **T** [1 x h cell array]: solution of the model
-%   - **sstate** [1 x h cell array]: steady state in each regime
-%   - **state_cols** [vector]: location of state variables in the y0 vector
-%   below
-%   - **Q** [h x h matrix]: initial transition matrix
-%   - **Qfunc** [function_handle]: function that takes as input a vector of
-%   endogenous variables' values and return a transition matrix
-%   - **k** [scalar]: shock horizon beyond the current period
+%    - **model** [struct]: structure with fields
+%      - **T** [1 x h cell array]: solution of the model
+%      - **sstate** [1 x h cell array]: steady state in each regime
+%      - **state_cols** [vector]: location of state variables in the y0 vector
+%      below
+%      - **Q** [h x h matrix]: initial transition matrix
+%      - **Qfunc** [function_handle]: function that takes as input a vector of
+%      endogenous variables' values and return a transition matrix
+%      - **k** [scalar]: shock horizon beyond the current period
 %
-% - **y0** [vector]: initial conditions
+%    - **y0** [vector]: initial conditions
 %
-% - **ycond** [struct]: structure with fields
-%   - **data** [3-dimensional array]: The first page is the mean, the
-%   second is the lower bound, the third is the upper bound
-%   - **pos** [empty|scalar|vector]: location of the conditioning variables
-%   in the state vector
+%    - **ycond** [struct]: structure with fields
+%      - **data** [3-dimensional array]: The first page is the mean, the
+%      second is the lower bound, the third is the upper bound
+%      - **pos** [empty|scalar|vector]: location of the conditioning variables
+%      in the state vector
 %
-% - **econd** []: structure with fields
-%   - **data** [3-dimensional array]: The first page is the mean, the
-%   second is the lower bound, the third is the upper bound
-%   - **pos** [empty|scalar|vector]: location of the conditioning shocks
-%   in the state vector
+%    - **econd** []: structure with fields
+%      - **data** [3-dimensional array]: The first page is the mean, the
+%      second is the lower bound, the third is the upper bound
+%      - **pos** [empty|scalar|vector]: location of the conditioning shocks
+%      in the state vector
 %
-% - **options** [struct]: structure with options of interest. See details
-% in utils.forecast.rscond.density_shocks and utils.forecast.rscond.form_system
+%    - **options** [struct]: structure with options of interest. See details
+%    in utils.forecast.rscond.density_shocks and utils.forecast.rscond.form_system
 %
-% - **regimes** [empty|vector]: regimes for each step
+%    - **regimes** [empty|vector]: regimes for each step
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **shocks** [empty|2 or 3-dimensional array]: nshocks x horizon x ndraws
+%    - **shocks** [empty|2 or 3-dimensional array]: nshocks x horizon x ndraws
 %
-% - **regimes** [vector]: regimes visited over the forecast horizon
+%    - **regimes** [vector]: regimes visited over the forecast horizon
 %
-% - **PAI** [h x nsteps matrix]: evolution of choice probabilities
+%    - **PAI** [h x nsteps matrix]: evolution of choice probabilities
 %
-% - **retcode** [scalar]: 0 if no problem
+%    - **retcode** [scalar]: 0 if no problem
 %
-% - **cfkst** [n x (nsteps+1) matrix]: conditional forecasts
+%    - **cfkst** [n x (nsteps+1) matrix]: conditional forecasts
 %
-% - **Qt** [h x h x nsteps array]: time series of transition matrices
+%    - **Qt** [h x h x nsteps array]: time series of transition matrices
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: RSCF.LOOP_FORECAST
+%    See also: RSCF.LOOP_FORECAST
 
 if nargin==0
     

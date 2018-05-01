@@ -1,24 +1,20 @@
 function [dictionary,PlannerObjective_block,Model_block]=planner_objective(...
-    dictionary,listing,Model_block)
+dictionary,listing,Model_block)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 dictionary.is_model_with_planner_objective=~isempty(listing);
 

@@ -2,23 +2,19 @@ function [log_likt,PAI01_tt,retcode]=switch_like_exp_facility(PAI,log_f01,kalman
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
     retcode=0;
     

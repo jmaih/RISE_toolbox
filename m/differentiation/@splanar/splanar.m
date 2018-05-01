@@ -1,114 +1,110 @@
 classdef splanar
-    % splanar symbolic "planar" differentiation
-    %
-    % - [abs](splanar/abs)
-    % - [acos](splanar/acos)
-    % - [acosh](splanar/acosh)
-    % - [and](splanar/and)
-    % - [asin](splanar/asin)
-    % - [asinh](splanar/asinh)
-    % - [atan](splanar/atan)
-    % - [atanh](splanar/atanh)
-    % - [char](splanar/char)
-    % - [cos](splanar/cos)
-    % - [cosh](splanar/cosh)
-    % - [cot](splanar/cot)
-    % - [derivatives2functions](splanar/derivatives2functions)
-    % - [diff](splanar/diff)
-    % - [differentiate](splanar/differentiate)
-    % - [eq](splanar/eq)
-    % - [erf](splanar/erf)
-    % - [exp](splanar/exp)
-    % - [ge](splanar/ge)
-    % - [get](splanar/get)
-    % - [gt](splanar/gt)
-    % - [if_elseif](splanar/if_elseif)
-    % - [if_then_else](splanar/if_then_else)
-    % - [initialize](splanar/initialize)
-    % - [intercept_column](splanar/intercept_column)
-    % - [is_one](splanar/is_one)
-    % - [is_zero](splanar/is_zero)
-    % - [isnumeric](splanar/isnumeric)
-    % - [kron](splanar/kron)
-    % - [le](splanar/le)
-    % - [load_varlist](splanar/load_varlist)
-    % - [log](splanar/log)
-    % - [log10](splanar/log10)
-    % - [lt](splanar/lt)
-    % - [max](splanar/max)
-    % - [min](splanar/min)
-    % - [minus](splanar/minus)
-    % - [mpower](splanar/mpower)
-    % - [mrdivide](splanar/mrdivide)
-    % - [mtimes](splanar/mtimes)
-    % - [ne](splanar/ne)
-    % - [normcdf](splanar/normcdf)
-    % - [norminv](splanar/norminv)
-    % - [normpdf](splanar/normpdf)
-    % - [or](splanar/or)
-    % - [plus](splanar/plus)
-    % - [power](splanar/power)
-    % - [print](splanar/print)
-    % - [rdivide](splanar/rdivide)
-    % - [set](splanar/set)
-    % - [sign](splanar/sign)
-    % - [sin](splanar/sin)
-    % - [sinh](splanar/sinh)
-    % - [splanar](splanar/splanar)
-    % - [sqrt](splanar/sqrt)
-    % - [tan](splanar/tan)
-    % - [tanh](splanar/tanh)
-    % - [times](splanar/times)
-    % - [uminus](splanar/uminus)
-    % - [uplus](splanar/uplus)
-    
-    properties
-        func
-        args
-        incidence % tells which variable appears
-        lineage={} % will serve to trace back all generations of derivatives
+% splanar symbolic "planar" differentiation
+%
+% - [abs](splanar/abs)
+% - [acos](splanar/acos)
+% - [acosh](splanar/acosh)
+% - [and](splanar/and)
+% - [asin](splanar/asin)
+% - [asinh](splanar/asinh)
+% - [atan](splanar/atan)
+% - [atanh](splanar/atanh)
+% - [char](splanar/char)
+% - [cos](splanar/cos)
+% - [cosh](splanar/cosh)
+% - [cot](splanar/cot)
+% - [derivatives2functions](splanar/derivatives2functions)
+% - [diff](splanar/diff)
+% - [differentiate](splanar/differentiate)
+% - [eq](splanar/eq)
+% - [erf](splanar/erf)
+% - [exp](splanar/exp)
+% - [ge](splanar/ge)
+% - [get](splanar/get)
+% - [gt](splanar/gt)
+% - [if_elseif](splanar/if_elseif)
+% - [if_then_else](splanar/if_then_else)
+% - [initialize](splanar/initialize)
+% - [intercept_column](splanar/intercept_column)
+% - [is_one](splanar/is_one)
+% - [is_zero](splanar/is_zero)
+% - [isnumeric](splanar/isnumeric)
+% - [kron](splanar/kron)
+% - [le](splanar/le)
+% - [load_varlist](splanar/load_varlist)
+% - [log](splanar/log)
+% - [log10](splanar/log10)
+% - [lt](splanar/lt)
+% - [max](splanar/max)
+% - [min](splanar/min)
+% - [minus](splanar/minus)
+% - [mpower](splanar/mpower)
+% - [mrdivide](splanar/mrdivide)
+% - [mtimes](splanar/mtimes)
+% - [ne](splanar/ne)
+% - [normcdf](splanar/normcdf)
+% - [norminv](splanar/norminv)
+% - [normpdf](splanar/normpdf)
+% - [or](splanar/or)
+% - [plus](splanar/plus)
+% - [power](splanar/power)
+% - [print](splanar/print)
+% - [rdivide](splanar/rdivide)
+% - [set](splanar/set)
+% - [sign](splanar/sign)
+% - [sin](splanar/sin)
+% - [sinh](splanar/sinh)
+% - [splanar](splanar/splanar)
+% - [sqrt](splanar/sqrt)
+% - [tan](splanar/tan)
+% - [tanh](splanar/tanh)
+% - [times](splanar/times)
+% - [uminus](splanar/uminus)
+% - [uplus](splanar/uplus)
+
+properties
+func
+args
+incidence % tells which variable appears
+lineage={} % will serve to trace back all generations of derivatives
 %         prototype
-        location % will hold position (column) where the derivative will be stored
-    end
-    
-    properties(Dependent)
-        
-        number_of_columns=1
-        
-    end
-    
-    methods
-        % constructor
-        %------------
-        function obj=splanar(f,a)
-            % splanar - constructor for splanar objects
-            %
-            % Syntax
-            % -------
-            % ::
-            %
-            %   obj=splanar(f)
-            %   obj=splanar(f,a)
-            %
-            % Inputs
-            % -------
-            %
-            % - **f** [splanar|char|numeric]: function (string) or variable name or
-            %   numerical value
-            %
-            % - **a** [cell|numeric|splanar]: argument(s) of function f. This is when f
-            %   is indeed a function
-            %
-            % Outputs
-            % --------
-            %
-            % - **obj** [splanar]: built object
-            %
-            % More About
-            % ------------
-            %
-            % Examples
-            % ---------
+location % will hold position (column) where the derivative will be stored
+end
+
+properties(Dependent)
+
+number_of_columns=1
+
+end
+
+methods
+% constructor
+%------------
+function obj=splanar(f,a)
+% splanar - constructor for splanar objects
+%
+% ::
+%
+%
+%   obj=splanar(f)
+%   obj=splanar(f,a)
+%
+% Args:
+%              %
+%              % - **f** [splanar|char|numeric]: function (string) or variable name or
+%              %   numerical value
+%              %
+%              % - **a** [cell|numeric|splanar]: argument(s) of function f. This is when f
+%              %   is indeed a function
+%              %
+% Returns:
+%    :
+%              %
+%              % - **obj** [splanar]: built object
+%              %
+% Note:
+%              %
+% Example:
             %
             % See also:
             if nargin>0

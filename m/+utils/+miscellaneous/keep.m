@@ -1,31 +1,27 @@
 function keep(varargin)
 % keep - clears the workspace for undesired variables
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   keep v1 v2 v3...
 %
 %   keep('v1','v2','v3',...,'vn')
 %
-% Inputs
-% -------
+% Args:
 %
-% - **v1, v2,..,vn** [char]: names of the variables to clear
+%    - **v1, v2,..,vn** [char]: names of the variables to clear
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - none
+%    - none
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: clear
+%    See also: clear
 
 % This is a modification of keep.m by Xiaoning (David) Yang xyang@lanl.gov
 % 1998.

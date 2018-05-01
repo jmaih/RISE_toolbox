@@ -1,51 +1,47 @@
 function [x]=fernandez_plateau_stewart(do_left,x,varargin)
 % fernandez_plateau_stewart computes kron(Q1,Q2,...,Qk)*x or x*kron(Q1,...,Qk)
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   Y=fernandez_plateau_stewart(do_left,X,{Q1,n1},{Q2,n2},...,{Qk,nk})
 %   Y=fernandez_plateau_stewart(do_left,X,{Q1,n1},{Q2,n2},...,{Qk,nk},'-debug')
 %
-% Inputs
-% -------
+% Args:
 %
-% - **do_left** [true|false] if true, matrix x appears to the left of the
-%   kronecker product i.e. x*kron(Q1,...,Qk). If instead do_left is false,
-%   matrix x appears to the right of the kronecker product i.e.
-%   kron(Q1,...,Qk)*x
+%    - **do_left** [true|false] if true, matrix x appears to the left of the
+%      kronecker product i.e. x*kron(Q1,...,Qk). If instead do_left is false,
+%      matrix x appears to the right of the kronecker product i.e.
+%      kron(Q1,...,Qk)*x
 %
-% - **x** [matrix|vector] is a vector or a matrix whose number of columns
-%   (respectively number of rows) is equal to the product of the rows
-%   (respectively columns) of all Qi's 
+%    - **x** [matrix|vector] is a vector or a matrix whose number of columns
+%      (respectively number of rows) is equal to the product of the rows
+%      (respectively columns) of all Qi's
 %
-% - **varargin** [array of 2-element cells|matrix] cell inputs are of the
-%   form {Qi,ni}. Alternatively, an input could simply be Qi
-%   - **Qi** [matrix] : must be square
-%   - **ni** [integer] : number of times the kronecker of Qi appears
+%    - **varargin** [array of 2-element cells|matrix] cell inputs are of the
+%      form {Qi,ni}. Alternatively, an input could simply be Qi
+%      - **Qi** [matrix] : must be square
+%      - **ni** [integer] : number of times the kronecker of Qi appears
 %
-%   - **'-debug'** : entered at the end, this strings triggers the direct
-%     computation of the x*kron(Q1,...,Qk) or kron(Q1,...,Qk)*x, checks the
-%     differences and times each computation.
+%      - **'-debug'** : entered at the end, this strings triggers the direct
+%        computation of the x*kron(Q1,...,Qk) or kron(Q1,...,Qk)*x, checks the
+%        differences and times each computation.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **x** [matrix|vector] : result of the computations
+%    - **x** [matrix|vector] : result of the computations
 %
-% More About
-% ------------
+% Note:
 %
-% No kronecker product is required in the computation.
+%    No kronecker product is required in the computation.
 %
-% Examples
-% ---------
+% Example:
 %
-% x=rand(1,3^3*7^2*5^1);
-% fernandez_plateau_stewart(true,x,{rand(3),3},{rand(7),2},{rand(5),1})
+%    x=rand(1,3^3*7^2*5^1);
+%    fernandez_plateau_stewart(true,x,{rand(3),3},{rand(7),2},{rand(5),1})
 %
-% See also:
+%    See also:
 
 % Reference:
 % Paulo Fernandes, Brigitte Plateau, William J. Stewart (1998): "Efficient

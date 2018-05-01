@@ -1,23 +1,19 @@
 function [smpl,fsmpl,accept_rate,start] = mh_sampler(start,nsamples,varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 start.f0=-start.f0;

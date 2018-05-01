@@ -1,33 +1,29 @@
 function res=first_order(dv,vz,~)
 % first_order -- first-order multivariate chain rule
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   res=first_order(dv,vz)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **dv** [nd x nv matrix]: jacobian of function with respect to the
-% locations of its arguments
+%    - **dv** [nd x nv matrix]: jacobian of function with respect to the
+%    locations of its arguments
 %
-% - **vz** [nv x nz matrix]: jacobian of the locations with respect to the
-% variables to differentiate
+%    - **vz** [nv x nz matrix]: jacobian of the locations with respect to the
+%    variables to differentiate
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **res** [nd x nz]: output matrix
+%    - **res** [nd x nz]: output matrix
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 nz=size(vz,2);
 nd=size(dv,1);

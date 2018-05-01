@@ -1,107 +1,103 @@
 
 classdef figure < rise_report.generic_report
-    % figure report figure object
-    %
-    % methods
-    % --------
-    %
-    % - [addlistener](rise_report.figure/addlistener)
-    % - [best_title](rise_report.figure/best_title)
-    % - [delete](rise_report.figure/delete)
-    % - [eq](rise_report.figure/eq)
-    % - [figure](rise_report.figure/figure)
-    % - [findobj](rise_report.figure/findobj)
-    % - [findprop](rise_report.figure/findprop)
-    % - [ge](rise_report.figure/ge)
-    % - [gt](rise_report.figure/gt)
-    % - [isvalid](rise_report.figure/isvalid)
-    % - [le](rise_report.figure/le)
-    % - [lt](rise_report.figure/lt)
-    % - [ne](rise_report.figure/ne)
-    % - [notify](rise_report.figure/notify)
-    % - [reprocess](rise_report.figure/reprocess)
-    % - [write](rise_report.figure/write)
-    %
-    % properties
-    % -----------
-    %
-    % - [title] -
-    % - [name] -
-    % - [width] -
-    % - [height] -
-    % - [angle] -
-    % - [scale] -
-    % - [graphicspath] -
-    % - [numbering] -
-    % - [batch] -
-    % - [id] -
-    properties
-        title=''
-        % string or function handle
-        name =''
-        % scale graphic to the specified width
-        width
-        % scale graphic to the specified height
-        height
-        % rotate graphic counterclockwise
-        angle=0
-        % scale graphic
-        scale=0.85
-        % path to the graph
-        graphicspath = ''
-        numbering=true
-    end
-    properties(Dependent)
-        batch
-    end
-    properties(Hidden)
-        figure_number
-    end
-    methods
-        function obj=figure(varargin)
-            % FIGURE constructs a reporting figure
-            %
-            % Syntax
-            % -------
-            % ::
-            %   obj=FIGURE(varargin)
-            %
-            % Inputs
-            % -------
-            %
-            % the input arguments must come in pairs :
-            %   - ['title',[char]] : title for the figure to be reported
-            %
-            %   - ['name',[char|handle]] : name of the pdf file (on the
-            %     matlab path) or the handle to the figure to be reported
-            %
-            %   - ['width',[numeric|{}]] : width for resizing the figure to
-            %     be plotted
-            %
-            %   - ['height',[numeric|{}]] : height for resizing the figure to
-            %     be plotted
-            %
-            %   - ['angle',[numeric|{0}]] : rotation angle
-            %
-            %   - ['scale',[numeric|{0.85}]] : scale for resizing the figure to
-            %     be plotted
-            %
-            %   - ['graphicspath',[char|{''}]] : path to the location of
-            %     the graph or figure
-            %
-            %   - ['numbering',[{true}|false]] : whether or not the table
-            %     should be numbered in the final report
-            %
-            % Outputs
-            % --------
-            %
-            % - obj [figure object]
-            %
-            % More About
-            % ------------
-            %
-            % Examples
-            % ---------
+% figure report figure object
+%
+% methods
+% --------
+%
+% - [addlistener](rise_report.figure/addlistener)
+% - [best_title](rise_report.figure/best_title)
+% - [delete](rise_report.figure/delete)
+% - [eq](rise_report.figure/eq)
+% - [figure](rise_report.figure/figure)
+% - [findobj](rise_report.figure/findobj)
+% - [findprop](rise_report.figure/findprop)
+% - [ge](rise_report.figure/ge)
+% - [gt](rise_report.figure/gt)
+% - [isvalid](rise_report.figure/isvalid)
+% - [le](rise_report.figure/le)
+% - [lt](rise_report.figure/lt)
+% - [ne](rise_report.figure/ne)
+% - [notify](rise_report.figure/notify)
+% - [reprocess](rise_report.figure/reprocess)
+% - [write](rise_report.figure/write)
+%
+% properties
+% -----------
+%
+% - [title] -
+% - [name] -
+% - [width] -
+% - [height] -
+% - [angle] -
+% - [scale] -
+% - [graphicspath] -
+% - [numbering] -
+% - [batch] -
+% - [id] -
+properties
+title=''
+% string or function handle
+name =''
+% scale graphic to the specified width
+width
+% scale graphic to the specified height
+height
+% rotate graphic counterclockwise
+angle=0
+% scale graphic
+scale=0.85
+% path to the graph
+graphicspath = ''
+numbering=true
+end
+properties(Dependent)
+batch
+end
+properties(Hidden)
+figure_number
+end
+methods
+function obj=figure(varargin)
+% FIGURE constructs a reporting figure
+%
+% ::
+%
+%   obj=FIGURE(varargin)
+%
+% Args:
+%              %
+%              % the input arguments must come in pairs :
+%              %   - ['title',[char]] : title for the figure to be reported
+%              %
+%              %   - ['name',[char|handle]] : name of the pdf file (on the
+%              %     matlab path) or the handle to the figure to be reported
+%              %
+%              %   - ['width',[numeric|{}]] : width for resizing the figure to
+%              %     be plotted
+%              %
+%              %   - ['height',[numeric|{}]] : height for resizing the figure to
+%              %     be plotted
+%              %
+%              %   - ['angle',[numeric|{0}]] : rotation angle
+%              %
+%              %   - ['scale',[numeric|{0.85}]] : scale for resizing the figure to
+%              %     be plotted
+%              %
+%              %   - ['graphicspath',[char|{''}]] : path to the location of
+%              %     the graph or figure
+%              %
+%              %   - ['numbering',[{true}|false]] : whether or not the table
+%              %     should be numbered in the final report
+%              %
+% Returns:
+%    :
+%              %
+%              % - obj [figure object]
+%              %
+% Note:
+%              %
+% Example:
             %
             % See also:
             obj=rise_report.feed_properties(mfilename,obj,varargin{:});

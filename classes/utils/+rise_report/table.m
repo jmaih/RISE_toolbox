@@ -1,90 +1,86 @@
 classdef table < rise_report.generic_report
-    % table report table object
-    %
-    % methods
-    % --------
-    %
-    % - [addlistener](rise_report.table/addlistener)
-    % - [best_title](rise_report.table/best_title)
-    % - [delete](rise_report.table/delete)
-    % - [eq](rise_report.table/eq)
-    % - [findobj](rise_report.table/findobj)
-    % - [findprop](rise_report.table/findprop)
-    % - [ge](rise_report.table/ge)
-    % - [gt](rise_report.table/gt)
-    % - [isvalid](rise_report.table/isvalid)
-    % - [le](rise_report.table/le)
-    % - [lt](rise_report.table/lt)
-    % - [ne](rise_report.table/ne)
-    % - [notify](rise_report.table/notify)
-    % - [reprocess](rise_report.table/reprocess)
-    % - [table](rise_report.table/table)
-    % - [write](rise_report.table/write)
-    %
-    % properties
-    % -----------
-    %
-    % - [title] -
-    % - [longtable] -
-    % - [log] -
-    % - [precision] -
-    % - [numbering] -
-    % - [batch] -
-    % - [id] -
-    properties
-        title=''
-        longtable=false
-        % cell elements to be written in a table
-        log={};
-        % number of decimals
-        precision=4
-        numbering=true
-        header={};
-    end
-    properties(Dependent)
-        batch
-    end
-    properties(Hidden)
-        table_number
-    end
-    methods
-        function obj=table(varargin)
-            % TABLE constructs a reporting table
-            %
-            % Syntax
-            % -------
-            % ::
-            %   obj=TABLE(varargin)
-            %
-            % Inputs
-            % -------
-            %
-            % the input arguments must come in pairs :
-            %   - ['log',[cell array]] : table comes in the form of a cell
-            %      array
-            %
-            %   - ['title',[char]]
-            %
-            %   - ['longtable',[true|{false}]]
-            %
-            %   - ['precision',[numeric|{4}]] : number of decimal points
-            %
-            %   - ['numbering',[{true}|false]] : whether or not the table
-            %     should be numbered in the final report
-            %
-            %   - ['header',[{''}|char|cell]] : Header of the table below the
-            %   title if not already included in the log
-            %
-            % Outputs
-            % --------
-            %
-            % - obj [table object]
-            %
-            % More About
-            % ------------
-            %
-            % Examples
-            % ---------
+% table report table object
+%
+% methods
+% --------
+%
+% - [addlistener](rise_report.table/addlistener)
+% - [best_title](rise_report.table/best_title)
+% - [delete](rise_report.table/delete)
+% - [eq](rise_report.table/eq)
+% - [findobj](rise_report.table/findobj)
+% - [findprop](rise_report.table/findprop)
+% - [ge](rise_report.table/ge)
+% - [gt](rise_report.table/gt)
+% - [isvalid](rise_report.table/isvalid)
+% - [le](rise_report.table/le)
+% - [lt](rise_report.table/lt)
+% - [ne](rise_report.table/ne)
+% - [notify](rise_report.table/notify)
+% - [reprocess](rise_report.table/reprocess)
+% - [table](rise_report.table/table)
+% - [write](rise_report.table/write)
+%
+% properties
+% -----------
+%
+% - [title] -
+% - [longtable] -
+% - [log] -
+% - [precision] -
+% - [numbering] -
+% - [batch] -
+% - [id] -
+properties
+title=''
+longtable=false
+% cell elements to be written in a table
+log={};
+% number of decimals
+precision=4
+numbering=true
+header={};
+end
+properties(Dependent)
+batch
+end
+properties(Hidden)
+table_number
+end
+methods
+function obj=table(varargin)
+% TABLE constructs a reporting table
+%
+% ::
+%
+%   obj=TABLE(varargin)
+%
+% Args:
+%              %
+%              % the input arguments must come in pairs :
+%              %   - ['log',[cell array]] : table comes in the form of a cell
+%              %      array
+%              %
+%              %   - ['title',[char]]
+%              %
+%              %   - ['longtable',[true|{false}]]
+%              %
+%              %   - ['precision',[numeric|{4}]] : number of decimal points
+%              %
+%              %   - ['numbering',[{true}|false]] : whether or not the table
+%              %     should be numbered in the final report
+%              %
+%              %   - ['header',[{''}|char|cell]] : Header of the table below the
+%              %   title if not already included in the log
+%              %
+% Returns:
+%    :
+%              %
+%              % - obj [table object]
+%              %
+% Note:
+%              %
+% Example:
             %
             % See also:
             

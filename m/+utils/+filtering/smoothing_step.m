@@ -1,49 +1,45 @@
 function [atT,etat,rlag]=smoothing_step(a,r,K,P,T,R,Z,iF,v)
 % smoothing_step - smoothing step
 %
-% Syntax
-% -------
 % ::
-%   
+%
+%
 %   [atT,etat,rlag]=smoothing_step(a,r,K,P,T,R,Z,iF,v)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **a** [vector] : m x 1 filtered state
+%    - **a** [vector] : m x 1 filtered state
 %
-% - **r** [vector] : m x 1
+%    - **r** [vector] : m x 1
 %
-% - **K** [matrix] : m x p kalman gain
+%    - **K** [matrix] : m x p kalman gain
 %
-% - **P** [matrix] : m x m covariance of filtered state
+%    - **P** [matrix] : m x m covariance of filtered state
 %
-% - **T** [matrix] : m x m state matrix of all endogenous
+%    - **T** [matrix] : m x m state matrix of all endogenous
 %
-% - **R** [matrix] : m x n shock impact matrix
+%    - **R** [matrix] : m x n shock impact matrix
 %
-% - **Z** [square matrix] : selection matrix of observed into grand state
+%    - **Z** [square matrix] : selection matrix of observed into grand state
 %
-% - **iF** [matrix] : p x p inverse of covariance matrix of forecast errors
+%    - **iF** [matrix] : p x p inverse of covariance matrix of forecast errors
 %
-% - **v** [vector] : p x 1  forecast errors
+%    - **v** [vector] : p x 1  forecast errors
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **atT** [vector] : smoothed state
+%    - **atT** [vector] : smoothed state
 %
-% - **etat** [square matrix] : smoothed errors
+%    - **etat** [square matrix] : smoothed errors
 %
-% - **rlag** [square matrix]
+%    - **rlag** [square matrix]
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 L=T-T*K*Z;
 % Note that Durbin and Koopman define K=T*P*Z'*iF, while here it is defined

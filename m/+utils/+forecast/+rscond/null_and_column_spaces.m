@@ -1,23 +1,19 @@
 function [M1,M2,RM2i,q,U,S,retcode]=null_and_column_spaces(R,verbose)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<2
     verbose=false;

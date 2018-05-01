@@ -1,36 +1,32 @@
 function db=pageify(varargin)
 % pageify -- turn databases into one db with one observation and many pages
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   db=pageify(pivot_date,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **pivot_date** [char|serial date] : reference date, typically end of
-% history.
+%    - **pivot_date** [char|serial date] : reference date, typically end of
+%    history.
 %
-% - **varargin** [struct|ts] : databases in time series format or in struct
+%    - **varargin** [struct|ts] : databases in time series format or in struct
 %
-% format
+%    format
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **db** [ts] : time series with one observation and many pages
+%    - **db** [ts] : time series with one observation and many pages
 %
-% More About
-% ------------
+% Note:
 %
-% - This routine is useful for preparing data for conditional forecasting
+%    - This routine is useful for preparing data for conditional forecasting
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 db=utils.time_series.pageify(varargin{:});
 

@@ -1,9 +1,8 @@
 function [obj,H,issue]=hessian(obj,x,varargin)
 % hessian - computes the hessian of the model at a specific point
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [obj,H,issue]=hessian(obj)
 %
@@ -11,36 +10,33 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 %
 %   [obj,H,issue]=hessian(obj,x,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar]: model object
+%    - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **x** [[]|vector]: vector at which one wants to compute the hessian
+%    - **x** [[]|vector]: vector at which one wants to compute the hessian
 %
-% - **varargin** additional optional inputs among which the most relevant
-%   for estimation is:
-%   - **hessian_type** [{'fd'}|'opg']: The hessian is either computed by
-%   finite differences (fd) or by outer-product-gradient (opg)
+%    - **varargin** additional optional inputs among which the most relevant
+%      for estimation is:
+%      - **hessian_type** [{'fd'}|'opg']: The hessian is either computed by
+%      finite differences (fd) or by outer-product-gradient (opg)
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [rise|dsge|rfvar|svar]: model object containing the new hessian
-% in case the model was previously estimated.
+%    - **obj** [rise|dsge|rfvar|svar]: model object containing the new hessian
+%    in case the model was previously estimated.
 %
-% - **H** [d x d matrix]: hessian matrix
+%    - **H** [d x d matrix]: hessian matrix
 %
-% - **issue** [char|'']: any issue encountered during the computation of
-% the hessian
+%    - **issue** [char|'']: any issue encountered during the computation of
+%    the hessian
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 nobj=numel(obj);
 

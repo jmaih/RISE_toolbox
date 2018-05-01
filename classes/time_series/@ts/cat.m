@@ -1,44 +1,40 @@
 function db=cat(dim,varargin)
 % cat concatenates time series along the specified dimension
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   db=cat(1,db1,db2,...,dbn)
 %   db=cat(2,db1,db2,...,dbn)
 %   db=cat(3,db1,db2,...,dbn)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **dim** [1|2|3] : dimension along which concatenation is done
+%    - **dim** [1|2|3] : dimension along which concatenation is done
 %
-% - **db1, db2,...,dbn** [ts] : time series
+%    - **db1, db2,...,dbn** [ts] : time series
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **db** [ts] : time series with concatenated series
+%    - **db** [ts] : time series with concatenated series
 %
-% More About
-% ------------
+% Note:
 %
-% - all times series must be of the same frequency
+%    - all times series must be of the same frequency
 %
-% - Concatenation along the second dimension requires that variables have
-%   the same number of columns if no names are specified
+%    - Concatenation along the second dimension requires that variables have
+%      the same number of columns if no names are specified
 %
-% - if names are specified in the first time series, then names should be
-%   specified in all of the others as well.
+%    - if names are specified in the first time series, then names should be
+%      specified in all of the others as well.
 %
-% - empty time series are discarded but there should be at least one
-%   non-empty time series
+%    - empty time series are discarded but there should be at least one
+%      non-empty time series
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 
 n=length(varargin);

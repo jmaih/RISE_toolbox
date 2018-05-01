@@ -2,23 +2,19 @@ function [the_leads,the_lags,nind,endo_nbr]=create_endogenous_variables_indices(
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 endo_nbr=size(lead_lag_incidence,1);
 

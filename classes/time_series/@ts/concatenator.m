@@ -2,29 +2,25 @@ function myirfs=concatenator(varargin)
 % CONCATENATOR - concatenate outputs from multiple time series or
 % structures of time series
 %
-% Syntax
-% -------
 % ::
+%
 %
 % - myirfs=CONCATENATOR(db1,db2,...,dbn)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **dbi** [struct|ts] : time series or structure of time series
+%    - **dbi** [struct|ts] : time series or structure of time series
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **myirfs** [struct] : structure containing the concatenated time series
+%    - **myirfs** [struct] : structure containing the concatenated time series
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:  
+%    See also:
 
 myirfs=struct();
 

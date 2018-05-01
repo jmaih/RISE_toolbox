@@ -1,29 +1,25 @@
 function varargout=rd(varargin)
 % rd -- rise dates
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   See help for date2serial
 %
-% Inputs
-% -------
+% Args:
 %
-% See help for date2serial 
+%    See help for date2serial
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% See help for date2serial
+%    See help for date2serial
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: DATE2SERIAL
+%    See also: DATE2SERIAL
 
 [varargout{1:nargout}]=date2serial(varargin{:});
 

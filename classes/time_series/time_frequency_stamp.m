@@ -1,23 +1,19 @@
 function [stamp,unstamp]=time_frequency_stamp(option)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % stamps helps put a stamp on the serial numbers such that the frequency is
 % recoverable

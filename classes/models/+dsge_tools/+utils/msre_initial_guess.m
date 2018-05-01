@@ -1,23 +1,19 @@
 function T0=msre_initial_guess(A0,dpb_minus,dbf_plus,solve_initialization,old_T0)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin==0
     T0=struct();

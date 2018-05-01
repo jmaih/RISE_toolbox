@@ -2,32 +2,28 @@ function obj=assign_estimates(obj,params)
 % assign_estimates -- assign parameters to the model typically under
 % estimation
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   obj=assign_estimates(obj,params)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|svar|rfvar]: model object
+%    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% - **params** [vector]: values of parameters estimated or under estimation
-% or under posterior simulation
+%    - **params** [vector]: values of parameters estimated or under estimation
+%    or under posterior simulation
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [generic]: model object
+%    - **obj** [generic]: model object
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % this is the routine called during estimation for assigning new estimates
 % to the model

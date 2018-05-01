@@ -1,164 +1,160 @@
 function [Reply,retcode]=get(obj,PropertyName)
 % GET -- fetches information from generic objects
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [Reply,retcode]=get(obj,PropertyName)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar]: model object
+%    - **obj** [rise|dsge|rfvar|svar]: model object
 %
-% - **PropertyName** [char]: name of the property or element desired. This
-% includes
+%    - **PropertyName** [char]: name of the property or element desired. This
+%    includes
 %
-%   - **'structure'** [char]: derivatives + transition matrices + other
-%   information need to solve the model
+%      - **'structure'** [char]: derivatives + transition matrices + other
+%      information need to solve the model
 %
-%   - **'definitions'** [char]: definitions. This requires the model to be
-%   solved. If there are no definitions or if the definitions have been
-%   substituted, the result will be an empty structure.
+%      - **'definitions'** [char]: definitions. This requires the model to be
+%      solved. If there are no definitions or if the definitions have been
+%      substituted, the result will be an empty structure.
 %
-%   - **'solution'** [char]: solution of the model
+%      - **'solution'** [char]: solution of the model
 %
-%   - **'trend'|'growth'|'bgp'** [char]: balanced growth path. It is
-%   also possible to further taylor the output:
-%       - 'trend' | 'trend(default)' | 'growth' |
-%       'growth(default)' | 'bgp' | 'bgp(default)'
-%       will give the same result (default) result
-%       - '...(struct)' will return the BGP in vector of structures,
-%       where each structure is a separate regime
-%       - '...(cell)' will return the BGP in a cell array in which
-%       the first column is the list of variables and the subsequent
-%       columns are the different regimes.
-%  N.B. For linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
-%   variables the BGP is x_t/x_{t-1}
+%      - **'trend'|'growth'|'bgp'** [char]: balanced growth path. It is
+%      also possible to further taylor the output:
+%          - 'trend' | 'trend(default)' | 'growth' |
+%          'growth(default)' | 'bgp' | 'bgp(default)'
+%          will give the same result (default) result
+%          - '...(struct)' will return the BGP in vector of structures,
+%          where each structure is a separate regime
+%          - '...(cell)' will return the BGP in a cell array in which
+%          the first column is the list of variables and the subsequent
+%          columns are the different regimes.
+%     N.B. For linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
+%      variables the BGP is x_t/x_{t-1}
 %
-%   - **'sstate'|'steadystate'|'steady_state'** [char]: steady state. It is
-%   also possible to further taylor the output:
-%       - 'sstate' | 'sstate(default)' | 'steadystate' |
-%       'steadystate(default)' | 'steady_state' | 'steady_state(default)'
-%       will give the same result (default) result
-%       - '...(struct)' will return the sstates in vector of structures,
-%       where each structure is a separate regime
-%       - '...(cell)' will return the sstates in a cell array in which
-%       the first column is the list of variables and the subsequent
-%       columns are the different regimes.
+%      - **'sstate'|'steadystate'|'steady_state'** [char]: steady state. It is
+%      also possible to further taylor the output:
+%          - 'sstate' | 'sstate(default)' | 'steadystate' |
+%          'steadystate(default)' | 'steady_state' | 'steady_state(default)'
+%          will give the same result (default) result
+%          - '...(struct)' will return the sstates in vector of structures,
+%          where each structure is a separate regime
+%          - '...(cell)' will return the sstates in a cell array in which
+%          the first column is the list of variables and the subsequent
+%          columns are the different regimes.
 %
-%   - **'parameters'|'par_vals'** [char]: parameter values. It is also
-%   possible to further taylor the output:
-%       - 'parameters'|'parameters(default)'|'par_vals'|'par_vals(default)'
-%       will give the same result (default) result
-%       - '...(struct)' will return the parameters in vector of structures,
-%       where each structure is a separate regime
-%       - '...(cell)' will return the parameters in a cell array in which
-%       the first column is the list of the parameters and the subsequent
-%       columns are the different regimes.
+%      - **'parameters'|'par_vals'** [char]: parameter values. It is also
+%      possible to further taylor the output:
+%          - 'parameters'|'parameters(default)'|'par_vals'|'par_vals(default)'
+%          will give the same result (default) result
+%          - '...(struct)' will return the parameters in vector of structures,
+%          where each structure is a separate regime
+%          - '...(cell)' will return the parameters in a cell array in which
+%          the first column is the list of the parameters and the subsequent
+%          columns are the different regimes.
 %
-%   - **'par_list'** [char]: list of parameters. Instead of the full list,
-%   a sub-list or its complement (using a "~" sign in from of the
-%   attribute) can also be queried:
-%       - '...(switching)' : list of parameters that are switching
-%       - '...(trans_prob)' : list of transition probability parameters
-%       - '...(measurement_error)' : list of measurement-error parameters
-%       - '...(in_use)' : list of parameters that are in use
+%      - **'par_list'** [char]: list of parameters. Instead of the full list,
+%      a sub-list or its complement (using a "~" sign in from of the
+%      attribute) can also be queried:
+%          - '...(switching)' : list of parameters that are switching
+%          - '...(trans_prob)' : list of transition probability parameters
+%          - '...(measurement_error)' : list of measurement-error parameters
+%          - '...(in_use)' : list of parameters that are in use
 %
-%   - **'par_tex'** [char]: description of the parameters
+%      - **'par_tex'** [char]: description of the parameters
 %
-%   - **'endo_list'** [char]: list of the endogenous variables. Instead of
-%   the full list, a sub-list or its complement (using a "~" sign in from
-%   of the attribute) can also be queried:
-%       - '...(lagrange_multiplier)' : Lagrange multipliers for optimal
-%       policy models
-%       - '...(static)': static variables or variables appearing only
-%       contemporaneously in the model
-%       - '...(predetermined)': predetermined variables i.e. variables
-%       appearing with lags and not with leads
-%       - '...(pred_frwrd_looking)': variables appearing with both a lead
-%       and a lag
-%       - '...(state)': endogenous state variables i.e. all variables
-%       appearing with a lag
-%       - '...(frwrd_looking)': variables appearing with leads but not lags
-%       - '...(log_var)': variables for which a log-linear approximation is
-%       declared from within the model file.
-%       - '...(log_expanded)': variables for which a log-linear
-%       approximation is requested after the model object is built.
-%       - '...(auxiliary)': auxiliary variables automatically created by
-%       RISE for support. Leads and lags greater than 1, lags or leads in
-%       parameters or exogenous variables.
-%       - '...(original)': endogenous variables declared in the model file
-%       i.e. excluding the auxiliary variables
-%       - '...(affect_trans_probs)': variables entering the calculation of
-%       endogenous probabilities
-%       - '...(hybrid_expect)': variables for which a hybrid expectation is
-%       taken.
-%       - '...(stationary)': variables that are not trending over time.
+%      - **'endo_list'** [char]: list of the endogenous variables. Instead of
+%      the full list, a sub-list or its complement (using a "~" sign in from
+%      of the attribute) can also be queried:
+%          - '...(lagrange_multiplier)' : Lagrange multipliers for optimal
+%          policy models
+%          - '...(static)': static variables or variables appearing only
+%          contemporaneously in the model
+%          - '...(predetermined)': predetermined variables i.e. variables
+%          appearing with lags and not with leads
+%          - '...(pred_frwrd_looking)': variables appearing with both a lead
+%          and a lag
+%          - '...(state)': endogenous state variables i.e. all variables
+%          appearing with a lag
+%          - '...(frwrd_looking)': variables appearing with leads but not lags
+%          - '...(log_var)': variables for which a log-linear approximation is
+%          declared from within the model file.
+%          - '...(log_expanded)': variables for which a log-linear
+%          approximation is requested after the model object is built.
+%          - '...(auxiliary)': auxiliary variables automatically created by
+%          RISE for support. Leads and lags greater than 1, lags or leads in
+%          parameters or exogenous variables.
+%          - '...(original)': endogenous variables declared in the model file
+%          i.e. excluding the auxiliary variables
+%          - '...(affect_trans_probs)': variables entering the calculation of
+%          endogenous probabilities
+%          - '...(hybrid_expect)': variables for which a hybrid expectation is
+%          taken.
+%          - '...(stationary)': variables that are not trending over time.
 %
-%   - **'endo_tex'** [char]: description of endogenous variables
+%      - **'endo_tex'** [char]: description of endogenous variables
 %
-%   - **'exo_list'** [char]: list of exogenous variables. Instead of the
-%   full list, a sub-list or its complement (using a "~" sign in from of
-%   the attribute) can also be queried:
-%       - '...(observed)' : list of exogenous variables that are observed
-%       - '...(in_user)' : list of exogenous variables that appear in the
-%       model block
+%      - **'exo_list'** [char]: list of exogenous variables. Instead of the
+%      full list, a sub-list or its complement (using a "~" sign in from of
+%      the attribute) can also be queried:
+%          - '...(observed)' : list of exogenous variables that are observed
+%          - '...(in_user)' : list of exogenous variables that appear in the
+%          model block
 %
-%   - **'exo_tex'** [char]: description of exogenous variables
+%      - **'exo_tex'** [char]: description of exogenous variables
 %
-%   - **'obs_list'** [char]: list of observable variables. Instead of the
-%   full list, a sub-list or its complement (using a "~" sign in from of
-%   the attribute) can also be queried:
-%       - '...(endogenous)' : list of observable variables that are
-%       endogenous.
+%      - **'obs_list'** [char]: list of observable variables. Instead of the
+%      full list, a sub-list or its complement (using a "~" sign in from of
+%      the attribute) can also be queried:
+%          - '...(endogenous)' : list of observable variables that are
+%          endogenous.
 %
-%   - **'obs_tex'** [char]: description of observable variables
+%      - **'obs_tex'** [char]: description of observable variables
 %
-%   - **'chain_list'** [char]: list of markov chains
+%      - **'chain_list'** [char]: list of markov chains
 %
-%   - **'chain_tex'** [char]: description of markov chains
+%      - **'chain_tex'** [char]: description of markov chains
 %
-%   - ***'regime_list'* [char]: list of regimes (i.e. composites of
-%   states from different chains)
+%      - ***'regime_list'* [char]: list of regimes (i.e. composites of
+%      states from different chains)
 %
-%   - **'regime_tex'** [char]: description of regimes
+%      - **'regime_tex'** [char]: description of regimes
 %
-%   - **'state_list'** [char]: list of states of all the markov chains
+%      - **'state_list'** [char]: list of states of all the markov chains
 %
-%   - **'state_tex'** [char]: description of the states of all the markov
-%   chains
+%      - **'state_tex'** [char]: description of the states of all the markov
+%      chains
 %
-%   - **'tex'|'description'** [char]: description for all the atoms in the
-%   system.
+%      - **'tex'|'description'** [char]: description for all the atoms in the
+%      system.
 %
-%   - **'state_vars'** [char]: variables and their lag structure as
-%   required for forecasting.
+%      - **'state_vars'** [char]: variables and their lag structure as
+%      required for forecasting.
 %
-%   - **'mode'** [char]: parameters maximizing the posterior distribution
+%      - **'mode'** [char]: parameters maximizing the posterior distribution
 %
-%   - **'prior_mean'** [char]: prior mean of the parameters
+%      - **'prior_mean'** [char]: prior mean of the parameters
 %
-%   - **'start'** [char]: initial values for estimation (maximization of
-%   the posterior)
+%      - **'start'** [char]: initial values for estimation (maximization of
+%      the posterior)
 %
-%   - **pname** [char]: name of a particular parameter in the model
+%      - **pname** [char]: name of a particular parameter in the model
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Reply** []: value for the queried property/information
+%    - **Reply** []: value for the queried property/information
 %
-% - **retcode** [numeric]: 0 if an error is not encounted
+%    - **retcode** [numeric]: 0 if an error is not encounted
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % TODO:
 % create a separate get function for dsge

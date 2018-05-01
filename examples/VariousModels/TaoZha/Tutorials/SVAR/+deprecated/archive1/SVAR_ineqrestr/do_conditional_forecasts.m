@@ -2,9 +2,8 @@ function [fkst,bands,hdl]=do_conditional_forecasts(m,db,conddb,draws,options)
 
 % do_conditional_forecasts -- do conditional forecast for a SVAR model.
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [fkst,bands]=do_conditional_forecasts(m,db,conddb)
 %
@@ -12,43 +11,40 @@ function [fkst,bands,hdl]=do_conditional_forecasts(m,db,conddb,draws,options)
 %
 %   [fkst,bands]=do_conditional_forecasts(m,db,conddb,draws,options)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **m** [svar]: svar model object (estimated or not)
+%    - **m** [svar]: svar model object (estimated or not)
 %
-% - **db** [struct|ts]: time series (historical database) 
+%    - **db** [struct|ts]: time series (historical database)
 %
-% - **conddb** [struct|ts]: time series (database with conditional information) 
+%    - **conddb** [struct|ts]: time series (database with conditional information)
 %
-% - **draws** [struct]: draws from the sampler (structure with fields "x"
-% and "f".
+%    - **draws** [struct]: draws from the sampler (structure with fields "x"
+%    and "f".
 %
-% - **options** [empty|struct]: structure with possibly some of the
-% following fields
-%   - **ndraws** [empty|{200}]: number of parameter draws 
-%   - **cbands** [empty|{[10,20,50,80,90]}]: 
-%   - **do_plot** [empty|true|{false}]: plot the conditional forecasts
-%   - **param_uncertainty** [empty|{true}|false]: parameter uncertainty
-%   - **shock_uncertainty** [empty|true|{false}]: shock uncertainty
-%   - **nsteps** [empty|12]: number of forecast steps
+%    - **options** [empty|struct]: structure with possibly some of the
+%    following fields
+%      - **ndraws** [empty|{200}]: number of parameter draws
+%      - **cbands** [empty|{[10,20,50,80,90]}]:
+%      - **do_plot** [empty|true|{false}]: plot the conditional forecasts
+%      - **param_uncertainty** [empty|{true}|false]: parameter uncertainty
+%      - **shock_uncertainty** [empty|true|{false}]: shock uncertainty
+%      - **nsteps** [empty|12]: number of forecast steps
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **fkst** [struct]: all forecasts for all parameter draws
+%    - **fkst** [struct]: all forecasts for all parameter draws
 %
-% - **bands** [struct]: confidence bands for all variables.
+%    - **bands** [struct]: confidence bands for all variables.
 %
-% - **hdl** [empty|handle]: handle to the figure
+%    - **hdl** [empty|handle]: handle to the figure
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<5
     options=[];

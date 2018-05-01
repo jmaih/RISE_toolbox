@@ -1,29 +1,25 @@
 function g=group(h,varargin)
 % GROUP -- groups contributions in a structure of ts objects
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% - **h** [struct]: structure of ts objects
+% Args:
 %
-% - **varargin** []: same as varargin in TS/GROUP
+%    - **h** [struct]: structure of ts objects
 %
-% Outputs
-% --------
+%    - **varargin** []: same as varargin in TS/GROUP
 %
-% - **g** [struct]: structure of ts objects
+% Returns:
+%    :
 %
-% More About
-% ------------
+%    - **g** [struct]: structure of ts objects
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: TS/GROUP
+% Example:
+%
+%    See also: TS/GROUP
 
 if ~isstruct(h)
     

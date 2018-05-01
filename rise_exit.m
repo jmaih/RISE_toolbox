@@ -1,30 +1,26 @@
 function rise_exit()
 % rise_exit exit from RISE
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   rise_exit
 %   rise_exit()
 %
-% Inputs
-% -------
+% Args:
 %
-% none
+%    none
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% none
+%    none
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 rise_startup(true)
 

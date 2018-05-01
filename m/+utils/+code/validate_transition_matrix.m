@@ -1,23 +1,19 @@
 function [Qx,retcode]=validate_transition_matrix(Qx)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 total=sum(Qx,2);
 if any(isnan(Qx(:))) || ...

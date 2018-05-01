@@ -1,48 +1,44 @@
 function y00=crs_filter_simul_init(y0,shocks,cond_shocks_id,data_y,t,p,...
-    obs_id,match_first_page,nsteps)
+obs_id,match_first_page,nsteps)
 % crs_filter_simul_initial_conditions -- initial conditions for conditional
 % forecasting in the crs filters
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   y00=crs_filter_simul_init(y0,shocks,cond_shocks_id,data_y,t,p,...
 %    obs_id,match_first_page,nsteps)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **y0** []:
+%    - **y0** []:
 %
-% - **shocks** []:
+%    - **shocks** []:
 %
-% - **cond_shocks_id** []:
+%    - **cond_shocks_id** []:
 %
-% - **data_y** []:
+%    - **data_y** []:
 %
-% - **t** []:
+%    - **t** []:
 %
-% - **p** []:
+%    - **p** []:
 %
-% - **obs_id** []:
+%    - **obs_id** []:
 %
-% - **match_first_page** [true|{false}]:
+%    - **match_first_page** [true|{false}]:
 %
-% - **nsteps** []:
+%    - **nsteps** []:
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **y00** []:
+%    - **y00** []:
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<9
     

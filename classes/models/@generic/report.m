@@ -1,9 +1,8 @@
 function mytable=report(obj,destination_root,rep_items,varargin)
 % REPORT assigns the elements of interest to a rise_report.report object
 %
-% Syntax
-% -------
 % ::
+%
 %   - REPORT(rise.empty(0)) : displays the default inputs
 %
 %   - REPORT(obj,destination_root,rep_items) : assigns the reported
@@ -12,30 +11,27 @@ function mytable=report(obj,destination_root,rep_items,varargin)
 %   - REPORT(obj,destination_root,rep_items,varargin) : assigns varargin to
 %     obj before doing the rest
 %
-% Inputs
-% -------
+% Args:
 %
-% - obj : [rise|dsge]
+%    - obj : [rise|dsge]
 %
-% - destination_root : [rise_report.report] : handle for the actual report
+%    - destination_root : [rise_report.report] : handle for the actual report
 %
-% - rep_items : [char|cellstr] : list of desired items to report. This list
-%   can only include : 'endogenous', 'exogenous', 'observables',
-%   'parameters', 'solution', 'estimation', 'estimation_statistics',
-%   'equations', 'code'  
+%    - rep_items : [char|cellstr] : list of desired items to report. This list
+%      can only include : 'endogenous', 'exogenous', 'observables',
+%      'parameters', 'solution', 'estimation', 'estimation_statistics',
+%      'equations', 'code'
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% none
+%    none
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if isempty(obj)
     

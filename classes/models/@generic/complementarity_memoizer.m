@@ -1,35 +1,31 @@
 function [sep_cf,cf]=complementarity_memoizer(obj)
 % complementarity_memoizer - memoizes linear and nonlinear restrictions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [sep_cf,cf]=complementarity_memoizer(obj)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|svar|rfvar]: model object
+%    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **sep_cf** [function handle]: function that takes as input a vector of
-% variable values and returns a vector of values that are expected to be
-% greater than or equal to 0.
+%    - **sep_cf** [function handle]: function that takes as input a vector of
+%    variable values and returns a vector of values that are expected to be
+%    greater than or equal to 0.
 %
-% - **cf** [function handle]: function that takes as input a vector of
-% variable values and returns a true if all the restrictions are satisfied
-% and returns false otherwise
+%    - **cf** [function handle]: function that takes as input a vector of
+%    variable values and returns a true if all the restrictions are satisfied
+%    and returns false otherwise
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if ~isfield(obj.routines,'complementarity')||... I do not expect VARs to have this although in theory they could.
         isempty(obj.routines.complementarity)

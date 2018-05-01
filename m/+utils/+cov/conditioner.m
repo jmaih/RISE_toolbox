@@ -1,23 +1,19 @@
 function [H,iH,dH] = conditioner(H0,tol)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % based on ddom.m
 % returns a diagonally dominant matrix H by modifying the

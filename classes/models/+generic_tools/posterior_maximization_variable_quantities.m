@@ -1,41 +1,37 @@
 function post_max=posterior_maximization_variable_quantities(post_max,...
-    a_func)
+a_func)
 % posterior_maximization_variable_quantities -- recomputes the quantities
 % that depend on the Hessian
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   post_max=posterior_maximization_variable_quantities(post_max,H)
 %
 %   post_max=posterior_maximization_variable_quantities(post_max,H,flag)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **post_max** [struct]: more specifically the content of
-% obj.estimation.posterior_maximization
+%    - **post_max** [struct]: more specifically the content of
+%    obj.estimation.posterior_maximization
 %
-% - **a_func** [function_handle]: function that inflates x and Vx under
-% linear restrictions.
+%    - **a_func** [function_handle]: function that inflates x and Vx under
+%    linear restrictions.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **post_max** [struct]: containing
-%   - **SD** [vector]: standard deviations of the parameters
-%   - **log_marginal_data_density_laplace** [numeric]: laplace
-%   approximation of the log marginal data density
-%   - **vcov** [matrix]: variance-covariance of estimated parameters
+%    - **post_max** [struct]: containing
+%      - **SD** [vector]: standard deviations of the parameters
+%      - **log_marginal_data_density_laplace** [numeric]: laplace
+%      approximation of the log marginal data density
+%      - **vcov** [matrix]: variance-covariance of estimated parameters
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 H=post_max.hessian;
 

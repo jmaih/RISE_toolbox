@@ -1,30 +1,26 @@
 function varargout=decipher(varargin)
 % decipher - interprets error codes
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   msgout=decipher(code)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **code** [scalar|vector]: scalar or vector of error codes returned by
-% RISE.
+%    - **code** [scalar|vector]: scalar or vector of error codes returned by
+%    RISE.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **msgout** [char|cellstr]: explanation of the return code as a char if
-% the input is a scalar or as a cellstr if input is a vector.
+%    - **msgout** [char|cellstr]: explanation of the return code as a char if
+%    the input is a scalar or as a cellstr if input is a vector.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 [varargout{1:nargout}]=utils.error.decipher(varargin{:});

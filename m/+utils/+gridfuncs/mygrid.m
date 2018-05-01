@@ -1,44 +1,40 @@
 function [Regimes,unique_regimes]=mygrid(v,vectorized)
 % mygrid creates a grid of points
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [Regimes,unique_regimes]=mygrid(v)
 %
 %   [Regimes,unique_regimes]=mygrid(v,vectorized)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **v** [scalar|vector] : n x 1 or 1 x n each entry in the vector
-%   represents the number of elements along that dimension
+%    - **v** [scalar|vector] : n x 1 or 1 x n each entry in the vector
+%      represents the number of elements along that dimension
 %
-% - **vectorized** [{true}|false] : if true, use a vectorization instead of
-% a for loop
+%    - **vectorized** [{true}|false] : if true, use a vectorization instead of
+%    a for loop
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Regimes** [matrix|vector] : prod(v) x n matrix of regimes (each row
-%   represents a specific combination of states in each dimension, hence a
-%   regime).
+%    - **Regimes** [matrix|vector] : prod(v) x n matrix of regimes (each row
+%      represents a specific combination of states in each dimension, hence a
+%      regime).
 %
-% - **unique_regimes** [matrix|vector] : ? x n matrix of regimes without
-%   repetition and such that for each row the indexes are increasing.
+%    - **unique_regimes** [matrix|vector] : ? x n matrix of regimes without
+%      repetition and such that for each row the indexes are increasing.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% - Regimes=mygrid(10); : one chain with 10 regimes
-% - Regimes=mygrid([10,5]) : 2 chains with 5 regimes for the second one
-% - Regimes=mygrid([10,5,3]): 3 chains with 3 regimes on the third one
+%    - Regimes=mygrid(10); : one chain with 10 regimes
+%    - Regimes=mygrid([10,5]) : 2 chains with 5 regimes for the second one
+%    - Regimes=mygrid([10,5,3]): 3 chains with 3 regimes on the third one
 %
-% See also:
+%    See also:
 if nargin<2
     
     vectorized=true;

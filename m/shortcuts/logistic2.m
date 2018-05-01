@@ -1,23 +1,19 @@
 function varargout=logistic2(varargin)
 % logistic2 2nd-order logistic function
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 [varargout{1:nargout}]=second_order_logistic(varargin{:});
 

@@ -1,44 +1,40 @@
 function [is_steady,oldK]=check_steady_state_kalman(is_steady,K,oldK,options,t,no_more_missing)
 % check_steady_state_kalman - checks whether the covariance matrix has converged
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [is_steady,oldK]=check_steady_state_kalman(is_steady,K,oldK,options,t,no_more_missing)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **is_steady** [true|false]: flag indicating whether or not the steady
-%   state is reached
+%    - **is_steady** [true|false]: flag indicating whether or not the steady
+%      state is reached
 %
-% - **K** [matrix]: Kalman gain
+%    - **K** [matrix]: Kalman gain
 %
-% - **oldK** [matrix]: old Kalman gain
+%    - **oldK** [matrix]: old Kalman gain
 %
-% - **options** [struct]: options for the Kalman filter
+%    - **options** [struct]: options for the Kalman filter
 %
-% - **t** [integer]: iteration number
+%    - **t** [integer]: iteration number
 %
-% - **no_more_missing** [boolean]: true if there are no more missing
-% observations, false otherwise.
+%    - **no_more_missing** [boolean]: true if there are no more missing
+%    observations, false otherwise.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **is_steady** [true|false]: flag indicating whether or not the steady
-%   state is reached
+%    - **is_steady** [true|false]: flag indicating whether or not the steady
+%      state is reached
 %
-% - **oldK** [matrix]: updated old Kalman gain
+%    - **oldK** [matrix]: updated old Kalman gain
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 % the likelihood affects the values of the updated
 % probabilities. In turn, the updated probabilities affect the

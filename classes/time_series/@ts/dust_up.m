@@ -1,33 +1,29 @@
 function this=dust_up(this,crit)
 % dust_up - sets insignificant digits to zero
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   this=dust_up(this)
 %
 %   this=dust_up(this,crit)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **this** [rts|ts]: time-series object
+%    - **this** [rts|ts]: time-series object
 %
-% - **crit** [numeric|{sqrt(eps)}]: cutoff point
+%    - **crit** [numeric|{sqrt(eps)}]: cutoff point
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **this** [rts|ts]: time-series object
+%    - **this** [rts|ts]: time-series object
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if nargin<2
     crit=sqrt(eps);

@@ -1,39 +1,35 @@
 function db=ones(start_date,varargin)
 % ones overloads ones for ts objects
 %
-% Syntax
-% -------
 % ::
+%
 %   db=ts.ones(start_date,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **start_date** : [numeric|char]: a valid time series (ts) date
+%    - **start_date** : [numeric|char]: a valid time series (ts) date
 %
-% - varargin : [numeric]: arguments to matlab's **ones** function.
+%    - varargin : [numeric]: arguments to matlab's **ones** function.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **db** : [ts]: a time series
+%    - **db** : [ts]: a time series
 %
-% More About
-% ------------
+% Note:
 %
-% - this is a static method and so it has to be called with the **ts.**
-%   prefix
+%    - this is a static method and so it has to be called with the **ts.**
+%      prefix
 %
-% - ts.ones does not allow more than 3 dimensions
+%    - ts.ones does not allow more than 3 dimensions
 %
-% Examples
-% ---------
+% Example:
 %
-%   db=ts.ones(1990,10,1)
-%   db=ts.ones('1990',10,3)
-%   db=ts.ones('1990Q3',10,5,100)
+%      db=ts.ones(1990,10,1)
+%      db=ts.ones('1990',10,3)
+%      db=ts.ones('1990Q3',10,5,100)
 %
-% See also: 
+%    See also:
 
 
 data=ones(varargin{:});

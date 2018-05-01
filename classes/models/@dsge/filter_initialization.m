@@ -1,68 +1,64 @@
 function [init,retcode]=filter_initialization(obj,varargin)
 % FILTER_INITIALIZATION - Initial conditions for filtering
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [init,retcode]=FILTER_INITIALIZATION(obj)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object
+%    - **obj** [rise|dsge]: model object
 %
-% - **varargin** [name,value]: valid pairwise options with the most
-% relevant beeing:
+%    - **varargin** [name,value]: valid pairwise options with the most
+%    relevant beeing:
 %
-%   - **kf_ergodic** [{true}|false]: initialization at the ergodic
-%       distribution
+%      - **kf_ergodic** [{true}|false]: initialization at the ergodic
+%          distribution
 %
-%   - **kf_init_variance** [{[]}|scalar]: initial variance factor (Harvey
-%       scale factor). If not empty, the information in T and R is ignored.
+%      - **kf_init_variance** [{[]}|scalar]: initial variance factor (Harvey
+%          scale factor). If not empty, the information in T and R is ignored.
 %
-%   - **kf_presample** [{0}|integer]: Number of observations to discard
-%       before computing the likelihood.
+%      - **kf_presample** [{0}|integer]: Number of observations to discard
+%          before computing the likelihood.
 %
-%   - **kf_filtering_level** [0|1|2|{3}]: 0: Likelihood only, 1: 0+filtered
-%   series, 2: 1+ updated series, 3: 2+ smoothed series
+%      - **kf_filtering_level** [0|1|2|{3}]: 0: Likelihood only, 1: 0+filtered
+%      series, 2: 1+ updated series, 3: 2+ smoothed series
 %
-%   - **kf_user_init** [{[]}|cell]: User-defined initialization. When not
-%   empty, it can take three forms. {a0}, {a0,cov_a0}, {a0,cov_a0,PAI00}
-%   where a0 is the initial state vector with the same order as the rows of
-%   T, cov_a0 is the initial covariance of the state vector (same order as
-%   a0) and PAI00 is the initial vector of regime probabilities.
+%      - **kf_user_init** [{[]}|cell]: User-defined initialization. When not
+%      empty, it can take three forms. {a0}, {a0,cov_a0}, {a0,cov_a0,PAI00}
+%      where a0 is the initial state vector with the same order as the rows of
+%      T, cov_a0 is the initial covariance of the state vector (same order as
+%      a0) and PAI00 is the initial vector of regime probabilities.
 %
-%   - **kf_user_algo** [{''}|char|function handle]: User-defined filtering
-%   algorithm. It should have the same inputs and outputs as e.g.
-%   switching_divided_difference_filter.m.
+%      - **kf_user_algo** [{''}|char|function handle]: User-defined filtering
+%      algorithm. It should have the same inputs and outputs as e.g.
+%      switching_divided_difference_filter.m.
 %
-%   - **kf_householder_chol** [{false}|true]: if true, return the cholesky
-%   decomposition when taking the householder transformation. This option
-%   is primarily used in the switching divided difference filter.
+%      - **kf_householder_chol** [{false}|true]: if true, return the cholesky
+%      decomposition when taking the householder transformation. This option
+%      is primarily used in the switching divided difference filter.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **init** [struct]: initial conditions of the filter
+%    - **init** [struct]: initial conditions of the filter
 %
-% - **retcode** [scalar]: 0 if there is no problem
+%    - **retcode** [scalar]: 0 if there is no problem
 %
-% More About
-% ------------
+% Note:
 %
-% - The initial covariance is always computed using the current impact
-% matrix of the shocks even when the anticipation horizon of the agents is
-% greater than zero.
+%    - The initial covariance is always computed using the current impact
+%    matrix of the shocks even when the anticipation horizon of the agents is
+%    greater than zero.
 %
-% - use option "lyapunov_diffuse_factor" to set the variance for
-% nonstationary variables separately. If this is not the case the variance
-% for those variables will be 1 by default.
+%    - use option "lyapunov_diffuse_factor" to set the variance for
+%    nonstationary variables separately. If this is not the case the variance
+%    for those variables will be 1 by default.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: DSGE/FILTER
+%    See also: DSGE/FILTER
 
 
 % diffuse initialization for all elements in the state vector including

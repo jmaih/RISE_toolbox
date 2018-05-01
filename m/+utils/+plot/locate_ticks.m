@@ -1,35 +1,31 @@
 function posticks=locate_ticks(total,n,start_at)
 % locate_ticks -- finds n tick positions in a vector of length "total"
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   posticks=locate_ticks(total,n)
 %
 %   posticks=locate_ticks(total,n,start_at)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **total** [integer]: length of the axis
+%    - **total** [integer]: length of the axis
 %
-% - **n** [integer]: desired number of ticks
+%    - **n** [integer]: desired number of ticks
 %
-% - **start_at** [integer|{1}]: location of first tick
+%    - **start_at** [integer|{1}]: location of first tick
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **posticks** [vector]: location of the ticks
+%    - **posticks** [vector]: location of the ticks
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if nargin<3
     

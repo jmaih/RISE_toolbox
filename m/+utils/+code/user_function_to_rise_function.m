@@ -2,23 +2,19 @@ function [objective,vargs]=user_function_to_rise_function(objective)
 % extract_objective_and_varargin - extracts objective function and
 % additional input arguments for user-defined functions
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 vargs={};
 

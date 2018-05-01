@@ -1,24 +1,20 @@
 function [pol,fval,exitflag]=orthonormal_polynomial(...
-    max_order,x,optimal,debug)
+max_order,x,optimal,debug)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 a=0;
 b=1;

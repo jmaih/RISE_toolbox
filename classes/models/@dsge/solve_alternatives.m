@@ -1,39 +1,35 @@
 function [allobj,mean_square_stable]=solve_alternatives(obj,varargin)
 % solve_alternatives - attempts to find all solutions of a MSDSGE model
 %
-% Syntax
-% -------
 % ::
+%
 %   [allobj,mean_square_stable]=solve_alternatives(obj)
 %   [allobj,mean_square_stable]=solve_alternatives(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: RISE model object
+%    - **obj** [rise|dsge]: RISE model object
 %
-% - **solve_alternatives_nsim** [numeric|{100}]: Number of random starting
-% values generated.
+%    - **solve_alternatives_nsim** [numeric|{100}]: Number of random starting
+%    values generated.
 %
-% - **solve_alternatives_file2save2** [char|{''}]: name of the diary file
-% where the results are saved.
+%    - **solve_alternatives_file2save2** [char|{''}]: name of the diary file
+%    where the results are saved.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **allobj** [rise|dsge]: vector of RISE objects with the solutions found
+%    - **allobj** [rise|dsge]: vector of RISE objects with the solutions found
 %
-% - **mean_square_stable** [true|false]: vector of logicals with the same
-% number of elements as allobj. An entry equal to true means the particular
-% model is mean square stable.
+%    - **mean_square_stable** [true|false]: vector of logicals with the same
+%    number of elements as allobj. An entry equal to true means the particular
+%    model is mean square stable.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 % syntax is allobj=solve_alternatives(obj,solver,file2save2)
 

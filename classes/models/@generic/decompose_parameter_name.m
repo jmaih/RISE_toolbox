@@ -1,25 +1,21 @@
 function [position,regime_states,pname,chain,state]=...
-    decompose_parameter_name(pname,markov_chains,param_names,...
-    governing_chain)
+decompose_parameter_name(pname,markov_chains,param_names,...
+governing_chain)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 regimes=cell2mat(markov_chains.regimes(2:end,2:end));

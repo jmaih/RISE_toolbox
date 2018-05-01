@@ -1,23 +1,19 @@
 function [loglik,v_iF_v,lik]=conditional_likelihood(v,iF,dF,pp)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 v_iF_v=v'*iF*v;
 

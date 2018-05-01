@@ -1,39 +1,35 @@
 function [Spq] = perfect_shuffle(p,q,for_loop)
 % perfect_shuffle produces the a perfect shuffle matrix that turns kron(B,C) into kron(C,B)
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [Spq] = perfect_shuffle(p,q)
 %   [Spq] = perfect_shuffle(p,q,for_loop)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **p** [numeric]: number of rows of square matrix B
+%    - **p** [numeric]: number of rows of square matrix B
 %
-% - **q** [numeric]: number of rows of square matrix C
+%    - **q** [numeric]: number of rows of square matrix C
 %
-% - **for_loop** [true|{false}]: if true, a for loop is used. else the
-%   procedure is vectorized.
+%    - **for_loop** [true|{false}]: if true, a for loop is used. else the
+%      procedure is vectorized.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Spq** [matrix]: p*q x p*q matrix such that
-%   Spq*kron(B,C)*Spq' = kron(C,B)  
+%    - **Spq** [matrix]: p*q x p*q matrix such that
+%      Spq*kron(B,C)*Spq' = kron(C,B)
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% m1=3;n1=4; m2=5;n2=7; B=rand(m1,n1);C=rand(m2,n2);BC=kron(B,C);CB=kron(C,B);
-% Sm1_m2=perfect_shuffle(m1,m2); Sn1_n2=perfect_shuffle(n1,n2); max(max(Sm1_m2*BC*Sn1_n2'-CB))==0
+%    m1=3;n1=4; m2=5;n2=7; B=rand(m1,n1);C=rand(m2,n2);BC=kron(B,C);CB=kron(C,B);
+%    Sm1_m2=perfect_shuffle(m1,m2); Sn1_n2=perfect_shuffle(n1,n2); max(max(Sm1_m2*BC*Sn1_n2'-CB))==0
 %
-% See also:
+%    See also:
 
 % References: 
 % - Charles F. Van Loan (2000): "The ubiquitous Kronecker product", Journal

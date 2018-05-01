@@ -1,37 +1,33 @@
 function varargout=permute_tensor(A1_Ak,matsizes,varargin)
 % permute_tensor -- permute a kronecker product
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [H1,H2,...,Hn]=permute_tensor(A1_Ak,matsizes,order_1,...,order_n)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **A1_Ak** [matrix]: representing the kronecker product A1*A2*A3*...*Ak
+%    - **A1_Ak** [matrix]: representing the kronecker product A1*A2*A3*...*Ak
 %
-% - **matsizes** [matrix]: k x 2 matrix of size of the various matrices
-% entering the tensor. Each row represents the size of a matrix and it is
-% assumed that the main(or first) tensor product is ordered [1,2,...,k]
+%    - **matsizes** [matrix]: k x 2 matrix of size of the various matrices
+%    entering the tensor. Each row represents the size of a matrix and it is
+%    assumed that the main(or first) tensor product is ordered [1,2,...,k]
 %
-% - **order_i** [vector]: permutation of [1,2,...,k]. N.B: all elements
-% 1,2,...,k should be part of the vector and the vector should have exactly
-% k elements
+%    - **order_i** [vector]: permutation of [1,2,...,k]. N.B: all elements
+%    1,2,...,k should be part of the vector and the vector should have exactly
+%    k elements
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **Hi** [matrix]: tensor permutation of A1_Ak according to order "i"
+%    - **Hi** [matrix]: tensor permutation of A1_Ak according to order "i"
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: sum_permutations, tensorperm
+%    See also: sum_permutations, tensorperm
 
 persistent A1_Ak0 orig_order nmat rows_prod cols_prod
 

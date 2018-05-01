@@ -1,23 +1,19 @@
 function this=newreport(varargin)
 % newreport initialize a new report object
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 this=rise_report.report(varargin{:});
 end

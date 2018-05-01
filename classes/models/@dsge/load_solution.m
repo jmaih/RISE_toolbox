@@ -1,24 +1,20 @@
 function [T,R,steady_state,new_order,state_vars_location,log_vars]=...
-    load_solution(obj,type,do_bvar_dsge)
+load_solution(obj,type,do_bvar_dsge)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % when the type is ov, R is empty while T is of size solve_order x
 % regimes_number. Basically, T is returned as Tz, Tzz, Tzzz, etc. where the

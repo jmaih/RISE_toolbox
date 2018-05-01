@@ -1,23 +1,19 @@
 function [A,retcode]=theoretical_autocorrelations(obj,varargin)%,resolve_flag
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if isempty(obj)
     

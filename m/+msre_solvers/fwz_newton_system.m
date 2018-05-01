@@ -1,26 +1,22 @@
 function [iterating_function,...
-    solution_function,...
-    inverse_solution_function,...
-    sampling_function] = fwz_newton_system(Gplus01,A0,Aminus,Q)
+solution_function,...
+inverse_solution_function,...
+sampling_function] = fwz_newton_system(Gplus01,A0,Aminus,Q)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % We need to rewrite the system in the form
 % A(st)*x=B(st)*x_{t-1}+PSI*e_t+PI(st), with the ll forward-looking

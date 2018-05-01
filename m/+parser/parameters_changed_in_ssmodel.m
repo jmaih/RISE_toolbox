@@ -2,34 +2,30 @@ function is_changed=parameters_changed_in_ssmodel(shadow_sstate,pstring,n)
 % parameters_changed_in_ssmodel - flags the parameters that are modified in
 % the steady state model
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   is_changed=parameters_changed_in_ssmodel(shadow_sstate,pstring,n)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **shadow_sstate** [cellstr]: list of steady state equations
+%    - **shadow_sstate** [cellstr]: list of steady state equations
 %
-% - **pstring** [char]: generic name of shadow parameters
+%    - **pstring** [char]: generic name of shadow parameters
 %
-% - **n** [integer]: number of parameters
+%    - **n** [integer]: number of parameters
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **is_changed** [logical]: 1 x n vector flagging the changed
-%   parameters
+%    - **is_changed** [logical]: 1 x n vector flagging the changed
+%      parameters
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 len=size(pstring,2);
 bingo=find(strncmp(pstring,shadow_sstate,len));

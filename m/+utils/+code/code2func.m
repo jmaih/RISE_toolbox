@@ -1,23 +1,19 @@
 function func=code2func(code,argins,do_vectorize)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: UTILS.CODE.CODE2VECTOR
+% Example:
+%
+%    See also: UTILS.CODE.CODE2VECTOR
 
 % writes a cell array of strings into a structure with a field containing
 % functions, a field with information about the size of the matrix to be

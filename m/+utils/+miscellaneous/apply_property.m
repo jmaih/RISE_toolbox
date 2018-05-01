@@ -1,31 +1,27 @@
 function newv=apply_property(type,refv,newv)
 % apply_range -- makes to vectors have the same minimum and maximum
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   new=apply_range(type,refv,newv)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **refv** [vector]: reference vector
+%    - **refv** [vector]: reference vector
 %
-% - **newv** [vector]: vector to modify
+%    - **newv** [vector]: vector to modify
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **newv** [vector]: modified vector
+%    - **newv** [vector]: modified vector
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 switch lower(type)
     

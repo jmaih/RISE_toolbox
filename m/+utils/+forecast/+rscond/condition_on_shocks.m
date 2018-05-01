@@ -1,49 +1,45 @@
 function [cfkst]=condition_on_shocks(T,sstate,y0,states,state_cols,k,...
-    nsteps,shocks,debug)
+nsteps,shocks,debug)
 % cumul_matrices -- creates impact matrix for contemporaneous and future
 % shocks
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [M,ufkst]=cumul_matrices(T,sstate,y0,states,state_cols,k,nsteps,y_pos,e_pos)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **T** [{}]:
+%    - **T** [{}]:
 %
-% - **sstate** [{}]:
+%    - **sstate** [{}]:
 %
-% - **y0** [{}]:
+%    - **y0** [{}]:
 %
-% - **states** [{}]:
+%    - **states** [{}]:
 %
-% - **state_cols** [{}]:
+%    - **state_cols** [{}]:
 %
-% - **k** [{}]:
+%    - **k** [{}]:
 %
-% - **nsteps** [{}]:
+%    - **nsteps** [{}]:
 %
-% - **y_pos** [{}]:
+%    - **y_pos** [{}]:
 %
-% - **e_pos** [{}]:
+%    - **e_pos** [{}]:
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **M** [{}]:
+%    - **M** [{}]:
 %
-% - **ufkst** [{}]:
+%    - **ufkst** [{}]:
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 nz=size(T{1},2);
 

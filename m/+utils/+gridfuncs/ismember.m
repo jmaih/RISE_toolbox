@@ -1,36 +1,32 @@
 function [lia,locb] = ismember(A,B)
 % ismember -- checks membership of the rows of a matrix in another matrix
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [lia] = ismember(A,B)
 %
 %   [lia,locb] = ismember(A,B)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **A** [n x k matrix] : matrix whose rows we want to locate or check the
-% membership
+%    - **A** [n x k matrix] : matrix whose rows we want to locate or check the
+%    membership
 %
-% - **B** [m x k matrix] : reference matrix
+%    - **B** [m x k matrix] : reference matrix
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **lia** [n x 1 logical] : true for rows that belong
+%    - **lia** [n x 1 logical] : true for rows that belong
 %
-% - **locb** [n x 1 vector] : location of the elements of A in B
+%    - **locb** [n x 1 vector] : location of the elements of A in B
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 if size(A,2)~=size(B,2)
     

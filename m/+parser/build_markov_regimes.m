@@ -1,24 +1,20 @@
 function [TM,markov_chain_info,myifelseif]=build_markov_regimes(...
-    transition_matrices,markov_chains,issorted)
+transition_matrices,markov_chains,issorted)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 if nargin<3
     

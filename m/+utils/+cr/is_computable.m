@@ -1,33 +1,29 @@
 function flag=is_computable(varargin)
 % is_computable -- checks whether the input is valid for computation
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   flag=is_computable(x1)
 %
 %   flag=is_computable(x1,x2,...xn)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **x** [empty|matrix]: matrix to be checked for non-emptiness and for
-% any non-zeros. If there are many x's, 
+%    - **x** [empty|matrix]: matrix to be checked for non-emptiness and for
+%    any non-zeros. If there are many x's,
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **flag** [true|false]: true if all the matrices are not empty and have
-% at least one non-zero element
+%    - **flag** [true|false]: true if all the matrices are not empty and have
+%    at least one non-zero element
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 flag=true;
 

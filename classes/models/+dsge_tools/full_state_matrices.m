@@ -1,23 +1,19 @@
 function [Aplus,A0,Aminus,T0]=full_state_matrices(siz,sm,T0)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % builds state matrices for the system
 % Aplus*X_{t+1}+A0*X_{t}+Aminus*X_{t-1}=0

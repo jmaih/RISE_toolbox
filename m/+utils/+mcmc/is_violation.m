@@ -1,31 +1,27 @@
 function flag=is_violation(f,penalty)
 % is_violation -- checks whether the fitness is too low
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   flag=is_violation(f,penalty)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **f** [numeric]: fitness
+%    - **f** [numeric]: fitness
 %
-% - **penalty** [numeric]: lowest possible fitness 
+%    - **penalty** [numeric]: lowest possible fitness
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **flag** [true|false]: 
+%    - **flag** [true|false]:
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 flag=abs(f)>=penalty||~isreal(f);
 if ~isreal(f)

@@ -1,37 +1,33 @@
 function plot_handle=plot_real_time(varargin)
 % plot_real_time - hairy plot
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   plot_handle=plot_real_time(rts)
 %   plot_handle=plot_real_time(xrange,rts)
 %   plot_handle=plot_real_time(rts,varargin)
 %   plot_handle=plot_real_time(xrange,rts,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **rts** [ts|rts]: valid time series object with possibly several
-% columns and exactly one page
+%    - **rts** [ts|rts]: valid time series object with possibly several
+%    columns and exactly one page
 %
-% - **xrange** []: range over which to restrict the plots
+%    - **xrange** []: range over which to restrict the plots
 %
-% - **varargin** : valid matlab arguments for plot, coming in pairs
+%    - **varargin** : valid matlab arguments for plot, coming in pairs
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **plot_handle** : handle to the plot
+%    - **plot_handle** : handle to the plot
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 
 plot_handle0=utils.plot.myplot(@plot_real_time,varargin{:});

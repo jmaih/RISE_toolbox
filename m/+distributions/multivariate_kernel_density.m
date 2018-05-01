@@ -1,9 +1,8 @@
 function [F,X]=multivariate_kernel_density(X0,N,kernel,id,findex,F,X,Hi_dHiOvern)
 % multivariate_kernel_density -- multivariate kernel density estimation
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [F,X]=multivariate_kernel_density(X0)
 %
@@ -21,56 +20,53 @@ function [F,X]=multivariate_kernel_density(X0,N,kernel,id,findex,F,X,Hi_dHiOvern
 %
 %   [F,X]=multivariate_kernel_density(X0,N,kernel,id,findex,F,X,Hi_dHi)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **X0** [cell|matrix]: when it is a cell, the first element in the cell
-% contains the observations and the second element contains the a d x 2
-% matrix in which the first column represents lower bounds and the second
-% columns represents upper bounds for the d variables of interest. When it
-% is a matrix, X0 is simply a d x n matrix of observations, where d is the
-% number of variables and n the number of observations. In that case,
-% bounds default to the min and max in X0.
+%    - **X0** [cell|matrix]: when it is a cell, the first element in the cell
+%    contains the observations and the second element contains the a d x 2
+%    matrix in which the first column represents lower bounds and the second
+%    columns represents upper bounds for the d variables of interest. When it
+%    is a matrix, X0 is simply a d x n matrix of observations, where d is the
+%    number of variables and n the number of observations. In that case,
+%    bounds default to the min and max in X0.
 %
-% - **N** [empty|integer|vector|{250}]: number of grid points in each
-% dimension.
+%    - **N** [empty|integer|vector|{250}]: number of grid points in each
+%    dimension.
 %
-% - **kernel** [empty|char|{'normal'}]: must be one of the following:
-%   'cosine','epanechnikov','normal','triangular','triweight','uniform'
+%    - **kernel** [empty|char|{'normal'}]: must be one of the following:
+%      'cosine','epanechnikov','normal','triangular','triweight','uniform'
 %
-% - **id** [empty|scalar]: indicates the current evaluation stage of the
-% multivariate algorithm
+%    - **id** [empty|scalar]: indicates the current evaluation stage of the
+%    multivariate algorithm
 %
-% - **findex** [cell|empty]: coordinates to be filled in F below
+%    - **findex** [cell|empty]: coordinates to be filled in F below
 %
-% - **F** [empty|matrix]: kernel density
+%    - **F** [empty|matrix]: kernel density
 %
-% - **X** [empty|cell]: each cell contains a 1 x N vector of coordinates
-% for the observations in each dimension
+%    - **X** [empty|cell]: each cell contains a 1 x N vector of coordinates
+%    for the observations in each dimension
 %
-% - **Hi_dHiOvern** [cell]: placeholder for the inverse of the bandwith
-% matrix and the determinant of the same inverse divided by n.
+%    - **Hi_dHiOvern** [cell]: placeholder for the inverse of the bandwith
+%    matrix and the determinant of the same inverse divided by n.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **F** [empty|matrix]: kernel density
+%    - **F** [empty|matrix]: kernel density
 %
-% - **X** [empty|cell]: each cell contains a 1 x N vector of coordinates
-% for the observations in each dimension
+%    - **X** [empty|cell]: each cell contains a 1 x N vector of coordinates
+%    for the observations in each dimension
 %
-% More About
-% ------------
+% Note:
 %
-% - In the two-dimensional case (d=2), the output is readily plotted using
-% either mesh, surf or any suitable 3-D plotting function as:
-%   - surf(X{1},X{2},F)
-%   - mesh(X{1},X{2},F)
+%    - In the two-dimensional case (d=2), the output is readily plotted using
+%    either mesh, surf or any suitable 3-D plotting function as:
+%      - surf(X{1},X{2},F)
+%      - mesh(X{1},X{2},F)
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: kernel_density
+%    See also: kernel_density
 
 % Sources:
 % - Wikipedia : 3.6 Multivariate Kernel Density Estimation

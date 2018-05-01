@@ -2,23 +2,19 @@ function vcov=farthest(vcov0,debug)
 
 % farthest -- computes farthest covariance matrix when failure
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 if nargin<2
     debug=false;

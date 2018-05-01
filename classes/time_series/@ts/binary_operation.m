@@ -1,23 +1,19 @@
 function db=binary_operation(db1,db2,op_string)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 operation=str2func(['@(x,y)bsxfun(@',op_string,',x,y)']);
 

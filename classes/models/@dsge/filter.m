@@ -1,38 +1,34 @@
 function [obj,LogLik,Incr,retcode]=filter(obj,varargin)
 % FILTER -- filtering of DSGE models
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [obj,LogLik,Incr,retcode]=FILTER(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object
+%    - **obj** [rise|dsge]: model object
 %
-% - **varargin** []: pairwise options. Those options are drawn from
-% dsge/filter_initialization
+%    - **varargin** []: pairwise options. Those options are drawn from
+%    dsge/filter_initialization
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [rise|dsge]: model object with the filters
+%    - **obj** [rise|dsge]: model object with the filters
 %
-% - **LogLik** [numeric]: log likelihood
+%    - **LogLik** [numeric]: log likelihood
 %
-% - **Incr** [vector]: contributions to the likelihood for each time t
+%    - **Incr** [vector]: contributions to the likelihood for each time t
 %
-% - **retcode** [integer]: 0 if no problem encountered
+%    - **retcode** [integer]: 0 if no problem encountered
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: SVAR/FILTER, DSGE/FILTER_INITIALIZATION
+%    See also: SVAR/FILTER, DSGE/FILTER_INITIALIZATION
 
 
 if isempty(obj)

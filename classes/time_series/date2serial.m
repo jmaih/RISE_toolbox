@@ -1,23 +1,19 @@
 function [s,frequency]=date2serial(dat,silent)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 % test=(date2serial(1990):date2serial(1995))
 % serial2date(test)

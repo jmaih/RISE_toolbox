@@ -1,9 +1,8 @@
 function [db,varlist,fh]=create_dataset(scale,do_plot)
 % create_dataset -- creates time series for all SVAR models
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [db,varlist,fh]=create_dataset()
 %
@@ -11,32 +10,29 @@ function [db,varlist,fh]=create_dataset(scale,do_plot)
 %
 %   [db,varlist,fh]=create_dataset(scale,do_plot)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **scale** [empty|numeric|{1}]: factor by which to multiply the data
+%    - **scale** [empty|numeric|{1}]: factor by which to multiply the data
 %
-% - **do_plot** [empty|true|{false}]: if true, the data are plotted.
+%    - **do_plot** [empty|true|{false}]: if true, the data are plotted.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **db** [struct]: structure with fields as the names of the endogenous
-% variables.
+%    - **db** [struct]: structure with fields as the names of the endogenous
+%    variables.
 %
-% - **varlist** [cellstr]: list of the endogenous variables and their
-% description
+%    - **varlist** [cellstr]: list of the endogenous variables and their
+%    description
 %
-% - **fh** [empty|handle]: if **do_plot** is set to true, **fh** is the
-% handle to the plotted figure. Else, it is empty
+%    - **fh** [empty|handle]: if **do_plot** is set to true, **fh** is the
+%    handle to the plotted figure. Else, it is empty
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if nargin<2
     do_plot=false;

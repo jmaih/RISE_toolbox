@@ -1,23 +1,19 @@
 function a=sabs(varargin)
 % sabs smooth approximation of abs
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 a=utils.smooth_approximation.sabs(varargin{:});
 

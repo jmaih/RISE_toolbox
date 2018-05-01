@@ -1,23 +1,19 @@
 function [x0,f0,exitflag,output]=blockwise_optimization(func,x0,lb,ub,options,varargin)
 % blockwise_optimization optimization by blocks of parameters rather than the whole vector
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 
 if nargin<4

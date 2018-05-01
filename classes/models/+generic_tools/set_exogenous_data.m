@@ -1,23 +1,19 @@
 function shocks=set_exogenous_data(exo_nbr,is_observed,simul_with_shocks,z,horizon)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<5
     horizon=1;

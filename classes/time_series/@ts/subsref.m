@@ -1,23 +1,19 @@
 function this=subsref(obj,s)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % db=ts('1990q1',randn(10,4,3),{'v1','v2','v3','v4'});
 % pick a variable:

@@ -1,9 +1,8 @@
 function outcell=print_solution(obj,varlist,orders,compact_form,precision,equation_format,file2save2)
 % print_solution - print the solution of a model or vector of models
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   print_solution(obj)
 %   print_solution(obj,varlist)
@@ -14,47 +13,44 @@ function outcell=print_solution(obj,varlist,orders,compact_form,precision,equati
 %   print_solution(obj,varlist,orders,compact_form,precision,equation_format,file2save2)
 %   outcell=print_solution(obj,...)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge] : model object or vector of model objects
+%    - **obj** [rise|dsge] : model object or vector of model objects
 %
-% - **varlist** [char|cellstr|{[]}] : list of variables of interest
+%    - **varlist** [char|cellstr|{[]}] : list of variables of interest
 %
-% - **orders** [numeric|{[1:solve_order]}] : orders for which we want to
-%   see the solution
+%    - **orders** [numeric|{[1:solve_order]}] : orders for which we want to
+%      see the solution
 %
-% - **compact_form** [{true}|false] : if true, only the solution of unique
-%   tuples (i,j,k) such that i<=j<=k is presented. If false, the solution
-%   of all combinations is presented. i.e.
-%   (i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)  
+%    - **compact_form** [{true}|false] : if true, only the solution of unique
+%      tuples (i,j,k) such that i<=j<=k is presented. If false, the solution
+%      of all combinations is presented. i.e.
+%      (i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)
 %
-% - **precision** [char|{'%8.6f'}] : precision of the numbers printed
+%    - **precision** [char|{'%8.6f'}] : precision of the numbers printed
 %
-% - **equation_format** [true|{false}] : if true, the solution is presented
-%   in the form of equations for each endogenous variable (not recommended)
+%    - **equation_format** [true|{false}] : if true, the solution is presented
+%      in the form of equations for each endogenous variable (not recommended)
 %
-% - **file2save2** [char|{''}] : if not empty, the solution is written to a
-%   file rather than printed on screen. For this to happen, print_solution
-%   has to be called without ouput arguments
+%    - **file2save2** [char|{''}] : if not empty, the solution is written to a
+%      file rather than printed on screen. For this to happen, print_solution
+%      has to be called without ouput arguments
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **outcell** [cellstr] : If an output is requested, the solution is not
-%   printed on screen or to a file.
+%    - **outcell** [cellstr] : If an output is requested, the solution is not
+%      printed on screen or to a file.
 %
-% More About
-% ------------
+% Note:
 %
-% If a model is solved, say, up to 3rd order, one may still want to see the
-% first-order solution or the solution up to second-order only or any
-% combination of orders.
+%    If a model is solved, say, up to 3rd order, one may still want to see the
+%    first-order solution or the solution up to second-order only or any
+%    combination of orders.
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 
 if isempty(obj)

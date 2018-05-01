@@ -1,23 +1,19 @@
 function status=pdflatex(filename)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % get the compiler from the rise_root
 compiler=getappdata(0,'rise_pdflatex');

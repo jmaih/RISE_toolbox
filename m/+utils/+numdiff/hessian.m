@@ -1,44 +1,40 @@
 function H = hessian(Objective,xparam,options,varargin)
 % hessian - computes the hessian of a scalar function
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   H = hessian(Objective,xparam)
 %   H = hessian(Objective,xparam,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **Objective** [char|function handle]: function to differentiate
+%    - **Objective** [char|function handle]: function to differentiate
 %
-% - **xparam** [vector]: Point at which the derivatives are taken
+%    - **xparam** [vector]: Point at which the derivatives are taken
 %
-% - **options** [struct]: structure containing the options for the
-%   computation. These are:
-%   - **tol** [numeric|{eps.^(1/4)}] : tolerance for the computation of the
-%       steps
-%   - **diagonly** [true|{false}] : if true, only the elements on the
-%       diagonal are computed
+%    - **options** [struct]: structure containing the options for the
+%      computation. These are:
+%      - **tol** [numeric|{eps.^(1/4)}] : tolerance for the computation of the
+%          steps
+%      - **diagonly** [true|{false}] : if true, only the elements on the
+%          diagonal are computed
 %
-% - **varargin** []: further input arguments of **Objective**
+%    - **varargin** []: further input arguments of **Objective**
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **H** [matrix]: hessian matrix
+%    - **H** [matrix]: hessian matrix
 %
-% More About
-% ------------
+% Note:
 %
-% - The tolerance level is hard-coded to be eps.^(1/4). This should
-%   probably be an input
+%    - The tolerance level is hard-coded to be eps.^(1/4). This should
+%      probably be an input
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 if nargin<3
     options=[];

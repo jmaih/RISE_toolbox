@@ -1,23 +1,19 @@
 function E=E_kron_X_Y(Mx,Ny,Oyx)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % problems:
 %         1- X and Y should have the same # rows

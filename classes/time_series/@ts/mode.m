@@ -1,23 +1,19 @@
 function varargout=mode(this,varargin)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 nout=nargout;
 [varargout{1:nout}]=utils.stat.mode(this.data,varargin{:});

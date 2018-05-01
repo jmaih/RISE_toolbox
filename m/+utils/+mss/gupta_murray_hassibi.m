@@ -2,9 +2,8 @@ function [flag,max_eig,C]=gupta_murray_hassibi(T,Q,crit,fast)
 % GUPTA_MURRAY_HASSIBI -- checks for Mean Square Stability using the Gupta,
 % Murray and Hassibi algorithm
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   C=GUPTA_MURRAY_HASSIBI(T,Q)
 %
@@ -12,35 +11,32 @@ function [flag,max_eig,C]=gupta_murray_hassibi(T,Q,crit,fast)
 %
 %   C=GUPTA_MURRAY_HASSIBI(T,Q,crit,fast)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **T** [1 x h cell array]: Autoregressive part of the solution in each
-% regime
+%    - **T** [1 x h cell array]: Autoregressive part of the solution in each
+%    regime
 %
-% - **Q** [h x h matrix]: Transition matrix
+%    - **Q** [h x h matrix]: Transition matrix
 %
-% - **crit** [numeric]: tolerance criterion
+%    - **crit** [numeric]: tolerance criterion
 %
-% - **fast** [false|{true}]: use the fastest algorithm
+%    - **fast** [false|{true}]: use the fastest algorithm
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **flag** [true|false]: result of the investigation on whether there is
-% MSS or not.
+%    - **flag** [true|false]: result of the investigation on whether there is
+%    MSS or not.
 %
-% - **max_eig** [numeric]: maximum eigenvalue
+%    - **max_eig** [numeric]: maximum eigenvalue
 %
-% - **C** [matrix]: matrix in the criterion for checking stability
+%    - **C** [matrix]: matrix in the criterion for checking stability
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: COSTA_FRAGOSO_MARQUES
+%    See also: COSTA_FRAGOSO_MARQUES
 
 % References:
 % Vijay Gupta, Richard Murray and Babak Hassibi (2003):

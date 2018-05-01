@@ -1,23 +1,19 @@
 function C=A_times_kron_I_B_I(A,B,q,r)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 % computes C=A*kron(kron(Iq,B),Ir)
 

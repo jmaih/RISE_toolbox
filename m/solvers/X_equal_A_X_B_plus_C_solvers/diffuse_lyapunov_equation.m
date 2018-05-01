@@ -1,36 +1,32 @@
 function [P0,retcode]=diffuse_lyapunov_equation(T,RQR,diffuse_factor,...
-    check_unit_roots,diffuse_all)
+check_unit_roots,diffuse_all)
 % diffuse_lyapunov_equation attempts to solve V=T*V*T'+RQR under
 % nonstationarity
 %
-% Syntax
-% -------
 % ::
+%
 %   [P0,retcode]=diffuse_lyapunov_equation(T,RQR)
 %   [P0,retcode]=diffuse_lyapunov_equation(T,RQR,diffuse_factor)
 %   [P0,retcode]=diffuse_lyapunov_equation(T,RQR,diffuse_factor,check_unit_roots)
 %   [P0,retcode]=diffuse_lyapunov_equation(T,RQR,diffuse_factor,check_unit_roots,diffuse_all)
 %
-% Inputs
-% -------
-% - T :
-% - RQR :
-% - diffuse_factor : [ positive scalar | {10} ]
-% - check_unit_roots : [ {true} | false ]
-% - diffuse_all : [ true | {false} ]
-% 
-% Outputs
-% --------
-% - P0 :
-% - Retcode :
+% Args:
+%    - T :
+%    - RQR :
+%    - diffuse_factor : [ positive scalar | {10} ]
+%    - check_unit_roots : [ {true} | false ]
+%    - diffuse_all : [ true | {false} ]
 %
-% More About
-% ------------
+% Returns:
+%    :
+%    - P0 :
+%    - Retcode :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<5
     diffuse_all=false;

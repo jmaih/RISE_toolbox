@@ -2,23 +2,19 @@ function [y1,is_active_shock,retcode]=one_step_frwrd(T,y0,ss,xloc,sig,shocks,ord
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 narginchk(7,9)
 

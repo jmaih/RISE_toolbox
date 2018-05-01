@@ -1,35 +1,31 @@
 function [Rmse,Pe] = rmse(rawdata)
 % RMSE -- Root Mean Square Error
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   [Rmse,Pe] = rmse(rawdata)
 %
-% Inputs
-% -------
+% Args:
 %
-%   - **rawdata** : [T x (h+1) x nsim ts]. Time series with 
-%       - T observations
-%       - h+1 columns, where the first column represents the actual data
-%       and the remaining h columns are forecasts
-%       - nsim number of simulations
+%      - **rawdata** : [T x (h+1) x nsim ts]. Time series with
+%          - T observations
+%          - h+1 columns, where the first column represents the actual data
+%          and the remaining h columns are forecasts
+%          - nsim number of simulations
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-%   - **Rmse** : [h x nsim]. Matrix of root mean square errors 
+%      - **Rmse** : [h x nsim]. Matrix of root mean square errors
 %
-%   - **Pe** : [T x h x nsim ts]. Time series of prediction errors 
+%      - **Pe** : [T x h x nsim ts]. Time series of prediction errors
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: 
+%    See also:
 
 % data = T x h x nsim
 

@@ -1,60 +1,56 @@
 function obj=set(obj,varargin)
 % set - sets options for dsge|rise models
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   obj=set(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge]: model object
+%    - **obj** [rise|dsge]: model object
 %
-% - **varargin** : valid input arguments coming in pairs. Notable fields to
-%   that can be set include and are not restricted to:
-%   - **solve_shock_horizon** [integer|struct|cell]
-%       - for the integer case, all shocks are set to the same integer
-%       - for the struct case, the input must be a structure with shock
-%           names as fields. Only the shock names whose value is to change
-%           have to be listed. In this case, different shocks can have
-%           different horizons k. The default is k=0 i.e. agents don't
-%           see into the future. The value of the fields is one of the
-%           following:
-%           - k 
-%           - {k,chainName_state}
-%           - {chainName_state,k}
-%       - for the cell case, the cell should have two columns. The first
-%           column includes the names of the shocks whose horizon is to
-%           change. The second column is one of the following: 
-%           - the horizon for the shock 
-%           - {horizon,chainName_state}
-%           - {chainName_state,horizon}
-%   - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
-%       - in the **amateur** or **explicit** mode the functions are kept in
-%           cell arrays of anonymous functions and evaluated using for
-%           loops
-%       - in the **vectorized** or **professional** mode the functions are
-%           compacted into one long and unreadable function.
-%       - in the **disc** mode the functions are written to disc in a
-%           subdirectory called routines.
+%    - **varargin** : valid input arguments coming in pairs. Notable fields to
+%      that can be set include and are not restricted to:
+%      - **solve_shock_horizon** [integer|struct|cell]
+%          - for the integer case, all shocks are set to the same integer
+%          - for the struct case, the input must be a structure with shock
+%              names as fields. Only the shock names whose value is to change
+%              have to be listed. In this case, different shocks can have
+%              different horizons k. The default is k=0 i.e. agents don't
+%              see into the future. The value of the fields is one of the
+%              following:
+%              - k
+%              - {k,chainName_state}
+%              - {chainName_state,k}
+%          - for the cell case, the cell should have two columns. The first
+%              column includes the names of the shocks whose horizon is to
+%              change. The second column is one of the following:
+%              - the horizon for the shock
+%              - {horizon,chainName_state}
+%              - {chainName_state,horizon}
+%      - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
+%          - in the **amateur** or **explicit** mode the functions are kept in
+%              cell arrays of anonymous functions and evaluated using for
+%              loops
+%          - in the **vectorized** or **professional** mode the functions are
+%              compacted into one long and unreadable function.
+%          - in the **disc** mode the functions are written to disc in a
+%              subdirectory called routines.
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **obj** [rise|dsge]: model object
+%    - **obj** [rise|dsge]: model object
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
-% obj=set(obj,'solve_shock_horizon',5)
+%    obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
+%    obj=set(obj,'solve_shock_horizon',5)
 %
-% See also: generic.set
+%    See also: generic.set
 
 if isempty(obj)
     

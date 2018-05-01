@@ -1,44 +1,40 @@
 function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % forecast_real_time - forecast from each point in time
 %
-% Syntax
-% -------
 % ::
+%
 %
 % - [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj)
 % - [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [dsge|svar|rfvar] : model object
+%    - **obj** [dsge|svar|rfvar] : model object
 %
-% - **varargin** : valid optional inputs coming in pairs. The main inputs
-%   of interest for changing the default behavior are:
-%   - **forecast_rt_nsteps** [integer] : number of periods ahead
+%    - **varargin** : valid optional inputs coming in pairs. The main inputs
+%      of interest for changing the default behavior are:
+%      - **forecast_rt_nsteps** [integer] : number of periods ahead
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **ts_fkst** [struct] : fields are forecasts in the form of ts objects
-%   for the different endogenous variables
+%    - **ts_fkst** [struct] : fields are forecasts in the form of ts objects
+%      for the different endogenous variables
 %
-% - **ts_rmse** [ts|struct] : if only one object is processed, the output
-% is a ts. If instead several objects are processed, fields are RMSEs in
-% the form of ts objects for the different endogenous variables
+%    - **ts_rmse** [ts|struct] : if only one object is processed, the output
+%    is a ts. If instead several objects are processed, fields are RMSEs in
+%    the form of ts objects for the different endogenous variables
 %
-% - **rmse** [matrix] : RMSEs for the different endogenous variables
+%    - **rmse** [matrix] : RMSEs for the different endogenous variables
 %
-% - **Updates** [struct] : fields are the updated (in a filtering sense) in
-%   the form of ts objects for the different endogenous variables
+%    - **Updates** [struct] : fields are the updated (in a filtering sense) in
+%      the form of ts objects for the different endogenous variables
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: plot_real_time 
+%    See also: plot_real_time
 
 if isempty(obj)
     

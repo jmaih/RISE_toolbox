@@ -1,9 +1,8 @@
 function P=sum_permutations(ABCD,matsizes,options,varargin)
 % sum_permutations -- sums the permutations of a tensor product
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   P=sum_permutations(ABCD,matsizes,[],order_1,order_2,...,order_n)
 %
@@ -13,38 +12,35 @@ function P=sum_permutations(ABCD,matsizes,options,varargin)
 %
 %   P=sum_permutations(ABCD,matsizes,options,{order_1,order_2,...,order_n})
 %
-% Inputs
-% -------
+% Args:
 %
-% - **ABCD** [matrix]: tensor product of k matrices
+%    - **ABCD** [matrix]: tensor product of k matrices
 %
-% - **matsizes** [matrix]: k x 2 matrix of size of the various matrices
-% entering the tensor. Each row represents the size of a matrix and it is
-% assumed that the main(or first) tensor product is ordered [1,2,...,k]
+%    - **matsizes** [matrix]: k x 2 matrix of size of the various matrices
+%    entering the tensor. Each row represents the size of a matrix and it is
+%    assumed that the main(or first) tensor product is ordered [1,2,...,k]
 %
-% - **options** [empty|struct]: structure with various options such as
-%   - **use_old_algo** [true|{false}]: old and potentially slow algorithm
-%   - **use_grid** [true|{false}]: use grid in the old algorithm:a grid is
-%       used to compute the indexes of the main kronecker product 
-%   - **skip_first** [true|{false}]: if true, the original input matrix is
-%   not added to the sum
+%    - **options** [empty|struct]: structure with various options such as
+%      - **use_old_algo** [true|{false}]: old and potentially slow algorithm
+%      - **use_grid** [true|{false}]: use grid in the old algorithm:a grid is
+%          used to compute the indexes of the main kronecker product
+%      - **skip_first** [true|{false}]: if true, the original input matrix is
+%      not added to the sum
 %
-% - **order_i** [vector]: permutation of [1,2,...,k]. N.B: all elements
-% 1,2,...,k should be part of the vector and the vector should have exactly
-% k elements
+%    - **order_i** [vector]: permutation of [1,2,...,k]. N.B: all elements
+%    1,2,...,k should be part of the vector and the vector should have exactly
+%    k elements
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **P** sum of ABCD and its permutations
+%    - **P** sum of ABCD and its permutations
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also: tensorperm
+%    See also: tensorperm
 
 default_options={
     'use_old_algo',false,@(x)islogical(x),'use_old_algo must be a logical'

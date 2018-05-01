@@ -1,23 +1,19 @@
 function [loglik,Incr,retcode,Filters]=msre_kalman(syst,data_info,state_trend,init,options)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 
 % this filter assumes a state space of the form

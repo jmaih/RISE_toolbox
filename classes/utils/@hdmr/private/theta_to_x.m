@@ -1,23 +1,19 @@
 function [x,theta_low,theta_high]=theta_to_x(theta,theta_low,theta_high,xlow,xhigh)
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also: 
+% Example:
+%
+%    See also:
 
 if nargin<5
     xhigh=1;

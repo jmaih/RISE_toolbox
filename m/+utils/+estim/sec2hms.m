@@ -1,36 +1,32 @@
 function [hms,h,m,s] = sec2hms(secs)
 % sec2hms -- converts seconds to hours, minutes and seconds
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   hms = sec2hms(secs)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **secs** [numeric]:
+%    - **secs** [numeric]:
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **hms** [char]: string breaking down the input into hours, minutes and
-% seconds.
+%    - **hms** [char]: string breaking down the input into hours, minutes and
+%    seconds.
 %
-% - **h** [numeric]:hours.
+%    - **h** [numeric]:hours.
 %
-% - **m** [numeric]: minutes.
+%    - **m** [numeric]: minutes.
 %
-% - **s** [numeric]:  seconds.
+%    - **s** [numeric]:  seconds.
 %
-% More About
-% ------------
+% Note:
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 % Adapted for RISE from code from Peter J. Acklam 
 % http://home.online.no/~pjacklam

@@ -1,32 +1,28 @@
 function g=evaluate_general_restrictions(obj)
-% EVALUATE_GENERAL_RESTRICTIONS - evaluates general restrictions 
+% EVALUATE_GENERAL_RESTRICTIONS - evaluates general restrictions
 %
-% Syntax
-% -------
 % ::
+%
 %
 %   g=EVALUATE_GENERAL_RESTRICTIONS(obj)
 %
-% Inputs
-% -------
+% Args:
 %
-% - **obj** [rise|dsge|rfvar|svar] : scalar of vector or RISE model objects
+%    - **obj** [rise|dsge|rfvar|svar] : scalar of vector or RISE model objects
 %
-% Outputs
-% --------
+% Returns:
+%    :
 %
-% - **g** [cell array] : value of restrictions for each object.
+%    - **g** [cell array] : value of restrictions for each object.
 %
-% More About
-% ------------
+% Note:
 %
-% - The restrictions will be processed as g(x)<=0. But all the user has to
-% do is to put zero where the restrictions are not violated!!!
+%    - The restrictions will be processed as g(x)<=0. But all the user has to
+%    do is to put zero where the restrictions are not violated!!!
 %
-% Examples
-% ---------
+% Example:
 %
-% See also:
+%    See also:
 
 nobj=numel(obj);
 

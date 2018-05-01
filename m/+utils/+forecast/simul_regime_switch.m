@@ -1,25 +1,21 @@
 function [sim1,regimes,Qt,retcode]=simul_regime_switch(y0,T,ss,...
-    state_vars_location,options)
+state_vars_location,options)
 
 % H1 line
 %
-% Syntax
-% -------
 % ::
 %
-% Inputs
-% -------
 %
-% Outputs
-% --------
+% Args:
 %
-% More About
-% ------------
+% Returns:
+%    :
 %
-% Examples
-% ---------
+% Note:
 %
-% See also:
+% Example:
+%
+%    See also:
 
 simul_sig=options.simul_sig;
 
