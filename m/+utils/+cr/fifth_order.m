@@ -197,7 +197,7 @@ res=res+dvvvvv_vz_vz_vz_vz_vz();
                 
             else
                 
-                res=dvvv*kronall(vz,vzz,vzz);
+                res=dvvv*utils.kronecker.kronall(vz,vzz,vzz);
                 
             end
             
@@ -220,7 +220,7 @@ res=res+dvvvvv_vz_vz_vz_vz_vz();
                 
             else
                 
-                res=dvvv*kronall(vz,vz,vzzz);
+                res=dvvv*utils.kronecker.kronall(vz,vz,vzzz);
                 
             end
             
@@ -251,7 +251,7 @@ res=res+dvvvvv_vz_vz_vz_vz_vz();
                 
             else
                 
-                res=dvvvv*kronall(vz,vz,vz,vzz);
+                res=dvvvv*utils.kronecker.kronall(vz,vz,vz,vzz);
                 
             end
             
