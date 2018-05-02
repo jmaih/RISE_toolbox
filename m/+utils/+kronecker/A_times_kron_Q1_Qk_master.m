@@ -46,7 +46,6 @@ function C=A_times_kron_Q1_Qk_master(kind,varargin)
 %    tic,r2=utils.kronecker.A_times_kron_Q1_Qk_master('decomp',fvv,A{:});toc
 %    max(max(abs(r1-r0)))
 %    max(max(abs(r2-r0)))
-
 %
 %    See also:
 
