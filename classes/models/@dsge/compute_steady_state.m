@@ -257,7 +257,7 @@ else
         [y(:,istate),g(:,istate),r(:,istate),p(:,istate),retcode]=...
             run_one_regime(y0(:,istate),g0(:,istate),p(:,istate),x,...
             d{istate},sscode,unsolved,blocks);
-        
+                
         if retcode
             
             break
@@ -398,27 +398,13 @@ if ~isempty(sscode)
         % no point in doing loops if the model is linear
         
         [y,g,r,retcode]=loop_over(y0,g0,sscode.subset);
-        
-        if solve_bgp
-            
-            r=r(1:numel(y));
-            
-        end
-        
+                
     else
         
         [y,g,p,r,retcode]=grand_sscode(y0,g0,p,d);
         
         if sscode.is_imposed_steady_state || check_residuals(r,optimopt.TolFun)
-            
-            if solve_bgp
-                
-                r=r(1:numel(y));
-                
-            end
-            
-            return
-            
+            % do nothing
         else
             
             if retcode
@@ -448,6 +434,13 @@ else
     [y,g,p,r,retcode]=divide_and_conquer(y0,g0,p,x,d,unsolved,dq_blocks);
     
 end
+
+if solve_bgp
+    
+    r=r(1:numel(y));
+    
+end
+
 
 
 
