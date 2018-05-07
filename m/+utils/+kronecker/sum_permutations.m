@@ -21,7 +21,9 @@ function P=sum_permutations(ABCD,matsizes,options,varargin)
 %    assumed that the main(or first) tensor product is ordered [1,2,...,k]
 %
 %    - **options** [empty|struct]: structure with various options such as
-%      - **use_old_algo** [true|{false}]: old and potentially slow algorithm
+%      - **algo** [{'shuf1'}|'shuf2'|'old'|'perm']: shuf1 shuffles the
+%      matrix, shuf2 pre and post multiplies the matrix, old may or may not
+%      construct a grid, perm uses a permutation-type of strategy.
 %      - **use_grid** [true|{false}]: use grid in the old algorithm:a grid is
 %          used to compute the indexes of the main kronecker product
 %      - **skip_first** [true|{false}]: if true, the original input matrix is
@@ -43,8 +45,8 @@ function P=sum_permutations(ABCD,matsizes,options,varargin)
 %    See also: tensorperm
 
 default_options={
-    'use_old_algo',false,@(x)islogical(x),'use_old_algo must be a logical'
-    'use_grid',false,@(x)islogical(x),'use_old_algo must be a logical'
+    'algo','shuf1',@(x)ismember(x,{'shuf1','shuf2','old','perm'}),'algo must be "shuf1", "shuf2", "old" or "perm"'
+    'use_grid',false,@(x)islogical(x),'use_grid must be a logical'
     'skip_first',false,@(x)islogical(x),'use_old_algo must be a logical'
     };
 
@@ -82,40 +84,82 @@ if options.skip_first
     
 end
 
-if options.use_old_algo
+switch options.algo
     
-    if options.use_grid
+    case 'old'
         
-        [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:},'grid');
+        old_algorithm()
         
-    else
+    case 'perm'
         
-        [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:});
+        permute_algorithm()
         
-    end
-    
-    for ii=1:size(irows,2)
+    case 'shuf1'
         
-        P=P+ABCD(irows(:,ii),jcols(:,ii));
+        shuffle1_algorithm()
         
-    end
-    
-else
-    
-    for ii=1:numel(orders)
+    case 'shuf2'
         
-        P=P+utils.kronecker.permute_tensor(ABCD,matsizes,orders{ii});
+        shuffle2_algorithm()
         
-        if ii==1
+end
+
+    function shuffle1_algorithm()
+        
+        for ii=1:numel(orders)
             
-            ABCD=[];
-            
-            matsizes=[];
+            P=P+utils.kronecker.shuffle_tensor1(ABCD,matsizes,orders{ii});
             
         end
         
     end
-    
-end
+
+    function shuffle2_algorithm()
+        
+        for ii=1:numel(orders)
+            
+            P=P+utils.kronecker.shuffle_tensor2(ABCD,matsizes,orders{ii});
+            
+        end
+        
+    end
+
+    function permute_algorithm()
+        
+        for ii=1:numel(orders)
+            
+            P=P+utils.kronecker.permute_tensor(ABCD,matsizes,orders{ii});
+            
+            if ii==1
+                
+                ABCD=[];
+                
+                matsizes=[];
+                
+            end
+            
+        end
+        
+    end
+
+    function old_algorithm()
+        
+        if options.use_grid
+            
+            [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:},'grid');
+            
+        else
+            
+            [irows,jcols]=utils.kronecker.tensorperm(matsizes,orders{:});
+            
+        end
+        
+        for ii=1:size(irows,2)
+            
+            P=P+ABCD(irows(:,ii),jcols(:,ii));
+            
+        end
+        
+    end
 
 end
