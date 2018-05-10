@@ -140,7 +140,7 @@ param_block=[param_block,' ',newparams];
 
 % model equations
 %-----------------
-rise_code = regexprep(rise_code,'model\(linear\)','model');
+rise_code = regexprep(rise_code,'model\(linear|use_dll\)','model');
 
 % replace weird numbers that RISE does not parse yet
 %---------------------------------------------------
@@ -168,6 +168,8 @@ ssmodel_eqtns = extract_other_blocks('(steady_state_model;|initval;)');
 if ~isempty(ssmodel_eqtns)
     
     ssmodel_eqtns=strrep(ssmodel_eqtns,'initval;','');
+    
+    ssmodel_eqtns=strrep(ssmodel_eqtns,'steady_state_model;','');
     
 end
 
