@@ -77,6 +77,12 @@ classdef splanar
         
     end
     
+    properties(Constant)
+        
+        known_functions=do_known_functions()
+        
+    end
+    
     methods
         % constructor
         %------------
@@ -125,7 +131,7 @@ classdef splanar
                         
                         end
                         
-                        obj.args={a};
+                        obj.args=a;
                     
                     end
                     
@@ -716,36 +722,9 @@ classdef splanar
         
         varargout=kron(varargin)
         
-        varargout=load_varlist(varargin)
-        
         varargout=set(varargin)
         
         varargout=get(varargin)
-        
-        function flag=isnumeric(a)
-            
-            % isnumeric - checks whether a splanar object is numeric
-            flag=isnumeric(a.func)||islogical(a.func);
-            
-        end
-        
-        function flag=is_zero(a)
-            
-            % is_zero - checks whether a splanar object is zero
-            afunc=a.func;
-            
-            flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==0);
-            
-        end
-        
-        function flag=is_one(a)
-            % is_one - checks whether a splanar object is 1
-            
-            afunc=a.func;
-            
-            flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==1);
-            
-        end
         
         function d=diff(x,wrt,pointer)
             % diff - overloads diff for splanar
@@ -1123,6 +1102,33 @@ classdef splanar
             
         end
         
+        varargout=load_varlist(varargin)
+        
+        function flag=isnumeric(a)
+            
+            % isnumeric - checks whether a splanar object is numeric
+            flag=isnumeric(a.func)||islogical(a.func);
+            
+        end
+        
+        function flag=is_zero(a)
+            
+            % is_zero - checks whether a splanar object is zero
+            afunc=a.func;
+            
+            flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==0);
+            
+        end
+        
+        function flag=is_one(a)
+            % is_one - checks whether a splanar object is 1
+            
+            afunc=a.func;
+            
+            flag=(isnumeric(afunc)||islogical(afunc)) && all(afunc==1);
+            
+        end
+        
     end
     
     methods(Static)
@@ -1187,6 +1193,70 @@ classdef splanar
         
     end
     
+end
+
+function kf=do_known_functions()
+
+kf={'abs'
+    'acos'
+    'acosh'
+    'and'
+    'asin'
+    'asinh'
+    'atan'
+    'atanh'
+    'betacdf'
+    'betainv'
+    'betapdf'
+    'char'
+    'cos'
+    'cosh'
+    'cot'
+%     'diff'
+%     'differentiate'
+    'eq'
+    'erf'
+    'exp'
+    'ge'
+    'get'
+    'gt'
+    'if_elseif'
+    'if_then_else'
+    'initialize'
+    'kron'
+    'le'
+    'log'
+    'log10'
+    'lt'
+    'max'
+    'min'
+    'minus'
+    'mpower'
+    'mrdivide'
+    'mtimes'
+    'ne'
+    'normcdf'
+    'norminv'
+    'normpdf'
+    'or'
+    'plus'
+    'power'
+    'print'
+    'rdivide'
+    'set'
+    'sign'
+    'sin'
+    'sinh'
+    'splanar'
+    'sqrt'
+    'steady_state'
+    'tan'
+    'tanh'
+    'times'
+    'uminus'
+    'uplus'
+}.';
+
 end
 
 function obj=prototypize(obj)
