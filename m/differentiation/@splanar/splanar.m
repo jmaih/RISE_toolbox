@@ -747,40 +747,6 @@ classdef splanar
             
         end
         
-        function obj=intercept_column(obj,pointer)
-            % intercept_column - builds a scalar splanar object from a
-            % vectorized splanar object. The pointer argument points the
-            % element in the vector to be used.
-            if obj.number_of_columns>1
-                
-                if isnumeric(obj) && numel(obj.func)>1
-                    
-                    obj.func=obj.func(pointer);
-                    
-                elseif ~isempty(obj.args)
-                    
-                    for iarg=1:numel(obj.args)
-                        
-                        if ~isa(obj.args{iarg},'splanar')
-                            
-                            continue
-                            
-                        end
-                        
-                        obj.args{iarg}=intercept_column(obj.args{iarg},pointer);
-                        
-                    end
-                    
-                    % the line below will correct for zeros, ones, etc. as well as
-                    % incidences.
-                    obj=feval(obj.func,obj.args{:});
-                    
-                end
-                
-            end
-            
-        end
-        
         function d=diff(x,wrt,pointer)
             % diff - overloads diff for splanar
             if nargin<3
@@ -1113,6 +1079,44 @@ classdef splanar
                         
                         d=numerator/denominator*betapdf(x.args{1},x.args{2},x.args{3});
                 
+                end
+                
+            end
+            
+        end
+        
+    end
+    
+    methods(Access=private)
+        
+        function obj=intercept_column(obj,pointer)
+            % intercept_column - builds a scalar splanar object from a
+            % vectorized splanar object. The pointer argument points the
+            % element in the vector to be used.
+            if obj.number_of_columns>1
+                
+                if isnumeric(obj) && numel(obj.func)>1
+                    
+                    obj.func=obj.func(pointer);
+                    
+                elseif ~isempty(obj.args)
+                    
+                    for iarg=1:numel(obj.args)
+                        
+                        if ~isa(obj.args{iarg},'splanar')
+                            
+                            continue
+                            
+                        end
+                        
+                        obj.args{iarg}=intercept_column(obj.args{iarg},pointer);
+                        
+                    end
+                    
+                    % the line below will correct for zeros, ones, etc. as well as
+                    % incidences.
+                    obj=feval(obj.func,obj.args{:});
+                    
                 end
                 
             end
