@@ -142,7 +142,19 @@ for s1=1:h
                 
                 if s1==1 && s0==1
                     
-                    max_order=numel(obj.routines.probs_times_dynamic_derivatives);
+                    tmp_=obj.routines.probs_times_dynamic_derivatives;
+                    
+                    if isa(tmp_,'function_handle')
+                        
+                        max_order=nargout(tmp_);
+                        
+                    else
+                        
+                        max_order=numel(tmp_);
+                        
+                    end
+                    
+                    clear tmp_
                     
                     if solve_order>max_order
                         
@@ -218,7 +230,7 @@ for s1=1:h
                     
                     zkz=kron(zkz,log_deriv_coefs(s1,:));
                     structural_matrices.(['d',xxx(1:io)]){s0,s1}=...
-                        bsxfun(@times,G01{io},zkz);%
+                        multiply_bsxfun(G01{io},zkz);
                     
                 end
                 
@@ -395,6 +407,32 @@ end
         end
         
     end
+
+end
+
+function G=multiply_bsxfun(G,zkz)
+
+if all(zkz==1)
+    
+    return
+    
+end
+
+try
+    
+    G=bsxfun(@times,G,zkz);
+    
+catch
+    
+    for ii=1:size(G,1)
+        
+        tmp=find(G(ii,:));
+        
+        G(ii,tmp)=G(ii,tmp).*zkz(tmp);
+        
+    end
+    
+end
 
 end
 

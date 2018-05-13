@@ -32,24 +32,43 @@ function ypred=locate_permutation(x,n,wrt_wise)
 %    See also:
 
 if nargin<3
+
     wrt_wise=false;
+
 end
-xlong=x(:);
-if any(xlong>n)||any(xlong<=0)||any(floor(xlong)~=ceil(xlong))
-    error('wrong specification of the elements in the x matrix')
-end
+
+% xlong=x(:); % checking this slows things down
+% 
+% if any(xlong>n)||any(xlong<=0)||any(floor(xlong)~=ceil(xlong))
+% 
+%     error('wrong specification of the elements in the x matrix')
+% 
+% end
+
 order=size(x,2);
+
 if wrt_wise
+    
     ypred=x(:,end)-1;
+    
     for ii=order-1:-1:1
+    
         ypred=n*ypred+x(:,ii)-1;
+    
     end
-    ypred=ypred+1;
+    
 else
+    
     ypred=x(:,1)-1;
+    
     for ii=2:order
+    
         ypred=n*ypred+x(:,ii)-1;
+    
     end
-    ypred=ypred+1;
+
 end
+    
+ypred=ypred+1;
+
 end

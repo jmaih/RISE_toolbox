@@ -18,11 +18,17 @@ function [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices)
 % the obj going out probably contains the changed options
 
 if isempty(obj)
+    
     if nargout>1
+        
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
+    
     end
+    
     T=struct();
+    
     return
+    
 end
 
 %% begin
@@ -54,6 +60,13 @@ if obj.options.solve_order>=1
     % higher orders
     %--------------
     if obj.options.solve_order>=2 && ~retcode
+        
+        if obj.options.solve_accelerate||debug
+            
+            [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
+            
+        end
+        
         % shortcuts to functions
         %-----------------------
         is_computable=@utils.cr.is_computable;
@@ -700,21 +713,21 @@ end
             % shrink D and so on
             %--------------------
             if accelerate
-                [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
-                nkept=sum(shrink);
+
+                nkept=sum(shrink{oo});
                 if debug
                     Dtest=D;
                 end
-                D=D(:,shrink,:);
+                D=D(:,shrink{oo},:);
                 if debug
-                    Dbig=D(:,expand,:);
+                    Dbig=D(:,expand{oo},:);
                     max(abs(Dtest(:)-Dbig(:)))
                 end
             else
                 if debug
-                    [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
-                    D=D(:,shrink,:);
-                    D=D(:,expand,:);
+
+                    D=D(:,shrink{oo},:);
+                    D=D(:,expand{oo},:);
                 end
                 nkept=siz.nz^oo;
             end
@@ -732,7 +745,7 @@ end
             if ~retcode
                 if accelerate
                     X=reshape(X,[siz.nd,nkept,siz.h]);
-                    X=X(:,expand,:);
+                    X=X(:,expand{oo},:);
                 else
                     X=reshape(X,[siz.nd,siz.nz^oo,siz.h]);
                 end
@@ -752,7 +765,7 @@ end
                         AT=AT+dbf_plus{r00,r1}*tau(pos.t.bf,:,r1);
                     end
                     if accelerate
-                        AT=AT(:,expand);
+                        AT=AT(:,expand{oo});
                     end
                     ATCzzz=temporary_term();
                     ATC_plus_T(:,:,r00)=ATCzzz+tau(:,:,r00);
@@ -833,7 +846,7 @@ end
                         error('perturbations implemented only up to order 5')
                     end
                     if accelerate
-                        ATC=ATC(:,shrink);
+                        ATC=ATC(:,shrink{oo});
                     end
                 end
             end

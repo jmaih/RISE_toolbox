@@ -40,22 +40,33 @@ function c=find_combos(acell,bcell,c)
 %
 %    See also:
 if nargin<3
+    
     c=[];
+
 end
 
 num_type=isa(acell{1},'double');
+
 if num_type
+
     is_error=~isa(bcell{1},'double');
+
 else
+    
     is_error=~(ischar(acell{1}) && ischar(bcell{1}));
+
 end
 
 if is_error
+
     error('the first element in both cell must be a number or a char')
+
 end
 
 cold=c;
+
 nrows=max(size(cold,1),1);
+
 is_update=false;
 
 do_one(acell,bcell)
@@ -63,18 +74,30 @@ do_one(acell,bcell)
 do_one(bcell,acell)
 
     function do_one(main,altern)
+
         if main{2}
+        
             co=[cold,main{1}(ones(nrows,1))];
+            
             main{2}=main{2}-1;
-            co=find_combos(main,altern,co);
+            
+            co=utils.gridfuncs.find_combos(main,altern,co);
+            
             if is_update
+            
                 c=[c
                     co];
+            
             else
+                
                 c=co;
+                
                 is_update=true;
+            
             end
+            
         end
+        
     end
 
 end

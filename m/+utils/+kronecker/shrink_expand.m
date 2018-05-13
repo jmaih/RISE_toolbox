@@ -1,4 +1,4 @@
-function [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
+function [keep,expand,C,UC]=shrink_expand(n,k,varargin)
 % shrink_expand computes shrinking and expansion objects for the manipulation of symmetric tensors
 %
 % ::
@@ -6,34 +6,33 @@ function [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
 %
 %   [keep,expand,C,UC,B]=shrink_expand(n,k)
 %   [keep,expand,C,UC,B]=shrink_expand(n,k,strategy)
-%   [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
+%   [keep,expand,C,UC,B]=shrink_expand(n,k,strategy)
 %
 % Args:
 %
 %    - **n** [scalar] : number of variables in the tensor
 %    - **k** [scalar] : order of the tensor
-%    - **strategy** [1|2|{3}] : alternative computation strategies
-%      - 1: uses bsxfun
-%      - 2: splanar inspired
-%      - 3: applies ismember
-%    - **debug** [true|{false}] : checks the results
+%    - **strategy** ['up'|{'down'}] : alternative compression strategies
+%      - 'up': i1<=i2<=i3....<=in
+%      - 'down': i1>=i2>=i3....>=in
 %
 % Returns:
 %    :
 %
-%    - **keep** [logical] : n^k x 1 vector true for the columns to be kept
-%    - **expand** [vector] : n^k x 1 vector replicating the compressed
-%      columns to form the grand tensor
-%    - **C** [matrix] : sparse compression matrix of size n^k x g, where
-%      g=nchoosek(n+k-1,k) is the number of unique elements in the tensor
-%      (matrix version of **keep**)
-%    - **UC** [matrix] : sparse expansion matrix of size g x n^k, where
-%      g=nchoosek(n+k-1,k) is the number of unique elements in the tensor
-%      (matrix version of **expand**)
-%    - **B** [matrix] : g x k matrix of combinations without repetitions. Each
-%      row in increasing order.
+%    - **keep** [cell array of k logical vectors] : n^k x 1 vector true for
+%    the columns to be kept  
+%    - **expand** [cell array of k vectors] : n^k x 1 vector replicating the
+%    compressed columns to form the grand tensor
+%    - **C** [cell array of k matrices] : sparse compression matrix of size
+%    n^k x g, where g=nchoosek(n+k-1,k) is the number of unique elements in
+%    the tensor (matrix version of **keep**)
+%    - **UC** [cell array of k matrices] : sparse expansion matrix of size
+%    g x n^k, where g=nchoosek(n+k-1,k) is the number of unique elements in
+%    the tensor (matrix version of **expand**)
 %
 % Note:
+%
+%    Essentially the results are given for orders from 1 to k
 %
 %    useful for shrinking tensors of the form fvvv...v as used in higher-order
 %    differentiation
@@ -42,160 +41,45 @@ function [keep,expand,C,UC,B]=shrink_expand(n,k,strategy,debug)
 %
 %    See also:
 
-if nargin<4
+nout=nargout;
+
+[expand,keep]=utils.kronecker.tensor_locator(n,k,varargin{:});
+
+if nout>2
     
-    debug=false;
+    C=cell(1,k);
     
-    if nargin<3
-        
-        strategy=3;
-        
-    end
+    UC=cell(1,k);
     
 end
 
-% differentiation order all derivatives
-%--------------------------------------
-A=utils.gridfuncs.mygrid(n*ones(1,k));
-
-nbig=size(A,1);
-
-% find the non-decreasing indices
-%--------------------------------
-% flip left right
-test2=A(:,end:-1:1);
-% stamp the decreasing rows
-drow=test2(:,1:end-1)-test2(:,2:end);
-
-% definition change to accord with derivatives
-%----------------------------------------------
-keep=all(drow<=0,2);%<--keep=~any(drow<0,2);
-
-if nargout>1
+for ii=1:k
     
-    nkept=sum(keep);
+    expand{ii}=expand{ii}(:).';
     
-    % now map all rows into the kept ones and vice versa
-    %----------------------------------------------------
-    test2=sort(test2,2);
+    keep{ii}=sparse(keep{ii}(:).');
     
-    % separate kept and unkept
-    kept=test2(keep,:);
-    
-    % stamps
-    
-    switch strategy
-        
-        case 1
-            
-            expand=bsxfun_strategy();
-            
-        case 2
-            
-            expand=splanar_strategy();
-            
-        case 3
-            
-            [~,expand]=utils.gridfuncs.ismember(test2,kept);
-            
-        otherwise
-            
-            error('strategy not implemented')
-            
-    end
-    
-    if nargout>2
-        % compression matrix
-        %-------------------
-        C=speye(nbig);
-        
-        C=C(:,keep);
-        
-        if debug
-            
-            A_=(1:nbig)*C;
-            
-            max(abs(A_(:)-find(keep)))
-            
-        end
-        
-        if nargout>3
-            % uncompression matrix
-            %----------------------
-            UC=speye(nkept);
-            
-            UC=UC(:,expand);
-            
-            if debug
-                
-                A_=(1:nkept)*UC;
-                
-                max(abs(A_(:)-expand(:)))
-                
-            end
-            
-            if nargout>4
-                
-                B=A(keep,:);
-                
-            end
-            
-        end
-        
-    end
+    matrix_form()
     
 end
 
-    function expand=splanar_strategy()
+    function matrix_form()
         
-        expand=zeros(1,nbig);
-        
-        proto_permutation=cell2mat(utils.gridfuncs.mypermutation(1:k));
-        
-        for ikept=1:nkept
+        if nout>2
             
-            this=kept(ikept,:);
+            nbig=numel(keep{ii});
             
-            this=this(proto_permutation);
+            Ci=speye(nbig);
             
-            % locate these permutations
-            ypred=utils.gridfuncs.locate_permutation(this,n,false);
+            C{ii}=Ci(:,keep{ii});
             
-            ypred=unique(ypred);
-            
-            expand(ypred)=ikept;
-            
-        end
-        
-    end
-
-    function expand=bsxfun_strategy()
-        
-        expand=zeros(1,nbig);
-        
-        expand(keep)=1:nkept;
-        
-        Index=1:nbig;
-        
-        Index(keep)=[];
-        
-        if ~isempty(Index)
-            
-            for ikept=1:nkept
+            if nout>3
                 
-                target=kept(ikept,:);
+                nkeep=sum(keep{ii});
                 
-                if all(target==target(1))
-                    
-                    continue
-                    
-                end
+                UCi=speye(nkeep);
                 
-                bingo=sum(abs(bsxfun(@minus,test2(Index,:),target)),2)==0;
-                
-                expand(Index(bingo))=ikept;
-                
-                Index(bingo)=[];
+                UC{ii}=UCi(:,expand{ii});
                 
             end
             
@@ -204,4 +88,3 @@ end
     end
 
 end
-% not implemented solution : create a container with unique identifiers
