@@ -27,7 +27,7 @@ if ~iscell(myfunc)
     
 end
 
-for ifunk=1:numel(myfunc);
+for ifunk=1:numel(myfunc)
     
     if isa(myfunc{ifunk},'function_handle')
         
