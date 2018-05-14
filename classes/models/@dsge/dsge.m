@@ -69,6 +69,8 @@ user_data
 end
 
 properties (Hidden = true)
+    
+alien_list % user-defined functions
 
 old_solution
 
@@ -316,7 +318,7 @@ function obj=dsge(model_filename,varargin)
             dictionary=parser.parse(model_filename,cmfArgins{:});
             
             % build the equations object
-            quick_fill={'lead_lag_incidence','filename',...
+            quick_fill={'alien_list','lead_lag_incidence','filename',...
                 'planner_system',...
                 'auxiliary_variables',...
                 'is_hybrid_expectations_model','is_optimal_policy_model',...

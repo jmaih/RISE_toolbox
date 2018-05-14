@@ -1,5 +1,11 @@
 function [derivs,numEqtns,numVars,jac_toc,original_funcs]=...
-    differentiate_system(myfunc,input_list,wrt,order)
+    differentiate_system(myfunc,input_list,wrt,order,alien_list)
+
+if nargin<5
+    
+    alien_list=[];
+    
+end
 
 numEqtns=numel(myfunc);
 
@@ -35,14 +41,18 @@ original_funcs=myfunc;
 for ifunc=1:numEqtns
 
     [occur,myfunc{ifunc}]=parser.find_occurrences(myfunc{ifunc},symb_list);
+    
+    % alienize
+    alien_func=splanar.alienize(myfunc{ifunc},alien_list);
+    
     % re-create the function
     var_occur=symb_list(occur);
     
     argfun=cell2mat(strcat(var_occur,','));
     
-    myfunc{ifunc}=str2func(['@(',argfun(1:end-1),')',myfunc{ifunc}]);
+    original_funcs{ifunc}=str2func(['@(',argfun(1:end-1),')',myfunc{ifunc}]);
     
-    original_funcs{ifunc}=myfunc{ifunc};
+    myfunc{ifunc}=str2func(['@(',argfun(1:end-1),')',alien_func]);
     
     arg_occur=args(occur);
     
@@ -54,7 +64,7 @@ verbose=false;
 
 tic
 
-derivs=splanar.differentiate(myfunc,numVars,order,verbose);
+derivs=splanar.differentiate(myfunc,numVars,order,alien_list,verbose);
 
 derivs=splanar.print(derivs,input_list);
 

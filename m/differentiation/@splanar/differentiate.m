@@ -1,4 +1,4 @@
-function derivs=differentiate(eqtns,nwrt,order,verbose)
+function derivs=differentiate(eqtns,nwrt,order,alien_list,verbose)
 % differentiate - differentiates vectors of splanar objects
 %
 % ::
@@ -16,6 +16,10 @@ function derivs=differentiate(eqtns,nwrt,order,verbose)
 %      taken
 %
 %    - **order** [integer|{1}]: order of differentiation
+%
+%    - **alien_list** [empty|cellstr|char]: list of alien functions
+%      (functions that RISE does not recognize and that are to be
+%      differentiated by the user himself).
 %
 %    - **verbose** [true|{false}]: displays information about the process e.g.
 %      the amount of time it takes to differentiate each order
@@ -42,11 +46,27 @@ function derivs=differentiate(eqtns,nwrt,order,verbose)
 %
 %    See also:
 
-if nargin<4
+if nargin<5
 
-    verbose=false;
+    verbose=[];
+    
+    if nargin<4
+        
+        alien_list=[];
+        
+        if nargin<3
+            
+            order=[];
+            
+        end
+        
+    end
 
 end
+
+if isempty(verbose),verbose=false; end
+
+if isempty(order),order=1; end
 
 if iscell(eqtns)
 
@@ -145,7 +165,7 @@ for oo=1:order
                 
                 end
                 
-                d0=diff(obj,wrt);
+                d0=diff(obj,wrt,[],alien_list);
                 
                 d0.lineage=lineage__;
                 

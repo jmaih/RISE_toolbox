@@ -69,6 +69,7 @@ classdef splanar
         lineage={} % will serve to trace back all generations of derivatives
         %         prototype
         location % will hold position (column) where the derivative will be stored
+        is_known=true % flag for known functions
     end
     
     properties(Dependent)
@@ -166,7 +167,13 @@ classdef splanar
             
             function n=sub_number_of_columns(obj)
                 
-                n=obj.number_of_columns;
+                n=0;
+                
+                if isa(obj,'splanar')
+                    
+                    n=obj.number_of_columns;
+                    
+                end
                 
             end
             
@@ -726,12 +733,19 @@ classdef splanar
         
         varargout=get(varargin)
         
-        function d=diff(x,wrt,pointer)
+        function d=diff(x,wrt,pointer,alien_list)
             % diff - overloads diff for splanar
+            
+            if nargin<4
+                
+                alien_list=[];
+                
             if nargin<3
                 
                 pointer=[];
                 
+            end
+            
             end
             
             
@@ -745,7 +759,7 @@ classdef splanar
                     
                     for icol=1:ncols
                         
-                        d{irow,icol}=diff(x(irow,icol),wrt);
+                        d{irow,icol}=diff(x(irow,icol),wrt,pointer,alien_list);
                         
                     end
                     
@@ -754,13 +768,15 @@ classdef splanar
                 return
                 
             end
+                
+                nargs=numel(x.args);
             
             if isempty(x.incidence)
                 % numbers/vectors and variables which are not part of differentiation
                 % automatically receive 0 as derivative
                 d=prototypize(x);d.func=0;
                 
-            elseif isempty(x.args)
+            elseif nargs==0
                 % variables that are part of differentiation
                 d=prototypize(x);
                 
@@ -768,13 +784,43 @@ classdef splanar
                 % why do we need to double it?
                 % we need to carry around vectors in order to be able to do
                 % higher-order derivatives
+                
+            elseif ~isempty(alien_list) && ismember(x.func,alien_list)
+
+                d=x;
+                
+                is_differentiated=false;
+                
+                for ii=1:nargs
+                    
+                    d_arg=d.args{ii};
+                    
+                    is_differentiated=ischar(d_arg) && strcmp(d_arg,'''diff''');
+                        
+                    if is_differentiated
+                        
+                        break
+                        
+                    end
+                    
+                end
+                
+                if is_differentiated
+                    % increase the order of differentiation
+                    d.args{end}=d.args{end}+1;
+                    
+                else
+                    % first-order derivative
+                    d.args=[d.args,{'''diff''',1}];
+                    
+                end
+                
+                
             else
                 % functions of variables
                 if_elseif_flag=strcmp(x.func,'if_elseif');
                 
                 if_then_else_flag=strcmp(x.func,'if_then_else');
-                
-                nargs=numel(x.args);
                 
                 d_args=x.args;
                 
@@ -792,7 +838,7 @@ classdef splanar
                         
                     end
                     
-                    d_args{iarg}=diff(x.args{iarg},wrt,pointer);
+                    d_args{iarg}=diff(x.args{iarg},wrt,pointer,alien_list);
                     
                 end
                 % compose derivatives
@@ -1132,6 +1178,86 @@ classdef splanar
     end
     
     methods(Static)
+        
+        function [eqtns]=alienize(eqtns,alien_list)
+            
+            if isempty(alien_list)
+                
+                return
+                
+            end
+            
+            was_char=ischar(eqtns);
+            
+            if was_char
+                
+                eqtns=cellstr(eqtns);
+                
+            end
+            
+            alien_list=parser.cell2matize(alien_list);
+            
+            engine=@(x)regexprep(x,['\<',alien_list,'\('],'splanar.backdoor(''$1'',');
+            
+            for ii=1:numel(eqtns)
+                
+                eqtn=eqtns{ii};
+                
+                if isa(eqtn,'function_handle')
+                    
+                    eqtn=func2str(eqtn);
+                    
+                    eqtns{ii}=str2func(engine(eqtn));
+                    
+                else
+                    
+                    eqtns{ii}=engine(eqtn);
+                    
+                end
+                
+            end
+            
+            if was_char
+                
+                eqtns=char(eqtns);
+                
+            end
+            
+        end
+        
+        function y=backdoor(f,varargin)
+            
+            y=splanar(f,varargin);
+            
+            incid=[];
+            
+            for ii=1:length(varargin)
+                
+                arg=varargin{ii};
+                
+                if isa(arg,'splanar')
+                    
+                    a_incid=arg.incidence;
+                    
+                    if isempty(incid)
+                    
+                    incid=a_incid;
+                    
+                    elseif ~isempty(a_incid)
+                        
+                        incid=incid|a_incid;
+                        
+                    end
+                    
+                end
+                
+            end
+            
+            y.incidence=incid;
+            
+            y.is_known=false;
+            
+        end
         
         function var_list=initialize(var_list,wrt_list)
             % initialize - initializes splanar objects for differentiation

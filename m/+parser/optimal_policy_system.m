@@ -1,4 +1,5 @@
-function [modelBlock,dic,jac_toc]=optimal_policy_system(Utility,constraints,dic)
+function [modelBlock,dic,jac_toc]=optimal_policy_system(Utility,constraints,...
+    dic)
 
 % H1 line
 %
@@ -15,7 +16,6 @@ function [modelBlock,dic,jac_toc]=optimal_policy_system(Utility,constraints,dic)
 % Example:
 %
 %    See also:
-
 
 [Policy_equations,sstate_Policy_equations,Policy_vars,...
     discount_name,discount]=policy_warmup(Utility,dic.add_welfare);
@@ -78,7 +78,7 @@ order=dic.is_optimal_policy_model+2*dic.is_optimal_simple_rule_model;
 verbose=false;
 tic
 
-[derivs,args]=take_derivatives(eqtns,symb_list,wrt,order,verbose);
+[derivs,args]=take_derivatives(eqtns,symb_list,wrt,order,dic.alien_list,verbose);
 
 dic.planner_system.utils_derivs=[];
 
@@ -177,7 +177,7 @@ if ~dic.is_optimal_simple_rule_model
                 mfx=mfx+1/discount_arg*MULT_LAG(ieqtn)*lag_equation(fx(ieqtn,future));
                 
                 f_bf_1bf_wx{ieqtn,ivar}=f_bf_1bf_wx{ieqtn,ivar}+1/discount_arg*fx(ieqtn,future);
-            
+                
             end
             
             % current
@@ -185,7 +185,7 @@ if ~dic.is_optimal_simple_rule_model
             if ~occur(2,ivar)
                 
                 error(['variable ',endo_names{ivar},' does not appear as current']);
-           
+                
             end
             
             mfx=mfx+MULT(ieqtn)*fx(ieqtn,current);
@@ -197,11 +197,11 @@ if ~dic.is_optimal_simple_rule_model
                 mfx=mfx+discount_arg*MULT_LEAD(ieqtn)*lead_equation(fx(ieqtn,past));
                 
                 f_bf_1bf_wx{ieqtn,ivar}=f_bf_1bf_wx{ieqtn,ivar}+discount_arg*fx(ieqtn,past);
-            
+                
             end
             
             f_bf_1bf_wx{ieqtn,ivar}=char(f_bf_1bf_wx{ieqtn,ivar});
-        
+            
         end
         
         wxfx(ivar)=wxfx(ivar)-mfx;
@@ -213,7 +213,7 @@ if ~dic.is_optimal_simple_rule_model
         % rebuild steady-state equations
         %--------------------------------
         f_bf_1bf_wx{ieqtn+1,ivar}=char(f_bf_1bf_wx{ieqtn+1,ivar});
-    
+        
     end
     
     old_size=size(f_bf_1bf_wx);
@@ -235,7 +235,7 @@ if ~dic.is_optimal_simple_rule_model
     dic.planner_system.static_mult_equations={f_bf_1bf_wx,old_size,good_fx};
     
     dic.planner_system.wrt=wrt(nleads+(1:nvars));
-
+    
 end
 
 % remove the discount parameter created above
@@ -261,7 +261,7 @@ for iv=1:numberOfAdditionalEquations
     
     dic.auxiliary_equations=[dic.auxiliary_equations
         tmp];
-
+    
 end
 
 jac_toc=toc;
@@ -283,12 +283,13 @@ jac_toc=toc;
             % contemporaneous endogenous variables only
             wrt_new=dic.endogenous_list;
             
-            [utils_derivs]=take_derivatives(eqtns(end),symb_list,wrt_new,2,verbose);
+            [utils_derivs]=take_derivatives(eqtns(end),symb_list,wrt_new,2,...
+                dic.alien_list,verbose);
             
         end
         
         utils_derivs=splanar.print(utils_derivs);
-            
+        
         utils_derivs=utils_derivs(2);
         
         [utils_derivs.derivatives]=cleanup(utils_derivs.derivatives,true);
@@ -322,11 +323,11 @@ jac_toc=toc;
             if ieq<=n_inner_eqtns
                 
                 eqtn=constraints{ieq,1};
-            
+                
             else
                 
                 eqtn=Utility{1,1};
-            
+                
             end
             
             for icol_=1:size(eqtn,2)
@@ -344,7 +345,7 @@ jac_toc=toc;
                     if ~is_endo
                         
                         error('leads and lags in parameters not yet accommodated')
-                    
+                        
                     end
                     
                     if thyme<0
@@ -352,35 +353,35 @@ jac_toc=toc;
                         type='XLAG';
                         
                         occur(3,vpos)=true;
-                    
+                        
                     else
                         
                         type='XLEAD';
                         
                         occur(1,vpos)=true;
-                    
+                        
                     end
                     
                     new_var=[vname,sprintf('_%s_%0.0f',type,abs(thyme))];
                     
                     if ~any(strcmp(new_var,symb_list))
                         
-                        symb_list=[symb_list,new_var];
-                    
+                        symb_list=[symb_list,new_var]; %#ok<AGROW>
+                        
                     end
                     
                     if thyme<0
                         
                         wrt_lags{vpos}=new_var;
-                    
+                        
                     else
                         
                         wrt_leads{vpos}=new_var;
-                    
+                        
                     end
                     
                     eqtn{1,icol_}=new_var;
-                
+                    
                 end
                 
             end
@@ -390,7 +391,7 @@ jac_toc=toc;
             if strcmp(eqtns{ieq}(end),';')
                 
                 eqtns{ieq}(end)=[];
-            
+                
             end
             
         end
@@ -442,7 +443,7 @@ jac_toc=toc;
             this_digit=sprintf('%s%0.0f',ooo,ieqtn_);
             
             mult_name=sprintf('%s%s',mult,this_digit(end-ndigits+1:end));
-
+            
             mult_names{ieqtn_}=mult_name;
             
             % add to the list of endogenous
@@ -458,13 +459,13 @@ jac_toc=toc;
             MULT_LEAD(ieqtn_).func=sprintf('%s_XLEAD_1',mult_name);
             
             MULT_LAG(ieqtn_).func=sprintf('%s_XLAG_1',mult_name);
-        
+            
         end
         
         dic.endogenous=[dic.endogenous,xxxxx_];
         
         dic.auxiliary_variables.model=[dic.auxiliary_variables.model,mult_names];
-    
+        
     end
 
     function [x,old_size]=cleanup(x,remove_time)
@@ -556,7 +557,7 @@ Policy_equations={
 sstate_Policy_equations={
     nan,sprintf('UTIL=%s',cell2mat(Utility{1,1}(1,:))),'Utility'
     nan,'WELF=UTIL;','Welfare'
-%     nan,sprintf('WELF=1/(1-(%s))*UTIL;',discount),'Welfare'
+    %     nan,sprintf('WELF=1/(1-(%s))*UTIL;',discount),'Welfare'
     };
 
 Policy_vars={'UTIL','WELF'};
@@ -569,19 +570,8 @@ Policy_vars=Policy_vars(1:numberOfAdditionalEquations);
 
 end
 
-function [derivs,args,total_time]=take_derivatives(eqtns,symb_list,wrt,order,verbose)
-
-if nargin<5
-    
-    verbose=false;
-    
-    if nargin<4
-        
-        order=1;
-    
-    end
-    
-end
+function [derivs,args,total_time]=take_derivatives(eqtns,symb_list,wrt,...
+    order,alien_list,verbose)
 
 args=splanar.initialize(symb_list,wrt);
 
@@ -608,7 +598,7 @@ end
 
 tic
 
-derivs=splanar.differentiate(eqtns,numel(wrt),order,verbose);
+derivs=splanar.differentiate(eqtns,numel(wrt),order,alien_list,verbose);
 
 total_time=toc;
 
@@ -649,7 +639,7 @@ elseif ischar(xfunc)
         
         redo_it=@do_it; %#ok<NASGU>
         
-        if isempty(strfind(xfunc,'_XLEAD_')) && isempty(strfind(xfunc,'_XLAG_'))
+        if isempty(strfind(xfunc,'_XLEAD_')) && isempty(strfind(xfunc,'_XLAG_')) %#ok<STREMP>
             
             if add<0
                 

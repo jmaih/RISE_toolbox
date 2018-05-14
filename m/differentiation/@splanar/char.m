@@ -65,12 +65,11 @@ if isnumeric(x)
     
     n=numel(x.func);
     
-    % c=num2str(x.func);
-    c=sprintf('%0.15g',full(x.func(1)));
+    c=sprintf('%0.20g',full(x.func(1)));
     
     for ii=2:n
         
-        c=[c,',',sprintf('%0.15g',full(x.func(ii)))]; %#ok<AGROW>
+        c=[c,',',sprintf('%0.20g',full(x.func(ii)))]; %#ok<AGROW>
     
     end
     
@@ -90,7 +89,29 @@ else
    
     for iarg=1:numel(args)
         
-        args{iarg}=char(args{iarg},long);
+        argi=args{iarg};
+        
+        if isa(argi,'splanar')
+        
+        argi=char(argi,long);
+        
+        elseif ischar(argi)
+            
+            % do nothing
+            
+        elseif isnumeric(argi)
+            
+            argi=sprintf('%0.20g',argi);
+            
+        else
+            
+            disp(argi)
+            
+            error('unable to char element above')
+            
+        end
+        
+        args{iarg}=argi;
     
     end
     
@@ -111,12 +132,12 @@ else
             'cosh','cot','erf','exp','log','log10','sign','sin','sinh',...
             'tan','if_elseif','if_then_else','normcdf','normpdf','norminv',...
             'max','min','sqrt','steady_state','betapdf','betacdf',...
-            'betainv'}))
+            'betainv'}))||~x.is_known
         
         c=cell2mat(strcat(args,','));
         
         c=[the_func,'(',c(1:end-1),')'];
-    
+        
     else
         
         switch the_func

@@ -1403,7 +1403,7 @@ obj.routines.shadow_steady_state_auxiliary_growth_rate_eqtns=...
         
         wrt=[ywrt(:).',gwrt(:).'];
         
-        [derivs]=parser.differentiate_system(myfunc,list,wrt,order);
+        [derivs]=parser.differentiate_system(myfunc,list,wrt,order,obj.alien_list);
         
         %         if iblk==1
         %

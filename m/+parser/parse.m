@@ -37,6 +37,8 @@ function dictionary=parse(FileName,varargin)
 %      the rise file. In case of a cell, the cell should be a k x 2 cell,
 %      where the first column collects the conditional parsing names and the
 %      second column the values.
+%      - **alien_list** [empty|char|cellstr]: List of functions unknown to
+%      RISE and that the user is to differentiate himself.
 %
 % Returns:
 %    :
@@ -61,68 +63,125 @@ DefaultOptions=...
     'max_deriv_order',1,'definitions_inserted',false,...
     'parse_debug',false,...
     'add_welfare',false,...
-    'parameter_differentiation',false);
+    'parameter_differentiation',false,...
+    'alien_list',{cell(1,0)});
+
 DefaultOptions=utils.miscellaneous.mergestructures(DefaultOptions,...
     parser.preparse());
+
 if nargin<1
+    
     dictionary=DefaultOptions;
+    
     return
+
 end
 
 %%
 lv=length(varargin);
+
 if rem(lv,2)~=0
+    
     error('arguments must come in pairs')
+
 end
+
 if lv
+    
     ccc=reshape(varargin(:),2,[]); clear varargin
+    
     for ii=1:0.5*lv
+        
         str=ccc{1,ii};
+        
         if ~isfield(DefaultOptions,str)
+            
             error([str,' Not an option for ',mfilename])
+        
         end
+        
         DefaultOptions.(str)=ccc{2,ii};
+    
     end
+    
 end
 %% general initializations
 
 dictionary = parser.initialize_dictionary();
+
 dictionary.definitions_inserted=DefaultOptions.definitions_inserted;
+
 dictionary.parse_debug=DefaultOptions.parse_debug;
+
 dictionary.add_welfare=DefaultOptions.add_welfare;
+
+dictionary.alien_list=DefaultOptions.alien_list;
+
+if ischar(dictionary.alien_list) && ~isempty(dictionary.alien_list)
+    
+    dictionary.alien_list=cellstr(dictionary.alien_list);
+    
+end
+
 parameter_differentiation=DefaultOptions.parameter_differentiation;
 
 %% set various blocks
 
 % first output: the dictionary.filename
 valid_extensions={'.rs','.rz','.dsge'};
+
 VE=parser.cell2matize(valid_extensions);
+
 FileName=regexprep(FileName,'\s*','');
+
 FileName=regexp(FileName,['(?<fname>\w+[^\.]*)(?<ext>',VE,'?)'],'names');
+
 if iscell(FileName)
+    
     FileName=[FileName{:}];
-end
-for id=1:numel(FileName)
-    if isempty(FileName(id).ext)
-        iext=0; found=false;
-        while ~found && iext<numel(valid_extensions)
-            iext=iext+1;
-            found=exist([FileName(id).fname,valid_extensions{iext}],'file');
-        end
-        if ~found
-            error([mfilename,':: ',FileName(id).fname,'.rs or ',...
-                FileName(id).fname,'.rz  or ',FileName(id).fname,'.dsge not found'])
-        end
-        FileName(id).ext=valid_extensions{iext};
-    else
-        if ~exist([FileName(id).fname,FileName(id).ext],'file')
-            error([mfilename,':: ',[FileName(id).fname,FileName(id).ext],' not found'])
-        end
-    end
+
 end
 
+for id=1:numel(FileName)
+    
+    if isempty(FileName(id).ext)
+        
+        iext=0; found=false;
+        
+        while ~found && iext<numel(valid_extensions)
+            
+            iext=iext+1;
+            
+            found=exist([FileName(id).fname,valid_extensions{iext}],'file');
+        
+        end
+        
+        if ~found
+            
+            error([mfilename,':: ',FileName(id).fname,'.rs or ',...
+                FileName(id).fname,'.rz  or ',FileName(id).fname,'.dsge not found'])
+        
+        end
+        
+        FileName(id).ext=valid_extensions{iext};
+   
+    else
+        
+        if ~exist([FileName(id).fname,FileName(id).ext],'file')
+            
+            error([mfilename,':: ',[FileName(id).fname,FileName(id).ext],' not found'])
+        
+        end
+        
+    end
+    
+end
+
+
 filename_=strrep(parser.cell2matize({FileName.fname}),'|','+');
+
 filename_=strrep(filename_,'(','');
+
 filename_=strrep(filename_,')','');
 
 dictionary.filename=filename_;
@@ -137,33 +196,56 @@ logic=islogical(DefaultOptions.saveas) && DefaultOptions.saveas;
 hasname= ~isempty(DefaultOptions.saveas) && ischar(DefaultOptions.saveas);
 
 newname='';
+
 if logic
+    
     newname=[strrep(filename_,'+','_'),'_expanded.dsge'];
+
 elseif hasname
+    
     newname=DefaultOptions.saveas;
+    
     thedot=strfind(newname,'.');
+    
     if isempty(thedot) %#ok<STREMP>
+        
         newname=[newname,'.dsge'];
+    
     end
+    
 end
+
 % write the expanded version
 if ~isempty(newname)
+    
     newfile='';
+    
     fid=fopen(newname,'w');
+    
     for irow=1:size(RawFile,1)
+        
         write_newfilename=isempty(newfile)||~strcmp(newfile,RawFile{irow,2});
+        
         if write_newfilename
+            
             newfile=RawFile{irow,2};
+            
             fprintf(fid,'%s\n',['// ',newfile,' line ',sprintf('%0.0f',RawFile{irow,3})]);
+        
         end
+        
         fprintf(fid,'%s\n',RawFile{irow,1});
+    
     end
+    
     fclose(fid);
+
 end
 
 [blocks,dictionary.markov_chains]=parser.file2blocks(RawFile);
 
 dictionary.raw_file=cell2struct(RawFile,{'code','filename','line_numbers'},2);
+
 dictionary.rawfile_triggers={blocks.trigger};
 
 clear RawFile
@@ -180,10 +262,15 @@ dictionary.chain_names={dictionary.markov_chains.name};
 % and update the names of the variables in the process
 
 old_endo_names={dictionary.endogenous.name};
+
 logvarnames={dictionary.log_vars.name};
+
 for ivar=1:numel(logvarnames)
+    
     loc=strcmp(logvarnames{ivar},{dictionary.endogenous.name});
+    
     dictionary.endogenous(loc).is_log_var=true;
+
 end
 %% Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
@@ -238,7 +325,9 @@ do_parameter_restrictions();
 
 %% Lump together the model and steady-state model
 static_mult_equations=[];
+
 utils_derivatives=[];
+
 if dictionary.is_optimal_policy_model
     
     static_mult_equations=dictionary.planner_system.static_mult_equations{1};
@@ -257,14 +346,20 @@ AllModels=[Model_block
     PlannerObjective_block
     utils_derivatives
     static_mult_equations];
+
 % steady state equations (including auxiliary) are identified by number 5
 aux_ss_eq_nbr=size(auxiliary_steady_state_equations,1);
+
 ss_eq_nbr=size(SteadyStateModel_block,1);
+
 % dictionary.planner_system objective equations are identified by number 6
 planobj_eq_nbr=size(PlannerObjective_block,1);
+
 osr_derivs_eqn_nbr=size(utils_derivatives,1);
+
 % mult steady state identified by number 7
 stat_mult_eq_nbr=size(static_mult_equations,1);
+
 equation_type=[equation_type
     5*ones(ss_eq_nbr+aux_ss_eq_nbr,1)
     6*ones(planobj_eq_nbr+osr_derivs_eqn_nbr,1)
@@ -295,6 +390,7 @@ fast_sstate_occurrence_params=parser.occurrence_map(stat.shadow_fast_ssmodel,...
 %---------------------------------------------------
 
 orig_definitions=defs.original;
+
 shadow_definitions=defs.shadow;
 
 %% steady state and static models
@@ -316,35 +412,61 @@ static.shadow_steady_state_model(ss_eq_nbr+1:end)=[];
 dictionary.is_param_changed_in_ssmodel=parser.parameters_changed_in_ssmodel(...
     static.shadow_steady_state_model,'param',numel(dictionary.parameters));
 
+
 static.shadow_steady_state_model=strrep(static.shadow_steady_state_model,...
     'x1_=','[x1_,fval,exitflag]=');
+
 static.shadow_steady_state_model=strrep(static.shadow_steady_state_model,...
     ',x0_,',',x0_,options,');
+
 old_shadow_steady_state_model=static.shadow_steady_state_model;
+
 static.shadow_steady_state_model=cell(0,1);
+
 fsolve_nbr=0;
+
 for ii=1:numel(old_shadow_steady_state_model)
+    
     eq_i=old_shadow_steady_state_model{ii};
+    
     if ~isempty(strfind(eq_i,'argzero')) %#ok<STREMP>
+        
         eq_i=strrep(eq_i,'argzero','fsolve');
+        
         static.shadow_steady_state_model=[static.shadow_steady_state_model;{eq_i}];
+        
         eq_i={'retcode=1-(exitflag==1);'};
+        
         if ii<numel(old_shadow_steady_state_model)
+            
             eq_i=[eq_i;{'if ~retcode,'}]; %#ok<*AGROW>
+            
             fsolve_nbr=fsolve_nbr+1;
+        
         end
+        
         static.shadow_steady_state_model=[static.shadow_steady_state_model;eq_i];
+    
     else
+        
         static.shadow_steady_state_model=[static.shadow_steady_state_model;{eq_i}];
+    
     end
+    
 end
+
 for ii=1:fsolve_nbr
+    
     static.shadow_steady_state_model=[static.shadow_steady_state_model;{'end;'}];
+
 end
+
 clear old_shadow_steady_state_model
 % now add the prelude
 if ~isempty(static.shadow_steady_state_model)
+    
     static.shadow_steady_state_model=[{['if ~exist(''y'',''var''),y=zeros(',sprintf('%0.0f',orig_endo_nbr),',1); end;']};static.shadow_steady_state_model];
+
 end
 %% replace the list of definition names with definition equations
 dictionary.definitions=struct('name',dictionary.definitions(:),...
@@ -366,6 +488,7 @@ routines.definitions=utils.code.code2func(...
 %--------------------------------------------------------------
 routines.steady_state_model=parser.substitute_definitions(...
     static.shadow_steady_state_model,shadow_definitions);
+
 routines.steady_state_model=struct('code',cell2mat(routines.steady_state_model(:)'),...
     'argins',{parser.input_list},...
     'argouts',{{'y','param'}});
@@ -412,7 +535,9 @@ dictionary.is_endogenous_switching_model=any(dictionary.markov_chains.chain_is_e
 disp(' ')
 disp('Now computing symbolic derivatives...')
 disp(' ')
+
 max_deriv_order=max(1,DefaultOptions.max_deriv_order);
+
 exo_nbr=numel(dictionary.exogenous);
 % switching_ones=find([dictionary.parameters.is_switching]);
 
@@ -447,7 +572,7 @@ routines.probs_times_dynamic=parser.burry_probabilities(dynamic.shadow_model,myi
     routines.probs_times_dynamic,...
     dictionary.input_list,...
     wrt,...
-    max_deriv_order);
+    max_deriv_order,dictionary.alien_list);
 
 routines.probs_times_dynamic=utils.code.code2func(routines.probs_times_dynamic);
 
@@ -509,7 +634,7 @@ if parameter_differentiation
     [routines.parameter_derivatives,numEqtns,numVars,jac_toc,original_funcs]=...
         parser.differentiate_system(...
         ppdd(dynamic.shadow_model),...
-        dictionary.input_list,wrt,1);
+        dictionary.input_list,wrt,1,alien_list);
     
     routines.symbolic.parameters={original_funcs,wrt};
     
@@ -520,22 +645,32 @@ end
 %% optimal policy and optimal simple rules routines
 %-----------------------------------------
 if dictionary.is_model_with_planner_objective
+    
     planner_shadow_model=strrep(strrep(dictionary.planner_system.shadow_model,'discount-',''),'commitment-','');
     
     if dictionary.is_optimal_policy_model
+        
         tmp=parser.replace_steady_state_call(dictionary.planner_system.static_mult_equations{1});
+        
         tmp=utils.code.code2func(tmp,parser.input_list);
         
         routines.planner_static_mult=tmp;
+        
         routines.planner_static_mult_support=...
             dictionary.planner_system.static_mult_equations(2:end);
         dictionary.planner_system=rmfield(dictionary.planner_system,...
             'static_mult_equations');
+    
     end
+    
     osr_=dictionary.planner_system.utils_derivs;
+    
     endo_names={dictionary.endogenous.name};
+    
     ordered_endo_names=endo_names(dictionary.order_var);
+    
     der_reo=locate_variables(osr_.wrt,ordered_endo_names);
+    
     routines.planner_osr_support=struct('derivatives_re_order',der_reo,...
         'partitions',osr_.partitions,'nwrt',osr_.nwrt,...
         'map',vec(cell2mat(osr_.map(:,2).')),'size',osr_.size);
@@ -555,19 +690,23 @@ end
 % the unsorted variables are variables sorted according to their order in
 % during the solving of the model.
 unsorted_endogenous=dictionary.endogenous(dictionary.order_var);
+
 logical_incidence=dictionary.lead_lag_incidence.before_solve(dictionary.order_var,:);
 
 dictionary.NumberOfEquations=sum(equation_type==1);
 
 % now we can resort the final variables
 [~,tags]=sort({unsorted_endogenous.name});
+
 logical_incidence=logical_incidence(tags,:);
+
 dictionary.endogenous=unsorted_endogenous(tags);
 
 % update the lead-lag incidence and the order of the variables: with the
 % new settings, this is not expected to ever change
 %--------------------------------------------------------------------------
 dictionary.lead_lag_incidence.after_solve=logical_incidence;
+
 dictionary.lead_lag_incidence.after_solve(dictionary.lead_lag_incidence.after_solve~=0)=1:nnz(dictionary.lead_lag_incidence.after_solve);
 
 % update the topology of the solution: with the new settings, this is not
@@ -596,87 +735,156 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
     function do_incidence_matrix()
         
         before_solve=zeros(3,orig_endo_nbr);
+        
         for iii=1:3
+            
             for jj=1:orig_endo_nbr
+                
                 if any(occurrence(:,jj,iii))
+                    
                     before_solve(iii,jj)=1;
+                
                 end
+                
             end
+            
         end
+        
         before_solve=transpose(flipud(before_solve));
+        
         before_solve(before_solve>0)=1:nnz(before_solve);
         
         appear_as_current=before_solve(:,2)>0;
+        
         if any(~appear_as_current)
+            
             disp('The following variables::')
+            
             allendo={dictionary.endogenous.name};
+            
             disp(allendo(~appear_as_current))
+            
             error('do not appear as current')
+        
         end
+        
         dictionary.lead_lag_incidence.before_solve=before_solve;
+    
     end
 
     function [equation_type,occurrence,fast_sstate_occurrence]=equation_types_and_variables_occurrences()
+        
         number_of_equations=size(Model_block,1);
+        
         occurrence=false(number_of_equations,orig_endo_nbr,3);
+        
         fast_sstate_occurrence=occurrence;
+        
         has_fast_sstate=cellfun(@(x)~isempty(x),Model_block(:,end));
+        
         equation_type=ones(number_of_equations,1);
+        
         for iii=1:number_of_equations
+            
             % main equation
             eq_i_= Model_block{iii,1};
+            
             run_occurrence(eq_i_);
+            
             % bgp/sstate equation if not empty
             eq_i_= Model_block{iii,end};
+            
             run_occurrence(eq_i_,false);
+        
         end
+        
         % replace the locations without steady state equations with the
         % normal equations
         %---------------------------------------------------------------
         fast_sstate_occurrence(~has_fast_sstate,:,:)=occurrence(~has_fast_sstate,:,:);
+        
         % keep only the structural equations
         %------------------------------------
         occurrence=occurrence(equation_type==1,:,:);
+        
         fast_sstate_occurrence=fast_sstate_occurrence(equation_type==1,:,:);
+        
         neqtns=size(occurrence,1);
+        
         nvars=size(occurrence,2);
+        
         if neqtns>nvars
+           
             error(['more equations (',int2str(neqtns),') than variables(',int2str(nvars),')'])
+        
         elseif neqtns<nvars
+            
             error(['more variables (',int2str(nvars),') than equations(',int2str(neqtns),')'])
+        
         end
         
         function run_occurrence(eq_i_,is_dynamic)
+            
             if nargin<2
+                
                 is_dynamic=true;
+            
             end
+            
             if isempty(eq_i_)
+                
                 return
+            
             end
+            
             if strcmp(Model_block{iii,4},'def') % <---ismember(eq_i_{1,1},dictionary.definitions) && strcmp(eq_i_{1,2}(1),'=')
+                
                 equation_type(iii)=2;
+            
             elseif strcmp(Model_block{iii,4},'tvp') % <---ismember(eq_i_{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i_{1,2}(1),'=')
+                
                 equation_type(iii)=3;
+            
             elseif strcmp(Model_block{iii,4},'mcp') % <---ismember(eq_i_{1,1},dictionary.time_varying_probabilities) && strcmp(eq_i_{1,2}(1),'=')
+                
                 equation_type(iii)=4;
+            
             end
+            
             for ii2=1:size(eq_i_,2)
+                
                 if ~isempty(eq_i_{2,ii2})
+                    
                     var_loc=strcmp(eq_i_{1,ii2},{dictionary.endogenous.name});
+                    
                     lag_or_lead=eq_i_{2,ii2}+2;
+                    
                     if any(var_loc) && equation_type(iii)==2
+                        
                         error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to be a definition cannot contain variables'])
+                    
                     elseif equation_type(iii)==3 && ismember(lag_or_lead,[3,1])
+                        
                         error([mfilename,':: equation (',sprintf('%0.0f',iii),') detected to describe endogenous switching cannot contain leads or lags'])
+                    
                     end
+                    
                     if is_dynamic
+                        
                         occurrence(iii,var_loc,lag_or_lead)=true;
+                    
                     else
+                        
                         fast_sstate_occurrence(iii,var_loc,lag_or_lead)=true;
+                    
                     end
+                    
                 end
+                
             end
+            
         end
+        
     end
 
     function do_parameter_restrictions()
@@ -690,6 +898,7 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
             'parsed',{Param_rest_block(:,1)});
         % remove item from block
         blocks(current_block_id)=[];
+    
     end
 
     function do_parameterization()
@@ -700,14 +909,19 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         
         % remove item from block
         blocks(current_block_id)=[];
+
     end
+
 end
 
 
 function [wrt,v,locations,siz,order_var,inv_order_var,steady_state_index]=...
     dynamic_differentiation_list(LLI,exo_nbr,pindex)%% partition the endogenous
+
 if nargin<3
+    
     pindex=[];
+
 end
 
 % order the list of the variables to differentiate according to
@@ -732,6 +946,7 @@ locations=struct();
     LLI,...
     exo_nbr,... number of shocks
     0);% number of shocks periods beyond the current
+
 v{strcmp(v(:,1),'s_0'),2}=siz.ns;
 
 v(strncmp(v(:,1),'p',1),2)={siz.np};
@@ -741,27 +956,43 @@ v(strncmp(v(:,1),'b',1),2)={siz.nb};
 v(strncmp(v(:,1),'f',1),2)={siz.nf};
 
 steady_state_index=struct();
+
 if isempty(LLI)
+    
     ywrt={};
+
 else
     % endogenous
     %-----------
     llio=LLI(order_var,:);
+    
     yindex=nonzeros(llio(:))';
+    
     ywrt=cellstr(strcat('y_',num2str(yindex(:))));
+    
     steady_state_index.y=order_var([find(llio(:,1))',find(llio(:,2))',find(llio(:,3))']); %<-- yindex=[LLI([both,frwrd],1)',LLI(order_var,2)',LLI([pred,both],3)];
+
     ywrt=cellfun(@(x)x(~isspace(x)),ywrt,'uniformOutput',false);
+
 end
 % exogenous
 %----------
 if exo_nbr
+    
     xindex=1:exo_nbr;
+    
     xwrt=cellstr(strcat('x_',num2str(xindex(:))));
+    
     xwrt=cellfun(@(x)x(~isspace(x)),xwrt,'uniformOutput',false);
+
     steady_state_index.x=xindex(:)';
+
 else
+    
     xwrt={};
+
 end
+
 v{strcmp(v(:,1),'e_0'),2}=siz.ne;
 
 % constant parameters
@@ -771,31 +1002,53 @@ pwrt=process_parameters(pindex,'');
 % differentiation list
 %---------------------
 wrt=[ywrt(:)',xwrt(:)',pwrt(:)'];
+
 steady_state_index.wrt=wrt;
 
 % v-locations
 %------------
 numbers=cell2mat(v(:,2));
+
 for ifield=1:numel(fields)
+    
     ff=fields{ifield};
+    
     underscore=strfind(ff,'_');
+    
     ff2=ff(1:underscore(1)-1);
+    
     locations.v.(ff)=sum(numbers(1:ifield-1))+(1:siz.(['n',ff2]));
+
 end
+
 siz.nv=sum(numbers);
+
 locations.v.bf_plus=[locations.v.b_plus,locations.v.f_plus];
+
 locations.v.pb_minus=[locations.v.p_minus,locations.v.b_minus];
+
 locations.v.t_0=siz.nb+siz.nf+(1:siz.ns+siz.np+siz.nb+siz.nf); % =[locations.v.s_0,locations.v.p_0,locations.v.b_0,locations.v.f_0];
 
     function pwrt=process_parameters(index,prefix)
+        
         if isempty(index)
+            
             pwrt={};
+        
         else
+            
             if ischar(index)
+                
                 index=cellstr(index);
+            
             end
+            
             pwrt=cellstr(strcat(prefix,'param_',num2str(index(:))));
+            
             pwrt=cellfun(@(x)x(~isspace(x)),pwrt,'uniformOutput',false);
+        
         end
+        
     end
+
 end
