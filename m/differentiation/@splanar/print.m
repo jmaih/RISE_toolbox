@@ -140,37 +140,63 @@ c.map=cmap;
 c=update_fieldnames(c,args);
 
     function do_expansion()
+        
         nd=numel(deriv.derivatives);
+        
         expansions=cell(nd,2); % row, expansion
+        
         offset=0;
+        
         for ider=1:nd
+            
             d=deriv.derivatives(ider);
+            
             row=d.location{1};
+            
             nlocs=numel(d.location{end});
+            
             if d.number_of_columns==1 && nlocs>1
+                
                 newguys=offset+ones(nlocs,1);
+                
             else
+                
                 newguys=offset+(1:nlocs).';
+                
             end
+            
             expansions(ider,:)={row*ones(nlocs,1),newguys};
+            
             offset=newguys(end);
+            
         end
+        
         expansions=cell2mat(expansions);
+        
         cmapr=cell2mat(cmapr);
+        
         deriv.vectorizer=struct('rows',expansions(:,1),'cols',cmapr(:),'inflator',expansions(:,2));
+    
     end
 
     function do_analytic()
+        
         if ~isempty(args) && ~isempty(c)
+            
             if ischar(args)
+                
                 args=cellstr(args);
+                
             end
+            
             args=args(:)';
             
             % put into analytical form
             %--------------------------
             c=parser.analytical_symbolic_form(c,args,'analytic');
+            
         end
+        
     end
 
     function do_optimize()
