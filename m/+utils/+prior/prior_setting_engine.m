@@ -4,17 +4,9 @@ if nargin<5
     
     chkBounds=[];
     
-    if nargin < 4
-        
-        prior_trunc=[];
-        
-    end
-    
 end
 
 if isempty(chkBounds),chkBounds=true; end
-
-if isempty(prior_trunc),prior_trunc=1e-10; end
 
 % for truncation
 invgamma_upper_bound_truncation=10;
@@ -61,7 +53,8 @@ disp([' parameter: ',upper(parray.name),', density:',upper(parray.prior_distrib)
 % get the functions of the distribution
 [~,~,icdfn]=distributions.(parray.prior_distrib)();
 
-bounds=[icdfn(prior_trunc,parray.a,parray.b),icdfn(1-prior_trunc,parray.a,parray.b)];
+bounds=[icdfn(prior_trunc,parray.a,parray.b),...
+    icdfn(1-prior_trunc,parray.a,parray.b)];
 
 if isempty(parray.prior_mean)||isempty(parray.prior_stdev)
     

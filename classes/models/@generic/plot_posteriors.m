@@ -1,4 +1,5 @@
-function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,varargin)
+function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,...
+    npoints,varargin)
 % plot_posteriors -- computes posterior densities for estimated parameters
 %
 % ::
@@ -7,6 +8,12 @@ function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,varargin)
 %   pdata=plot_posteriors(obj)
 %
 %   pdata=plot_posteriors(obj,simulation_folder)
+%
+%   pdata=plot_posteriors(obj,simulation_folder,parlist)
+%
+%   pdata=plot_posteriors(obj,simulation_folder,parlist,npoints)
+%
+%   pdata=plot_posteriors(obj,simulation_folder,parlist,npoints,varargin)
 %
 % Args:
 %
@@ -17,6 +24,9 @@ function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,varargin)
 %    located in the address found in obj.folders_paths.simulations. If it is a
 %    "char", this corresponds to the location of the simulation. Otherwise, if
 %    it is a struct, then it has to be the output of posterior_simulator.m
+%
+%    - **npoints** [numeric|{20^2}]: the number of points in the
+%    discretization of the prior support
 %
 %    - **parlist** [empty|char|cellstr]: list of the parameters for which one
 %    wants to plot the posteriors
@@ -51,13 +61,19 @@ if isempty(obj)
     
 end
 
-if nargin<3
+if nargin<4
     
-    parlist=[];
+    npoints=[];
     
-    if nargin<2
+    if nargin<3
         
-        simulation_folder=[];
+        parlist=[];
+        
+        if nargin<2
+            
+            simulation_folder=[];
+            
+        end
         
     end
     
@@ -85,7 +101,8 @@ if nobj>1
         
         if nout
             
-            [argouts{1:nout}]=plot_posteriors(obj(iobj),simulation_folder,parlist,varargin{:});
+            [argouts{1:nout}]=plot_posteriors(obj(iobj),simulation_folder,...
+                parlist,npoints,varargin{:});
             
             tmpdata{iobj}=argouts{1};
             
@@ -97,7 +114,8 @@ if nobj>1
             
         else
             
-            plot_posteriors(obj(iobj),simulation_folder,parlist,varargin{:});
+            plot_posteriors(obj(iobj),simulation_folder,parlist,npoints,...
+                varargin{:});
             
         end
         
@@ -146,6 +164,20 @@ elseif ~isstruct(simulation_folder)
     
 end
 
+if isempty(npoints),npoints=20^2; end
+
+numscal=@(x)isnumeric(x) && isscalar(x);
+
+num_fin=@(x)numscal(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+if ~num_fin_int(npoints)
+    
+    error('npoints must be a finite and positive integer')
+    
+end
+
 % do prior densities for all parameters
 %----------------------------------------
 prior_dens=plot_priors(obj,parlist);
@@ -169,7 +201,7 @@ f_post_mode_sim=-inf;
 
 if is_posterior_max
     
-    post_mode=obj.estimation.posterior_maximization.mode(vlocs); 
+    post_mode=obj.estimation.posterior_maximization.mode(vlocs);
     
 end
 
@@ -212,7 +244,7 @@ for ipar=1:npar
             
         end
         
-		Params=[tmp.x];
+        Params=[tmp.x];
         
         all_vals=[all_vals;Params(vlocs(ipar),:).']; %#ok<AGROW>
         

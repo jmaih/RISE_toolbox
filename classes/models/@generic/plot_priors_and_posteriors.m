@@ -1,4 +1,5 @@
-function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,parlist,normalize2prior,varargin)
+function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,...
+    parlist,trunc,npoints,varargin)
 % plot_priors_and_posteriors -- computes posterior and prior densities for
 % estimated parameters
 %
@@ -22,8 +23,10 @@ function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,parlist,n
 %    - **parlist** [empty|char|cellstr]: list of the parameters for which one
 %    wants to plot the priors and the posteriors
 %
-%    - **normalize2prior** [true|{false}]: if true, the range of the densities
-%    is the same as that of the prior, else is the range of the posterior
+%    - **trunc** [numeric|{1e-3}]: serves to truncate the support
+%
+%    - **npoints** [numeric|{20^2}]: the number of points in the
+%    discretization of the prior support 
 %
 % Returns:
 %    :
@@ -55,30 +58,29 @@ if isempty(obj)
     
 end
 
-if nargin<4
-    
-    normalize2prior=[];
-    
-    if nargin<3
+    if nargin<5
         
-        parlist=[];
+        npoints=[];
         
-        if nargin<2
+        if nargin<4
             
-            simulation_folder=[];
+            trunc=[];
+            
+            if nargin<3
+                
+                parlist=[];
+                
+                if nargin<2
+                    
+                    simulation_folder=[];
+                    
+                end
+                
+            end
             
         end
         
     end
-    
-end
-
-
-if isempty(normalize2prior)
-    
-    normalize2prior=false;
-    
-end
 
 nout=nargout;
 
@@ -102,7 +104,8 @@ if nobj>1
         
         if nout
             
-            [argouts{1:nout}]=plot_priors_and_posteriors(obj(iobj),simulation_folder,parlist,normalize2prior,varargin{:});
+            [argouts{1:nout}]=plot_priors_and_posteriors(obj(iobj),...
+                simulation_folder,parlist,trunc,npoints,varargin{:});
             
             tmpdata{iobj}=argouts{1};
             
@@ -114,7 +117,8 @@ if nobj>1
             
         else
             
-            plot_priors_and_posteriors(obj(iobj),simulation_folder,parlist,normalize2prior,varargin{:});
+            plot_priors_and_posteriors(obj(iobj),simulation_folder,...
+                parlist,trunc,npoints,varargin{:});
             
         end
         
@@ -144,13 +148,13 @@ end
 
 % do posterior densities
 %---------------------------
-post_dens=plot_posteriors(obj,simulation_folder,parlist);
+post_dens=plot_posteriors(obj,simulation_folder,parlist,npoints);
 
 vnames=fieldnames(post_dens);
 
 % do prior densities for all parameters
 %----------------------------------------
-prior_dens=plot_priors(obj,vnames);
+prior_dens=plot_priors(obj,vnames,trunc,npoints);
 
 % create the data
 %----------------
@@ -160,7 +164,8 @@ ppdata_=struct();
 
 for ipar=1:npar
     
-    ppdata_.(vnames{ipar})=do_one_post_prior(prior_dens.(vnames{ipar}),post_dens.(vnames{ipar}));
+    ppdata_.(vnames{ipar})=do_one_post_prior(prior_dens.(vnames{ipar}),...
+        post_dens.(vnames{ipar}));
     
 end
 
@@ -195,20 +200,14 @@ end
 
     function ss=do_one_post_prior(prior,post)
         
+        prior.x_min=min(prior.x_min,post.x_min);
+        
+        prior.x_max=max(prior.x_max,post.x_max);
+        
         post=rmfield(post,{'x_min','x_max','tex_name'});
         
         ss=utils.miscellaneous.mergestructures(prior,post);
-        
-        if normalize2prior
-            % give the posterior density the same range as the prior
-            ss.f_kdens=utils.miscellaneous.apply_property('range',ss.f_prior,ss.f_kdens);
-            
-        else
-            % give the prior density the same range as ss.f_kdens
-            ss.f_prior=utils.miscellaneous.apply_property('range',ss.f_kdens,ss.f_prior);
-            
-        end
-        
+                
     end
 
     function [tex_name,legend_]=plotfunc(pname,ppdata)

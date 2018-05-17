@@ -1,4 +1,5 @@
-function [pdata,hdl]=plot_priors(obj,parlist,varargin)
+function [pdata,hdl]=plot_priors(obj,parlist,trunc,npoints,...
+    varargin)
 % plot_priors -- computes prior densities for estimated parameters
 %
 % ::
@@ -8,7 +9,11 @@ function [pdata,hdl]=plot_priors(obj,parlist,varargin)
 %
 %   ppdata=plot_priors(obj,parlist)
 %
-%   ppdata=plot_priors(obj,parlist,varargin)
+%   ppdata=plot_priors(obj,parlist,trunc)
+%
+%   ppdata=plot_priors(obj,parlist,trunc,npoints)
+%
+%   ppdata=plot_priors(obj,parlist,trunc,npoints,varargin)
 %
 % Args:
 %
@@ -16,6 +21,11 @@ function [pdata,hdl]=plot_priors(obj,parlist,varargin)
 %
 %    - **parlist** [[]|char|cellstr]: list of the parameters for which one
 %    wants to plot the priors
+%
+%    - **trunc** [numeric|{1e-3}]: serves to truncate the support
+%
+%    - **npoints** [numeric|{20^2}]: the number of points in the
+%    discretization of the prior support 
 %
 %    - **varargin** [pairwise plotting arguments]:
 %
@@ -35,9 +45,12 @@ function [pdata,hdl]=plot_priors(obj,parlist,varargin)
 %    - if there are no output arguments, figures with prior densities are
 %    plotted, but not saved!!!.
 %
+%   There are other arguments that can be set via the model object directly
+%   and that are relevant for this function. They are:
+%
 % Example:
 %
-%    See also: utils.plot.prior_posterior
+%    See also: utils.plot.plot_posteriors, utils.plot.plot_priors_and_posteriors
 
 
 if isempty(obj)
@@ -55,6 +68,24 @@ if isempty(obj)
     end
     
     return
+    
+end
+
+if nargin<4
+    
+    npoints=[];
+    
+    if nargin<3
+        
+        trunc=[];
+        
+        if nargin<2
+            
+            parlist=[];
+            
+        end
+        
+    end
     
 end
 
@@ -80,7 +111,8 @@ if nobj>1
         
         if nout
             
-            [argouts{1:nout}]=plot_priors(obj(iobj),parlist,varargin{:});
+            [argouts{1:nout}]=plot_priors(obj(iobj),parlist,trunc,npoints,...
+                varargin{:});
             
             tmpdata{iobj}=argouts{1};
             
@@ -92,7 +124,7 @@ if nobj>1
             
         else
             
-            plot_priors(obj(iobj),parlist,varargin{:});
+            plot_priors(obj(iobj),parlist,trunc,npoints,varargin{:});
             
         end
         
@@ -115,16 +147,31 @@ if nobj>1
 end
 
 %----------------------------------------
-N=obj.options.prior_discretize^2;
+
+if isempty(npoints),npoints=20^2; end
+
+if isempty(trunc),trunc=1e-3; end
+
+numscal=@(x)isnumeric(x) && isscalar(x);
+
+num_fin=@(x)numscal(x) && isfinite(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+if ~numscal(trunc) && trunc>0 && trunc<1
+    
+    error('trunc must be greater than 0 and less than 1')
+    
+end
+
+if ~num_fin_int(npoints)
+    
+    error('npoints must be a finite and positive integer')
+    
+end
 
 allpnames=cellfun(@(x)parser.param_texname_to_param_name(x),...
     {obj.estimation.priors.name},'uniformOutput',false);
-
-if nargin<2
-    
-    parlist=[];
-    
-end
 
 if isempty(parlist)
     
@@ -165,13 +212,6 @@ distr0=distr;
 %-------------------------------------
 distr=strrep(distr,'dirichlet','beta');
 
-% recollect the densities
-for idistr=1:numel(distr)
-    
-    distr{idistr}=distributions.(distr{idistr});
-    
-end
-
 lb=vertcat(obj.estimation.priors(plocs).lower_bound);
 
 ub=vertcat(obj.estimation.priors(plocs).upper_bound);
@@ -184,6 +224,24 @@ catch
     % backward compatibility
     %-----------------------
     hypers=[[obj.estimation.priors.a].',[obj.estimation.priors.b].'];
+    
+end
+
+% recollect the densities
+for idistr=1:numel(distr)
+    
+    a=hypers(idistr,1);
+    
+    b=hypers(idistr,2);
+    
+    [distr{idistr},~,icdfn]=distributions.(distr{idistr});
+    
+    bounds=[icdfn(trunc,a,b),...
+        icdfn(1-trunc,a,b)];
+    
+    lb(idistr)=max(lb(idistr),bounds(1));
+    
+    ub(idistr)=min(ub(idistr),bounds(2));
     
 end
 
@@ -231,7 +289,7 @@ end
         
         pdens=struct();
         
-        x_prior=vec(linspace(lb(ipar),ub(ipar),N));
+        x_prior=vec(linspace(lb(ipar),ub(ipar),npoints));
         
         pdens.x_prior=x_prior;
         
@@ -268,8 +326,8 @@ end
                     
                 end
                 
-%                 fname=[fname,'(',divise{2},')'];
-
+                %                 fname=[fname,'(',divise{2},')'];
+                
                 fname=divise{2};
                 
             end
@@ -288,13 +346,6 @@ end
 
 function d=the_defaults()
 
-num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
-
-num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
-
-d={
-    'prior_discretize',20,@(x)num_fin_int(x),...
-    'prior_discretize must be a finite and positive integer'
-    };
+d=cell(0,4);
 
 end

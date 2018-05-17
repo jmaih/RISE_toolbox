@@ -28,7 +28,7 @@ for ii=1:numel(test.priors)
     
     blk=utils.prior.cell2block(test1,['endo_prior_',int2str(ii)],'const',1,[]);
     
-    ep=utils.prior.prior_setting_engine(ep,blk,1,[],test_start);
+    ep=utils.prior.prior_setting_engine(ep,blk,1,obj.options.prior_trunc,test_start);
     
 end
 
