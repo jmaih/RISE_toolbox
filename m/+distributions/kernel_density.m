@@ -70,24 +70,20 @@ if isempty(n),n=100;end
 if isempty(ub),ub=max(data);end
 
 if isempty(lb),lb=min(data);end
-    
 
-if isempty(lb)
-    
-    lb=min(data);
-    
-end
+lb=-inf;
 
-if isempty(ub)
-    
-    ub=max(data);
-    
-end
+ub=inf;
+
+[ff_,xx_] = ksdensity(data,[],'NumPoints',n,...
+    'Kernel',kernel,'Support',[lb,ub]);
+
+return
 
 % compute bandwith
 h=std(data);
 
-h=1.06*h*n^(-1/5); 
+h=3.5*h*n^(-1/3);  % h=1.06*h*n^(-1/5); 
 
 % normalizing function
 normalize=@(xx,m,s)(xx-m)/s;
