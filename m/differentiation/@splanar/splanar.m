@@ -158,8 +158,9 @@ classdef splanar
                 
                 for ii=1:numel(obj.args)
                     
-                    n=max(n,...
-                        sub_number_of_columns(obj.args{ii}));
+                    ni=sub_number_of_columns(obj.args{ii});
+                    
+                    n=max(n,ni);
                     
                 end
                 
