@@ -175,7 +175,8 @@ c=update_fieldnames(c,args);
         
         cmapr=cell2mat(cmapr);
         
-        deriv.vectorizer=struct('rows',expansions(:,1),'cols',cmapr(:),'inflator',expansions(:,2));
+        deriv.vectorizer=struct('rows',expansions(:,1),'cols',cmapr(:),...
+            'inflator',expansions(:,2));
     
     end
 

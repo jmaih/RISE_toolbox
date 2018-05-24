@@ -46,8 +46,22 @@ function derivs=differentiate(eqtns,nwrt,order,alien_list,verbose)
 %
 %    See also:
 
-if nargin<5
+% container by order and by equation and not container for all
+% equations in all orders...
+%
+% We simultaneously count the number of nonzero derivatives
+%
+% we cannot pair the derivatives in the expanded matrix...
+% since we are computing vectors belonging to different
+% locations. Unless at evaluation, we create the vector and
+% then dispatch each element separately, which can also be
+% done.
+%
+% We can offer both options at the time of writing
+% derivatives...
 
+if nargin<5
+    
     verbose=[];
     
     if nargin<4
@@ -61,7 +75,7 @@ if nargin<5
         end
         
     end
-
+    
 end
 
 if isempty(verbose),verbose=false; end
@@ -69,183 +83,181 @@ if isempty(verbose),verbose=false; end
 if isempty(order),order=1; end
 
 if iscell(eqtns)
-
+    
     eqtns=[eqtns{:}];
-
+    
 end
 
 eqtns=eqtns(:);
 
-neqtns0=size(eqtns,1);
+neqtns=size(eqtns,1);
 
 % identify where the equations are coming from since everything will be
 % vectorized later on
-for ieq=1:neqtns0
-
+for ieq=1:neqtns
+    
     eqtns(ieq).location={ieq,[]};
-
+    
 end
-
-neqtns=neqtns0;
 
 derivs=struct('size',{},'derivatives',{},...
     'nwrt',{},'order',{},'nnz_derivs',{},'partitions',{},...
-    'map',{},'vectorizer',{});
+    'map',{},'vectorizer',{},...
+    'timer',{});
 
 [keep_all,expand_all]=utils.kronecker.shrink_expand(nwrt,order);
 
-for oo=1:order
+nkept=zeros(1,order);
+
+B=cell(1,order);
+
+expand=cell(1,order);
+
+for ieqtn=1:neqtns
     
-    if verbose
+    myeqtn=eqtns(ieqtn);
     
-        tic
-    
-    end
-    
-    % compute all combinations and hash them up
-    %------------------------------------------
-    [ncols,B,expand]=store_combinations();
-    
-    % differentiate
-    %--------------
-    d=cell(nwrt*neqtns,1);
-    
-    iter=0;
-    
-    proto_offset=0;
-    
-    nnz_derivs=0;
-    
-    big_index=cell(1,neqtns);
-    
-    for ieqtn=1:neqtns % number of rows
+    for oo=1:order
         
-        oldwrt=eqtns(ieqtn).lineage;
-        
-        if ~isempty(oldwrt)
-        
-            oldwrt=oldwrt{end};
-        
+        if ieqtn==1
+            
+            [nkept(oo),B{oo},expand{oo}]=store_combinations();
+            
+            initialize_output_order();
+            
         end
         
-        ncols_=max(1,numel(oldwrt));
+        if verbose
+            
+            tic
+            
+        end
         
-        index_=cell(1,ncols_);
+        ncols1=numel(myeqtn);
         
-        for icol=1:ncols_ % number of derivatives taken in earlier round
+        myeqtn1=splanar.empty(1,0);
+        
+        ndvec=0;
+        
+        for icol1=1:ncols1
             
-            obj=intercept_column(eqtns(ieqtn),icol);
+            obj=myeqtn(icol1);
             
-            if ~isempty(eqtns(ieqtn).lineage) && ~isempty(eqtns(ieqtn).lineage{end})
+            oldwrt=obj.lineage;
             
-                obj.lineage=[eqtns(ieqtn).lineage(1:end-1),{eqtns(ieqtn).lineage{end}(icol)}];
+            ncols2=max(1,numel(oldwrt));
             
-            end
+            pointer=0;
             
-            candidates=find(obj.incidence);
-
-            % ensure the location remains the same as in the parent
-            % object. otherwise the equation number will be lost
-            %-------------------------------------------------------
-            obj.location=eqtns(ieqtn).location;
-            
-            wrt=candidates;
-            
-            if ~isempty(wrt)
+            for icol2=1:ncols2
                 
-                if ~isempty(oldwrt) % <--- oo>1
+                pointer=pointer+1;
+                
+                if ncols2>1
                     
-                    wrt(wrt<oldwrt(icol))=[];
-                
-                    lineage__=[obj.lineage(1:end-1),{oldwrt(icol),wrt}];
-                
+                    obj2=intercept_column(obj,pointer);
+                    
                 else
                     
-                    lineage__={wrt};
-                
+                    obj2=obj;
+                    
                 end
                 
-                d0=diff(obj,wrt,[],alien_list);
+                candidates=find(obj2.incidence);
                 
-                d0.lineage=lineage__;
-                
-                nderivs=numel(d0.lineage{end});
-                % store the derivative if not zero
-                %---------------------------------
-                if nderivs
-                    % locate each derivative in the reduced matrix
-                    %---------------------------------------------
-                    former=cell2mat(d0.lineage(1:end-1));
+                if isempty(candidates)
                     
-                    if isempty(former)
+                    continue
                     
-                        current=lineage__{end}(:);
-                    
-                    else
-                        
-                        current=[former(ones(nderivs,1),:),lineage__{end}(:)];
-                    
-                    end
-                    
-                    deriv_positions=proto_offset+(1:nderivs);
-                    
-                    index_{icol}=set_positions(current);
-                    
-                    d0.location={obj.location{1},deriv_positions};
-                    
-                    proto_offset=deriv_positions(end);
-                    
-                    iter=iter+1;
-                    
-                    d{iter}=d0;
-                
-                    nnz_derivs=nnz_derivs+nderivs;
-            
                 end
+                
+                if isempty(oldwrt)
+                    
+                    b=[];
+                    
+                else
+                    
+                    b=oldwrt{pointer}; % lineage of derivatives...
+                    
+                end
+                
+                % Only consider variables that are greater than or equal to
+                % the current pointing variable...
+                wrt=candidates;
+                
+                if ~isempty(b)
+                    
+                    wrt(wrt<b(end))=[];
+                    
+                end
+                
+                if isempty(wrt)
+                    
+                    continue
+                    
+                end
+                
+                d=diff(obj2,wrt,alien_list);
+                
+                store_derivative()
                 
             end
             
         end
         
-        big_index{ieqtn}=cell2mat(index_);
+        myeqtn=myeqtn1;
         
     end
     
-    % make sure we have a row vector here!!!
-    %----------------------------------------    
-    big_index=cell2mat(big_index);
-    
-    d=[d{1:iter}];
-    
-    d=d(:);
-    
-    % swap locations
-    %---------------
-    neqtns=numel(d);
-    
-    for ideriv=1:neqtns
-    
-        d(ideriv).location{2}=big_index(d(ideriv).location{2});
-    
-    end
-    
-    % spit out the time it took to compute
-    %-------------------------------------
-    if verbose
-    
-        fprintf(1,'differentiation at order %0.0f done in %0.4f seconds\n',oo,toc);
-
-    end
-    
-    derivs(oo)=struct('size',{[neqtns0,ncols]},'derivatives',d,...
-        'nwrt',nwrt,'order',oo,'nnz_derivs',nnz_derivs,'partitions',expand,...
-        'map',[],'vectorizer',[]);
-    
-    % next round
-    %-----------
-    eqtns=d;
-
 end
+
+    function store_derivative()
+        
+        if verbose
+            
+            derivs(oo).timer(ieqtn)=derivs(oo).timer(ieqtn)+toc;
+            
+        end
+        
+        % do not store zero derivatives
+        %------------------------------
+        dfunc=d.func;
+        
+        if isnumeric(dfunc) && isscalar(dfunc) && dfunc==0
+            
+            return
+            
+        end
+        
+        nw=numel(wrt);
+        
+        lin=cell(1,nw);
+        
+        for ii=1:nw
+            
+            lin{ii}=[b,wrt(ii)];
+            
+        end
+        
+        d.lineage=lin;
+        
+        lin=cell2mat(lin(:));
+        
+        p=set_positions(lin);
+        
+        % add a field to store the location of the derivatives???
+        
+        d.location={ieqtn,p};
+        
+        ndvec=ndvec+1;
+        
+        myeqtn1(ndvec)=d;
+        
+        derivs(oo).derivatives(end+1)=d;
+        
+        derivs(oo).nnz_derivs=derivs(oo).nnz_derivs+nw;
+        
+    end
 
     function p=set_positions(proto)
         
@@ -257,10 +269,40 @@ end
         
         for ii=1:n
             
-            p(ii)=B(batch{ii,:});
+            p(ii)=B{oo}(batch{ii,:});
             
         end
         
+    end
+
+    function initialize_output_order()
+                           
+            derivs(oo).size=[neqtns,nkept(oo)];
+            
+            derivs(oo).nwrt=nwrt;
+            
+            derivs(oo).order=oo;
+            
+            derivs(oo).nnz_derivs=0;
+            
+            derivs(oo).partitions=expand{oo};
+            
+            derivs(oo).map=[];
+            
+            derivs(oo).vectorizer=[];
+            
+            derivs(oo).derivatives=splanar.empty(0,1);
+            
+            if verbose
+                
+                derivs(oo).timer=zeros(neqtns,1);
+                
+            else
+                
+                derivs(oo).timer=nan(neqtns,1);
+                
+            end
+                    
     end
 
     function [nkept,B,expand]=store_combinations()
@@ -280,15 +322,9 @@ end
             B=reshape(expand,[tmp{:}]);
             
         end
-    
+        
         nkept=sum(keep); % size(B,1)
-
+        
     end
 
 end
-
-% % we keep it outside the space of the main function otherwise memoization
-% % will store useless and heavy too many variables in its workspace.
-% function expand=inflator(nwrt,oo)
-% [~,expand]=utils.kronecker.shrink_expand(nwrt,oo);
-% end
