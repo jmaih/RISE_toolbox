@@ -1,9 +1,19 @@
-function obj=prototypize(obj)
+function obj=prototypize(f)
 
-obj.func=[];
+persistent proto
 
-obj.args=[];
+if isempty(proto)
 
-obj.incidence=[];
+	proto=splanar(0);
+
+end
+
+obj=proto;
+
+if nargin
+
+	obj.func=f;
+
+end
 
 end

@@ -418,21 +418,16 @@ if all(zkz==1)
     
 end
 
-try
-    
-    G=bsxfun(@times,G,zkz);
-    
-catch
-    
-    for ii=1:size(G,1)
-        
-        tmp=find(G(ii,:));
-        
-        G(ii,tmp)=G(ii,tmp).*zkz(tmp);
-        
-    end
-    
-end
+[ii,jj,vv]=find(G);
+
+% duplicate the relevant columns
+zkz=zkz(jj);
+
+vv=vv.*zkz(:);
+
+[m,n]=size(G);
+
+G=sparse(ii,jj,vv,m,n);
 
 end
 

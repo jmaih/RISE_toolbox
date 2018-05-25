@@ -323,7 +323,7 @@ classdef splanar
             end
             % initialize the splanar
             %------------------------
-            obj=splanar.prototypize(varargin{1});
+            obj=splanar.prototypize();
             
             if nconst==n
                 
@@ -427,19 +427,14 @@ classdef splanar
             % mpower - overloads mpower for splanar
             [a,b]=splanarize(a,b);
             
-            obj=splanar.prototypize(a);
-            
-            if is_zero(b)
+            if is_zero(b)|| is_one(a)
                 % x^0 = 1
-                obj.func=1;
+                % 1^x = 1 
+	            obj=splanar.prototypize(1);
                 
             elseif is_one(b)
                 % x^1 = x
                 obj=a;
-                
-            elseif is_one(a)
-                % 1^x = 1
-                obj.func=1;
                 
             else
                 
@@ -464,9 +459,7 @@ classdef splanar
                 
             elseif is_zero(a)
                 
-                obj=splanar.prototypize(a);
-                
-                obj.func=0;
+                obj=splanar.prototypize();
                 
             elseif strcmp(a.func,'uminus')
                 
@@ -518,9 +511,7 @@ classdef splanar
             elseif (isnum_a && is_zero(a))||(isnum_b && is_zero(b))
                 % 0 * x = 0
                 % x * 0 = 0
-                obj=splanar.prototypize(a);
-                
-                obj.func=0;% obj.func=0*ones(1,maxcols);
+                obj=splanar.prototypize();
                 
             elseif isnum_a && is_one(a) % maxcols==1 &&
                 % 1 * x = x
@@ -679,15 +670,13 @@ classdef splanar
             if strcmp(a.func,'uminus')
                 
                 % Simplify -(-x) in x
-                obj=splanar.prototypize(a);
-                
                 if strcmp(class(a.args{1}),'splanar')
                     
                     obj=a.args{1};
                     
                 else
                     
-                    obj.func=a.args{1};
+                    obj=splanar.prototypize(a.args{1});
                     
                 end
                 
@@ -991,47 +980,29 @@ varargout=varargin;
 
 n=nargin;
 
-obj=[];
-
-guy_is_planar=false(1,n);
-
 for iarg=1:n
     
-    guy_is_planar(iarg)=strcmp(class(varargin{iarg}),'splanar');
-    
-    if isempty(obj) && guy_is_planar(iarg)
-        
-        obj=splanar.prototypize(varargin{iarg});
-        
-    end
-    
-end
+    if ~strcmp(class(varargin{iarg}),'splanar')
 
-for iarg=find(~guy_is_planar)
+	    varargout{iarg}=splanar.prototypize(varargout{iarg});
+	    
+	end
     
-    tmp=varargout{iarg};
-    
-    varargout{iarg}=obj;
-    
-    varargout{iarg}.func=tmp;
-    
-end
+end	
 
 end
 
 function obj=do_trivariate(x,mu,sd,func)
+
 [x,mu,sd]=splanarize(x,mu,sd);
-% initialize the splanar
-%------------------------
-obj=splanar.prototypize(x);
 
 if isnumeric(x.func) && isnumeric(mu.func) && isnumeric(sd.func)
     
-    obj.func=feval(func,x.func,mu.func,sd.func);
+    obj=splanar.prototypize(feval(func,x.func,mu.func,sd.func));
     
 else
     
-    obj.func=func;
+    obj=splanar.prototypize(func);
     
     obj.args={x,mu,sd};
     
@@ -1082,9 +1053,6 @@ if re_splanarize
     [a,b]=splanarize(a,b);
     
 end
-% initialize the splanar
-%------------------------
-obj=splanar.prototypize(a);
 
 if isnumeric(a.func) && isnumeric(b.func)
     
@@ -1094,11 +1062,11 @@ if isnumeric(a.func) && isnumeric(b.func)
         
     end
     
-    obj.func=feval(func,a.func,b.func);
+    obj=splanar.prototypize(feval(func,a.func,b.func));
     
 else
     
-    obj.func=func;
+    obj=splanar.prototypize(func);
     
     obj.args={a,b};
     
@@ -1123,17 +1091,14 @@ end
 end
 
 function obj=do_univariate(a,func)
-% initialize the splanar
-%------------------------
-obj=splanar.prototypize(a);
 
 if isnumeric(a.func)
     
-    obj.func=feval(func,a.func);
+    obj=splanar.prototypize(feval(func,a.func));
     
 else
     
-    obj.func=func;
+    obj=splanar.prototypize(func);
     
     obj.args={a};
     

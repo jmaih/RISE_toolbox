@@ -33,13 +33,11 @@ nargs=numel(x.args);
 if isempty(x.incidence)
     % numbers/vectors and variables which are not part of differentiation
     % automatically receive 0 as derivative
-    d=splanar.prototypize(x);d.func=0;
+    d=splanar.prototypize();
     
 elseif nargs==0
     % variables that are part of differentiation
-    d=splanar.prototypize(x);
-    
-    d.func=double(x.incidence(wrt));
+    d=splanar.prototypize(double(x.incidence(wrt)));
     % why do we need to double it?
     % we need to carry around vectors in order to be able to do
     % higher-order derivatives
@@ -143,7 +141,7 @@ end
                     'steady_state'}
                 
                 % derivatives are zero
-                d=splanar.prototypize(x); d.func=0;
+                d=splanar.prototypize();
                 
             case 'if_then_else'
                 
