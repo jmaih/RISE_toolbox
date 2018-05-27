@@ -54,7 +54,7 @@ if obj.options.solve_order>=1
         
         if obj.options.solve_accelerate||debug
             
-            [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,oo);
+            [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,obj.options.solve_order);
             
         end
         
