@@ -21,12 +21,12 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %    min F(X)  subject to:  LB <= X <= UB   (bounds)
 %     X
 %
-%   RES = BEE_GATE(FUN,X0,LB,UB) starts at X0 and finds a minimum X to the
+%   X = BEE_GATE(FUN,X0,LB,UB) starts at X0 and finds a minimum X to the
 %   function FUN, subject to the bound constraints LB and UB. FUN accepts
 %   input X and returns a scalar function value F evaluated at X. X0 may be
 %   a scalar or a vector.
 %
-%   [X,F,OBJ] = BEE_GATE(FUN,X0,LB,UB,OPTIONS) optimizes the function FUN under the
+%   X = BEE_GATE(FUN,X0,LB,UB,OPTIONS) optimizes the function FUN under the
 %   optimization options set under the structure OPTIONS. The fields of
 %   this structure could be all or any of the following:
 %       - 'MaxNodes': this the number of different elements in the group
@@ -37,10 +37,20 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %       - 'MaxFunEvals': the maximum number of function evaluations. The
 %       default is inf
 %       - 'rand_seed': the seed number for the random draws
-%    X if the optimum, F is the value of the objective at X, OBJ is an
+%    X is the optimum, F is the value of the objective at X, OBJ is an
 %    object with more information
 %
-%   Optimization stops when one of the following happens:
+%   [X,F] = BEE_GATE(...) returns, in addition to X, the value F=FUN(X)
+%
+%   [X,F,exitflag] = BEE_GATE(...) returns, in addition to X and F, a value
+%   exitflag with the same interpretation as in Matlab's fmincon, fminunc,
+%   etc.
+%
+%   [X,F,exitflag,OBJ] = BEE_GATE(...) returns, in addition to X, F and
+%   exitflag, the optimized bee object with all information about the
+%   optimization process.
+%
+%   N:B: Optimization stops when one of the following happens:
 %   1- the number of iterations exceeds MaxIter
 %   2- the number of function counts exceeds MaxFunEvals
 %   3- the time elapsed exceeds MaxTime
@@ -114,7 +124,7 @@ f=obj.best_fval;
 
 nx=numel(x);
 
-H=nan(nx);
+H=obj.COV\eye(nx);
 
 if obj.iterations>=obj.MaxIter || ...
         obj.funcCount>=obj.MaxFunEvals || ...
@@ -126,6 +136,8 @@ else
     
     exitflag=-1; % disp('Stopped by output/plot function.')
     
+end
+
 end
         
                     

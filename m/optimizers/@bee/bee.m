@@ -28,6 +28,11 @@ classdef bee %< handle
         max_trials=100
         nonlcon
         max_genes_change = 1 % number of genes change
+        % computation of moments
+        %-----------------------
+        COV=0
+        moment_count=0
+        mean=0
     end
     %     properties(Constant, Hidden = true)
     %     end
@@ -504,6 +509,10 @@ else
         obj.best=tmpx;
         
         obj.best_viol_strength=tmpviol;
+        
+        obj.moment_count=obj.moment_count+1;
+        
+        [obj.mean,obj.COV]=utils.moments.recursive(obj.mean,obj.COV,Xn,obj.moment_count);
         
     end
     
