@@ -8,12 +8,13 @@ function db=dbminusdb(obj,odb,cdb)
 %
 % Returns:
 %    :
-%
+%   none
+%%
 % Note:
 %
 % Example:
 %
-%    See also:
+% See also:
 
 if isempty(obj)
 
@@ -33,35 +34,35 @@ is_log_var=obj.log_vars;
 fields=fieldnames(odb);
 
 for ifield=1:numel(fields)
-    
+
     name=fields{ifield};
-    
+
     if ~isfield(cdb,name)
-        
+
         continue
-        
+
     end
-    
+
     lv=false;
-    
+
     pos=find(strcmp(name,endo_names));
-    
+
     if ~isempty(pos)
-        
+
         lv=is_log_var(pos);
-        
+
     end
-    
+
     if lv
-        
+
         db.(name)=odb.(name)/cdb.(name);
-        
+
     else
-        
+
         db.(name)=odb.(name)-cdb.(name);
-        
+
     end
-    
+
 end
 
 end

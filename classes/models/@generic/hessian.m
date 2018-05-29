@@ -3,7 +3,6 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 %
 % ::
 %
-%
 %   [obj,H,issue]=hessian(obj)
 %
 %   [obj,H,issue]=hessian(obj,x)
@@ -18,59 +17,60 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 %
 %    - **varargin** additional optional inputs among which the most relevant
 %      for estimation is:
+%
 %      - **hessian_type** [{'fd'}|'opg']: The hessian is either computed by
-%      finite differences (fd) or by outer-product-gradient (opg)
+%        finite differences (fd) or by outer-product-gradient (opg)
 %
 % Returns:
 %    :
 %
 %    - **obj** [rise|dsge|rfvar|svar]: model object containing the new hessian
-%    in case the model was previously estimated.
+%      in case the model was previously estimated.
 %
 %    - **H** [d x d matrix]: hessian matrix
 %
 %    - **issue** [char|'']: any issue encountered during the computation of
-%    the hessian
+%      the hessian
 %
 % Note:
 %
 % Example:
 %
-%    See also:
+% See also:
 
 nobj=numel(obj);
 
 if nobj==0
-    
+
     if nargout>1
-        
+
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-        
+
     end
-    
+
     obj=utils.hessian.numerical();
-    
+
     return
-    
+
 end
 
 if nargin<2||isempty(x)
-    
+
     if ~isfield(obj.estimation.posterior_maximization,'mode')||...
             isempty(obj.estimation.posterior_maximization.mode)
-        
+
         error('vector of parameters should be specified when model has not been estimated')
-        
+
     end
-    
-   x=obj.estimation.posterior_maximization.mode; 
-   
+
+   x=obj.estimation.posterior_maximization.mode;
+
 end
 
 if ~isempty(varargin)
-    
+
     obj=set(obj,varargin{:});
-    
+
 end
 
 fh=pull_objective(obj);
