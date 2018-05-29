@@ -3,7 +3,6 @@ function [ff,lb,ub,x0,vcov,obj]=pull_objective(obj,varargin)
 %
 % ::
 %
-%
 %   [ff,lb,ub]=PULL_OBJECTIVE(obj)
 %
 %   [ff,lb,ub]=PULL_OBJECTIVE(obj,varargin)
@@ -32,42 +31,43 @@ function [ff,lb,ub,x0,vcov,obj]=pull_objective(obj,varargin)
 %    - **x0** [d x 1 vector]: posterior mode if available
 %
 %    - **vcov** [d x d matrix]: covariance matrix at the posterior mode if
-%    available.
+%      available.
 %
 %    - **obj** [rise|dsge|svar|rfvar]: updated model object
 %
 % Note:
 %
 %    - The function can be used for :
+%
 %      - optimization,
 %      - gradient computation,
 %      - hessian computation,
 %      - posterior simulation
 %
 %    - The updated object should be used for doing various exercises (irfs,
-%    simulations, etc.) if the posterior mode is not computed.
+%      simulations, etc.) if the posterior mode is not computed.
 %
 %    - Using this function is potentially costly, one could alternatively
-%    simply use log_posterior_kernel. However, if there are restrictions, they
-%    will not be enforced. Nevertheless it is an interesting proposition that
-%    should be investigated further.
+%      simply use log_posterior_kernel. However, if there are restrictions, they
+%      will not be enforced. Nevertheless it is an interesting proposition that
+%      should be investigated further.
 %
 % Example:
 %
-%    See also:
+% See also:
 
 if isempty(obj)
-    
+
     if nargout>1
-        
+
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-    
+
     end
-    
+
     ff=cell(0,4);
-    
+
     return
-    
+
 end
 
 if ~isempty(varargin)

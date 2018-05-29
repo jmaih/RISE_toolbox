@@ -3,8 +3,7 @@ function g=evaluate_general_restrictions(obj)
 %
 % ::
 %
-%
-%   g=EVALUATE_GENERAL_RESTRICTIONS(obj)
+%   g = EVALUATE_GENERAL_RESTRICTIONS(obj)
 %
 % Args:
 %
@@ -18,34 +17,34 @@ function g=evaluate_general_restrictions(obj)
 % Note:
 %
 %    - The restrictions will be processed as g(x)<=0. But all the user has to
-%    do is to put zero where the restrictions are not violated!!!
+%      do is to put zero where the restrictions are not violated!!!
 %
 % Example:
 %
-%    See also:
+% See also:
 
 nobj=numel(obj);
 
 if nobj==0
-    
+
     g=cell(0,4);
-    
+
 else
-    
+
     g=cell(1,nobj);
-    
+
     for iobj=1:nobj
-        
+
         if ~isempty(obj(iobj).options.estim_general_restrictions)
             % take the absolute value: the violations are the non-zero
             % elements
             %-------------------------------------------------------------
             g{iobj}=abs(obj(iobj).general_restrictions_data(obj(iobj)));
-            
+
         end
-        
+
     end
-    
+
 end
 
 end
