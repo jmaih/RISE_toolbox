@@ -3,8 +3,6 @@ function obj=intercept_column(obj,pointer)
 % vectorized splanar object. The pointer argument points the
 % element in the vector to be used.
 
-%  if obj.number_of_columns==1,return,end
-
 if isnumeric(obj) && numel(obj.func)>1
     
     obj.func=obj.func(pointer);
@@ -12,6 +10,8 @@ if isnumeric(obj) && numel(obj.func)>1
 elseif ~isempty(obj.args)
     
     is_simplifiable=false;
+    
+    incid=sparse(1,numel(obj.incidence));
     
     for iarg=1:numel(obj.args)
         
@@ -32,12 +32,22 @@ elseif ~isempty(obj.args)
             
         end
         
+        if ~isempty(obj.args{iarg}.incidence)
+            
+            incid=incid|obj.args{iarg}.incidence;
+            
+        end
+        
     end
     % the line below will correct for zeros, ones, etc. as well as
     % incidences.
     if is_simplifiable
         
         obj=feval(obj.func,obj.args{:});
+        
+    else
+        
+        obj.incidence=incid;
         
     end
     

@@ -729,9 +729,13 @@ classdef splanar
         
     end
     
-    methods(Access=private)
+    methods(Hidden)
         
         varargout=intercept_column(varargin)
+        
+    end
+    
+    methods(Access=private)
                 
         varargout=load_varlist(varargin)
         
