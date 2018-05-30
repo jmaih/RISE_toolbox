@@ -107,7 +107,7 @@ classdef bee %< handle
             %     the MYFUNC function evaluated at X.
             %
             %     FUN can also be an anonymous function:
-            %        RES = bee(@(x) 3*sin(x(1))+exp(x(2)),[1;1],[],[],[],[],[],[0 0])
+            %        RES = bee(@(x) 3*sin(x(1))+exp(x(2)),[1;1],[],-10*ones(2,1),10*ones(2,1),[])
             %     returns X = [0;0].
             %
             %     FUN=inline('sum(x.^2)'); n=100;
@@ -512,7 +512,7 @@ else
         
         obj.moment_count=obj.moment_count+1;
         
-        [obj.mean,obj.COV]=utils.moments.recursive(obj.mean,obj.COV,Xn,obj.moment_count);
+        [obj.mean,obj.COV]=utils.moments.recursive(obj.mean,obj.COV,tmpx,obj.moment_count);
         
     end
     
