@@ -11,21 +11,16 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
 %    - **obj** [rise|dsge]: scalar or vector of model objects. The optional
 %      options below come in pairs.
-%
 %    - **solve_accelerate** [{false}|true]: Accelerate or do not accelerate
 %      the solving
-%
 %    - **solve_check_stability** [{true}|false]: check stability of Markov
 %      switching models while solving. The stability of constant-parameter
 %      models is always checked whether that of markov-switching models is
 %      optional. This is because (1) the procedure is computationally intensive
 %      and (2) there is no define stability criterion under endogenous switching
-%
 %    - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
 %      derivatives
-%
 %    - **solve_order** [integer|{1}]: order of approximation
-%
 %    - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
 %      of shocks beyond the current period. When the input is :
 %
@@ -39,12 +34,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
 %    - **solve_alternatives_file2save2** [{[]}|char]: name of the file to
 %      write the results of the alternative solutions
-%
 %    - **solve_alternatives_nsim** [integer|{100}]: Number of initial guesses
 %      for the solution sampled randomly, when attempting to find all possible
 %      solutions.
-%
-%     - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
+%    - **solve_function_mode** [{explicit/amateur}|vectorized/professional|disc]
 %
 %      - in the **amateur** or **explicit** mode the functions are kept in
 %        cell arrays of anonymous functions and evaluated using for loops
@@ -121,10 +114,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %            the problem
 %          - **retcode** : 0 if no problem found when solving the problem
 %
-%       The function can be passed along as a string, a function handle or a
-%       cell array in which case the first element of the cell contains the
-%       function itself and the remaining cells contain further arguments
-%       required by the function but unknown to RISE.
+%        The function can be passed along as a string, a function handle or a
+%        cell array in which case the first element of the cell contains the
+%        function itself and the remaining cells contain further arguments
+%        required by the function but unknown to RISE.
 %
 %    - **solve_log_approx_vars** [char|cellstr|{[]}]: List of variables for
 %      which we want to take a log expansion (x_t-x_ss)/x_ss, which approximates
@@ -199,11 +192,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %    :
 %
 %    - **obj** [rise|dsge]: scalar or vector of model objects
-%
 %    - **retcode** [integer]: if 0, no problem was found when solving the
 %      model. If positive, the reason for the problem can be obtained by running
 %      decipher(retcode)
-%
 %    - **structural_matrices** [struct]: Structure holding various types of
 %      derivatives that are used in the computation of the solution
 %
@@ -212,11 +203,9 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %    - constant-parameter models can also be solved using the procedures for
 %      switching parameter models. There is no guarantee, however, any obtained
 %      solution will be determinate (unique and stable)
-%
 %    - determinacy is only checked for constant-parameter models. For
 %      determinacy computations for switching dsge models with constant
 %      transition matrices, see Cho(2014).
-%
 %    - In RISE we consider that it is in the nature of nonlinear models to
 %      have many solutions. Obtaining even one of those solution is usually
 %      difficult and a concept such as determinacy is NEVER used in the solving

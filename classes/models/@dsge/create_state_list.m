@@ -3,7 +3,6 @@ function [final_list,kept]=create_state_list(m,orders,compact_form)
 %
 % ::
 %
-%
 %   final_list=create_state_list(m)
 %   final_list=create_state_list(m,orders)
 %
@@ -29,26 +28,26 @@ function [final_list,kept]=create_state_list(m,orders,compact_form)
 %
 % Example:
 %
-%    See also:
+% See also:
 
 if isempty(m)
-    
+
     final_list=cell(0,4);
-    
+
     return
-    
+
 end
 
 if nargin<3
-    
+
     compact_form=false;
-    
+
     if nargin<2
-    
+
         orders=[];
-    
+
     end
-    
+
 end
 
 if isempty(orders)
@@ -69,7 +68,7 @@ state_list = [get(m,'endo_list(predetermined)'),get(m,'endo_list(pred_frwrd_look
 
 % lag those names
 %-----------------
-state_list = parser.lag_names(state_list); 
+state_list = parser.lag_names(state_list);
 
 % add the perturbation parameter then the exogenous
 %--------------------------------------------------
@@ -92,43 +91,43 @@ old_state={};
 kept=cell(numel(orders),1);
 
 if compact_form
-    
+
     kept=utils.kronecker.shrink_expand(n,max(orders));
-    
+
 end
 
 for io=1:max(orders)
 
     new_state={};
-    
+
     if isempty(old_state)
-    
+
         new_state=state_list;
-    
+
     else
-        
+
         for istate=1:numel(old_state)
-        
+
             new_state=[new_state,strcat(old_state{istate},',',state_list)]; %#ok<*AGROW>
-        
+
         end
-        
+
     end
-    
+
     old_state=new_state;
         % save only the requested orders
     if any(io-orders==0)
-   
+
         if compact_form
-        
+
             new_state=new_state(kept{io});
-        
+
         end
-        
+
         final_list=[final_list,new_state];
-    
+
     end
-    
+
 end
 
 kept=cell2mat(kept(orders));

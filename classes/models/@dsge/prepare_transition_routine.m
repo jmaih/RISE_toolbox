@@ -13,14 +13,14 @@ function Qfunc=prepare_transition_routine(obj)
 %
 % Example:
 %
-%    See also:
+% See also:
 
 
 if obj.is_endogenous_switching_model
     M=obj.parameter_values;
     % transition matrix should be invariant. And so, hopefully, the first
     % argument to Q{2} could be the updated data in any state.
-    % order of the input arguments is y,x,ss,param,def,s0,s1 
+    % order of the input arguments is y,x,ss,param,def,s0,s1
     % remaining arguments of Q{2} after the first one
     %-------------------------------------------------
     defs=mean([obj.solution.definitions{:}],2);

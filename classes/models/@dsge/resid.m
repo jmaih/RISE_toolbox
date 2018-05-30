@@ -3,7 +3,6 @@ function r=resid(obj,varargin)
 %
 % ::
 %
-%
 %   r=resid(obj)
 %
 %   r=resid(obj,varargin)
@@ -11,7 +10,6 @@ function r=resid(obj,varargin)
 % Args:
 %
 %    - **obj** [rise|dsge]: model object
-%
 %    - **varargin** [pairs of arguments]:
 %
 % Returns:
@@ -25,14 +23,14 @@ function r=resid(obj,varargin)
 %
 % Example:
 %
-%    See also:
+% See also:
 
 if isempty(obj)
-    
+
     r=cell(0,4);
-    
+
     return
-    
+
 end
 
 [~,structural_matrices]=compute_steady_state(obj,varargin{:});
@@ -44,19 +42,19 @@ r=full(structural_matrices.user_resids);
 add_on=repmat('%0.4g ',1,number_of_regimes);
 
 if nargout==0
-    
+
     disp(' ')
-    
+
     for ieqtn=1:eqtns_nbr
-        
+
         these_resids=num2cell(r(ieqtn,:));
-        
+
         fprintf(1,['equation #%0.0f : ',add_on,' \n'],ieqtn,these_resids{:});
-        
+
     end
-    
+
     clear r
-    
+
 end
 
 end

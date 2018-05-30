@@ -15,19 +15,16 @@ function [T_red,Q_red,n,h_red]=problem_reduction(obj)
 %    :
 %
 %    - **T** [1 x h cell]: Companion form for different regimes. Each cell
-%    contains an n x n matrix
-%
+%      contains an n x n matrix
 %    - **Q** [h x h matrix]: Transition matrix
-%
 %    - **n** [integer]: number of endogenous variable
-%
 %    - **h** [integer]: number of regimes
 %
 % Note:
 %
 % Example:
 %
-%    See also: SVAR/PROBLEM_REDUCTION
+% See also: SVAR/PROBLEM_REDUCTION
 
 T=obj.solution.Tz;
 Q=obj.solution.transition_matrices.Q;

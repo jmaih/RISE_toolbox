@@ -13,22 +13,22 @@ function [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices)
 %
 % Example:
 %
-%    See also:
+% See also:
 
 % the obj going out probably contains the changed options
 
 if isempty(obj)
-    
+
     if nargout>1
-        
+
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-    
+
     end
-    
+
     T=struct();
-    
+
     return
-    
+
 end
 
 %% begin
@@ -45,28 +45,28 @@ precompute_czzzzz=false;
 % options.solve_order 1
 %--------
 if obj.options.solve_order>=1
-    
+
     debug=obj.options.debug;
-    
+
     [pos,siz,shock_horizon]=dsge_tools.rehash_topology(obj,structural_matrices);
-    
+
     % Structure of elements that will move across different orders
     %-------------------------------------------------------------
     others=struct();
-    
+
     [T.Tz,others,eigval,retcode,obj.options]=solve_first_order(structural_matrices,...
         others,siz,pos,obj.options,shock_horizon);
-    
+
     % higher orders
     %--------------
     if obj.options.solve_order>=2 && ~retcode
-        
+
         if obj.options.solve_accelerate||debug
-            
+
             [shrink,expand]=utils.kronecker.shrink_expand(siz.nz,obj.options.solve_order);
-            
+
         end
-        
+
         % shortcuts to functions
         %-----------------------
         is_computable=@utils.cr.is_computable;
@@ -83,7 +83,7 @@ if obj.options.solve_order>=1
         kronall=@utils.kronecker.kronall;
         [T,retcode]=solve_higher_orders(T,others,obj.options.solve_accelerate);
     end
-    
+
     % solve for growth constant
     %--------------------------
     if ~retcode
@@ -92,23 +92,23 @@ if obj.options.solve_order>=1
 end
 
     function [T,retcode]=solve_higher_orders(T,others,accelerate)
-        
+
         % higher-order moments
         %----------------------
         [Eu{1:obj.options.solve_order}]=dsge_tools.u_higher_order_moments(siz);
-        
+
         a0_z=sparse(siz.nv,siz.nz);
         a0_z(pos.v.b_minus,pos.z.b)=eye(siz.nb);
         a0_z(pos.v.p_minus,pos.z.p)=eye(siz.np);
         a0_z(pos.v.e_0,pos.z.e_0)=eye(siz.ne);
         a0_z=repmat({a0_z},siz.h,siz.h);
         a1_z=repmat({sparse(siz.nv,siz.nz)},1,siz.h);
-        
+
         hz=sparse(siz.nz,siz.nz);
         hz(pos.z.sig,pos.z.sig)=1;
         hz(siz.np+siz.nb+1+(1:siz.ne*shock_horizon),pos.z.e_plus)=eye(shock_horizon*siz.ne);
         hz=repmat({hz},1,siz.h);
-        
+
         dbf_plus=others.dbf_plus;
         for rt=1:siz.h
             for rplus=1:siz.h
@@ -117,57 +117,57 @@ end
                 dbf_plus{rt,rplus}=others.Ui(:,:,rt)*dbf_plus{rt,rplus};
             end
         end
-        
+
 %         tic
         Dzz=second_order_rhs();
         Czz=cell(1,siz.h);
         [T.Tzz,retcode]=solve_generalized_sylvester(Dzz,2);
         clear Dzz Czz
 %         fprintf(1,'Order 2 done in %0.4f seconds \n\n',toc);
-        
+
         if obj.options.solve_order>2 && ~retcode
             a0_zz=repmat({sparse(siz.nv,siz.nz^2)},siz.h,siz.h);
             a1_zz=repmat({sparse(siz.nv,siz.nz^2)},1,siz.h);
             hzz=repmat({sparse(siz.nz,siz.nz^2)},1,siz.h);
-            
+
 %             tic
             Dzzz=third_order_rhs();
             Czzz=cell(1,siz.h);
             [T.Tzzz,retcode]=solve_generalized_sylvester(Dzzz,3);
             clear Dzzz Czzz
 %             fprintf(1,'Order 3 done in %0.4f seconds \n\n',toc);
-            
+
             if obj.options.solve_order>3 && ~retcode
                 a0_zzz=repmat({sparse(siz.nv,siz.nz^3)},siz.h,siz.h);
                 a1_zzz=repmat({sparse(siz.nv,siz.nz^3)},1,siz.h);
                 hzzz=repmat({sparse(siz.nz,siz.nz^3)},1,siz.h);
                 Dzzzz=fourth_order_rhs();
-                
+
 %                 tic
                 Czzzz=cell(1,siz.h);
                 [T.Tzzzz,retcode]=solve_generalized_sylvester(Dzzzz,4);
                 clear Dzzzz Czzzz
 %                 fprintf(1,'Order 4 done in %0.4f seconds \n\n',toc);
-                
+
                 if obj.options.solve_order>4 && ~retcode
                     hzzzz=repmat({sparse(siz.nz,siz.nz^4)},1,siz.h);
                     a0_zzzz=sparse(siz.nv,siz.nz^4);
                     a1_zzzz=sparse(siz.nv,siz.nz^4);
                     Dzzzzz=fifth_order_rhs();
-                    
+
 %                     tic
                     Czzzzz=cell(1,siz.h);
                     [T.Tzzzzz,retcode]=solve_generalized_sylvester(Dzzzzz,5);
                     clear Dzzzzz
 %                     fprintf(1,'Order 5 done in %0.4f seconds \n\n',toc);
-                    
+
                     if obj.options.solve_order>5
                         error('perturbations of order greater than 5 not implemented');
                     end
                 end
             end
         end
-        
+
         function Dzz=second_order_rhs()
             Dzz=preallocate_rhs(2);
             for r0=1:siz.h
@@ -183,7 +183,7 @@ end
                 % precondition
                 Dzz(:,:,r0)=-others.Ui(:,:,r0)*Dzz(:,:,r0);
             end
-            
+
             function res=dvv_Evz_vz()
                 res=sparse(siz.nd,siz.nz^2);
                 if is_computable(structural_matrices.dvv{r0,r1})
@@ -194,7 +194,7 @@ end
                 end
             end
         end
-        
+
         function Dzzz=third_order_rhs()
             Dzzz=preallocate_rhs(3);
             for r0=1:siz.h
@@ -206,32 +206,32 @@ end
                     if r0==1
                         a1_zz{r1}(pos.v.bf_plus,:)=T.Tzz{r1}(pos.t.bf,:);
                     end
-                    
+
                     Dzzz(:,:,r0)=Dzzz(:,:,r0)+dvvv_Evz_vz_vz();
-                    
+
                     Dzzz(:,:,r0)=Dzzz(:,:,r0)+dvv_Evz_vzz();
-                    
+
                     Dzzz(:,:,r0)=Dzzz(:,:,r0)+others.dbf_plus{rt,rplus}*Tzz_hz_hzz();
                 end
                 % precondition
                 Dzzz(:,:,r0)=-others.Ui(:,:,r0)*Dzzz(:,:,r0);
             end
-            
+
             function res=dvv_Evz_vzz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},...
                     a0_z{r0,r1},a0_zz{r0,r1}+a1_zz{r1}*Eu{2});
-                
+
                 res=res+A_times_sum_perms(...
                     A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},...
                     a1_z{r1},a1_zz{r1}),...
                     {Eu{2},hz{r0}},...
                     siz.nz*ones(3,2),...
                     true,[1,3,2]);
-                
+
                 res=dv_vz_omega(res,siz.nz,1);
             end
-            
+
             function res=Tzz_hz_hzz()
                 if is_computable(T.Tzz{r1}(pos.t.bf,:),hz{r0},hzz{r0})
                     res=A_times_kron_Q1_Qk(T.Tzz{r1}(pos.t.bf,:),hz{r0},hzz{r0});
@@ -241,10 +241,10 @@ end
                     res=sparse(siz.nb+siz.nf,siz.nz^3);
                 end
             end
-            
+
             function res=dvvv_Evz_vz_vz()
                 res=fvvv_vx_vx_vx(structural_matrices.dvvv{r0,r1},a0_z{r0,r1});
-                
+
                 res=res+A_times_sum_perms(...
                     structural_matrices.dvvv{r0,r1},...
                     {kron_Q1_Qk_times_A(Eu{2},a1_z{r1},a1_z{r1}),a0_z{r0,r1}},...
@@ -252,7 +252,7 @@ end
                     true,[1,3,2],[3,1,2]);
             end
         end
-        
+
         function Dzzzz=fourth_order_rhs()
             Dzzzz=preallocate_rhs(4);
             for r0=1:siz.h
@@ -267,26 +267,26 @@ end
                         fvvv_vx_vx_vx(T.Tzzz{r1}(pos.t.bf,:),hz{r0})+...
                         fvv_vx_vxx_omega_1(T.Tzz{r1}(pos.t.bf,:),hz{r0},hzz{r0})+...
                         T.Tz{r1}(pos.t.bf,:)*hzzz{r0};
-                    
+
                     Dzzzz(:,:,r0)=Dzzzz(:,:,r0)+dvvvv_Evz_vz_vz_vz();
-                    
+
                     Dzzzz(:,:,r0)=Dzzzz(:,:,r0)+dvvv_Evz_vz_vzz();
-                    
+
                     Dzzzz(:,:,r0)=Dzzzz(:,:,r0)+dvv_Evz_vzzz();
-                    
+
                     Dzzzz(:,:,r0)=Dzzzz(:,:,r0)+dvv_Evzz_vzz();
-                    
+
                     Dzzzz(:,:,r0)=Dzzzz(:,:,r0)+others.dbf_plus{rt,rplus}*lambda_bf_XI01_4();
                 end
                 % precondition
                 Dzzzz(:,:,r0)=-others.Ui(:,:,r0)*Dzzzz(:,:,r0);
             end
-            
+
             function res=dvvvv_Evz_vz_vz_vz()
                 res=A_times_k_kron_B(structural_matrices.dvvvv{r0,r1},a0_z{r0,r1},4);
-                
+
                 res=res+A_times_k_kron_B(structural_matrices.dvvvv{r0,r1},a1_z{r1},4)*Eu{4};
-                
+
                 tmp=kron_Q1_Qk_times_A(Eu{2},a1_z{r1},a1_z{r1});
                 matsizes=ones(4,1)*[siz.nv,siz.nz];
                 res=res+A_times_sum_perms(...
@@ -295,20 +295,20 @@ end
                     matsizes,true,...
                     [1,3,2,4],[1,3,4,2],[3,1,4,2],[3,4,1,2],[3,1,2,4]);
             end
-            
+
             function res=dvvv_Evz_vz_vzz()
                 res=A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
                     a0_z{r0,r1},a0_z{r0,r1},a0_zz{r0,r1});
-                
+
                 res=res+A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
                     a0_z{r0,r1},a0_z{r0,r1},a1_zz{r1}*Eu{2});
-                
+
                 res=res+A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
                     a1_z{r1},a1_z{r1},a1_zz{r1})*Eu{4};
-                
+
                 res=res+A_times_kron_Q1_Qk(structural_matrices.dvvv{r0,r1},...
                     kron_Q1_Qk_times_A(Eu{2},a1_z{r1},a1_z{r1}),a0_zz{r0,r1});
-                
+
                 matsizes=[ones(2,1)*[siz.nv,siz.nz];siz.nz(ones(2))];
                 res0=A_times_sum_perms(...
                     structural_matrices.dvvv{r0,r1}*kron(speye(siz.nv^2),a1_zz{r1}),... A_times_kron_I_B(structural_matrices.dvvv{r0,r1},a1_zz{r1},siz.nv^2)
@@ -318,7 +318,7 @@ end
                     [1,2,4,3],[2,1,3,4],[2,1,4,3]);
                 res=res+res0;
                 res=dv_vz_omega(res,siz.nz,2);
-                
+
                 if debug
                     B=Pfunc(kron(Eu{2},hz{r0}),siz.nz(ones(3,2)),[1,3,2]);
                     A=kron_Q1_Qk_times_A(B,a1_z{r1},a1_zz{r1});
@@ -329,26 +329,26 @@ end
                     keyboard
                 end
             end
-            
+
             function res=dvv_Evz_vzzz()
                 res=A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a0_z{r0,r1},a0_zzz{r0,r1});
-                
+
                 res=res+A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a1_z{r1},a1_zzz{r1})*Eu{4};
-                
+
                 res=res+A_times_sum_perms(...
                     A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a1_z{r1},a1_zzz{r1}),...
                     {Eu{2},hz{r0},hz{r0}},...
                     siz.nz(ones(4,2)),true,...
                     [1,3,2,4],[1,3,4,2]);
-                
+
                 res=res+A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},...
                     a0_z{r0,r1},A_times_sum_perms(...
                     a1_zzz{r1},{hz{r0},Eu{2}},...
                     siz.nz(ones(3,2)),true,...
                     [2,1,3],[2,3,1]));
-                
+
                 omega1=utils.cr.omega(siz.nz,1);
-                
+
                 res0=A_times_kron_I_B(...
                     A_times_kron_Q1_Qk(...
                     A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},...
@@ -357,7 +357,7 @@ end
                     omega1,siz.nz);
                 res=res+res0;
                 res=dv_vz_omega(res,siz.nz,3);
-                
+
                 if debug
                     res00=A_times_kron_Q1_Qk(...
                         A_times_kron_Q1_Qk(...
@@ -370,19 +370,19 @@ end
                     keyboard
                 end
             end
-            
+
             function res=dvv_Evzz_vzz()
                 res=A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a0_zz{r0,r1},a0_zz{r0,r1});
-                
+
                 res=res+A_times_sum_perms(...
                     structural_matrices.dvv{r0,r1},...
                     {a0_zz{r0,r1},a1_zz{r1}*Eu{2}},...
                     ones(2,1)*[siz.nv,siz.nz^2],true,...
                     [2,1]);
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1},a1_zz{r1})*Eu{4};
-                
+
                 res=res+A_times_sum_perms(...
                     A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1},a1_zz{r1}),...
@@ -390,15 +390,15 @@ end
                     siz.nz(ones(4,2)),...
                     true,[1,2,4,3],...
                     [2,1,3,4],[2,1,4,3]);
-                
+
                 res=dv_vz_omega(res,siz.nz,4);
             end
-            
+
             function res=lambda_bf_XI01_4()
                 res0=A_times_kron_Q1_Qk(T.Tzzz{r1}(pos.t.bf,:),hz{r0},hz{r0},hzz{r0});
-                
+
                 res0=res0+A_times_kron_Q1_Qk(T.Tzzz{r1}(pos.t.bf,:),Eu{2},hzz{r0});
-                
+
                 res=dv_vz_omega(res0,siz.nz,2);
                 if debug
                     % the multiplication seems to introduce some
@@ -407,16 +407,16 @@ end
                     disp(max(max(abs(res__-res)))) %e.g. 5.9605e-08
                     keyboard
                 end
-                
+
                 res=res+dv_vz_omega(A_times_kron_Q1_Qk(T.Tzz{r1}(pos.t.bf,:),...
                     hz{r0},hzzz{r0}),siz.nz,3);
-                
+
                 res=res+dv_vz_omega(...
                     A_times_kron_Q1_Qk(T.Tzz{r1}(pos.t.bf,:),hzz{r0},hzz{r0}),...
                     siz.nz,4);
             end
         end
-        
+
         function Dzzzzz=fifth_order_rhs()
             Dzzzzz=preallocate_rhs(5);
             for r0=1:siz.h
@@ -426,25 +426,25 @@ end
                     a0_zzzz(pos.v.t_0,:)=T.Tzzzz{r0};
                     a0_zzzz(pos.v.bf_plus,:)=redo_a0_zzzz();
                     a1_zzzz(pos.v.bf_plus,:)=T.Tzzzz{r1}(pos.t.bf,:);
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+dvvvvv_Evz_vz_vz_vz_vz();
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+dvvvv_Evz_vz_vz_vzz();
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+dvvv_Evz_vz_vzzz();
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+dvvv_Evz_vzz_vzz();
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+dvv_Evz_vzzzz();
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+dvv_Evzz_vzzz();
-                    
+
                     Dzzzzz(:,:,r0)=Dzzzzz(:,:,r0)+others.dbf_plus{rt,rplus}*lambda_bf_XI01();
                 end
                 % precondition
                 Dzzzzz(:,:,r0)=-others.Ui(:,:,r0)*Dzzzzz(:,:,r0);
             end
-            
+
             function res=redo_a0_zzzz()
                 % builds on lambda_bf_XI01_4 but it is different!!!!
                 %---------------------------------------------------
@@ -460,13 +460,13 @@ end
                 res=res+T.Tz{r1}(pos.t.bf,:)*hzzzz{r0};
                 res=res+A_times_kron_Q1_Qk(T.Tzzzz{r1}(pos.t.bf,:),hz{r0},hz{r0},hz{r0},hz{r0});
             end
-            
+
             function res=dvvvvv_Evz_vz_vz_vz_vz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvvvvv{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a0_z{r0,r1});
-                
+
                 tmp=kron_Q1_Qk_times_A(Eu{2},a1_z{r1},a1_z{r1});
-                
+
                 matsizes=ones(5,1)*[siz.nv,siz.nz];
                 res=res+A_times_sum_perms(structural_matrices.dvvvvv{r0,r1},...
                     {a0_z{r0,r1},a0_z{r0,r1},a0_z{r0,r1},tmp},...
@@ -475,7 +475,7 @@ end
                     [1,2,4,3,5],[1,2,4,5,3],[1,4,2,5,3],...
                     [1,4,5,2,3],[4,1,5,2,3],[4,5,1,2,3],[4,1,2,5,3],...
                     [4,1,2,3,5],[1,4,2,3,5]);
-                
+
                 % exploit sparsity by using kron directly
                 %-----------------------------------------
                 tmp=kronall(a1_z{r1},a1_z{r1},a1_z{r1},a1_z{r1})*Eu{4};%<--tmp=kron_Q1_Qk_times_A(Eu{4},a1_z{r1},a1_z{r1},a1_z{r1},a1_z{r1});
@@ -484,26 +484,26 @@ end
                     matsizes,...
                     true,[2,1,3,4,5],[2,3,1,4,5],[2,3,4,1,5],[2,3,4,5,1]);
             end
-            
+
             function res=dvvvv_Evz_vz_vz_vzz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvvvv{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a0_zz{r0,r1});
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvvvv{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a0_z{r0,r1},a1_zz{r1}*Eu{2});
-                
+
                 tmp=A_times_kron_Q1_Qk(...
                     structural_matrices.dvvvv{r0,r1},a1_z{r1},a1_z{r1},a1_z{r1},a1_zz{r1});
                 res=res+A_times_sum_perms(tmp,{Eu{4},hz{r0}},...
                     siz.nz*ones(5,2),...
                     true,[1,2,3,5,4]);
-                
+
                 res=res+A_times_sum_perms(...
                     structural_matrices.dvvvv{r0,r1},...
                     {a0_z{r0,r1},kron_Q1_Qk_times_A(Eu{2},a1_z{r1},a1_z{r1}),a0_zz{r0,r1}},...
                     [ones(3,1)*[siz.nv,siz.nz];[siz.nv,siz.nz^2]],...
                     true,[2,1,3,4],[2,3,1,4]);
-                
+
                 tmp=A_times_sum_perms(...
                     kron(a1_z{r1},a1_zz{r1}),{Eu{2},hz{r0}},...
                     siz.nz*ones(3,2),...
@@ -515,7 +515,7 @@ end
                     [ones(3,1)*[siz.nv,siz.nz];[siz.nv,siz.nz^2]],...
                     true,[1,3,2,4],[3,1,2,4]...
                     );
-                
+
                 % invoke sparsity
                 %------------------
                 tmp=kronall(a1_z{r1},a1_z{r1},a1_zz{r1})*Eu{4};%<--tmp=kron_Q1_Qk_times_A(Eu{4},a1_z{r1},a1_z{r1},a1_zz{r1});
@@ -524,10 +524,10 @@ end
                     {a0_z{r0,r1},tmp},...
                     [ones(3,1)*[siz.nv,siz.nz];[siz.nv,siz.nz^2]],...
                     true,[2,1,3,4],[2,3,1,4]);
-                
+
                 res=dv_vz_omega(res,siz.nz,5);
             end
-            
+
             function res=dvvv_Evz_vz_vzzz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},a0_z{r0,r1},a0_z{r0,r1},...
@@ -535,11 +535,11 @@ end
                     A_times_sum_perms(a1_zzz{r1},{hz{r0},Eu{2}},siz.nz*ones(3,2),...
                     true,[2,1,3],[2,3,1])...
                     );
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},...
                     kron_Q1_Qk_times_A(Eu{2},a1_z{r1},a1_z{r1}),a0_zzz{r0,r1});
-                
+
                 tmp=A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},...
                     a1_z{r1},a1_z{r1},a1_zzz{r1});
@@ -547,7 +547,7 @@ end
                     tmp,{Eu{4},hz{r0}},...
                     [[siz.nz^2,siz.nz^2];siz.nz*ones(3,2)],true,...
                     [1,2,4,3],[1,4,2,3]);
-                
+
                 tmp=A_times_sum_perms(kron(a1_z{r1},a1_zzz{r1}),...
                     {Eu{2},hz{r0},hz{r0}},...
                     siz.nz*ones(4,2),...
@@ -556,12 +556,12 @@ end
                     {a0_z{r0,r1},tmp},...
                     [ones(2,1)*[siz.nv,siz.nz];[siz.nv,siz.nz^3]],...
                     true,[2,1,3]);
-                
+
                 res=res+A_times_sum_perms(structural_matrices.dvvv{r0,r1},...
                     {a0_z{r0,r1},kron_Q1_Qk_times_A(Eu{4},a1_z{r1},a1_zzz{r1})},...
                     [ones(2,1)*[siz.nv,siz.nz];[siz.nv,siz.nz^3]],...
                     true,[2,1,3]);
-                
+
                 omega1=utils.cr.omega(siz.nz,1);
                 tmp=kron_Q1_Qk_times_A(kron(Eu{2},hzz{r0}),a1_z{r1},a1_zz{r1});
                 tmp=tmp*kron(speye(siz.nz),omega1);
@@ -570,42 +570,42 @@ end
                     {a0_z{r0,r1},tmp},...
                     [ones(2,1)*[siz.nv,siz.nz];[siz.nv,siz.nz^3]],...
                     true,[2,1,3]);
-                
+
                 res=dv_vz_omega(res,siz.nz,6);
             end
-            
+
             function res=dvvv_Evz_vzz_vzz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},a0_z{r0,r1},...
                     a0_zz{r0,r1},a0_zz{r0,r1}+a1_zz{r1}*Eu{2});
-                
+
                 tmp=A_times_sum_perms(kron(a1_zz{r1},a1_zz{r1}),...
                     {hz{r0},Eu{2},hz{r0}},...
                     siz.nz*ones(4,2),true,...
                     [1,2,4,3],[2,1,4,3],[2,1,3,4]);
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},a0_z{r0,r1},tmp); clear tmp
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvvv{r0,r1},a0_z{r0,r1},...
                     kron(a1_zz{r1}*Eu{2},a0_zz{r0,r1})+...
                     kron(a1_zz{r1},a1_zz{r1})*Eu{4});
-                
+
                 res=res+A_times_sum_perms(structural_matrices.dvvv{r0,r1},...
                     {kron(a1_z{r1},a1_zz{r1})*kron(Eu{2},hz{r0}),a0_zz{r0,r1}},...
                     [[siz.nv,siz.nz];ones(2,1)*[siz.nv,siz.nz^2]],...
                     true,[1,3,2]);
-                
+
                 tmp=A_times_sum_perms(kronall(a1_z{r1},a1_zz{r1},a1_zz{r1}),...
                     {hz{r0},Eu{4}},siz.nz*ones(5,2),false,...
                     [2,3,1,4,5],[2,1,3,4,5]);
                 res=res+A_times_sum_perms(structural_matrices.dvvv{r0,r1},...
                     {tmp},[[siz.nv,siz.nz];ones(2,1)*[siz.nv,siz.nz^2]],...
                     true,[1,3,2]);
-                
+
                 res=dv_vz_omega(res,siz.nz,7);
             end
-            
+
             function res=dvv_Evz_vzzzz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a0_z{r0,r1},a0_zzzz+...
@@ -613,7 +613,7 @@ end
                     Pfunc(kronall(Eu{2},hz{r0},hz{r0}),siz.nz*ones(4,2),...
                     [1,3,2,4],[1,3,4,2],[3,1,4,2],[3,4,1,2],[3,1,2,4]))+...
                     dv_vz_omega(A_times_kron_Q1_Qk(a1_zzz{r1},Eu{2},hzz{r0}),siz.nz,2));
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_z{r1},a1_zzzz)*(...
                     Pfunc(kronall(Eu{2},hz{r0},hz{r0},hz{r0}),siz.nz*ones(5,2),...
@@ -621,21 +621,21 @@ end
                     Pfunc(kron(Eu{4},hz{r0}),siz.nz*ones(5,2),...
                     [1,2,3,5,4],[1,2,5,3,4],[1,5,2,3,4])...
                     );
-                
+
                 omega5=utils.cr.omega(siz.nz,5);
                 tmp=A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_z{r1},a1_zzz{r1});
                 res=res+A_times_sum_perms(tmp,{kronall(Eu{2},hz{r0},hzz{r0})*omega5},...
                     [siz.nz*ones(3,2);[siz.nz,siz.nz^2]],...
                     true,[1,3,2,4]); clear tmp
-                
+
                 omega6=utils.cr.omega(siz.nz,6);
                 tmp=A_times_kron_Q1_Qk(structural_matrices.dvv{r0,r1},a1_z{r1},a1_zz{r1});
                 res=res+A_times_kron_Q1_Qk(tmp,Eu{2},hzzz{r0})*omega6; clear tmp
-                
+
                 res=dv_vz_omega(res,siz.nz,8);
             end
-            
+
             function res=dvv_Evzz_vzzz()
                 res=A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a0_zz{r0,r1},...
@@ -643,10 +643,10 @@ end
                     a1_zzz{r1}*Pfunc(kron(hz{r0},Eu{2}),...
                     siz.nz*ones(3,2),[2,1,3],[2,3,1])...
                     );
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1}*Eu{2},a0_zzz{r0,r1});
-                
+
                 res=res+A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1},a1_zzz{r1})*(...
                     Pfunc(kronall(hz{r0},Eu{2},hz{r0},hz{r0}),siz.nz*ones(5,2),...
@@ -658,7 +658,7 @@ end
                     Pfunc(kron(Eu{4},hz{r0}),...
                     [[siz.nz^2,siz.nz^2];siz.nz*ones(3,2)],...
                     [1,2,4,3],[1,4,2,3]));
-                
+
                 omega5=utils.cr.omega(siz.nz,5);
                 tmp=A_times_kron_Q1_Qk(...
                     structural_matrices.dvv{r0,r1},a1_zz{r1},a1_zz{r1});
@@ -666,42 +666,42 @@ end
                     {kronall(hz{r0},Eu{2},hzz{r0})*omega5},...
                     [siz.nz*ones(3,2);[siz.nz,siz.nz^2]],...
                     true,[2,1,3,4]);
-                
+
                 res=dv_vz_omega(res,siz.nz,9);
             end
-            
+
             function res=lambda_bf_XI01()
                 res=dv_vz_omega(A_times_kron_Q1_Qk(...
                     T.Tzzzz{r1}(pos.t.bf,:),hz{r0},hz{r0},hz{r0},hzz{r0}),...
                     siz.nz,5);
-                
+
                 omega5=utils.cr.omega(siz.nz,5);
                 res=res+A_times_sum_perms(...
                     T.Tzzzz{r1}(pos.t.bf,:),{Eu{2},hz{r0},hzz{r0}},...
                     [siz.nz*ones(3,2);[siz.nz,siz.nz^2]],...
                     true,[1,3,2,4],[3,1,2,4])*omega5;
-                
+
                 res=res+dv_vz_omega(A_times_kron_Q1_Qk(...
                     T.Tzzz{r1}(pos.t.bf,:),hz{r0},hz{r0},hzzz{r0}),siz.nz,6);
-                
+
                 res=res+dv_vz_omega(A_times_kron_Q1_Qk(...
                     T.Tzzz{r1}(pos.t.bf,:),Eu{2},hzzz{r0}),siz.nz,6);
-                
+
                 res=res+dv_vz_omega(A_times_kron_Q1_Qk(...
                     T.Tzzz{r1}(pos.t.bf,:),hz{r0},hzz{r0},hzz{r0}),siz.nz,7);
-                
+
                 res=res+dv_vz_omega(T.Tzz{r1}(pos.t.bf,:)*...
                     kron(hz{r0},hzzzz{r0}),siz.nz,8);
-                
+
                 res=res+dv_vz_omega(T.Tzz{r1}(pos.t.bf,:)*...
                     kron(hzz{r0},hzzz{r0}),siz.nz,9);
             end
         end
-        
+
         function D=preallocate_rhs(oo)
             D=zeros(siz.nd,siz.nz^oo,siz.h);
         end
-        
+
         function [X,retcode]=solve_generalized_sylvester(D,oo)
             % [X,retcode] = tfqmr(@afun,D(:),obj.options.fix_point_TolFun);
             %     0 tfqmr converged to the desired tolerance TOL within MAXIT iterations.
@@ -709,7 +709,7 @@ end
             %     2 preconditioner M was ill-conditioned.
             %     3 tfqmr stagnated (two consecutive iterates were the same).
             %     4 one of the scalar quantities calculated during tfqmr became too
-            
+
             % shrink D and so on
             %--------------------
             if accelerate
@@ -731,7 +731,7 @@ end
                 end
                 nkept=siz.nz^oo;
             end
-            
+
             % expand final result: maybe, maybe not
             %--------------------------------------
             if x0_equal_D
@@ -739,9 +739,9 @@ end
             else
                 x0=[];
             end
-            
+
             [X,retcode]=utils.optim.linear_systems_solver(@afun,D(:),x0,obj.options);
-                
+
             if ~retcode
                 if accelerate
                     X=reshape(X,[siz.nd,nkept,siz.h]);
@@ -755,7 +755,7 @@ end
                 end
                 X=tmp;
             end
-            
+
             function ATC_plus_T=afun(tau)
                 tau=reshape(tau,[siz.nd,nkept,siz.h]);
                 ATC_plus_T=zeros(size(tau));

@@ -12,7 +12,7 @@ function [welf,retcode,V,d]=loss(obj,simuls,varargin)
 %
 %    - **obj** [rise|dsge]: scalar or vector of model objects.
 %
-%    - **simuls** [ts|struct|empty]: if empty, the unconditional welfare is
+%    - **simuls** [ts\|struct\|empty]: if empty, the unconditional welfare is
 %      returned. if not empty the conditional welfare is calculated instead
 %
 %    - **varargin** []: optional arguments coming in pairs

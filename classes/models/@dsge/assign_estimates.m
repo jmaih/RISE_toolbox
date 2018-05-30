@@ -4,7 +4,6 @@ function obj=assign_estimates(obj,params)
 %
 % ::
 %
-%
 %   obj=assign_estimates(obj,params)
 %
 % Args:
@@ -12,7 +11,7 @@ function obj=assign_estimates(obj,params)
 %    - **obj** [rise|dsge]: model object
 %
 %    - **params** [vector]: values of parameters estimated or under estimation
-%    or under posterior simulation
+%      or under posterior simulation
 %
 % Returns:
 %    :
@@ -23,16 +22,16 @@ function obj=assign_estimates(obj,params)
 %
 % Example:
 %
-%    See also:
+% See also:
 
 % this is the routine called during estimation for assigning new estimates
 % to the model
 if isempty(obj)
-    
+
     obj=cell(0,4);
-    
+
     return
-    
+
 end
 
 if ~isempty(params)
@@ -41,7 +40,7 @@ if ~isempty(params)
     % ensure the model will be re-solved no matter what
     %---------------------------------------------------
     obj.warrant_resolving = true;
-    
+
 end
 
 end

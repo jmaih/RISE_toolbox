@@ -9,7 +9,6 @@ function [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % Args:
 %
 %    - **obj** [dsge|svar|rfvar] : model object
-%
 %    - **varargin** : valid optional inputs coming in pairs. The main inputs
 %      of interest for changing the default behavior are:
 %
