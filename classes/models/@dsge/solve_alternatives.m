@@ -1,5 +1,5 @@
 function [allobj,mean_square_stable]=solve_alternatives(obj,varargin)
-% solve_alternatives - attempts to find all solutions of a MSDSGE model
+% Attempts to find all solutions of a MSDSGE model
 %
 % ::
 %

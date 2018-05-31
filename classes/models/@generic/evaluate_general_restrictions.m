@@ -1,9 +1,9 @@
 function g=evaluate_general_restrictions(obj)
-% EVALUATE_GENERAL_RESTRICTIONS - evaluates general restrictions
+% Evaluate general restrictions
 %
 % ::
 %
-%   g = EVALUATE_GENERAL_RESTRICTIONS(obj)
+%   g = evaluate_general_restrictions(obj)
 %
 % Args:
 %

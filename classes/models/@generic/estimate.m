@@ -1,10 +1,10 @@
 function obj=estimate(obj,varargin)
-% ESTIMATE - estimates the parameters of a RISE model
+% Estimate the parameters of a RISE model
 %
 % ::
 %
-%   obj=ESTIMATE(obj)
-%   obj=ESTIMATE(obj,varargin)
+%   obj=estimate(obj)
+%   obj=estimate(obj,varargin)
 %
 % Args:
 %
@@ -47,11 +47,11 @@ function obj=estimate(obj,varargin)
 %      without any inputs. In that case, RISE expects the output to be a
 %      structure with fields :
 %
-%          - **number_of_restrictions** : number of restrictions
-%          - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
-%            for the computation of the restrictions. If 1, only the filtered
-%            variables are required. If 2, the updated variables are required.
-%            If 3, the smoothed variables are required.
+%       - **number_of_restrictions** : number of restrictions
+%       - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
+%         for the computation of the restrictions. If 1, only the filtered
+%         variables are required. If 2, the updated variables are required.
+%         If 3, the smoothed variables are required.
 
 %      When the function is called with inputs, RISE expects as output the
 %      values of the restrictions. The sign of the violations does not matter.
@@ -63,10 +63,10 @@ function obj=estimate(obj,varargin)
 %      exogeneity or to impose other forms of linear restrictions. When not
 %      empty, **estim_linear_restrictions** must be a 2-column cell:
 %
-%      - Each row of the first column represents a particular linear
-%        combination of the estimated parameters.
-%      - Each row of the second column holds the value of the linear
-%        combination.
+%       - Each row of the first column represents a particular linear
+%         combination of the estimated parameters.
+%       - Each row of the second column holds the value of the linear
+%         combination.
 %
 %    - **estim_nonlinear_restrictions** [{[]}|cell]: When not
 %      empty, **estim_nonlinear_restrictions** must be a k x 1 cell, with each
@@ -81,13 +81,13 @@ function obj=estimate(obj,varargin)
 %      **estim_endogenous_priors** must be a function handle such that when
 %      called without inputs, it returns a struct with fields:
 %
-%      - **priors** : cell array of estimation priors. more explicitly, each
-%        entry of the cell array is itself a cell with the same syntax as the
-%        priors for estimation, EXCEPT the start value!
-%      - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
-%        for the computation of the endogenous priors. If 1, only the
-%        filtered variables are required. If 2, the updated variables are
-%        required. If 3, the smoothed variables are required.
+%       - **priors** : cell array of estimation priors. more explicitly, each
+%         entry of the cell array is itself a cell with the same syntax as the
+%         priors for estimation, EXCEPT the start value!
+%       - **kf_filtering_level** [0|1|2|3]: if 0, no filters are required
+%         for the computation of the endogenous priors. If 1, only the
+%         filtered variables are required. If 2, the updated variables are
+%         required. If 3, the smoothed variables are required.
 %
 %      When the function handle is called with an input, what is returned is a
 %      vector of values for which RISE will evaluate the endogenous prior.
@@ -100,12 +100,12 @@ function obj=estimate(obj,varargin)
 %    - **estim_penalty** [numeric|{1e+8}]: value of the objective function
 %      when a problem occurs. Possible problems include:
 %
-%      - no solution found
-%      - very low likelihood
-%      - stochastic singularity
-%      - problems computing the initial covariance matrix
-%      - non-positive definite covariance matrices
-%      - etc.
+%       - no solution found
+%       - very low likelihood
+%       - stochastic singularity
+%       - problems computing the initial covariance matrix
+%       - non-positive definite covariance matrices
+%       - etc.
 %
 %    - **estim_penalty_factor** [numeric|{10}]: when general nonlinear
 %      restrictions are present, RISE uses an estimation strategy in which the

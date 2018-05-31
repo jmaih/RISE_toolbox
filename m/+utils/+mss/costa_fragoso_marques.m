@@ -1,42 +1,38 @@
 function [flag,max_eig,C]=costa_fragoso_marques(T,Q,crit)
-% COSTA_FRAGOSO_MARQUES -- checks for Mean Square Stability using the
+% checks for Mean Square Stability using the
 % Costa, Fragoso and Marques algorithm.
 %
 % ::
 %
-%
-%   C=COSTA_FRAGOSO_MARQUES(T,Q)
-%
-%   C=COSTA_FRAGOSO_MARQUES(T,Q,crit)
+%   C=costa_fragoso_marques(T,Q)
+%   C=costa_fragoso_marques(T,Q,crit)
 %
 % Args:
 %
 %    - **T** [1 x h cell array]: Autoregressive part of the solution in each
-%    regime
-%
+%      regime
 %    - **Q** [h x h matrix]: Transition matrix
-%
 %    - **crit** [numeric]: tolerance criterion
 %
 % Returns:
 %    :
 %
 %    - **flag** [true|false]: result of the investigation on whether there is
-%    MSS or not.
-%
+%      MSS or not.
 %    - **max_eig** [numeric]: maximum eigenvalue
-%
 %    - **C** [matrix]: matrix in the criterion for checking stability
 %
 % Note:
 %
 % Example:
 %
-%    See also: GUPTA_MURRAY_HASSIBI
-
+% See also: gupta_murray_hassibi
+%
 % References:
-% O.L.V. Costa, M.D. Fragoso and R.P. Marques (2004):
-% "Discrete-Time Markov Jump Linear Systems"
+%
+%   - O.L.V. Costa, M.D. Fragoso and R.P. Marques (2004):
+%     "Discrete-Time Markov Jump Linear Systems"
+
 if nargin<3
     crit=[];
 end

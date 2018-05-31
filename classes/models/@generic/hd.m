@@ -1,5 +1,5 @@
 function [Histdec,obj]=hd(obj,varargin)
-% historical_decomposition Computes historical decompositions of a DSGE model
+% Compute the historical decompositions of a DSGE model
 %
 % ::
 %

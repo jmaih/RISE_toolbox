@@ -1,6 +1,5 @@
 function obj=assign_estimates(obj,params)
-% assign_estimates -- assign parameters to the model typically under
-% estimation
+% Assign parameters to the model typically under the estimation
 %
 % ::
 %
@@ -9,7 +8,6 @@ function obj=assign_estimates(obj,params)
 % Args:
 %
 %    - **obj** [rise|dsge]: model object
-%
 %    - **params** [vector]: values of parameters estimated or under estimation
 %      or under posterior simulation
 %

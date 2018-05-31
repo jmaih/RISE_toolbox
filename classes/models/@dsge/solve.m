@@ -1,10 +1,9 @@
 function [obj,retcode,structural_matrices]=solve(obj,varargin)
-% solve - solves dsge model
+% Solves dsge models
 %
 % ::
 %
 %   [obj,retcode,structural_matrices]=solve(obj)
-%
 %   [obj,retcode,structural_matrices]=solve(obj,varargin)
 %
 % Args:
@@ -16,10 +15,10 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %    - **solve_check_stability** [{true}|false]: check stability of Markov
 %      switching models while solving. The stability of constant-parameter
 %      models is always checked whether that of markov-switching models is
-%      optional. This is because (1) the procedure is computationally intensive
+%      optional. This is optional because (1) the procedure is computationally intensive
 %      and (2) there is no define stability criterion under endogenous switching
 %    - **solve_derivatives_type** [numeric|automatic|{symbolic}]: choice of
-%      derivatives
+%      numerical derivatives
 %    - **solve_order** [integer|{1}]: order of approximation
 %    - **solve_shock_horizon** [integer|{0}|struct|cell]: anticipation horizon
 %      of shocks beyond the current period. When the input is :
@@ -55,27 +54,30 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %      - **random** : the initial guess is random
 %
 %    - **solve_linsyst_user_algo** [{''}|cell|char]: user-defined solver for
-%      linear systems. It should be possible to call the function as
-%      [X,FLAG,RELRES,ITER,RESVEC] = bicgstabl(A,B,TOL,MAXIT,varargin). Hence,
+%      linear systems. It should be possible to call the function as ::
+%
+%         [X,FLAG,RELRES,ITER,RESVEC] = bicgstabl(A,B,TOL,MAXIT,varargin)
+%
+%      Hence,
 %      the function should accept at least 4 inputs where:
 %
-%      - **A** : matrix or function handle
-%      - **B** : right-hand side of system to solve
-%      - **TOL** : tolerance level
-%      - **MAXIT** : maximum number of iterations
+%       - **A** : matrix or function handle
+%       - **B** : right-hand side of system to solve
+%       - **TOL** : tolerance level
+%       - **MAXIT** : maximum number of iterations
 %
-%    The function must return 5 outputs as in Matlab's tfqmr, bicgstab,
-%    bicgstabl, gmres, etc. :
+%      The function must return 5 outputs as in Matlab's tfqmr, bicgstab,
+%      bicgstabl, gmres, etc. :
 %
-%      - **X** : the solution
-%      - **FLAG** : convergence flag
-%      - **RELRES** : relative residual NORM(B-A*X)/NORM(B)
-%      - **ITER** : iteration number
-%      - **RESVEC** : residual vector for various iterations
+%       - **X** : the solution
+%       - **FLAG** : convergence flag
+%       - **RELRES** : relative residual NORM(B-A*X)/NORM(B)
+%       - **ITER** : iteration number
+%       - **RESVEC** : residual vector for various iterations
 %
-%    As far as the outputs are concerned, only the two first are relevant for
-%    RISE and so the three last can be empty. But they must be returned by the
-%    function all the same.
+%      As far as the outputs are concerned, only the two first are relevant for
+%      RISE and so the three last can be empty. But they must be returned by the
+%      function all the same.
 %
 %    - **solver** [{[]}|char|user_defined]: solver for the dsge model. The
 %      following are possible:

@@ -1,10 +1,10 @@
 function flag=is_stationary_system(obj)
-% IS_STATIONARY_SYSTEM -- checks whether a the model is stationary. i.e.
+% Checks whether a the model is stationary. i.e.,
 % does not containt trending variables
 %
 % ::
 %
-%   flag=IS_STATIONARY_SYSTEM(obj)
+%   flag=is_stationary_system(obj)
 %
 % Args:
 %

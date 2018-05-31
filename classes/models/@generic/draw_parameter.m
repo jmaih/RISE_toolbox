@@ -8,7 +8,6 @@ function [draw,obj]=draw_parameter(obj,simulation_folder)
 % Args:
 %
 %    - **obj** [rise|dsge|rfvar|svar]: RISE model object
-%
 %    - **simulation_folder** [char|struct]:
 %
 %      - char(1): simulation folder : the stored elements should be structures

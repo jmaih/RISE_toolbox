@@ -4,7 +4,6 @@ function r=resid(obj,varargin)
 % ::
 %
 %   r=resid(obj)
-%
 %   r=resid(obj,varargin)
 %
 % Args:

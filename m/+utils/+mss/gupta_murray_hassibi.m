@@ -1,46 +1,37 @@
 function [flag,max_eig,C]=gupta_murray_hassibi(T,Q,crit,fast)
-% GUPTA_MURRAY_HASSIBI -- checks for Mean Square Stability using the Gupta,
-% Murray and Hassibi algorithm
+% Checks for the Mean Square Stability using the Gupta, Murray and Hassibi algorithm
 %
 % ::
 %
-%
-%   C=GUPTA_MURRAY_HASSIBI(T,Q)
-%
-%   C=GUPTA_MURRAY_HASSIBI(T,Q,crit)
-%
-%   C=GUPTA_MURRAY_HASSIBI(T,Q,crit,fast)
+%   C=gupta_murray_hassibi(T,Q)
+%   C=gupta_murray_hassibi(T,Q,crit)
+%   C=gupta_murray_hassibi(T,Q,crit,fast)
 %
 % Args:
 %
 %    - **T** [1 x h cell array]: Autoregressive part of the solution in each
-%    regime
-%
+%      regime
 %    - **Q** [h x h matrix]: Transition matrix
-%
 %    - **crit** [numeric]: tolerance criterion
-%
 %    - **fast** [false|{true}]: use the fastest algorithm
 %
 % Returns:
 %    :
 %
 %    - **flag** [true|false]: result of the investigation on whether there is
-%    MSS or not.
-%
+%      MSS or not.
 %    - **max_eig** [numeric]: maximum eigenvalue
-%
 %    - **C** [matrix]: matrix in the criterion for checking stability
 %
 % Note:
 %
 % Example:
 %
-%    See also: COSTA_FRAGOSO_MARQUES
-
+% See also: costa_fragoso_marques
+%
 % References:
-% Vijay Gupta, Richard Murray and Babak Hassibi (2003):
-% "On the Control of Jump Linear Markov Systems with Markov State Estimation"
+%   - Vijay Gupta, Richard Murray and Babak Hassibi (2003):
+%     "On the Control of Jump Linear Markov Systems with Markov State Estimation."
 
 if nargin<4
     fast=[];

@@ -1,12 +1,10 @@
 function flag=is_stable_system(obj,varargin)
-% IS_STABLE_SYSTEM -- checks the stability of a linear markov switching
-% system.
+% Checks the stability of a linear markov switching system.
 %
 % ::
 %
-%   flag=IS_STABLE_SYSTEM(obj)
-%
-%   flag=IS_STABLE_SYSTEM(obj,varargin)
+%   flag=is_stable_system(obj)
+%   flag=is_stable_system(obj,varargin)
 %
 % Args:
 %
@@ -29,9 +27,19 @@ function flag=is_stable_system(obj,varargin)
 %
 % Note:
 %
-% Example:
+%    RISE implements two algorithms from the engineering literature to check
+%    for the stability. They are
 %
-% See also:
+%       - Costa-Fragoso-Marques :cite:`costa2006discrete`
+%       - Hassibi-Murray-Gupta :cite:`gupta2003control`
+%
+%    Refer to the references to see the specific algorithms. However, for most
+%    applications, one can just use the default options.
+%
+% References:
+%
+%    - :cite:`costa2006discrete`
+%    - :cite:`gupta2003control`
 
 % this function checks that the solved system is
 % stable in the sense that its covariance matrix is

@@ -1,5 +1,5 @@
 function cond_fkst_db=forecast(obj,varargin)
-% forecast - computes forecasts for rise|dsge|svar|rfvar models
+% Compute forecasts for rise|dsge|svar|rfvar models
 %
 % ::
 %

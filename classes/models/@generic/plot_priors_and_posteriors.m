@@ -1,12 +1,10 @@
 function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,...
     parlist,trunc,npoints,varargin)
-% plot_priors_and_posteriors -- computes posterior and prior densities for
-% estimated parameters
+% compute posterior and prior densities for estimated parameters
 %
 % ::
 %
 %   ppdata=plot_priors_and_posteriors(obj)
-%
 %   ppdata=plot_priors_and_posteriors(obj,simulation_folder)
 %
 % Args:

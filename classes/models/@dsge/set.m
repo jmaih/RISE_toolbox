@@ -8,7 +8,6 @@ function obj=set(obj,varargin)
 % Args:
 %
 %    - **obj** [rise|dsge]: model object
-%
 %    - **varargin** : valid input arguments coming in pairs. Notable fields to
 %      that can be set include and are not restricted to:
 %
@@ -48,8 +47,6 @@ function obj=set(obj,varargin)
 %    :
 %
 %    - **obj** [rise|dsge]: model object
-%
-% Note:
 %
 % Example:
 %

@@ -1,5 +1,5 @@
 function [obj,H,issue]=hessian(obj,x,varargin)
-% hessian - computes the hessian of the model at a specific point
+% Computes the hessian of the model at a specific point
 %
 % ::
 %

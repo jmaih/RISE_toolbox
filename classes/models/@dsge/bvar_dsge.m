@@ -8,7 +8,6 @@ function [obj,retcode]=bvar_dsge(obj,varargin)
 % Args:
 %
 %    - **obj** [rise|dsge]: model object
-%
 %    - **varargin** [?]: ususal dsge options. The most important of which are:
 %
 %      - **dsgevar_lag** [integer|{4}]: number of lags in the VAR

@@ -3,7 +3,7 @@ function params=isnan(obj)
 %
 % ::
 %
-%    params = isnan();
+%    params = isnan(obj);
 %
 % Args:
 %

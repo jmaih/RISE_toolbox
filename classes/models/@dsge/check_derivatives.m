@@ -1,5 +1,5 @@
 function retcode=check_derivatives(obj,varargin)
-% check_derivatives - compares the derivatives and the solutions from various differentiation techniques
+% Compares the derivatives and the solutions from various differentiation techniques
 %
 % ::
 %
@@ -20,7 +20,6 @@ function retcode=check_derivatives(obj,varargin)
 % Note:
 %
 %    - The derivatives computed are 'automatic', 'symbolic' or 'numerical'
-%
 %    - The comparisons are done relative to automatic derivatives, which are
 %      assumed to be the most accurate.
 %
