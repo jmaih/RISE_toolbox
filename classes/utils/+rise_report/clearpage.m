@@ -1,6 +1,16 @@
 classdef clearpage < rise_report.generic_report
-    % clearpage report clear page object
     %
+    % clears the page
+    %
+    % ::
+    %
+    %    document.clearpage();
+    %
+    % Args:
+    %    none
+    %
+
+
     % methods
     % --------
     %

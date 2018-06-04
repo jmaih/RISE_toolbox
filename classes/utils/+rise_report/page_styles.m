@@ -1,20 +1,5 @@
 function ps=page_styles()
-% H1 line
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
+% Internal File -- Not intended to be used directly by users
 
 ps={'plain','headings','empty','fancy'};
 

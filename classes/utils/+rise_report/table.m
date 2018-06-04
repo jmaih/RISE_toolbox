@@ -1,6 +1,40 @@
 classdef table < rise_report.generic_report
-% table report table object
+% Create a table
 %
+% ::
+%
+%    document.table('option_name',option_value);
+%
+% Args:
+%
+%    varargin: arguments need to come in pairs
+%
+%       - **log** : [cell] contents of the table
+%       - **title** : [char] title of the table
+%       - **longtable** : [true|{false}] whether long table
+%       - **numbering** : [{true}|false] whether to number the table
+%       - **precision** : [numeric|{4}] number of decimal places
+%       - **header** : [{''}|char|cell] : Header of the table if not already included in the log
+%
+% Example:
+%
+% ::
+%
+%    table={
+%        '','col2','col3','col4'
+%        'row2',rand,rand,rand
+%        'row3',rand,rand,rand
+%        'row4',rand,rand,rand
+%        'row5',rand,rand,rand
+%        'row6',rand,rand,rand
+%        'row7',rand,rand,rand
+%        'row8',rand,rand,rand
+%        };
+%    document.table('title','title of the table', 'log',table)
+%
+
+
+
 % methods
 % --------
 %
@@ -49,41 +83,7 @@ table_number
 end
 methods
 function obj=table(varargin)
-% TABLE constructs a reporting table
-%
-% ::
-%
-%   obj=TABLE(varargin)
-%
-% Args:
-%              %
-%              % the input arguments must come in pairs :
-%              %   - ['log',[cell array]] : table comes in the form of a cell
-%              %      array
-%              %
-%              %   - ['title',[char]]
-%              %
-%              %   - ['longtable',[true|{false}]]
-%              %
-%              %   - ['precision',[numeric|{4}]] : number of decimal points
-%              %
-%              %   - ['numbering',[{true}|false]] : whether or not the table
-%              %     should be numbered in the final report
-%              %
-%              %   - ['header',[{''}|char|cell]] : Header of the table below the
-%              %   title if not already included in the log
-%              %
-% Returns:
-%    :
-%              %
-%              % - obj [table object]
-%              %
-% Note:
-%              %
-% Example:
-            %
-            % See also:
-            
+
             obj=rise_report.feed_properties(mfilename,obj,varargin{:});
         end
         function b = get.batch(obj)

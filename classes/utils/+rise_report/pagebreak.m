@@ -1,4 +1,15 @@
 classdef pagebreak < rise_report.generic_report
+    %
+    % Insert a page break
+    %
+    % ::
+    %
+    %    document.pagebreak();
+    %
+    % Args:
+    %    none
+    %
+
     % pagebreak report page break object
     %
     % methods

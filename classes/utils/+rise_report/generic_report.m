@@ -1,6 +1,7 @@
 classdef generic_report < handle
-    % generic_report generic class for report objects
+    % Internal Object -- Not intended to be used directly by users
     %
+
     % methods
     % --------
     %

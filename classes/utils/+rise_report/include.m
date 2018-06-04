@@ -1,6 +1,17 @@
 classdef include < rise_report.generic_report
-    % include report include object
+    % Insert text from a file
     %
+    % ::
+    %
+    %    document.include('option_name',option_value);
+    %
+    % Args:
+    %
+    %    varargin: arguments need to come in pairs
+    %
+    %       - **filename** : filename to include
+    %
+
     % methods
     % --------
     %

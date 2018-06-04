@@ -1,5 +1,14 @@
 classdef cleardoublepage < rise_report.generic_report
-    % cleardoublepage report clear double page object
+    % clears double page
+    %
+    % ::
+    %
+    %    document.clearpage();
+    %
+    % Args:
+    %    none
+    %
+
     %
     % methods
     % --------

@@ -1,6 +1,20 @@
 classdef chapter < rise_report.generic_report
-    % chapter report chapter object
+    % Chapter
     %
+    % ::
+    %
+    %    document.chapter('option_name',option_value);
+    %
+    % Args:
+    %
+    %    varargin: arguments need to come in pairs
+    %
+    %       - **title** : title of the chapter
+    %       - **tableOfContents** : [true|{false}] whether to include in the table of contents
+    %       - **tableOfContentsTitle** : chapter title to be used in the table of contents
+    %       - **numbering** : [{true}|false] whether to include the chapter in numbering of the table of contents
+    %
+
     % methods
     % --------
     %

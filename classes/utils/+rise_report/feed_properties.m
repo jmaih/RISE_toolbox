@@ -1,20 +1,5 @@
 function obj=feed_properties(classname,obj,varargin)
-% H1 line
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
+% Internal Method
 
 n=length(varargin);
 if rem(n,2)

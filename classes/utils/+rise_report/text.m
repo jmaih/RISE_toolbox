@@ -1,6 +1,15 @@
 classdef text < rise_report.generic_report
-    % text report text object
+    % Write literal text to file
     %
+    % ::
+    %
+    %    document.text('text');
+    %
+    % Args:
+    %
+    %    - **text** : text to write to file
+    %
+
     % methods
     % --------
     %

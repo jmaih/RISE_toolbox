@@ -2,6 +2,33 @@
 classdef figure < rise_report.generic_report
 % figure report figure object
 %
+% ::
+%
+%    document.table('option_name',option_value);
+%
+% Args:
+%
+%    varargin: arguments need to come in pairs
+%
+%       - **title** : [char] title of the figure
+%       - **name** : [char|handle] name of the file to attach or the handle to the plot to attach
+%       - **width** : [numeric (optional)] width of the figure
+%       - **height** : [numeric (optional)] height of the figure
+%       - **angle** : [numeric (optional)] rotate the figure by the given angle
+%       - **scale** : [numeric (optional)| {0.85}] rescale the figure by the given scale
+%       - **graphicspath** : [char|''] path to the graph or figure
+%       - **numbering** : [{true}|false] whether the figure should be numbered
+%
+% Example:
+%
+% ::
+%
+%    fighand=figure('name','figure name');
+%    x=1:100;
+%    plot(x,sin(x),'linewidth',2)
+%    document.figure('title','latex figure name', 'name',fighand);
+%
+
 % methods
 % --------
 %
@@ -59,47 +86,6 @@ figure_number
 end
 methods
 function obj=figure(varargin)
-% FIGURE constructs a reporting figure
-%
-% ::
-%
-%   obj=FIGURE(varargin)
-%
-% Args:
-%              %
-%              % the input arguments must come in pairs :
-%              %   - ['title',[char]] : title for the figure to be reported
-%              %
-%              %   - ['name',[char|handle]] : name of the pdf file (on the
-%              %     matlab path) or the handle to the figure to be reported
-%              %
-%              %   - ['width',[numeric|{}]] : width for resizing the figure to
-%              %     be plotted
-%              %
-%              %   - ['height',[numeric|{}]] : height for resizing the figure to
-%              %     be plotted
-%              %
-%              %   - ['angle',[numeric|{0}]] : rotation angle
-%              %
-%              %   - ['scale',[numeric|{0.85}]] : scale for resizing the figure to
-%              %     be plotted
-%              %
-%              %   - ['graphicspath',[char|{''}]] : path to the location of
-%              %     the graph or figure
-%              %
-%              %   - ['numbering',[{true}|false]] : whether or not the table
-%              %     should be numbered in the final report
-%              %
-% Returns:
-%    :
-%              %
-%              % - obj [figure object]
-%              %
-% Note:
-%              %
-% Example:
-            %
-            % See also:
             obj=rise_report.feed_properties(mfilename,obj,varargin{:});
             own_props={
                 'name',@(x)ischar(x)||ishandle(x)

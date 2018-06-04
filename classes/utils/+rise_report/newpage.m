@@ -1,6 +1,15 @@
 classdef newpage < rise_report.generic_report
-    % newpage report new page object
     %
+    % Create a new page
+    %
+    % ::
+    %
+    %    document.newpage();
+    %
+    % Args:
+    %    none
+    %
+
     % methods
     % --------
     %

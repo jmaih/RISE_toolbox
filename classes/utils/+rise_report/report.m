@@ -1,5 +1,41 @@
 classdef report < rise_report.titlepage
-    % report Reporting system
+    % Initialize the report
+    %
+    % ::
+    %
+    %    document = report('option_name',option_value);
+    %
+    % Args:
+    %
+    %    varargin: arguments need to come in pairs
+    %
+    %       - **title** : title of the chapter
+    %       - **tableOfContents** : [true|{false}] whether to include in the table of contents
+    %       - **tableOfContentsTitle** : chapter title to be used in the table of contents
+    %       - **numbering** : [{true}|false] whether to include the chapter in numbering of the table of contents
+    %
+    % - [name] -
+    % - [graphicspath] -
+    % - [documentclass] -
+    % - [packages] -
+    % - [orientation] -
+    % - [points] -
+    % - [papersize] -
+    % - [fleqn] -
+    % - [leqno] -
+    % - [titlepage] -
+    % - [onecolumn] -
+    % - [twoside] -
+    % - [openright] -
+    % - [title] -
+    % - [date] -
+    % - [author] -
+    % - [address] -
+    % - [email] -
+    % - [abstract] -
+    % - [latex_date_format] -
+
+
     %
     % methods
     % --------
@@ -226,7 +262,7 @@ classdef report < rise_report.titlepage
                 error([mfilename,':: arguments must come in pairs'])
             end
             default_options=struct('write2disk',true,'clean_up',true);
-            
+
             fields=fieldnames(default_options);
             for iarg=1:2:n
                 if ~any(strcmp(varargin{iarg},fields))
@@ -241,7 +277,7 @@ classdef report < rise_report.titlepage
             clean_up=default_options.clean_up;
             report_name=parser.remove_file_extension(obj.name);
             do_write_up()
-            
+
             if write2disk
                 utils.latex.pdflatex(report_name)
             end
@@ -261,7 +297,7 @@ classdef report < rise_report.titlepage
                     end
                 end
             end
-            
+
             function do_write_up()
                 if write2disk
                     [fid, msg] = fopen([report_name,'.tex'],'w');
@@ -276,7 +312,7 @@ classdef report < rise_report.titlepage
                 add_body();
                 add_finish();
                 %-------------------------------------
-                
+
                 function add_finish()
                     fprintf(fid, '\\end{document}\n');
                     fprintf(fid, '%% End Report Object\n');
@@ -288,18 +324,18 @@ classdef report < rise_report.titlepage
                     end
                     disp('Finished Writing Report!');
                 end
-                
+
                 function add_body()
                     for iter_=1:obj.iter
                         fprintf(1,'now writing item # %0.0f of %0.0f\n',iter_,obj.iter);
                         write(obj.log{iter_},fid)
                     end
                 end
-                
+
                 function add_title_page()
                     write(obj,fid)
                 end
-                
+
                 function add_preamble()
                     fprintf(fid,'%% Report Object\n');
                     doc_attributes=setdiff(properties(rise_report.report),...
@@ -346,7 +382,7 @@ classdef report < rise_report.titlepage
                     %                     fprintf(fid, '\\usepackage{color, colortbl}\n');
                     %                     fprintf(fid, '\\definecolor{LightCyan}{rgb}{0.88,1,1}\n');
                     %                     fprintf(fid, '\\definecolor{Gray}{gray}{0.9}\n');
-                    
+
                     %                     if obj.showDate
                     %                         fprintf(fid, '\\usepackage{fancyhdr, datetime}\n');
                     %                         fprintf(fid, '\\newdateformat{reportdate}{\\THEDAY\\ \\shortmonthname\\ \\THEYEAR}\n');
@@ -355,7 +391,7 @@ classdef report < rise_report.titlepage
                     %                         fprintf(fid, '\\renewcommand{\\footrulewidth}{0.5pt}\n');
                     %                         fprintf(fid, '\\rfoot{\\scriptsize\\reportdate\\today\\ -- \\currenttime}\n');
                     %                     end
-                    
+
                     % May not need these.....
                     %                     fprintf(fid, '\\renewcommand{\\textfraction}{0.05}\n');
                     %                     fprintf(fid, '\\renewcommand{\\topfraction}{0.8}\n');

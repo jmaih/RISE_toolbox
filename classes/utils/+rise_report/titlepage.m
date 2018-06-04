@@ -1,6 +1,24 @@
 classdef titlepage < rise_report.generic_report
-    % titlepage report title page object
+    % Create the Title Page
     %
+    % ::
+    %
+    %    document.chapter('option_name',option_value);
+    %
+    % Args:
+    %
+    %    varargin: arguments need to come in pairs
+    %
+    %       - **title** : title
+    %       - **date** : date
+    %       - **author** : author name
+    %       - **address** : institution
+    %       - **email** : e-mail address
+    %       - **abstract** : abstract
+    %       - **latex_date_format** : XXXXXXXXXXX
+    %
+
+
     % methods
     % --------
     %

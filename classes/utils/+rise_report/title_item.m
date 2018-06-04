@@ -1,19 +1,6 @@
 function b=title_item(type,title,numbering,tableOfContentsTitle)
-% H1 line
+% Internal Function -- Not intended to be used by users
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<4
     tableOfContentsTitle='';
