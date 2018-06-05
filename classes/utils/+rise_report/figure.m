@@ -16,7 +16,7 @@ classdef figure < rise_report.generic_report
 %       - **height** : [numeric (optional)] height of the figure
 %       - **angle** : [numeric (optional)] rotate the figure by the given angle
 %       - **scale** : [numeric (optional)| {0.85}] rescale the figure by the given scale
-%       - **graphicspath** : [char|''] path to the graph or figure
+%       - **graphicspath** : [char|{''}] path to the graph or figure
 %       - **numbering** : [{true}|false] whether the figure should be numbered
 %
 % Example:
@@ -135,10 +135,10 @@ function obj=figure(varargin)
                 myfigname=reprocess(titel);
                 attributes={};
                 if ~isempty(obj.width)
-                    attributes=[attributes,sprintf('%0.2f\textwidth',obj.width)];
+                    attributes=[attributes,sprintf('width=%0.2f\\textwidth',obj.width)];
                 end
                 if ~isempty(obj.height)
-                    attributes=[attributes,sprintf('%0.2f\textheight',obj.height)];
+                    attributes=[attributes,sprintf('height=%0.2f\\textheight',obj.height)];
                 end
                 if ~isempty(angle_)
                     attributes=[attributes,sprintf('angle=%0.2f',angle_)];
