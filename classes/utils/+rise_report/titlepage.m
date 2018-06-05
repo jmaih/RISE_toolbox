@@ -9,12 +9,12 @@ classdef titlepage < rise_report.generic_report
     %
     %    varargin: arguments need to come in pairs
     %
-    %       - **title** : title
-    %       - **date** : date
-    %       - **author** : author name
-    %       - **address** : institution
-    %       - **email** : e-mail address
-    %       - **abstract** : abstract
+    %       - **title** : [char] title
+    %       - **date** : [char] date
+    %       - **author** : [char] author name
+    %       - **address** : [char] institution
+    %       - **email** : [char] e-mail address
+    %       - **abstract** : [char] abstract
     %       - **latex_date_format** : XXXXXXXXXXX
     %
 

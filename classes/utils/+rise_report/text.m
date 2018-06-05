@@ -1,5 +1,5 @@
 classdef text < rise_report.generic_report
-    % Write literal text to file
+    % Write literal text to the file
     %
     % ::
     %
@@ -7,7 +7,7 @@ classdef text < rise_report.generic_report
     %
     % Args:
     %
-    %    - **text** : text to write to file
+    %    text (char): text to write to the file
     %
 
     % methods

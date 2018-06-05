@@ -9,31 +9,27 @@ classdef report < rise_report.titlepage
     %
     %    varargin: arguments need to come in pairs
     %
-    %       - **title** : title of the chapter
-    %       - **tableOfContents** : [true|{false}] whether to include in the table of contents
-    %       - **tableOfContentsTitle** : chapter title to be used in the table of contents
-    %       - **numbering** : [{true}|false] whether to include the chapter in numbering of the table of contents
+    %       - **name** : [char] name of the report (gets used for file/folder names)
+    %       - **graphicspath** : [char] folder to save figures
+    %       - **documentclass** : [{article}|report|book|proc|minimal|slides] documentclass of the latex document
+    %       - **packages** : [{}] latex packages to include
+    %       - **orientation** : [{landscape}|portrait] orientation of the paper
+    %       - **points** : [12pt] font of the texts
+    %       - **papersize** : [a4paper|{letterpaper}|a5paper|b5paper|executivepaper|legalpaper] size of the paper
+    %       - **fleqn** :
+    %       - **leqno** :
+    %       - **titlepage** : [titlepage, notitlepage] whether to create the title page
+    %       - **onecolumn** : [onecolumn|twocolumn] number of columns
+    %       - **twoside** : [oneside|twoside] one-sided or two-sided
+    %       - **openright** : [openright|openany] whether to start a new chapter from right or any page
+    %       - **title** : [char] title
+    %       - **date** : [char] date
+    %       - **author** : [char]  author name
+    %       - **address** : [char] address
+    %       - **email** : [char] email
+    %       - **abstract** : [char] abstract
+    %       - **latex_date_format** :
     %
-    % - [name] -
-    % - [graphicspath] -
-    % - [documentclass] -
-    % - [packages] -
-    % - [orientation] -
-    % - [points] -
-    % - [papersize] -
-    % - [fleqn] -
-    % - [leqno] -
-    % - [titlepage] -
-    % - [onecolumn] -
-    % - [twoside] -
-    % - [openright] -
-    % - [title] -
-    % - [date] -
-    % - [author] -
-    % - [address] -
-    % - [email] -
-    % - [abstract] -
-    % - [latex_date_format] -
 
 
     %
@@ -257,6 +253,18 @@ classdef report < rise_report.titlepage
         %         end
         %-----------------------------------
         function publish(obj,varargin)
+            % Finalize the RISE report and create the relevant document
+            %
+            % Args:
+            %    varargin : arguments need to come in pairs
+            %
+            %       - **write2disk**: [{true}|false] whether to write the result to a file as a pdf
+            %       - **clean_up**: [{true}|false] whether to delete extra files created by latex, e.g., log, aux files.
+            %
+            % Returns:
+            %    Finished report
+            %
+
             n=length(varargin);
             if rem(n,2)
                 error([mfilename,':: arguments must come in pairs'])

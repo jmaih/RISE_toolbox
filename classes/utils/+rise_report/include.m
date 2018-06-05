@@ -9,7 +9,7 @@ classdef include < rise_report.generic_report
     %
     %    varargin: arguments need to come in pairs
     %
-    %       - **filename** : filename to include
+    %       - **filename** : name of the file to be included
     %
 
     % methods
