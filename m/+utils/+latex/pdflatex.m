@@ -1,19 +1,6 @@
 function status=pdflatex(filename)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % get the compiler from the rise_root
 compiler=getappdata(0,'rise_pdflatex');

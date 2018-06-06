@@ -1,6 +1,5 @@
 function [flag,max_eig,C]=costa_fragoso_marques(T,Q,crit)
-% checks for Mean Square Stability using the
-% Costa, Fragoso and Marques algorithm.
+% checks for Mean Square Stability using the Costa, Fragoso and Marques algorithm.
 %
 % ::
 %

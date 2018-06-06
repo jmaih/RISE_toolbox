@@ -1,6 +1,5 @@
 function vcov=farthest(vcov0,debug)
-
-% farthest -- computes farthest covariance matrix when failure
+% computes farthest covariance matrix when failure
 %
 % ::
 %

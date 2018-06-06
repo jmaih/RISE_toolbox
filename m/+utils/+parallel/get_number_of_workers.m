@@ -1,9 +1,7 @@
 function n=get_number_of_workers()
-% get_number_of_workers -- get number of labs available for parallel
-% processing
+% INTERNAL FUNCTION: get number of labs available for parallel processing
 %
 % ::
-%
 %
 %   n=get_number_of_workers()
 %
@@ -14,13 +12,8 @@ function n=get_number_of_workers()
 % Returns:
 %    :
 %
-%    - **n** [integer]: number of labs available
+%    - **n** [integer]: number of parallel workers available
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 v=ver;
 Names={v.Name};

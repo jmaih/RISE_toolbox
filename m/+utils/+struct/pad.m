@@ -1,36 +1,30 @@
 function c=pad(varargin)
-% pad concatenates fields structures horizontally
+% Concatenates fields structures horizontally
 %
-% Syntax
-% -------
 % ::
 %
 %   c=pad(c1,c2,...,cn)
 %
-% Inputs
-% -------
+% Args:
 %
-% - ci : [struct] 
+%    - ci : [struct]
 %
-% Outputs
-% --------
+% Returns:
 %
-% - c : [struct] structure with fields that horizontally concatenate the
-%   fields of c1, c2,..., cn
+%    - c : [struct] structure with fields that horizontally concatenate the
+%      fields of c1, c2,..., cn
 %
-% Remarks
-% --------
+% Note:
+%    All structures must have the same fields and the fields must be
+%    concatenable.
 %
-% - All structures must have the same fields and the fields must be
-%   concatenable.
+% Example:
 %
-% Examples
-% ---------
+%    ::
 %
-% c1=struct('a',1,'b',3); c2=struct('a',2,'b',3); c3=struct('a',3,'b',3);
-% c=utils.struct.pad(c1,c2,c3) 
+%       c1=struct('a',1,'b',3); c2=struct('a',2,'b',3); c3=struct('a',3,'b',3);
+%       c=utils.struct.pad(c1,c2,c3)
 %
-% See also: 
 
 n=nargin;
 silent=true;

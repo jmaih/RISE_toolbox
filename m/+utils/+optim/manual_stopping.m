@@ -1,19 +1,6 @@
 function flag=manual_stopping(action)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin==0
     action=0;
@@ -46,5 +33,5 @@ switch action
                 end
             end
         end
-end
+    end
 end

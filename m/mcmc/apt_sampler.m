@@ -1,69 +1,63 @@
 function [Results]=apt_sampler(logf,lb,ub,options,mu,SIG_mom)
-% MH_SAMPLER -- Metropolis Hastings sampler
+% Metropolis Hastings sampler
 %
 % ::
 %
-%
 %   [Results]=MH_SAMPLER(logf,lb,ub)
-%
 %   [Results]=MH_SAMPLER(logf,lb,ub,options)
-%
 %   [Results]=MH_SAMPLER(logf,lb,ub,options,mu)
-%
 %   [Results]=MH_SAMPLER(logf,lb,ub,options,mu,SIG)
 %
 % Args:
 %
 %    - **logf** [char|function_handle]: Objective function to MINIMIZE!!!
-%
 %    - **lb** [d x 1 vector]: lower bound of the paramters
-%
 %    - **ub** [d x 1 vector]: upper bound of the paramters
-%
 %    - **options** [struct]:
+%
 %      - **alpha** [scalar|2-element|{[.25,.45]}]: target acceptance rate
 %      - **burnin** [integer|{0}]: number of burn-in initial simulations
 %      - **N** [integer|{20000}]: number of simulations
 %      - **verbose** [integer|{100}]: displays progress for every multiple of
-%      "verbose"
+%        "verbose"
 %      - **c** [scalar|{0.25}]: initial scale for the covariance matrix
 %      - **c_range** [vector|{}]: range of variation of c
 %      - **thin** [integer|{1}]: number of thinning simulations. 1 means we
-%      keep every draw, 2 means we keep every second, 3 every third, etc.
+%        keep every draw, 2 means we keep every second, 3 every third, etc.
 %      - **retune_cov_every** [integer|{100}]: frequence for the retuning of
-%      the scale parameter
+%        the scale parameter
 %      - **penalty** [numeric|{1e+8}]: worst possible function value
 %      - **nchain** [integer|{1}]: number of parallel chains
 %      - **rwm_exp** [numeric|{0.6}]: tuning hyper-parameter for scale and
-%      covariance matrix
+%        covariance matrix
 %      - **fixed_scaling** [true|{false}]: if true, the scaling (c) of the
-%      covariance matrix is kept constant
+%        covariance matrix is kept constant
 %      - **use_true_moments** [true|{false}]: if true, the updated exact
-%      covariance matrix of the draws is used at each step. If false, a
-%      different update of the covariance matrix is used.
+%        covariance matrix of the draws is used at each step. If false, a
+%        different update of the covariance matrix is used.
 %      - **logproppdf** [function_handle|{[]}]: used when the proposal is not
-%      symmetric
+%        symmetric
 %      - **MaxTime** [numeric|{inf}]: maximum simulation time.
 %      - **adapt_covariance** [true|{false}]: If true, the covariance matrix
-%      is updated with the sampled draws.
+%        is updated with the sampled draws.
 %      - **save** [struct|{'every='inf,'location=',pwd,'filename=',''}]:
-%      structure with fields "every", "location", "filename"
+%        structure with fields "every", "location", "filename"
 %      - **recover** [false|{true}]: attempts to recover from an earlier
-%      aborted simulation
+%        aborted simulation
 %      - **recover_start_at_best** [true|{false}]: in an event of a recovery,
-%      start all the chains at the best value. Note this will break the chains
-%      if the best value is not the last element that was saved in the chain.
+%        start all the chains at the best value. Note this will break the chains
+%        if the best value is not the last element that was saved in the chain.
 %
 %    - **mu** [d x 1 vector]: initial condition for the sampler
-%
 %    - **SIG** [d x d matrix]: initial covariance matrix
 %
 % Returns:
 %    :
 %
 %    - **Results** [struct]:
+%
 %      - **pop** [nchain x N struct]: fields are "x" for the parameter vector
-%      and "f" for the value of the parameter vector
+%        and "f" for the value of the parameter vector
 %      - **bestf** [numeric]: best function value
 %      - **bestx** [vector]: best parameter vector
 %      - **best** [nchain x 1]: vector of best individual in each chain
@@ -80,7 +74,10 @@ function [Results]=apt_sampler(logf,lb,ub,options,mu,SIG_mom)
 %
 % Example:
 %
-%    See also:	CONSTANT_BVAR_SAMPLER, RRF_SAMPLER
+% See also:
+%    - constant_bvar_sampler
+%    - rrf_sampler
+%
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 
@@ -118,56 +115,56 @@ defaults={ % arg_names -- defaults -- checks -- error_msg
 
 
 if nargin==0
-    
+
     Results=cell2struct(defaults(:,2),defaults(:,1),1);
-    
+
     return
-    
+
 end
 
 if nargin<6
-    
+
     SIG_mom=[];
-    
+
     if nargin<5
-        
+
         mu=[];
-        
+
         if nargin<4
-            
+
             options=struct();
-            
+
         end
-        
+
     end
-    
+
 end
 
 % number of parameters
 [d,ncols]=size(lb);
 
 if ncols~=1
-    
+
     error('number of columns of lb should be 1')
-    
+
 end
 
 if ~(all(isfinite(lb)) && all(isfinite(ub)))
-    
+
     error('lb and ub shoud be finite')
-    
+
 end
 
 if d==0
-    
+
     error('lb cannot have less than 1 row')
-    
+
 end
 
 if ~isequal(size(ub),[d,ncols])
-    
+
     error('size ub does not match size lb')
-    
+
 end
 
 options=parse_arguments(defaults,options);
@@ -199,71 +196,71 @@ saveevery=options.save.every;
 is_save=isfinite(saveevery);
 
 isave_batch=0;
-    
+
 if is_save
-    
+
     if isempty(savelocation)
-        
+
         savelocation=pwd;
-        
+
     end
-    
+
     if isempty(savefile)
-        
-        savefile='mhDraws';  
-        
+
+        savefile='mhDraws';
+
     end
-    
+
     % try recovering
     %---------------
-    
+
     if options.recover
-        
+
         [~,~,~,summary]=mcmc.process_draws(savelocation);
-        
+
         if summary.nchains
-            
+
             burnin=0;
-            
+
             if nchain~=summary.nchains
-               
+
                 error('number of chains does not match')
-                
+
             end
-            
+
             mu=[summary.last.x];
-            
+
             if options.recover_start_at_best
-                
+
                 mu=summary.best_of_the_best.x;
                 % mu will be expanded below as needed if necessary
-                
+
             end
-            
+
             if ~isempty(summary.last_cov)
-                
+
                 SIG_mom=summary.last_cov;
-                
+
             end
-            
+
             if ~isempty(summary.last_cScale)
-                
+
                 log_c=log(summary.last_cScale);
-                
+
             end
-            
+
         end
-        
+
         isave_batch=summary.last_saved_index;
-        
+
     end
-    
+
 end
 
 if ischar(logf)
-    
+
     logf=str2func(logf);
-    
+
 end
 
 logproppdf=options.logproppdf;
@@ -271,9 +268,9 @@ logproppdf=options.logproppdf;
 symmetric=isempty(logproppdf);
 
 if ~isa(logf,'function_handle')
-    
+
     error('logf should be a function handle or a string')
-    
+
 end
 
 % target acceptance range
@@ -307,9 +304,9 @@ thin=options.thin;
 N=options.N;
 
 if isempty(mu)
-    
+
     mu=.5*(ub+lb);
-    
+
 end
 
 % covariance adaptations
@@ -317,47 +314,47 @@ end
 adapt_covariance=options.adapt_covariance;
 
 if isempty(SIG_mom)
-    
+
     SIG_mom=utils.mcmc.initial_covariance(lb,ub);
-    
+
     adapt_covariance=true;
-    
+
 end
 
 if size(mu,2)<nchain
-    
+
     mu=mu(:,ones(1,nchain));
-    
+
 end
 
 if size(mu,3)<H
-    
+
     mu=mu(:,:,ones(1,H));
-    
+
 end
 
 if size(SIG_mom,3)<nchain
 
     SIG_mom=SIG_mom(:,:,ones(1,nchain));
-    
+
 end
 
 if size(SIG_mom,4)<H
 
     SIG_mom=SIG_mom(:,:,:,ones(1,H));
-    
+
 end
 
 % make positive definite as necessary
 %------------------------------------
 for ii=1:size(SIG_mom,3)
-    
+
     for jj=1:size(SIG_mom,4)
-        
+
         SIG_mom(:,:,ii,jj)=utils.cov.nearest(SIG_mom(:,:,ii,jj));
-        
+
     end
-    
+
 end
 
 mu_algo=mu;
@@ -390,17 +387,17 @@ lambda = inv_temperatures();
 % pre-allocate
 %--------------
 if is_save
-    
+
     saveevery=min(saveevery,N);
-    
+
     pop=stud(:,ones(1,saveevery));
-    
+
     the_iter=0;
-    
+
 else
-    
+
     pop=stud(:,ones(1,N));
-    
+
 end
 
 d=numel(lb);
@@ -443,104 +440,104 @@ accepted_swaps_total=zeros(nchain,H-1);
 swaps_number_total = zeros(nchain,H-1);
 
 while isempty(stopflag)
-    
+
     idraw=idraw+1;
-    
+
     obj.iterations=idraw+burnin;
-    
+
     % sample from the proposal distribution
     %---------------------------------------
     y=proprnd();
-    
+
     if ~symmetric
-        
+
         q_x0_given_y = logproppdf(stud,y);
-        
+
         q_y_given_x0 = logproppdf(y,stud);
-        
+
     end
-    
+
     % this is a generic formula.
     rho = (reshapef(y)+q_x0_given_y)-(reshapef(stud)+q_y_given_x0);
-    
-    % minimization: change sign: 
+
+    % minimization: change sign:
     %--------------------------
     rho=-rho;
-    
+
     rho=min(lambda.*exp(rho),1);
-    
+
     % Accept or reject the proposal
     %-------------------------------
     U=rand(nchain,H);
-    
+
     acc = rho>=U;
-    
+
     stud(acc) = y(acc); % preserves x's shape.
-    
+
     accept_ratio=((obj.iterations-1)*accept_ratio+acc)/obj.iterations;
-    
+
     % save down
     %----------
     if idraw>0 && mod(idraw,thin)==0 % burnin and thin
-        
+
         if is_save
-            
+
             the_iter=the_iter+1;
-            
+
         else
-            
+
             the_iter=idraw/thin;
-            
+
         end
-        
-        
+
+
         pop(:,the_iter) = stud(:,1);
-            
+
         do_save()
-        
+
     end
-    
+
     % update the best
     %-----------------
     tmpf=[stud(:,1).f];
-    
+
     good=tmpf<obj.best_fval;
-    
+
     best(good)=stud(good,1);
-    
+
     obj.best_fval=[best.f];
-    
+
     % update the moments
     %-------------------
     moments_updating()
-    
+
     % update the cCs
     %---------------
     scale_times_sqrt_covariance_updating()
-    
+
     % Swap states between temperatures
     %----------------------------------
     [acc_sw_, alpha_sw_, who_swapped] = one_random_swap();
 
     accepted_swaps_total = accepted_swaps_total + acc_sw_;
-    
+
     % Record the statistics
     swaps_number_total = swaps_number_total + who_swapped;
 
     % Adaptation of the temperature schedule
     %---------------------------------------
     lambda = inv_temperatures(alpha_sw_);
-    
+
     % display progress
     %------------------
     obj.accept_ratio=accept_ratio(:,1).';
-    
+
     utils.optim.display_progress(obj)
-    
+
     % check convergence
     %------------------
     stopflag=utils.optim.check_convergence(obj);
-    
+
 %     waitbar_updating()
 end
 
@@ -549,142 +546,142 @@ end
 Results=do_results();
 
     function [acc_sw, alpha_swap, who_swapped] = one_random_swap()
-        
+
         who_swapped = zeros(nchain,H-1);
-        
+
         alpha_swap = who_swapped;
-        
+
         acc_sw = alpha_swap;
-        
+
         if H==1
-            
+
             return
-            
+
         end
-        
+
         % Pick random integer in [1,H-1]
         picked_stage = min(floor(rand(nchain,1)*(H-1)+1),H-1);
-        
+
         IND=sub2ind([nchain,H],1:nchain,picked_stage(:).');
-        
+
         [acc_sw(IND), alpha_swap(IND)] = try_swap(picked_stage);
-        
+
         who_swapped(IND) = 1;
-        
+
         function [acc_sw, acceptance_prob] = try_swap(chosen_stage)
             % Try to swap the levels istage <-> istage+1
             acc_sw=false(nchain,1);
-            
+
             acceptance_prob=zeros(nchain,1);
-            
+
             for ichain=1:nchain
                 picked=chosen_stage(ichain);
                 % The acceptance probability:
                 delta_lambda=lambda(ichain,picked)-lambda(ichain,picked+1);
-                
+
                 acceptance_prob(ichain)=acceptance_probability(delta_lambda,stud(ichain,picked+1).f,stud(ichain,picked).f);
-                
+
                 % An accept-reject for the swap
                 if rand <= acceptance_prob(ichain)
                     % Swap states
                     x_f = stud(ichain,picked);
-                    
+
                     stud(ichain,picked) = stud(ichain,picked+1);
-                    
+
                     stud(ichain,picked+1) = x_f;
-                    
+
                     % Update statistics
                     acc_sw(ichain) = true;
                 end
-                
+
             end
-            
+
             function prob=acceptance_probability(delta,lfx,lfx0)
-                
+
                 lfx0=delta*(lfx-lfx0);
-                
+
                 minimization=true;
-                
+
                 if minimization
-                    
+
                     lfx0=-lfx0;
-                    
+
                 end
-                
+
                 prob = min(1,exp(lfx0));
-                
+
             end
-            
+
         end
-        
+
     end
 
     function lambda = inv_temperatures(alpha_sw_)
-        
+
         if fixed_temperatures
-            
+
         warning('inv_temperatures needs to be reajusted for the number of chains')
-        
+
             if geometric_tempering
-                
+
                 rho=sqrt(eps)^(1/(H-1));
-            
+
                 lambda=rho.^(0:H-1);
-            
+
             else
-                
+
                 lambda=fliplr(linspace(sqrt(eps),1,H));
-        
+
             end
-            
+
         else
             %-------------------------------
-            
+
             if nargin
-                
+
                 gamma_temper = ((H-1)./sum(who_swapped,2))*(obj.iterations+1)^(-sw_exp_rm);
-            
+
                 Dlog_T = Dlog_T + gamma_temper(:,ones(1,H-1)).*who_swapped.*(alpha_sw_ - alpha_swap);
-            
+
             end
             %-------------------------------
-            
+
             T = ones(1,H);
-            
+
             for k = 1:H-1
-            
+
                 T(k+1) = T(k) + exp(Dlog_T(k));
-            
+
             end
-            
+
             lambda = 1./T;
-            
+
         end
-        
+
         lambda=lambda(:).';
-        
+
         lambda=lambda(ones(nchain,1),:);
-        
+
     end
 
     function Results=do_results()
-        
+
         if is_save
             % in case we end right at the re-initialization...
            cutoff=max(1,the_iter);
-            
+
         else
-            
+
             cutoff=the_iter;
-            
+
         end
-        
+
         bestOfTheBest=utils.mcmc.sort_population(best);
-        
+
         obj.end_time=clock;
-        
-        c=exp(log_c); 
-        
+
+        c=exp(log_c);
+
         Results=struct('pop',pop(:,1:cutoff),...
             'bestf',bestOfTheBest(1).f,...
             'bestx',bestOfTheBest(1).x,...
@@ -700,105 +697,105 @@ Results=do_results();
     end
 
     function do_save()
-        
+
         if ~(is_save && the_iter==saveevery)
-            
+
             return
-            
+
         end
-        
+
         results=do_results(); %#ok<NASGU>
-        
+
         isave_batch=isave_batch+1;
-        
+
         save(sprintf('%s%s%s_%0.0f',savelocation,filesep,savefile,isave_batch),...
             '-struct','results')
-        
+
         the_iter=0;
-        
+
     end
 
     function scale_times_sqrt_covariance_updating()
-        
+
             nbatch=obj.iterations;
-            
+
             sqrt_cSIG=SIG_mom;
-            
+
             iterations=obj.iterations;
-            
+
             parfor (ichain=1:nchain*H,NumWorkers)
-                
+
                 if iterations>0
-                    
+
                      log_c(ichain)=utils.mcmc.update_scaling(log_c(ichain),...
                         rho(ichain),alpha,fixed_scaling,nbatch,...
                         rwm_exp,[],c_range);
-                    
+
                end
-                
+
                 if use_true_moments
-                    
+
                     sqrt_cSIG(:,:,ichain)=chol(...
                         exp(log_c(ichain))*SIG_mom(:,:,ichain),...
                         'lower');
-                    
+
                 else
-                    
+
                     sqrt_cSIG(:,:,ichain)=chol(...
                         exp(log_c(ichain))*SIG_algo(:,:,ichain),...
                         'lower');
-                    
+
                 end
-                
+
             end
-            
+
     end
 
     function moments_updating()
-        
+
         if adapt_covariance
-            
+
             for ichain=1:nchain*H
-                
+
                 [mu(:,ichain),SIG_mom(:,:,ichain)]=utils.moments.recursive(...
                     mu(:,ichain),SIG_mom(:,:,ichain),stud(ichain).x,obj.iterations);
-                
+
                 [mu_algo(:,ichain),SIG_algo(:,:,ichain)]=utils.mcmc.update_moments(...
                     mu_algo(:,ichain),SIG_algo(:,:,ichain),stud(ichain).x,obj.iterations,...
                     options.rwm_exp);
-                
+
             end
-            
+
         end
-        
+
     end
 
     function v1=proprnd()
-        
+
         v1=stud;
-        
+
         parfor (ichain=1:nchain,NumWorkers)
-            
+
             for istage=1:H
-                
+
                 xd=stud(ichain,istage).x+sqrt_cSIG(:,:,ichain,istage)*randn(d,1);
-                
+
                 bad=xd<lb; xd(bad)=lb(bad);
-                
+
                 bad=xd>ub; xd(bad)=ub(bad);
-                
+
                 v1(ichain,istage).x=xd;
-                
+
                 v1(ichain,istage).f=logf(xd); %#ok<PFBNS>
-                
+
             end
-            
+
         end
-        
+
         funevals=funevals+ones(nchain,H);
-        
+
         obj.funcCount=sum(funevals(:));
-        
+
     end
 
 %     function waitbar_updating()

@@ -1,16 +1,15 @@
 function [h,legend_,tex_name]=prior_posterior(ss,varargin)
-% prior_posterior -- plots prior and, if information is available,
-% posterior densities
+% plots prior and, if information is available, posterior densities
 %
 % ::
-%
 %
 %   [h,legend_]=prior_posterior(ss,varargin)
 %
 % Args:
 %
 %    - **ss** [struct]: structure containing the relevant information to plot
-%    and more specifically
+%      and more specifically
+%
 %      - **x_kdens** [vector]: x-axis values for the posterior density
 %      - **f_kdens** [vector]: y-axis values for the posterior density
 %      - **x_prior** [vector]: x-axis values for the prior density
@@ -21,25 +20,20 @@ function [h,legend_,tex_name]=prior_posterior(ss,varargin)
 %      - **tex_name** [char]: name of the parameter
 %
 %    - **varargin** [pairwise arguments]: standard plotting arguments for
-%    matlab
+%      matlab
 %
 % Returns:
 %    :
 %
 %    - **h** [handle]: handle for the plot
-%
 %    - **legend_** [cellstr]: names of the lines in the plot
-%
 %    - **tex_name** [char]: name of the parameter
 %
 % Note:
 %
 %    - Only the prior density is plotted if no posterior information is
-%    available.
+%      available.
 %
-% Example:
-%
-%    See also:
 
 % initialize the legend items
 %----------------------------
@@ -75,7 +69,7 @@ if is_posterior
     plot([x_mean x_mean], [0 ss.f_kdens(position)],...
         'LineStyle',':','Color','black',varargin{:} )
     legend_=[legend_,'mean'];
-    
+
     % plot vertical line at maximization mode
     %---------------------------------------
     if isfield(ss,'post_mode')
@@ -84,14 +78,14 @@ if is_posterior
             'LineStyle',':','Color','green',varargin{:} )
         legend_=[legend_,'max-mode'];
     end
-    
+
     % plot vertical line at simulation mode
     %---------------------------------------
     [x_post_mode_sim,position]=utils.miscellaneous.find_nearest(ss.x_kdens,ss.post_mode_sim);
     plot([x_post_mode_sim x_post_mode_sim],[0 ss.f_kdens(position)],...
         'LineStyle',':','Color','red',varargin{:} )
     legend_=[legend_,'sim-mode'];
-    
+
     hold off
 end
 
@@ -105,9 +99,9 @@ tex_name=ss.tex_name;
 %-----------------
 
 if abs(top-bottom)<sqrt(eps)
-    
+
     top=inf;
-    
+
 end
 
 axis([ss.x_min ss.x_max bottom 1*top]);

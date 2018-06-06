@@ -1,8 +1,7 @@
 function H=evaluate_policy_objective_hessian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1)
-% evaluate_policy_objective_hessian_numerically - numerical evaluation of the hessian of the policy objective
+% Numerical evaluation of the hessian of the policy objective
 %
 % ::
-%
 %
 %   H=evaluate_policy_objective_hessian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1)
 %
@@ -10,21 +9,13 @@ function H=evaluate_policy_objective_hessian_numerically(funcs,y,x,ss,param,spar
 %
 %    - **funcs** [fhandle|cell array]: function or functions to be
 %      differentiated
-%
 %    - **y** [vector]: values of endogenous variables
-%
 %    - **x** [vector]: values of exogenous variables
-%
 %    - **ss** [vector]: steady state
-%
 %    - **param** [vector]: parameter vector
-%
 %    - **sparam** [vector]: vector of parameters appearing with a lead
-%
 %    - **def** [vector]: values of definitions
-%
 %    - **s0** [scalar]: state today
-%
 %    - **s1** [scalar]: state tomorrow
 %
 % Returns:
@@ -33,13 +24,9 @@ function H=evaluate_policy_objective_hessian_numerically(funcs,y,x,ss,param,spar
 %    - **H** [matrix]: Numerical Hessian of **funcs** at [y]
 %
 % Note:
-%
 %    It is assumed that the inputs are y,x,ss,param,sparam,def,s0,s1 as
 %    ordered in parser.input_list()
 %
-% Example:
-%
-%    See also:
 
 if iscell(funcs)
     funcs=funcs{1};

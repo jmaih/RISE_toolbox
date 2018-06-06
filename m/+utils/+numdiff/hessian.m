@@ -1,8 +1,7 @@
 function H = hessian(Objective,xparam,options,varargin)
-% hessian - computes the hessian of a scalar function
+% Computes the hessian of a scalar function
 %
 % ::
-%
 %
 %   H = hessian(Objective,xparam)
 %   H = hessian(Objective,xparam,varargin)
@@ -10,15 +9,14 @@ function H = hessian(Objective,xparam,options,varargin)
 % Args:
 %
 %    - **Objective** [char|function handle]: function to differentiate
-%
 %    - **xparam** [vector]: Point at which the derivatives are taken
-%
 %    - **options** [struct]: structure containing the options for the
 %      computation. These are:
+%
 %      - **tol** [numeric|{eps.^(1/4)}] : tolerance for the computation of the
-%          steps
+%        steps
 %      - **diagonly** [true|{false}] : if true, only the elements on the
-%          diagonal are computed
+%        diagonal are computed
 %
 %    - **varargin** []: further input arguments of **Objective**
 %
@@ -32,9 +30,6 @@ function H = hessian(Objective,xparam,options,varargin)
 %    - The tolerance level is hard-coded to be eps.^(1/4). This should
 %      probably be an input
 %
-% Example:
-%
-%    See also:
 
 if nargin<3
     options=[];

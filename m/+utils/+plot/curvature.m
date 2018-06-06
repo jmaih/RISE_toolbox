@@ -1,19 +1,18 @@
 function [h,legend_,tex_name]=curvature(xname,db)
-% curvature -- plots the curvature of an estimated parameter at the model
+% plots the curvature of an estimated parameter at the model
 %
 % ::
-%
 %
 %   [h,legend_]=curvature(xname,db)
 %
 % Args:
 %
 %    - **xname** [char]: name of the parameter to plot
-%
 %    - **db** [struct]: structure containing the various parameters. Each
-%    parameter field is itself a structure with the following
+%      parameter field is itself a structure with the following
+%
 %      - **tex_name** [char]: name of the parameter as it should appear in the
-%      title of the plot
+%        title of the plot
 %      - **mode** [scalar]: value of the parameter at the mode
 %      - **log_post_mode** [scalar]: value of the log posterior mode
 %      - **log_lik_mode** [scalar]: value of the log likelihood at the mode
@@ -25,17 +24,9 @@ function [h,legend_,tex_name]=curvature(xname,db)
 %    :
 %
 %    - **h** [handle]: handle for the plot
-%
 %    - **legend_** [cellstr]: names of the lines in the plot
-%
 %    - **tex_name** [char]: name of the parameter
 %
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 legend_={'log post','log lik','mode'};
 pp=db.(xname);
@@ -70,9 +61,9 @@ llf=(1-sign(low_f)*rescale)*low_f;
 hhf=(1+sign(high_f)*rescale)*high_f;
 
 if abs(hhf-llf)<eps
-    
+
     hhf=inf;
-    
+
 end
 
 axis([x_min x_max llf hhf]);

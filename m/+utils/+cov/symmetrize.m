@@ -1,8 +1,7 @@
 function A=symmetrize(A)
-% symmetrize - makes a square matrix symmetric
+% Makes a square matrix symmetric
 %
 % ::
-%
 %
 %   A=symmetrize(A)
 %
@@ -13,13 +12,8 @@ function A=symmetrize(A)
 % Returns:
 %    :
 %
-%    - **A** [square matrix]
+%    - **A** [square matrix] : :math:`\frac{A + A^{T}}{2}`
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 A=.5*(A+A.');
 end

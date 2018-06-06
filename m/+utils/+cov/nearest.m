@@ -1,6 +1,5 @@
 function vcov=nearest(vcov0,debug,farthest)
-
-% nearest -- computes nearest covariance matrix
+% Computes nearest covariance matrix
 %
 % ::
 %
@@ -37,9 +36,9 @@ if any(oldD<too_low)
         oldD=abs(oldD);
     end
     D=max(oldD,too_low);
-    
+
     vcov = V*diag(D)*V';
-    
+
     if debug && max(abs(D-oldD))>1e-6
         warning('Covariance matrix altered')
     end

@@ -1,19 +1,6 @@
 function msgout=decipher(code)
-% H1 line
+% INTERNAL FUNCTION: decipher the numerical error code
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 n=numel(code);
 if n>1

@@ -1,23 +1,24 @@
 function xout=code2vector(xcell,devect)
-% code2vector - transforms a set of function handles into a single function
+% INTERNAL FUNCTION: transforms a set of function handles into a single function
 %
 % ::
-%
 %
 %   xout=code2vector(xcell)
 %
 % Args:
 %
 %    - **xcell** [fhandle|cell|struct]:
+%
 %      - if cell, it is assumed that all entries are anonymous functions
 %        sharing the same inputs. One anonymous function is returned in a cell
 %      - if fhandle, the same input is returned
 %      - if struct
+%
 %          - derivatives are identified by the fields
 %            'size','functions','map','partitions'
 %          - eval items are identified by the fields 'code','argins','argouts'
 %          - else it is assumed we have transition matrix, in which case the
-%              output is the same as the input
+%            output is the same as the input
 %
 %    - **devect** [true|{false}]: de-vectorize functions.
 %
@@ -33,7 +34,8 @@ function xout=code2vector(xcell,devect)
 %
 % Example:
 %
-%    See also: UTILS.CODE.CODE2FUNC
+% See also:
+%    -utils.code.code2func
 
 
 xout=xcell;
@@ -78,7 +80,7 @@ end
             do_one_order(io);
         end
         tmp=rmfield(tmp,'map'); % vectorizer will be used at evaluation...
-        
+
         function do_one_order(oo)
             xcell=tmp(oo).functions;
             tmp(oo).functions=main_engine();

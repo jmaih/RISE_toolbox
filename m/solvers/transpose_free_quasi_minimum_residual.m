@@ -5,7 +5,6 @@ x0,... % initial guess
 tol,... % tolerance level
 MaxIter,... % maximum number of iterations
 verbose) % flag for printing progress or not
-
 % transpose_free_quasi_minimum_residual attempts to solve Ax=b
 %
 % ::
@@ -40,7 +39,7 @@ verbose) % flag for printing progress or not
 
 %    retcode: 0 TFQMR converged to the desired tolerance TOL within MAXIT iterations.
 %    retcode: 201 TFQMR iterated MAXIT times without converging. This may
-%             still be a good solution. 
+%             still be a good solution.
 %    retcode: 202 TFQMR delivered Nans: probably no solution.
 
 % examples:
@@ -125,12 +124,12 @@ else
             if ~converged
                 m=jj;
                 if jj==2
-                    y=y-alpha*v; 
-                    Ay=matrix_times_vector(y); 
+                    y=y-alpha*v;
+                    Ay=matrix_times_vector(y);
                 end
-                d=y+(theta^2*eta/alpha)*d; 
-                w=w-alpha*Ay; 
-                theta=norm(w)/tau; 
+                d=y+(theta^2*eta/alpha)*d;
+                w=w-alpha*Ay;
+                theta=norm(w)/tau;
                 c=1/sqrt(1+theta^2);
                 tau=tau*theta*c; % == norm(r)/norm(b)
                 eta=c^2*alpha;
@@ -145,13 +144,13 @@ else
             fprintf(1,'%s %6.0d %s %6.4d\n','iter',iter,'tau',tau);
         end
         if ~finished
-            rho_new=r0'*w; 
+            rho_new=r0'*w;
             beta=rho_new/rho;
             % partial update of v
             v=beta*(Ay+beta*v);
-            y=w+beta*y; 
-            Ay=matrix_times_vector(y); 
-            v=Ay+v; 
+            y=w+beta*y;
+            Ay=matrix_times_vector(y);
+            v=Ay+v;
             rho=rho_new;
         end
     end

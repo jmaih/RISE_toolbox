@@ -1,19 +1,6 @@
 function parfor_save(filename,x) %#ok<INUSD>
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 save(filename,'x')
 

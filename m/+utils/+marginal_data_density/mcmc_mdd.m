@@ -1,78 +1,69 @@
 function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
-% MCMC_MDD -- computes various types of log marginal data density
+% Computes various types of log marginal data density
 %
 % ::
 %
-%
-%   [log_mdd,extras] = MCMC_MDD(theta_draws)
-%
-%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb)
-%
-%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub)
-%
-%   [log_mdd,extras] = MCMC_MDD(theta_draws,lb,ub,options)
+%   [log_mdd,extras] = mcmc_mdd(theta_draws)
+%   [log_mdd,extras] = mcmc_mdd(theta_draws,lb)
+%   [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub)
+%   [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %
 % Args:
 %
 %    - **theta_draws** [struct]: with fields "f" and "x". Each parameter is
-%    defined as a structure, which means that theta_draws is a vector of
-%    structures. "x" is the parameter vector and "f" is the NEGATIVE of the
-%    log posterior kernel evaluated at "x". In case "f" is instead the log
-%    posterior kernel itself, option **maximization** below has to be set to
-%    "true".
-%
+%      defined as a structure, which means that theta_draws is a vector of
+%      structures. "x" is the parameter vector and "f" is the NEGATIVE of the
+%      log posterior kernel evaluated at "x". In case "f" is instead the log
+%      posterior kernel itself, option **maximization** below has to be set to
+%      "true".
 %    - **lb** [empty|vector]: lower bound of the search space. Necessary only
-%    for the swz algorithm. Conveniently replaced with the lower bounds of
-%    theta_draws if empty.
+%      for the swz algorithm. Conveniently replaced with the lower bounds of
+%      theta_draws if empty.
 %
 %    - **ub** [empty|vector]: upper bound of the search space. Necessary only
-%    for the swz algorithm. Conveniently replaced with the upper bounds of
-%    theta_draws if empty.
-%
+%      for the swz algorithm. Conveniently replaced with the upper bounds of
+%      theta_draws if empty.
 %    - **options** [struct]: with possible fields
+%
 %      - **log_post_kern** [function handle]: function computing the log
-%      posterior kernel for a given parameter vector
+%        posterior kernel for a given parameter vector
 %      - **center_at_mean** [{false}|true]: if true, the distribution is
-%      centered at the mean. Else, it is centered at the mode, which should be
-%      the maximum of the log posterior kernel in theta_draws
+%        centered at the mean. Else, it is centered at the mode, which should be
+%        the maximum of the log posterior kernel in theta_draws
 %      - **algorithm** [{mhm}|swz|mueller|bridge|is|ris|cj|laplace|laplace_mcmc]:
+%
 %          - **mhm** is the modified harmonic mean
 %          - **swz** is the Sims, Waggoner and Zha (2008) algorithm
 %          - **mueller** is the unpublished Mueller algorithm (see Liu,
-%          Waggoner and Zha 2011).
+%            Waggoner and Zha 2011).
 %          - **bridge** is the Meng and Wong (1996) algorithm.
 %          - **is** is the Importance sampling algorithm.
 %          - **ris** is the reciprocal importance sampling algorithm.
 %          - **cj** is the Chib and Jeliazkov (2001) algorithm.
 %          - **laplace** is the laplace approximation
 %          - **laplace_mcmc** is the laplace approximation using the
-%          covariance of the mcmc draws rather than the one obtain from
-%          computing and inverting the numerical hessian.
+%            covariance of the mcmc draws rather than the one obtain from
+%            computing and inverting the numerical hessian.
+%
 %      - **L** [{500}|integer|struct]: number of IID draws or IID draws
 %      - **maximization** [{false}|true]: Informs the procedure about whether
-%      we have a maximization or a minimization problem.
+%        we have a maximization or a minimization problem.
 %      - **debug** [{false}|true]: print useful information during estimation.
 %      - **mhm_tau** [{(.1:.1:.9)}|vector|scalar]: truncation probabilities
-%      for the MHM algorithm
+%        for the MHM algorithm
 %      - **swz_pvalue** [{90}|scalar]: scalar for the computation of the lower
-%      bound in the SWZ algorithm
+%        bound in the SWZ algorithm
 %      - **bridge_TolFun** [numeric|{sqrt(eps)}]: convergence criterion in the
-%      BRIDGE algorithm
+%        BRIDGE algorithm
 %
 % Returns:
 %    :
 %
 %    - **log_mdd** [numeric]: log marginal data density
-%
 %    - **extras** [empty|struct]: further output from specific algorithms,
-%    which will include the iid draws as they can be re-use in some other
-%    algorithm.
+%      which will include the iid draws as they can be re-use in some other
+%      algorithm.
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
@@ -228,32 +219,32 @@ extras.iid_draws=iid_draws_;
         % Posterior kernel at the mode
         %--------------------------------------------------
         numerator=LogPost_M(best_loc);
-        
+
         % weighting-function density for the M original draws
         %-----------------------------------------------------
         Logq_M=old_draws_in_weighting_function('CJ');
-        
+
         % log posterior kernel of the IID draws
         %---------------------------------------
         [LogPost_L]=iid_draws('CJ');
-        
+
         % acceptance probability for the IID draws relative to the
-        % posterior mode 
+        % posterior mode
         %-----------------------------------------------------------------
         alpha=zeros(1,L);
         for idraw=1:L
             logr=LogPost_L(idraw)-numerator;
             alpha(idraw)=exp(min(0,logr));
         end
-        
+
         extras=struct('cj_alpha',alpha);
-        
+
         % approximate log posterior at the mode
         %--------------------------------------
         big=max(Logq_M);
         top=exp(Logq_M-big);
         lp_thet_y=big+log(mean(top))-log(mean(alpha));
-        
+
         % finally compute the marginal data density
         %------------------------------------------
         log_mdd=numerator-lp_thet_y;
@@ -285,22 +276,22 @@ extras.iid_draws=iid_draws_;
         % Xiao-Li Meng and Wing Hung Wong (1996): " Simulating Ratios of
         % Normalizing Constants via a Simple Identity: A Theoretical
         % Exploration". Statistica Sinica, 6, 831860.
-        
+
         % 1- draw L vectors and evaluate them at the posterior kernel and
         % at the weighting function
         %------------------------------------------------------------------
         [LogPost_L,Logq_L]=iid_draws('BRIDGE');
-        
+
         % 2- for the M original draws compute the density from the
         % weighting function
         %----------------------------------------------------------
         Logq_M=old_draws_in_weighting_function('BRIDGE');
-        
+
         lmdd0=0;
         if bridge_initialize_is
             lmdd0=do_importance_sampling(LogPost_L,Logq_L);
         end
-        
+
         if bridge_fix_point
             [log_mdd,lmdd,conv]=fix_point_strategy(lmdd0);
         else
@@ -339,7 +330,7 @@ extras.iid_draws=iid_draws_;
             lmdd=lmdd(1:iter);
             conv=conv(1:iter);
         end
-        
+
         function [log_mdd,lmdd,conv]=fix_point_strategy(lmdd0)
             fzero_options=optimset('Display','none');
             if debug
@@ -351,28 +342,28 @@ extras.iid_draws=iid_draws_;
             max_iter=1000;
             conv=zeros(max_iter,1);
             lmdd=zeros(max_iter,1);
-            
+
             log_mdd=fzero(@one_right_hand_side,lmdd0,fzero_options);
             if debug
                 fprintf('Done in %0.4d seconds\n',toc);
             end
             conv=conv(1:next);
             lmdd=lmdd(1:next);
-            
+
             function rhs=one_right_hand_side(lmdd_iter)
                 % numerator
                 %-----------
                 rq=alpha_times_p_or_q(Logq_L,LogPost_L-lmdd_iter,2);
-                
+
                 % denominator
                 %-------------
                 rmc=alpha_times_p_or_q(Logq_M,LogPost_M-lmdd_iter,1);
-                
+
                 % numerator minus denominator
                 %----------------------------
                 max_rq=max(rq);
                 max_rmc=max(rmc);
-                
+
                 rhs=max_rq+log(mean(exp(rq-max_rq)))-...
                     (max_rmc+log(mean(exp(rmc-max_rmc))));
                 next=next+1;
@@ -385,7 +376,7 @@ extras.iid_draws=iid_draws_;
                 lmdd(next)=lmdd_iter;
             end
         end
-        
+
         function a_p=alpha_times_p_or_q(f1,f2,stud)
             biggest=max([f1;f2],[],1);
             f1=f1-biggest;
@@ -400,23 +391,23 @@ extras.iid_draws=iid_draws_;
                 exp(log(M)+f2)...
                 );
         end
-        
+
         function lmdd=do_one_iteration(lmdd)
             % numerator
             %-----------
             lp_q=LogPost_L-lmdd;
             rq=alpha_times_p_or_q(Logq_L,lp_q,2);
-            
+
             % denominator
             %-------------
             lp_m=LogPost_M-lmdd;
             rmc=alpha_times_p_or_q(Logq_M,lp_m,1);
-            
+
             % numerator minus denominator
             %----------------------------
             max_rq=max(rq);
             max_rmc=max(rmc);
-            
+
             lmdd=lmdd+...
                 max_rq+log(mean(exp(max(rq-max_rq,-1e15))))-...
                 (max_rmc+log(mean(exp(max(rmc-max_rmc,-1e15)))));
@@ -428,37 +419,37 @@ extras.iid_draws=iid_draws_;
         % step 1: compute the r(s)
         % ------------------------
         r=compute_r();
-        
+
         % step 2: compute the parameters of the h-density
         % ------------------------------------------------
         [aa,bb,v]=compute_a_b_v();
-        
+
         % step 3: draw L parameters from the elliptical distribution
         % -----------------------------------------------------------
         % the following quantity will be re-used many times
         bv_av=bb^v-aa^v;
-        
+
         [~,~,Lswz,qLswz]=elliptical_distribution_log_posterior_kernel_and_bounds();
         extras=struct('swz_L',Lswz,'swz_qL',qLswz);
-        
+
         % step 4: Log values of the elliptical distribution at the posterior draws
         % -------------------------------------------------------------------------
         log_Integration_constant = gammaln(d/2)-(log(2)+d/2*log(pi)+...
             1/2*log(det(SigmaMode)));
-        
+
         logG_theta = log_Integration_constant+log(v/bv_av)+(v-d)*log(r);
-        
+
         % step 5: Compute the log marginal data density
         % ----------------------------------------------
         logh = -log(qLswz)+logG_theta(:).';
-        
+
         % finally compute the modified harmonic mean
         %--------------------------------------------
         good=LogPost_M>Lswz & isfinite(logh);
         log_mdd = sum(exp(logh(good)-LogPost_M(good)+facilitator))/M;
-        
+
         log_mdd = facilitator-log(log_mdd);
-        
+
         function [lpost_ell,theta_ell,Lswz,qLswz]=elliptical_distribution_log_posterior_kernel_and_bounds()
             lpost_ell = zeros(1,L);
             v_i=1/v;
@@ -492,7 +483,7 @@ extras.iid_draws=iid_draws_;
                 qLswz = sum(lpost_ell>Lswz)/L;
             end
         end
-        
+
         function [a,b,v]=compute_a_b_v()
             rDist = sort(r);
             c1 = rDist(ceil((1/100)*M));
@@ -503,7 +494,7 @@ extras.iid_draws=iid_draws_;
             b = c90/(0.9^(1/v));
             a = c1;
         end
-        
+
         function r=compute_r()
             r= zeros(M,1);
             for ii=1:M;
@@ -519,7 +510,7 @@ extras.iid_draws=iid_draws_;
         % LogPost_L: weighting draws evaluated through the log-posterior kernel
         %----------------------------------------------------------------
         [LogPost_L,Logq_L]=iid_draws('MUELLER');
-        
+
         % old draws evaluated through the weighting function
         %----------------------------------------------------
         Logq_M=old_draws_in_weighting_function('MUELLER');
@@ -528,7 +519,7 @@ extras.iid_draws=iid_draws_;
         %----------------
         log_rh=LogPost_L-Logq_L;
         log_rp=Logq_M-LogPost_M;
-        
+
         fzero_options=optimset('Display','none');
         if debug
             fprintf('MUELLER: Now bisecting...');
@@ -543,9 +534,9 @@ extras.iid_draws=iid_draws_;
             fprintf('Done in %0.4d seconds\n',toc);
         end
         extras=struct('mueller_convergence',record(1:next));
-        
+
         log_mdd=thecoef*log_mdd;
-        
+
         function h=hfunc(log_c)
             % left side
             %------------

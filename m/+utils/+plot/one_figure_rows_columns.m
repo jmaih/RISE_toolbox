@@ -1,19 +1,6 @@
 function [r,c]=one_figure_rows_columns(nitems)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 r=ceil(sqrt(nitems));
 c=floor(sqrt(nitems));
