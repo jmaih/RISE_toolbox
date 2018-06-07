@@ -15,11 +15,7 @@ function obj=add_to_routines(obj,varargin)
 %
 %    - **obj** [rise|dsge|svar|rfvar]: model object
 %
-% Note:
-%
-% Example:
-%
-% See also:
+
 
 n=length(varargin);
 if rem(n,2)

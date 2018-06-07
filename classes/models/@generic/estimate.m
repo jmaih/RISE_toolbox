@@ -9,7 +9,6 @@ function obj=estimate(obj,varargin)
 % Args:
 %
 %    - **obj** [rise|dsge|rfvar|svar]: model object
-%
 %    - **varargin** additional optional inputs among which the most relevant
 %      for estimation are:
 %
@@ -167,9 +166,6 @@ function obj=estimate(obj,varargin)
 %      while the subsequent pages are the expectations data.
 %      See help dsge.forecast for more information
 %
-% Example:
-%
-% See also:
 
 nobj=numel(obj);
 

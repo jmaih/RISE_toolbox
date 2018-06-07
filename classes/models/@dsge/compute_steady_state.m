@@ -1,5 +1,5 @@
 function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
-% compute_steady_state - computes the steady state of a dsge model
+% Computes the steady state of a dsge model
 %
 % ::
 %
@@ -84,9 +84,6 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 %    - Writing the steady state file in this ways makes it possible to use the
 %      same whether there is regime switching or not.
 %
-% Example:
-%
-% See also:
 
 % possible fields are "imposed", "unique", "loop".
 % The default value for all of those is false.

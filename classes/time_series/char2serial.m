@@ -1,19 +1,6 @@
 function ss=char2serial(x)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if iscellstr(x)
     if numel(x)>1

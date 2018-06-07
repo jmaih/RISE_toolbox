@@ -20,27 +20,16 @@ estimation_wrapper(obj,action,x0,lb,ub,funevals)
 %    :
 %
 %    - **x1** [[]|d x 1 vector]: final paramter vector
-%
 %    - **f1** [numeric]: value of objective function evaluated at x1
-%
 %    - **H** [d x d x 2 array]: Hessian, such that H(:,:,1) is the hessian
 %      computed returned from the optimizer and H(:,:,2) is the hessian computed
 %      numerically by RISE.
-%
 %    - **issue** [char|cellstr]: list of problems encountered during the
 %      process
-%
 %    - **viol** [[]|vector]: restriction violations
-%
 %    - **obj** [rise|dsge|svar|rfvar]: model object possibly modified
-%
 %    - **funevals** [[]|numeric]: function evaluations
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 if isempty(action)
 

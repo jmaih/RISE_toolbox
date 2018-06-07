@@ -1,19 +1,17 @@
 function rise_startup(flag)
-% H1 line
+% Initialize RISE for use by add proper folder paths (and set up optional latex integration)
 %
 % ::
 %
+%    rise_startup;
 %
 % Args:
+%    flag (bool): whether shutting down or not (true = shutdown)
 %
 % Returns:
 %    :
+%    None
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<1
     flag=false;
@@ -35,7 +33,7 @@ for iprog=1:numel(latex_progs)
     else% gnu/linux
         [rcode,latex_paths{iprog}] = system(['which ',latex_progs{iprog}]);
     end
-    
+
     if any(isspace(latex_paths{iprog}))
         latex_paths{iprog}=strcat('"',strtrim(latex_paths{iprog}),'"');
     end
@@ -66,16 +64,16 @@ USE_RISE_PRINT = true;
 rise_data=cell(0,2);
 
 if USE_RISE_PRINT
-    
+
     % Version Variables
     % ------------------
-    
+
     NOT_INSTALLED = 'Not installed';
     matlab_version = NOT_INSTALLED;
     optimization_version = [NOT_INSTALLED,'(Fatal error)'];
     statistics_version = NOT_INSTALLED;
     rise_version = NOT_INSTALLED;
-    
+
     vs = ver;
     for jj = 1:length(vs)
         v = vs(jj);
@@ -98,7 +96,7 @@ if USE_RISE_PRINT
         'rise_version', rise_version
         'rise_required_matlab_version', '7.11'}
         ];
-    
+
     % set page properties for printing
     %---------------------------------
     set(0, 'DefaultFigurePaperOrientation','landscape');
@@ -112,7 +110,7 @@ end
 % Plot settings
 %--------------
 if USE_RISE_PLOT
-    
+
     rise_default_plot_colors={ ...
         [0 0 1],     ...  % 'b'
         [1 0 0],     ...  % 'r'
@@ -139,7 +137,7 @@ if USE_RISE_PLOT
         [255 207 0]/255,   ...
         [0.9 0.266 0.593]
         };
-    
+
     rise_data=[rise_data
         {'rise_default_plot_colors',rise_default_plot_colors}];
     set(0, 'DefaultFigureColor', 'w');
@@ -188,7 +186,7 @@ end
         %-----------------------------------------
         pdf_doc=[rise_root,filesep,'help',filesep,'build',filesep,'latex',filesep,'RISE.pdf'];
         html_doc=[rise_root,filesep,'help',filesep,'build',filesep,'html',filesep,'master_doc.html'];
-        
+
         MiKTeX='MiKTeX';
         if ~ispc
             MiKTeX='MacTeX';
