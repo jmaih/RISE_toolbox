@@ -1,51 +1,45 @@
 classdef tsparse
-    % tsparse -- constructs the transpose of a sparse matrix so as to save
-    % memory
+% Transpose of a sparse matrix to save memory (This is because of the default sparse matrix data-structure of MATLAB).
+%
+
     properties
         v
         data
     end
     methods
         function obj=tsparse(ii,jj,vv,nrows,ncols)
-            % tsparse -- constructor for tsparse objects
+            % Constructor of the tsparse class
             %
-            % Syntax
-            % -------
             % ::
-            %   obj=tsparse(ii,jj,vv,nrows,ncols)
             %
-            % Inputs
-            % -------
-            % 
-            % - **ii** [vector]: index for rows
+            %    obj=tsparse(ii,jj,vv,nrows,ncols)
             %
-            % - **jj** [vector]: index for columns
+            % Args:
             %
-            % - **vv** [vector]: values
+            %    - **ii** [vector]: index for rows
+            %    - **jj** [vector]: index for columns
+            %    - **vv** [vector]: values
+            %    - **nrows** [integer]: number of rows
+            %    - **ncols** [integer]: number of columns
             %
-            % - **nrows** [integer]: number of rows
+            % Returns:
+            %    :
+            %    - **obj** [tsparse]: tsparse object containing the transpose
+            %      of the matrix of interest
             %
-            % - **ncols** [integer]: number of columns
-            %
-            % Ouputs
-            % -------
-            %
-            % - **obj** [tsparse]: tsparse object containing the transpose
-            % of the matrix of interest
-            %
-            % More About
-            % ------------
-            %
-            % Examples
-            % ---------
-            %
-            % See also:
+
             if nargin
                 obj.data=sparse(jj,ii,vv,ncols,nrows);
                 obj.v=vv;
             end
         end
         function c=mtimes(a,b)
+            % * operator
+            %
+            % Warning:
+            %    * defaults to .* for tsparse class
+            %
+
             a_tsp=isa(a,'tsparse');
             b_tsp=isa(b,'tsparse');
             if a_tsp && ~b_tsp
@@ -103,7 +97,7 @@ classdef tsparse
                 %--------------------------
                 nrows=ceil(max_bytes/ca);
                 nrows=min(ra,nrows);
-                
+
                 swallow_rows();
                 nf=numel(Af);
                 if nf<r

@@ -1,19 +1,6 @@
 function a=smin(x,tol)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % smooth approximation of min(x,0)
 if nargin<2

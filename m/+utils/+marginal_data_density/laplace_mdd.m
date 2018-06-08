@@ -3,7 +3,7 @@ function log_mdd=laplace_mdd(log_post,Hinv)
 %
 % ::
 %
-%   log_mdd=LAPLACE_MDD(log_post,Hinv)
+%   log_mdd=laplace_mdd(log_post,Hinv)
 %
 % Args:
 %

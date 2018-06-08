@@ -1,4 +1,7 @@
 function opt=disp_defaults(defs)
+% INTERNAL FUNCTION
+%
+
 
 % remove comments that call for further action:
 % e.g. 'irf_shock_list(sr)' into 'irf_shock_list'
@@ -10,17 +13,17 @@ values=defs(:,2);
 myopt=cell2struct(values,strings,1);
 
 if nargout
-    
+
     opt=myopt;
-    
+
 else
-    
+
     disp(' ')
-    
+
     disp(myopt)
-    
+
     disp(' ')
-    
+
 end
 
 end

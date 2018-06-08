@@ -23,15 +23,12 @@ function [flag,max_eig,C]=gupta_murray_hassibi(T,Q,crit,fast)
 %    - **max_eig** [numeric]: maximum eigenvalue
 %    - **C** [matrix]: matrix in the criterion for checking stability
 %
-% Note:
-%
-% Example:
-%
 % See also: costa_fragoso_marques
 %
 % References:
 %   - Vijay Gupta, Richard Murray and Babak Hassibi (2003):
 %     "On the Control of Jump Linear Markov Systems with Markov State Estimation."
+%
 
 if nargin<4
     fast=[];

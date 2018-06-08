@@ -1,9 +1,8 @@
 function [data_values,start_date,end_date,missing]=data_request(...
 data,varlist,start_date,end_date,pages)
-% Selects the data requested for estimation or for forecasting
+% INTERNAL FUNCTION: Selects the data requested for estimation or for forecasting
 %
 % ::
-%
 %
 %    [data_values,start_date,end_date,missing]=data_request(data,varlist)
 %    [data_values,start_date,end_date,missing]=data_request(data,varlist,start_date)

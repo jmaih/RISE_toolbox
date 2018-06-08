@@ -3,16 +3,13 @@ function H = finite_differences(Objective,params,varargin)
 %
 % ::
 %
-%
 %	H = finite_differences(Objective,params)
 %	H = finite_differences(Objective,params,varargin)
 %
 % Args:
 %
 %    - **Objective** [char|function handle]: function to differentiate
-%
 %    - **params** [vector]: point at which the differentiation is taken
-%
 %    - **varargin** : optional/further arguments of the objective function
 %
 % Returns:
@@ -20,10 +17,5 @@ function H = finite_differences(Objective,params,varargin)
 %
 %    - **H** [matrix]: Hessian matrix
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 H=utils.numdiff.hessian(Objective,params,[],varargin{:});

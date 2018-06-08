@@ -1,19 +1,6 @@
 function parts=partition_variables(LLI)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % this function assumes that LLI is ordered alphabetically
 parts=struct();

@@ -1,19 +1,6 @@
 function a=smax(x,tol)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % smooth approximation of max(x,0)
 if nargin<2

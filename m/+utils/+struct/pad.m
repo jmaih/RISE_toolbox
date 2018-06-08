@@ -1,5 +1,5 @@
 function c=pad(varargin)
-% Concatenates fields structures horizontally
+% INTERNAL FUNCTION: Concatenates fields structures horizontally
 %
 % ::
 %

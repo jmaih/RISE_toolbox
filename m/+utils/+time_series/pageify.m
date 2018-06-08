@@ -1,5 +1,5 @@
 function db=pageify(pivot_date,varargin)
-% Turn databases into one db with one observation and many pages
+% INTERNAL FUNCTION: Turn databases into one db with one observation and many pages
 %
 % ::
 %

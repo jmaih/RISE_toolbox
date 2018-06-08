@@ -1,9 +1,11 @@
 function SIG=initial_covariance(lb,ub,k)
+% INTERNAL FUNCTION: Computes covariances of uniform distribution
+%
 
 if nargin<3
-    
+
     k=5;
-    
+
 end
 
 ub(ub==inf)=10;

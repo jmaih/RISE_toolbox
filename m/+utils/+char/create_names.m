@@ -1,5 +1,5 @@
 function names=create_names(names,prefix,n)
-% INTERNAL FUNCTION creates default variable names
+% INTERNAL FUNCTION: creates default variable names
 %
 % ::
 %

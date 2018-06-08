@@ -19,7 +19,6 @@ function [log_mdd,extras] = mcmc_mdd(theta_draws,lb,ub,options)
 %    - **lb** [empty|vector]: lower bound of the search space. Necessary only
 %      for the swz algorithm. Conveniently replaced with the lower bounds of
 %      theta_draws if empty.
-%
 %    - **ub** [empty|vector]: upper bound of the search space. Necessary only
 %      for the swz algorithm. Conveniently replaced with the upper bounds of
 %      theta_draws if empty.

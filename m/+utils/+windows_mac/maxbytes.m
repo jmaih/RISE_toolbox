@@ -2,7 +2,6 @@ function mb=maxbytes()
 % INTERNAL FUNCTION
 %
 
-
 if ispc
 
     ss=memory;

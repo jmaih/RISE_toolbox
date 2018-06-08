@@ -1,19 +1,6 @@
 function [data,varinfo] = haver2rise(tickers)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 %% haver2rise.m
 
@@ -64,7 +51,7 @@ for ii = 1 : numel(databases)
     end
     varnames=summary.(databases{ii});
     Frequence=summary_periods.(databases{ii});
-    
+
     for v=1:numel(varnames)
         success=false;
         try

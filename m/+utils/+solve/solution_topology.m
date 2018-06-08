@@ -2,21 +2,8 @@ function [siz,t,z,parts,order_var,inv_order_var]=solution_topology(...
 lead_lag_incidence,...
 exo_nbr,... number of shocks
 kfuture) % number of shocks periods beyond the current
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
     if nargin<3
         kfuture=0;

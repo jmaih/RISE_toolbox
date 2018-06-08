@@ -1,9 +1,11 @@
 function d=mymafilter(y,q,extend)
+% INTERNAL FUNCTION
+%
 
 if nargin<3
-    
+
     extend=false;
-    
+
 end
 
 [T,nvar]=size(y);
@@ -23,20 +25,20 @@ d=zeros(N,nvar);
 grab=0:wl-1;
 
 for ii=1:N
-    
+
     grab=grab+1;
-    
+
     d(ii,:)=weights*y(grab,:);
-    
+
 end
 
 
 if extend
-        
+
     d=[d(ones(q,1),:);d;d(N*ones(q,1),:)];
-    
+
     return
-    
+
 end
 
 end

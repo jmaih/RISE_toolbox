@@ -21,16 +21,13 @@ function [flag,max_eig,C]=costa_fragoso_marques(T,Q,crit)
 %    - **max_eig** [numeric]: maximum eigenvalue
 %    - **C** [matrix]: matrix in the criterion for checking stability
 %
-% Note:
-%
-% Example:
-%
 % See also: gupta_murray_hassibi
 %
 % References:
 %
 %   - O.L.V. Costa, M.D. Fragoso and R.P. Marques (2004):
 %     "Discrete-Time Markov Jump Linear Systems"
+%
 
 if nargin<3
     crit=[];
