@@ -1,20 +1,6 @@
 function theta_ = halton(lb,ub,K,scramble_flag)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 %   Examples:
 %

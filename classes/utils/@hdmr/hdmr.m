@@ -132,7 +132,7 @@ classdef hdmr
             if isempty(pol_max_order),pol_max_order=3;end
             if isempty(sample_percentage),sample_percentage=.75;end
             if isempty(pol_optimal),pol_optimal=true;end
-            
+
             sample_percentage=abs(sample_percentage);
             while sample_percentage>1
                 sample_percentage=0.1*sample_percentage;
@@ -170,7 +170,7 @@ classdef hdmr
             obj.D=1/obj.Nobs*sum(bsxfun(@minus,obj.g(:,1:obj.Nobs),obj.f0).^2,2);
             %
             obj.poly_coefs=orthonormal_polynomial(obj.pol_max_order,obj.x(:,1:obj.Nobs),obj.optimal,debug);
-            
+
             % computation of coefficients
             obj.coefficients=struct('level',{},'indexes',{},'regime',{},'coef',{},'sensitivity',{});
             obj.aggregate=struct('level',{},'indexes',{},'sensitivity',{});
@@ -184,7 +184,7 @@ classdef hdmr
                     POLS(:,oo+1,v)=POLS(:,oo,v).*xp;
                 end
             end
-            
+
             for lev=1:obj.expansion_order
                 indexes=obj.Indices{lev};
                 for jj=1:size(indexes,1)
@@ -248,7 +248,7 @@ classdef hdmr
             Neff=size(theta,2);
             % normalize between 0 and 1
             xx=theta_to_x(theta,obj.theta_low,obj.theta_high);
-            
+
             fit=struct();
             fit.f0=obj.f0;
             fit.h=obj.f0(:,ones(Neff,1));
@@ -308,21 +308,21 @@ classdef hdmr
                 ylabel('Metamodel')
                 plot([min(g_(:)),max(g_(:))],[min(h(:)),max(h(:))],'color','r')
                 hold off
-                
+
                 subplot(3,1,2)
                 [fg,xg]=distributions.empirical_cdf(g_,min(g_),max(g_),100);
                 [fh,xh]=distributions.empirical_cdf(h,min(g_),max(g_),100);
                 plot(xg,fg,xh,fh)
                 title('cdf')
                 legend({'True model','Metamodel'})
-                
+
                 subplot(3,1,3)
                 [fg,xg]=distributions.kernel_density(g_,min(g_),max(g_),'normal',100);
                 [fh,xh]=distributions.kernel_density(h,min(g_),max(g_),'normal',100);
                 plot(xg,fg,xh,fh)
                 title('pdf')
                 legend({'True model','Metamodel'})
-                
+
             end
         end
         %================
@@ -378,14 +378,14 @@ classdef hdmr
         end
         function coefs=polynomial_multiplication(p1,p2)
             % each polynomial is of the form a0+a1*x+...+ar*x^r
-            
+
             % get the orders
             o1=numel(p1)-1;
             o2=numel(p2)-1;
-            
+
             nterms=o1+o2+1;
             coefs=zeros(1,nterms);
-            
+
             for i1=1:o1+1
                 for i2=1:o2+1
                     order=(i1-1)+(i2-1);
@@ -407,5 +407,3 @@ classdef hdmr
         end
     end
 end
-
-

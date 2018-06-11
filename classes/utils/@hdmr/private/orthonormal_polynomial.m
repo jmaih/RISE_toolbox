@@ -1,20 +1,7 @@
 function [pol,fval,exitflag]=orthonormal_polynomial(...
 max_order,x,optimal,debug)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 a=0;
 b=1;
@@ -28,7 +15,7 @@ if nargin<4
         end
     end
 end
-warnstate=warning('query','all');                
+warnstate=warning('query','all');
 warning('off')%#ok<WNOFF> %,'MATLAB:divideByZero'
 
 options=optimset('Display','none','MaxFunEvals',100000,'tolfun',tol);
@@ -90,7 +77,7 @@ if n
         [pol,fval_theory,exitflag] = fmincon(@all_residuals,pol_theory,[],[],[],[],lb,ub,[],options,optimal);
     end
     fval=nan(1,n);
-    
+
     for ii=1:n
         if N>0
             [fval(ii),m(ii,:),v(ii,:),eta(ii,:)]=residuals(pol,ii,true);
@@ -105,7 +92,7 @@ if n
         end
     end
 end
-warning(warnstate)                               
+warning(warnstate)
 
     disp('============= theory fval (target=0) =============')
     disp(fval_theory)

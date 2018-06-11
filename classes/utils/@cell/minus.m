@@ -1,19 +1,6 @@
 function c=minus(a,b)
-% minus -- overload minus for cell
+% INTERNAL FUNCTION: overload minus for cell
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ischar(a)
     a=cellstr(a);
