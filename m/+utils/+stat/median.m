@@ -1,19 +1,6 @@
 function varargout=median(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 [varargout{1:nargout}]=nanmedian(varargin{:});
 end

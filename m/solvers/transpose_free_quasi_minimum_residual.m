@@ -5,7 +5,7 @@ x0,... % initial guess
 tol,... % tolerance level
 MaxIter,... % maximum number of iterations
 verbose) % flag for printing progress or not
-% transpose_free_quasi_minimum_residual attempts to solve Ax=b
+% Solve Ax=b
 %
 % ::
 %
@@ -28,12 +28,6 @@ verbose) % flag for printing progress or not
 %    - retcode :
 %    - tau :
 %
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % attempts to solve Ax=b
 

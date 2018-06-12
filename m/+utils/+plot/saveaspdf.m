@@ -1,19 +1,6 @@
 function correction=saveaspdf(fig,filename)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 filename=parser.remove_file_extension(filename);
 
@@ -44,13 +31,13 @@ switch computer
         remove_figure_margins()
 end
 
-if ~success 
+if ~success
     print(fig,'-dpdf',filename)%,sprintf('-r%d',dpi)
 end
 
 
     function remove_figure_margins()
-        
+
         haxes=	findobj(fig, 'Type', 'axes', '-and', 'Tag', '');
         for n=1:length(haxes)
             xl=		get(haxes(n), 'XLim');
@@ -62,7 +49,7 @@ end
                 inx=			(xl(1) <= x) & (x <= xl(2));	% Within the x borders.
                 iny=			(yl(1) <= y) & (y <= yl(2));	% Within the y borders.
                 keep=			inx & iny;						% Within the box.
-                
+
                 if(~strcmp(get(lines(m), 'LineStyle'), 'none'))
                     crossx=		((x(1:end-1) < xl(1)) & (xl(1) < x(2:end))) ...	% Crossing border x1.
                         |	((x(1:end-1) < xl(2)) & (xl(2) < x(2:end))) ...	% Crossing border x2.
@@ -84,7 +71,7 @@ end
                 set(lines(m), 'YData', y(keep))
             end
         end
-        
+
     end
 
 end

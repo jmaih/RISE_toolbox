@@ -1,4 +1,6 @@
 function p=derivative_location(a,p)
+% INTERNAL FUNCTION
+%
 
 if nargin<2
     p=0;

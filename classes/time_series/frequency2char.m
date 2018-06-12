@@ -1,19 +1,6 @@
 function fq=frequency2char(fq)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 fmap=frequency_map();
 if isnumeric(fq)

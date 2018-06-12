@@ -1,19 +1,6 @@
 function [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,nvar,r0,c0)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 Remains=nvar-(fig-1)*(r0*c0);
 

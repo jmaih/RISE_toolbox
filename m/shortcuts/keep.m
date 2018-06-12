@@ -1,11 +1,9 @@
 function keep(varargin)
-% keep - clears the workspace for undesired variables
+% Clears the workspace for undesired variables
 %
 % ::
 %
-%
 %   keep v1 v2 v3...
-%
 %   keep('v1','v2','v3',...,'vn')
 %
 % Args:
@@ -17,14 +15,13 @@ function keep(varargin)
 %
 %    - none
 %
+% See also:
+%    clear
+%
 % Note:
+%    This is a modification of keep.m by Xiaoning (David) Yang xyang@lanl.gov
+%    1998.
 %
-% Example:
-%
-%    See also: clear
-
-% This is a modification of keep.m by Xiaoning (David) Yang xyang@lanl.gov
-% 1998.
 
 % Keep all
 %----------

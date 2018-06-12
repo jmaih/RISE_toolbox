@@ -1,19 +1,6 @@
 function varargout=myplot(plotfunc,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 funct_type=func2str(plotfunc);
 
@@ -83,7 +70,7 @@ else
 end
 
    [varargout{1:nargout}]=plot_it(datta);
-   
+
    if nargout==0
        clear plot_handle
    end
@@ -190,7 +177,7 @@ end
             end
         end
         varargout=vout(1:nout);
-        
+
         function add_horizontal_lines()
             if ~isempty(rise_items.hline)
                 xmin=pp.xlim(1);
@@ -204,7 +191,7 @@ end
                 end
             end
         end
-        
+
         function add_vertical_lines()
             if ~isempty(rise_items.vline)
                 for iline=1:numel(rise_items.vline)
@@ -226,9 +213,9 @@ function [datta,date_numbers,sizdata]=stretch_data(datta,date_numbers,sizdata)
 n=numel(datta);
 
 if n==1
-    
+
     return
-    
+
 end
 
 lowestdn=inf;
@@ -236,11 +223,11 @@ lowestdn=inf;
 highestdn=-inf;
 
 for its=1:n
-    
+
     lowestdn=min(lowestdn,date_numbers{its}(1));
-    
+
     highestdn=max(highestdn,date_numbers{its}(end));
-    
+
 end
 
 dn=lowestdn:highestdn;
@@ -248,22 +235,22 @@ dn=lowestdn:highestdn;
 T=numel(dn);
 
 for its=1:n
-    
+
     start=find(date_numbers{its}(1)==dn,1,'first');
-    
+
     final=find(date_numbers{its}(end)==dn,1,'last');
-    
+
     % override the first dimension
     sizdata{its}(1)=T;
-    
+
     newdata=nan(sizdata{its});
-    
+
     newdata(start:final,:,:,:)=datta{its};
-    
+
     datta{its}=newdata;
-    
+
     date_numbers{its}=dn;
-    
+
 end
-    
+
 end

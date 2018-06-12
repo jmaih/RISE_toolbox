@@ -1,4 +1,6 @@
 function obj=prototypize(f)
+% INTERNAL FUNCTION
+%
 
 persistent proto
 

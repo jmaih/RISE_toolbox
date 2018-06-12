@@ -1,5 +1,5 @@
 function H=evaluate_policy_objective_hessian_numerically(funcs,y,x,ss,param,sparam,def,s0,s1)
-% Numerical evaluation of the hessian of the policy objective
+% INTERNAL FUNCTION: Numerical evaluation of the hessian of the policy objective
 %
 % ::
 %

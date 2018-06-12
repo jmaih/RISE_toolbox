@@ -1,5 +1,5 @@
 function C=evaluate_automatic_derivatives(funcs,order,engine,varargin)
-% evaluate automatic differentiation
+% INTERNAL FUNCTION: evaluate automatic differentiation
 %
 % ::
 %

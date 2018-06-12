@@ -1,19 +1,6 @@
 function [dat,frequency,year,period]=serial2date(s,silent)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
     silent=false;
@@ -32,9 +19,9 @@ end
 % check whether it is truly serial
 %-----------------------------------
 if ~is_serial(s)
-    
+
     error('input is not serial')
-    
+
 end
 
 dec=serial2dec(s,true);
@@ -54,9 +41,9 @@ frequency=frequency2char(dec(1).freq);
 nonyear=dec(1).freq>1;
 
 if nonyear
-    
+
     dat=strcat(dat,frequency,period_str);
-    
+
 end
 
 dat=cellfun(@(x)x(~isspace(x)),dat,'uniformOutput',false);

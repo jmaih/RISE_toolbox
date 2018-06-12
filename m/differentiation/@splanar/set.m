@@ -1,19 +1,6 @@
 function obj=set(obj,prop,value)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 
 obj.(prop)=value;

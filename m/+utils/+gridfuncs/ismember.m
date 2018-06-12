@@ -1,35 +1,26 @@
 function [lia,locb] = ismember(A,B)
-% ismember -- checks membership of the rows of a matrix in another matrix
+% INTERNAL FUNCTION: checks membership of the rows of a matrix in another matrix
 %
 % ::
 %
-%
 %   [lia] = ismember(A,B)
-%
 %   [lia,locb] = ismember(A,B)
 %
 % Args:
 %
 %    - **A** [n x k matrix] : matrix whose rows we want to locate or check the
-%    membership
-%
+%      membership
 %    - **B** [m x k matrix] : reference matrix
 %
 % Returns:
 %    :
 %
 %    - **lia** [n x 1 logical] : true for rows that belong
-%
 %    - **locb** [n x 1 vector] : location of the elements of A in B
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if size(A,2)~=size(B,2)
-    
+
     error('matrices should have the same number of columns')
 
 end

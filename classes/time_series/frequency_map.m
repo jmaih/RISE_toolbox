@@ -1,19 +1,6 @@
 function fmap=frequency_map()
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 fmap={
     'W',52

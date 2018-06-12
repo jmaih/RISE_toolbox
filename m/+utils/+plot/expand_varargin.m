@@ -1,5 +1,6 @@
 function vargs=expand_varargin(vargs,varargin)
 % INTERNAL FUNCTION
+%
 
 if isempty(vargs)
 

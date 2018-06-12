@@ -1,26 +1,13 @@
 function [year,period,freq,frequency]=date2year_period(date)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 [dec,success]=decompose_date(date);
 
 if ~success
-    
+
     error('wrong date')
-    
+
 end
 
 year=[dec.year];

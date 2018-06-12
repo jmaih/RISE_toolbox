@@ -1,9 +1,11 @@
 function print_structural_form(obj,varlist)
+% INTERNAL FUNCTION
+%
 
 if nargin<2
-    
+
     varlist=[];
-    
+
 end
 
 string='';
@@ -11,17 +13,17 @@ string='';
 nobj=numel(obj);
 
 for iobj=1:nobj
-    
+
     if nobj>1
-        
+
         string=int2str(iobj);
-        
+
     end
-    
+
     fprintf(1,'\n%s\n',['MODEL ',string,' STRUCTURAL FORM']);
-    
+
     print_low_level(obj(iobj),mfilename,varlist)
-    
+
 end
 
 end

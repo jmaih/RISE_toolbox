@@ -1,19 +1,6 @@
 function c=kron(a,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 a=splanar(a);
 b=splanar(b);

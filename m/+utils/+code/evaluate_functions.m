@@ -1,5 +1,5 @@
 function varargout=evaluate_functions(xcell,varargin)
-% Evaluates functions in various formats
+% INTERNAL FUNCTION: Evaluates functions in various formats
 %
 % ::
 %

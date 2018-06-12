@@ -1,19 +1,6 @@
 function K=commutation(m,n,fast)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % properties of the commutation matrix
 %                i) Kmn'=Knm

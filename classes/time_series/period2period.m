@@ -1,19 +1,6 @@
 function p=period2period(p0,freq0,freq1,head)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % transform a period a particular frequency into a period of another
 % frequency

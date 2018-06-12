@@ -1,19 +1,6 @@
 function pp=plot_specs(date_numbers,nticks,date_format)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 default_nticks=8;
 if nargin<3

@@ -1,19 +1,6 @@
 function [Qx,retcode]=validate_transition_matrix(Qx)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 total=sum(Qx,2);
 if any(isnan(Qx(:))) || ...

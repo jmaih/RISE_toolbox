@@ -14,10 +14,8 @@ function [mc,switch_prior,restr]=build_model(m,vnames,options)
 % Returns:
 %    :
 %       - mc [struct]: structure containing information about the markov chains
-%
 %       - switch_prior [struct] structure containing the priors on the transition
 %         probabilities
-%
 %       - restr [cell array]: list of (Choleski) restrictions. state-identifying
 %         restrictions are not added yet
 

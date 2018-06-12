@@ -1,19 +1,6 @@
 function hh = rotateXLabels( ax, angle, varargin )
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % original code by Ben Tordoff at the Mathworks
 %
@@ -91,7 +78,7 @@ end
                 switch upper( params{pp} )
                     case 'MAXSTRINGLENGTH'
                         maxStringLength = values{pp};
-                        
+
                     otherwise
                         error( 'RotateXLabels:BadParam', 'Optional parameter ''%s'' not recognised.', params{pp} );
                 end
@@ -102,7 +89,7 @@ end
     function [vals,labels] = findAndClearExistingLabels( ax, maxStringLength )
         % Get the current tick positions so that we can place our new labels
         vals = get( ax, 'XTick' );
-        
+
         % Now determine the labels. We look first at for previously rotated labels
         % since if there are some the actual labels will be empty.
         ex = findall( ax, 'Tag', 'RotatedXTickLabel' );
@@ -134,17 +121,17 @@ end
                 end
             end
         end
-        
+
     end % findAndClearExistingLabels
 %-------------------------------------------------------------------------%
     function restoreDefaultLabels( ax )
         % Restore the default axis behavior
         removeListeners( ax );
-        
+
         % Try to restore the tick marks and labels
         set( ax, 'XTickMode', 'auto', 'XTickLabelMode', 'auto' );
         rmappdata( ax, 'OriginalXTickLabels' );
-        
+
         % Try to restore the axes position
         if isappdata( ax, 'OriginalAxesPosition' )
             set( ax, 'Position', getappdata( ax, 'OriginalAxesPosition' ) );
@@ -156,8 +143,8 @@ end
         % Work out the ticklabel positions
         zlim = get(ax,'ZLim');
         z = zlim(1);
-        
-        % We want to work in normalised coords, but this doesn't print 
+
+        % We want to work in normalised coords, but this doesn't print
         % correctly. Instead we have to work in data units even though it
         % makes positioning hard.
         ylim = get( ax, 'YLim' );
@@ -166,7 +153,7 @@ end
         else
             y = ylim(1);
         end
-        
+
         % Now create new text objects in similar positions.
         textLabels = -1*ones( numel( vals ), 1 );
         for ll=1:numel(vals)
@@ -184,12 +171,12 @@ end
         % callback. We only attach it to one label to save massive numbers
         % of callbacks during axes shut-down.
         set(textLabels(end), 'DeleteFcn', @onTextLabelDeleted);
-        
+
         % Now copy font properties into the texts
         updateFont();
         % Update the alignment of the text
         updateAlignment();
- 
+
     end % createNewLabels
 
 %-------------------------------------------------------------------------%
@@ -200,18 +187,18 @@ end
         if ~strcmpi( get( ax, 'ActivePositionProperty' ), 'OuterPosition' )
             return;
         end
-        
+
         % Work out the maximum height required for the labels
         labelHeight = getLabelHeight(ax);
-        
+
         % Remove listeners while we mess around with things, otherwise we'll
         % trigger redraws recursively
         removeListeners( ax );
-        
+
         % Change to normalized units for the position calculation
         oldUnits = get( ax, 'Units' );
         set( ax, 'Units', 'Normalized' );
-        
+
         % Not sure why, but the extent seems to be proportional to the height of the axes.
         % Correct that now.
         set( ax, 'ActivePositionProperty', 'Position' );
@@ -219,7 +206,7 @@ end
         axesHeight = pos(4);
         % Make sure we don't adjust away the axes entirely!
         heightAdjust = min( (axesHeight*0.9), labelHeight*axesHeight );
-        
+
         % Move the axes
         if isappdata( ax, 'OriginalAxesPosition' )
             pos = getappdata( ax, 'OriginalAxesPosition' );
@@ -236,10 +223,10 @@ end
         end
         set( ax, 'Units', oldUnits );
         set( ax, 'ActivePositionProperty', 'OuterPosition' );
-        
+
         % Make sure we find out if axes properties are changed
         addListeners( ax );
-        
+
     end % repositionAxes
 
 %-------------------------------------------------------------------------%
@@ -247,7 +234,7 @@ end
         % Try to work out where to put the xlabel
         removeListeners( ax );
         labelHeight = getLabelHeight(ax);
-        
+
         % Use the new max extent to move the xlabel. We may also need to
         % move the title
         xlab = get(ax,'XLabel');
@@ -403,7 +390,7 @@ end
 
 %-------------------------------------------------------------------------%
     function onTextLabelDeleted( ~, ~ )
-        % The final text label has been deleted. This is likely from a 
+        % The final text label has been deleted. This is likely from a
         % "cla" or "close" call, so we should remove all of our dirty
         % hacks.
         restoreDefaultLabels(ax);

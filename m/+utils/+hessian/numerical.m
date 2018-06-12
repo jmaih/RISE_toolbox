@@ -1,5 +1,5 @@
 function [H,issue]=numerical(fh,xbest,hessian_type)
-% numerical -- compute the hessian numerically
+% Computes the hessian numerically
 %
 % ::
 %

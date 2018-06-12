@@ -1,5 +1,5 @@
 function f=memoize(g,order,varargin)
-% makes it possible to call a function with only the first input
+% INTERNAL FUNCTION: makes it possible to call a function with only the first input
 %
 % ::
 %

@@ -1,21 +1,8 @@
 function [position,regime_states]=parameter_position_and_regimes(pnames,...
 param_names,governing_chain,chain_names,...
 grand_chains_to_small,regimes)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ischar(pnames)
     pnames=cellstr(pnames);

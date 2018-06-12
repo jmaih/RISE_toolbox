@@ -1,19 +1,6 @@
 function [st,Q0,PAI,retcode]=choose_state(st,Qfunc,PAI,y)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % st: state
 % Qfunc: function that returns the transition matrix evaluated at y ...

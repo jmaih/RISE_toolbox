@@ -1,19 +1,6 @@
 function [hrs,mins,secs]=estimated_time_of_arrival(start_clock,percentage_complete)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if percentage_complete<=0||percentage_complete>1
     error('second argument must be in (0,1]')

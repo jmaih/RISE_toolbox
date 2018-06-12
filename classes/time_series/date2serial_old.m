@@ -1,19 +1,6 @@
 function [s,frequency]=date2serial(dat,silent)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
     silent=false;
@@ -86,7 +73,7 @@ else
     end
     stamp=time_frequency_stamp();
     dn=@(x,per,freq)x*freq+per-1+stamp(freq);
-    
+
     s=dn(year,period,freq);
 end
 

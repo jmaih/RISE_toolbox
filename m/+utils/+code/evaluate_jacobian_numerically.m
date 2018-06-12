@@ -1,5 +1,5 @@
 function J=evaluate_jacobian_numerically(funcs,y,x,ss,param,def,s0,s1)
-% numerical evaluation of the jacobian of the objective function
+% INTERNAL FUNCTION: numerical evaluation of the jacobian of the objective function
 %
 % ::
 %

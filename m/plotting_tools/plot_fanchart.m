@@ -1,19 +1,6 @@
 function hh=plot_fanchart(data,MainColor,nticks)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<3
     nticks=[];
@@ -63,7 +50,7 @@ ci=ci(:);
 n=numel(ci);
 
 if isnumeric(maincolor) && size(maincolor,2)==3
-    
+
     if size(maincolor,1)==1
         maincolor=ci*maincolor;
     elseif size(maincolor,1)~=n

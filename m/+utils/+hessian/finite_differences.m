@@ -1,5 +1,5 @@
 function H = finite_differences(Objective,params,varargin)
-% finite_differences - computes the hessian by finite differences
+% Computes the hessian by finite differences
 %
 % ::
 %

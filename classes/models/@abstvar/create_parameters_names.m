@@ -1,9 +1,9 @@
 function p=create_parameters_names(nvars,lags,constant,nd,additional_params)
 
 if nargin<4
-    
+
     additional_params=[];
-    
+
 end
 
 % the parameters are ordered as
@@ -29,11 +29,11 @@ is_svar=lags(1)==0;
 if is_svar
     % svar
     prefix='a';
-    
+
 else
     % rfvar
     prefix='b';
-    
+
 end
 
 p=vartools.param_creator(nvars,lags,constant,nd,additional_params,prefix,is_svar);

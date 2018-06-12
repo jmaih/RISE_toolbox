@@ -1,18 +1,15 @@
 function this=unfold(last_hist_date,varargin)
-% UNFOLD -- takes a folded times series and turns it into a one-page time
+% Takes a folded times series and turns it into a one-page time
 % series
 %
 % ::
 %
-%
-%   this=UNFOLD(last_hist_date,obj)
-%
-%   this=UNFOLD(last_hist_date,obj1,obj2,...,objn)
+%   this=unfold(last_hist_date,obj)
+%   this=unfold(last_hist_date,obj1,obj2,...,objn)
 %
 % Args:
 %
 %    - **last_hist_date** [char|serial date]:
-%
 %    - **obj** [ts]: time series
 %
 % Returns:
@@ -20,11 +17,6 @@ function this=unfold(last_hist_date,varargin)
 %
 %    - **this** [ts]: unfolded time series
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ~(ischar(last_hist_date)||isnumeric(last_hist_date))
     error('pivot date should be a valid date or a serial date')

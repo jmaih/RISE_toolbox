@@ -1,19 +1,6 @@
 function y = nanvar(x,w,dim)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin < 2 || isempty(w), w = 0; end
 

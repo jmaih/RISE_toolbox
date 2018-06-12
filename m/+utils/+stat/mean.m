@@ -1,19 +1,6 @@
 function m=mean(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 m=utils.stat.nanmean(varargin{:});
 end

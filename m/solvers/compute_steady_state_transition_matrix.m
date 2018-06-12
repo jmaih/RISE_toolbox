@@ -1,6 +1,5 @@
 function [Q,retcode]=compute_steady_state_transition_matrix(trans_mat_func,...
 ss_0,pp0,def_0,exo_nbr)
-
 % compute_steady_state_transition_matrix computes the transition matrix a
 % the steady state
 %

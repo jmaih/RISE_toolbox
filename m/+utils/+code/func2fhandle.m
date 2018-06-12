@@ -1,5 +1,5 @@
 function varargout = func2fhandle(varargin)
-% Creates a handle to an m-file not on the matlab search path
+% INTERNAL FUNCTION: Creates a handle to an m-file not on the matlab search path
 %
 % ::
 %

@@ -1,19 +1,6 @@
 function obj=cell2object(C,the_class)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 fields=C(1,:);
 vals=C(2,:);

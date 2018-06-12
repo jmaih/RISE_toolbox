@@ -1,19 +1,6 @@
 function [ax,h]=sup_label(text,whichLabel,supAxes)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % This modifies Ben Barrowes' suplabel (see Matlab Central).
 % It places text as a title, xlabel, or ylabel on a group of subplots.
