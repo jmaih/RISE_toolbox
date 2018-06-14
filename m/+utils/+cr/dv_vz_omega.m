@@ -1,5 +1,5 @@
 function oo = dv_vz_omega(dv_vz,nz,varargin)
-% computes A*OMEGA_i
+% INTERNAL FUNCTION: computes A*OMEGA_i
 %
 % ::
 %

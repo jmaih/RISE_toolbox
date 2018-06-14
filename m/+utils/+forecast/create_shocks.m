@@ -1,24 +1,11 @@
 function [shocks]=create_shocks(nx,shock_id,det_vars,options)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 
 % The shock will hit either in the current period,horizon_hit=0 or in a
 % later period horizon_hit>0. In principle horizon_hit can differ from the
-% number of periods agents can see into the future. 
+% number of periods agents can see into the future.
 
 random=options.simul_shock_uncertainty;
 % stochastic shocks

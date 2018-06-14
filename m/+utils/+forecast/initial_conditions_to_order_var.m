@@ -1,22 +1,6 @@
 function Initcond=initial_conditions_to_order_var(Initcond,new_order,options)
-
-% initial_conditions_to_order_var set initial conditions to the order of
-% the solution of the model (going from the Alphabetical order)
+% INTERNAL FUNCTION: Set initial conditions to the order of the solution of the model (going from the Alphabetical order)
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % adjust the start values according to the order_var
 %---------------------------------------------------

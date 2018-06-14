@@ -12,7 +12,7 @@ n,xi3,c3,c_range)
 %
 %    - **log_c** [numeric]: initial scaling
 %    - **accept_ratio** [numeric]: acceptance rate
-%    - **alpha_range** [interval|{[]}]:
+%    - **alpha_range** [interval|{[]}]: target acceptance range
 %    - **fixed_scaling** [true|false]: Do not update the scale of the algorithm
 %    - **n** [integer]: iteration
 %    - **xi3** [numeric]: appears in gam3 = c3*(n+1)^(-xi3). must lie in
@@ -77,7 +77,6 @@ projection_facility()
 
             if log_c<log_c_range(1)
 
-                log_c=log_c_range(1);
 
             end
 

@@ -1,8 +1,9 @@
 function vcov = project(vcov0,e_min,e_max)
-% Projection of covariance matrix such the eigenvalues are sandwiched.
+% INTERNAL FUNCTION: Projection of covariance matrix such the eigenvalues are sandwiched.
 %
 % ::
 %
+%    vcov = project(vcov0,e_min,e_max);
 %
 % Args:
 %

@@ -1,5 +1,5 @@
 function oo = omega(nz,index)
-% creator of sparse matrices for mutivariate chain rules up to fifth order
+% INTERNAL FUNCTION: creator of sparse matrices for mutivariate chain rules up to fifth order
 %
 % ::
 %
@@ -9,9 +9,6 @@ function oo = omega(nz,index)
 %
 %    - **nz** [integer]: number of variables in the differentiation
 %    - **index** [integer]: code for the requested omega. Must be in [1,9]
-%
-% Returns:
-%    :
 %
 % Reference:
 %

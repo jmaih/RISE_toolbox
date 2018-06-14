@@ -1,19 +1,6 @@
 function shocks=replace_impulse(shocks,shock_id,k_plus_1,new_impulse)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 
 nx=size(shocks,1);

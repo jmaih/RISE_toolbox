@@ -1,19 +1,6 @@
 function [H,iH,dH] = conditioner(H0,tol)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % based on ddom.m
 % returns a diagonally dominant matrix H by modifying the

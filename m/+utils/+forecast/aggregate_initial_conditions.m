@@ -1,19 +1,6 @@
 function [y0,T,steady_state]=aggregate_initial_conditions(PAI,y0,T,steady_state)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<4
     steady_state=[];
@@ -28,7 +15,7 @@ solve_order=1;
 do_T= ~isempty(T);
 do_ss= ~isempty(steady_state);
 if do_T
-    solve_order=size(T,1); 
+    solve_order=size(T,1);
     % the last row might be the position of the state variables but this
     % should not be a problem
 end

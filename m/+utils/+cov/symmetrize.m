@@ -1,5 +1,5 @@
 function A=symmetrize(A)
-% Makes a square matrix symmetric
+% INTERNAL FUNCTION: Makes a square matrix symmetric
 %
 % ::
 %

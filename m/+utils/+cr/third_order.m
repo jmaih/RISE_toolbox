@@ -1,5 +1,5 @@
 function res=third_order(dvvv,dvv,dv,vzzz,vzz,vz,options)
-% third-order multivariate chain rule
+% INTERNAL FUNCTION: third-order multivariate chain rule
 %
 % ::
 %

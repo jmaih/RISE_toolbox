@@ -1,8 +1,7 @@
 function [hms,h,m,s] = sec2hms(secs)
-% sec2hms -- converts seconds to hours, minutes and seconds
+% INTERNAL FUNCTION: converts seconds to hours, minutes and seconds
 %
 % ::
-%
 %
 %   hms = sec2hms(secs)
 %
@@ -14,22 +13,14 @@ function [hms,h,m,s] = sec2hms(secs)
 %    :
 %
 %    - **hms** [char]: string breaking down the input into hours, minutes and
-%    seconds.
-%
+%      seconds.
 %    - **h** [numeric]:hours.
-%
 %    - **m** [numeric]: minutes.
-%
 %    - **s** [numeric]:  seconds.
 %
 % Note:
-%
-% Example:
-%
-%    See also:
-
-% Adapted for RISE from code from Peter J. Acklam 
-% http://home.online.no/~pjacklam
+%    Adapted for RISE from code from Peter J. Acklam
+%    http://home.online.no/~pjacklam
 
 secs = round(secs);
 s = rem(secs, 60);

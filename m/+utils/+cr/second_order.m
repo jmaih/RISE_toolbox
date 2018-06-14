@@ -1,5 +1,5 @@
 function res=second_order(dvv,dv,vzz,vz,options)
-% second-order multivariate chain rule
+% INTERNAL FUNCTION: second-order multivariate chain rule
 %
 % ::
 %

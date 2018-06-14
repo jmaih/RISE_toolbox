@@ -1,8 +1,7 @@
 function v=load_start_values(names,db,date,v)
-% load_start_values - load the start values for forecasting
+% INTERNAL FUNCTION: load the start values for forecasting
 %
 % ::
-%
 %
 %   v=load_start_values(names,db,date)
 %   v=load_start_values(names,db,date,v)
@@ -10,12 +9,9 @@ function v=load_start_values(names,db,date,v)
 % Args:
 %
 %    - **names** [char|cellstr]: names of variables to load from the database
-%
 %    - **db** [ts|struct]: ts time series data
-%
 %    - **date** [char|numeric|serial date]: date for which the data are
 %      requested
-%
 %    - **v** (optional)[vector,3-dimensional array|[]]: start values. If
 %      provided, it should have the same number of rows as the number of names
 %
@@ -27,7 +23,6 @@ function v=load_start_values(names,db,date,v)
 % Note:
 %
 %    - leads are ignored
-%
 %    - if a variable is not found in the database, it is initialized at 0 in
 %      the first page and nan in the subsequent pages
 %
@@ -36,7 +31,9 @@ function v=load_start_values(names,db,date,v)
 %    db=ts('1990q1',rand(100,5,3),{'v1','v2','v3','v4','v5'})
 %    v=utils.forecast.load_start_values({'v4','v5','v5_AUX_L_8{+2}','v5_AUX_F_3'},db,'2011Q4')
 %
-%    See also: data_request
+% See also:
+%    data_request
+%
 
 if ischar(names)
     names=cellstr(names);
@@ -67,7 +64,7 @@ serial_date=date2serial(date);
 dbnames=get(db,'varnames');
 
 % the database may have several pages : conditioning information
-% note that going from 
+% note that going from
 %----------------------------------------------------------------
 v=full(v); % avoid problems with sparse
 if npages>1
@@ -119,13 +116,13 @@ for ipage=npages:-1:2
 end
 
     function [vname_out,lead_lag,in_database]=get_name_and_lead_lag(vname_in)
-        
+
         % check first for curly braces
         %-----------------------------
         [vname_out,lead_lag]=curly_braces_check(vname_in);
-        
+
         in_database=any(strcmp(vname_out,dbnames));
-        
+
         if ~in_database
             % if the variable is auxiliary, do further processing
             %----------------------------------------------------
@@ -136,7 +133,7 @@ end
                 in_database=any(strcmp(vname_out,dbnames));
             end
         end
-        
+
         function [name_out,lead_lag]=curly_braces_check(name_in)
             lead_lag=0;
             name_out=name_in;

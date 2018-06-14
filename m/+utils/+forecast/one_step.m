@@ -1,21 +1,7 @@
 function [y1,is_active_shock,retcode]=one_step(T,y0,ss,xloc,sig,shocks,...
 order,compl,shock_structure)
-
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 narginchk(7,9)
 

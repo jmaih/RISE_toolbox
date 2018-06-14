@@ -1,19 +1,6 @@
 function check_shock_id(id,nx)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 id=id(:);
 if any(id>nx)||...

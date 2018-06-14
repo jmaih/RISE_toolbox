@@ -1,21 +1,7 @@
 function [y1,is_active_shock,retcode]=one_step_frwrd_back_shooting(T,y0,ss,xloc,sig,...
 shocks,order,compl,cond_shocks_id)
-
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 narginchk(7,9)
 
@@ -83,7 +69,7 @@ if ~isempty(first_viol)
         % the constraints
         %------------------------------------------------------------------
         [~,first_viol]=multi_step_shooting(shocks0,true);
-        
+
         test_passed=isempty(first_viol);
         % if the test is passed we are done
         %----------------------------------

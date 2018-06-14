@@ -537,11 +537,11 @@ Results=do_results();
 
                 if iterations>0
 
-                     log_c(ichain)=utils.mcmc.update_scaling(log_c(ichain),...
+                    log_c(ichain)=utils.mcmc.update_scaling(log_c(ichain),...
                         rho(ichain),alpha,fixed_scaling,nbatch,...
                         rwm_exp,[],c_range);
 
-               end
+                end
 
                 if use_true_moments
 

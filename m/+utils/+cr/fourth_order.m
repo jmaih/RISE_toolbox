@@ -1,5 +1,5 @@
 function res=fourth_order(dvvvv,dvvv,dvv,dv,vzzzz,vzzz,vzz,vz,options)
-% fourth-order multivariate chain rule
+% INTERNAL FUNCTION: fourth-order multivariate chain rule
 %
 % ::
 %

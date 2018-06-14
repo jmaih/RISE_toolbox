@@ -1,5 +1,5 @@
 function res=fifth_order(dvvvvv,dvvvv,dvvv,dvv,dv,vzzzzz,vzzzz,vzzz,vzz,vz,options)
-% fifth-order multivariate chain rule
+% INTERNAL FUNCTION: fifth-order multivariate chain rule
 %
 % ::
 %

@@ -1,5 +1,5 @@
 function flag=is_computable(varargin)
-% checks whether the input is valid for computation
+% INTERNAL FUNCTION: checks whether the input is valid for computation
 %
 % ::
 %

@@ -1,20 +1,6 @@
 function [y1,is_active_shock,retcode]=one_step_frwrd(T,y0,ss,xloc,sig,shocks,order,compl,cond_shocks_id)
-
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 narginchk(7,9)
 

@@ -1,5 +1,5 @@
 function res=first_order(dv,vz,~)
-% first-order multivariate chain rule
+% INTERNAL FUNCTION: first-order multivariate chain rule
 %
 % ::
 %
