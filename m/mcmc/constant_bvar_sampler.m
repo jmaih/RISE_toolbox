@@ -50,10 +50,6 @@ function [Results,start] = constant_bvar_sampler(start,options)
 %
 %    - **start** [struct]: see above
 %
-% Note:
-%
-% Example:
-%
 % See also:
 %    :func:`mh_sampler <rise.mh_sampler>`
 %

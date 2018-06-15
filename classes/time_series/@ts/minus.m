@@ -1,19 +1,6 @@
 function db=minus(db1,db2)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 db=ts.binary_operation(db1,db2,mfilename);
 end

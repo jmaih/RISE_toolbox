@@ -1,20 +1,6 @@
 function S=skewness(this,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 S=utils.stat.skewness(this.data,varargin{:});
 end

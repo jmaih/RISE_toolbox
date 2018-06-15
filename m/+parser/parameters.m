@@ -1,20 +1,6 @@
 function new=parameters()
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % format endogenous, parameters, observables, etc
 new=struct('name',{},...

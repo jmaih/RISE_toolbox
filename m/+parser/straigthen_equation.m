@@ -1,11 +1,13 @@
 function [eqtn,dico,leadorlag]=straigthen_equation(eqtn,variable,leadorlag,dico)
+% INTERNAL FUNCTION
+%
 
 if abs(leadorlag)>0
     endo_names={dico.endogenous.name};
     param_exo=[{dico.parameters.name},{dico.exogenous.name}];
-    
+
     is_param_Or_exo=any(strcmp(variable,param_exo));
-    
+
     if is_param_Or_exo
         % create an auxiliary variable first and replace the location
         new_variable=parser.create_auxiliary_name(variable,0,true);

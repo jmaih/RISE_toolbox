@@ -1,20 +1,6 @@
 function info=describe(self)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 nobs=self.NumberOfObservations;
 

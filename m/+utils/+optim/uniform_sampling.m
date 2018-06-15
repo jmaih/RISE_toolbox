@@ -1,21 +1,6 @@
 function r=uniform_sampling(pop_size,howmany)
-% H1 line
+% INTERNAL FUNCTION: samples without repetition
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
-% samples without repetition
 
 if howmany>pop_size
     error([mfilename,':: # requested draws > population size'])

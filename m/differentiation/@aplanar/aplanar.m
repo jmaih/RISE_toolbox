@@ -1,4 +1,7 @@
 classdef aplanar
+% INTERNAL Class
+%
+
     % aplanar automatic "planar" differentiation
     %
     % - [abs](aplanar/abs)

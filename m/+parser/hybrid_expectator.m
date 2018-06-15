@@ -1,4 +1,6 @@
 function [Model_block,dic]=hybrid_expectator(Model_block,dic)
+% INTERNAL FUNCTION
+%
 
 names=parser.name4hybrid_expectation();
 w=names{1};
@@ -53,7 +55,7 @@ if naux
     aux_eqtns=[repmat({nan},naux,1),aux_eqtns,repmat({'HBE eqtns'},naux,1)];
     [aux_eqtns,dic]=parser.capture_equations(dic,aux_eqtns,'model');
     Model_block=[Model_block;aux_eqtns];
-    
+
     % auxiliary equations to be used in steady state computation
     %------------------------------------------------------------
     ss_eqtns=[repmat({nan},naux,1),ss_eqtns,repmat({'HBE eqtns'},naux,1)];

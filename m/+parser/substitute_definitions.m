@@ -1,19 +1,6 @@
 function string=substitute_definitions(string,definitions)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 n = nargin;
 if n==1

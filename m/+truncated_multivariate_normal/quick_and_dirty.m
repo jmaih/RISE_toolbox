@@ -1,19 +1,6 @@
 function x=quick_and_dirty(mu,CS,lb,ub,Nsim)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<5
     Nsim=1;

@@ -3,20 +3,20 @@ function [mc,switch_prior,restr]=build_model(m,vnames,options)
 % structural VAR identified by Choleski restrictions.
 %
 % Args:
-%    - m: [string] nvmc or nvABCmc, where n is the number of states for the
+%    - m (string): nvmc or nvABCmc, where n is the number of states for the
 %      variances, m the number of states for the coefficients. A, B, C are the
 %      equations identified by variable names.
-%    - vnames: [cellstr] list of the endogenous variables ordered according
+%    - vnames (cell of string): list of the endogenous variables ordered according
 %      to their position in the VAR
-%    - options: [struct|{}] default options for beta and dirichlet
+%    - options (struct): [{}] default options for beta and dirichlet
 %      distributions
 %
 % Returns:
 %    :
-%       - mc [struct]: structure containing information about the markov chains
-%       - switch_prior [struct] structure containing the priors on the transition
+%       - mc (struct): structure containing information about the markov chains
+%       - switch_prior (struct): structure containing the priors on the transition
 %         probabilities
-%       - restr [cell array]: list of (Choleski) restrictions. state-identifying
+%       - restr (cell array): list of (Choleski) restrictions. state-identifying
 %         restrictions are not added yet
 
 % models={'1v|1c','2v|1c','3v|1c','1v|2c','2v|2c','3v|2c',...

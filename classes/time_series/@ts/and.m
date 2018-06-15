@@ -1,19 +1,6 @@
 function this3=and(this1,this2)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % this1= ts(1990,rand(10,1))
 % this2= ts('1990Q1',rand(10,1))

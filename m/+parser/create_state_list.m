@@ -1,28 +1,15 @@
 function x=create_state_list(name,number)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if isscalar(number)
-    
+
     number=(1:number).';
-    
+
 else
-    
+
     number=number(:);
-    
+
 end
 
 x=cellstr(strcat(name,'_',num2str(number)));

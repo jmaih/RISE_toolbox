@@ -1,20 +1,6 @@
 function m=std(this,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 m=utils.stat.std(this.data,varargin{:});
 

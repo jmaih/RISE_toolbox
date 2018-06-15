@@ -1,19 +1,6 @@
 function [dn,dn_max,dn_min,nvar,npages,freq]=decompose_series(this)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 dn=this.date_numbers;
 dn_max=max(dn);

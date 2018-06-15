@@ -1,4 +1,6 @@
 function B=shuffle_tensor1(A,matsizes,newOrder)
+% INTERNAL FUNCTION
+%
 
 rows=matsizes(end:-1:1,1);
 
@@ -19,9 +21,9 @@ newOrder_=fliplr(newOrder(:).');
 reorder=nan(1,nmat);
 
 for ii=1:nmat
-    
+
     reorder(ii)=find(order_==newOrder_(ii));
-    
+
 end
 
 newira=permute(ira,reorder);

@@ -1,5 +1,8 @@
 function dictionary=dictionary_cleanup(dictionary,dynamic,static,...
     old_endo_names,logical_incidence)
+% INTERNAL FUNCTION
+%
+
 cleanup_endogenous(old_endo_names,logical_incidence);
 
 cleanup_exogenous();
@@ -40,7 +43,7 @@ dictionary=orderfields(dictionary);
         hbe=hbe(strncmp(hbe,'hbe_param_',10));
         hbe=regexprep(hbe,'hbe_param_(\w+)','$1');
         dictionary.endogenous.is_hybrid_expect=ismember(dictionary.endogenous.name,hbe);
-        
+
         % re-encode the auxiliary variables
         %------------------------------------
         dictionary.auxiliary_variables.sstate_solved=...

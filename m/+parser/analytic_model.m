@@ -1,19 +1,6 @@
 function m=analytic_model(m,var_list)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
     var_list=parser.input_list();

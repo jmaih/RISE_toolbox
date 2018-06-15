@@ -1,19 +1,6 @@
 function [listing,nlist]=insert_definitions(listing,flag)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 nlist=size(listing,1);
 
@@ -25,7 +12,7 @@ if flag
         thiseq(isspace(thiseq))=[];
         %--------------
         isdef(irow)=strcmp(thiseq(1),'#')||def_unfinished;
-        if isdef(irow)            
+        if isdef(irow)
             if def_unfinished
                 rhs=[rhs,thiseq]; %#ok<AGROW>
             else

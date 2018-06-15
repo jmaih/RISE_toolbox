@@ -1,11 +1,9 @@
 function pname=param_name_to_param_texname(pname,chain_names)
-% PARAM_NAME_TO_PARAM_TEXNAME - change the parameter names from
-% name_chain_state to name(chain,state)
+% INTERNAL FUNCTION: change the parameter names from name_chain_state to name(chain,state)
 %
 % ::
 %
-%
-%   pname=PARAM_NAME_TO_PARAM_TEXNAME(pname,chain_names)
+%   pname=param_name_to_param_texname(pname,chain_names)
 %
 % Args:
 %
@@ -18,11 +16,9 @@ function pname=param_name_to_param_texname(pname,chain_names)
 %
 %    - **pname** [char|cellstring]: names of the changed parameters
 %
-% Note:
+% See also:
+%    - parser.param_texname_to_param_name
 %
-% Example:
-%
-%    See also: PARSER.PARAM_TEXNAME_TO_PARAM_NAME
 
 chain_names=cell2mat(strcat(chain_names(:)','|'));
 

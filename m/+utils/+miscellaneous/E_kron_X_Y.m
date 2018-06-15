@@ -1,19 +1,6 @@
 function E=E_kron_X_Y(Mx,Ny,Oyx)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % problems:
 %         1- X and Y should have the same # rows

@@ -1,19 +1,6 @@
 function m=allmean(this)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 vnames=this.varnames;
 this=this.data;

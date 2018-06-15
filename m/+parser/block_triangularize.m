@@ -1,37 +1,28 @@
 function [equation_blocks,variable_blocks]=block_triangularize(Incidence,do_blocks)
-% block_triangularize -- creates blocks of equation-variables so as to
-% permit a recursive solution
+% INTERNAL FUNCTION: creates blocks of equation-variables so as to permit a recursive solution
 %
 % ::
-%
 %
 %   [equation_blocks,variable_blocks]=block_triangularize(Incidence,do_blocks)
 %
 % Args:
 %
 %    - **Incidence** [sparse]: Incidence matrix where rows represent equations
-%    and columns represent variables.
-%
+%      and columns represent variables.
 %    - **do_blocks** [false|{true}]: triggers the computation of blocks.
 %
 % Returns:
 %    :
 %
 %    - **equation_blocks** [cell array]: blocks of equations IDs
-%
 %    - **variable_blocks** [cell array]: blocks of variables IDs
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % References
 %-------------
 % Pothen, Alex and Chin-Ju Fan "Computing the Block Triangular Form of a
 % Sparse Matrix" ACM Transactions on Mathematical Software Vol 16, No. 4
-% Dec. 1990, pp. 303-324.  
+% Dec. 1990, pp. 303-324.
 %
 % Inspired by Jaromir Benes' Blazer
 
@@ -75,11 +66,11 @@ end
         order_cols = colamd(Incidence);
         ordered_incidence = Incidence(:,order_cols);
         ordered_variables = variables(order_cols);
-        
+
         order_rows = colamd(ordered_incidence.');
         ordered_incidence = ordered_incidence(order_rows,:);
         ordered_equations = equations(order_rows);
-        
+
         [order_rows2,order_cols2] = dmperm(ordered_incidence);
         ordered_incidence = ordered_incidence(order_rows2,order_cols2);
         ordered_variables = ordered_variables(order_cols2);

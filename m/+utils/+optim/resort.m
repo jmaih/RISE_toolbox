@@ -1,19 +1,6 @@
 function varargout=resort(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 nout=nargout;
 if nout~=nargin

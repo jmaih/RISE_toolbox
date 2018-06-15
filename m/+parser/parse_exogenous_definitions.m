@@ -1,4 +1,7 @@
 function [dictionary,blocks]=parse_exogenous_definitions(dictionary,blocks)
+% INTERNAL FUNCTION
+%
+
 % this block needs a special treatment as the information provided here
 % will only be used when building the dataset for estimation and/or during
 % forecasting.

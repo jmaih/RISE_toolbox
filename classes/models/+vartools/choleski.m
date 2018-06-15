@@ -1,4 +1,6 @@
 function [Rfunc,ident]=choleski(n,ordering)
+% INTERNAL FUNCTION
+%
 
 if nargin < 2
 

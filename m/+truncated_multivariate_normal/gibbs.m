@@ -1,19 +1,6 @@
 function x=gibbs(mu,SIG,lb,ub,Nsim,burn)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<6
     burn=0;

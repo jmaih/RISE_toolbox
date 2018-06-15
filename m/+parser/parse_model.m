@@ -1,4 +1,6 @@
 function [Model_block,dictionary,blocks]=parse_model(dictionary,blocks)
+% INTERNAL FUNCTION
+%
 
 current_block_id=find(strcmp('model',{blocks.name}));
 
@@ -17,7 +19,7 @@ if dictionary.parse_debug
     profile on
 
 else
-    
+
     tic
 
 end
@@ -31,7 +33,7 @@ if dictionary.parse_debug
     keyboard
 
 else
-    
+
     disp([mfilename,':: Model parsing ',more_string,'. ',sprintf('%0.4f',toc),' seconds'])
 
 end

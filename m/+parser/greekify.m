@@ -1,19 +1,6 @@
 function equation=greekify(equation)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % so far I will just greekify names but later on, I might also greekify
 % equations

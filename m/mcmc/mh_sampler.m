@@ -70,8 +70,6 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 %
 %    - It is assumed that logf is a function to minimize
 %
-% Example:
-%
 % See also:
 %    - constant_bvar_sampler
 %    - rrf_sampler

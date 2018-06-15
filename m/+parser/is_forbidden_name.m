@@ -1,20 +1,6 @@
 function [flag,msg]=is_forbidden_name(name)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 fn={
     'regime','used for setting up simulations '

@@ -1,19 +1,6 @@
 function dictionary = initialize_dictionary()
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 dictionary=struct();
 
@@ -40,13 +27,13 @@ distr_list=what('+distributions');
 for ilist=1:numel(distr_list)
 
     if ~isempty(distr_list(ilist).m)
-    
+
         mydistrlist=distr_list(ilist).m;
-        
+
         break
-    
+
     end
-    
+
 end
 % for some reason I do not understand, this sometimes returns a 2 x 1
 % structure instead of a 1 x 1. I have experienced it when using parallel
@@ -89,11 +76,11 @@ end
 if neat %nargout==1
 
     if nargout>1
-    
+
         error('functional programming does not allow more than one output')
-    
+
     end
-    
+
     status=if_elseif(any(strcmp(x,{dict.endogenous.name})),'y',... %(1)
     any(strcmp(x,{dict.exogenous.name})),'x',... %(2)
     any(strcmp(x,{dict.parameters.name})),'param',... %(3)
@@ -112,135 +99,135 @@ if neat %nargout==1
     1,'unknown');
 
 else
-    
+
     status='unknown';
-    
+
     loc=find(strcmp(x,dict.endogenous_list),1,'first');
-    
+
     if ~isempty(loc)
-    
+
         status='y'; %(1)
-    
+
     else
-        
+
         loc=find(strcmp(x,dict.exogenous_list),1,'first');
-        
+
         if ~isempty(loc)
-        
+
             status='x'; %(2)
-        
+
         else
-            
+
             loc=find(strcmp(x,dict.parameters_list),1,'first');
-            
+
             if ~isempty(loc)
-            
+
                 status='param'; %(3)
-            
+
             else
-                
+
                 loc=find(strcmp(x,dict.add_operators),1,'first');
-                
+
                 if ~isempty(loc)
-                
+
                     status='+'; %(4)
-                
+
                 else
-                    
+
                     loc=find(strcmp(x,dict.mult_operators),1,'first');
-                    
+
                     if ~isempty(loc)
-                    
+
                         status='*'; %(5)
-                    
+
                     else
-                        
+
                         loc=find(strcmp(x,dict.symbols),1,'first');
-                        
+
                         if ~isempty(loc)
-                        
+
                             status=x; %(6)
-                        
+
                         else
-                            
+
                             flag=~isnan(str2double(x));
-                           
+
                             if flag
-                            
+
                                 loc=flag;
-                            
+
                             end
-                            
+
                             if ~isempty(loc)
-                            
+
                                 status='n'; %(7)
-                            
+
                             else
-                                
+
                                 loc=find(strcmp(x,dict.relational_operators),1,'first');
-                                
+
                                 if ~isempty(loc)
-                                
+
                                     status='>'; %(8)
-                                
+
                                 else
-                                    
+
                                     loc=find(strcmp(x,dict.chain_names),1,'first');
-                                    
+
                                     if ~isempty(loc)
-                                    
+
                                         status='cn'; %(9)
-                                    
+
                                     else
-                                        
+
                                         loc=find(strcmp(x,dict.time_varying_probabilities),1,'first');
-                                        
+
                                         if ~isempty(loc)
-                                        
+
                                             status='tvp'; %(10)
-                                        
+
                                         else
-                                            
+
                                             loc=find(strcmp(x,dict.definitions),1,'first');
-                                            
+
                                             if ~isempty(loc)
-                                            
+
                                                 status='def'; %(11)
-                                            
+
                                             else
-                                                
+
                                                 loc=find(strcmp(x,dict.known_words),1,'first');
-                                                
+
                                                 if ~isempty(loc)||... %(12)
                                                         exist([x,'.m'],'file')||... % no need for location  %(13)
                                                         (strncmp(x,'xx_ssmdef_',10) && all(isstrprop(x(11:end),'digit'))) % no need for location %(14)
-                                                
+
                                                     status='f';
-                                                
+
                                                 end
-                                                
+
                                             end
-                                            
+
                                         end
-                                        
+
                                     end
-                                    
+
                                 end
-                                
+
                             end
-                            
+
                         end
-                        
+
                     end
-                    
+
                 end
-                
+
             end
-            
+
         end
-        
+
     end
-    
+
 end
 
 end

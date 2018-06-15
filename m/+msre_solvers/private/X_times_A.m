@@ -1,19 +1,6 @@
 function D=X_times_A(X,A,locs)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % computes X*A assuming the zero columns of A are deleted. the nonzero
 % columns are given in the logical vector locs

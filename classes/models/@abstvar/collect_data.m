@@ -1,4 +1,6 @@
 function [y,x,date_range]=collect_data(self,date_range)
+% INTERNAL FUNCTION
+%
 
 ynames=self.endogenous;
 

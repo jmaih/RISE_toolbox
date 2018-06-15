@@ -1,19 +1,6 @@
 function [occur,objectives,aliens]=find_occurrences(objectives,vlist)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if iscellstr(objectives)
     varlist=objectives(:)';

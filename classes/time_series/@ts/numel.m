@@ -1,20 +1,6 @@
 function n=numel(this,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 if isempty(varargin)
     n=builtin('numel',this);

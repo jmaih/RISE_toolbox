@@ -1,19 +1,6 @@
 function preserve(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 wh=evalin('base','who');
 nvar=numel(varargin);

@@ -1,19 +1,6 @@
 function this=cot(this)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % Here it does not make sense to have names any more. But
 % all the same, perhaps I should have a function to rename

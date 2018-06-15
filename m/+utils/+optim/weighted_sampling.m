@@ -1,21 +1,7 @@
 function r=weighted_sampling(pop_size,howmany,weights)
-% H1 line
+% INTERNAL FUNCTION: samples without repetition
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
-% samples without repetition
 error(nargchk(2,3,nargin))
 
 if nargin<3

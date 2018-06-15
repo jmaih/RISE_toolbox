@@ -1,20 +1,6 @@
 function xout=string_mult(a,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 if ~ischar(a)
     a=char(a);

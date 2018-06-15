@@ -78,8 +78,6 @@ function [Results]=rrf_sampler(logf,lb,ub,options,mu,SIG)
 %      - simple average : what if it has unacceptable density?
 %      - weigthed average through a merit system : what if it has unacceptable density?
 %
-% Example:
-%
 % See also:
 %    - constant_bvar_sampler
 %    - mh_sampler

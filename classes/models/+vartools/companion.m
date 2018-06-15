@@ -1,4 +1,6 @@
 function [T,R,C,eigvals]=companion(B,ShockImpact,nz)
+% INTERNAL FUNCTION
+%
 
 % the VBR has the form y=C*z+B1*y{-1}+B2*y{-2}+...+Bp*y{-p}+ShockImpact*u
 % so that B=[C,B1,B2,...,Bp];
@@ -22,15 +24,15 @@ R=[];
 if ~isempty(ShockImpact)
 
 	R=[ShockImpact;zeros(dd,n)];
-	
+
 end
 
 C=[C;zeros(dd,nz)];
 
 if nargout>3
-    
+
     eigvals=abs(eig(T));
-    
+
 end
 
 end

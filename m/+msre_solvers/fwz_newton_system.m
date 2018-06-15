@@ -2,21 +2,8 @@ function [iterating_function,...
 solution_function,...
 inverse_solution_function,...
 sampling_function] = fwz_newton_system(Gplus01,A0,Aminus,Q)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % We need to rewrite the system in the form
 % A(st)*x=B(st)*x_{t-1}+PSI*e_t+PI(st), with the ll forward-looking
@@ -27,7 +14,7 @@ sampling_function] = fwz_newton_system(Gplus01,A0,Aminus,Q)
 % implemented.
 hh=size(Q,1);
 Aplus=unearth_frwrd_matrix();
- 
+
 fwl=any(Aplus(:,:,1));
 for istate=2:hh
     fwl=fwl|any(Aplus(:,:,istate));
@@ -100,15 +87,15 @@ sampling_function=@sample_guess;
             f_rows=(s_now-1)*(nn-ll)+1:s_now*(nn-ll);
             for s_plus=1:hh
                 plus_cols=(s_plus-1)*ll*(nn-ll)+1:s_plus*ll*(nn-ll);
-                
+
                 BoA=B(:,:,s_plus)/A(:,:,s_now);
-                
+
                 FPRIME(now_rows,plus_cols)=Q(s_now,s_plus)*kron(transpose(Inl0*BoA*[Inl;-X(:,:,s_now)]),Il);
-                
+
                 XI=[X(:,:,s_plus),Il];
-                
+
                 XBA=XBA+Q(s_now,s_plus)*XI*BoA*ZnlIl;
-                
+
                 F(:,f_rows)=F(:,f_rows)+Q(s_now,s_plus)*XI*BoA*[Inl;-X(:,:,s_now)];
             end
             FPRIME(now_rows,now_rows)=FPRIME(now_rows,now_rows)+kron(Inl,XBA);

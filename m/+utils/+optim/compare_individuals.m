@@ -1,19 +1,6 @@
 function c=compare_individuals(a,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 c=1;
 if (b.violstrength<a.violstrength)||...

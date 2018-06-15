@@ -1,8 +1,7 @@
 function X = kron_Q1_Qk_times_X(X,varargin)
-% X_times_kron_Q1_Qk Efficient Kronecker Multiplication of kron(Q1,Q2,...,Qk)*X
+% INTERNAL FUNCTION: Efficient Kronecker Multiplication of kron(Q1,Q2,...,Qk)*X
 %
 % ::
-%
 %
 %   Y=kron_Q1_Qk_times_X(X,{Q1,n1},{Q2,n2},...,{Qk,nk})
 %
@@ -10,26 +9,25 @@ function X = kron_Q1_Qk_times_X(X,varargin)
 %
 %    - **X** [matrix|vector] is a vector or a matrix whose number of rows is equal to
 %      the product of the columns of all Qi's
-%
 %    - **varargin** [array of 2-element cells] of the form {Qi,ni}
+%
 %      - **Qi** [matrix]
 %      - **ni** [integer] : number of times the kronecker of Qi appears
 %
 % Returns:
 %    :
 %
+%    - X
+%
 % Note:
 %
 %    No kronecker product is required.
 %
-% Example:
-%
-%    See also:
 
 % Reference:
-% Paulo Fernandes, Brigitte Plateau, William J. Stewart (1998): "Efficient
-% Descriptor-Vector Multiplications in Stochastic Automata Networks". JACM
-% 45(3): 381--414. (see page 394)
+%    Paulo Fernandes, Brigitte Plateau, William J. Stewart (1998): "Efficient
+%    Descriptor-Vector Multiplications in Stochastic Automata Networks". JACM
+%    45(3): 381--414. (see page 394)
 %
 
 nmat=length(varargin);

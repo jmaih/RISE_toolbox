@@ -1,20 +1,6 @@
 function h=boxplot(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 %  boxplot Displays box plots of multiple time series in a frame.
 %     boxplot(db) produces a box plot of the data in db.  If db has many
@@ -22,8 +8,8 @@ function h=boxplot(varargin)
 %     is just one box. On each box, the central mark is the median, the
 %     edges of the box are the 25th and 75th percentiles, the whiskers
 %     extend to the most extreme datapoints the algorithm considers to be
-%     not outliers, and the outliers are plotted individually.  
-%     
+%     not outliers, and the outliers are plotted individually.
+%
 %     boxplot(xrange,db) selects the data matching the time represented by
 %     xrange
 %
@@ -33,11 +19,11 @@ function h=boxplot(varargin)
 %                       box style designed for plots with many groups.  The
 %                       plotstyle changes the defaults for some other
 %                       parameters, as described below.
-%  
+%
 %       'boxstyle'      'outline' (default) to draw an unfilled box with
 %                       dashed lines for whiskers, or 'filled' to draw a
 %                       narrow filled box with solid lines for whiskers.
-%       'colorgroup'    One or more grouping variables, of the same type as 
+%       'colorgroup'    One or more grouping variables, of the same type as
 %                       permitted for G, specifying that the box color should
 %                       change when the specified variables change.  Default
 %                       is [] for no box color change.
@@ -48,7 +34,7 @@ function h=boxplot(varargin)
 %                       'rb' gives boxes that alternate in color.  Default
 %                       when no 'colorgroup' is specified is to use the same
 %                       color scheme for all boxes.  Default with
-%                       'colorgroup' is a modified hsv colormap. 
+%                       'colorgroup' is a modified hsv colormap.
 %       'datalim'       A two-element vector containing lower and upper limits,
 %                       used by 'extrememode' to determine which points are
 %                       extreme.  Default is [-Inf Inf].
@@ -63,17 +49,17 @@ function h=boxplot(varargin)
 %                       on the plot.  Box notches are drawn to scale and may
 %                       extend beyond the bounds if the median is inside the
 %                       limit; they are not drawn if the median is outside
-%                       the limits.  
+%                       the limits.
 %       'factordirection' 'data' (default) to arrange the factors with the
 %                       first value next to the origin, 'list' to arrange the
 %                       factors left-to-right if on the x axis or top-to-
 %                       bottom if on the y axis, or 'auto' to use 'data' for
 %                       numeric grouping variables and 'list' for strings.
 %       'fullfactors'   'off' (default) to have one group for each unique row
-%                       of G, or 'on' to create a group for each possible 
+%                       of G, or 'on' to create a group for each possible
 %                       combination of group variable values, including
 %                       combinations that do not appear in the data.
-%       'factorseparator' Specifies which factors should have their values 
+%       'factorseparator' Specifies which factors should have their values
 %                       separated by a grid line.  The value may be 'auto' or
 %                       a vector of grouping variable numbers.  For example,
 %                       [1 2] adds a separator line when the first or second
@@ -133,7 +119,7 @@ function h=boxplot(varargin)
 %       'positions'     Box positions specified as a numeric vector with one
 %                       entry per group or db value (default 1:NGROUPS when the
 %                       number of groups is NGROUPS).
-%       'symbol'        Symbol and color to use for outliers, using the same 
+%       'symbol'        Symbol and color to use for outliers, using the same
 %                       values as the LineSpec parameter S in PLOT.  Default
 %                       is 'r+'. If the symbol is omitted then the outliers
 %                       are invisible; if the color is omitted then the
@@ -156,34 +142,34 @@ function h=boxplot(varargin)
 %                       the 'positions' argument takes its default value.
 %                       The list of values is replicated or truncated as
 %                       necessary.
-%  
+%
 %     When the 'plotstyle' parameter takes the value 'compact', then the
 %     default values for other parameters are the following:
 %         boxstyle - 'filled'            labelverbosity - 'majorminor'
 %         factorgap - 'auto'             medianstyle - 'target'
 %         factorseparator - 'auto'       outliersize - 4
 %         jitter - 0.5                   symbol - 'o'
-%         labelorientation - 'inline'        
-%  
+%         labelorientation - 'inline'
+%
 %     You can see the data values and group names by using the data cursor
 %     tool, available from the figure window.  The data cursor shows the
 %     original values of any points affected by the 'datalim' parameter.  You
 %     can label the specific group to which an outlier belongs using the gname
 %     function.
-%  
+%
 %     To modify the properties of box components, use findobj using tags to
 %     find their handles as in one of the examples below.  The tag names
 %     depend on the plotstyle and are:
-%  
+%
 %        all styles:  'Box', 'Outliers'
 %        traditional: 'Median', 'Upper Whisker', 'Lower Whisker',
-%                     'Upper Adjacent Value', 'Lower Adjacent Value', 
+%                     'Upper Adjacent Value', 'Lower Adjacent Value',
 %        compact:     'Whisker', 'MedianOuter', 'MedianInner'
 %        when 'notch' is 'marker':
 %                     'NotchLo', 'NotchHi'
 %     In addition to those matlab properties, RISE adds further properties,
 %     which allow to control for. See parse_plot_args
-                   
+
 tmp=utils.plot.myplot(@boxplot,varargin{:});
 
 if nargout

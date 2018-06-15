@@ -1,18 +1,5 @@
 function varargout=rd(varargin)
-% rise dates
-%
-% ::
-%
-%   See help for date2serial
-%
-% Args:
-%
-%    See help for date2serial
-%
-% Returns:
-%    :
-%
-%    See help for date2serial
+% INTERNAL FUNCTION
 %
 
 [varargout{1:nargout}]=date2serial(varargin{:});

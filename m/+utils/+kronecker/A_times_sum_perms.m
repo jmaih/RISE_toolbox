@@ -1,46 +1,34 @@
 function res=A_times_sum_perms(A,kron_matrices,matsizes,add_lead_term,varargin)
-% A_times_sum_perms -- Computes the product between a matrix and a sum of
-% tensor products
+% INTERNAL FUNCTION: Computes the product between a matrix and a sum of tensor products
 %
 % ::
-%
 %
 %   res=A_times_sum_perms(A,kron_matrices,matsizes,add_lead_term,P1,...,Pm)
 %
 % Args:
 %
 %    - **A** [matrix]:
-%
 %    - **kron_matrices** [cell array]: e.g. {M1,M2,...,Mn}, where the Mi's are
-%    the matrices entering the various tensor products.
-%
+%      the matrices entering the various tensor products.
 %    - **matsizes** [k x 2 vector]: sizes of the matrices. Note need to be
-%    taken of the fact that these sizes are not necessarily the sizes of the
-%    matrices entering **kron_matrices** . e.g. suppose we want to compute
-%    A(UUB+UBU+BUU), where U is unknown but UU is known. Then we can have
-%    kron_matrices={UU,B} but matsizes=[size(U);size(U);size(B)]
-%
+%      taken of the fact that these sizes are not necessarily the sizes of the
+%      matrices entering **kron_matrices** . e.g. suppose we want to compute
+%      A(UUB+UBU+BUU), where U is unknown but UU is known. Then we can have
+%      kron_matrices={UU,B} but matsizes=[size(U);size(U);size(B)]
 %    - **add_lead_term** [{true}|false]: if true, the term A(M1*M2*...*Mn) is
-%    added to the sum
-%
+%      added to the sum
 %    - **P1,...,Pm** [vectors]: permutations of the tensor products entering
-%    the sum. The number of elements entering each Pi has to be the same as
-%    the number of rows of **matsizes**, which represents the effective number
-%    of matrices.
+%      the sum. The number of elements entering each Pi has to be the same as
+%      the number of rows of **matsizes**, which represents the effective number
+%      of matrices.
 %
 % Returns:
 %    :
 %
 %    - **res** [matrix]: result of A(B*C*D+C*D*B+...)
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
-
-nmat=size(matsizes,1); 
+nmat=size(matsizes,1);
 
 rc=prod(matsizes,1);
 
@@ -61,7 +49,7 @@ for imat=1:numel(kron_matrices)
 end
 nterms=length(varargin);
 algo=1;
-switch algo 
+switch algo
     case 1
         % do the lead term
         %------------------
@@ -74,7 +62,7 @@ switch algo
         %------------------------
         for ii=1:nterms
             res=res+do_one_permutation(varargin{ii});
-        end 
+        end
     case 2
         ABC=utils.kronecker.kronall(kron_matrices{:});
         % do the lead term
@@ -88,10 +76,10 @@ switch algo
         %------------------------
         for ii=1:nterms
             res=res+do_one_big_permutation(varargin{ii});
-        end 
+        end
     case 3
         ABC=utils.kronecker.kronall(kron_matrices{:});
-        
+
         % do the lead term
         %------------------
         if add_lead_term
@@ -99,12 +87,12 @@ switch algo
         else
             SumABC=sparse(size(ABC,1),size(ABC,2));
         end
-        
+
         % add the remaining ones
         %------------------------
         for ii=1:nterms
             add_abc(varargin{ii});
-        end 
+        end
         res=A*SumABC;
     case 4
         % vectorization strategy
@@ -119,13 +107,13 @@ switch algo
         else
             SumR_ABC_L=sparse(nr*ncols,nc*ncols);
         end
-        
+
         % add the remaining ones
         %------------------------
         for ii=1:nterms
             [~,~,Li_,Ri_]=get_shufflers(varargin{ii});
             SumR_ABC_L=SumR_ABC_L+kron(Ri_.',A*Li_);
-        end 
+        end
         res=reshape(SumR_ABC_L*ABC(:),nr,[]);
     otherwise
         error('unknown algorithm')
@@ -145,8 +133,8 @@ end
     function [re_order_rows,re_order_cols,lfact,rfact]=get_shufflers(in_order)
         inflip=fliplr(in_order);
         new_order=kron_order(inflip);
-        re_order_rows=reshape(permute(rows_span,[1,new_order+1]),1,[]); 
-        re_order_cols=reshape(permute(cols_span,[1,new_order+1]),1,[]); 
+        re_order_rows=reshape(permute(rows_span,[1,new_order+1]),1,[]);
+        re_order_cols=reshape(permute(cols_span,[1,new_order+1]),1,[]);
         % first step: permute rows
         %-------------------------
         % Note that A*factor is different from A(:,re_order_rows) !!!
@@ -159,12 +147,12 @@ end
     end
 
     function res=do_one_big_permutation(in_order)
-        [re_order_rows,re_order_cols]=get_shufflers(in_order);  
+        [re_order_rows,re_order_cols]=get_shufflers(in_order);
         res=A*ABC(re_order_rows,re_order_cols);
     end
 
     function res=do_one_permutation(in_order)
-        [~,re_order_cols,lfact]=get_shufflers(in_order);  
+        [~,re_order_cols,lfact]=get_shufflers(in_order);
         % first step: permute rows
         %-------------------------
         % Note that A*lfact is different from A(:,re_order_rows) !!!
@@ -175,7 +163,7 @@ end
         % the two options below seem to take about the same time to
         % compute...
         res=res(:,re_order_cols);% res=res*rfact;
-        
+
 %         ABC=utils.kronecker.kronall(kron_matrices{:});
 %         Ic=speye(rc(2));
 %         reo=kron_matrices(in_order);

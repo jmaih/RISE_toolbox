@@ -1,19 +1,6 @@
 function m=min(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin==1||nargin==3
     this=varargin{1}.data;

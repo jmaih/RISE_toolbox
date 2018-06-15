@@ -1,19 +1,6 @@
 function d=dispersion(X,lb,ub)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 ul=sqrt(eps)+ub-lb;
 X=sort(X,2);

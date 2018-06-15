@@ -1,19 +1,6 @@
 function list=loose_commit()
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 list='loosecommit';
 end

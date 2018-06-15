@@ -1,19 +1,6 @@
 function block=capture_parameterization(dictionary,listing)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 PARAM_DELIMITERS=[char([9:13,32]),',;'];
 
@@ -104,7 +91,7 @@ block.error_control=error_control;
                     ' at line(s) ',iline_])
             end
         end
-        
+
         % initialize and begin storing
         %-----------------------------
         par_name=tokk;

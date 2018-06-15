@@ -1,20 +1,6 @@
 function [date_numbers,datta,rows_dates,varloc,pages]=process_subs(obj,subs,caller)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 nsubs=numel(subs);
 date_numbers=obj.date_numbers;
@@ -53,7 +39,7 @@ switch nsubs
             rows_dates=subs1;
         elseif ischar(subs1)|| iscellstr(subs1) % dates or variable
             if ischar(subs1)
-                subs1=cellstr(subs1); 
+                subs1=cellstr(subs1);
             end
             subs1=cellfun(@(x)x(~isspace(x)),subs1,'uniformOutput',false);
             % if starts with a digit: date
@@ -64,7 +50,7 @@ switch nsubs
             end
             if date_style
                 ss=char2serial(subs1);
-                freq=serial2frequency(ss); 
+                freq=serial2frequency(ss);
                 % the call above returns a scalar. so we have to
                 % reconstruct a vector for freq in case ss is not a scalar
                 freq=freq(1)*ones(size(ss));
@@ -149,7 +135,7 @@ end
         % do the ones with annual frequency
         %----------------------------------
         wrong_freq=find(~good);
-        
+
         if ~isempty(wrong_freq)
             x=x(wrong_freq);
             freq=freq(wrong_freq);

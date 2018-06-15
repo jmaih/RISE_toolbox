@@ -1,23 +1,7 @@
 function [loglik,Incr,retcode,Filters]=crs_linear_filter_update_cell(...
 syst,data_y,U,z,options,impose_conditions)
-
-
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % this filter assumes a state space of the form
 % X_t=c_t{st}+T{st}*X_{t-1}+R{st}*eps_t
@@ -28,9 +12,9 @@ syst,data_y,U,z,options,impose_conditions)
 cutoff=-sqrt(eps);
 
 if nargin<6
-    
+
     impose_conditions=false;
-    
+
 end
 % data
 %-----
@@ -93,9 +77,9 @@ h=numel(T);
 att_all=a{1}*PAItt(1);
 
 for rt=2:h
-    
+
     att_all=att_all+a{rt}*PAItt(rt);
-    
+
 end
 
 Q=Qfunc(att_all);
@@ -118,13 +102,13 @@ if tmax_u
     % update the state (a_{1|0} with the deterministic variables
     %------------------------------------------------------------
     Ut=U(:,0+1);
-    
+
     for splus=1:h
-        
+
         [a{splus}]=ff(splus,a{splus},shocks,Ut);
-        
+
     end
-    
+
 end
 
 myshocks=cell(1,h);
@@ -132,17 +116,17 @@ myshocks=cell(1,h);
 h_last=0;
 
 if ~isempty(H{1})
-    
+
     h_last=size(H{1},3);
-    
+
 end
 
 rqr_last=size(RR{1},3);
 
 if rqr_last>1
-    
+
     error('time-varying impact matrices not supported in this filter')
-    
+
 end
 
 % definitions and options
@@ -152,19 +136,19 @@ twopi=2*pi;
 store_filters=options.kf_filtering_level;
 
 if store_filters
-    
+
     nsteps=options.kf_nsteps;
-    
+
     if store_filters>2
-        
+
         R_store=struct();
-        
+
     end
-    
+
 else
     % do not do multi-step forecasting during estimation
     nsteps=1;
-    
+
 end
 
 kalman_tol=options.kf_tol;
@@ -178,9 +162,9 @@ Rt=cell(1,h);
 Tt=T;
 
 for st=1:h
-    
+
     Tt{st}=transpose(T{st}); % permute(T,[2,1,3]); % transpose
-    
+
 end
 
 % initialization of matrices
@@ -241,138 +225,138 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
     % data and indices for observed variables at time t
     %--------------------------------------------------
     [p,occur,obsOccur,no_more_missing]=z(t);
-    
+
     y=data_y(occur,t,1);
-    
+
     log_f01 = nan(h,1);
-    
+
     for st=1:h
         % forecast of observables: already include information about the
         % trend and or the steady state from initialization
         %------------------------------------------------------------------
         yf=a{st}(obsOccur); %<-- yf=Z*a{st};
-        
+
         % forecast errors and variance
         %-----------------------------
         v{st}=y-yf;
-        
+
         if ~is_steady
-            
+
             PZt=P{st}(:,obsOccur); % PZt=<-- P{st}*Z';
-            
+
             Fst=PZt(obsOccur,:); % <--- F=Z*PZt+H{st}(occur,occur);
-            
+
             if h_last>0
-                
+
                 Fst=Fst+H{st}(occur,occur,min(t,h_last));
-                
+
             end
-            
+
             detF=det(Fst);
-            
+
             failed=detF<=0;
-            
+
             if ~failed
-                
+
                 iF{st}=Fst\eye(p);
-                
+
                 failed=any(isnan(iF{st}(:)));
-                
+
             end
-            
+
             if failed
-                
+
                 retcode=305;
-                
+
                 return
-                
+
             end
-            
+
             % Kalman gain (for update)
             %-------------------------
             K(:,occur,st)=PZt*iF{st}; % K=PZt/F{st};
-            
+
             % state covariance update (Ptt=P-P*Z*inv(F)*Z'*P)
             %------------------------------------------------
             P{st}=P{st}-K(:,occur,st)*PZt.';%<---P{st}=P{st}-K(:,occur,st)*P{st}(obsOccur,:);
-            
+
             twopi_p_dF(st)=twopi^p*detF;
-            
+
         end
         % state update (att=a+K*v)
         %-------------------------
         if impose_conditions
-            
+
             [a{st},retcode,myshocks{st}]=state_update_without_test(a{st},K(:,occur,st)*v{st},st);
-        
+
         else
-            
+
             [a{st},retcode,myshocks{st}]=state_update_with_test(a{st},K(:,occur,st)*v{st},st);
             % <--- a{st}=a{st}+K(:,occur,st)*v{st};
         end
-        
+
         if retcode
-            
+
             return
-            
+
         end
-        
+
         log_f01(st)=-0.5*(...
             log(twopi_p_dF(st))+...
             v{st}'*iF{st}*v{st}...
             );
-        
+
     end
-    
+
     [Incr(t),PAI01_tt,retcode]=switch_like_exp_facility(PAI,log_f01,kalman_tol);
-    
+
     if retcode
-        
+
         return
-        
+
     end
-    
+
     PAItt=sum(PAI01_tt,2);
-    
+
     if store_filters>1
-        
+
         store_updates();
-        
+
     end
-    
+
     % endogenous probabilities (conditional on time t information)
     %-------------------------------------------------------------
     att=a;
-    
+
     if ~is_steady
-        
+
         Ptt=P;
-        
+
     end
-    
+
     if h>1
-        
+
         att_all=att{1}*PAItt(1);
-        
+
         for rt=2:h
-            
+
             att_all=att_all+att{rt}*PAItt(rt);
-            
+
         end
-        
+
         [Q,retcode]=Qfunc(att_all);
-        
+
         if retcode
-            
+
             return
-            
+
         end
-        
+
         % Probabilities predictions
         %--------------------------
         PAI=Q'*PAItt;
     end
-    
+
     % state and state covariance prediction
     %--------------------------------------
     if t+1<=tmax_u
@@ -431,14 +415,14 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
             P{splus}=utils.cov.symmetrize(P{splus});
         end
     end
-    
+
     if store_filters>0
         store_predictions()
         if store_filters>2
             R_store(t).R=Rt;
         end
     end
-    
+
     if ~is_steady && isempty(sep_compl) % && h==1
         % don't check steadiness if the filter is constrained.
         %------------------------------------------------------
@@ -561,12 +545,12 @@ end
         % initialize the shocks
         %------------------------
         myshocks_=shocks;
-        
+
         a_update=atmp;
         if has_fire(st) && violations
             do_anticipation()
         end
-        
+
         function do_anticipation()
             % if we can expect violations, inform the state that
             % constraints will be binding
@@ -580,7 +564,7 @@ end
                 start_iter=start_iter+1;
                 % compute the conditional update: note that we are now
                 % using the last update as the initial condition
-                %----------------------------------------------------------                
+                %----------------------------------------------------------
                 y0=simul_initial_conditions(att{st},start_iter);
                 myoptions=options;
                 myoptions.nsteps=start_iter;

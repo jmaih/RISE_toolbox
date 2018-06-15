@@ -1,20 +1,6 @@
 function out=translate_auxiliary_names(names)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % variables with lags
 negative_str=parser.lead_lag_string(-1);

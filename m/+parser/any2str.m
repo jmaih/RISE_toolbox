@@ -1,19 +1,6 @@
 function str=any2str(whatever)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ischar(whatever)
     str=whatever;

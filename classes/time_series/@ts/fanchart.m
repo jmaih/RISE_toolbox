@@ -1,19 +1,6 @@
 function out=fanchart(this,ci)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 out=struct();
 nvar=this.NumberOfVariables;

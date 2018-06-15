@@ -1,15 +1,17 @@
 function dynaressfile2rise(dynFileName,param_names,riseFileName)
+% INTERNAL FUNCTION
+%
 
 if nargin<3
-    
+
     riseFileName=[];
-    
+
 end
 
 if isempty(riseFileName)
-    
+
     riseFileName=[regexprep(dynFileName,'(\w+)\.?\w+?','$1_rise'),'.m'];
-    
+
 end
 
 p='p';
@@ -129,27 +131,27 @@ raw_code=[
 parser.write2file(raw_code,riseFileName);
 
     function newcode=replace_params(oldcode,whichParams,prefix)
-        
+
         whichParams=cell2mat(strcat(whichParams(:)','|'));
-        
+
         % replace parameters computed in steady state
-        
+
         newcode = regexprep(oldcode,['\<(',whichParams(1:end-1),')\>'],[prefix,'.$1']);
-        
+
     end
 
     function newpList=parameters_solved_in_ssfile()
-        
+
         param_names_=cell2mat(strcat(param_names,'|'));
-        
+
         % make a list of the parameters updated in the steady state file
         %----------------------------------------------------------------
         newpList = regexp(raw_code,['\<(',param_names_(1:end-1),')\>(\s*=)'],'match');
-        
+
         newpList=cellfun(@(x)x(~isspace(x)),newpList,'uniformOutput',false);
-        
+
         newpList=strrep(newpList,'=','');
-        
+
         newpList=unique(newpList);
 
     end
@@ -161,17 +163,17 @@ function raw_code = read_file(dynFileName)
 fid = fopen(dynFileName,'r');
 
 if fid == -1
-    
+
     if exist(dynFileName,'file') == false
-        
+
         error('Unable to find ''%s''.',dynFileName);
-        
+
     else
-        
+
         error('Unable to open ''%s'' for reading.',dynFileName);
-        
+
     end
-    
+
 end
 
 raw_code = transpose(fread(fid,'*char'));

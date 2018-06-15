@@ -1,5 +1,5 @@
 function hh = rotateXLabels( ax, angle, varargin )
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: To be removed
 %
 
 % original code by Ben Tordoff at the Mathworks

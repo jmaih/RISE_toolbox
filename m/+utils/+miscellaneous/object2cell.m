@@ -1,19 +1,6 @@
 function [C,hyper_class]=object2cell(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % nobj=numel(obj);
 if isempty(obj)

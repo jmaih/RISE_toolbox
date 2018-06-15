@@ -1,19 +1,6 @@
 function [block,dictionary,static]=capture_equations(dictionary,listing,block_name,static)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<4
     static=struct();
@@ -73,11 +60,11 @@ end
         % with the corresponding auxiliary variable and update the lead or
         % lag of the variable in the list and then create auxiliary
         % equations when the parsing of the model is done.
-        
+
         % store this useful information separately
         %-----------------------------------------
         reset_lists();
-        
+
         iline_=cell_info{1};
         rawline_=cell_info{2};
         file_name_=cell_info{3};
@@ -92,7 +79,7 @@ end
                 rest_=rawline_;
                 rawline_=[];
             end
-            
+
             if isempty(equation.eqtn)
                 endo_switch_flag=false;
                 def_flag=false;
@@ -105,7 +92,7 @@ end
             end
             while ~isempty(rest_) && ~all(isspace(rest_))
                 [tokk,rest1]=strtok(rest_,DELIMITERS);
-                
+
                 % test whether there is a declaration
                 if ~isempty(tokk)
                     if (strcmp(block_name,'model') && strcmp(tokk,'model'))||...
@@ -122,7 +109,7 @@ end
                         break % exit while ~isempty(rest_) loop
                     end
                 end
-                
+
                 if ~isempty(tokk)
                     tok_status=dictionary.determine_status(tokk,dictionary);
                     if strcmp(tok_status,'param')
@@ -208,18 +195,18 @@ end
                             error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                         end
                     end
-                    
+
                     if def_flag && (strcmp(tok_status,'y')||strcmp(tok_status,'x')) && ~dictionary.definitions_inserted
                         error([mfilename,':: definitions cannot contain variables. ',...
                             'If this is an endogenous parameter, declare the definitions as ',...
                             'parameters and use a steady state file. check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                     end
-                    
+
                     if ~endo_switch_flag && strcmp(tok_status,'tvp')
                         error([mfilename,':: model equations cannot contain endogenous switching probabilities. check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                     end
                     left_operator=parser.look_around(tokk,rest_);
-                    
+
                     for i1=2:length(left_operator)
                         first=dictionary.determine_status(left_operator(i1-1),dictionary);
                         if strcmp(first,'unknown')
@@ -266,7 +253,7 @@ end
                             end
                             left_operator=left_operator(2:end);
                         end
-                        
+
                         left_parents=sum(left_operator=='(');
                         right_parents=sum(left_operator==')');
                         % try and close the function before worrying about
@@ -280,7 +267,7 @@ end
                         if function_on<0
                             error([mfilename,':: parenthesis mismatch in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                         end
-                        
+
                         if ~isempty(left_operator)
                             equation.eqtn=[equation.eqtn,{left_operator,[]}']; %#ok<*AGROW>
                         end
@@ -553,7 +540,7 @@ end
                     if ~isempty(msg)
                         error([mfilename,':: ',msg,' on left hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                     end
-                    
+
                     if ~isempty(right_string)
                         % add to the rhs but before !
                         rhs=[transpose({right_string,[]}),rhs];
@@ -621,7 +608,7 @@ end
                     error([' A complementarity condition must contain one of the above ''=''  in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
                 end
             end
-            
+
             function msg=count_parentheses(equation)
                 equation=cell2mat(equation);
                 leftpars=numel(strfind(equation,'('));
@@ -671,8 +658,8 @@ function p=switching_status_of_parameters(dic)
 %-------------------
 p=struct();
 for ipar=1:numel(dic.parameters)
-    
+
     p.(dic.parameters(ipar).name)=dic.parameters(ipar).is_switching;
-    
+
 end
 end

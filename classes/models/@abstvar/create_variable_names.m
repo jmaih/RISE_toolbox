@@ -1,4 +1,6 @@
 function final_names=create_variable_names(n,prefix,names0)
+% INTERNAL FUNCTION
+%
 
 if nargin<3
 

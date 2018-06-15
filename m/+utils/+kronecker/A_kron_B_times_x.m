@@ -1,21 +1,7 @@
 function z=A_kron_B_times_x(A,B,x,cols_b,cols_a)
-% H1 line
+% INTERNAL FUNCTION: computes the kron(A,B)*x
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
-% computes the kron(A,B)*x
 if nargin<4
     cols_a=size(A,2);
     if nargin<3

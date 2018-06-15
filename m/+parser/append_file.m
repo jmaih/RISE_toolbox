@@ -1,20 +1,6 @@
 function output=append_file(output,rline,definitions)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 rf=include_file();
 output=[output;rf];

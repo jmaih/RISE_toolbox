@@ -1,19 +1,6 @@
 function [islands,ids]=clear_duplicates(islands,lb,ub,newdeal)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<4
     newdeal=false;
@@ -44,7 +31,7 @@ for i1=1:MaxNodes
 end
 ids=find(ids);
 
-%% Reliable: 
+%% Reliable:
 % bbo_3
 % gampc_2: sensitive to crossover prob .1 seems to work ok
 % bee : may/may not require as many probes as advodated by the gampc guys

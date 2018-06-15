@@ -1,20 +1,6 @@
 function batch=replace_definitions(batch,Definitions)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 if ~isempty(Definitions)
     Definitions=regexp(Definitions,'=','split');

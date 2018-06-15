@@ -1,5 +1,7 @@
 function [abar,SIGu,sampler]=sims_zha_prior(kdata,Yraw,SIGu,...
     prior_hyperparams)
+% INTERNAL FUNCTION
+%
 
 sig=std(Yraw(:,:),[],2); % stretch for panel
 

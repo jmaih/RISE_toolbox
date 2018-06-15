@@ -1,19 +1,6 @@
 function [x,x_id]=find_farthest(xvec,x0)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 dd=abs(xvec-x0);
 x_id=find(dd==max(dd),1,'first');

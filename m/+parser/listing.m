@@ -1,19 +1,6 @@
 function xout=listing(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % LISTING parses the arguments of a parameter or a variable
 myscalar=@(x)isa(x,'double') && isscalar(x) && floor(x)==ceil(x);

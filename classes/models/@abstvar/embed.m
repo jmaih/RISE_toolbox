@@ -1,4 +1,6 @@
 function kdata=embed(kdata,y,x)
+% INTERNAL FUNCTION
+%
 
 nlags=kdata.nlags;
 

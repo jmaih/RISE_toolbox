@@ -1,19 +1,6 @@
 function xout=kron(a,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % kronecker multiplication of cell arrays of strings
 

@@ -1,19 +1,6 @@
 function add_str=lead_lag_string(lead_or_lag)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if lead_or_lag>0
     add_str='LEAD_';

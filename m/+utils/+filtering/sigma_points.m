@@ -1,4 +1,7 @@
 function [x,retcode]=sigma_points(a,P,type,scale)
+% INTERNAL FUNCTION
+%
+
 if nargin<4
     scale=[];
 end

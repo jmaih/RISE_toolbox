@@ -4,6 +4,8 @@ function [dictionary,...
     defs,...
     shadow_tvp,...
     shadow_complementarity]=shadowize(dictionary,AllModels,equation_type)
+% INTERNAL FUNCTION
+%
 
 % dynamic to be merged later with the other portion
 %---------------------------------------------------
@@ -21,7 +23,7 @@ stat.shadow_steady_state_model=cell(0,1);
 stat.shadow_fast_ssmodel=cell(ndyn,1);
 
 % plan_syst to be merged later with the other portion in
-% dictionary.planner_system 
+% dictionary.planner_system
 %---------------------------------------------------------------
 nplan=sum(equation_type==6);
 shadow_plan_syst=cell(nplan,1);
@@ -47,7 +49,7 @@ pos_planner=0;
 pos_dyn=0;
 for ii=1:numel(equation_type)
     % we don't need the semicolons anymore
-    is_def=equation_type(ii)==2; 
+    is_def=equation_type(ii)==2;
     is_tvp=equation_type(ii)==3;
     is_mcp=equation_type(ii)==4;
     is_sseq=any(equation_type(ii)==[5,7]);
@@ -65,16 +67,16 @@ for ii=1:numel(equation_type)
     else
         pos_dyn=pos_dyn+1;
     end
-    
+
     eq_i=AllModels{ii,1};
     do_one_equation(eq_i)
-    
+
     eq_i=AllModels{ii,end};
     if ~isempty(eq_i)
         is_fast_sstate=true;
         do_one_equation(eq_i,is_fast_sstate)
     end
-    
+
 end
 
 if isfield(dictionary.planner_system,'shadow_model')
@@ -112,7 +114,7 @@ stat.shadow_fast_ssmodel=strrep(stat.shadow_fast_ssmodel,'ss','y');
         sh_d='';sh_tvp='';sh_ssm='';
         sh_pl='';o_d='';
         sh_mcp='';
-        
+
         Vss_pos=0;
         for jj=1:size(eq_i,2)
             item=eq_i{1,jj};
@@ -154,7 +156,7 @@ stat.shadow_fast_ssmodel=strrep(stat.shadow_fast_ssmodel,'ss','y');
                             o_m=[o_m,'{',sprintf('%0.0f',lead_or_lag),'}'];
                         end
                         sh_o=[sh_o,'y(',sprintf('%0.0f',index),')'];
-                        
+
                         s_m=[s_m,item];
                         sh_s=[sh_s,'y(',sprintf('%0.0f',pos),')'];
                         sh_s=update_time(sh_s,lead_or_lag);
@@ -266,7 +268,7 @@ stat.shadow_fast_ssmodel=strrep(stat.shadow_fast_ssmodel,'ss','y');
                     end
             end
         end
- 
+
         if is_def
             defs.shadow{pos_def}=sh_d; % put back the semicolon as this is going to be evaluated
             defs.original{pos_def}=o_d;

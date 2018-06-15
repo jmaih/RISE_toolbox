@@ -1,21 +1,6 @@
 function C=A_times_kron_B_I(A,B,q,use_reshape)
-% H1 line
+% INTERNAL FUNCTION: computes C=A*kron(B,Iq)
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
-% computes C=A*kron(B,Iq)
 
 % clc,rb=10;cb=7;q=9;ra=3;ca=rb*q;
 % B=rand(rb,cb);A=rand(ra,ca);

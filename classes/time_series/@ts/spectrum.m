@@ -1,19 +1,6 @@
 function [sw,jj,T]=spectrum(this)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 y=this.data;
 if size(y,3)>1

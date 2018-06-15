@@ -1,21 +1,6 @@
 function Z=A_times_B_kron_C(A,B,C)
-% H1 line
+% INTERNAL FUNCTION: computes the A*kron(B,C)
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
-% computes the A*kron(B,C)
 
 [rb,cb]=size(B);
 [rc,cc]=size(C);

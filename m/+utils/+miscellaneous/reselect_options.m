@@ -1,17 +1,15 @@
 function opt=reselect_options(options,fn)
-% reselect_options - discards the options not used by a function
+% INTERNAL FUNCTION: discards the options not used by a function
 %
 % ::
-%
 %
 %   opt=reselect_options(options,fn)
 %
 % Args:
 %
 %    - **options** [struct]: all options
-%
 %    - **fn** [char|function_handle]: function whose options we are interested
-%    in.
+%      in.
 %
 % Returns:
 %    :
@@ -21,24 +19,21 @@ function opt=reselect_options(options,fn)
 % Note:
 %
 %    - the function of interest should be such that if called without inputs,
-%    it returns its default options.
+%      it returns its default options.
 %
-% Example:
-%
-%    See also:
 
 if ischar(fn)
-    
+
     fn=str2func(fn);
-    
+
 end
 
 defaults=fn();
 
 if ~isstruct(defaults)
-    
+
     defaults=disp_defaults(defaults);
-    
+
 end
 
 fn_fields=fieldnames(defaults);

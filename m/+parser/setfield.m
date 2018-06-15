@@ -1,22 +1,6 @@
 function S = setfield(S,name,value)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
-%UNTITLED10 Summary of this function goes here
-%   Detailed explanation goes here
 
 siz=size(S);
 

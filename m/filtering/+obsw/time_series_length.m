@@ -1,4 +1,6 @@
 function [sp,Z,Z_is_selector]=time_series_length(Z,T,H,Q,R)
+% INTERNAL FUNCTION
+%
 
 sp=struct();
 
@@ -15,17 +17,17 @@ nR=size(R,3); sp.R=@(t)min(t,nR);
 Z_is_selector=ncZ~=m;
 
 if Z_is_selector
-    
+
     if islogical(Z)
-        
+
         Z=find(Z);
-        
+
     end
-    
+
 else
-    
+
     sp.Z=@(t)min(t,nZ);
-    
+
 end
 
 end

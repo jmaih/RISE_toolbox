@@ -1,19 +1,6 @@
 function this=drop(this,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 survive=true(1,this.NumberOfVariables);
 for ii=1:length(varargin)

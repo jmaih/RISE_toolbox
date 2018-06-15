@@ -1,20 +1,6 @@
 function check_markov_chains_adequacy(dictionary)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % check that the markov chain is parameterized in all of its elements
 %---------------------------------------------------------------------

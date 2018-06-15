@@ -1,8 +1,7 @@
 function res=sum(varargin)
-% sum sums products of all possible permutations of kronecker products
+% INTERNAL FUNCTION: Sums products of all possible permutations of kronecker products
 %
 % ::
-%
 %
 %   res=sum(A1,A2,...,Ak)
 %
@@ -21,9 +20,6 @@ function res=sum(varargin)
 %    sum(A,B,C)=kron(A,B,C) + kron(A,C,B) + kron(B,A,C) + kron(B,C,A) +
 %    kron(C,A,B) + kron(C,B,A)
 %
-% Example:
-%
-%    See also:
 
 n=length(varargin);
 % find all permutations

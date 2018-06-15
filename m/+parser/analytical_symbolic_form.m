@@ -1,19 +1,6 @@
 function [strout,varlist]=analytical_symbolic_form(str,validNames,flag)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % turns x(1),y(1),ss(1),p(1) into x_1,y_1,ss_1,p_1
 % this might not be very robust, I should add that the variables cannot

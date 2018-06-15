@@ -1,30 +1,18 @@
 function db=step_dummy(start_date,end_date,dummy_start_date)
-% H1 line
-%
-% ::
-%
+% INTERNAL FUNCTION: implements a step dummy in the time series
 %
 % Args:
+%
+%    - start_date: start date of the time series
+%    - end_date: end date of the time series
+%    - dummy_start_date: start date of the step dummy
 %
 % Returns:
 %    :
 %
-% Note:
+%    - db: a time series with zeros from the first observation to the date
+%      before the start of the dummy and ones from then on.
 %
-% Example:
-%
-%    See also:
-
-% implements a step dummy in the time series
-% inputs
-%-------
-% start_date: start date of the time series
-% end_date: end date of the time series
-% dummy_start_date: start date of the step dummy
-% output
-%-------
-% db: a time series with zeros from the first observation to the date
-% before the start of the dummy and ones from then on.
 
 start_date=date2serial(start_date);
 if ischar(dummy_start_date)

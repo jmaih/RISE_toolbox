@@ -1,19 +1,6 @@
 function A = mergestructures(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % Merge structures with unique fields.
 % based on MERGESTRUCT by Loren Shure (Mathworks)

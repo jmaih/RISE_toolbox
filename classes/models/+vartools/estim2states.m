@@ -1,4 +1,6 @@
 function M=estim2states(params,theMap,nparams,nregs)
+% INTERNAL FUNCTION
+%
 
 nsol=size(params,2);
 
@@ -11,9 +13,9 @@ for isol=1:nsol
 end
 
     function M=do_one(M,p)
-        
+
         M(theMap(:,2))=p(theMap(:,1));
-        
+
     end
 
 end

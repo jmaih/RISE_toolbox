@@ -1,20 +1,6 @@
 function [T1,W1]=newton_iteration_h_full(T0,Gplus01,A0,Aminus,kron_method,options)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 [n,n,h]=size(A0);
 
@@ -52,7 +38,7 @@ for r0=1:h
     Ui=U\speye(n);
     T1_fi=-Ui*Aminus(:,:,r0);
     W(:,:,r0)=W(:,:,r0)-T1_fi;
-    
+
     Lminus=-T1_fi;
     if kron_method
         Lminus_prime=Lminus.';

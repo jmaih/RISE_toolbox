@@ -1,21 +1,6 @@
 function C=kron_I_A_times_B(A,B,n)
-% H1 line
+% INTERNAL FUNCTION: computes C=kron(In,A)*B
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
-% computes C=kron(In,A)*B
 
 [qn,m]=size(B);
 [p,q]=size(A);

@@ -1,23 +1,9 @@
 function [fresh_options,missing]=setfield(default_options,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 nn=length(varargin);
-if nn==1 
+if nn==1
     if isempty(varargin{1})
         fresh_options=default_options;
         return

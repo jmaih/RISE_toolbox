@@ -1,4 +1,6 @@
 function p=create_parameters_names(nvars,lags,constant,nd,additional_params)
+% INTERNAL FUNCTION
+%
 
 if nargin<4
 

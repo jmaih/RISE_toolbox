@@ -1,20 +1,6 @@
 function data=transform(datam,type)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 % type is one of the following:
 % 1 or 'level': Untransformed data - level (default)
@@ -27,7 +13,7 @@ function data=transform(datam,type)
 % 8 or 'log_ch': %Log Change - period to period (log-change)
 % 9 or 'yoy_log_ch': Year to year log change (yr-yr l-chg)
 % this follows the definitions of Haver
-        
+
 if nargin<2
     type=[];
 end

@@ -1,20 +1,6 @@
 function db=ts_roll_or_expand(db,func,window,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 data=db.data;
 

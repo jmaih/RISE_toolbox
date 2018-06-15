@@ -1,19 +1,6 @@
 function blocks=initialize_blocks()
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 listing=parser.listing();
 

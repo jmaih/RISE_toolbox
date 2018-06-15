@@ -1,22 +1,6 @@
 function C=A_times_k_kron_B(A,B,k)
-% H1 line
+% INTERNAL FUNCTION: computes C=A*(BxBx...xB)
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
-
-% computes C=A*(BxBx...xB)
 
 % clc,rb=10;k=3;ra=5;ca=rb^k; cb=30;
 % B=rand(rb,cb);A=rand(ra,ca);

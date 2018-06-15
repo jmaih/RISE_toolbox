@@ -1,19 +1,6 @@
 function this=subsref(obj,s)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % db=ts('1990q1',randn(10,4,3),{'v1','v2','v3','v4'});
 % pick a variable:
@@ -67,60 +54,60 @@ function this=subsref(obj,s)
 % transpose(db)
 
 switch s(1).type
-    
+
     case '.'
         % subs = character string
         this=builtin(mfilename,obj,s);
-        
+
     case {'()','{}'}
         [date_numbers,datta,...
             rows_dates,varloc,pages]=process_subs(obj,s(1).subs,mfilename);
-        
+
         if isvector(rows_dates)
-            
+
             rows_dates=rows_dates(:);
-            
+
         end
-        
+
         if size(rows_dates,2)>1||size(rows_dates,3)>1
-            
+
             error('I don''t know how to concatenate multiple series with different dates')
-        
+
         end
-        
+
         date_numbers=date_numbers(rows_dates);
-        
+
         if any(isnan(varloc))
-            
+
             datta=datta(rows_dates,:,pages);
-            
+
             this=ts(date_numbers(:),datta,obj.varnames,obj.description);
-            
+
         elseif isempty(varloc)
-            
+
             this=ts.empty(0);
-            
+
         else
-            
+
             datta=datta(rows_dates,varloc,pages);
-            
+
             this=ts(date_numbers(:),datta,obj.varnames(varloc),...
                 obj.description(varloc));
-            
+
         end
-        
+
         s=s(2:end);
-        
+
         if ~isempty(s)
-            
+
             this=subsref(this,s);
-            
+
         end
-        
+
     otherwise
-        
+
         error(['unexpected type "',s(1).type,'"'])
-        
+
 end
 
 

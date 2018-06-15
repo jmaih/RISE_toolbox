@@ -1,19 +1,6 @@
 function [blocks,markov_chains]=file2blocks(RawFile)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 tex_name='';
 quote_active=false;
@@ -65,7 +52,7 @@ while iline<NumberOfLines
     rawline=RawFile{iline,1};
     file_name=RawFile{iline,2};
     line_number=RawFile{iline,3};
-    
+
     [tok,rest]=strtok(rawline,DELIMITERS);
     if strcmp(tok,'end')
         if isempty(last_block_id)
@@ -130,41 +117,41 @@ paramBlock=strcmp('parameters',{blocks.name});
 param_names={blocks(paramBlock).listing.name};
 modelBlock=strcmp('model',{blocks.name});
 
-if ~isempty(levelvar_names) 
-    
+if ~isempty(levelvar_names)
+
     if ~isempty(logvar_names)
-        
+
         error('log_variables and level_variables cannot be declared in the same file')
-    
+
     end
-    
+
     locs=locate_variables(levelvar_names,endovar_names,true);
-    
+
     store_locs=locs;
-    
+
     locs=find(isnan(locs));
-    
+
     if ~isempty(locs)
-        
+
         bad_vars=levelvar_names(locs);
-        
+
         disp(bad_vars(:)')
-        
+
         error('The LEVEL variables above have not been found in the list of endogenous variables')
-        
+
     end
-    
+
     blocks(levelVarBlock).listing=blocks(logvarBlock).listing;
-    
+
 %     levelvar_names={blocks(logvarBlock).listing.name};
-    
+
     % now swap and destroy
     blocks(logvarBlock).listing=blocks(endogBlock).listing;
-    
+
     blocks(logvarBlock).listing(store_locs)=[];
-    
-    logvar_names={blocks(logvarBlock).listing.name};    
-    
+
+    logvar_names={blocks(logvarBlock).listing.name};
+
 end
 
 % check that the potential measurement errors have corresponding observables
@@ -274,21 +261,21 @@ blocks(modelBlock).listing=parser.process_keywords(...
 %--------------------------------------------------------------------------
 
     function block=construct_list(block,rawline_,tokk)
-        
+
         current_list={block.listing.name};
-        
+
         rawline_without_description=parser.remove_description(rawline_);
-        
+
         try
-            
+
             end_game= contains(rawline_without_description,';');
-            
+
         catch
-            
-            end_game=~isempty(strfind(rawline_without_description,';')); 
-            
+
+            end_game=~isempty(strfind(rawline_without_description,';'));
+
         end
-        
+
         if end_game
             warning(['ending declaration listings with a'';'' is no longer required. In ',...
                 file_name,' at line ',sprintf('%0.0f',line_number)])

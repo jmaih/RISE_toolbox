@@ -1,5 +1,5 @@
 function xrotate(angle)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: to be removed
 %
 
 if nargin==0

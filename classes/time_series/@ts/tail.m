@@ -1,19 +1,6 @@
 function db=tail(db,n)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
     n=min(5,db.NumberOfObservations);

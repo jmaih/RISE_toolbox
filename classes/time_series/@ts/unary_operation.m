@@ -1,19 +1,6 @@
 function db=unary_operation(db,op_string)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ischar(op_string)
     op_string=str2func(['@(x)',op_string,'(x)']);

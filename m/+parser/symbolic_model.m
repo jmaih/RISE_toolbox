@@ -1,30 +1,17 @@
 function m=symbolic_model(m,var_list)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
-    
+
     var_list=parser.input_list();
-    
+
 end
 
 if ischar(var_list)
-    
+
     var_list=cellstr(var_list);
-    
+
 end
 
 no_word_before='\<'; % no_word_before='(?<!\w+)';

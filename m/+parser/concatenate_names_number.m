@@ -1,25 +1,12 @@
 function out=concatenate_names_number(names,lag)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 test=@myadd; %#ok<NASGU>
 % translate auxiliaries
 %----------------------
  out=parser.translate_auxiliary_names(names);
- 
+
 % set the lead/lag to 0 for variables that are contemporaneous
 %-------------------------------------------------------------
 out=regexprep(out,'(\w+)(?!({|}|\w+))','$1{0}');

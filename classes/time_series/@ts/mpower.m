@@ -1,19 +1,6 @@
 function this=mpower(this,const)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 this=power(this,const);
 end

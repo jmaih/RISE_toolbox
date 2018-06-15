@@ -1,4 +1,6 @@
 function [w]=sigma_weights(m,type)
+% INTERNAL FUNCTION
+%
 
 switch type
     case 'ckf'

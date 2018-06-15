@@ -1,19 +1,6 @@
 function fname=remove_file_extension(fname)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 thedot=find(fname=='.');
 if ~isempty(thedot)

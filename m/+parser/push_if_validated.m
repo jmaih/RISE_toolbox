@@ -1,19 +1,6 @@
 function dd=push_if_validated(val,testfunc,type,name_file_line)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<3
     name_file_line=[];

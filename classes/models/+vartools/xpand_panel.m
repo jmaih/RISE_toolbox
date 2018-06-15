@@ -1,4 +1,7 @@
 function d=xpand_panel(d)
+% INTERNAL FUNCTION
+%
+
 % going from nvar x T x npages to nvar*npages x T
 % where npages is the number of panel members
 % the resulting ordering is

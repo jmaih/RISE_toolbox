@@ -1,45 +1,31 @@
 function varargout=bar(varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 %     bar(X,db) draws the columns of the M-by-N matrix db as M groups of N
 %     vertical bars versus vector of dates X. X can be of
 %     multiple forms and need not be of the same length as db:
 %         - a string of dates. e.g. X='1990:2000' X='1990Q1:2000Q1'
-%         X='1990m1:2000m2' 
+%         X='1990m1:2000m2'
 %         - serial dates. e.g. X=date2serial('1990Q1):date2serial('2000Q1')
-%         X='1990m1:2000m2' 
-%  
+%         X='1990m1:2000m2'
+%
 %     bar(db) uses the dates within db.  The colors are set by the colormap.
-%  
+%
 %     bar(X,db,WIDTH) or bar(db,WIDTH) specifies the width of the bars. Values
 %     of WIDTH > 1, produce overlapped bars.  The default value is WIDTH=0.8
-%  
+%
 %     bar(...,'grouped') produces the default vertical grouped bar chart.
 %     bar(...,'stacked') produces a vertical stacked bar chart.
 %     bar(...,LINESPEC) uses the line color specified (one of 'rgbymckw').
-%  
+%
 %     H = bar(...) returns a vector of handles to barseries objects.
-%  
+%
 %     Use SHADING FACETED to put edges on the bars.  Use SHADING FLAT to
 %     turn them off.
-%  
+%
 %     See also hist, plot, barh, bar3, bar3h.
-%     
+%
 %     In addition to those matlab properties, RISE adds further properties,
 %     which allow to control for:
 %     - the figure size (multiple plots): 'figsize', with default [3,3]

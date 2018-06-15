@@ -1,19 +1,6 @@
 function tank=remove_definitions(tank,definitions)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 test=regexp(tank(:,1),'@{[\w/*\-+^]+}','match');%@{\w+}
 test= unique([test{:}]);

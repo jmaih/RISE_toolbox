@@ -1,20 +1,6 @@
 function data=bsxfun(db,fun,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 data=bsxfun(fun,db.data,b);
 

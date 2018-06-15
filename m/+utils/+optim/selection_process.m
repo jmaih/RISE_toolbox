@@ -1,19 +1,6 @@
 function c=selection_process(a,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 choice=utils.optim.compare_individuals(a,b);
 if choice==1

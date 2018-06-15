@@ -1,5 +1,7 @@
 function [R,HHRestr]=build_shock_restrictions(H,G,yrest_id,xrest_id,...
     nsteps)
+% INTERNAL FUNCTION
+%
 
 [model,ny]=build_model();
 y0=zeros(ny,1);

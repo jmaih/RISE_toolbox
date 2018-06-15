@@ -1,19 +1,6 @@
 function ed=distance(a,b)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if isempty(a)||isempty(b)
     ed=inf;

@@ -1,20 +1,6 @@
 function lhs=korder_matrix_vector(x,T_order_1,G,G0p)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 [r1,c1,p1]=size(T_order_1);
 [rg,cg,pg,bg]=size(G);

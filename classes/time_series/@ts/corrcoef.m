@@ -1,19 +1,6 @@
 function varargout=corrcoef(this,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ~isempty(varargin) && isa(varargin{1},'ts')
     this=this & varargin{1};
