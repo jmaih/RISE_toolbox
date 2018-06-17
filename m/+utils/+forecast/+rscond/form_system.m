@@ -1,4 +1,6 @@
 function [RS,yhats]=form_system(M,ycond,econd,nsteps,options)
+% INTERNAL FUNCTION
+%
 
 %   - **forecast_conditional_hypothesis**
 %   [{'default'}|'ncp'/'econ'|'nas'/'econ']: in dsge models in which agents
@@ -16,8 +18,8 @@ function [RS,yhats]=form_system(M,ycond,econd,nsteps,options)
 
 % forecast_conditional_hypothesis econ seems to create some inaccuracies
 % - Different inversions of the matrices give different solutions despite
-% the fact that the matrices are full ranked. 
-% - This also leads to unrealistically-sized shocks... 
+% the fact that the matrices are full ranked.
+% - This also leads to unrealistically-sized shocks...
 % - We have checked that the restrictions remain well enforced albeit with
 % negligeable inaccuracies
 % - What I have not thoroughly checked is whether the other inverses lead
@@ -29,10 +31,10 @@ function [RS,yhats]=form_system(M,ycond,econd,nsteps,options)
 hypotheses={'default','jma','ncp','econ','nas'};
 defaults={
     'debug',false,@(x)islogical(x),'debug must be a logical'
-    
+
     'forecast_conditional_hypothesis','default',@(x)ismember(x,hypotheses),...
     ['forecast_conditional_hypothesis must be one of ',cell2mat(strcat(hypotheses,'|'))]
-    
+
     'nsteps',[],@(x)isnumeric(x)&&isscalar(x)&&x>0 && floor(x)==ceil(x),...
     'nsteps must be a positive integer'
     };

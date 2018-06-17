@@ -1,4 +1,7 @@
 function [tex_name,legend_]=one_fanchart(f,vname,mycol,histdb,obsnames)
+% INTERNAL FUNCTION
+%
+
 data=f.(vname);
 plot_fanchart(data,mycol);
 if any(strcmp(vname,obsnames))

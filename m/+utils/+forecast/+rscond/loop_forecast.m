@@ -1,18 +1,15 @@
 function varargout=loop_forecast(varargin)
-% LOOP_FORECAST - conditional forecast for regime-switching models in a
-% loop
+% INTERNAL FUNCTION: conditional forecast for regime-switching models in a loop
 %
-% More About
-% ------------
+
+% Note:
 %
-% - This function is the same as RSCF.FORECAST except that it calls
-% RSCF.FORECAST in a loop, permitting variations in the unconditional
-% regimes.
+%    - This function is the same as RSCF.FORECAST except that it calls
+%      RSCF.FORECAST in a loop, permitting variations in the unconditional
+%      regimes.
 %
-% Examples
-% ---------
-%
-% See also: RSCF.FORECAST
+% See also:
+%    RSCF.FORECAST
 
 nout=nargout;
 if nargin==0
@@ -26,7 +23,7 @@ if nargin==0
     end
 else
     narginchk(5,6)
-    
+
     options=varargin{5};
     varargin{5}.forecast_conditional_sampling_ndraws=1;
     forecast_conditional_sampling_ndraws=options.forecast_conditional_sampling_ndraws;

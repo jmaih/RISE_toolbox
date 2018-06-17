@@ -1,4 +1,7 @@
 function [shocks,retcode]=density_shocks(R,mu_lb_ub,nshocks,OMG,options)
+% INTERNAL FUNCTION
+%
+
 % Both gibbs and ghk algorithms seem to work fine regardless of whether
 % there is shock simul_shock_uncertainty or not. But then again, only when the default
 % algorithm, which does not trim the R (shock impact) matrix is employed.
@@ -51,19 +54,19 @@ if retcode
     shocks=[];
 else
     M2_gam2=hard_conditions(x);
-    
+
     shocks=M2_gam2;
     if simul_shock_uncertainty
         n1=size(M1,2);
         gam1=randn(n1,options.forecast_conditional_sampling_ndraws);
         shocks=M1*gam1+shocks;
     end
-    
+
     if options.debug
         % all lb<=x<=ub
         %---------------
         fprintf('Checking that lb<=R*shocks: %0.0f\n\n',allpos(R*shocks,lb))
-        
+
         fprintf('Checking that R*shocks<=ub : %0.0f\n\n',allpos(ub,R*shocks))
     end
     shocks=reshape_shocks(shocks);
@@ -99,37 +102,37 @@ end
         if options.debug
             fprintf('Hard-condition problem max resid = %0.8f\n\n',...
                 maxdiff(R*ehat,yhats))
-            
+
             % M2*gam2 and R'*inv(R*R')*x
             %------------------------------
             RRRi=utils.forecast.rscond.direct_inverse(R);
             ehat2=RRRi*yhats;
             fprintf('M2*gam2 vs R''*inv(R*R'')*x max diff = : %0.8f\n\n',...
                 maxdiff(ehat,ehat2))
-            
+
             % pinv(R)*x and R'*inv(R*R')*x
             %------------------------------
             ehat3=pinv(full(R))*x;
             fprintf('pinv(R)*x vs R''*inv(R*R'')*x max diff = %0.8f\n\n',...
                 maxdiff(ehat3,ehat2))
-            
+
             % pinv(R)*x and M2*gam2
             %-----------------------
             fprintf('pinv(R)*x vs M2*gam2 max diff = %0.8f\n\n',...
                 maxdiff(ehat3,ehat))
-            
+
             % R'*((R*R')\yhats) and R'*inv(R*R')*x
             %--------------------------------------
             ehat4=R'*((R*R')\yhats);
             fprintf('R''*((R*R'')\\x) vs R''*inv(R*R'')*x max diff = %0.8f\n\n',...
                 maxdiff(ehat4,ehat2))
-            
+
             % R'/(R*R')*yhats and R'*inv(R*R')*x
             %--------------------------------------
             ehat5=R'/(R*R')*yhats;
             fprintf('R''/(R*R'')*x vs R''*inv(R*R'')*x max diff = %0.8f\n\n',...
                 maxdiff(ehat5,ehat2))
-            
+
             % R'/(R*R')*yhats and pinv(R)
             %--------------------------------------
             fprintf('R''/(R*R'')*x vs pinv(R)*x max diff = %0.8f\n\n',...

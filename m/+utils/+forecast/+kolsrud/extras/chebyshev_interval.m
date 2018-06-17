@@ -1,4 +1,7 @@
 function ci=chebyshev_interval(y,gam,z)
+% INTERNAL FUNCTION
+%
+
 if nargin<3
     z=[];
 end

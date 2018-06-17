@@ -1,4 +1,7 @@
 function cb=chebyshev_band(y,gam,c)
+% INTERNAL FUNCTION
+%
+
 if nargin<3
     c=utils.forecast.kolsrud.chebyshev_distance(y);
 end

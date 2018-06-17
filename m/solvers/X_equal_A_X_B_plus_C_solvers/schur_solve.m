@@ -1,6 +1,8 @@
 function [V,u,stationary_vars] = schur_solve(H,GG,...
     qz_criterium,...
     lyapunov_complex_threshold)
+% INTERNAL FUNCTION
+%
 
 % Solves the Lyapunov equation V =H*V*H'+ GG
 %- To be implemented
@@ -43,9 +45,9 @@ second_pass()
             [U,T] = ordschur(U,T,e1);
             T = T(n_unstab+1:end,n_unstab+1:end);
         end
-        
+
         B = U(:,n_unstab+1:end)'*GG*U(:,n_unstab+1:end);
-        
+
         Vstab = zeros(n_stab,n_stab);
         ii = n_stab;
         while ii >= 2

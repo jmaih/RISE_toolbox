@@ -1,4 +1,6 @@
 function [x1,S,options]=tmvnrnd(m,SIG,lb,ub,options)
+% INTERNAL FUNCTION
+%
 
 num_fin_int=@(x)isnumeric(x)&&isfinite(x)&&isreal(x)&&isscalar(x) && x>=0;
 
@@ -9,21 +11,21 @@ algorithms={'rejection','gibbs','ghk'};
 defaults={
     'forecast_conditional_sampling_algo','rejection',@(x)ismember(x,algorithms),...
     ['algorithm must be one of ',cell2mat(strcat(algorithms,'|'))]
-    
+
     'forecast_conditional_sampling_ndraws',1,@(x)num_fin_int(x) && x>0,...
 	'forecast_conditional_sampling_ndraws must be a positive scalar'
-    
+
     'forecast_conditional_sampling_burnin',0,@(x)num_fin_int(x),...
 	'forecast_conditional_sampling_burnin must be a positive scalar'
-    
+
     'forecast_conditional_sampling_thinning',1,@(x)num_fin_int(x) && x>0,...
 	'forecast_conditional_sampling_thinning must be a positive scalar'
-    
+
     'forecast_conditional_sampling_max_rejection_attempts',500,@(x)num_fin_int(x),...
 	'forecast_conditional_sampling_max_rejection_attempts must be a positive scalar'
-    
+
     'S',[],@(x)Stmp(x),'temporary variable S must be empty|struct|matrix'
-    
+
     'debug',false,@(x)islogical(x),'debug must be logical'
     };
 
@@ -111,7 +113,7 @@ x1(is_soft,:)=do_soft_conditions(m(is_soft),lb(is_soft),ub(is_soft),...
                 xs(:,idraw/forecast_conditional_sampling_thinning)=x;
             end
         end
-        
+
         function do_ghk()
             eta=nan(nsoft,1);
             for ii=1:nsoft
@@ -125,7 +127,7 @@ x1(is_soft,:)=do_soft_conditions(m(is_soft),lb(is_soft),ub(is_soft),...
                 an=(a-mi)/S(ii,ii);
             end
         end
-        
+
         function do_rejection
             iter=0;
             success=false;
@@ -143,7 +145,7 @@ x1(is_soft,:)=do_soft_conditions(m(is_soft),lb(is_soft),ub(is_soft),...
                 fprintf('Rejection: no success after %0.0f attempts\n',forecast_conditional_sampling_max_rejection_attempts)
             end
         end
-        
+
         function do_gibbs()
             % Jayesh Hukumchand Kotecha and Petar M. Djuric (1999): "Gibbs
             % sampling approach for generation of truncated multivariate

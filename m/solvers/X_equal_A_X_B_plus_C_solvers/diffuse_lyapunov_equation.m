@@ -22,11 +22,6 @@ check_unit_roots,diffuse_all)
 %    - P0 :
 %    - Retcode :
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<5
     diffuse_all=false;

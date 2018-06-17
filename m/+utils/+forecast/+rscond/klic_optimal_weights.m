@@ -1,4 +1,6 @@
 function paistar=klic_optimal_weights(gam,pai,gy)
+% INTERNAL FUNCTION
+%
 
 tgam=gam(:).';
 paistar=pai;

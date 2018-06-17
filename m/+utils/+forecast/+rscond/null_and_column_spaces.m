@@ -1,19 +1,6 @@
 function [M1,M2,RM2i,q,U,S,retcode]=null_and_column_spaces(R,verbose)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
     verbose=false;
@@ -59,11 +46,11 @@ if failed
 end
 retcode=0;
 
-M2=V(:,1:q); % another basis which is different but gives the same end results is M22=null(M1') 
+M2=V(:,1:q); % another basis which is different but gives the same end results is M22=null(M1')
 
 M1=V(:,q+1:cols); % == null(R)
 
-RM2i=(R*M2)\eye(q); 
+RM2i=(R*M2)\eye(q);
 
 %M2RM2=M2/(R*M2); % which gives the same results as R'/(R*R'), the WZ result
 % but is different from R\eye(q), the solution that Ida would prefer...

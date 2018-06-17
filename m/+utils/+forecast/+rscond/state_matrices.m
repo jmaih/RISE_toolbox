@@ -1,19 +1,6 @@
 function [Tt,Rt,bt,Qt,Record]=state_matrices(T,R,mut,OMG,DPHI,DT,Record,ExpandedFlag)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<8
 ExpandedFlag=0;

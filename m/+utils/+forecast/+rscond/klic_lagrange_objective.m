@@ -1,4 +1,7 @@
 function objective=klic_lagrange_objective(gam,pai,gy_gbar)
+% INTERNAL FUNCTION
+%
+
 tgam=gam(:).';
 objective=0;
 n=numel(pai);

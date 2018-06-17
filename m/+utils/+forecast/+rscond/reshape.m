@@ -1,4 +1,7 @@
 function shocks=reshape(A,nshocks,debug)
+% INTERNAL FUNCTION
+%
+
 [nr,np]=size(A);
 nc=nr/nshocks;
 shocks=reshape(A,[nshocks,nc,np]);

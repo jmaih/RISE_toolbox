@@ -1,4 +1,7 @@
 function [dd,di]=tnrnd(a,b,m,s,options)
+% INTERNAL FUNCTION
+%
+
 if nargin<5
     options=[];
     if nargin<4

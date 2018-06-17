@@ -1,14 +1,14 @@
 function c=chebyshev_distance(y)
-% chebyshev_distance - computes chebyshev distances
+% INTERNAL FUNCTION: computes chebyshev distances
 %
 % ::
-%
 %
 %   c=chebyshev_distance(y)
 %
 % Args:
 %
 %    - **y** [numeric] : N x T x G array, with
+%
 %      - **N** [numeric] : number of simulations/replications
 %      - **T** [numeric] : sample length (time series dimension)
 %      - **G** [numeric] : number of variables
@@ -18,11 +18,10 @@ function c=chebyshev_distance(y)
 %
 %    - **c** [N x 1 vector] : chebyshev distances
 %
-% Note:
+% See also:
+%     - standardized_distance
+%     - multivariate_chebyshev_box
 %
-% Example:
-%
-%    See also: standardized_distance, multivariate_chebyshev_box
 
 % References:
 % Dag Kolsrud (2015): "A time-simultaneous prediction box for a
