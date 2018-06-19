@@ -1,17 +1,16 @@
 function g=group(this,varargin)
-% GROUP -- groups contributions
+% Groups contributions
 %
 % ::
 %
-%
-%   g=GROUP(this,{group1,{v11,v12,...}},...,{groupn,{vn1,vn2,...}})
+%   g=group(this,{group1,{v11,v12,...}},...,{groupn,{vn1,vn2,...}})
 %
 % Args:
 %
 %    - **this** [ts]: time series of multiple variables
-%
 %    - **varargin** []: sequences of cell arrays with the following possible
-%    formats:
+%      formats:
+%
 %      - {'supply','Ep'}
 %      - {'demand',{'Ey','Er'}}
 %
@@ -20,12 +19,6 @@ function g=group(this,varargin)
 %
 %    - **g** [ts]: new time series with grouped contributions
 %
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 n=length(varargin);
 discard=false(1,n);
@@ -56,17 +49,17 @@ newnames=cell(1,n);
 newdata=nan(nobs,n);
 
 for ii=1:n
-    
+
     if numel(varargin{ii})~=2
-        
+
         error('each group must be a two-element cell: e.g. {''supply'',{''E1'',''E2'',''E3''}}')
-        
+
     end
-    
+
     [newnames{ii},pos]=set_one_group();
-    
+
     newdata(:,ii)=sum(data(:,pos),2);
-    
+
     is_taken(pos)=true;
 end
 
@@ -80,43 +73,43 @@ g=ts(start,newdata,newnames);
 
 
     function [header,pos]=set_one_group()
-        
+
         header=varargin{ii}{1};
-        
+
         items=varargin{ii}{2};
-        
+
         if ischar(items)
-            
+
             items=cellstr(items);
-            
+
         end
-        
+
         if ~iscellstr(items)
-            
+
             error('group elements must be char or cellstr')
-            
+
         end
-        
+
         if ~ischar(header)
-            
+
             error('the first element of each cell must be a char')
-            
+
         end
-        
+
         pos=locate_variables(items,oldnames);
-        
+
         bad=is_taken(pos);
-        
+
         badnames=oldnames(bad);
-        
+
         if ~isempty(badnames)
-            
+
             disp(badnames)
-            
+
             error('the variables above belong to several groups')
-            
+
         end
-        
+
     end
 
 end

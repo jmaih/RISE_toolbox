@@ -1,5 +1,5 @@
 function [trend,detrended]=ma_filter(varargin)
-% MA_FILTER - moving average filter
+% Moving average filter
 %
 % ::
 %
@@ -27,14 +27,7 @@ function [trend,detrended]=ma_filter(varargin)
 %    :
 %
 %    - **trend** [ts] : (non-parametric) trend
-%
 %    - **detrended** [ts] : y-trend
-%
-% Note:
-%
-% Example:
-%
-% See also:
 %
 
 n=length(varargin);
