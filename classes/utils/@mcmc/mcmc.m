@@ -34,6 +34,8 @@ classdef mcmc < handle
                             
                             if nargin<1
                                 
+                                obj=mcmc.empty();
+                                
                                 return
                                 
                             end
@@ -52,8 +54,17 @@ classdef mcmc < handle
             
             [obj.nchains,obj.npop]=size(obj.draws);
             
-            obj.nparams=numel(obj.draws(1).x);
             if obj.npop
+                
+                obj.nparams=numel(obj.draws(1).x);
+                
+            else
+                
+                obj=mcmc.empty();
+                
+                return
+                
+            end
             
             if isempty(pnames)
                 
@@ -63,7 +74,11 @@ classdef mcmc < handle
             
             obj.pnames=pnames;
             
-            obj.psrf=gelman_rubin(obj,true);
+            if obj.npop
+                
+                obj.psrf=gelman_rubin(obj,true);
+                
+            end
             
         end
         
