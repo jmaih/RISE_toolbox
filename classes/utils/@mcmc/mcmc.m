@@ -53,6 +53,7 @@ classdef mcmc < handle
             [obj.nchains,obj.npop]=size(obj.draws);
             
             obj.nparams=numel(obj.draws(1).x);
+            if obj.npop
             
             if isempty(pnames)
                 
