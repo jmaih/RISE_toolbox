@@ -1,5 +1,5 @@
 function [hptrend,hpcycle] = hpfilter(db,lambda)
-% INTERNAL FUNCTION: HP filters a collection of time series.
+% HP filters a collection of time series.
 %
 % Args:
 %

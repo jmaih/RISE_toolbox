@@ -1,5 +1,8 @@
 function this3=and(this1,this2)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Combines two databases into a combined database
+%
+% Note:
+%    - It is assumed that the frequency and length of time series are the same between the two databases.
 %
 
 % this1= ts(1990,rand(10,1))

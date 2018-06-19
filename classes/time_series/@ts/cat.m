@@ -1,5 +1,5 @@
 function db=cat(dim,varargin)
-% cat concatenates time series along the specified dimension
+% INTERNAL FUNCTION: Concatenates time series along the specified dimension
 %
 % ::
 %
@@ -22,20 +22,13 @@ function db=cat(dim,varargin)
 % Note:
 %
 %    - all times series must be of the same frequency
-%
 %    - Concatenation along the second dimension requires that variables have
 %      the same number of columns if no names are specified
-%
 %    - if names are specified in the first time series, then names should be
 %      specified in all of the others as well.
-%
 %    - empty time series are discarded but there should be at least one
 %      non-empty time series
 %
-% Example:
-%
-%    See also:
-
 
 n=length(varargin);
 dn1=cell(1,n);

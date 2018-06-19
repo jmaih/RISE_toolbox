@@ -1,6 +1,5 @@
 function this=unfold(last_hist_date,varargin)
-% Takes a folded times series and turns it into a one-page time
-% series
+% Takes a folded times series and turns it into a one-page time series
 %
 % ::
 %

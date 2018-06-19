@@ -1,5 +1,5 @@
 function [yh,res]=chowlin(y0,Xh0,varargin)
-% CHOWLIN - Temporal disaggregation using the Chow-Lin method
+% Temporal disaggregation using the Chow-Lin method
 %
 % ::
 %
@@ -42,12 +42,6 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 %    - **yh** [ts] : (disaggregated) high-frequency left-hand-side variable
 %
 %    - **res** [struct] : structure with further details on the computations
-%
-% Note:
-%
-% Example:
-%
-% See also:
 %
 % REFERENCES:
 %    - Chow, G. and Lin, A.L. (1971) "Best linear unbiased
