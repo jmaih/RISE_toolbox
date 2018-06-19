@@ -427,7 +427,7 @@ end
         method_list=methods(dum_obj);
         
         restricted_list={class(obj),'horzcat','cat','vertcat',...
-            'template'};%,'prior_plots','initialize_solution_or_structure'
+            'template','Contents'};%,'prior_plots','initialize_solution_or_structure'
         
         method_list(ismember(method_list,restricted_list))=[];
         
