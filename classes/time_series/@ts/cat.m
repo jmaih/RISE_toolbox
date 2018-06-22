@@ -3,7 +3,6 @@ function db=cat(dim,varargin)
 %
 % ::
 %
-%
 %   db=cat(1,db1,db2,...,dbn)
 %   db=cat(2,db1,db2,...,dbn)
 %   db=cat(3,db1,db2,...,dbn)

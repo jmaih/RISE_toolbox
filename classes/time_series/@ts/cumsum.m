@@ -1,5 +1,5 @@
 function db=cumsum(db,dim)
-% INTERNAL FUNCTION
+% Overloaded cumsum function for ts object
 %
 
 if nargin<2

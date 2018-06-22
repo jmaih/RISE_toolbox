@@ -1,5 +1,8 @@
 function this=horzcat(varargin)
-% INTERNAL FUNCTION
+% Combines/concatenate databases into a combined database
+%
+% Note:
+%    - It is assumed that the frequency and length of time series are the same between the two databases.
 %
 
 for ii=1:length(varargin)

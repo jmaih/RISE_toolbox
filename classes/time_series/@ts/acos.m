@@ -1,5 +1,5 @@
 function this=acos(this)
-% INTERNAL FUNCTION
+% Overloaded acos function for ts object
 %
 
 % Here it does not make sense to have names any more. But

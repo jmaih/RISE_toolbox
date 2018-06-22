@@ -1,5 +1,5 @@
 function m=min(varargin)
-% INTERNAL FUNCTION
+% Overloaded min function for ts object
 %
 
 if nargin==1||nargin==3

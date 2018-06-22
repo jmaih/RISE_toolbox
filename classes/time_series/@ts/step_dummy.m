@@ -1,5 +1,5 @@
 function db=step_dummy(start_date,end_date,dummy_start_date)
-% INTERNAL FUNCTION: implements a step dummy in the time series
+% Implements a step dummy in the time series
 %
 % Args:
 %

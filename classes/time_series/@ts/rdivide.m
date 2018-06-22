@@ -1,5 +1,5 @@
 function db=rdivide(db1,db2)
-% INTERNAL FUNCTION
+% Overloaded rdivide function for ts object
 %
 
 db=ts.binary_operation(db1,db2,mfilename);

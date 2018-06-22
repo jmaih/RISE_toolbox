@@ -1,5 +1,5 @@
 function this=cos(this)
-% INTERNAL FUNCTION
+% Overloaded cos function for ts object
 %
 
 % Here it does not make sense to have names any more. But

@@ -1,5 +1,5 @@
 function db=minus(db1,db2)
-% INTERNAL FUNCTION
+% Overloaded minus function for ts object
 %
 
 db=ts.binary_operation(db1,db2,mfilename);

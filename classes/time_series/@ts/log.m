@@ -1,5 +1,5 @@
 function this=log(this)
-% INTERNAL FUNCTION
+% Overloaded log function for ts object
 %
 
 % Here it does not make sense to have names any more. But

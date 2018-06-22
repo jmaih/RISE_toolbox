@@ -1,5 +1,5 @@
 function this=asin(this)
-% INTERNAL FUNCTION
+% Overloaded asin for ts object
 %
 
 % Here it does not make sense to have names any more. But

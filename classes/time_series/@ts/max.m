@@ -1,5 +1,5 @@
 function m=max(varargin)
-% INTERNAL FUNCTION
+% Overloaded max function for ts object
 %
 
 if nargin==1||nargin==3

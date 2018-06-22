@@ -1,5 +1,5 @@
 function this=uminus(this)
-% INTERNAL FUNCTION
+% Overloaded uminus function for ts object
 %
 
 % Here it does not make sense to have names any more. But

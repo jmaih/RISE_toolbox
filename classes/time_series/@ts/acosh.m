@@ -1,5 +1,5 @@
 function this=acosh(this)
-% INTERNAL FUNCTION
+% Overloaded acosh function for ts object
 %
 
 % Here it does not make sense to have names any more. But

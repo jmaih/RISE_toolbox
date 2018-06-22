@@ -1,5 +1,5 @@
 function db=cumprod(db,dim)
-% INTERNAL FUNCTION
+% Overloaded cumprod function for ts object
 %
 
 if nargin<2

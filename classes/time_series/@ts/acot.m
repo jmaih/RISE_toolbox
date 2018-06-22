@@ -1,5 +1,5 @@
 function this=acot(this)
-% INTERNAL FUNCTION
+% Overloaded acot for ts object
 %
 
 % Here it does not make sense to have names any more. But

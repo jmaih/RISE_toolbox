@@ -1,5 +1,5 @@
 function db=times(db1,db2)
-% INTERNAL FUNCTION
+% Overloaded times function for ts object
 %
 
 db=ts.binary_operation(db1,db2,mfilename);

@@ -1,5 +1,5 @@
 function d=double(self)
-% INTERNAL FUNCTION: % Returns the underlying data of the time series
+% INTERNAL FUNCTION: Returns the underlying data of the time series
 %
 % ::
 %

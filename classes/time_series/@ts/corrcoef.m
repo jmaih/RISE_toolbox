@@ -1,5 +1,18 @@
 function varargout=corrcoef(this,varargin)
-% INTERNAL FUNCTION
+% Computes correlation for time series: It is an interface to MATLAB implementation of corrcoef
+%
+% ::
+%
+%    varargout = corrcoef(db,varargin);
+%
+% Args:
+%    db (ts object): times series object
+%    varargin: varargin for corrcoef function in MATLAB
+%
+% Returns:
+%    :
+%
+%    varargout: output from corrcoef function
 %
 
 if ~isempty(varargin) && isa(varargin{1},'ts')
