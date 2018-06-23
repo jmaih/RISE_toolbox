@@ -569,9 +569,7 @@ classdef ts < gogetter
         varargout=expanding(varargin)
         varargout=fanchart(varargin)
         varargout=hpfilter(varargin)
-        varargout=index(varargin)
         varargout=interpolate(varargin)
-        varargout=intersect(varargin)
         varargout=ma_filter(varargin)
         varargout=moments(varargin)
         varargout=npdecomp(varargin)
@@ -657,7 +655,6 @@ classdef ts < gogetter
         varargout=and(varargin)
         varargout=cat(varargin)
         varargout=chowlin(varargin)
-        varargout=decompose_series(varargin)
         varargout=drop(varargin)
         varargout=dust_up(varargin)
         varargout=group(varargin)
@@ -698,6 +695,9 @@ classdef ts < gogetter
 
     methods(Access=private)
         varargout=comparison(varargin)
+        varargout=decompose_series(varargin)
+        varargout=index(varargin)
+        varargout=intersect(varargin)
         varargout=process_subs(varargin)
         varargout=ts_roll_or_expand(varargin)
     end

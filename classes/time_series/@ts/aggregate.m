@@ -1,6 +1,23 @@
 function this=aggregate(this,newfreq,method)
-% INTERNAL FUNCTION
+% AGGREGATE : Convert time series to a lower frequency
 %
+% ::
+%
+%    this=aggregate(this,newfreq)
+%    this=aggregate(this,newfreq,method)
+%
+% Args:
+%
+%    - **this** [ts object]: time series object
+%
+%    - **newfreq** [char]: frequency to convert the data to. It must be a
+%    lower than the frequency of the data in **this**
+%
+%    - **method** ['interpolation'|{'distribution'}]: method of conversion
+%
+% Output Args: 
+%
+%    - **this** [ts object]: time series object
 
 if nargin<3
 
