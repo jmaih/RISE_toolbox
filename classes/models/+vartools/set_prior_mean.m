@@ -1,4 +1,6 @@
 function bstar=set_prior_mean(kdata,prior_hyperparams)
+% INTERNAL FUNCTION
+%
 
 coefprior=prior_hyperparams.coefprior;
 

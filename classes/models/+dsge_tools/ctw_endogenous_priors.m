@@ -1,4 +1,6 @@
 function [ld,user_info,retcode]=ctw_endogenous_priors(obj,user_info,targets,prior_sample)
+% INTERNAL FUNCTION
+%
 
 if nargin<4
     prior_sample=[];
@@ -19,7 +21,7 @@ else
     ld=log_density();
 end
 
-    function ld=log_density() 
+    function ld=log_density()
         Ftheta=diag(P(user_info.ids,user_info.ids));
         FF=user_info.Fhat-Ftheta;
         ld=.5*user_info.ny*log(user_info.T/(2*pi))...
@@ -49,9 +51,9 @@ end
             prior_sample=smpl;
         end
         user_info.T=prior_sample;
-        
+
         zero_frequency_spectral_density();
-        
+
         function zero_frequency_spectral_density()
             % demean the data and address problem of missing obs
             %----------------------------------------------------

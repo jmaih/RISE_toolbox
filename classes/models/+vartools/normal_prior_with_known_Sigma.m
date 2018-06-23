@@ -1,9 +1,11 @@
 function [abar_out,SIGu,smpl]=normal_prior_with_known_Sigma(Z,SIGu,Va,astar,y,linres)
+% INTERNAL FUNCTION
+%
 
 if nargin < 6
-    
+
     linres=[];
-    
+
 end
 
 % stretch for panel
@@ -28,21 +30,21 @@ dfunc=@()0;
 afunc=@(x)x;
 
 if ~isempty(linres)
-    
+
     a2=@(x)linres.a_to_a2tilde(x);
-    
+
     afunc=@(x)linres.a2tilde_to_a(x);
-    
+
     K=linres.K;
-    
+
     dfunc=@()kron(Z*Z.',iSIGu)*linres.d;
-    
+
     na2=size(K,2);
-    
+
 end
 
 % SIGa=(iVa+kron(Z*Z.',iSIGu))\eye(na); % 5.2.7
-% 
+%
 % abar=SIGa*(iVa*astar+kron(Z,iSIGu)*y); % 5.2.6
 
 SIGa=(K.'*(iVa+kron(Z*Z.',iSIGu))*K)\eye(na2); % 5.2.7
@@ -60,25 +62,25 @@ smpl=@posterior_simulator;
 abar_out=afunc(abar);
 
     function draws=posterior_simulator(ndraws)
-        
+
         for idraw=1:ndraws
             % re-expand immediately
             adraw=afunc(abar+CSIGa*randn(na2,1));
-            
+
             if idraw==1
-                
+
                 di=[adraw;vech(SIGu)];
-                
+
                 draws=di(:,ones(ndraws,1));
-                
+
             else
-                
+
                 draws(1:na,idraw)=adraw;
-                
+
             end
-            
+
         end
-        
+
     end
 
 end

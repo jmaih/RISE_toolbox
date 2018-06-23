@@ -1,19 +1,6 @@
 function v=vech(A)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 [nr,nc]=size(A);
 if ~isequal(nr,nc)

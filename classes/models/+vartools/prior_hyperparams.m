@@ -1,4 +1,6 @@
 function p=prior_hyperparams()
+% INTERNAL FUNCTION
+%
 
 % L1 : Overall tightness
 % L2 : Cross-variable specific variance parameter
@@ -34,7 +36,7 @@ p.normal_wishart_eta=0.01;
 % a small value of ? implies a tight prior variance
 % If ? is increased, the posterior mean approaches the LS estimator as
 % expected because all terms involving V ?1 in the formulas for the
-% posterior moments disappear if ??? and V ?1 ? 0 
+% posterior moments disappear if ??? and V ?1 ? 0
 
 p.independent_normal_wishart_eta=p.normal_wishart_eta;
 
