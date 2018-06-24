@@ -1,5 +1,5 @@
 function Y=range(this,varargin)
-% RANGE overloads Matlab's RANGE for ts objects. returns the range of the
+% Vverloads Matlab's RANGE for ts objects. returns the range of the
 % values in the time series
 %
 % ::
@@ -9,14 +9,14 @@ function Y=range(this,varargin)
 % Args:
 %
 %    - **this** [ts]: time series object
-%
 %    - **varargin**: additional matlab arguments for the RANGE function
 %
-% Output Args:
+% Returns:
 %
 %    - **Y** [numeric]: Difference between maximum and minimum values
 %
-% See also : RANGE
+% See also:
+%    - range
 
 Y=range(this.data,varargin{:});
 
