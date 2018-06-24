@@ -22,10 +22,11 @@ function db=rand(start_date,varargin)
 %    - ts.rand does not allow more than 3 dimensions
 %
 % Example:
+%    ::
 %
-%      db=ts.rand(1990,10,1)
-%      db=ts.rand('1990',10,3)
-%      db=ts.rand('1990Q3',10,5,100)
+%       db=ts.rand(1990,10,1)
+%       db=ts.rand('1990',10,3)
+%       db=ts.rand('1990Q3',10,5,100)
 %
 
 data=rand(varargin{:});

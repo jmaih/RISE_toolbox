@@ -30,7 +30,7 @@ function out=pdecomp(y0,doLog,dorder)
 %    of the structure will be the names of the different variables.
 %
 % See also:
-%    - npdecomp
+%    - :func:`npdecomp <ts.npdecomp>`
 %
 
 n=nargin;

@@ -8,7 +8,7 @@ function m=allmean(this)
 % Args:
 %    db (ts object): the times series object to compute the mean of
 %
-% Returns;
+% Returns:
 %    :
 %    - m (cell): Cell containing
 %

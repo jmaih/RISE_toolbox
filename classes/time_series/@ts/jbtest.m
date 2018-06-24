@@ -10,26 +10,28 @@ function [h,p,jbstat,critval]=jbtest(this,varargin)
 %
 % Args:
 %
-%    - **this** [ts]: time series object
-%    - **alpha** [numeric|{0.05}]: significance level
-%    - **mctol** [numeric|{[]}]: significance level when Monte Carlo is
+%    - **this** (ts): time series object
+%    - **alpha** (numeric\|{0.05}): significance level
+%    - **mctol** (numeric\|{[]}): significance level when Monte Carlo is
 %      used (instead of interpolation) in the computation of **p** (see
 %      below)
 %
 % Returns:
+%    :
 %
-%    - **h** [0|1]: result of the test. H=0 indicates that the null
-%      hypothesis ("the data are normally distributed") cannot be rejected
-%      at the 5% significance level. H=1 indicates that the null hypothesis
-%      can be rejected at the 5% level.
-%    - **p** : p-value computed using inverse interpolation into the
-%      look-up table of critical values. Small values of p cast doubt on
-%      the validity of the null hypothesis
-%    - **jbstat** : test statistic
-%    - **critval** : critical value for the test
+%       - **h** (0|1): result of the test. H=0 indicates that the null
+%         hypothesis ("the data are normally distributed") cannot be rejected
+%         at the 5% significance level. H=1 indicates that the null hypothesis
+%         can be rejected at the 5% level.
+%       - **p**: p-value computed using inverse interpolation into the
+%         look-up table of critical values. Small values of p cast doubt on
+%         the validity of the null hypothesis
+%       - **jbstat**: test statistic
+%       - **critval**: critical value for the test
 %
 % See also:
 %    - jbtest
+%
 
 this=this.data;
 

@@ -22,10 +22,11 @@ function db=zeros(start_date,varargin)
 %    - ts.zeros does not allow more than 3 dimensions
 %
 % Example:
+%    ::
 %
-%      db=ts.zeros(1990,10,1)
-%      db=ts.zeros('1990',10,3)
-%      db=ts.zeros('1990Q3',10,5,100)
+%       db=ts.zeros(1990,10,1)
+%       db=ts.zeros('1990',10,3)
+%       db=ts.zeros('1990Q3',10,5,100)
 %
 
 data=zeros(varargin{:});

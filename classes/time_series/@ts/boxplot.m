@@ -15,8 +15,8 @@ function h=boxplot(varargin)
 %    - varargin: additional matlab (See BOXPLOT) and RISE (PARSE_PLOT_ARGS)
 %      options coming in pairs
 %
-% See also :
-%    PARSE_PLOT_ARGS
+% See also:
+%    parse_plot_args
 
 tmp=utils.plot.myplot(@boxplot,varargin{:});
 
