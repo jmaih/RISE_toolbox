@@ -178,27 +178,31 @@ format_output()
     function [y0,shocks]=format_input()
         
         if ~isempty(x)
+            
+            xend=x(:,end,:);
+            
             % there is a third dimension if we have panel...
             x=x(:,last_obs+1:end,:);
             
-        end
-        
-        % constant, if any, is already added by collect_data
-        
-        if ~isempty(x)
-            % expand the exogenous from the last observation if necessary
             ncols=size(x,2);
             
+            % constant, if any, is already added by collect_data
+            
+            % expand the exogenous from the last observation if necessary
             if ncols<nsteps
                 
                 n_n=nsteps-ncols;
                 
-                xx=x(:,ncols*ones(1,n_n),:);
+                xx=xend(:,ones(1,n_n),:);
                 
                 x=cat(2,x,xx);
                 
-                warning(['Not enough observations on exogenous over the ',...
-                    'forecast horizon. Last observation replicated'])
+                if ~all(x(:)==1)
+                    % display warning only if it is not the constant
+                    warning(['Not enough observations on exogenous over the ',...
+                        'forecast horizon. Last observation replicated'])
+                    
+                end
                 
             end
             % there is a third dimension if we have panel...
@@ -281,7 +285,7 @@ format_output()
         
         date_start=date2serial(date_start);
         
-        if isempty(histdb),histdb=self.data; end
+        if isempty(histdb),histdb=self.estim_.data; end
         
     end
 
