@@ -18,8 +18,4 @@ x=cellfun(@(z)z(~isspace(z)),x,'uniformOutput',false);
 
 x=x(:).';
 
-n=numel(number);
-
-x=x(1:n);
-
 end
