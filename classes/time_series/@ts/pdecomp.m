@@ -9,10 +9,10 @@ function out=pdecomp(y0,doLog,dorder)
 %
 % Args:
 %
-%    - **y** [ts] : time series to decompose
-%    - **doLog** [true|{false}] : if log, do a multiplicative decomposition
+%    y (ts): time series to decompose
+%    doLog (true | {false}): if log, do a multiplicative decomposition
 %      otherwise the decomposition is additive
-%    - **dorder** [integer|{2}] : detrending order
+%    dorder (integer | {2}): detrending order
 %
 % Returns:
 %    :

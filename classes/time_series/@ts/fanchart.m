@@ -7,9 +7,9 @@ function out=fanchart(this,ci)
 %
 % Args:
 %
-%    - **this** [ts]: time series with either multiple pages or multiple
+%    this (ts): time series with either multiple pages or multiple
 %      columns, but not both
-%    - **ci** [vector]: numbers in [0,1] or in [0,100] to be used in the
+%    ci (vector): numbers in [0,1] or in [0,100] to be used in the
 %      calculation of the width of the fans
 %
 % Returns:

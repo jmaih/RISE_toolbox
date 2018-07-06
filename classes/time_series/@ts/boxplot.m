@@ -10,9 +10,9 @@ function h=boxplot(varargin)
 %
 % Args:
 %
-%    - **db** [ts]: time series object
-%    - **xrange** [char|cellstr|serial date]: Range of the data to plot
-%    - varargin: additional matlab (See BOXPLOT) and RISE (PARSE_PLOT_ARGS)
+%    db (ts object): time series object
+%    xrange (char | cellstr | serial date): Range of the data to plot
+%    varargin (pairs): additional matlab (See BOXPLOT) and RISE (PARSE_PLOT_ARGS)
 %      options coming in pairs
 %
 % See also:

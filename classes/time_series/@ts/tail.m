@@ -7,8 +7,8 @@ function db=tail(db,n)
 %    db = tail(db,n);
 %
 % Args:
-%    - db (ts object): time series object
-%    - n (integer): number of time steps to show
+%    db (ts object): time series object
+%    n (integer): number of time steps to show
 %
 % Returns:
 %    :

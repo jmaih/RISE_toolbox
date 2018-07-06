@@ -6,13 +6,13 @@ function plot_handle=barh(varargin)
 %    varargout = bar(X,db,varargin);
 %
 % Args:
-%    - X : Date description
+%    X (string | serial): Date description
 %
 %       - string of dates, e.g., X='1990:2000'
 %       - serial dates, e.g., X=date2serial('1990Q1'):date2serial('2000Q1')
 %
-%    - db (ts object): Time series object with data
-%    - options: Options need to come in pairs
+%    db (ts object): Time series object with data
+%    options (pairs): Options need to come in pairs
 %
 %       - 'figsize' ([value, value]): the figure size (multiple plots) with default [3,3]
 %       - 'figtitle' (string): the figure title (multiple plots) with default ''

@@ -10,9 +10,9 @@ function [h,p,jbstat,critval]=jbtest(this,varargin)
 %
 % Args:
 %
-%    - **this** (ts): time series object
-%    - **alpha** (numeric\|{0.05}): significance level
-%    - **mctol** (numeric\|{[]}): significance level when Monte Carlo is
+%    this (ts): time series object
+%    alpha (numeric | {0.05}): significance level
+%    mctol (numeric | {[]}): significance level when Monte Carlo is
 %      used (instead of interpolation) in the computation of **p** (see
 %      below)
 %

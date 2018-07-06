@@ -8,7 +8,7 @@ function [trend,detrended]=ma_filter(varargin)
 %
 % Args:
 %
-%    - **y** [ts] : scalar time series
+%    y (ts): scalar time series
 %      the time series. The following are admitted:
 %
 %      - annual data : e.g. 1990 or '1990'
@@ -16,10 +16,10 @@ function [trend,detrended]=ma_filter(varargin)
 %      - Quarterly data : e.g. '1990Q3'
 %      - monthly data : e.g. '1990M12'
 %
-%    - **q** [integer|{0.5*frequency}] : number of periods before or after the
+%    q (integer | {0.5*frequency}): number of periods before or after the
 %      current one to be considered in the moving average calculation. The
 %      total window length is 2q+1
-%    - **extend** [true|{'false'}] : if true, replicated observations are
+%    extend (true | {'false'}): if true, replicated observations are
 %      added both at the beginning and at the end of the original dataset in
 %      order to avoid losing some observations during the filtering process.
 %

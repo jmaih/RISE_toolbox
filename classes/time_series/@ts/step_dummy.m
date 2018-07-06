@@ -3,9 +3,9 @@ function db=step_dummy(start_date,end_date,dummy_start_date)
 %
 % Args:
 %
-%    - start_date: start date of the time series
-%    - end_date: end date of the time series
-%    - dummy_start_date: start date of the step dummy
+%    start_date: start date of the time series
+%    end_date: end date of the time series
+%    dummy_start_date: start date of the step dummy
 %
 % Returns:
 %    :

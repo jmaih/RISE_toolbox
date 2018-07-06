@@ -7,9 +7,9 @@ function this=reset_data(this,newdata,newnames)
 %    db = reset_data(db,newdata,newnames);
 %
 % Args:
-%    - db (ts object): original time series object
-%    - newdata (matrix): new data to replace the data of the original time series
-%    - newnames: (optional) new variable names to replace with
+%    db (ts object): original time series object
+%    newdata (matrix): new data to replace the data of the original time series
+%    newnames: (optional) new variable names to replace with
 %
 % Returns:
 %    :

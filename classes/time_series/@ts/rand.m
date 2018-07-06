@@ -7,8 +7,8 @@ function db=rand(start_date,varargin)
 %
 % Args:
 %
-%    - **start_date** : [numeric|char]: a valid time series (ts) date
-%    - varargin : [numeric]: arguments to matlab's **rand** function.
+%    start_date (numeric | char): a valid time series (ts) date
+%    varargin (numeric): arguments to matlab's **rand** function.
 %
 % Returns:
 %    :

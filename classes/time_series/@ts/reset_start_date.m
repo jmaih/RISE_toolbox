@@ -6,8 +6,8 @@ function this=reset_start_date(this,startdate)
 %    db = reset_start_date(db,startdate)
 %
 % Args:
-%    - db (ts object): original time series object
-%    - startdate: refer to :func:`ts` to see what startdate formats are available
+%    db (ts object): original time series object
+%    startdate: refer to :func:`ts` to see what startdate formats are available
 %
 % Returns:
 %    :

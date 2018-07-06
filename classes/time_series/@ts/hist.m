@@ -10,10 +10,10 @@ function h=hist(varargin)
 %
 % Args:
 %
-%    - db (ts object): time series object
-%    - xrange: date range. Check XXXXX for correct format
-%    - M (integer): number of bins (default 10)
-%    - X (vector): histogram with bin centers given by X
+%    db (ts object): time series object
+%    xrange: date range. Check XXXXX for correct format
+%    M (integer): number of bins (default 10)
+%    X (vector): histogram with bin centers given by X
 %
 % Returns:
 %    :

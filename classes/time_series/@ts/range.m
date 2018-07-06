@@ -8,8 +8,8 @@ function Y=range(this,varargin)
 %
 % Args:
 %
-%    - **this** [ts]: time series object
-%    - **varargin**: additional matlab arguments for the RANGE function
+%    this (ts): time series object
+%    varargin : additional matlab arguments for the RANGE function
 %
 % Returns:
 %

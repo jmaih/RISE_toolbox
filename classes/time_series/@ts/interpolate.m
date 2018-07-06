@@ -7,8 +7,8 @@ function this=interpolate(this,method,varargin)
 %    db = interpolate(db, method, varargin);
 %
 % Args:
-%    - db (ts object): time series object to interpolate from
-%    - method (string): interpolate method (default: spline). Same as the option used in MATLAB, i.e.,
+%    db (ts object): time series object to interpolate from
+%    method (string): interpolate method (default: spline). Same as the option used in MATLAB, i.e.,
 %
 %        - 'nearest': nearest neighbor interpolation
 %        - 'linear': linear interpolation
@@ -18,7 +18,7 @@ function this=interpolate(this,method,varargin)
 %        - 'v5cubic': the cubic interpolation from MATLAB 5, which does not
 %          extrapolate and uses 'spline' if X is not equally spaced.
 %
-%    - varargin{1}: optional condition for extrapolation (default: no extrapolation)
+%    varargin{1}: optional condition for extrapolation (default: no extrapolation)
 %
 %       - 'extrap': extrapolate out for dates outside the dates with observations
 %       - extrapval (double): use extrapval for dates outside the dates with observations

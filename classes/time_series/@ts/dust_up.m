@@ -8,8 +8,8 @@ function this=dust_up(this,crit)
 %
 % Args:
 %
-%    - **this** [rts|ts]: time-series object
-%    - **crit** [numeric|{sqrt(eps)}]: cutoff point
+%    this (rts | ts): time-series object
+%    crit (numeric | {sqrt(eps)}): cutoff point
 %
 % Returns:
 %    :

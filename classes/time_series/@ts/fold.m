@@ -9,8 +9,8 @@ function this=fold(last_hist_date,varargin)
 %
 % Args:
 %
-%    - **last_hist_date** [char|serial date]:
-%    - **obj** [ts]: time series
+%    last_hist_date (char | serial date):
+%    obj (ts): time series
 %
 % Returns:
 %    :

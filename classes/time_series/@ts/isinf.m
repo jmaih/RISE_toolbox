@@ -6,7 +6,7 @@ function flag=isinf(self)
 %    flag = isinfinite(db);
 %
 % Args:
-%    - db (ts object): time series object
+%    db (ts object): time series object
 %
 % Returns:
 %    - flag (bool): whether the corresponding data is infinite or not

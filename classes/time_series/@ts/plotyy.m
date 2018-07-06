@@ -9,12 +9,12 @@ function varargout=plotyy(varargin)
 %    [ax, h1, h2] = plotyy(xrange, y1, y2, func1, func2);
 %
 % Args:
-%    - y1 (ts object): time series to plot with left axis tick
-%    - y2 (ts object): time series to plot with right axis tick
-%    - xrange: date range to plot. See ts for formats
-%    - func (string/func-handle): use the function to make the plots instead
-%    - func1 (string/func-handle): use the function to make the plot for y1
-%    - func2 (string/func-handle): use the function to make the plot for y2
+%    y1 (ts object): time series to plot with left axis tick
+%    y2 (ts object): time series to plot with right axis tick
+%    xrange: date range to plot. See ts for formats
+%    func (string/func-handle): use the function to make the plots instead
+%    func1 (string/func-handle): use the function to make the plot for y1
+%    func2 (string/func-handle): use the function to make the plot for y2
 %
 % Returns:
 %    :

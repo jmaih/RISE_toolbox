@@ -7,7 +7,7 @@ function [Rmse,Pe] = rmse(rawdata)
 %
 % Args:
 %
-%      - **rawdata** : [T x (h+1) x nsim ts]. Time series with
+%      rawdata (T x (h+1) x nsim ts): Time series with
 %
 %          - T observations
 %          - h+1 columns, where the first column represents the actual data

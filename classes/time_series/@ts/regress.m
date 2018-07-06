@@ -8,9 +8,9 @@ function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 %
 % Args:
 %
-%    - **this** [ts] : left-hand-side variable
-%    - **this2** [ts] : right-hand-side variables
-%    - **varargin** [comma separated] : additional inputs for Matlab's REGRESS
+%    this (ts): left-hand-side variable
+%    this2 (ts): right-hand-side variables
+%    varargin (comma separated): additional inputs for Matlab's REGRESS
 %      function
 %
 % Returns:

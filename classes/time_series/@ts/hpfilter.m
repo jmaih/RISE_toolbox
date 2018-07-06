@@ -3,8 +3,8 @@ function [hptrend,hpcycle] = hpfilter(db,lambda)
 %
 % Args:
 %
-%    - db (double): T*n ts object
-%    - lambda (double): scalar, lambda parameter. Refer to `wikipedia <https://en.wikipedia.org/wiki/Hodrick-Prescott_filter>`_
+%    db (double): T*n ts object
+%    lambda (double): scalar, lambda parameter. Refer to `wikipedia <https://en.wikipedia.org/wiki/Hodrick-Prescott_filter>`_
 %
 % Returns:
 %    :

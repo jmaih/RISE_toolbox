@@ -7,9 +7,9 @@ function db=prctile(db,p)
 %
 % Args:
 %
-%    - **db** [ts] : time series with many pages (third dimension). The time
+%    db (ts): time series with many pages (third dimension). The time
 %      series may have one or several variables.
-%    - **p** [scalar|vector] : scalar or a vector of percent values
+%    p (scalar | vector): scalar or a vector of percent values
 %
 % Returns:
 %    :

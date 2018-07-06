@@ -7,7 +7,7 @@ function [sw,jj,T]=spectrum(this)
 %
 % Args:
 %
-%    - **this** (ts object): time series object
+%    this (ts object): time series object
 %
 % Returns:
 %    :

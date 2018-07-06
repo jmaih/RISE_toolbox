@@ -10,10 +10,10 @@ function plot_handle=plot_real_time(varargin)
 %
 % Args:
 %
-%    - **rts** [ts|rts]: valid time series object with possibly several
+%    rts (ts | rts): valid time series object with possibly several
 %      columns and exactly one page
-%    - **xrange** []: range over which to restrict the plots
-%    - **varargin** : valid matlab arguments for plot, coming in pairs
+%    xrange : range over which to restrict the plots
+%    varargin : valid matlab arguments for plot, coming in pairs
 %
 % Returns:
 %    :
