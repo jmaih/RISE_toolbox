@@ -17,5 +17,6 @@ function H = finite_differences(Objective,params,varargin)
 %
 %    - **H** [matrix]: Hessian matrix
 %
+% See also : utils.hessian.outer_product
 
 H=utils.numdiff.hessian(Objective,params,[],varargin{:});
