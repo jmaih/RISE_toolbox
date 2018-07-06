@@ -3,6 +3,7 @@ function [lnprior,retcode]=log_prior_density(obj,param)
 %
 % ::
 %
+%    [lnprior,retcode]=log_prior_density(obj,param)
 %
 % Args:
 %

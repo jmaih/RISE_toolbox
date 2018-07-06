@@ -1,15 +1,13 @@
 function db=dbminusdb(obj,odb,cdb)
 % H1 line
 %
-% ::
-%
-%
 % Args:
 %
 % Returns:
 %    :
-%   none
-%%
+%
+%    none
+%
 % Note:
 %
 % Example:

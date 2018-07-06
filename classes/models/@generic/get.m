@@ -1,5 +1,5 @@
 function [Reply,retcode]=get(obj,PropertyName)
-% GET -- fetches information from generic objects
+% Fetches information from generic objects
 %
 % ::
 %
@@ -24,8 +24,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %      - **'trend'|'growth'|'bgp'** [char]: balanced growth path. It is
 %        also possible to further taylor the output:
 %
-%          - 'trend' | 'trend(default)' | 'growth' |
-%            'growth(default)' | 'bgp' | 'bgp(default)'
+%          - 'trend'|'trend(default)'|'growth'|'growth(default)'|'bgp'|'bgp(default)'
 %            will give the same result (default) result
 %          - '...(struct)' will return the BGP in vector of structures,
 %            where each structure is a separate regime
@@ -33,8 +32,8 @@ function [Reply,retcode]=get(obj,PropertyName)
 %            the first column is the list of variables and the subsequent
 %            columns are the different regimes.
 %
-%      N.B. For linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
-%      variables the BGP is x_t/x_{t-1}
+%        N.B. For linear variables the BGP is x_t-x_{t-1}, whereas for log-linear
+%        variables the BGP is x_t/x_{t-1}
 %
 %      - **'sstate'|'steadystate'|'steady_state'** [char]: steady state. It is
 %        also possible to further taylor the output:
@@ -125,7 +124,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %      - **'chain_tex'** [char]: description of markov chains
 %
-%      - ***'regime_list'* [char]: list of regimes (i.e. composites of
+%      - ***'regime_list'** [char]: list of regimes (i.e. composites of
 %        states from different chains)
 %
 %      - **'regime_tex'** [char]: description of regimes
@@ -157,11 +156,6 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %    - **retcode** [numeric]: 0 if an error is not encounted
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 % TODO:
 % create a separate get function for dsge

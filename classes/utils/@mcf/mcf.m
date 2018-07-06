@@ -6,7 +6,7 @@ classdef mcf < handle
     %    - lb : lower bounds for the parameters
     %    - ub : upper bounds for the parameters
     %    - nsim : number of simulations
-    %    - procedure : sampling procedure [{'uniform'}|'latin_hypercube'|'sobol'|'halton'|user-defined]
+    %    - procedure : sampling procedure [ {'uniform'} | 'latin_hypercube' | 'sobol' | 'halton' | user-defined]
     %    - parameter_names : names of the parameters
     %    - samples : parameter draws
     %    - is_behaved : boolean flag for behaved parameter vectors
@@ -104,8 +104,8 @@ classdef mcf < handle
             %    - **names** [empty|char|cellstr]: names of the parameters. If
             %      empty, the names are created as p_i, where "i" is the order
             %      of the parameter in the list.
-            %    - **procedure_** [{'uniform'}|'latin_hypercube'|'sobol'|..
-            %      'halton'|user-defined]: when it is user-defined, it should be
+            %    - **procedure_** [{'uniform'}||'latin_hypercube'||'sobol'||..
+            %      'halton'||user-defined]: when it is user-defined, it should be
             %      a function handle, and should take 3 inputs(lb, ub, nsim) and
             %      return a parameter draw.
             %
