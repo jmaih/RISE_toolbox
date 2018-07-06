@@ -1,11 +1,10 @@
 function [H,H2,grad]=outer_product(Objective,xparam,varargin)
-% outer_product -- Computes the hessian using the outer product of the
-% gradient 
+% Computes the hessian using the outer product of the gradient 
 %
 % ::
 %
-%	H = outer_product(Objective,params)
-%	H = outer_product(Objective,params,varargin)
+%    H = outer_product(Objective,params);
+%    H = outer_product(Objective,params,varargin);
 %
 % Args:
 %
@@ -25,11 +24,15 @@ function [H,H2,grad]=outer_product(Objective,xparam,varargin)
 %
 %    - **grad** [vector]: gradient vector
 %
-% Note: Objective is assumed to have at least two output arguments the
-% first one will not be used. The second one is the different increments of
-% the likelihood 
+% Note:
+%    Objective is assumed to have at least two output arguments the
+%    first one will not be used. The second one is the different increments of
+%    the likelihood 
 %
-% See also : utils.hessian.finite_differences
+% See also:
+%
+%    - utils.hessian.finite_differences
+%
 
 if ischar(Objective)
     
