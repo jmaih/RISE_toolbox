@@ -1,5 +1,5 @@
 function self=setup_nonlinear_restrictions(self,express,rplfunc)
-% setup_nonlinear_restrictions - sets nonlinear restrictions
+% Sets nonlinear restrictions
 %
 % ::
 %
@@ -28,7 +28,6 @@ function self=setup_nonlinear_restrictions(self,express,rplfunc)
 %
 % Example:
 %
-%    See also:
 
 RestrictionsBlock=self.estim_.linear_restrictions;
 
@@ -37,10 +36,10 @@ nc=numel(RestrictionsBlock);
 is_inequality=false(1,nc);
 
 for ii=1:nc
-    
+
     is_inequality(ii)=any(RestrictionsBlock{ii}=='<')||...
         any(RestrictionsBlock{ii}=='>');
-    
+
 end
 
 RestrictionsBlock=RestrictionsBlock(is_inequality);
@@ -48,15 +47,15 @@ RestrictionsBlock=RestrictionsBlock(is_inequality);
 self.estim_.linear_restrictions(is_inequality)=[];
 
 if isempty(RestrictionsBlock)
-    
+
     return
-    
+
 end
 
 if isstruct(RestrictionsBlock)
-    
+
     RestrictionsBlock=RestrictionsBlock.original;
-    
+
 end
 
 RestrictionsBlock=cellfun(@(x)x(~isspace(x)),RestrictionsBlock,...
@@ -73,11 +72,11 @@ nparams=numel(param_names);
 governing_chain=nan(1,nparams);
 
 for ii=1:numel(self.markov_chains)
-    
+
     these_params=self.markov_chains(ii).param_list;
-    
+
     governing_chain(locate_variables(these_params,param_names))=ii;
-    
+
 end
 
 % chain_names=self.markov_chain_info.small_markov_chain_info.chain_names;
@@ -95,13 +94,13 @@ RestrictionsBlock=parameterize(RestrictionsBlock);
     RestrictionsBlock);
 
 if ~isempty(derived_parameters)
-    
+
     error('derived parameters should not appear here')
-    
+
 end
 
     function restr=parameterize(restr)
-        
+
         express=['\<',...
             '(a|b)',...1
             '(\d+)',...2
@@ -114,33 +113,33 @@ end
             '(?:,)?',...
             '(\d+)?',...6
             '(?:\))\>'];
-        
+
         replace=@engine; %#ok<NASGU>
-        
+
         restr=regexprep(restr,express,'${replace($1,$2,$3,$4,$5,$6)}');
-        
+
         function str=engine(a,lag,eqtn,vbl,chain,state)
-            
+
             vbl=vbl2vbl(vbl);
-            
+
             str=[a,lag,'_',eqtn,'_',vbl];
-            
+
             if ~isempty(chain)
-                
+
                 str=[str,'(',chain,',',state,')'];
-                
+
             end
-            
+
             function v=vbl2vbl(v)
-                
+
                 v=locate_variables(v,endo_names);
-                
+
                 v=int2str(v);
-                
+
             end
-            
+
         end
-        
+
     end
 
 end

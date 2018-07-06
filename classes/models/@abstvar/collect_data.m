@@ -1,5 +1,8 @@
 function [y,x,date_range]=collect_data(self,date_range)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Parse data into a useable format
+%
+% Note:
+%    It is assumed that data is set in self.estim_.data before the execution of this function
 %
 
 ynames=self.endogenous;
@@ -48,48 +51,48 @@ if ng>1
 
 end
 
-    function add_constants()
+function add_constants()
 
-        sd=size(yx,2);
+    sd=size(yx,2);
 
-        if self.constant
+    if self.constant
 
-            wan=ones(1,sd,ng);
+        wan=ones(1,sd,ng);
 
-            x=cat(1,wan,x);
-
-        end
+        x=cat(1,wan,x);
 
     end
 
-    function d=collectdata(data,vnames)
+end
 
-        nvars_=numel(vnames);
+function d=collectdata(data,vnames)
 
-        if nvars_==0
+    nvars_=numel(vnames);
 
-            d=[];
+    if nvars_==0
 
-            return
+        d=[];
 
-        end
-
-        tmp=ts.collect(data);
-
-        d=double(tmp);
-
-        where=locate_variables(vnames,tmp.varnames);
-
-        dn=tmp.date_numbers;
-
-        date_range=abstvar.reset_range(date_range,dn);
-
-        start=find(dn==date_range(1));
-
-        finish=find(dn==date_range(2));
-
-        d=permute(d(start:finish,where,:,:),[2,1,3,4]);
+        return
 
     end
+
+    tmp=ts.collect(data);
+
+    d=double(tmp);
+
+    where=locate_variables(vnames,tmp.varnames);
+
+    dn=tmp.date_numbers;
+
+    date_range=abstvar.reset_range(date_range,dn);
+
+    start=find(dn==date_range(1));
+
+    finish=find(dn==date_range(2));
+
+    d=permute(d(start:finish,where,:,:),[2,1,3,4]);
+
+end
 
 end
