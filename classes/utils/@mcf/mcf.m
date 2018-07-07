@@ -81,7 +81,7 @@ classdef mcf < handle
             %
             % Args:
             %
-            %    - **check_behavior** [function_handle|cell|vector]:
+            %    check_behavior (function_handle | cell | vector):
             %
             %      (i) when it is a function handle, the function takes as input a vector
             %          of parameters and returns in its first output a boolean that
@@ -95,17 +95,16 @@ classdef mcf < handle
             %      (iii) if it is a vector, all elements are either 0 or 1 or boolean, describing whether
             %            each parameter vector checks the behavior or not.
             %
-            %    - **nsim_or_draws** [integer|matrix]: When it is an integer,
+            %    nsim_or_draws (integer | matrix): When it is an integer,
             %      nsim_or_draws is the number of draws to sample. When it is a
             %      matrix, it is the draws. No further sampling will be
             %      performed.
-            %    - **lb** [empty|vector]: lower bound of the search space
-            %    - **ub** [empty|vector]: upper bound of the search space
-            %    - **names** [empty|char|cellstr]: names of the parameters. If
+            %    lb (empty | vector): lower bound of the search space
+            %    ub (empty | vector): upper bound of the search space
+            %    names (empty|char|cellstr]: names of the parameters. If
             %      empty, the names are created as p_i, where "i" is the order
             %      of the parameter in the list.
-            %    - **procedure_** [{'uniform'}||'latin_hypercube'||'sobol'||..
-            %      'halton'||user-defined]: when it is user-defined, it should be
+            %    procedure_ ({'uniform'} | 'latin_hypercube' | 'sobol' | 'halton' | user-defined): when it is user-defined, it should be
             %      a function handle, and should take 3 inputs(lb, ub, nsim) and
             %      return a parameter draw.
             %

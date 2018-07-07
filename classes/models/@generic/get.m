@@ -10,7 +10,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %    - **obj** [rise|dsge|rfvar|svar]: model object
 %
 %    - **PropertyName** [char]: name of the property or element desired. This
-%      includes
+%      includes:
 %
 %      - **'structure'** [char]: derivatives + transition matrices + other
 %        information need to solve the model

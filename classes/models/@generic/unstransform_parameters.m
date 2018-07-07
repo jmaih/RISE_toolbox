@@ -7,19 +7,17 @@ function x=unstransform_parameters(obj,x)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
-%    - **x** [n x 1 vector]: original parameters
+%    obj (rise | dsge | rfvar | svar): model object
+%    x (n x 1 vector): original parameters
 %
 % Returns:
 %    :
 %
 %    - **x** [n x 1 vector]: untransformed parameters
 %
-% Note:
+% See also:
+%    - transform_parameters
 %
-% Example:
-%
-% See also: transform_parameters
 
 if isempty(obj)
 

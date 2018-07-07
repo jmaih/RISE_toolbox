@@ -7,8 +7,8 @@ function obj=add_to_routines(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
-%    - **varargin** : arguments coming in pairs
+%    obj (rise | dsge | svar | rfvar): model object
+%    varargin : arguments coming in pairs
 %
 % Returns:
 %    :

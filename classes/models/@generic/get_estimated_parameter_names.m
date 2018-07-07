@@ -1,20 +1,6 @@
 function estim_names=get_estimated_parameter_names(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 estim_names={obj.estimation.priors.name};
 

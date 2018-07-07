@@ -1,27 +1,21 @@
 function ind=stationary_index(obj,too_small)
-% STATIONARY_INDEX - index for stationary variables
+% INTERNAL FUNCTION: Index for stationary variables
 %
 % ::
 %
-%   ind=STATIONARY_INDEX(obj)
-%
-%   ind=STATIONARY_INDEX(obj,too_small)
+%   ind=stationary_index(obj)
+%   ind=stationary_index(obj,too_small)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: model object
-%    - **too_small** [numeric|{1e-10}]: cutoff criterion
+%    obj (rise | dsge): model object
+%    too_small (numeric | {1e-10}): cutoff criterion
 %
 % Returns:
 %    :
 %
 %    - **ind** [logical]: true if variable is stationary
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

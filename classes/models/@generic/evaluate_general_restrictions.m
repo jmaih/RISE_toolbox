@@ -7,7 +7,7 @@ function g=evaluate_general_restrictions(obj)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar] : scalar of vector or RISE model objects
+%    obj (rise | dsge | rfvar | svar): scalar of vector or RISE model objects
 %
 % Returns:
 %    :

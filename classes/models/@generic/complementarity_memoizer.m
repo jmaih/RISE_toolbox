@@ -7,7 +7,7 @@ function [sep_cf,cf]=complementarity_memoizer(obj)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
+%    obj (rise | dsge | svar | rfvar): model object
 %
 % Returns:
 %    :

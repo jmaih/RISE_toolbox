@@ -1,5 +1,5 @@
 function obj=back_door(obj,attribute,value)
-% back_door -- forces the assignment of properties
+% Forces the assignment of properties
 %
 % ::
 %
@@ -7,9 +7,9 @@ function obj=back_door(obj,attribute,value)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
-%    - **attribute** [char|cellstr]: (hierarchical) fields to be updated
-%    - **value** [any]: updating value
+%    obj (rise | dsge | svar | rfvar): model object
+%    attribute (char | cellstr): (hierarchical) fields to be updated
+%    value (any): updating value
 %
 % Returns:
 %    :

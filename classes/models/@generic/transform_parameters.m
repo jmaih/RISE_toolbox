@@ -8,16 +8,16 @@ function [obj,x0,lb,ub,vcov]=transform_parameters(obj,x0,lb,ub,vcov)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
+%    obj (rise | dsge | rfvar | svar): model object
 %
-%    - **x0** [empty|n x 1 vector]: initial conditions of estimation in a space that
+%    x0 (empty | n x 1 vector): initial conditions of estimation in a space that
 %      the user understands
 %
-%    - **lb** [n x 1 vector]: lower bound of the search space
+%    lb (n x 1 vector): lower bound of the search space
 %
-%    - **ub** [n x 1 vector]: upper bound of the search space
+%    ub (n x 1 vector): upper bound of the search space
 %
-%    - **vcov** [empty|n x n matrix]: variance covariance of the parameters
+%    vcov (empty | n x n matrix): variance covariance of the parameters
 %
 % Returns:
 %    :
@@ -42,9 +42,9 @@ function [obj,x0,lb,ub,vcov]=transform_parameters(obj,x0,lb,ub,vcov)
 %      that no element in the transformed lower bound exceeds its upper bound
 %      counterpart.
 %
-% Example:
+% See also:
+%    - untransform_parameters
 %
-% See also: untransform_parameters
 
 if isempty(obj)
 
