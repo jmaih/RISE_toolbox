@@ -1,20 +1,10 @@
 function [log_post,log_lik,log_prior,Incr,retcode,obj]=log_posterior_kernel(obj,param)
-% H1 line
+% INTERNAL FUNCTION: Compute log posterior of the dsge model
 %
 % ::
 %
 %    [log_post,log_lik,log_prior,Incr,retcode,obj]=log_posterior_kernel(obj,param)
 %
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 
 nobj=numel(obj);

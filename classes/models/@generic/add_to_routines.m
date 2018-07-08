@@ -1,5 +1,5 @@
 function obj=add_to_routines(obj,varargin)
-% Add routines items
+% INTNERAL FUNCTION: Add routines items
 %
 % ::
 %

@@ -10,10 +10,10 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 %
 % Args:
 %
-%    - **logf** [char|function_handle]: Objective function to **MINIMIZE**!!!
-%    - **lb** [d x 1 vector]: lower bound of the paramters
-%    - **ub** [d x 1 vector]: upper bound of the paramters
-%    - **options** [struct]:
+%    logf (char | function_handle): Objective function to **MINIMIZE**!!!
+%    lb (d x 1 vector): lower bound of the paramters
+%    ub (d x 1 vector): upper bound of the paramters
+%    options (struct):
 %
 %      - **alpha** [scalar|2-element|{[.25,.45]}]: target acceptance rate
 %      - **burnin** [integer|{0}]: number of burn-in initial simulations
@@ -46,8 +46,8 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 %        start all the chains at the best value. Note this will break the chains
 %        if the best value is not the last element that was saved in the chain.
 %
-%    - **mu** [d x 1 vector]: initial condition for the sampler
-%    - **SIG** [d x d matrix]: initial covariance matrix
+%    mu (d x 1 vector): initial condition for the sampler
+%    SIG (d x d matrix): initial covariance matrix
 %
 % Returns:
 %    :

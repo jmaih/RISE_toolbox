@@ -7,8 +7,8 @@ function obj=set(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: model object
-%    - **varargin** : valid input arguments coming in pairs. Notable fields to
+%    obj(rise | dsge): model object
+%    varargin : valid input arguments coming in pairs. Notable fields to
 %      that can be set include and are not restricted to:
 %
 %      - **solve_shock_horizon** [integer|struct|cell]
@@ -55,7 +55,9 @@ function obj=set(obj,varargin)
 %    obj=set(obj,'solve_shock_horizon',struct('shock1',2,'shock3',4))
 %    obj=set(obj,'solve_shock_horizon',5)
 %
-% See also: generic.set
+% See also:
+%    - generic.set
+%
 
 if isempty(obj)
 
