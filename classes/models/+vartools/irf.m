@@ -36,6 +36,10 @@ failed=false(1,kreps);
 %-------------------------------------------
 xdet=zeros(nx,irf_periods);
 
+% Only regime-specific IRFs are computed
+%---------------------------------------
+Qfunc=transition_function();
+
 for jj=1:kreps
 
     Aj=params(jj).B;
@@ -61,7 +65,7 @@ for jj=1:kreps
             shocks(ishock,1)=1;
 
             myirfs(:,:,ishock,jj,ireg)=vartools.simulate(y0,xdet,...
-                Aj(:,:,ireg),Rj(:,:,ireg),shocks);
+                Aj(:,:,ireg),Rj(:,:,ireg),shocks,Qfunc);
 
         end
 
@@ -72,5 +76,19 @@ end
 myirfs=myirfs(:,:,:,~failed,:);
 
 info={'nvars','length','nshocks','nrepetitions','nregimes'};
+
+    function out=transition_function()
+
+        out=@engine;
+
+        function [Q,retcode]=engine(~)
+
+            Q=1;
+
+            retcode=0;
+
+        end
+
+    end
 
 end

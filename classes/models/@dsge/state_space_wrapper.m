@@ -1,33 +1,43 @@
 function [T,R,Z,H,Q,sstate,init,growth]=state_space_wrapper(syst)
 
-T=zeros(syst.m);
+h=numel(syst.T);
 
-T(:,syst.state_vars_location)=syst.Tx{1};
+nshocks=size(syst.Te{1},2);
 
-R=syst.Te{1};
+T=zeros(syst.m,syst.m,h);
 
-init=struct('a',syst.a{1},'P',syst.P{1});
+R=zeros(syst.m,nshocks,h);
 
 Z=syst.obs_id;
 
-H=syst.H{1};
+nobs=numel(Z);
 
-if isempty(H)
+H=zeros(nobs,nobs,h);
+
+init=struct();
+init.a=cell2mat(syst.a);
+init.P=zeros(syst.m,syst.m,h);
+
+Q=repmat(eye(nshocks),[1,1,h]);
+
+for ireg=1:h
     
-    H=zeros(numel(Z));
+    T(:,syst.state_vars_location,ireg)=syst.Tx{ireg};
+    
+    R(:,:,ireg)=syst.Te{ireg};
+    
+    if ~isempty(syst.H{ireg})
+        
+        H(:,:,ireg)=syst.H{ireg};
+        
+    end
+    
+    init.P(:,:,ireg)=syst.P{ireg};
     
 end
 
-Q=eye(size(R,2));
+sstate=cell2mat(syst.steady_state);
 
-sstate=syst.steady_state{1};
-
-growth=imag(syst.Tsig{1});
-
-if max(abs(growth))<1e-9
-    
-    growth=0;
-    
-end
+growth=imag(cell2mat(syst.Tsig));
 
 end

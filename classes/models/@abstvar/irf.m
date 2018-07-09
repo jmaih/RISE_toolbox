@@ -52,25 +52,26 @@ for ishock=1:self.nvars
                     
                     if self.nregs==1
                         
-                        proto=ts(1,data);
+                        regimeNames=[];
                         
                     else
                         
                         regimeNames=abstvar.create_variable_names(self.nregs,'regime');
                         
-                        proto=ts(1,data,regimeNames);
-                        
                     end
+                    
+                    proto=ts(1,data,regimeNames);
                     
                 end
                 
                 if self.is_panel
                     
-                    tmp.(sname).(C1).(vname).(C2)=reset_data(proto,data);
+                    tmp.(sname).(C1).(vname).(C2)=reset_data(proto,data,...
+                        regimeNames);
                     
                 else
                     
-                    tmp.(sname).(vname)=reset_data(proto,data);
+                    tmp.(sname).(vname)=reset_data(proto,data,regimeNames);
                     
                 end
                 

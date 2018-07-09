@@ -48,6 +48,8 @@ Aj=[];
 
 Rj=[];
 
+Qj=[];
+
 for jj=1:kreps
 
     jpar=min(jj,par_replic);
@@ -78,11 +80,27 @@ for jj=1:kreps
 
     shocksj2=cell2mat(shocksj2);
 
-    fkst(:,:,jj)=vartools.simulate(y0,xdet,Aj,Rj,shocksj2);
+    Qfunc=transition_function();
+
+    fkst(:,:,jj)=vartools.simulate(y0,xdet,Aj,Rj,shocksj2,Qfunc);
 
 end
 
 info={'nvars','length','nrepetitions'};
+
+    function out=transition_function()
+
+        out=@engine;
+
+        function [Q,retcode]=engine(~)
+
+            Q=Qj;
+
+            retcode=0;
+
+        end
+
+    end
 
     function load_params()
         % identification can be expensive so save some steps if possible,
@@ -92,6 +110,8 @@ info={'nvars','length','nrepetitions'};
             Aj=params(jpar).B;
 
             Rj=identification(params(jpar));
+
+            Qj=params(jpar).Q.Q;
 
         end
 
