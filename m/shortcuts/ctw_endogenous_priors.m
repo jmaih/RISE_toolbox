@@ -1,6 +1,8 @@
 function varargout=ctw_endogenous_priors(varargin)
+% INTERNAL FUNCTION
+%
 
-% Endogenous priors a la 
+% Endogenous priors a la
 % Christiano,Trabandt and Walentin (2011):"Introducing Financial Frictions
 % and Unemployment into a Small Open Economy Model", Journal of Economic
 % Dynamics and Control

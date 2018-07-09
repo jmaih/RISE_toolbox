@@ -7,23 +7,23 @@ function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level,nstep
 %
 % Args:
 %
-%      - **y** [p x n matrix]: data
-%      - **T** [m x m x nT]: state matrix, see below
-%      - **R** [m x r x nR]: state matrix, see below
-%      - **Z** [p x m||logical]: state matrix or selector, see below
-%      - **H** [p x p x nH]: Covariances of measurement errors
-%      - **Q** [r x r x nQ]: Covariances of shocks
-%      - **init** [struct]:
-%      - **dy** [p x ndy]:
-%      - **ca** [m x nca]:
-%      - **level** [0|1|2|{3}]: controls the level output produced.
+%      y (p x n matrix): data
+%      T (m x m x nT): state matrix, see below
+%      R (m x r x nR): state matrix, see below
+%      Z (p x m | logical): state matrix or selector, see below
+%      H (p x p x nH): Covariances of measurement errors
+%      Q (r x r x nQ): Covariances of shocks
+%      init (struct):
+%      dy (p x ndy):
+%      ca (m x nca):
+%      level (0 | 1 | 2 | {3}): controls the level output produced.
 %
 %          - if level==0, only the likelihood is returned
 %          - if level==1, filters/forecasts are returned in addition to level 0
 %          - if level==2, updates are returned in addition to level 1
 %          - if level==3, smoothed values are returned in addition to level 2
 %
-%      - **nstep** [integer|{1}]: Number of forecast steps
+%      nstep (integer | {1}): Number of forecast steps
 %
 % Returns:
 %    :
@@ -53,7 +53,8 @@ function f=missing_observations_kalman_filter(y,T,R,Z,H,Q,init,dy,ca,level,nstep
 %
 % Note:
 %
-%    The system is of the form::
+%    The system is of the form
+%    .. math::
 %
 %       alpha(t+1) = T*alpha(t) + ca(t) + R(t)*eta(t),  eta ~ N(0, Q)
 %       y(t) =   Z*alpha(t) + dy(t) + epsilon(t),  epsilon ~ N(0,H)

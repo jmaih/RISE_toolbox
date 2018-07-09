@@ -1,19 +1,6 @@
 function this=newreport(varargin)
-% newreport initialize a new report object
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 this=rise_report.report(varargin{:});
 end

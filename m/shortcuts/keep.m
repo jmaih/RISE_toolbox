@@ -1,4 +1,7 @@
 function keep(varargin)
+% INTERNAL FUNCTION
+%
+
 % Clears the workspace for undesired variables
 %
 % ::
@@ -8,7 +11,7 @@ function keep(varargin)
 %
 % Args:
 %
-%    - **v1, v2,..,vn** [char]: names of the variables to clear
+%    v1, v2,..,vn (char): names of the variables to clear
 %
 % Returns:
 %    :

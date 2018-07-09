@@ -1,19 +1,10 @@
 function varargout=normal(lowerquantileORmean,upperquantileORstdev,prob,c,d)
-% H1 line
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
+% INTERNAL FUNCTION: normal distribution
 %
 % Note:
+%    One would rarely need to call distribution functions directly.
+%    Refer to <densities.html> file for list of supported distributions.
 %
-% Example:
-%
-%    See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
@@ -82,7 +73,7 @@ if hyperparameter_mode
         b=ab(2);
         moments=hyperparameters_2_moments(a,b,c,d);
     end
-    
+
     moments=struct('mean',moments(1),'sd',moments(2));
     varargout={a,b,moments,fval,space};
 else

@@ -1,20 +1,10 @@
 function out=empirical_moments(xx,lb,ub,probs,kernel,number_of_grid_points)
-% H1 line
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
+% INTERNAL FUNCTION: Compute empirical moments
 %
 % Note:
+%    One would rarely need to call distribution functions directly.
+%    Refer to <densities.html> file for list of supported distributions.
 %
-% Example:
-%
-%    See also:
-
 
 if nargin<6
 	number_of_grid_points=[];

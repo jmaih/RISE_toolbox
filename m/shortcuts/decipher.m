@@ -1,4 +1,7 @@
 function varargout=decipher(varargin)
+% INTERNAL FUNCTION
+%
+
 % Interprets error codes
 %
 % ::
@@ -7,8 +10,7 @@ function varargout=decipher(varargin)
 %
 % Args:
 %
-%    - **code** [scalar|vector]: scalar or vector of error codes returned by
-%      RISE.
+%    code (scalar | vector): scalar or vector of error codes returned by RISE.
 %
 % Returns:
 %    :
@@ -18,3 +20,5 @@ function varargout=decipher(varargin)
 %
 
 [varargout{1:nargout}]=utils.error.decipher(varargin{:});
+
+end

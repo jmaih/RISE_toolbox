@@ -1,20 +1,10 @@
 function varargout=wishart(S,v,~,~)
-% H1 line
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
+% INTERNAL FUNCTION: wishart distribution
 %
 % Note:
+%    One would rarely need to call distribution functions directly.
+%    Refer to <densities.html> file for list of supported distributions.
 %
-% Example:
-%
-%    See also:
-
 
 hyperparameter_mode=nargin>0;
 

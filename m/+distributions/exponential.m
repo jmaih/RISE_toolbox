@@ -1,14 +1,11 @@
 function varargout=exponential(lowerquantileORmean,upperquantileORstdev,prob,~,~)
-% H1 line
+% INTERNAL FUNCTION: exponential distribution
 %
-% ::
+% Note:
+%    One would rarely need to call distribution functions directly.
+%    Refer to <densities.html> file for list of supported distributions.
 %
-%
-% Args:
-%
-% Returns:
-%    :
-%
+
 % Note:
 %
 %    f(x,mu,s)=1/s*exp(-1/s*(x-mu))
@@ -21,9 +18,6 @@ function varargout=exponential(lowerquantileORmean,upperquantileORstdev,prob,~,~
 %
 %    V(x)=s^2
 %
-% Example:
-%
-%    See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
@@ -61,7 +55,7 @@ if hyperparameter_mode
     % check whether the inputs are lower_quantile and upper_quantile or
     % mean and standard deviations.
     mean_stdev_flag=isempty(prob)||isnan(prob);
-    % check the restrictions 
+    % check the restrictions
     if ~mean_stdev_flag && (upperquantileORstdev<=lowerquantileORmean)
         error([mfilename,':: upper bound cannot be less than or equal to lower bound'])
     end
@@ -79,7 +73,7 @@ if hyperparameter_mode
         b=ab(2);
         moments=hyperparameters_2_moments(a,b);
     end
-    
+
     moments=struct('mean',moments(1),'sd',moments(2));
     varargout={a,b,moments,fval,space};
 else
