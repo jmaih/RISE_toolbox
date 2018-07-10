@@ -9,6 +9,8 @@ function flag=isnan(self)
 %    db (ts object): time series object
 %
 % Returns:
+%    :
+%
 %    - flag (bool): whether the corresponding data is nan or not
 %
 % Note:

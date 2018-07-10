@@ -9,6 +9,8 @@ function flag=isinf(self)
 %    db (ts object): time series object
 %
 % Returns:
+%    :
+%
 %    - flag (bool): whether the corresponding data is infinite or not
 %
 % Note:

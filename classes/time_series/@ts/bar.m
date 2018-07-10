@@ -22,7 +22,7 @@ function varargout=bar(varargin)
 %       - 'secondary_y': the list of variables going to the secondary y axis
 %       - 'subplots' (bool): the flag for multiple plots with default false
 %
-% Notes:
+% Note:
 %
 %   - bar(db) uses the dates within db.  The colors are set by the colormap.
 %   - bar(X,db,WIDTH) or bar(db,WIDTH) specifies the width of the bars. Values
@@ -51,11 +51,11 @@ function varargout=bar(varargin)
 %       xrotate(90)
 %
 % See also:
-%    - hist
-%    - plot
-%    - barh
-%    - bar3
-%    - bar3h
+%    - :func:`hist <ts.hist>`
+%    - :func:`plot <ts.plot>`
+%    - :func:`barh <ts.barh>`
+%    - :func:`bar3 <ts.bar3>`
+%    - :func:`bar3h <ts.bar3h>`
 %
 
 [varargout{1:nargout}]=utils.plot.myplot(@bar,varargin{:});

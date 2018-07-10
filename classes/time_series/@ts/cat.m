@@ -20,7 +20,7 @@ function db=cat(dim,varargin)
 %
 % Note:
 %
-%    - all times series must be of the same frequency (see :func:`ts.aggregate` )
+%    - all times series must be of the same frequency (see :func:`aggregate <ts.aggregate>`)
 %    - Concatenation along the second dimension requires that variables have
 %      the same number of columns if no names are specified
 %    - if names are specified in the first time series, then names should be

@@ -3,7 +3,7 @@ function this=collect(varargin)
 %
 % ::
 %
-%   - this=collect(v1,v2,...,vn)
+%    this=collect(v1,v2,...,vn)
 %
 % Args:
 %
