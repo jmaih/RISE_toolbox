@@ -112,13 +112,17 @@ datta=this.data;
 switch method
 
     case 'interpolation'
-
+        
         indexfun=@(x)(x-1)*number+1;
-
+        
+        coef=1;
+        
     case 'distribution'
-
+        
         indexfun=@(x)(x-1)*number+1:x*number;
-
+        
+        coef=1/number;
+        
     otherwise
 
         error([mfilename,':: unknown aggregation method ',method])
@@ -130,8 +134,6 @@ T=last_guy-first_guy+1;
 q=T/number;
 
 C=zeros(q,T);
-
-coef=1/number;
 
 for ii=1:q
 
