@@ -8,14 +8,7 @@ function [trend,detrended]=ma_filter(varargin)
 %
 % Args:
 %
-%    y (ts): scalar time series
-%      the time series. The following are admitted:
-%
-%      - annual data : e.g. 1990 or '1990'
-%      - bi-annual data : e.g. '1990H1'
-%      - Quarterly data : e.g. '1990Q3'
-%      - monthly data : e.g. '1990M12'
-%
+%    y (ts object): time series object
 %    q (integer | {0.5*frequency}): number of periods before or after the
 %      current one to be considered in the moving average calculation. The
 %      total window length is 2q+1

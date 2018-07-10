@@ -6,8 +6,7 @@ function c2m=cell2matize(list)
 %   c2m=cell2matize(list)
 %
 % Args:
-%
-%    - **list** [cellstr]: list of variables
+%    list (cellstr): list of variables
 %
 % Returns:
 %    :

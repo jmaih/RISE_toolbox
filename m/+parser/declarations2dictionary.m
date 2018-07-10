@@ -2,9 +2,6 @@ function [dictionary,blocks] = declarations2dictionary(dictionary,blocks)
 % INTERNAL FUNCTION
 %
 
-%UNTITLED11 Summary of this function goes here
-%   Detailed explanation goes here
-
 % add the list of endogenous,exogenous,parameters and observables and
 % remove them from the blocks
 dic_items={'endogenous','exogenous','parameters','observables','log_vars'};
