@@ -1,4 +1,23 @@
 function hdl=autocorrplot(obj,pname,chain_id,order)
+% Make a plot of autocorrlation at different lags from the mcmc chains
+%
+% ::
+%
+%    hdl = autocorrplot(mcobj,pname);
+%    hdl = autocorrplot(mcobj,pname,chain_id);
+%    hdl = autocorrplot(mcobj,pname,chain_id,order);
+%
+% Args:
+%    mcobj (mcmc object): mcmc object
+%    pname (str): parameter to make the autocorrlation plot
+%    chain_id (vector of int): id of the chain to use
+%    order (int): maximum number of lags for the autocorrelation
+%
+% Returns:
+%    :
+%
+%    - **hdl** (handle object): handle to plot object
+%
 
 if nargin<4
 

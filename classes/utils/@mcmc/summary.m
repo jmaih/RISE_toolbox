@@ -1,4 +1,24 @@
 function [myMeanStdev,myQuantiles]=summary(obj,varargin)
+% Print summary information about the mcmc draws
+%
+% ::
+%
+%    [myMeanStdev, MyQuantiles] = summary(mcobj);
+%    [myMeanStdev, MyQuantiles] = summary(mcobj, varargin);
+%
+% Args:
+%    mcobj (mcmc object): mcmc object
+%    varargin (options): options need to come in pairs:
+%
+%       - 'percnt': Quantile points (default: [2.5, 25, 50, 75, 97.5])
+%       - 'batch_size': sampling size of for the computation of thinned standard deviation (SD(batch)), every 'batch_size'th points are used to compute SD(batch).
+%
+% Returns:
+%    :
+%
+%    - **myMeanStdev** [cell]: mean and standard deviations
+%    - **myQuantiles** [cell]: quantile values
+%
 
 defaults={
     'percnt',[2.5,25,50,75,97.5],@(x)all(isnumeric(x))&& all(x>0) && all(x<100)
@@ -18,35 +38,35 @@ mypercentiles=cell(obj.nparams,npc+3);
 mypercentiles(:,1)=obj.pnames(:);
 
 for ipar=1:obj.nparams
-    
+
     x=load_draws(obj,obj.pnames{ipar},[]);
-    
+
     xx=x(:,1:batch_size:end);
-    
+
     xx=xx(:);
-    
+
     x=x(:);
-    
+
     theMean=mean(x);
-    
+
     theStd=std(x);
-    
+
     theStd_batch=std(xx);
-    
+
     mycell{ipar,2}=theMean;
-    
+
     mycell{ipar,3}=theStd;
-    
+
     mycell{ipar,4}=theStd_batch;
-    
+
     mycell{ipar,5}=theMean/theStd;
-    
+
     mypercentiles{ipar,2}=obj.best.x(ipar);
-    
+
     mypercentiles{ipar,3}=median(x);
-    
+
     mypercentiles(ipar,4:end)=num2cell(prctile(x,percnt));
-    
+
 end
 
 mycell=[{'','mean','SD','SD(batch)','mean/SD'}
@@ -55,22 +75,22 @@ mycell=[{'','mean','SD','SD(batch)','mean/SD'}
 num2cell_percnt=num2cell(percnt);
 
 for ii=1:numel(percnt)
-    
+
     num2cell_percnt{ii}=sprintf('%0.1f%%',num2cell_percnt{ii});
-    
+
 end
 
 mypercentiles=[{'','mode','median'},num2cell_percnt
     mypercentiles];
 
 if nargout
-    
+
     myMeanStdev=mycell;
-    
+
     myQuantiles=mypercentiles;
-    
+
 else
-    
+
 fprintf(1,'Iterations = 1:%0.0f\n',obj.npop);
 
 fprintf(1,'Thinning interval = %0.0f\n',nan);

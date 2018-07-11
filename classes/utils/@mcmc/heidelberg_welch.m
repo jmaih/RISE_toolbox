@@ -1,15 +1,17 @@
 function [p]=heidelberg_welch(obj,alpha)
+% INTERNAL FUNCTION
+%
 
 if nargin<2
-    
+
     alpha=[];
-    
+
 end
 
 if isempty(alpha)
-    
+
     alpha=0.05;
-    
+
 end
 
 error('Implementation unfinished')

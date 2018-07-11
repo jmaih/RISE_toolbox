@@ -7,9 +7,9 @@ title(sprintf('%s(%0.4f)',pname,obj.psrf.(pname).psrf(end)))
 axis tight
 
 if nargout
-    
+
     hdl=hdl0;
-    
+
 end
 
 end
