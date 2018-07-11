@@ -12,7 +12,7 @@ function db=tail(db,n)
 %
 % Returns:
 %    :
-%    - db (ts object): time series with the last n-time steps
+%    - **db** (ts object): time series with the last n-time steps
 %
 % Note:
 %    - This is similar to the tail function in stata.

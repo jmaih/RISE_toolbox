@@ -10,16 +10,9 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 %
 % Args:
 %
-%    y0 (ts): low-frequency left-hand-side variable
-%      the time series. The following are admitted:
+%    y0 (ts object): low-frequency left-hand-side variable
 %
-%      - annual data : e.g. 1990 or '1990'
-%      - bi-annual data : e.g. '1990H1'
-%      - Quarterly data : e.g. '1990Q3'
-%      - monthly data : e.g. '1990M12'
-%
-%    Xh0 (ts | struct): high-frequency right-hand-side explanatory
-%      variables
+%    Xh0 (ts | struct): high-frequency right-hand-side explanatory variables
 %    aggreg_type ('flow' | {'average'} | 'index' | 'last' | 'first'): type of
 %      aggregation:
 %

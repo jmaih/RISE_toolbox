@@ -7,8 +7,8 @@ function db=ones(start_date,varargin)
 %
 % Args:
 %
-%    - **start_date** : [numeric|char]: a valid time series (ts) date
-%    - varargin : [numeric]: arguments to matlab's **ones** function.
+%    start_date (numeric | char): a valid time series (ts) date
+%    varargin (numeric): arguments to matlab's **ones** function.
 %
 % Returns:
 %    :

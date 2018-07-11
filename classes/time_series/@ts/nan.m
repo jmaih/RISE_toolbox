@@ -22,10 +22,12 @@ function db=nan(start_date,varargin)
 %    - ts.nan does not allow more than 3 dimensions
 %
 % Example:
+%    ::
 %
-%      db=ts.nan(1990,10,1)
-%      db=ts.nan('1990',10,3)
-%      db=ts.nan('1990Q3',10,5,100)
+%
+%       db=ts.nan(1990,10,1)
+%       db=ts.nan('1990',10,3)
+%       db=ts.nan('1990Q3',10,5,100)
 %
 
 data=nan(varargin{:});

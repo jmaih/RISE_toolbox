@@ -22,7 +22,7 @@ function data=transform(datam,type)
 % Returns:
 %    :
 %
-%    db (ts object): Transformed time series
+%    - **db** (ts object): Transformed time series
 %
 
 if nargin<2

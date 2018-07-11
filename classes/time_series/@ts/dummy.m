@@ -12,7 +12,7 @@ function db=dummy(start_date,end_date,dummy_date)
 %    dummy_date (char | serial date): date(s) at which to time series
 %      is 1 and not 0
 %
-% Output Args:
+% Returns:
 %
 %    - **db** [ts]: scalar time series of dummy observations
 %

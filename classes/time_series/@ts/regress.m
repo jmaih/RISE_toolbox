@@ -3,8 +3,8 @@ function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 %
 % ::
 %
-%   [B,BINT,R,RINT,STATS]=regress(this,this2)
-%   [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
+%   [B,BINT,R,RINT,STATS] = regress(this,this2)
+%   [B,BINT,R,RINT,STATS] = regress(this,this2,varargin)
 %
 % Args:
 %
@@ -32,10 +32,10 @@ function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 %
 %  ::
 %
-%    y=ts(1990,rand(100,1)); % random series
-%    X=y(-1)&y(-2)&y(-3); % columns of lags
-%    X=ones(X); % add a column of ones
-%    [B,BINT,R,RINT,STATS]=regress(y,X)
+%    y = ts(1990,rand(100,1)); % random series
+%    X = y(-1)&y(-2)&y(-3); % columns of lags
+%    X = ones(X); % add a column of ones
+%    [B,BINT,R,RINT,STATS] = regress(y,X)
 %
 
 if isa(this,'ts') && isa(this2,'ts')

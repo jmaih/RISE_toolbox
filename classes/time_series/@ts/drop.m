@@ -10,6 +10,8 @@ function this=drop(this,varargin)
 %    varargin (string): names of the variables to drop
 %
 % Returns:
+%    :
+%
 %    - db (ts object): time series object with corresponding variables dropped
 %
 

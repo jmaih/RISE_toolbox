@@ -9,9 +9,9 @@ function db=cat(dim,varargin)
 %
 % Args:
 %
-%    dim (1 | 2 | 3) : dimension along which concatenation is done
+%    dim (1 | 2 | 3): dimension along which concatenation is done
 %
-%    db1, db2,...,dbn (ts) : time series
+%    dbi (ts object): time series object
 %
 % Returns:
 %    :

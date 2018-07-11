@@ -6,8 +6,7 @@ function n=numel(this,varargin)
 %    n = numel(db);
 %
 % Args:
-%
-%    - db (ts object): time series object
+%    db (ts object): time series object
 %
 % Returns:
 %    :

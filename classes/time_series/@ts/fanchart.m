@@ -13,6 +13,7 @@ function out=fanchart(this,ci)
 %      calculation of the width of the fans
 %
 % Returns:
+%    :
 %
 %    - **out** [struct]: time series object
 %

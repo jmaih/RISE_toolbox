@@ -1,6 +1,5 @@
 function hdl=densplot(obj,pname,chain_id,N)
-<<<<<<< HEAD
-% autocorrplot -- plots marginal density of a given parameter
+% Plots marginal density of a given parameter
 %
 % ::
 %
@@ -10,14 +9,13 @@ function hdl=densplot(obj,pname,chain_id,N)
 %
 % Args:
 %
-%    - **obj** [mcmc object]: mcmc object 
+%    obj (mcmc object): mcmc object
+%    pname (string): parameter name
 %
-%    - **pname** [string]: parameter name 
+%    chain_id (integer | {[]}): choice of chain for which to plot the
+%      density. If empty, all chains are used.
 %
-%    - **chain_id** [integer|{[]}]: choice of chain for which to plot the
-%      density. If empty, all chains are used. 
-%
-%    - **N** [integer|{250}]: Number of point in the kernel density 
+%    N (integer | {250}): Number of point in the kernel density
 %
 % Returns:
 %    :
