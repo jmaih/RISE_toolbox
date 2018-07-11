@@ -98,7 +98,7 @@ classdef mcmc < handle
 
         varargout=summary(varargin)
 
-        varargout=heidelberg_welch(varargin)
+        % varargout=heidelberg_welch(varargin)
 
     end
 
