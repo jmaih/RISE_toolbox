@@ -1,4 +1,5 @@
 function hdl=densplot(obj,pname,chain_id,N)
+<<<<<<< HEAD
 % autocorrplot -- plots marginal density of a given parameter
 %
 % ::
@@ -25,21 +26,21 @@ function hdl=densplot(obj,pname,chain_id,N)
 %
 
 if nargin<4
-    
+
     N=[];
-    
+
     if nargin<3
-        
+
         chain_id=[];
-        
+
     end
-    
+
 end
 
 if isempty(N)
-    
+
     N=250;
-    
+
 end
 
 x=load_draws(obj,pname,chain_id);
@@ -55,9 +56,9 @@ title(pname)
 axis tight
 
 if nargout
-    
+
     hdl=hdl0;
-    
+
 end
 
 end

@@ -22,7 +22,7 @@ function plot_handle=barh(varargin)
 %       - 'secondary_y': the list of variables going to the secondary y axis
 %       - 'subplots' (bool): the flag for multiple plots with default false
 %
-% Notes:
+% Note:
 %
 %   - bar(db) uses the dates within db.  The colors are set by the colormap.
 %   - bar(X,db,WIDTH) or bar(db,WIDTH) specifies the width of the bars. Values
@@ -51,11 +51,11 @@ function plot_handle=barh(varargin)
 %       xrotate(90)
 %
 % See also:
-%    - hist
-%    - plot
-%    - barh
-%    - bar3
-%    - bar3h
+%    - :func:`hist <ts.hist>`
+%    - :func:`plot <ts.plot>`
+%    - :func:`barh <ts.barh>`
+%    - :func:`bar3 <ts.bar3>`
+%    - :func:`bar3h <ts.bar3h>`
 %
 
 plot_handle=utils.plot.myplot(@barh,varargin{:});

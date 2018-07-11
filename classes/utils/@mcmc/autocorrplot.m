@@ -1,4 +1,5 @@
 function hdl=autocorrplot(obj,pname,chain_id,order)
+
 % autocorrplot -- plots autocorrelations of a given parameter
 %
 % ::
