@@ -18,7 +18,7 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %       - **'MaxIter'**: {1000} the maximum number of iterations.
 %       - **'MaxTime'**: {3600} The time budget in seconds.
 %       - **'MaxFunEvals'**: {inf} the maximum number of function evaluations.
-%       - **'rand_seed'**: the seed number for the random draws
+%       - **'rand_seed'**: the seed number for the random draws (for replicability)
 %
 %    varargin : extra arguments to be fed into the function to minimize
 %
@@ -27,7 +27,7 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %
 %    - x (double): argmin of the Objective function
 %    - f (double): minimum value found by csminwel
-%    - exitflag (int):
+%    - exitflag (int): **Currently(2018/07/12) turned off**
 %
 %       - 1: the number of iterations exceeds MaxIter
 %       - 2: the number of function counts exceeds MaxFunEvals
@@ -35,8 +35,8 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %       - 4: the user write anything in and saves the automatically generated
 %         file called "ManualStopping.txt"
 %
-%    - H :
-%    - obj (struct): INTERNAL INFO struct containing all information from the optimization process
+%    - H (matrix): EXPERIMENTAL! Inverse of the covariance of the best values (if unimodal, can be used as an approximation of the covariance)
+%    - obj (bee object): INTERNAL INFO! struct containing all information from the optimization process. Support for this class is not provided
 %
 % Example:
 %    ::
@@ -59,7 +59,8 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %
 
 %   Copyright 2011 Junior Maih (junior.maih@gmail.com).
-%   $Revision: 7 $  $Date: 2011/05/26 11:23 $
+%   Revision: 7
+%   Date: 2011/05/26 11:23
 
 % OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
 

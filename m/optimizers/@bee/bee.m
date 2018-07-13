@@ -60,65 +60,16 @@ classdef bee %< handle
     end
     methods
         function obj=bee(Objective,x0,f0,lb,ub,options,varargin)
-            %  BEE attempts to find the global minimum of a constrained function of several variables.
-            %   BEE attempts to solve problems of the form:
-            %    min F(X)  subject to:  LB <= X <= UB   (bounds)
-            %     X
+            % A Variant of artificial bee colony (ABC) optimizer
             %
-            %   RES = BEE constructs an object with the default optimization parameters.
-            %   RES has fields that are intuitive to understand. 'lb' (lower bound),
-            %   'ub' (upper bound),'x0',(vector of initial values),'f0'(function value
-            %   at x0), 'vargs'(additional arguments of FUN),'penalty' (threshold
-            %   function value beyond which the parameter draws are
-            %   discarded),'Objective' (name of the objective function), 'best'(best
-            %   parameter vector), 'best_fval'(best function value), 'xx'(parameter
-            %   vectors in the colony),'ff'(function values at xx)
-            %   'MaxIter','MaxTime','MaxNodes
+            % Reference:
+            %    - :cite:`karaboga2014comprehensive`
             %
-            %   RES = BEE(FUN,X0,[],LB,UB) starts at X0 and finds a minimum X to the
-            %   function FUN, subject to the bound constraints LB and UB. FUN accepts
-            %   input X and returns a scalar function value F evaluated at X. X0 may be
-            %   a scalar or a vector.
-            %
-            %   RES = BEE(FUN,X0,[],LB,UB,OPTIONS) optimizes the function FUN under the
-            %   optimization options set under the structure OPTIONS. The fields of
-            %   this structure could be all or any of the following:
-            %       - 'MaxNodes': this the number of different elements in the group
-            %       that will share information with each other in order to find better
-            %       solutions. The default is 20
-            %       - 'MaxIter': the maximum number of iterations. The default is 1000
-            %       - 'MaxTime': The time budget in seconds. The default is 3600
-            %       - 'MaxFunEvals': the maximum number of function evaluations. The
-            %       default is inf
-            %       - 'rand_seed': the seed number for the random draws
-            %
-            %   Optimization stops when one of the following happens:
-            %   1- the number of iterations exceeds MaxIter
-            %   2- the number of function counts exceeds MaxFunEvals
-            %   3- the time elapsed exceeds MaxTime
-            %   4- the user write anything in and saves the automatically generated
-            %   file called "ManualStopping.txt"
-            %
-            %   Examples
-            %     FUN can be specified using @:
-            %        RES = bee(@myfunc,...)
-            %     In this case, F = myfunc(X) returns the scalar function value F of
-            %     the MYFUNC function evaluated at X.
-            %
-            %     FUN can also be an anonymous function:
-            %        RES = bee(@(x) 3*sin(x(1))+exp(x(2)),[1;1],[],-10*ones(2,1),10*ones(2,1),[])
-            %     returns X = [0;0].
-            %
-            %     FUN=inline('sum(x.^2)'); n=100;
-            %     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-            %     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
-            %     'MaxFunEvals',inf);
-            %     RES=bee(@(x) FUN(x),x0,[],lb,ub,optimpot)
 
-            % Reference: Inspired from Karaboga
-
-            %   Copyright 2011 Junior Maih (junior.maih@gmail.com).
-            %   $Revision: 8 $  $Date: 2011/08/13 11:23 $
+            %   Copyright 2011-2018 Junior Maih (junior.maih@gmail.com).
+            %   Revision: 8
+            %   Date: 2011/08/13 11:23
+            %
 
             if nargin==0
 
