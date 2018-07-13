@@ -54,6 +54,9 @@ function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
 %
 %       x=bee_gate(@(x) FUN(x),x0,lb,ub,optimpot)
 %
+% References:
+%     - :cite:`karaboga2014comprehensive`
+%
 
 %   Copyright 2011 Junior Maih (junior.maih@gmail.com).
 %   $Revision: 7 $  $Date: 2011/05/26 11:23 $

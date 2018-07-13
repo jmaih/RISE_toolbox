@@ -597,7 +597,8 @@ function obj=generate_mutant(obj,ii)
     % %     pick the parameters to change in the new solution
     nch=min(randi(ceil(0.5*obj.number_of_parameters)),obj.max_genes_change);
 
-    change=min(fix(rand(nch,1)*obj.number_of_parameters)+1,obj.number_of_parameters);
+    % change=min(fix(rand(nch,1)*obj.number_of_parameters)+1,obj.number_of_parameters);
+    change = randperm(obj.number_of_parameters, nch)';
 
     mutant(change)=mutant(change)+(mutant(change)-...
         obj.xx(change,donor_id))*2.*(rand(nch,1)-.5);
