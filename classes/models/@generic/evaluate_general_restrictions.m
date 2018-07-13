@@ -19,9 +19,6 @@ function g=evaluate_general_restrictions(obj)
 %    - The restrictions will be processed as g(x)<=0. But all the user has to
 %      do is to put zero where the restrictions are not violated!!!
 %
-% Example:
-%
-% See also:
 
 nobj=numel(obj);
 

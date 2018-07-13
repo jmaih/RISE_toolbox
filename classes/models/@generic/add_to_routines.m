@@ -3,7 +3,7 @@ function obj=add_to_routines(obj,varargin)
 %
 % ::
 %
-%   obj=add_to_routines(obj,item1_name,item1_val,...)
+%    obj=add_to_routines(obj,item1_name,item1_val,...)
 %
 % Args:
 %

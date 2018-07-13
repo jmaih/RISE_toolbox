@@ -1,20 +1,6 @@
 function Qfunc=prepare_transition_routine(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 Qfunc=memoizer(obj.solution.transition_matrices.Q);
 

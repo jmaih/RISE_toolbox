@@ -3,8 +3,8 @@ function flag=is_stable_system(obj,varargin)
 %
 % ::
 %
-%   flag=is_stable_system(obj)
-%   flag=is_stable_system(obj,varargin)
+%    flag = is_stable_system(obj)
+%    flag = is_stable_system(obj,varargin)
 %
 % Args:
 %

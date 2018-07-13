@@ -1,4 +1,6 @@
 function [Tz,others,eigval,retcode,options]=solve_first_order(structural_matrices,others,siz,pos,options,k_future)
+% INTERNAL FUNCTION
+%
 
 dv=structural_matrices.dv;
 
@@ -9,9 +11,9 @@ Q=structural_matrices.transition_matrices.Q;
 old_Tz=[];
 
 if isfield(structural_matrices.old_solution,'Tz')
-    
+
     old_Tz=structural_matrices.old_solution.Tz;
-    
+
 end
 
 % the sm that comes out here is aggregated!
@@ -48,7 +50,7 @@ if ~retcode
             df_Lf_Tzp_Lp(:,pos.t.p)=df_plus*Tz_pb(pos.t.f,1:siz.np,rplus);% place in the p position
             db_Lb_Tzb_Lb(:,pos.t.b)=db_plus*Tz_pb(pos.t.b,siz.np+(1:siz.nb),rplus);% place in the b position
             A0sig(:,:,rt) = A0sig(:,:,rt) + A0_0_1 + df_Lf_Tzp_Lp + db_Lb_Tzb_Lb;
-            
+
             % provision for shock impacts
             %----------------------------
             UUi(:,:,rt)=UUi(:,:,rt)+A0_0_1;
@@ -63,14 +65,14 @@ if ~retcode
         Tz_e_rt{rt}=-UUi(:,:,rt)*sm.de_0{rt};
         Tz{rt}=[Tz_pb(:,:,rt),Tz_sig(:,rt),Tz_e_rt{rt}];
     end
-    
+
     if ~isempty(options.solve_occbin)
         options.occbin.B=sm.de_0;
         if k_future
             error('Occbin-type models not solved with anticipated events')
         end
     end
-    
+
     % shock impacts (future)
     %-----------------------
     for ik=1:k_future
@@ -84,7 +86,7 @@ if ~retcode
             Tz{rt}=[Tz{rt},Tz_e_rt{rt}];
         end
     end
-    
+
     % now solve sum(A+*Tz_sig(+)+A0_sig*Tz_sig+dt_t=0
     %-------------------------------------------------
     % first we augment dt_t with the user_resid so that the first-order

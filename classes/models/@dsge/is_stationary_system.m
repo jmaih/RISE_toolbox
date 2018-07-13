@@ -24,8 +24,6 @@ function flag=is_stationary_system(obj)
 %         process will be said stationary if its first and second moment do not
 %         vary with time.
 %
-% Example:
-%
 % See also:
 %
 %    - rise_generic/is_stable_system

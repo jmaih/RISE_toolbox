@@ -16,11 +16,6 @@ function obj=assign_estimates(obj,params)
 %
 %    - **obj** [generic]: model object
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 % this is the routine called during estimation for assigning new estimates
 % to the model

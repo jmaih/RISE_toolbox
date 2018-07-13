@@ -1,19 +1,6 @@
 function [T,eigval,retcode,obj]=dsge_solver_h(obj,structural_matrices)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-% See also:
 
 % the obj going out probably contains the changed options
 

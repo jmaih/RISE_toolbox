@@ -1,14 +1,14 @@
 function [obj,retcode]=bvar_dsge(obj,varargin)
-% bvar_dsge -- intermediary file for computing key elements for dsge-var
+% INTERNAL FUNCTION: intermediary file for computing key elements for dsge-var
 %
 % ::
 %
-%   [obj,retcode]=bvar_dsge(obj,varargin)
+%   [obj,retcode] = bvar_dsge(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: model object
-%    - **varargin** [?]: ususal dsge options. The most important of which are:
+%    obj (rise | dsge): model object
+%    varargin : ususal dsge options. The most important of which are:
 %
 %      - **dsgevar_lag** [integer|{4}]: number of lags in the VAR
 %      - **dsgevar_constant** [false|{true}]: flag for having a constant in
@@ -29,9 +29,6 @@ function [obj,retcode]=bvar_dsge(obj,varargin)
 %      simulations, the missing variables will be stored as 0+1i in time series.
 %      This is true for forecast, irf and simulate
 %
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

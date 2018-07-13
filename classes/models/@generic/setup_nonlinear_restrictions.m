@@ -1,13 +1,5 @@
 function obj=setup_nonlinear_restrictions(obj)
-% setup_nonlinear_restrictions - sets nonlinear restrictions
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
+% INTERNAL FUNCTION: Sets nonlinear restrictions
 %
 % Note:
 %
@@ -26,23 +18,20 @@ function obj=setup_nonlinear_restrictions(obj)
 %      - chain [char]
 %      - state [digits]
 %
-% Example:
-%
-%    See also:
 
 RestrictionsBlock=obj.options.estim_nonlinear_restrictions;
 
 if isstruct(RestrictionsBlock)
-    
+
     RestrictionsBlock=RestrictionsBlock.original;
-    
+
 end
 
 if ~isempty(RestrictionsBlock)
-    
+
     RestrictionsBlock=cellfun(@(x)x(~isspace(x)),...
         RestrictionsBlock,'uniformOutput',false);
-    
+
 end
 
 param_names=obj.parameters.name;

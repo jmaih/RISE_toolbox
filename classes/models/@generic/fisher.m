@@ -1,4 +1,6 @@
-function F=fisher(obj,varargin) 
+function F=fisher(obj,varargin)
+% INTERNAL FUNCTION
+%
 
 if isempty(obj)
 
@@ -11,9 +13,9 @@ end
 obj.is_fisher=true;
 
 if isempty(obj.linear_restrictions_data)
-    
+
     obj=setup_restrictions(obj);
-    
+
 end
 
 [~,F]=hessian(obj,varargin{:});

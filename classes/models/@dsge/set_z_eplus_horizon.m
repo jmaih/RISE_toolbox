@@ -1,19 +1,6 @@
 function obj=set_z_eplus_horizon(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % get the shock horizon for all the shocks
 %------------------------------------------

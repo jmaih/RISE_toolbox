@@ -3,13 +3,13 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 % ::
 %
-%   [Reply,retcode]=get(obj,PropertyName)
+%   [Reply,retcode] = get(obj,PropertyName)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
+%    obj (rise | dsge | rfvar | svar): model object
 %
-%    - **PropertyName** [char]: name of the property or element desired. This
+%    PropertyName (char): name of the property or element desired. This
 %      includes:
 %
 %      - **'structure'** [char]: derivatives + transition matrices + other
@@ -124,7 +124,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %      - **'chain_tex'** [char]: description of markov chains
 %
-%      - ***'regime_list'** [char]: list of regimes (i.e. composites of
+%      - **'regime_list'** [char]: list of regimes (i.e. composites of
 %        states from different chains)
 %
 %      - **'regime_tex'** [char]: description of regimes

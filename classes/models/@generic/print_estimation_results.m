@@ -1,21 +1,6 @@
 function retcode=print_estimation_results(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%    retcode=print_estimation_results(obj)
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 if isempty(obj)
 

@@ -7,8 +7,8 @@ function [obj,structural_matrices,retcode]=compute_steady_state(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: model file
-%    - **varargin** []: usual optional arguments
+%    obj (rise | dsge): model file
+%    varargin : usual optional arguments
 %
 % Returns:
 %    :

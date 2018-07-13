@@ -1,16 +1,16 @@
 function [obj,issue,retcode]=load_data(obj,varargin)
-% load_data - loads data for estimation and for forecasting
+% INTERNAL FUNCTION: loads data for estimation and for forecasting
 %
 % ::
 %
-%   [obj,issue,retcode]=load_data(obj)
-%   [obj,issue,retcode]=load_data(obj,varargin)
+%    [obj,issue,retcode] = load_data(obj)
+%    [obj,issue,retcode] = load_data(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: scalar or vector or RISE model objects
-%    - **data** [ts|struct]: data to load
-%    - **data_demean** [true|{false}]: flag for demeaning the data
+%    obj (rise | dsge | rfvar | svar): scalar or vector or RISE model objects
+%    data (ts | struct): data to load
+%    data_demean (true | {false}): flag for demeaning the data
 %
 % Returns:
 %    :
@@ -20,12 +20,6 @@ function [obj,issue,retcode]=load_data(obj,varargin)
 %      loading of the data
 %    - **retcode** [{0}|positive integer]: if retcode is different from 0,
 %      then there is a problem
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if isempty(obj)
 

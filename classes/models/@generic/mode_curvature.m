@@ -1,22 +1,22 @@
 function db=mode_curvature(obj,varlist,type)
-% mode_curvature -- checks the curvature at the posterior mode
+% Checks the curvature at the posterior mode
 %
 % ::
 %
-%   db=mode_curvature(obj)
+%   db = mode_curvature(obj)
 %
-%   db=mode_curvature(obj,varlist)
+%   db = mode_curvature(obj,varlist)
 %
-%   db=mode_curvature(obj,varlist,type)
+%   db = mode_curvature(obj,varlist,type)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
+%    obj (rise | dsge | rfvar | svar): model object
 %
-%    - **varlist** [char|cellstr|empty]: list of parameters for which we want
+%    varlist (char | cellstr | empty): list of parameters for which we want
 %      to check the curvature
 %
-%    - **type** [{'max'}|'min'|'range']: normalization of the log-posterior
+%    type ({'max'} | 'min' | 'range'): normalization of the log-posterior
 %      and the log-likelihood.
 %
 % Returns:
@@ -32,9 +32,9 @@ function db=mode_curvature(obj,varlist,type)
 %    - one way to plot the curvatures from the output is to use the function
 %      utils.plot.curvature
 %
-% Example:
+% See also:
+%    - utils.plot.curvature
 %
-% See also: utils.plot.curvature
 
 if isempty(obj)
 

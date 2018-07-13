@@ -12,23 +12,21 @@ function hdl=quick_irfs(m,myirfs,var_list,shock_list,r0c0,xrange)
 %
 % Args:
 %
-%    - **m** [rise|dsge|svar|rfvar]: model object
-%    - **myirfs** [struct]: structure with irfs
-%    - **var_list** [cellstr]: list of variables of interest
-%    - **shock_list** [cellstr]: list of shocks of interest
-%    - **r0c0** [vector|{[4,4]}]: number of rows and columns in figure
-%    - **xrange** [serial|char|{[]}]: range over which to plot
+%    m (rise | dsge | svar | rfvar): model object
+%    myirfs (struct): structure with irfs
+%    var_list (cellstr): list of variables of interest
+%    shock_list (cellstr): list of shocks of interest
+%    r0c0 (vector | {[4,4]}): number of rows and columns in figure
+%    xrange (serial | char | {[]}): range over which to plot
 %
 % Returns:
 %    :
 %
 %    - **hdl** [handle]: handle to the plotted objects
 %
-% Note:
+% See also:
+%    - quick_plots
 %
-% Example:
-%
-% See also: quick_plots
 
 if nargin<6
 

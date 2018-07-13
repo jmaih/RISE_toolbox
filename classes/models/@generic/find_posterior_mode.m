@@ -18,15 +18,15 @@ function [x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb,u
 nobj=numel(obj);
 
 if nobj==0
-    
+
     if nargout>1
-        
+
         error([mfilename,':: when the object is emtpy, nargout must be at most 1'])
-    
+
     end
-    
+
     x1=struct();
-    
+
     return
 
 end
@@ -58,11 +58,11 @@ end
 % about whether the models are stationary or not.
 
 if f0(1)<obj(1).options.estim_penalty
-    
+
     beg=2;
 
 else
-    
+
     beg=1;
 
 end
@@ -77,47 +77,47 @@ fprintf(1,'%s\n','Looking for good enough start values. Please wait...');
 gen_start=@()estimation_wrapper(obj,'draw',[],lb,ub,funevals);
 
 for ii=beg:Nsim
-    
+
     NotDone=true;
-    
+
     iter=0;
-    
+
     while NotDone
-        
+
         [xtest,ftest,retcode]=...
             utils.estim.generate_starting_point(gen_start);
-        
+
         if ftest<obj(1).options.estim_penalty
-            
+
             NotDone=false;
-            
+
             f0(ii)=ftest;
-            
+
             x0(:,ii)=xtest;
-        
+
         end
-        
+
         iter=iter+1;
-        
+
         if iter>=obj(1).options.estim_max_trials
-            
+
             error([mfilename,':: No admissible starting value after ',...
                 int2str(obj(1).options.estim_max_trials),' trials'])
-        
+
         else
-            
+
             fprintf(1,'%3.0d :: %s\n',iter,utils.error.decipher(retcode));
-        
+
         end
-        
+
     end
-    
+
     disp(['Starting value # ',int2str(ii),' found after ',int2str(iter),' iterations'])
-    
+
     ratio=ii/Nsim;
-    
+
     fprintf(1,'%s\n',['...', num2str(100*ratio),'% done']);
-    
+
 end
 
 [x1,f1,H,issue,viol,obj,funevals]=estimation_wrapper(obj,'estimate',x0,lb,ub,funevals);

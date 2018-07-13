@@ -1,6 +1,6 @@
 function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,...
     npoints,varargin)
-% plot_posteriors -- computes posterior densities for estimated parameters
+% Computes posterior densities for estimated parameters
 %
 % ::
 %
@@ -16,18 +16,18 @@ function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,...
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
+%    obj (rise | dsge | rfvar | svar): model object
 %
-%    - **simulation_folder** [empty|char|struct]: location of the simulations. If
+%    simulation_folder (empty | char | struct): location of the simulations. If
 %      empty, it is assumed that the simulations are saved to disc and are
 %      located in the address found in obj.folders_paths.simulations. If it is a
 %      "char", this corresponds to the location of the simulation. Otherwise, if
 %      it is a struct, then it has to be the output of posterior_simulator.m
 %
-%    - **npoints** [numeric|{20^2}]: the number of points in the
+%    npoints (numeric | {20^2}): the number of points in the
 %      discretization of the prior support
 %
-%    - **parlist** [empty|char|cellstr]: list of the parameters for which one
+%    parlist (empty | char | cellstr): list of the parameters for which one
 %      wants to plot the posteriors
 %
 % Returns:
@@ -48,9 +48,6 @@ function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,...
 %      marginal densities are plotted, but not saved!!!.
 %      see also utils.plot.prior_posterior
 %
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

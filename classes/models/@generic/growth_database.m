@@ -1,20 +1,6 @@
 function db=growth_database(obj,endhist_date,end_sample,growth_type)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%    db=growth_database(obj,endhist_date,end_sample,growth_type);
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if isempty(obj)
 

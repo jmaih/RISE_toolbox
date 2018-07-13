@@ -1,20 +1,6 @@
 function [sims,retcode]=simulate_nonlinear(obj,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%    [sims,retcode]=simulate_nonlinear(obj,varargin);
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % To Do: Conditional forecasting
 %---------------------------------

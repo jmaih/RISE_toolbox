@@ -1,20 +1,6 @@
 function [A,B,steady_state]=set_solution_to_companion(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%    [A,B,steady_state]=set_solution_to_companion(obj)
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if isempty(obj)
 

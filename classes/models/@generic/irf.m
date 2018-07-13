@@ -1,10 +1,10 @@
 function myirfs=irf(obj,varargin)
-% irf - computes impulse responses for a RISE model
+% Computes impulse responses for a RISE model
 %
 % ::
 %
-%   myirfs=irf(obj)
-%   myirfs=irf(obj,varargin)
+%    myirfs = irf(obj)
+%    myirfs = irf(obj,varargin)
 %
 % Args:
 %

@@ -1,5 +1,5 @@
 function obj=set(obj,varargin)
-% set - sets options for dsge|rise models
+% Sets options for dsge|rise models
 %
 % ::
 %

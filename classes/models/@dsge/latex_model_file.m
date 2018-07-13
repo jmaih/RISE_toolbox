@@ -1,19 +1,6 @@
 function tex_code = latex_model_file(model,model_syntax,model_line_numbers)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-% See also:
 
 if nargin<3
     model_line_numbers=true;

@@ -1,20 +1,6 @@
 function [obj,retcode]=compute_definitions(obj,pp)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 definitions=obj.routines.definitions;
 number_of_regimes=obj.markov_chains.small_markov_chain_info.regimes_number;
@@ -25,7 +11,7 @@ end
 retcode=0;
 defs=cell(1,number_of_regimes);
 for ii=number_of_regimes:-1:1 % backward to optimize speed
-    tmp=utils.code.evaluate_functions(definitions,pp(:,ii)); 
+    tmp=utils.code.evaluate_functions(definitions,pp(:,ii));
     if any(isnan(tmp))||any(isinf(tmp))||any(~isreal(tmp))
         retcode=5;
         if obj.options.debug

@@ -1,6 +1,6 @@
 function [pdata,hdl]=plot_priors(obj,parlist,trunc,npoints,...
     varargin)
-% plot_priors -- computes prior densities for estimated parameters
+% Computes prior densities for estimated parameters
 %
 % ::
 %
@@ -16,17 +16,17 @@ function [pdata,hdl]=plot_priors(obj,parlist,trunc,npoints,...
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
+%    obj (rise | dsge | rfvar | svar): model object
 %
-%    - **parlist** [[]|char|cellstr]: list of the parameters for which one
+%    parlist ([] | char | cellstr): list of the parameters for which one
 %      wants to plot the priors
 %
-%    - **trunc** [numeric|{1e-3}]: serves to truncate the support
+%    trunc (numeric | {1e-3}): serves to truncate the support
 %
-%    - **npoints** [numeric|{20^2}]: the number of points in the
+%    npoints (numeric | {20^2}): the number of points in the
 %      discretization of the prior support
 %
-%    - **varargin** [pairwise plotting arguments]:
+%    varargin (pairwise plotting arguments):
 %
 % Returns:
 %    :
@@ -47,9 +47,10 @@ function [pdata,hdl]=plot_priors(obj,parlist,trunc,npoints,...
 %    - There are other arguments that can be set via the model object directly
 %      and that are relevant for this function. They are:
 %
-% Example:
+% See also:
+%    - utils.plot.plot_posteriors
+%    - utils.plot.plot_priors_and_posteriors
 %
-% See also: utils.plot.plot_posteriors, utils.plot.plot_priors_and_posteriors
 
 
 if isempty(obj)

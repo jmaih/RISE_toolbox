@@ -8,8 +8,8 @@ function varargout=observables_decomposition(obj,select,xrange,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: scalar model object
-%    - **select** [{[]}|'a'|'att'|'alpha'|'v'|'r'|'epsilon'|'eta']: type of
+%    obj (rise | dsge): scalar model object
+%    select ({[]} | 'a' | 'att' | 'alpha' | 'v' | 'r' | 'epsilon' | 'eta'): type of
 %      decomposition to perform
 %
 %      - **a** : filter
@@ -21,9 +21,9 @@ function varargout=observables_decomposition(obj,select,xrange,varargin)
 %      - **eta** : structural shocks
 %      - **[]** : all the above
 %
-%    - **xrange** [{[]}|vector|cell array]: start date and end date for the
+%    xrange ({[]} | vector | cell array): start date and end date for the
 %      decomposition
-%    - **db** [ts]: database with the data to be used in the decomposition
+%    db (ts): database with the data to be used in the decomposition
 %
 % Returns:
 %    :
@@ -40,9 +40,9 @@ function varargout=observables_decomposition(obj,select,xrange,varargin)
 %      differences in the decomposition to perform, e.g., the decomposition of
 %      forecast errors in terms of observables.
 %
-% Example:
+% See also:
+%    - historical_decomposition
 %
-% See also: HISTORICAL_DECOMPOSITION
 
 if isempty(obj)
 

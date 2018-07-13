@@ -16,11 +16,6 @@ function obj=back_door(obj,attribute,value)
 %
 %    - **obj** [generic]: model object
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 if ischar(attribute)
 

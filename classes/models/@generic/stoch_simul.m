@@ -1,4 +1,4 @@
-function [oo_]=stoch_simul(obj,var_list,varargin)%,omega
+function [oo_]=stoch_simul(obj,var_list,varargin) %,omega
 % H1 line
 %
 % ::

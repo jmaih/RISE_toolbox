@@ -1,25 +1,11 @@
 function obj=setup_measurement_errors(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 param_names=obj.parameters.name;
 obj.measurement_errors_restrictions=[];
 
-for ii=1:sum(obj.observables.number) 
+for ii=1:sum(obj.observables.number)
     % pick only the endogenous observables
     if ~obj.observables.is_endogenous(ii)
         continue

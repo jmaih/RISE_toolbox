@@ -1,14 +1,14 @@
 function [draw,obj]=draw_parameter(obj,simulation_folder)
-% draw_parameter - random parameter draws for RISE model objects.
+% Random parameter draws for RISE model objects.
 %
 % ::
 %
-%   [draw,obj]=draw_parameter(obj,simulation_folder)
+%   [draw,obj] = draw_parameter(obj,simulation_folder);
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: RISE model object
-%    - **simulation_folder** [char|struct]:
+%    obj (rise | dsge | rfvar | svar): RISE model object
+%    simulation_folder (char | struct):
 %
 %      - char(1): simulation folder : the stored elements should be structures
 %        with fields:
@@ -29,11 +29,6 @@ function [draw,obj]=draw_parameter(obj,simulation_folder)
 %    - **obj** [rise|dsge|rfvar|svar]: RISE model object in which the drawn
 %      parameter has been pushed.
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 if isempty(obj)
 
