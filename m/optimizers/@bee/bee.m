@@ -1,10 +1,9 @@
 classdef bee %< handle
-    % BEE global optimization of constrained functions using bees
-    %
-    % Constructor
-    % ------------
-    %
-    % - [bee](bee/bee)
+% INTERNAL OBJECT
+%
+% See also:
+%    - bee_gate
+%
 
     properties
         stopping_created=false;

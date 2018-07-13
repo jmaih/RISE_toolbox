@@ -1,76 +1,59 @@
 function [x,f,exitflag,H,obj]=bee_gate(Objective,x0,lb,ub,options,varargin)
-% bee_gate gateway to bee
+% Attempts to find the global minimum of a constrained function
 %
 % ::
 %
+%    [x,f,exitflag,H,obj] = bee_gate(Objective,x0,lb,ub,options,varargin)
+%
 % Args:
+%    Objective (function handle): objective function to minimize
+%    x0 (double): initial guess of the argmin
+%    lb (double): lower bound for parameters
+%    ub (double): upper bound for parameters
+%    options (struct): optimize options
+%
+%       - **'MaxNodes'**:{20} this the number of different elements in the group
+%         that will share information with each other in order to find better
+%         solutions.
+%       - **'MaxIter'**: {1000} the maximum number of iterations.
+%       - **'MaxTime'**: {3600} The time budget in seconds.
+%       - **'MaxFunEvals'**: {inf} the maximum number of function evaluations.
+%       - **'rand_seed'**: the seed number for the random draws
+%
+%    varargin : extra arguments to be fed into the function to minimize
 %
 % Returns:
 %    :
 %
-% Note:
+%    - x (double): argmin of the Objective function
+%    - f (double): minimum value found by csminwel
+%    - exitflag (int):
+%
+%       - 1: the number of iterations exceeds MaxIter
+%       - 2: the number of function counts exceeds MaxFunEvals
+%       - 3: the time elapsed exceeds MaxTime
+%       - 4: the user write anything in and saves the automatically generated
+%         file called "ManualStopping.txt"
+%
+%    - H :
+%    - obj (struct): INTERNAL INFO struct containing all information from the optimization process
 %
 % Example:
+%    ::
 %
-% See also:
-
-%  BEE_GATE attempts to find the global minimum of a constrained function of
-%  several variables.
-%   BEE_GATE attempts to solve problems of the form:
-%    min F(X)  subject to:  LB <= X <= UB   (bounds)
-%     X
+%       % Simple Example
+%       X = bee_gate(@(x) 3*sin(x(1))+exp(x(2)),[1;1],[],[],[],[],[0 0]);
 %
-%   X = BEE_GATE(FUN,X0,LB,UB) starts at X0 and finds a minimum X to the
-%   function FUN, subject to the bound constraints LB and UB. FUN accepts
-%   input X and returns a scalar function value F evaluated at X. X0 may be
-%   a scalar or a vector.
+%       % More Elaborate
+%       FUN=inline('sum(x.^2)');
+%       n=100;
+%       lb=-20*ones(n,1);
+%       ub=-lb;
+%       x0=lb+(ub-lb).*rand(n,1);
+%       optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,'MaxFunEvals',inf);
 %
-%   X = BEE_GATE(FUN,X0,LB,UB,OPTIONS) optimizes the function FUN under the
-%   optimization options set under the structure OPTIONS. The fields of
-%   this structure could be all or any of the following:
-%       - 'MaxNodes': this the number of different elements in the group
-%       that will share information with each other in order to find better
-%       solutions. The default is 20
-%       - 'MaxIter': the maximum number of iterations. The default is 1000
-%       - 'MaxTime': The time budget in seconds. The default is 3600
-%       - 'MaxFunEvals': the maximum number of function evaluations. The
-%       default is inf
-%       - 'rand_seed': the seed number for the random draws
-%    X is the optimum, F is the value of the objective at X, OBJ is an
-%    object with more information
+%       x=bee_gate(@(x) FUN(x),x0,lb,ub,optimpot)
 %
-%   [X,F] = BEE_GATE(...) returns, in addition to X, the value F=FUN(X)
-%
-%   [X,F,exitflag] = BEE_GATE(...) returns, in addition to X and F, a value
-%   exitflag with the same interpretation as in Matlab's fmincon, fminunc,
-%   etc.
-%
-%   [X,F,exitflag,OBJ] = BEE_GATE(...) returns, in addition to X, F and
-%   exitflag, the optimized bee object with all information about the
-%   optimization process.
-%
-%   N:B: Optimization stops when one of the following happens:
-%   1- the number of iterations exceeds MaxIter
-%   2- the number of function counts exceeds MaxFunEvals
-%   3- the time elapsed exceeds MaxTime
-%   4- the user write anything in and saves the automatically generated
-%   file called "ManualStopping.txt"
-%
-%   Examples
-%     FUN can be specified using @:
-%        X = bee_gate(@myfunc,...)
-%     In this case, F = myfunc(X) returns the scalar function value F of
-%     the MYFUNC function evaluated at X.
-%
-%     FUN can also be an anonymous function:
-%        X = bee_gate(@(x) 3*sin(x(1))+exp(x(2)),[1;1],[],[],[],[],[0 0])
-%     returns X = [0;0].
-%
-%     FUN=inline('sum(x.^2)'); n=100;
-%     lb=-20*ones(n,1); ub=-lb; x0=lb+(ub-lb).*rand(n,1);
-%     optimpot=struct('MaxNodes',20,'MaxIter',1000,'MaxTime',60,...
-%     'MaxFunEvals',inf);
-%     x=bee_gate(@(x) FUN(x),x0,lb,ub,optimpot)
 
 %   Copyright 2011 Junior Maih (junior.maih@gmail.com).
 %   $Revision: 7 $  $Date: 2011/05/26 11:23 $
@@ -138,5 +121,3 @@ else
 end
 
 end
-
-
