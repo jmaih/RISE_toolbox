@@ -1,5 +1,19 @@
 function iris2rise(irisFileName,riseFileName,stderr_name)
-% INTERNAL FUNCTION
+% Converts iris model file into rise model files
+%
+% ::
+%
+%    iris2rise(dynFileName);
+%    iris2rise(dynFileName, riseFileName);
+%    iris2rise(dynFileName, riseFileName, stderr_name);
+%
+% Args:
+%    dynFileName (string): File name of the iris file to convert
+%    riseFileName (string): File name for the output. (defaut: Change file extension to .rs)
+%    stderr_name (string): File name to save error messages (default: 'std')
+%
+% Returns:
+%    : none
 %
 
 if nargin<3
