@@ -1,5 +1,30 @@
 function self=set_inputs(self,varargin)
-% Sets inputs for the VAR
+% INTERNAL FUNCTION: Sets inputs for the VAR
+%
+% ::
+%
+%    var_obj = set_inputs(var_obj,varargin);
+%
+% Args:
+%    var_obj (var object): VAR object
+%    varargin: Options to set. Must come in pairs
+%
+%       - **'data'**: Data for the VAR. Can be either a struct or ts object
+%       - **'prior'**: Prior to use if BVAR. Available priors are
+%
+%          - minnesota
+%          - jeffrey
+%          - nw
+%          - normal-wishart
+%          - inw
+%          - sz
+%
+%       - **'linear_restrictions'**: Linear restrictions. For the format, see XXXXXXXXX
+%
+% Returns:
+%    :
+%
+%       - var_obj (var object): New VAR with the given inputs updated.
 %
 
 n=length(varargin);
@@ -39,7 +64,7 @@ end
 %
 %                 end
 %
-%                 self.(prop)=v;
+%                 self.(p)=v;
 
             case 'data'
 
@@ -51,13 +76,13 @@ end
 
                 check_data(v)
 
-                self.estim_.(prop)=v;
+                self.estim_.(p)=v;
 
             case 'prior'
 
                 check_prior(v)
 
-                self.estim_.(prop)=v;
+                self.estim_.(p)=v;
 
             case 'linear_restrictions'
 
@@ -85,7 +110,7 @@ end
 
                 self.estim_.linear_restrictions=v(:).';
 
-%                 self.estim_.(prop)=[v(:).',self.linear_restrictions_prime_time];
+%                 self.estim_.(p)=[v(:).',self.linear_restrictions_prime_time];
 
             otherwise
 
