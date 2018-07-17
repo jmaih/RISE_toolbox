@@ -115,8 +115,7 @@ function [Reply,retcode]=get(obj,PropertyName)
 %        full list, a sub-list or its complement (using a "~" sign in from of
 %        the attribute) can also be queried:
 %
-%          - '...(endogenous)' : list of observable variables that are
-%            endogenous.
+%          - '...(endogenous)' : list of observable variables that are endogenous.
 %
 %      - **'obs_tex'** [char]: description of observable variables
 %
@@ -131,11 +130,9 @@ function [Reply,retcode]=get(obj,PropertyName)
 %
 %      - **'state_list'** [char]: list of states of all the markov chains
 %
-%      - **'state_tex'** [char]: description of the states of all the markov
-%        chains
+%      - **'state_tex'** [char]: description of the states of all the markov chains
 %
-%      - **'tex'|'description'** [char]: description for all the atoms in the
-%        system.
+%      - **'tex'|'description'** [char]: description for all the atoms in the system.
 %
 %      - **'state_vars'** [char]: variables and their lag structure as
 %        required for forecasting.
