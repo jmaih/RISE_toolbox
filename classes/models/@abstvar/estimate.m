@@ -3,10 +3,18 @@ function self=estimate(self,varargin)
 %
 % ::
 %
-%    var = estimate(var, varargin);
+%    var = estimate(var);
+%    var = estimate(var, data);
+%    var = estimate(var, data, data_range);
+%    var = estimate(var, data, data_range, prior);
+%    var = estimate(var, data, data_range, prior, restrictions);
 %
 % Args:
-%
+%    var (var object): var object
+%    data (struct or ts obect): data for estimation
+%    data_range (serial): date_range
+%    prior (string): priors for BVAR
+%    restrictions : restrictions
 %
 % Returns:
 %

@@ -16,7 +16,7 @@ classdef (Abstract) abstvar < gogetter
         is_panel=false
         nlags
         nx
-        ng
+        ng    % Penal dimensionality, i.e., number of countries
         nvars
     end
 

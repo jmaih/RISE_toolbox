@@ -1,5 +1,6 @@
 function batch=read_identification_restrictions(self,restrictions,shocknames)
 % INTERNAL FUNCTION
+%
 
 endonames=self.endogenous;
 

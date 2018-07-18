@@ -1,5 +1,5 @@
 function self=prime_time(self)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Sets panel related restrictions
 %
 
 if ~self.is_panel||strcmp(self.homogeneity,'unrestricted')
