@@ -64,7 +64,7 @@ end
 %
 %                 end
 %
-%                 self.(prop)=v;
+%                 self.(p)=v;
 
             case 'data'
 
@@ -76,13 +76,13 @@ end
 
                 check_data(v)
 
-                self.estim_.(prop)=v;
+                self.estim_.(p)=v;
 
             case 'prior'
 
                 check_prior(v)
 
-                self.estim_.(prop)=v;
+                self.estim_.(p)=v;
 
             case 'linear_restrictions'
 
@@ -110,7 +110,7 @@ end
 
                 self.estim_.linear_restrictions=v(:).';
 
-%                 self.estim_.(prop)=[v(:).',self.linear_restrictions_prime_time];
+%                 self.estim_.(p)=[v(:).',self.linear_restrictions_prime_time];
 
             otherwise
 
