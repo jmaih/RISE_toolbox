@@ -1,5 +1,5 @@
 function [sol,M]=solve(self,varargin)
-% INTERNAL FUNCTION: Solves for consistent parameter values of the VAR
+% INTERNAL FUNCTION: Solves for the consistent parameters for the VAR
 %
 
 [sol,M]=solve@abstvar(self,varargin{:});

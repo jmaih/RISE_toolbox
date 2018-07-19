@@ -1,4 +1,6 @@
 function [sol,retcode]=solve(self,param,yt)
+% INTERNAL FUNCTION: Solves for the consistent parameters for the VAR
+%
 
 if nargin<3
 

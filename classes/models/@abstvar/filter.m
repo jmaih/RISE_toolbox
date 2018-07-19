@@ -1,5 +1,5 @@
 function varargout=filter(self,param)
-% Compute the likelihood of the MSVAR for the given parameters
+% INTERNAL FUNCTION: Compute the log likelihood of the VAR for the given parameters
 %
 % ::
 %
@@ -8,9 +8,14 @@ function varargout=filter(self,param)
 %
 % Args:
 %    self (var object): var object
-%    param (cell of struct): parameter values
+%    param (cell of struct): (optional) parameter values
 %
-
+% Returns:
+%    : log likelihood values of the VAR
+%
+% Note:
+%    Almost everything is automated in RISE, so see :func:`estimate` or :func:`identification` .
+%
 
 if nargin<2,param=[]; end
 

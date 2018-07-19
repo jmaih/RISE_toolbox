@@ -1,5 +1,5 @@
 function [r,f]=residuals(self,params,shock_names,raw)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Solves for the residuals given the parameters
 %
 
 n=nargin;

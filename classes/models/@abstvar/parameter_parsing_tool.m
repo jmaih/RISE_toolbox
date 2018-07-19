@@ -93,9 +93,13 @@ engine=@replacer;
 
             is_ready=false;
 
-            if islag||strcmp(koef,'c')
+            if islag
 
                 vbl=check_variable(second,'endogenous');
+
+            elseif strcmp(koef,'c')
+
+                vbl=check_variable(second,'exogenous');
 
             else
 

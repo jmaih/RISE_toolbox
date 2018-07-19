@@ -1,15 +1,7 @@
 function self=setup_nonlinear_restrictions(self,express,rplfunc)
-% Sets nonlinear restrictions
+% INTERNAL FUNCTION: Sets nonlinear restrictions
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
+
 %
 %    - uses estim_nonlinear_restrictions, which should be a cell array. Each
 %    item of the array is a string of the form
@@ -25,8 +17,6 @@ function self=setup_nonlinear_restrictions(self,express,rplfunc)
 %      - lag [digits]
 %      - chain [char]
 %      - state [digits]
-%
-% Example:
 %
 
 RestrictionsBlock=self.estim_.linear_restrictions;
