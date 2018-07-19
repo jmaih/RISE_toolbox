@@ -1,7 +1,7 @@
 classdef rfvar < abstvar
     %% Reduced Form VAR object
     %
-    % This is a class that helps with reduced form VAR analysis. For more detailed explanations on VAR analysis, refer to `< https://sehyoun.com >`_ .
+    % This is a class that helps with reduced form VAR analysis. For more detailed explanations on VAR analysis, refer to the `documentation <https://sehyoun.com>`_ .
     %
     % Attributes:
     %    endogenous (cellstring): cell of endogenous variable names
@@ -45,6 +45,33 @@ classdef rfvar < abstvar
     methods
 
         function self=rfvar(varargin)
+            % Constructor for rfvar object
+            %
+            % ::
+            %
+            %    var = rfvar(endog, exog, nlags, const, panel, markov_chains);
+            %
+            % Args:
+            %    endog (cellstring): cell of endogenous variable names
+            %    exog (cellstring): cell of exogenous variable names (default: [])
+            %    nlags (integer): number of VAR lags to include (default: 4)
+            %    const (bool): whether to include constants (default: true)
+            %    panel (struct): [optional] a struct of panel information including:
+            %
+            %       - **members** (cellstring): cell of country names
+            %       - **homogeneity** (string): assumptions made on the panel dimension. Available homogeneities are:
+            %
+            %          - **'pooled'**: all countries are assumed to have the same coefficients
+            %          - **'meanGroup'**: XXXXXXXXX
+            %          - **'independent'**: XXXXXXXXX
+            %          - **'static'**: XXXXXXXXXXXXX
+            %          - **'dynamic'**: XXXXXXXXXXXXXXXX
+            %
+            %    markov_chains : [optional] XXXXXXX
+            %
+            % Returns:
+            %    : constructed rfvar object
+            %
 
             self=self@abstvar(varargin{:});
 

@@ -1,5 +1,8 @@
 function batch=read_identification_restrictions(self,restrictions,shocknames)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Formats identification restrictions
+%
+% See also:
+%    :func:`rfvar.identification`
 %
 
 endonames=self.endogenous;

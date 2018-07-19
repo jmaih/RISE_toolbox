@@ -12,14 +12,14 @@ function self=estimate(self,varargin)
 % Args:
 %    var (var object): var object
 %    data (struct or ts obect): data for estimation
-%    data_range (serial): date_range
-%    prior (string): priors for BVAR
-%    restrictions : restrictions
+%    data_range (serial): (optional) date_range
+%    prior (string): (optional) priors if Bayesian VAR
+%    restrictions : restrictions. Refer to XXXXXXXX for analysis
 %
 % Returns:
+%    : var object with parameters estimated based on data
 %
 
-% data,date_range,prior,restrictions,
 data=[];date_range=[];prior=[];restrictions=[];
 
 n=length(varargin);
