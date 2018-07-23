@@ -1,5 +1,5 @@
 function [r,f]=residuals(self,params,shock_names,raw)
-% INTERNAL FUNCTION: Solves for the residuals given the parameters
+% Computes the residuals given the parameters
 %
 
 n=nargin;
@@ -129,4 +129,3 @@ f=set_data_to_time_series(self,tmpfit,self.endogenous,start_date);
     end
 
 end
-

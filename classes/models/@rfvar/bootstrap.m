@@ -1,5 +1,5 @@
 function RepsRun=bootstrap(self,boot)
-% Bootstrap the parameter values resampling :math:`varepsilon_t` terms from the data sample
+% Bootstrap the parameter values resampling :math:`\varepsilon_t` terms from the data sample
 %
 % ::
 %

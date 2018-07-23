@@ -1,23 +1,34 @@
 function varargout=identification(self,restr,shock_names,varargin)
-% Apply restrictions and solves for the parameters satisfying the restrictions
+% Parses identifying restrictions into RISE interpretable identification function
+%
+% Note:
+%    This function is a part of a general workflow. See XXXXXXXXXX to check the workflow.
 %
 % ::
 %
-%    var = identification(var, restr, shock_names, varargin);
+%    Rfunc = identification(var, restr, shock_names, varargin);
 %
 % Args:
 %    var (rfvar object): rfvar object
 %    restr : restrictions can take two forms
 %
 %       - **'choleski'**: choleski identification. Supply the ordering as a cell array as varargin{1}
-%       - **cellstring**: See XXXXXXXXX for the syntax
+%       - **cellstr**: See XXXXXXXXX for the syntax
 %
-%    shock_names (cellstring): cell of structural shock names
+%    shock_names (cellstr): cell of structural shock names
 %
 % Returns:
-%    varargout (rfvar object): rfvar object with updated parameters
+%    :
 %
-
+%    - **Rfunc** (function handle): a function that takes parameters and then returns structural shock matrix. This function function is not intended to be used used on its own, and supposed to be used as an argument in different functions.
+%
+% See also:
+%    - :func:`autocov <var.autocov>`
+%    - :func:`forecast <var.forecast>`
+%    - :func:`historical_decomposition <var.historical_decomposition>`
+%    - :func:`irf <var.irf>`
+%    - :func:`variance_decomposition <var.variance_decomposition>`
+%
 
 % if choleski, restr=choleski, varargin={ordering}, where
 % ordering is the list of the variables in their new order

@@ -390,8 +390,8 @@ classdef (Abstract) abstvar < gogetter
 
                             probnames=abstvar.problist(cn,markov_chains(ic).number_of_states);
 
-                        self.nonvar_parameters=...
-                            [self.nonvar_parameters,probnames(:).'];
+                            self.nonvar_parameters=...
+                                [self.nonvar_parameters,probnames(:).'];
 
                         end
 

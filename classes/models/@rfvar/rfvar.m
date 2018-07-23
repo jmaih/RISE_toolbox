@@ -7,7 +7,7 @@ classdef rfvar < abstvar
     %    endogenous (cellstring): cell of endogenous variable names
     %    exogenous (cellstring): cell of exogenous variable names
     %    parameters (cellstring): INTERNAL STATES: cell of parameters names
-    %    nonvar_parameters :XXXXXXXXX
+    %    nonvar_parameters (cellstring): Non-VAR parameters (depends on markov switching probability)
     %    members :XXXXXXXXXXX
     %    constant (bool): whether to include constants
     %    homogeneity (string): XXXXXXXXXXXX
@@ -67,7 +67,13 @@ classdef rfvar < abstvar
             %          - **'static'**: XXXXXXXXXXXXX
             %          - **'dynamic'**: XXXXXXXXXXXXXXXX
             %
-            %    markov_chains : [optional] XXXXXXX
+            %    markov_chains (struct): [optional] Struct containing the following fields:
+            %
+            %       - **'name'**:
+            %       - **'number_of_states'**:
+            %       - **'controlled_parameters'**:
+            %       - **'endogenous_probabilities'**:
+            %       - **'probability_parameters'**:
             %
             % Returns:
             %    : constructed rfvar object
