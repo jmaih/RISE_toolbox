@@ -1,5 +1,20 @@
 function this=pages2struct(this0)
-% INTERNAL FUNCTION
+% Turns multivariable ts object into a struct with time series object
+%
+% ::
+%
+%    output = pages2struct(input)
+%
+% Args:
+%    input (ts object): ts object to turn into struct form of data
+%
+% Returns:
+%    :
+%
+%    - **output** (struct): a struct with
+%
+%       - fieldname: variable names of input
+%       - value: ts object corresponding to the variable (with data and description)
 %
 
 vnames=this0.varnames;

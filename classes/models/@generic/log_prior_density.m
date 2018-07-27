@@ -1,10 +1,6 @@
 function [lnprior,retcode]=log_prior_density(obj,param)
 % INTERNAL FUNCTION: Computes the probability density function of the prior corresponding to the parameter values
 %
-% ::
-%
-%    [lnprior,retcode]=log_prior_density(obj,param)
-%
 
 nobj=numel(obj);
 
