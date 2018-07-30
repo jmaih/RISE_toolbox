@@ -1,5 +1,25 @@
-function [lnprior,retcode]=log_prior_density(obj,param)
-% INTERNAL FUNCTION: Computes the probability density function of the prior corresponding to the parameter values
+function [lnprior,retcode]=log_prior_density(obj, param)
+% Computes the probability density function of the prior corresponding to the parameter values
+%
+% Note:
+%    In effort to make RISE modular, this function is available so that one can use a different sampler if needed, but most likely, one should just use available stock samplers.
+%
+% ::
+%
+%    [lnprior, retcode] = log_prior_density(model, param)
+%
+% Args:
+%    model (dsge | rise object): model object
+%    param (column vector): parameter values
+%
+% Returns:
+%    : [lnprior, retcode]
+%
+%    - **lnprior** (double): log of prior density function
+%    - **retcode**: return code
+%
+% See also:
+%    - :func:`log_posterior_kernel <dsge.log_posterior_kernel>`
 %
 
 nobj=numel(obj);

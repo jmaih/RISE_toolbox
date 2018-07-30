@@ -65,12 +65,21 @@ function obj=setup_priors(obj,MyPriors,error_control)
 % Note:
 %
 %    - This function is also indirectly used for svar and rfvar objects.
+%    - Possible distributions include:
 %
-% Example:
-%
-%    - Possible distributions include: beta, cauchy, gamma, inv_gamma, laplace,
-%      left_triang, logistic, lognormal, normal, pareto, right_triang,
-%      uniform, weibull
+%       - beta
+%       - cauchy
+%       - gamma
+%       - inv_gamma
+%       - laplace
+%       - left_triang
+%       - logistic
+%       - lognormal
+%       - normal
+%       - pareto
+%       - right_triang
+%       - uniform
+%       - weibull
 %
 % See also:
 %    - rise_generic/estimate

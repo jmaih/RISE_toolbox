@@ -1,20 +1,6 @@
 function [A,retcode]=theoretical_autocorrelations(obj,varargin)%,resolve_flag
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%    [A,retcode]=theoretical_autocorrelations(obj,varargin)
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if isempty(obj)
 

@@ -1,14 +1,5 @@
 function [V,retcode]=theoretical_autocovariances(obj,varargin)
-% H1 line
-%
-% ::
-%
-%    [V,retcode]=theoretical_autocovariances(obj,varargin)
-%
-% Args:
-%
-% Returns:
-%    :
+% INTERNAL FUNCTION
 %
 % Note:
 %
@@ -16,9 +7,6 @@ function [V,retcode]=theoretical_autocovariances(obj,varargin)
 %      1. The nonstationary variables are detected by the program when option
 %      "solve_bgp" is set to true.
 %
-% Example:
-%
-%    See also:
 
 if isempty(obj)
 
