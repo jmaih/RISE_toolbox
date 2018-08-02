@@ -1,5 +1,5 @@
 function obj=setup_calibration(obj,Calibration)
-% setup_calibration -- set parameters
+% Set parameters
 %
 % ::
 %
@@ -7,8 +7,8 @@ function obj=setup_calibration(obj,Calibration)
 %
 % Args:
 %
-%    - **obj** [generic]: model object
-%    - **Calibration** [struct|cell]: calibration to push. There are two
+%    obj (generic): model object
+%    Calibration (struct | cell): calibration to push. There are two
 %      possibilities:
 %
 %      - Calibration is a struct: the fields are the parameter names and each
@@ -30,9 +30,6 @@ function obj=setup_calibration(obj,Calibration)
 %      some other is not. Then RISE will complain that the parameter is not
 %      controlled by the const markov chain.
 %
-% Example:
-%
-% See also:
 
 if isempty(Calibration)
 

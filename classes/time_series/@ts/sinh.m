@@ -1,5 +1,5 @@
 function this=sinh(this)
-% INTERNAL FUNCTION
+% Overloaded sinh function for ts object
 %
 
 % Here it does not make sense to have names any more. But

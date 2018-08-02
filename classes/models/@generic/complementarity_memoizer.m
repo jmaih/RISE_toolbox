@@ -7,7 +7,7 @@ function [sep_cf,cf]=complementarity_memoizer(obj)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
+%    obj (rise | dsge | svar | rfvar): model object
 %
 % Returns:
 %    :
@@ -20,11 +20,6 @@ function [sep_cf,cf]=complementarity_memoizer(obj)
 %      variable values and returns a true if all the restrictions are satisfied
 %      and returns false otherwise
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 if ~isfield(obj.routines,'complementarity')||... I do not expect VARs to have this although in theory they could.
         isempty(obj.routines.complementarity)

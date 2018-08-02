@@ -1,9 +1,11 @@
 function [abar_out,SIGu,smpl]=normal_wishart_posterior(Z,SIGu,V,astar,y,linres)
+% INTERNAL FUNCTION
+%
 
 if nargin < 6
-    
+
     linres=[];
-    
+
 end
 
 % stretch for panel
@@ -28,17 +30,17 @@ dfunc=@()0;
 afunc=@(x)x;
 
 if ~isempty(linres)
-    
+
     a2=@(x)linres.a_to_a2tilde(x);
-    
+
     afunc=@(x)linres.a2tilde_to_a(x);
-    
+
     K=linres.K;
-    
+
     dfunc=@()kron(Z*Z.',iSIGu)*linres.d;
-    
+
     na2=size(K,2);
-    
+
 end
 
 Sstar=eye(n_endo);
@@ -53,7 +55,7 @@ abar=SIGa(SIGu)*(K.'*kron(iV,iSIGu)*K*a2(astar)+...
     K.'*(kron(Z,iSIGu)*y-dfunc())); % 5.2.16
 
 % SIGa=@(SIGu)kron(inv(iV+Z*Z.'),SIGu); % 5.2.15
-% 
+%
 % abar=SIGa(SIGu)*[kron(iV,iSIGu),kron(Z,iSIGu)]*[astar;y(:)]; % 5.2.16
 
 Astar=reshape(astar,n_endo,[]);
@@ -87,32 +89,32 @@ smpl=@posterior_simulator;
 abar_out=afunc(abar);
 
     function draws=posterior_simulator(ndraws)
-               
+
         SIGud=SIGu;
-        
+
         for idraw=1:ndraws
-            
+
             CSIGa=chol(SIGa(SIGud),'lower');
-            
+
             % re-expand immediately
             adraw=afunc(abar+CSIGa*randn(na2,1));
-            
+
             di=[adraw;vech(SIGud)];
-            
+
             if idraw==1
-                
+
                 draws=di(:,ones(ndraws,1));
-                
+
             else
-                
+
                 draws(:,idraw)=di;
-                
+
             end
-            
+
             SIGud=iwishrnd(S,tau);
-            
+
         end
-        
+
     end
 
 end

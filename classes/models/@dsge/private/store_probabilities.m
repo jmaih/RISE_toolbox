@@ -1,19 +1,6 @@
 function obj=store_probabilities(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 nstates=numel(obj.markov_chains.state_names);
 nobs=obj.data.finish;

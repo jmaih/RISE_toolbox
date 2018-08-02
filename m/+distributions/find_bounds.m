@@ -1,20 +1,6 @@
 function bounds=find_bounds(distr,mm,ss,prob,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 [~,~,icdfn,~,m2h]=distributions.(distr)();
 

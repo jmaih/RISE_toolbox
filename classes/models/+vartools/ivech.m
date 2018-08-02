@@ -1,20 +1,6 @@
 function A=ivech(v)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 v=v(:);
 nv=numel(v);

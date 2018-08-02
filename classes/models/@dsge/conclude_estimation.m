@@ -1,19 +1,6 @@
 function [log_post,log_lik,log_prior,Incr,retcode,obj,x1]=conclude_estimation(obj,x1)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if ~obj.is_optimal_simple_rule_model
     obj.options.kf_filtering_level=3;

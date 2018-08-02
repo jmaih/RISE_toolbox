@@ -8,16 +8,17 @@ function [Histdec,obj]=historical_decomposition(obj,varargin)
 %
 % Args:
 %
-%    - obj : [rise|dsge|rfvar|svar] model(s) for which to compute the
+%    obj (rise | dsge | rfvar | svar) model(s) for which to compute the
 %      decomposition. obj could be a vector of models
 %
-%    - varargin : standard optional inputs **coming in pairs**. Among which:
+%    varargin: standard optional inputs **coming in pairs**. Among which:
 %
-%      - **histdec_start_date** : [char|numeric|{''}] : date at which the
+%      - **histdec_start_date** : [char | numeric | {''}] : date at which the
 %        decomposition starts. If empty, the decomposition starts at he
 %        beginning of the history of the dataset
 %
 % Returns:
+%    :
 %
 %    - Histdec : [struct|cell array] structure or cell array of structures
 %      with the decompositions in each model. The decompositions are given in
@@ -40,9 +41,6 @@ function [Histdec,obj]=historical_decomposition(obj,varargin)
 %      in which the variables, shocks and states matrices across states are
 %      averaged. The averaging weights are the smoothed probabilities.
 %
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

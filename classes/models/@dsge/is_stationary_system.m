@@ -1,6 +1,5 @@
 function flag=is_stationary_system(obj)
-% Checks whether a the model is stationary. i.e.,
-% does not containt trending variables
+% Checks whether a the model is stationary. i.e., does not containt trending variables
 %
 % ::
 %
@@ -8,12 +7,12 @@ function flag=is_stationary_system(obj)
 %
 % Args:
 %
-%    - **obj**[rise\|dsge]: model object
+%    obj (rise|dsge): rise/dsge model object
 %
 % Returns:
 %    :
 %
-%    - **flag**[true\|false]: true if the model is stationary
+%    - **flag** (bool): true if the model is stationary
 %
 % Note:
 %
@@ -25,9 +24,10 @@ function flag=is_stationary_system(obj)
 %         process will be said stationary if its first and second moment do not
 %         vary with time.
 %
-% Example:
+% See also:
 %
-% See also: RISE_GENERIC/IS_STABLE_SYSTEM
+%    - rise_generic/is_stable_system
+%
 
 if isempty(obj)
 

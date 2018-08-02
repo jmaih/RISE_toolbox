@@ -1,5 +1,5 @@
 function this=asinh(this)
-% INTERNAL FUNCTION
+% Overloaded asinh for ts object
 %
 
 % Here it does not make sense to have names any more. But

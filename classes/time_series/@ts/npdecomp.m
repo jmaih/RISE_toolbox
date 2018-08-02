@@ -8,8 +8,8 @@ function out=npdecomp(y0,doLog)
 %
 % Args:
 %
-%    - **y** [ts] : time series to decompose
-%    - **doLog** [true|{false}] : if log, do a multiplicative decomposition
+%    y (ts): time series to decompose
+%    doLog (true | {false}): if log, do a multiplicative decomposition
 %      otherwise the decomposition is additive
 %
 % Returns:
@@ -28,7 +28,7 @@ function out=npdecomp(y0,doLog)
 %    of the structure will be the names of the different variables.
 %
 % See also:
-%    - pdecomp
+%    - :func:`pdecomp <ts.pdecomp>`
 %
 
 n=nargin;

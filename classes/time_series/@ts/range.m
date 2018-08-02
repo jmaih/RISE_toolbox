@@ -1,18 +1,24 @@
 function Y=range(this,varargin)
-% INTERNAL FUNCTION
+% Overloads Matlab's range for ts objects. returns the range of the
+% values in the time series
 %
-
-% range  Sample range.
-%    Y = range(db) returns the range of the values in db.  For a vector input,
-%    Y is the difference between the maximum and minimum values.  For a
-%    matrix input, Y is a vector containing the range for each column.  For
-%    N-D arrays, range operates along the first non-singleton dimension.
+% ::
 %
-%    range treats NaNs as missing values, and ignores them.
+%    Y = range(this,varargin);
 %
-%    Y = range(db,DIM) operates along the dimension DIM.
+% Args:
 %
-%    See also iqr, mad, max, min, std.
+%    this (ts object): time series object
+%    varargin : additional matlab arguments for the range function
+%
+% Returns:
+%    :
+%
+%    - **Y** [numeric]: Difference between maximum and minimum values
+%
+% See also:
+%    - range
+%
 
 Y=range(this.data,varargin{:});
 

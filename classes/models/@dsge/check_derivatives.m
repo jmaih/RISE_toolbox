@@ -7,8 +7,7 @@ function retcode=check_derivatives(obj,varargin)
 %   retcode=check_derivatives(obj)
 %
 % Args:
-%
-%    - **obj** [rise|dsge]: model object or vectors of model objects
+%    obj (rise | dsge): model object or vectors of model objects
 %
 % Returns:
 %    :
@@ -23,10 +22,6 @@ function retcode=check_derivatives(obj,varargin)
 %    - The comparisons are done relative to automatic derivatives, which are
 %      assumed to be the most accurate.
 %
-% Example:
-%
-% See also:
-
 
 if isempty(obj)
 

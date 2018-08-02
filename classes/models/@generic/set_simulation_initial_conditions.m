@@ -7,7 +7,7 @@ function Initcond=set_simulation_initial_conditions(obj)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
+%    obj (rise | dsge | svar | rfvar): model object
 %
 % Returns:
 %    :

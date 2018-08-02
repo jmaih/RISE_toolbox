@@ -1,15 +1,14 @@
 function varargout=refresh(obj)
-% REFRESH - refresh the options of an old object with a newer version of
-%   the software
+% INTERNAL FUNCTION: - refresh the options of an old object with a newer version of
+% the software
 %
 % Note:
 %
 %    - REFRESH is the same as RISE_GENERIC.REFRESH except that it also
 %      refreshes parts of the system that are specific to DSGE or RISE objects.
 %
-% Example:
-%
 % See also: RISE_GENERIC.REFRESH
+%
 
 if ~isempty(obj)
 

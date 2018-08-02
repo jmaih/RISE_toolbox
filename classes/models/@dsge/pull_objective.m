@@ -1,15 +1,14 @@
 function varargout=pull_objective(obj,varargin)
-% PULL_OBJECTIVE -- pulls the objective function to optimize for a DSGE or
-% RISE model
+% INTERNAL FUNCTION: pulls the objective function to optimize for a DSGE or RISE model
 %
 % Note:
 %
-%    - PULL_OBJECTIVE is the same as GENERIC_SWITCH/PULL_OBJECTIVE except for
+%    - pull_objective is the same as generic/pull_objective except for
 %      the kf_filtering_level
 %
-% Example:
+% See also:
+%    - rise_generic/pull_objective
 %
-% See also: RISE_GENERIC/PULL_OBJECTIVE
 
 if ~isempty(obj)
 

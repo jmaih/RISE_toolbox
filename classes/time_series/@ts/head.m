@@ -7,8 +7,8 @@ function db=head(db,n)
 %    db = head(db,n);
 %
 % Args:
-%    - db (ts object): time series object
-%    - n (integer): number of time steps to show
+%    db (ts object): time series object
+%    n (integer): number of time steps to show
 %
 % Returns:
 %    :

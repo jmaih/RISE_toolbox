@@ -1,20 +1,21 @@
 function g=group(h,varargin)
+% INTERNAL FUNCTION
+%
+
 % Groups contributions in a structure of ts objects
-%
-% ::
-%
 %
 % Args:
 %
-%    - **h** [struct]: structure of ts objects
-%    - **varargin** []: same as varargin in TS/GROUP
+%    h (struct): structure of ts objects
+%    varargin (): same as varargin in ts/group
 %
 % Returns:
 %    :
 %
 %    - **g** [struct]: structure of ts objects
 %
-% See also: TS/GROUP
+% See also:
+%    - ts/group
 %
 
 if ~isstruct(h)

@@ -1,5 +1,5 @@
 function this=cosh(this)
-% INTERNAL FUNCTION
+% Overloaded cosh function for ts object
 %
 
 % Here it does not make sense to have names any more. But

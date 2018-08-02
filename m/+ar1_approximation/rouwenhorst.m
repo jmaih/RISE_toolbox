@@ -10,18 +10,18 @@ function [Thetai,y]=rouwenhorst(mu,rho,sigma,N,p,q)
 %
 % Args:
 %
-%    - mu : [numeric] : unconditonal mean of the ar(1) process
-%    - rho : [numeric] : autoregressive coefficient
-%    - sigma : [numeric] : standard deviation of the shock
-%    - N : [numeric|{2}] : number of states of the markov chain
-%    - p : [numeric|{.5*(1+rho)}] : first parameter of the procedure
-%    - q : [numeric|{.5*(1+rho)}] : second parameter of the procedure
+%    mu (numeric): unconditonal mean of the ar(1) process
+%    rho [numeric): autoregressive coefficient
+%    sigma (numeric): standard deviation of the shock
+%    N (numeric | {2}): number of states of the markov chain
+%    p (numeric | {.5*(1+rho)}): first parameter of the procedure
+%    q (numeric | {.5*(1+rho)}): second parameter of the procedure
 %
 % Returns:
 %    :
 %
-%    - Thetai : [numeric] : NxN transition matrix
-%    - y : [numeric] : vector of nodes or states
+%    - **Thetai** [numeric] : NxN transition matrix
+%    - **y** [numeric] : vector of nodes or states
 %
 % Note:
 %

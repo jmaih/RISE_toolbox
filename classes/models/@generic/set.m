@@ -1,16 +1,15 @@
 function obj=set(obj,varargin)
-% set - sets options for RISE models
+% Sets options for RISE models
 %
 % ::
-%
 %
 %   obj=set(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
+%    obj (rise | dsge | svar | rfvar): model object
 %
-%    - **varargin** : valid input arguments coming in pairs.
+%    varargin : valid input arguments coming in pairs.
 %
 % Returns:
 %    :
@@ -25,9 +24,6 @@ function obj=set(obj,varargin)
 %      function or algorithm down the road. Then you can run
 %      m=set(m,'+yourfield',value). then m will be part of the new options.
 %
-% Example:
-%
-%    See also:
 
 if isempty(obj)
 

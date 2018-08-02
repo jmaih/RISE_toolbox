@@ -7,8 +7,8 @@ function obj=assign_estimates(obj,params)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
-%    - **params** [vector]: values of parameters estimated or under estimation
+%    obj (rise | dsge | svar | rfvar): model object
+%    params (vector): values of parameters estimated or under estimation
 %      or under posterior simulation
 %
 % Returns:
@@ -16,11 +16,6 @@ function obj=assign_estimates(obj,params)
 %
 %    - **obj** [generic]: model object
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 % this is the routine called during estimation for assigning new estimates
 % to the model

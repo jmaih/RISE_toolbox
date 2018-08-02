@@ -1,5 +1,5 @@
 function blocks=create_estimation_blocks(obj,blocks)
-% H1 line
+% INTERNAL FUNCTION
 %
 % ::
 %
@@ -7,11 +7,13 @@ function blocks=create_estimation_blocks(obj,blocks)
 %
 % Args:
 %
-%    -**obj** [rise|dsge]: model object
-%    -**blocks** [cell array]: blocking information
+%    obj (rise | dsge): model object
+%    blocks (cell array): blocking information
 %
 % Returns:
 %    :
+%
+%    - **blocks**:
 %
 % Note:
 %
@@ -33,9 +35,6 @@ function blocks=create_estimation_blocks(obj,blocks)
 %    The estimated parameters that are controlled by a markov chain can be
 %    entered either as pname(chain,state) or as pname_chain_state
 %
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

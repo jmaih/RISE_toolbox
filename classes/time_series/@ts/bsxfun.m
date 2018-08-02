@@ -1,5 +1,5 @@
 function data=bsxfun(db,fun,b)
-% INTERNAL FUNCTION
+% Overloaded bsxfun for ts object
 %
 
 data=bsxfun(fun,db.data,b);

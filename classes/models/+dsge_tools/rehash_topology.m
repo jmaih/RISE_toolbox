@@ -1,4 +1,6 @@
 function [pos,siz,shock_horizon]=rehash_topology(obj,structural_matrices)
+% INTERNAL FUNCTION
+%
 
 pos=obj.locations.before_solve;
 
@@ -18,13 +20,13 @@ siz.nz=siz.np+siz.nb+1+siz.ne*(1+shock_horizon);
 siz.nd=size(structural_matrices.dv{1,1},1); % number of equations
 
 if siz.ne
-    
+
     pos.z.e_plus=pos.z.e_0(end)+(1:shock_horizon*siz.ne);
-    
+
 else
-    
+
     pos.z.e_plus=(1:shock_horizon*siz.ne);
-    
+
 end
 
 

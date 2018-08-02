@@ -1,20 +1,6 @@
 function params=isnan(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%    params = isnan(obj);
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

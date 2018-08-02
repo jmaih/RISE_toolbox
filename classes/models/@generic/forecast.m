@@ -1,15 +1,15 @@
 function cond_fkst_db=forecast(obj,varargin)
-% Compute forecasts for rise|dsge|svar|rfvar models
+% Compute forecasts for rise/dsge/svar/rfvar models
 %
 % ::
 %
-%   cond_fkst_db=forecast(obj,varargin)
+%   cond_fkst_db = forecast(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
+%    obj (rise | dsge | svar | rfvar): model object
 %
-%    - **varargin** : additional inputs coming in pairs. These include but are
+%    varargin : additional inputs coming in pairs. These include but are
 %      not restricted to:
 %
 %      - **forecast_to_time_series** [{true}|false]: sets the output to time
@@ -67,9 +67,10 @@ function cond_fkst_db=forecast(obj,varargin)
 %    - Further options for conditional forecasting can be found in
 %      RSCF.FORECAST
 %
-% Example:
+% See also:
+%    - rise_generic/simulate
+%    - rscf.forecast
 %
-% See also: RISE_GENERIC/SIMULATE, RSCF.FORECAST
 
 if isempty(obj)
 

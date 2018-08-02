@@ -16,7 +16,7 @@ classdef (Abstract) abstvar < gogetter
         is_panel=false
         nlags
         nx
-        ng
+        ng    % Penal dimensionality, i.e., number of countries
         nvars
     end
 
@@ -390,8 +390,8 @@ classdef (Abstract) abstvar < gogetter
 
                             probnames=abstvar.problist(cn,markov_chains(ic).number_of_states);
 
-                        self.nonvar_parameters=...
-                            [self.nonvar_parameters,probnames(:).'];
+                            self.nonvar_parameters=...
+                                [self.nonvar_parameters,probnames(:).'];
 
                         end
 

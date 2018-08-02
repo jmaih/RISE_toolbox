@@ -1,5 +1,5 @@
 function this=coth(this)
-% INTERNAL FUNCTION
+% Overloaded coth function for ts object
 %
 
 % Here it does not make sense to have names any more. But

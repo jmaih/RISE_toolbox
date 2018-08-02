@@ -1,9 +1,11 @@
 function yahooSendMail(myMail,MyPassword,recipients,subject,message,attachments)
+% INTERNAL FUNCTION
+%
 
 if nargin<6
-    
+
     attachments={};
-    
+
 end
 
 setpref('Internet','SMTP_Server','smtp.mail.yahoo.com');

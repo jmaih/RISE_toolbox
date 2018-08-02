@@ -7,7 +7,7 @@ function myirfs=concatenator(varargin)
 %
 % Args:
 %
-%    - **dbi** [struct|ts] : time series or structure of time series
+%    dbi (struct | ts): time series or structure of time series
 %
 % Returns:
 %    :

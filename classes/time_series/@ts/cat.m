@@ -1,8 +1,7 @@
 function db=cat(dim,varargin)
-% INTERNAL FUNCTION: Concatenates time series along the specified dimension
+% Concatenates time series along the specified dimension
 %
 % ::
-%
 %
 %   db=cat(1,db1,db2,...,dbn)
 %   db=cat(2,db1,db2,...,dbn)
@@ -10,9 +9,9 @@ function db=cat(dim,varargin)
 %
 % Args:
 %
-%    - **dim** [1|2|3] : dimension along which concatenation is done
+%    dim (1 | 2 | 3): dimension along which concatenation is done
 %
-%    - **db1, db2,...,dbn** [ts] : time series
+%    dbi (ts object): time series object
 %
 % Returns:
 %    :
@@ -21,7 +20,7 @@ function db=cat(dim,varargin)
 %
 % Note:
 %
-%    - all times series must be of the same frequency
+%    - all times series must be of the same frequency (see :func:`aggregate <ts.aggregate>`)
 %    - Concatenation along the second dimension requires that variables have
 %      the same number of columns if no names are specified
 %    - if names are specified in the first time series, then names should be

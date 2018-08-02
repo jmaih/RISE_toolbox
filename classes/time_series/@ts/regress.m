@@ -1,18 +1,16 @@
 function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
-% REGRESS -- Linear regression
+% Linear regression
 %
 % ::
 %
-%   [B,BINT,R,RINT,STATS]=regress(this,this2)
-%   [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
+%   [B,BINT,R,RINT,STATS] = regress(this,this2)
+%   [B,BINT,R,RINT,STATS] = regress(this,this2,varargin)
 %
 % Args:
 %
-%    - **this** [ts] : left-hand-side variable
-%
-%    - **this2** [ts] : right-hand-side variables
-%
-%    - **varargin** [comma separated] : additional inputs for Matlab's REGRESS
+%    this (ts): left-hand-side variable
+%    this2 (ts): right-hand-side variables
+%    varargin (comma separated): additional inputs for Matlab's REGRESS
 %      function
 %
 % Returns:
@@ -30,19 +28,15 @@ function [B,BINT,R,RINT,STATS]=regress(this,this2,varargin)
 %      statistic, the F statistic and p value for the full model,
 %      and an estimate of the error variance.
 %
-% Note:
-%
 % Example:
 %
 %  ::
 %
-%    y=ts(1990,rand(100,1)); % random series
-%    X=y(-1)&y(-2)&y(-3); % columns of lags
-%    X=ones(X); % add a column of ones
-%    [B,BINT,R,RINT,STATS]=regress(y,X)
+%    y = ts(1990,rand(100,1)); % random series
+%    X = y(-1)&y(-2)&y(-3); % columns of lags
+%    X = ones(X); % add a column of ones
+%    [B,BINT,R,RINT,STATS] = regress(y,X)
 %
-% See also:
-
 
 if isa(this,'ts') && isa(this2,'ts')
 

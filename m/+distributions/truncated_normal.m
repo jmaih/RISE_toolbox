@@ -1,19 +1,10 @@
 function varargout=truncated_normal(lowerquantileORmean,upperquantileORstdev,prob,c,d)
-% H1 line
-%
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
+% INTERNAL FUNCTION: truncated normal distribution
 %
 % Note:
+%    One would rarely need to call distribution functions directly.
+%    Refer to <densities.html> file for list of supported distributions.
 %
-% Example:
-%
-%    See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
@@ -84,7 +75,7 @@ if hyperparameter_mode
         b=ab(2);
         moments=hyperparameters_2_moments(a,b,c,d);
     end
-    
+
     moments=struct('mean',moments(1),'sd',moments(2));
     varargout={a,b,moments,fval,space};
 else
@@ -133,7 +124,7 @@ end
 		    PHI1=.5*(1+erf(a1/sqrt(2)));
 		    PHI2=.5*(1+erf(a2/sqrt(2)));
 		    D=PHI2-PHI1;
-		    
+
 		    pdfn=@(theta,a,b,c,d)exp(lpdfn(theta,a,b,c,d));
 		    phi1=pdfn(c,a,b,c,d);
 		    phi2=pdfn(d,a,b,c,d);
@@ -150,7 +141,7 @@ end
 		    moments=[mu_trunc;sqrt(var_trunc)];
         end
     end
-	
+
     function [violation,space]=hyperparameters(hyper)
         % -inf<a<inf, b>0
         space=[c,d;

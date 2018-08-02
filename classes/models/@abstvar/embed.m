@@ -1,5 +1,5 @@
 function kdata=embed(kdata,y,x)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Maps the data into proper lag/stacked form
 %
 
 nlags=kdata.nlags;

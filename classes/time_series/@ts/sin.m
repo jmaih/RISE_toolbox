@@ -1,5 +1,5 @@
 function this=sin(this)
-% INTERNAL FUNCTION
+% Overloaded sin function for ts object
 %
 
 % Here it does not make sense to have names any more. But

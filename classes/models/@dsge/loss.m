@@ -9,10 +9,10 @@ function [welf,retcode,V,d]=loss(obj,simuls,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: scalar or vector of model objects.
-%    - **simuls** [ts\|struct\|empty]: if empty, the unconditional welfare is
+%    obj (rise | dsge): scalar or vector of model objects.
+%    simuls (ts | struct | empty): if empty, the unconditional welfare is
 %      returned. if not empty the conditional welfare is calculated instead
-%    - **varargin** []: optional arguments coming in pairs
+%    varargin : optional arguments coming in pairs
 %
 % Returns:
 %    :
@@ -28,9 +28,6 @@ function [welf,retcode,V,d]=loss(obj,simuls,varargin)
 %
 %    The loss is such that :math:`v(x_t,r_t)=x_t.'*Vrt*x_t+drt`
 %
-% Example:
-%
-% See also:
 
 % Note W,Tx are stored in alphabetical order for the convenience of the user
 %------------------------------------------------------------------------

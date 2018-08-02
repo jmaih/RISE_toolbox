@@ -3,14 +3,14 @@ function flag=is_stable_system(obj,varargin)
 %
 % ::
 %
-%   flag=is_stable_system(obj)
-%   flag=is_stable_system(obj,varargin)
+%    flag = is_stable_system(obj)
+%    flag = is_stable_system(obj,varargin)
 %
 % Args:
 %
-%    - **obj** [dsge\|rise\|svar\|rfvar]: model object
+%    obj (dsge | rise | svar | rfvar): model object
 %
-%    - **varargin** [name,value]: pairwise valid options for RISE. The most
+%    varargin (name,value): pairwise valid options for RISE. The most
 %      relevant in this case are
 %
 %       - **stability_criterion** [numeric\|{1.000001}]: stability criterion.
@@ -40,6 +40,7 @@ function flag=is_stable_system(obj,varargin)
 %
 %    - :cite:`costa2006discrete`
 %    - :cite:`gupta2003control`
+%
 
 % this function checks that the solved system is
 % stable in the sense that its covariance matrix is

@@ -1,4 +1,6 @@
 function self=recreate_parameters(self,lag_start)
+% INTERNAL FUNCTION
+%
 
 nd=max(0,self.nx-self.constant);
 
@@ -17,14 +19,14 @@ markov_chains=self.markov_chains;
 self.is_time_varying_trans_prob=false;
 
 for ic=1:numel(markov_chains)
-    
+
     if ~self.is_time_varying_trans_prob
-        
+
         self.is_time_varying_trans_prob=...
             ~isempty(markov_chains(ic).endogenous_probabilities);
-    
+
     end
-    
+
     [markov_chains(ic).endogenous_probabilities]=...
         abstvar.format_transition_probabilities(...
         markov_chains(ic).endogenous_probabilities,...
@@ -48,9 +50,9 @@ if do_sort
     % If everything is sorted we can all go home early
     %-------------------------------------------------
     pos=locate_variables(self.markov_chain_info.chain_names,{self.markov_chains.name});
-    
+
     self.markov_chains=self.markov_chains(pos);
-    
+
 end
 
 end

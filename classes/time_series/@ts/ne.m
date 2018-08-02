@@ -1,5 +1,5 @@
 function flag=ne(varargin)
-% INTERNAL FUNCTION
+% Overloaded ne function for ts object
 %
 
 flag=comparison(mfilename,varargin{:});

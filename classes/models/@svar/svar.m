@@ -37,6 +37,9 @@ classdef svar < abstvar
         end
 
         function varargout=irf(self,shock_names,irf_periods,params)
+            % Compute Impulse-Response Function
+            %
+            %
 
             n=nargin;
 
@@ -75,6 +78,8 @@ classdef svar < abstvar
         end
 
         function Rfunc=identification(varargin)
+            % Parse identification
+            %
 
             Rfunc=@engine;
 

@@ -7,8 +7,8 @@ function m=median(varargin)
 %    m = median(db,dim);
 %
 % Args:
-%    - db (ts object): times series object to compute the median
-%    - dim (integer): (optional; default 1) direction to compute the median, e.g., dim = 1 is time median of each variables, and dim = 3 would be panel median
+%    db (ts object): times series object to compute the median
+%    dim (integer): (optional; default 1) direction to compute the median, e.g., dim = 1 is time median of each variables, and dim = 3 would be panel median
 %
 % Returns:
 %    :

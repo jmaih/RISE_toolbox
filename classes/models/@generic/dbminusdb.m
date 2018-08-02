@@ -1,20 +1,6 @@
 function db=dbminusdb(obj,odb,cdb)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%   none
-%%
-% Note:
-%
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

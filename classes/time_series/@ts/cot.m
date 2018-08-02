@@ -1,5 +1,5 @@
 function this=cot(this)
-% INTERNAL FUNCTION
+% Overloaded cot function for ts object
 %
 
 % Here it does not make sense to have names any more. But

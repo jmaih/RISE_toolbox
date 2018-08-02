@@ -1,28 +1,20 @@
 function map_=map_regimes(obj,big2small)
-% MAP_REGIMES -- map regimes from small ones to big ones and vice versa.
+% INTERNAL FUNCTION: map regimes from small ones to big ones and vice versa.
 % Useful when dealing with loose commitment.
 %
 % ::
 %
-%   map_=MAP_REGIMES(obj)
-%   map_=MAP_REGIMES(obj,big2small)
+%   map_=map_regimes(obj)
+%   map_=map_regimes(obj,big2small)
 %
 % Args:
-%
-%    - **obj** [dsge|rise]: model object
-%    - **big2small** [{true}|false]: decides the direction of the mapping
+%    obj (dsge | rise): model object
+%    big2small ({true} | false): decides the direction of the mapping
 %
 % Returns:
 %    :
 %
 %    - **map_** [1xh|1xbigh]: vector assigning the regimes
-%
-% Note:
-%
-% Example:
-%
-% See also:
-
 %
 
 if nargin<2

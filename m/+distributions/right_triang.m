@@ -1,19 +1,6 @@
 function varargout=right_triang(lowerquantileORmean,upperquantileORstdev,prob,~,~)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % The problem to solve is the following:
 % find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
@@ -68,7 +55,7 @@ if hyperparameter_mode
         b=ab(2);
         moments=hyperparameters_2_moments(a,b);
     end
-    
+
     moments=struct('mean',moments(1),'sd',moments(2));
     varargout={a,b,moments,fval,space};
 else

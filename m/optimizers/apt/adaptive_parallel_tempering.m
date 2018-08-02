@@ -1,5 +1,5 @@
 function Results = adaptive_parallel_tempering(logf,lb,ub,options,mu,SIG)
-% INTERNAL FUNCTION
+% DEPRECATED
 %
 
 % Also known as:

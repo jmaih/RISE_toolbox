@@ -7,11 +7,11 @@ function dictionary=parse(FileName,varargin)
 %
 % Args:
 %
-%    - **FileName** [char|cellstr]: if "char", name of the model file. The
+%    FileName (char | cellstr): if "char", name of the model file. The
 %      file should have extensions rs, rz or dsge. If "cellstr" each cell
 %      contains the name of a separate model file. The files are then meant to
 %      be combined into one single model.
-%    - **varargin** []: pairwise arguments with possiblities as follows:
+%    varargin (): pairwise arguments with possiblities as follows:
 %
 %      - **parameter_differentiation** [true|{false}]: compute or not
 %        parameter derivatives

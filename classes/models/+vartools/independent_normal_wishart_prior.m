@@ -1,5 +1,7 @@
 function [abar,SIGu,sampler]=independent_normal_wishart_prior(kdata,Yraw,...
     SIGu,prior_hyperparams)
+% INTERNAL FUNCTION
+%
 
 astar=vartools.set_prior_mean(kdata,prior_hyperparams);
 

@@ -1,17 +1,39 @@
 function self=estimate(self,varargin)
-% Estimates the VAR
+% Estimates VAR parameters using frequentist/Bayesian interpretation
 %
 % ::
 %
-%    var = estimate(var, varargin);
+%    var = estimate(var);
+%    var = estimate(var, data);
+%    var = estimate(var, data, data_range);
+%    var = estimate(var, data, data_range, prior);
+%    var = estimate(var, data, data_range, prior, restrictions);
 %
 % Args:
+%    var (var object): var object
+%    data (struct or ts obect): data for estimation
+%    data_range (serial): (optional) date_range
+%    prior (string): priors for parameters
 %
+%       - If no prior is given, maximum likehood estimators (frequentist) are set for parameters
+%       - With priors, posterior mode (Bayesian) values are set for parameters
+%
+%    restrictions : restrictions. Refer to XXXXXXXX for analysis
 %
 % Returns:
+%    : var object with parameters estimated based on data
+%
+% See also:
+%    - :func:`posterior_mode <var.posterior_mode>`
+%    - :func:`identification <var.identification>`
+%
+% Warning:
+%    Maximum is found using `fmincon` XXXXXXXXX, one should check return code to be safe.
+%
+% Todo:
+%    Check retcode of fmincon and give warnings.
 %
 
-% data,date_range,prior,restrictions,
 data=[];date_range=[];prior=[];restrictions=[];
 
 n=length(varargin);

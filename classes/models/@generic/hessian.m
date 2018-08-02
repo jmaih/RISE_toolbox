@@ -3,19 +3,19 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 %
 % ::
 %
-%   [obj,H,issue]=hessian(obj)
+%   [obj,H,issue] = hessian(obj)
 %
-%   [obj,H,issue]=hessian(obj,x)
+%   [obj,H,issue] = hessian(obj,x)
 %
-%   [obj,H,issue]=hessian(obj,x,varargin)
+%   [obj,H,issue] = hessian(obj,x,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|rfvar|svar]: model object
+%    obj (rise | dsge | rfvar | svar): model object
 %
-%    - **x** [[]|vector]: vector at which one wants to compute the hessian
+%    x ([] | vector): vector at which one wants to compute the hessian
 %
-%    - **varargin** additional optional inputs among which the most relevant
+%    varargin: additional optional inputs among which the most relevant
 %      for estimation is:
 %
 %      - **hessian_type** [{'fd'}|'opg']: The hessian is either computed by
@@ -32,11 +32,6 @@ function [obj,H,issue]=hessian(obj,x,varargin)
 %    - **issue** [char|'']: any issue encountered during the computation of
 %      the hessian
 %
-% Note:
-%
-% Example:
-%
-% See also:
 
 nobj=numel(obj);
 

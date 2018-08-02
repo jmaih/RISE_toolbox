@@ -1,5 +1,5 @@
-function outcell=print_solution(obj,varlist,orders,compact_form,precision,equation_format,file2save2)
-% print_solution - print the solution of a model or vector of models
+function outcell=print_solution_legacy(obj,varlist,orders,compact_form,precision,equation_format,file2save2)
+% Old form of printing the solution of a model or vector of models
 %
 % ::
 %
@@ -54,11 +54,11 @@ function outcell=print_solution(obj,varlist,orders,compact_form,precision,equati
 
 
 if isempty(obj)
-    
+
     outcell=cell(0,4);
-    
+
     return
-    
+
 end
 
 if nargin<7
@@ -151,9 +151,9 @@ else
     mycell=[mycell;{sprintf('%s :: %s','SOLVER',solver)}];
     h=obj.markov_chains.regimes_number;
     for ii=1:h
-        
+
         data=build_printing_array(ii);
-        
+
         B=utils.table.concatenate(data,precision);
         body_format='';
         % start from the end
@@ -213,7 +213,7 @@ end
             end
             state_names=[state_names,state_list];
         end
-        
+
         chop=1e-9;
         Tzname='T';
 		ifact=1./cumprod(1:orders(end));
@@ -226,11 +226,11 @@ end
                     ifact(io)*Tz];
             end
         end
-        
+
         if compact_form
             bigtime=bigtime(kept_states,:);
         end
-        
+
         bigtime=full(bigtime);
         bigtime(abs(bigtime)<chop)=0;
         keep_rows=any(bigtime,2);

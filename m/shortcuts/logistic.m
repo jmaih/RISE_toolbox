@@ -1,19 +1,6 @@
 function varargout=logistic(varargin)
-% logistic 1st-order logistic function
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 [varargout{1:nargout}]=utils.smooth_transition.(mfilename)(varargin{:});
 

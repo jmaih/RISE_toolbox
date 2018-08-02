@@ -1,5 +1,5 @@
 function this=atanh(this)
-% INTERNAL FUNCTION
+% Overloaded atanh for ts object
 %
 
 % Here it does not make sense to have names any more. But

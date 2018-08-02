@@ -7,8 +7,8 @@ function g=group(this,varargin)
 %
 % Args:
 %
-%    - **this** [ts]: time series of multiple variables
-%    - **varargin** []: sequences of cell arrays with the following possible
+%    this (ts): time series of multiple variables
+%    varargin : sequences of cell arrays with the following possible
 %      formats:
 %
 %      - {'supply','Ep'}

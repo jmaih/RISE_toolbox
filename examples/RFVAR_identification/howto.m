@@ -103,5 +103,3 @@ for ishock=1:numel(shock_names)
         title(var_texname{ivar})
     end
 end
-
-

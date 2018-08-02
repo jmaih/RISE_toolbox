@@ -9,15 +9,15 @@ obs_id,match_first_page,nsteps)
 %
 % Args:
 %
-%    - **y0** []:
-%    - **shocks** []:
-%    - **cond_shocks_id** []:
-%    - **data_y** []:
-%    - **t** []:
-%    - **p** []:
-%    - **obs_id** []:
-%    - **match_first_page** [true|{false}]:
-%    - **nsteps** []:
+%    y0 ():
+%    shocks ():
+%    cond_shocks_id ():
+%    data_y ():
+%    t ():
+%    p ():
+%    obs_id ():
+%    match_first_page (true | {false}):
+%    nsteps ():
 %
 % Returns:
 %    :

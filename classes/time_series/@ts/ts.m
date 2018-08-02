@@ -1,17 +1,17 @@
 classdef ts < gogetter
-% Constructor for time series objects
+% Constructor for the ts object
 %
 % ::
 %
-%   self=ts() % construct a time series with no observations
-%   self=ts(start_date,data)
-%   self=ts(start_date,data,varnames)
-%   self=ts(start_date,data,varnames,description)
-%   self=ts(start_date,data,varnames,description,trailnans)
+%   self=ts();    % construct a time series with no observations
+%   self=ts(start_date,data);
+%   self=ts(start_date,data,varnames);
+%   self=ts(start_date,data,varnames,description);
+%   self=ts(start_date,data,varnames,description,trailnans);
 %
 % Args:
 %
-%    - **start_date** [integer|char|serial date] : start date of
+%    start_date (integer | char | serial date): start date of
 %      the time series. The following are admitted:
 %
 %      - annual data : e.g. 1990 or '1990'
@@ -19,19 +19,18 @@ classdef ts < gogetter
 %      - Quarterly data : e.g. '1990Q3'
 %      - monthly data : e.g. '1990M12'
 %
-%    - **data** [numeric] : the format is nobs x nvars x npages,
+%    data (numeric): the format is nobs x nvars x npages,
 %      where:
 %
 %      - **nobs** is the number of observations
 %      - **nvars** is the number of variables
 %      - **npages** is the number of pages (3rd dimension)
 %
-%    - **varnames** [char|cellstr] : names of the variables in the
+%    varnames (char | cellstr): names of the variables in the
 %      database
-%    - **description** [char|cellstr|{''}]: comments on each
+%    description (char | cellstr | {''}): comments on each
 %      variable in the database
-%    - **trailnans** [true|{false}]: keep or remove nans (missing
-%      observations)
+%    trailnans (true|{false}): keep or remove nans (missing observations)
 %
 % Returns:
 %    :
@@ -40,110 +39,6 @@ classdef ts < gogetter
 %
 
 
-    % ts Time series
-    %
-    % ts Methods:
-    %
-    % acos
-    % acosh
-    % acot
-    % acoth
-    % aggregate
-    % allmean
-    % and
-    % apply
-    % asin
-    % asinh
-    % atan
-    % atanh
-    % automatic_model_selection
-    % bar
-    % barh
-    % boxplot
-    % bsxfun
-    % cat - concatenates time series along the specified dimension
-    % collect
-    % corr
-    % corrcoef
-    % cos
-    % cosh
-    % cot
-    % coth
-    % cov
-    % cumprod
-    % cumsum
-    % decompose_series
-    % describe
-    % disp
-    % double
-    % drop
-    % dummy
-    % eq
-    % exp
-    % expanding
-    % fanchart
-    % ge
-    % gt
-    % head
-    % hist
-    % horzcat
-    % hpfilter
-    % index
-    % interpolate
-    % intersect
-    % isfinite
-    % isinf
-    % isnan
-    % jbtest
-    % kurtosis
-    % le
-    % log
-    % lt
-    % max
-    % mean
-    % median
-    % min
-    % minus
-    % mode
-    % mpower
-    % mrdivide
-    % mtimes
-    % nan
-    % ne
-    % numel
-    % ones - overloads ones for ts objects
-    % pages2struct
-    % plot
-    % plotyy
-    % plus
-    % power
-    % prctile - Percentiles of a time series (ts)
-    % quantile
-    % rand
-    % randn
-    % range
-    % rdivide
-    % regress
-    % reset_start_date
-    % rolling
-    % sin
-    % sinh
-    % skewness
-    % spectrum
-    % std
-    % step_dummy
-    % subsasgn
-    % subsref
-    % sum
-    % tail
-    % times
-    % transform
-    % ts - Methods:
-    % uminus
-    % values
-    % var
-    % zeros
-    %
     % ts  Properties:
     %
     % varnames -   names of the variables in the database
@@ -199,48 +94,7 @@ classdef ts < gogetter
     end
 
     methods
-        % constructor
-        %--------------
         function self=ts(varargin)
-            % Constructor for time series objects
-            %
-            % ::
-            %
-            %   self=ts() % construct a time series with no observations
-            %   self=ts(start_date,data)
-            %   self=ts(start_date,data,varnames)
-            %   self=ts(start_date,data,varnames,description)
-            %   self=ts(start_date,data,varnames,description,trailnans)
-            %
-            % Args:
-            %
-            %    - **start_date** [integer|char|serial date] : start date of
-            %      the time series. The following are admitted:
-            %
-            %      - annual data : e.g. 1990 or '1990'
-            %      - bi-annual data : e.g. '1990H1'
-            %      - Quarterly data : e.g. '1990Q3'
-            %      - monthly data : e.g. '1990M12'
-            %
-            %    - **data** [numeric] : the format is nobs x nvars x npages,
-            %      where:
-            %
-            %      - **nobs** is the number of observations
-            %      - **nvars** is the number of variables
-            %      - **npages** is the number of pages (3rd dimension)
-            %
-            %    - **varnames** [char|cellstr] : names of the variables in the
-            %      database
-            %    - **description** [char|cellstr|{''}]: comments on each
-            %      variable in the database
-            %    - **trailnans** [true|{false}]: keep or remove nans (missing
-            %      observations)
-            %
-            % Returns:
-            %    :
-            %
-            %    - **self** [ts] : time series
-            %
 
             self=self@gogetter();
 
@@ -569,9 +423,7 @@ classdef ts < gogetter
         varargout=expanding(varargin)
         varargout=fanchart(varargin)
         varargout=hpfilter(varargin)
-        varargout=index(varargin)
         varargout=interpolate(varargin)
-        varargout=intersect(varargin)
         varargout=ma_filter(varargin)
         varargout=moments(varargin)
         varargout=npdecomp(varargin)
@@ -657,7 +509,6 @@ classdef ts < gogetter
         varargout=and(varargin)
         varargout=cat(varargin)
         varargout=chowlin(varargin)
-        varargout=decompose_series(varargin)
         varargout=drop(varargin)
         varargout=dust_up(varargin)
         varargout=group(varargin)
@@ -698,6 +549,9 @@ classdef ts < gogetter
 
     methods(Access=private)
         varargout=comparison(varargin)
+        varargout=decompose_series(varargin)
+        varargout=index(varargin)
+        varargout=intersect(varargin)
         varargout=process_subs(varargin)
         varargout=ts_roll_or_expand(varargin)
     end

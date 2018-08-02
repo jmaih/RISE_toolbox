@@ -1,20 +1,6 @@
 function resid=hyperparameter_residuals(x,cdfn,plb,pub,prob,callingfun,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 a=x(1);
 b=x(2);

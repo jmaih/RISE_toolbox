@@ -1,5 +1,18 @@
 function m=cov(this,varargin)
-% INTERNAL FUNCTION
+% Computes covariances for time series: It is an interface to MATLAB implementation of cov adjusted to handle nan properly
+%
+% ::
+%
+%    varargout = cov(db,varargin);
+%
+% Args:
+%    db (ts object): times series object
+%    varargin: varargin for cov function in MATLAB
+%
+% Returns:
+%    :
+%
+%    varargout: output from cov function
 %
 
 if ~isempty(varargin) && isa(varargin{1},'ts')

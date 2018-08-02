@@ -1,5 +1,30 @@
 function this=aggregate(this,newfreq,method)
-% INTERNAL FUNCTION
+% Convert time series to a lower frequency
+%
+% ::
+%
+%    this=aggregate(this,newfreq);
+%    this=aggregate(this,newfreq,method);
+%
+% Args:
+%    this (ts object): time series object
+%    newfreq (char): frequency to convert the data to. It must be a lower than the frequency of the data in **this**. Available frequencies are
+%
+%       - 'Q': quarterly
+%       - 'M': monthly
+%       - 'H': semiannual
+%       - 'W': weekly
+%       - 'D': daily
+%
+%    method ('interpolation' , 'distribution'): method of conversion (default: 'distribution')
+%
+%       - 'interpolation': Use the value corresponding to the first date of the coarse frequency
+%       - 'distribution': Use the average of all observations in the sampling frequency
+%
+% Returns:
+%    :
+%
+%    - **this** (ts object): time series object
 %
 
 if nargin<3
@@ -87,13 +112,17 @@ datta=this.data;
 switch method
 
     case 'interpolation'
-
+        
         indexfun=@(x)(x-1)*number+1;
-
+        
+        coef=1;
+        
     case 'distribution'
-
+        
         indexfun=@(x)(x-1)*number+1:x*number;
-
+        
+        coef=1/number;
+        
     otherwise
 
         error([mfilename,':: unknown aggregation method ',method])
@@ -105,8 +134,6 @@ T=last_guy-first_guy+1;
 q=T/number;
 
 C=zeros(q,T);
-
-coef=1/number;
 
 for ii=1:q
 

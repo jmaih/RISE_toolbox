@@ -6,9 +6,11 @@ function flag=isfinite(self)
 %    flag = isfinite(db);
 %
 % Args:
-%    - db (ts object): time series object
+%    db (ts object): time series object
 %
 % Returns:
+%    :
+%
 %    - flag (bool): whether the corresponding data is finite or not
 %
 % Note:

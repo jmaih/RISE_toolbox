@@ -1,19 +1,6 @@
 function model=load_mode(model)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % reload the start values for the estimated parameters from a structure.
 
@@ -46,10 +33,10 @@ if ~isempty(the_mode_file)
 end
 
 % function model=load_mode(model)
-% 
+%
 % the_mode_file=model.options.estim_mode_file;
-% 
-% if ~isempty(the_mode_file)&& exist(the_mode_file,'file') 
+%
+% if ~isempty(the_mode_file)&& exist(the_mode_file,'file')
 % 	% read the mode file
 % 	fid=fopen(the_mode_file);
 % 	param_names={model.estimated_parameters.name};

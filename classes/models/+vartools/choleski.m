@@ -1,5 +1,5 @@
 function [Rfunc,ident]=choleski(n,ordering)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Choleski identification of structural shocks
 %
 
 if nargin < 2

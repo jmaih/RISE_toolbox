@@ -1,25 +1,23 @@
 function f=frontier(obj,lambda_name,lambda_vals,simul,seed)
-% frontier -- computes standard devations of the model for a grid over a
-% given parameter
+% Compute standard devations of the model for a grid over a given parameter
 %
 % ::
 %
-%   f=frontier(obj,lambda_name,lambda_vals)
+%    f = frontier(obj,lambda_name,lambda_vals)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: model object
+%    obj (rise | dsge): model object
 %
-%    - **lambda_name** [char]: name of the parameter to vary
+%    lambda_name (char): name of the parameter to vary
 %
-%    - **lambda_vals** [vector]: 1 x 2 or 1 x N vector of values for the
+%    lambda_vals (vector): 1 x 2 or 1 x N vector of values for the
 %      parameter. When N=2, a grid of 50 points is constructed between the two
 %      values. When N>2, lambda_vals is the grid.
 %
-%    - **simul** [true|{false}]: use simulation instead of theoretical
-%      moments.
+%    simul (true | {false}): use simulation instead of theoretical moments.
 %
-%    - **seed** [numeric|{1971}]: see for simulations
+%    seed (numeric | {1971}): see for simulations
 %
 % Returns:
 %    :
@@ -44,9 +42,6 @@ function f=frontier(obj,lambda_name,lambda_vals,simul,seed)
 %    - improvements to consider are how to deal with regime switches or
 %      nonlinear models in general. One solution is to use simulation
 %
-% Example:
-%
-% See also:
 
 if isempty(obj)
 

@@ -1,5 +1,5 @@
 function flag=ge(varargin)
-% INTERNAL FUNCTION
+% Overloaded ge function for ts object
 %
 
 flag=comparison(mfilename,varargin{:});

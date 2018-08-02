@@ -8,22 +8,16 @@ function db=randsample(obj,N,K,varargin)
 %
 % Args:
 %
-%    - **obj** [rise|dsge|svar|rfvar]: model object
-%    - **N** [integer]: length of the time series
-%    - **K** [integer]: number of time series
-%    - **varargin** []: additional options for the model object
+%    obj (rise | dsge | svar | rfvar): model object
+%    N (integer): length of the time series
+%    K (integer): number of time series
+%    varargin : additional options for the model object
 %
 % Returns:
 %    :
 %
 %    - **db** [struct]: time series
 %
-% Note:
-%
-% Example:
-%
-% See also:
-
 
 % returns K samples of length N
 

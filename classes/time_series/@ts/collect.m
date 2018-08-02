@@ -3,11 +3,11 @@ function this=collect(varargin)
 %
 % ::
 %
-%   - this=collect(v1,v2,...,vn)
+%    this=collect(v1,v2,...,vn)
 %
 % Args:
 %
-%    - **Vi** [cell|ts|struct]: time series in ts format:
+%    Vi (cell | ts | struct): time series in ts format:
 %
 %      - cell: When Vi is a cell, then its format should be {vname,ts} i.e.
 %        the first element is the name of the variable and the second is the

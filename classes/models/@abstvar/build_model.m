@@ -1,6 +1,5 @@
 function [mc,switch_prior,restr]=build_model(m,vnames,options)
-% this function creates inputs for model setting and estimation of a
-% structural VAR identified by Choleski restrictions.
+% Create inputs for model setting and estimation of a structural VAR identified by Choleski restrictions.
 %
 % Args:
 %    - m (string): nvmc or nvABCmc, where n is the number of states for the
@@ -18,6 +17,7 @@ function [mc,switch_prior,restr]=build_model(m,vnames,options)
 %         probabilities
 %       - restr (cell array): list of (Choleski) restrictions. state-identifying
 %         restrictions are not added yet
+%
 
 % models={'1v|1c','2v|1c','3v|1c','1v|2c','2v|2c','3v|2c',...
 %     '3v|S2c','3v|SC2c','3v|SCP2c','3v|SRM2c','3v|RM2c','3v|RMC2c'

@@ -1,9 +1,22 @@
 function this=reset_data(this,newdata,newnames)
-% INTERNAL FUNCTION
+% Reset the data
+%
+% ::
+%
+%    db = reset_data(db,newdata);
+%    db = reset_data(db,newdata,newnames);
+%
+% Args:
+%    db (ts object): original time series object
+%    newdata (matrix): new data to replace the data of the original time series
+%    newnames: (optional cell of str) new variable names to replace with
+%
+% Returns:
+%    :
+%    db (ts object): time series object with the data (and variable names) replaced
 %
 % Note:
-%    - Keeps the start date and only changes the data. New data no longer
-%    needs to be of the same size as the old one.
+%    - Keeps the start date and only changes the data. New data does not needs to be of the same size as the old one.
 %
 
 nd=size(newdata,2);

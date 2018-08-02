@@ -1,20 +1,6 @@
 function obj=save_filters(obj)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 Fields=fieldnames(obj.filtering);
 rolling=[];
@@ -102,7 +88,7 @@ end
         elseif ismember(c,[nobs,nobs+1])
             filtdata=permute(filtdata,[2,1,3]); % time x names x regimes
         end
-        
+
         out=struct();
         if variables_flag
             nvars=obj.endogenous.number;
@@ -140,11 +126,11 @@ end
         function reprocess_filters()
             if strcmp(filtname,'Expected_filtered_variables')
                 Expected_rolling=filtdata;
-                filtdata(:,2:end,:)=[]; 
+                filtdata(:,2:end,:)=[];
             elseif strcmp(filtname,'filtered_variables')
                 rolling=filtdata;
                 for istate=1:numel(filtdata)
-                    filtdata{istate}(:,2:end,:)=[]; 
+                    filtdata{istate}(:,2:end,:)=[];
                 end
             end
             if iscell(filtdata)

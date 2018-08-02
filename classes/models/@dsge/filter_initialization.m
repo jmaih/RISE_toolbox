@@ -1,14 +1,14 @@
 function [init,retcode]=filter_initialization(obj,varargin)
-% FILTER_INITIALIZATION - Initial conditions for filtering
+% Initial conditions for filtering
 %
 % ::
 %
-%   [init,retcode]=FILTER_INITIALIZATION(obj)
+%   [init,retcode]=filter_initialization(obj)
 %
 % Args:
 %
-%    - **obj** [rise|dsge]: model object
-%    - **varargin** [name,value]: valid pairwise options with the most
+%    obj (rise | dsge): model object
+%    varargin (name,value): valid pairwise options with the most
 %      relevant beeing:
 %
 %      - **kf_ergodic** [{true}|false]: initialization at the ergodic
@@ -46,10 +46,9 @@ function [init,retcode]=filter_initialization(obj,varargin)
 %      nonstationary variables separately. If this is not the case the variance
 %      for those variables will be 1 by default.
 %
-% Example:
+% See also:
+%    - dsge/filter
 %
-% See also: DSGE/FILTER
-
 
 % diffuse initialization for all elements in the state vector including
 % stationary ones. This is what Waggoner and Zha do, but then they take

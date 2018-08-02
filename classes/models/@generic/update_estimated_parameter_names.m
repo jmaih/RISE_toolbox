@@ -1,20 +1,6 @@
-function estim_names=update_estimated_parameter_names(~,estim_names)
-% H1 line
+function estim_names=update_estimated_parameter_names(obj,estim_names)
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 end
 

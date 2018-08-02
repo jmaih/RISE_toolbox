@@ -1,18 +1,18 @@
 function [result,time_it_took]=posterior_sample(m,pop,dowhat,howmany,ouf,varargin)
-% POSTERIOR_SAMPLE -- computes a sample of any quantity of interest using
+% Computes a sample of any quantity of interest using
 % parameter draws from a population e.g. a posterior simulation
 %
 % ::
 %
-%   [result]=POSTERIOR_SAMPLE(m,pop,dowhat)
+%   [result]=posterior_sample(m,pop,dowhat)
 %
-%   [result]=POSTERIOR_SAMPLE(m,pop,dowhat,howmany)
+%   [result]=posterior_sample(m,pop,dowhat,howmany)
 %
-%   [result]=POSTERIOR_SAMPLE(m,pop,dowhat,howmany,ouf)
+%   [result]=posterior_sample(m,pop,dowhat,howmany,ouf)
 %
-%   [result]=POSTERIOR_SAMPLE(m,pop,dowhat,howmany,ouf,varargin)
+%   [result]=posterior_sample(m,pop,dowhat,howmany,ouf,varargin)
 %
-%   [result,is_failed,time_it_took]=POSTERIOR_SAMPLE(...)
+%   [result,is_failed,time_it_took]=posterior_sample(...)
 %
 % Args:
 %
@@ -58,9 +58,6 @@ function [result,time_it_took]=posterior_sample(m,pop,dowhat,howmany,ouf,varargi
 %      loop until the requested number of simulations is obtained. But it will
 %      not point to the parameter vectors that fail.
 %
-% Example:
-%
-% See also:
 
 % hard coded
 %-----------

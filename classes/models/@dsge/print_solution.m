@@ -1,5 +1,5 @@
 function outcell=print_solution(obj,varlist,orders,compact_form)
-% print_solution - print the solution of a model or vector of models
+% Print the solution of a model or vector of models
 %
 % ::
 %
@@ -10,14 +10,14 @@ function outcell=print_solution(obj,varlist,orders,compact_form)
 %
 % Args:
 %
-%    - **obj** [rise|dsge] : model object or vector of model objects
+%    obj (rise | dsge): model object or vector of model objects
 %
-%    - **varlist** [char|cellstr|{[]}] : list of variables of interest
+%    varlist (char | cellstr | {[]}): list of variables of interest
 %
-%    - **orders** [numeric|{[1:solve_order]}] : orders for which we want to
-%      see the solution
+%    orders (numeric) : orders for which we want to
+%      see the solution (default: [1:solve_order])
 %
-%    - **compact_form** [{true}|false] : if true, only the solution of unique
+%    compact_form ({true} | false): if true, only the solution of unique
 %      tuples (i,j,k) such that i<=j<=k is presented. If false, the solution
 %      of all combinations is presented. i.e.
 %      (i,j,k)(i,k,j)(j,i,k)(j,k,i)(k,i,j)(k,j,i)
@@ -34,10 +34,6 @@ function outcell=print_solution(obj,varlist,orders,compact_form)
 %    first-order solution or the solution up to second-order only or any
 %    combination of orders.
 %
-% Example:
-%
-% See also:
-
 
 outcell_=cell(0,4);
 

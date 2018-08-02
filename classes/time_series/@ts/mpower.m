@@ -1,5 +1,5 @@
 function this=mpower(this,const)
-% INTERNAL FUNCTION
+% Overloaded mpower function for ts object
 %
 
 this=power(this,const);

@@ -1,51 +1,47 @@
 function db=prctile(db,p)
-% prctile Percentiles of a time series (ts)
+% Compute the percentiles of a time series (ts)
 %
 % ::
-%
 %
 %   db=prctile(db,p)
 %
 % Args:
 %
-%    - **db** [ts] : time series with many pages (third dimension). The time
+%    db (ts): time series with many pages (third dimension). The time
 %      series may have one or several variables.
-%
-%    - **p** [scalar|vector] : scalar or a vector of percent values
+%    p (scalar | vector): scalar or a vector of percent values
 %
 % Returns:
 %    :
 %
 %    - **db** [ts] : time series with as many pages as the length of **p**.
 %
-% Note:
-%
 % Example:
+%    ::
 %
-%    test=ts(1990,rand(100,3,200),{'a','b','c'});
-%    tmp=prctile(test,[10,50,90])
-%    plot(tmp('a'))
+%       test=ts(1990,rand(100,3,200),{'a','b','c'});
+%       tmp=prctile(test,[10,50,90])
+%       plot(tmp('a'))
 %
-%    See also:
 
 if ~isvector(p) || numel(p) == 0 || any(p < 0 | p > 100) || ~isreal(p)
-    
+
     error('percentiles must be between 0 and 100');
-    
+
 end
 
 x=double(db);
 
 if size(x,3)==1
-    
+
     x=permute(x,[1,3,2]);
-    
+
     if ~isempty(db.varnames{1})
-        
+
         error('names found in the database but only one page. Suppress names or add pages')
-        
+
     end
-    
+
 end
 
 [nobs,nvars,npages]=size(x);
@@ -55,29 +51,29 @@ np=numel(p);
 y=nan(nobs,nvars,np);
 
 for ivar=1:nvars
-    
+
     y(:,ivar,:) = prctile_engine(permute(x(:,ivar,:),[1,3,2]));
-    
+
 end
 
 if isempty(db.varnames)
-    
+
     db=ts(db.start,y);
-    
+
 else
-    
+
     db=ts(db.start,y,db.varnames);
-    
+
 end
 
     function y = prctile_engine(x)
-        
+
         perm = [2 1];
         x = permute(x,perm);
-        
+
         x = sort(x,1);
         nonnans = ~isnan(x);
-        
+
         % If there are no NaNs, do all cols at once.
         if all(nonnans(:))
             n = npages;
@@ -93,7 +89,7 @@ end
                 y = zeros(numel(p), nobs);
                 y(:,:) = interp1q(q,xx,p(:));
             end
-            
+
             % If there are NaNs, work on each column separately.
         else
             % Get percentiles of the non-NaN values in each column.
@@ -115,9 +111,9 @@ end
                 end
             end
         end
-        
+
         % undo the DIM permutation
         y = ipermute(y,perm);
-        
+
     end
 end

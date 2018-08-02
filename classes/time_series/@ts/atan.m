@@ -1,5 +1,5 @@
 function this=atan(this)
-% INTERNAL FUNCTION
+% Overloaded atan for ts object
 %
 
 % Here it does not make sense to have names any more. But

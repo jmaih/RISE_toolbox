@@ -10,17 +10,10 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 %
 % Args:
 %
-%    - **y0** [ts] : low-frequency left-hand-side variable
-%      the time series. The following are admitted:
+%    y0 (ts object): low-frequency left-hand-side variable
 %
-%      - annual data : e.g. 1990 or '1990'
-%      - bi-annual data : e.g. '1990H1'
-%      - Quarterly data : e.g. '1990Q3'
-%      - monthly data : e.g. '1990M12'
-%
-%    - **Xh0** [ts|struct] : high-frequency right-hand-side explanatory
-%      variables
-%    - **aggreg_type** ['flow'|{'average'}|'index'|'last'|'first'] : type of
+%    Xh0 (ts | struct): high-frequency right-hand-side explanatory variables
+%    aggreg_type ('flow' | {'average'} | 'index' | 'last' | 'first'): type of
 %      aggregation:
 %
 %      - 'flow' (or 1) is the sum,
@@ -28,13 +21,13 @@ function [yh,res]=chowlin(y0,Xh0,varargin)
 %      - 'last' (or 3) is the last element,
 %      - 'first' (or 4) is the first element,
 %
-%    - **estim_method** [{0}|1|2] : estimation method
+%    estim_method ({0} | 1 | 2) : estimation method
 %
 %      - 0 : Generalized/Weighted Least squares (with grid)
 %      - 1 : Maximum Likelihood (with grid),
 %      - 2 : Maximum Likelihood (without grid) using fmincon as optimizer
 %
-%    - **ngrid** [integer|{250}] : number of grid points
+%    ngrid (integer | {250}) : number of grid points
 %
 % Returns:
 %    :

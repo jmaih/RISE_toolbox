@@ -1,5 +1,5 @@
 function flag=eq(varargin)
-% INTERNAL FUNCTION
+% Overloaded = function for ts object
 %
 
 flag=comparison(mfilename,varargin{:});

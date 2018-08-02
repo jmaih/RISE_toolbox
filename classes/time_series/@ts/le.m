@@ -1,5 +1,5 @@
 function flag=le(varargin)
-% INTERNAL FUNCTION
+% Overloaded le function for ts object
 %
 
 flag=comparison(mfilename,varargin{:});

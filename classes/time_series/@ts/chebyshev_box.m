@@ -7,9 +7,9 @@ function [mvcb,gam_,my]=chebyshev_box(this,gam)
 %
 % Args:
 %
-%    - **this** [ts|rts] : time series with many pages (number of simulations)
+%    this (ts | rts) : time series with many pages (number of simulations)
 %      and potentially many columns (number of variables)
-%    - **gam** [scalar|vector] : percentile(s)
+%    gam (scalar | vector) : percentile(s)
 %
 % Returns:
 %    :
