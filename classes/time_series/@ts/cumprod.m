@@ -1,6 +1,19 @@
 function db=cumprod(db,dim)
-% Overloaded cumprod function for ts object
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 if nargin<2
     dim=1;

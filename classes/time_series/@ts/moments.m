@@ -1,5 +1,5 @@
 function oo_=moments(db,drange,ar,lambda)
-% Computes the empirical moments of a time series
+% MOMENTS : Computes the empirical moments of a time series
 %
 % ::
 %
@@ -10,22 +10,24 @@ function oo_=moments(db,drange,ar,lambda)
 %
 % Args:
 %
-%    db (ts object): time series object to get data
-%    drange (char | serial date | cellstr | {[]}): Range of the data to use
-%    ar (integer | {1}): order of autocorrelation
-%    lambda (numeric | {[]}): hyperparameter for hp-filtering the data
+%    - **db** [ts object]: time series object to get data
+%
+%    - **drange** [char|serial date|cellstr|{[]}]: Range of the data to use
+%
+%    - **ar** [integer|{1}]: order of autocorrelation  
+%
+%    - **lambda** [numeric|{[]}]: hyperparameter for hp-filtering the data
 %      before computing the moments. If empty, the data are not
 %      hp-filtered.
 %
 %
-% Returns:
+% Output Args:
 %
 %    - **oo_** [struct]: structure with fields
-%
 %       - vcov : variance covariance
 %       - skewness : skewness
 %       - kurtosis : kurtosis
-%       - variance : variance
+%       - variance : variance 
 %       - stdev : standard deviation
 %       - corrcoef : correlation array
 %

@@ -4,6 +4,8 @@ classdef gogetter
         
         varargout=get(varargin)
         
+        varargout=set(varargin)
+        
     end
     
 end

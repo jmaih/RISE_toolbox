@@ -198,7 +198,7 @@ db=format_output();
 
                 d=reshape(data(:,ivar,:,:),new_N,K,npages);
 
-                db.(vnames{ivar})=reset_data(prototype,d);
+                db.(vnames{ivar})=set(prototype,'data',d);
 
             end
 

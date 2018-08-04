@@ -441,8 +441,8 @@ myirfs=format_irf_output(myirfs);
 
                             try
 
-                                tmp=reset_data(tmp,squeeze(Impulse_dsge(:,:,vlocs(vv),...
-                                    ishock)),RegimeNames);
+                                tmp=reset_data(tmp,'data',squeeze(Impulse_dsge(:,:,vlocs(vv),...
+                                    ishock)));
 
                             catch
 

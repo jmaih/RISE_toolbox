@@ -1,21 +1,19 @@
 function m=allmean(this)
-% Compute all different type of means for the time series variables
+% H1 line
 %
 % ::
 %
-%    m = allmean(db);
 %
 % Args:
-%    db (ts object): the times series object to compute the mean of
 %
 % Returns:
 %    :
-%    - m (cell): Cell containing
 %
-%       - 1st column: strings denoting the type of mean (Harmonic, Geometric, Arithmetic, Quadratic)
-%       - 1st row: variable names
-%       - otherwise: mean value corresponding to the variable and mean concept.
+% Note:
 %
+% Example:
+%
+%    See also:
 
 vnames=this.varnames;
 this=this.data;

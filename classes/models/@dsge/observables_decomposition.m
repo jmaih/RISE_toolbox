@@ -168,8 +168,8 @@ end
 
                 newdata=vin.(ff)(:,:,jjj);
 
-                vout.(fields{iii}).(inames{jjj})=reset_data(proto,...
-                    newdata,obsnames);
+                vout.(fields{iii}).(inames{jjj})=set(proto,'data',...
+                    newdata,'varnames',obsnames);
 
             end
 

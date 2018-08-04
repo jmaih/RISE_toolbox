@@ -15,9 +15,9 @@ npages=this.NumberOfPages;
 freq=serial2frequency(dn);
 
 if ~all(freq==freq(1))
-
+    
     error('data should have same frequency')
-
+    
 end
 
 freq=freq(1);

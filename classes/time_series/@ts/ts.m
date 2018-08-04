@@ -1,17 +1,17 @@
 classdef ts < gogetter
-% Constructor for the ts object
+% Constructor for time series objects
 %
 % ::
 %
-%   self=ts();    % construct a time series with no observations
-%   self=ts(start_date,data);
-%   self=ts(start_date,data,varnames);
-%   self=ts(start_date,data,varnames,description);
-%   self=ts(start_date,data,varnames,description,trailnans);
+%   self=ts() % construct a time series with no observations
+%   self=ts(start_date,data)
+%   self=ts(start_date,data,varnames)
+%   self=ts(start_date,data,varnames,description)
+%   self=ts(start_date,data,varnames,description,trailnans)
 %
 % Args:
 %
-%    start_date (integer | char | serial date): start date of
+%    - **start_date** [integer|char|serial date] : start date of
 %      the time series. The following are admitted:
 %
 %      - annual data : e.g. 1990 or '1990'
@@ -19,18 +19,19 @@ classdef ts < gogetter
 %      - Quarterly data : e.g. '1990Q3'
 %      - monthly data : e.g. '1990M12'
 %
-%    data (numeric): the format is nobs x nvars x npages,
+%    - **data** [numeric] : the format is nobs x nvars x npages,
 %      where:
 %
 %      - **nobs** is the number of observations
 %      - **nvars** is the number of variables
 %      - **npages** is the number of pages (3rd dimension)
 %
-%    varnames (char | cellstr): names of the variables in the
+%    - **varnames** [char|cellstr] : names of the variables in the
 %      database
-%    description (char | cellstr | {''}): comments on each
+%    - **description** [char|cellstr|{''}]: comments on each
 %      variable in the database
-%    trailnans (true|{false}): keep or remove nans (missing observations)
+%    - **trailnans** [true|{false}]: keep or remove nans (missing
+%      observations)
 %
 % Returns:
 %    :
@@ -39,6 +40,109 @@ classdef ts < gogetter
 %
 
 
+    % ts Time series
+    %
+    % ts Methods:
+    %
+    % acos
+    % acosh
+    % acot
+    % acoth
+    % aggregate
+    % allmean
+    % and
+    % apply
+    % asin
+    % asinh
+    % atan
+    % atanh
+    % automatic_model_selection
+    % bar
+    % barh
+    % boxplot
+    % bsxfun
+    % cat - concatenates time series along the specified dimension
+    % collect
+    % corr
+    % corrcoef
+    % cos
+    % cosh
+    % cot
+    % coth
+    % cov
+    % cumprod
+    % cumsum
+    % decompose_series
+    % describe
+    % disp
+    % double
+    % drop
+    % dummy
+    % eq
+    % exp
+    % expanding
+    % fanchart
+    % ge
+    % gt
+    % head
+    % hist
+    % horzcat
+    % hpfilter
+    % index
+    % interpolate
+    % intersect
+    % isfinite
+    % isinf
+    % isnan
+    % jbtest
+    % kurtosis
+    % le
+    % log
+    % lt
+    % max
+    % mean
+    % median
+    % min
+    % minus
+    % mode
+    % mpower
+    % mrdivide
+    % mtimes
+    % nan
+    % ne
+    % numel
+    % ones - overloads ones for ts objects
+    % pages2struct
+    % plot
+    % plotyy
+    % plus
+    % power
+    % prctile - Percentiles of a time series (ts)
+    % quantile
+    % rand
+    % randn
+    % range
+    % rdivide
+    % regress
+    % rolling
+    % sin
+    % sinh
+    % skewness
+    % spectrum
+    % std
+    % step_dummy
+    % subsasgn
+    % subsref
+    % sum
+    % tail
+    % times
+    % transform
+    % ts - Methods:
+    % uminus
+    % values
+    % var
+    % zeros
+    %
     % ts  Properties:
     %
     % varnames -   names of the variables in the database
@@ -53,8 +157,14 @@ classdef ts < gogetter
         % names of the variables in the database
         varnames={}
 
-        % frequency of the time series
-        frequency
+        % start time of the time series
+        start
+
+        % time series
+        data
+
+        % comments on the time series
+        description
 
     end
 
@@ -69,11 +179,11 @@ classdef ts < gogetter
         % number of variables in the time series
         NumberOfVariables=0;
 
-        % start time of the time series
-        start
-
         % end time of the time series
         finish
+
+        % frequency of the time series
+        frequency
 
     end
 
@@ -81,20 +191,53 @@ classdef ts < gogetter
 
         date_numbers
 
-    end
-
-    properties(Hidden)
-
-        data
-
         start_date_number
-
-        description
 
     end
 
     methods
+        % constructor
+        %--------------
         function self=ts(varargin)
+            % Constructor for time series objects
+            %
+            % ::
+            %
+            %   self=ts() % construct a time series with no observations
+            %   self=ts(start_date,data)
+            %   self=ts(start_date,data,varnames)
+            %   self=ts(start_date,data,varnames,description)
+            %   self=ts(start_date,data,varnames,description,trailnans)
+            %
+            % Args:
+            %
+            %    - **start_date** [integer|char|serial date] : start date of
+            %      the time series. The following are admitted:
+            %
+            %      - annual data : e.g. 1990 or '1990'
+            %      - bi-annual data : e.g. '1990H1'
+            %      - Quarterly data : e.g. '1990Q3'
+            %      - monthly data : e.g. '1990M12'
+            %
+            %    - **data** [numeric] : the format is nobs x nvars x npages,
+            %      where:
+            %
+            %      - **nobs** is the number of observations
+            %      - **nvars** is the number of variables
+            %      - **npages** is the number of pages (3rd dimension)
+            %
+            %    - **varnames** [char|cellstr] : names of the variables in the
+            %      database
+            %    - **description** [char|cellstr|{''}]: comments on each
+            %      variable in the database
+            %    - **trailnans** [true|{false}]: keep or remove nans (missing
+            %      observations)
+            %
+            % Returns:
+            %    :
+            %
+            %    - **self** [ts] : time series
+            %
 
             self=self@gogetter();
 
@@ -107,8 +250,6 @@ classdef ts < gogetter
                     self=varargin{1};
 
                 else
-
-                    start_date=date2serial(varargin{1});
 
                     [datax,vnames,dscrpt,trailnans]=dispatch_options();
 
@@ -256,24 +397,22 @@ classdef ts < gogetter
                 if ~is_valid_obs
 
                     return
-
+                    
                 end
-
+                
+                start_date=date2serial(varargin{1});
+                
                 if isscalar(start_date)
-
+                    
                     start_date=start_date+(first_good-1);
-
+                    
                 else
 
                     start_date=start_date(first_good);
 
                 end
-
-                self.start_date_number=start_date;
-
-                [~,freq_]=serial2date(self.start_date_number);
-
-                self.frequency=char(freq_);
+                
+                self.start=char(serial2date(start_date(1)));
 
             end
 
@@ -301,7 +440,7 @@ classdef ts < gogetter
 
                             if ~isempty(v4)
 
-                                if ~(ischar(v4)||iscellstr(v4))
+                                if ~(ischar(v4)||iscellstr(v4)) %#ok<ISCLSTR>
 
                                     error('dscrpt (arg # 4) must be a char or a cellstr')
 
@@ -339,6 +478,20 @@ classdef ts < gogetter
             end
 
         end
+        
+        function dn=get.start_date_number(self)
+            
+            dn=date2serial(self.start);
+            
+        end
+
+        function freq=get.frequency(self)
+            
+            [~,freq_]=serial2date(self.start_date_number);
+            
+            freq=char(freq_);
+            
+        end
 
         function n=get.NumberOfObservations(self)
 
@@ -365,24 +518,6 @@ classdef ts < gogetter
             if ~isempty(dn)
 
                 dn=dn+(0:self.NumberOfObservations-1);
-
-            end
-
-        end
-
-        function s=get.start(self)
-
-            sdn=self.start_date_number;
-
-            if isempty(sdn)
-
-                s='';
-
-            else
-
-                s=serial2date(sdn);
-
-                s=s{1};
 
             end
 
@@ -520,8 +655,6 @@ classdef ts < gogetter
         varargout=pages2struct(varargin)
         varargout=quantile(varargin)
         varargout=range(varargin)
-        varargout=reset_data(varargin)
-        varargout=reset_start_date(varargin)
         varargout=transform(varargin)
     end
 

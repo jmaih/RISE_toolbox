@@ -1,19 +1,19 @@
 function this=drop(this,varargin)
-% Drops the variable from the time series
+% H1 line
 %
 % ::
 %
-%    db=drop(db,'var_name');
 %
 % Args:
-%    db (ts object): time series object
-%    varargin (string): names of the variables to drop
 %
 % Returns:
 %    :
 %
-%    - db (ts object): time series object with corresponding variables dropped
+% Note:
 %
+% Example:
+%
+%    See also:
 
 survive=true(1,this.NumberOfVariables);
 for ii=1:length(varargin)

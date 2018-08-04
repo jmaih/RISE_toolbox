@@ -1,6 +1,19 @@
 function db=power(db1,db2)
-% Overloaded power function for ts object
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 db=ts.binary_operation(db1,db2,mfilename);
 end

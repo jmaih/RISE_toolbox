@@ -155,7 +155,7 @@ format_output()
 
                 dfkst=[permute(y0(iv*ones(1,nreplic),:,g),[2,1,3]);dfkst]; %#ok<AGROW>
 
-                tmp.(self.endogenous{iv})=reset_data(proto,dfkst);
+                tmp.(self.endogenous{iv})=set(proto,'data',dfkst);
 
             end
 

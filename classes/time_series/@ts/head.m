@@ -1,22 +1,19 @@
 function db=head(db,n)
-% Returns the first few sample dates of the time series
+% H1 line
 %
 % ::
 %
-%    db = head(db);
-%    db = head(db,n);
 %
 % Args:
-%    db (ts object): time series object
-%    n (integer): number of time steps to show
 %
 % Returns:
 %    :
-%    - db (ts object): time series with the first n-time steps
 %
 % Note:
-%    - This is similar to the head function in stata.
 %
+% Example:
+%
+%    See also:
 
 if nargin<2
     n=min(5,db.NumberOfObservations);

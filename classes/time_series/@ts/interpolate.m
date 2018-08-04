@@ -1,31 +1,47 @@
 function this=interpolate(this,method,varargin)
-% Interpolate based on the time series to fill in the missing dates
+% H1 line
 %
 % ::
 %
-%    db = interpolate(db);
-%    db = interpolate(db, method, varargin);
 %
 % Args:
-%    db (ts object): time series object to interpolate from
-%    method (string): interpolate method (default: spline). Same as the option used in MATLAB, i.e.,
 %
-%        - 'nearest': nearest neighbor interpolation
-%        - 'linear': linear interpolation
-%        - 'spline': piecewise cubic spline interpolation (SPLINE)
-%        - 'pchip': shape-preserving piecewise cubic interpolation
-%        - 'cubic': same as 'pchip'
-%        - 'v5cubic': the cubic interpolation from MATLAB 5, which does not
-%          extrapolate and uses 'spline' if X is not equally spaced.
+% Returns:
+%    :
 %
-%    varargin{1}: optional condition for extrapolation (default: no extrapolation)
+% Note:
 %
-%       - 'extrap': extrapolate out for dates outside the dates with observations
-%       - extrapval (double): use extrapval for dates outside the dates with observations
+% Example:
 %
+%    See also:
 
+
+%     dbq = interpolate(db) interpolates to find dbq, the values of the
+%     underlying function V=F(X) at the query points found to be the
+%     missing values in the time series, which can be univariate or
+%     multivariate and can have many pages
+%  
+%     dbq = interpolate(db,METHOD) specifies alternate methods.
+%     The default is spline interpolation. Available methods are:
+%  
+%       'nearest'  - nearest neighbor interpolation
+%       'linear'   - linear interpolation
+%       'spline'   - piecewise cubic spline interpolation (SPLINE)
+%       'pchip'    - shape-preserving piecewise cubic interpolation
+%       'cubic'    - same as 'pchip'
+%       'v5cubic'  - the cubic interpolation from MATLAB 5, which does not
+%                    extrapolate and uses 'spline' if X is not equally
+%                    spaced.
+%  
+%     dbq = interpolate(db,METHOD,'extrap') uses the interpolation algorithm
+%     specified by METHOD to perform extrapolation for the missing values
+%     for which the dates are outside the dates of the non-missing values.
+%  
+%     dbq = interpolate(db,METHOD,EXTRAPVAL) replaces the values outside of
+%     the interval spanned by X with EXTRAPVAL.  
+    
 if nargin<2 || isempty(method)
-    method='spline';
+    method='spline'; 
 end
 
 dn=this.date_numbers;

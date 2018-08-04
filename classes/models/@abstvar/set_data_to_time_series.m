@@ -32,7 +32,7 @@ for iv=1:numel(vnames)
 
     end
 
-    rtmp.(vnames{iv})=reset_data(proto,d);
+    rtmp.(vnames{iv})=set(proto,'data',d);
 
 end
 

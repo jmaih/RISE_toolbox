@@ -1,6 +1,19 @@
 function m=max(varargin)
-% Overloaded max function for ts object
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 if nargin==1||nargin==3
     this=varargin{1}.data;

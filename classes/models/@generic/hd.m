@@ -162,7 +162,7 @@ for v=1:numel(order_var_endo_names)
 
     else
 
-        proto=reset_data(proto,D(:,:,v),contrib_names);
+        proto=set(proto,'data',D(:,:,v));
 
     end
 

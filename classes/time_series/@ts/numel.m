@@ -1,18 +1,20 @@
 function n=numel(this,varargin)
-% Returns the number of data, i.e., (length of time)x(number of variables)x(number of panels)
+% H1 line
 %
 % ::
 %
-%    n = numel(db);
 %
 % Args:
-%    db (ts object): time series object
 %
 % Returns:
 %    :
 %
-%       - n (integer): total number of data points, i.e., (length of time)x(number of variables)x(number of panels)
+% Note:
 %
+% Example:
+%
+%    See also:
+
 
 if isempty(varargin)
     n=builtin('numel',this);

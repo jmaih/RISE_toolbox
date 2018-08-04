@@ -120,7 +120,7 @@ end
                     out.(vnames{ivar})=ts(dateInfo,datta,others);
                 end
             else
-                out.(vnames{ivar})=reset_data(out.(vnames{ivar-1}),datta);
+                out.(vnames{ivar})=set(out.(vnames{ivar-1}),'data',datta);
             end
         end
         function reprocess_filters()

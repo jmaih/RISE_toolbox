@@ -1,6 +1,19 @@
 function flag=comparison(func,db1,db2)
-% INTERNAL FUNCTION
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 func=str2func(['@(x,y)',func,'(x,y)']);
 if isa(db1,'ts')

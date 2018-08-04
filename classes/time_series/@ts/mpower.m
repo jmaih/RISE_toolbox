@@ -1,6 +1,19 @@
 function this=mpower(this,const)
-% Overloaded mpower function for ts object
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 this=power(this,const);
 end

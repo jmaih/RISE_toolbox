@@ -1,6 +1,6 @@
 function [h,p,jbstat,critval]=jbtest(this,varargin)
-% Overloads Matlab's jbtest for ts objects. performs the Jarque-Bera
-% goodness-of-fit test of composite normality
+% JBTEST overloads Matlab's jbtest for ts objects. performs the Jarque-Bera
+% goodness-of-fit test of composite normality 
 %
 % ::
 %
@@ -10,33 +10,35 @@ function [h,p,jbstat,critval]=jbtest(this,varargin)
 %
 % Args:
 %
-%    this (ts): time series object
-%    alpha (numeric | {0.05}): significance level
-%    mctol (numeric | {[]}): significance level when Monte Carlo is
+%    - **this** [ts]: time series object
+%
+%    - **alpha** [numeric|{0.05}]: significance level
+%
+%    - **mctol** [numeric|{[]}]: significance level when Monte Carlo is
 %      used (instead of interpolation) in the computation of **p** (see
 %      below)
 %
-% Returns:
-%    :
+% Output Args:
 %
-%       - **h** (0|1): result of the test. H=0 indicates that the null
-%         hypothesis ("the data are normally distributed") cannot be rejected
-%         at the 5% significance level. H=1 indicates that the null hypothesis
-%         can be rejected at the 5% level.
-%       - **p**: p-value computed using inverse interpolation into the
-%         look-up table of critical values. Small values of p cast doubt on
-%         the validity of the null hypothesis
-%       - **jbstat**: test statistic
-%       - **critval**: critical value for the test
+%    - **h** [0|1]: result of the test. H=0 indicates that the null
+%      hypothesis ("the data are normally distributed") cannot be rejected
+%      at the 5% significance level. H=1 indicates that the null hypothesis
+%      can be rejected at the 5% level. 
 %
-% See also:
-%    - jbtest
+%    - **p** : p-value computed using inverse interpolation into the
+%      look-up table of critical values. Small values of p cast doubt on
+%      the validity of the null hypothesis 
 %
+%    - **jbstat** : test statistic
+%
+%    - **critval** : critical value for the test
+%
+% See also : JBTEST
 
 this=this.data;
 
 if size(this,3)>1
-
+    
     error([mfilename,':: this operation is only defined for databases with one page'])
 
 end
@@ -52,7 +54,7 @@ jbstat=nan(1,n);
 critval=nan(1,n);
 
 for ii=1:n
-
+    
     [h(ii),p(ii),jbstat(ii),critval(ii)]=jbtest(this(:,ii),varargin{:});
 
 end

@@ -83,12 +83,11 @@ for ishock=1:self.nvars
 
                 if self.is_panel
 
-                    tmp.(sname).(C1).(vname).(C2)=reset_data(proto,data,...
-                        regimeNames);
+                    tmp.(sname).(C1).(vname).(C2)=set(proto,'data',data);
 
                 else
 
-                    tmp.(sname).(vname)=reset_data(proto,data,regimeNames);
+                    tmp.(sname).(vname)=set(proto,'data',data);
 
                 end
 

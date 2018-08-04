@@ -42,7 +42,7 @@ if ncond
 
         proto(:,:,1)=data;
 
-        db.(name)=reset_data(proto_ts,proto);
+        db.(name)=set(proto_ts,'data',proto);
 
     end
 

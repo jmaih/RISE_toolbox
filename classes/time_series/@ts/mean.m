@@ -1,20 +1,19 @@
 function m=mean(varargin)
-% Computes the mean of the time series
+% H1 line
 %
 % ::
 %
-%    m = mean(db);
-%    m = mean(db,dim);
 %
 % Args:
-%    db (ts object): times series object to compute the mean
-%    dim (integer): (optional; default 1) direction to compute the mean, e.g., dim = 1 is time mean of each variables, and dim = 3 would be panel mean
 %
 % Returns:
 %    :
 %
-%    - m (double): mean values
+% Note:
 %
+% Example:
+%
+%    See also:
 
 this=varargin{1}.data;
 dim=1;
