@@ -1,20 +1,22 @@
 function S=skewness(this,varargin)
-% H1 line
+% Computes skewness for time series: It is an interface to MATLAB
+%  implementation of skewness 
 %
 % ::
 %
+%    varargout = skewness(db,varargin);
 %
 % Args:
+%
+%    db (ts object): times series object
+%
+%    varargin: varargin for skewness function in MATLAB
 %
 % Returns:
 %    :
 %
-% Note:
+%    varargout: output from skewness function
 %
-% Example:
-%
-%    See also:
-
 
 S=utils.stat.skewness(this.data,varargin{:});
 end

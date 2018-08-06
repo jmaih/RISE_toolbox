@@ -1,20 +1,23 @@
 function varargout=mode(this,varargin)
-% H1 line
+% Computes mode for the time series: It is an interface to MATLAB
+%   implementation of mode 
 %
 % ::
 %
+%    varargout = mode(db,varargin);
 %
 % Args:
+%    db (ts object): times series object
+%    varargin: varargin for mode function in MATLAB
 %
 % Returns:
 %    :
 %
-% Note:
+%    varargout: output from mode function
 %
-% Example:
-%
-%    See also:
 
 nout=nargout;
+
 [varargout{1:nout}]=utils.stat.mode(this.data,varargin{:});
+
 end

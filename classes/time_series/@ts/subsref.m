@@ -4,23 +4,23 @@ function this=subsref(obj,s)
 % ::
 %
 %   db(I) is a time series formed from the elements of db specified by the
-%   subscript vector I. 
+%     subscript vector I. 
 %
 %   db(I,J) is a time series formed from the elements of the rectangular
-%   submatrix of db specified by the subscript vectors I and J 
+%     submatrix of db specified by the subscript vectors I and J 
 %
 %   db(I,J,K) is a time series formed from the elements of the cubic array
-%   of db specified by the subscript vectors I, J and K 
+%     of db specified by the subscript vectors I, J and K 
 %
 % Args:
 %
 %    - one index: variables, dates or time shift
 %
 %    - two indexes: dates (first dimension) and variables (second
-%      dimension)
+%        dimension)
 %
 %    - three indexes: dates (first dimension), variables (second dimension)
-%      and pages (third dimension) 
+%        and pages (third dimension) 
 %
 % Returns:
 %    :
@@ -42,7 +42,7 @@ function this=subsref(obj,s)
 %    - **specification of pages** : 
 %       - numbers : 1, 2:4, [1,3,5], etc. 
 %       - function handles : e.g. @isreal : only pages where all elements
-%         are real
+%          are real
 %
 %    - **specification of time shift** : db{-1}, db{+3}, ec.
 %

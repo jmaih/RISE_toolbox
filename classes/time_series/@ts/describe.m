@@ -1,20 +1,24 @@
 function info=describe(self)
-% H1 line
-%
-% ::
-%
+% Print the description of the time series object
 %
 % Args:
 %
-% Returns:
-%    :
+%    db (ts object): time series to describe
 %
 % Note:
 %
-% Example:
+%    The function prints
 %
-%    See also:
-
+%       - mean
+%       - standard deviation
+%       - min
+%       - 25th percentile
+%       - 50th percentile
+%       - 75th percentile
+%       - max
+%       - variable names
+%       - variable descriptions
+%
 
 nobs=self.NumberOfObservations;
 

@@ -1,19 +1,6 @@
 function flag=eq(varargin)
-% H1 line
+% Overloaded = function for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 flag=comparison(mfilename,varargin{:});
 end

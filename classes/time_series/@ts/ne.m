@@ -1,19 +1,6 @@
 function flag=ne(varargin)
-% H1 line
+% Overloaded ne function for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 flag=comparison(mfilename,varargin{:});
 end

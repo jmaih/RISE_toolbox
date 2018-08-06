@@ -1,20 +1,22 @@
 function K=kurtosis(this,varargin)
-% H1 line
+% Computes kurtosis for time series: It is an interface to MATLAB
+%   implementation of kurtosis 
 %
 % ::
 %
+%    varargout = kurtosis(db,varargin);
 %
 % Args:
+%
+%    db (ts object): times series object
+%
+%    varargin: varargin for kurtosis function in MATLAB
 %
 % Returns:
 %    :
 %
-% Note:
+%    varargout: output from kurtosis function
 %
-% Example:
-%
-%    See also:
-
 
 K=utils.stat.kurtosis(this.data,varargin{:});
 end

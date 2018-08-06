@@ -1,19 +1,6 @@
 function this=atan(this)
-% H1 line
+% Overloaded atan for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 % Here it does not make sense to have names any more. But
 % all the same, perhaps I should have a function to rename

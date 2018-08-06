@@ -1,19 +1,6 @@
 function db=binary_operation(db1,db2,op_string)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 operation=str2func(['@(x,y)bsxfun(@',op_string,',x,y)']);
 

@@ -1,22 +1,11 @@
 function db=cumprod(db,dim)
-% H1 line
+% Overloaded cumprod function for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 if nargin<2
+    
     dim=1;
+    
 end
 
 db=ts(db.date_numbers,cumprod(db.data,dim),db.varnames);

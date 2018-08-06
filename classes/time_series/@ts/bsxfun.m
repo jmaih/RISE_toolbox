@@ -1,20 +1,6 @@
 function data=bsxfun(db,fun,b)
-% H1 line
+% Overloaded bsxfun for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 data=bsxfun(fun,db.data,b);
 

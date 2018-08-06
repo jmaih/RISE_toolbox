@@ -1,19 +1,20 @@
 function m=var(this,varargin)
-% H1 line
+% Computes variance for time series: It is an interface to MATLAB
+%  implementation of var adjusted to handle nan properly 
 %
 % ::
 %
+%    varargout = var(db,varargin);
 %
 % Args:
+%    db (ts object): times series object
+%    varargin: varargin for var function in MATLAB
 %
 % Returns:
 %    :
 %
-% Note:
+%    varargout: output from var function
 %
-% Example:
-%
-%    See also:
 
 
 m=utils.stat.var(this.data,varargin{:});

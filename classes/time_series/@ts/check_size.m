@@ -1,4 +1,7 @@
 function s=check_size(data)
+% INTERNAL FUNCTION: Confirm that the data is consistent with the number of
+%  observed dates and variables 
+%
 
 sz=size(data);
 

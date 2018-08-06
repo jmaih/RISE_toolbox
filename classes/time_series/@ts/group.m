@@ -1,17 +1,17 @@
 function g=group(this,varargin)
-% GROUP -- groups contributions
+% Groups contributions
 %
 % ::
 %
-%
-%   g=GROUP(this,{group1,{v11,v12,...}},...,{groupn,{vn1,vn2,...}})
+%   g=group(this,{group1,{v11,v12,...}},...,{groupn,{vn1,vn2,...}})
 %
 % Args:
 %
-%    - **this** [ts]: time series of multiple variables
+%    this (ts): time series of multiple variables
 %
-%    - **varargin** []: sequences of cell arrays with the following possible
-%    formats:
+%    varargin : sequences of cell arrays with the following possible
+%      formats:
+%
 %      - {'supply','Ep'}
 %      - {'demand',{'Ey','Er'}}
 %
@@ -20,25 +20,32 @@ function g=group(this,varargin)
 %
 %    - **g** [ts]: new time series with grouped contributions
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 
 n=length(varargin);
+
 discard=false(1,n);
+
 for ii=1:length(varargin)
+    
     if ischar(varargin{ii})
+        
         discard(ii)=true;
+        
         is_pop=strcmp(varargin{ii},'pop');
+        
         if ~is_pop
+            
             error('To discard the rest, the option is "pop"')
+            
         end
+        
     end
+    
 end
+
 varargin=varargin(~discard);
+
 n=length(varargin);
 
 data=double(this);

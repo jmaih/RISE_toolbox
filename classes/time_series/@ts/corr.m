@@ -1,19 +1,21 @@
 function varargout=corr(this,varargin)
-% H1 line
+% Computes correlation for time series: It is an interface to MATLAB implementation of corr
 %
 % ::
 %
+%    varargout = corr(db,varargin);
 %
 % Args:
+%
+%    db (ts object): times series object
+%
+%    varargin: varargin for corr function in MATLAB
 %
 % Returns:
 %    :
 %
-% Note:
+%    varargout: output from corr function
 %
-% Example:
-%
-%    See also:
 
 if ~isempty(varargin) && isa(varargin{1},'ts')
     

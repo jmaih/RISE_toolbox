@@ -1,20 +1,20 @@
 function varargout=quantile(this,varargin)
-% H1 line
+% Computes quantile for time series: It is an interface to MATLAB
+%   implementation of quantile 
 %
 % ::
 %
+%    varargout = quantile(db,varargin);
 %
 % Args:
+%    db (ts object): times series object
+%    varargin: varargin for quantile function in MATLAB
 %
 % Returns:
 %    :
 %
-% Note:
+%    varargout: output from quantile function
 %
-% Example:
-%
-%    See also:
-
 
 % sample quantile (value at %)
 [varargout{1:nargout}]=utils.stat.quantile(this,varargin{:});

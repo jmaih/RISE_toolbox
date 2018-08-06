@@ -1,4 +1,6 @@
 function disp(t,indent,fullChar)
+% Overloaded disp function for ts object
+%
 
 if nargin < 3
     

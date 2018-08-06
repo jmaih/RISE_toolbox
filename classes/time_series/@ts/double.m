@@ -1,19 +1,18 @@
 function d=double(self)
-% H1 line
+% DOUBLE: Returns the underlying data of the time series
 %
 % ::
 %
+%    data = double(db);
 %
 % Args:
 %
+%    db (ts object): time series object
+%
 % Returns:
 %    :
+%    - data (numeric): vector/matrix/tensor form of the data underlying the time series
 %
-% Note:
-%
-% Example:
-%
-%    See also:
 
 d=self.data;
 end

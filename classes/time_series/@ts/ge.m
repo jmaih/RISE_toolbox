@@ -1,19 +1,6 @@
 function flag=ge(varargin)
-% H1 line
+% Overloaded ge function for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 flag=comparison(mfilename,varargin{:});
 end

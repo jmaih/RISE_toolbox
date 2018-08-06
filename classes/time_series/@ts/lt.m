@@ -1,19 +1,6 @@
 function flag=lt(varargin)
-% H1 line
+% Overloaded lt function for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 flag=comparison(mfilename,varargin{:});
 end

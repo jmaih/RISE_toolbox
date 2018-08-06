@@ -1,32 +1,29 @@
 function db=prctile(db,p)
-% prctile Percentiles of a time series (ts)
+% Compute the percentiles of a time series (ts)
 %
 % ::
-%
 %
 %   db=prctile(db,p)
 %
 % Args:
 %
-%    - **db** [ts] : time series with many pages (third dimension). The time
+%    db (ts): time series with many pages (third dimension). The time
 %      series may have one or several variables.
 %
-%    - **p** [scalar|vector] : scalar or a vector of percent values
+%    p (scalar | vector): scalar or a vector of percent values
 %
 % Returns:
 %    :
 %
 %    - **db** [ts] : time series with as many pages as the length of **p**.
 %
-% Note:
-%
 % Example:
+%    ::
 %
-%    test=ts(1990,rand(100,3,200),{'a','b','c'});
-%    tmp=prctile(test,[10,50,90])
-%    plot(tmp('a'))
+%       test=ts(1990,rand(100,3,200),{'a','b','c'});
+%       tmp=prctile(test,[10,50,90])
+%       plot(tmp('a'))
 %
-%    See also:
 
 if ~isvector(p) || numel(p) == 0 || any(p < 0 | p > 100) || ~isreal(p)
     

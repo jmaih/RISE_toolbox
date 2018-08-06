@@ -1,20 +1,6 @@
 function m=sum(this,varargin)
-% H1 line
+% Overloaded sum function for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 m=utils.stat.sum(this.data,varargin{:});
 

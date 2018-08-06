@@ -4,25 +4,25 @@ function obj=subsasgn(obj,s,b)
 % ::
 %
 %   db(I)= B assigns the values of B into a time series formed from the
-%   elements of db specified by the subscript vector I. 
+%    elements of db specified by the subscript vector I. 
 %
 %   db(I,J)=B assigns the values of B into a time series formed from the
-%   elements of the rectangular submatrix of db specified by the subscript
-%   vectors I and J  
+%    elements of the rectangular submatrix of db specified by the subscript
+%    vectors I and J  
 %
 %   db(I,J,K)=B assigns the values of B into a time series formed from the
-%   elements of the cubic array of db specified by the subscript vectors I,
-%   J and K  
+%    elements of the cubic array of db specified by the subscript vectors I,
+%    J and K  
 %
 % Args:
 %
 %    - one index: variables, dates or time shift
 %
 %    - two indexes: dates (first dimension) and variables (second
-%      dimension)
+%       dimension)
 %
 %    - three indexes: dates (first dimension), variables (second dimension)
-%      and pages (third dimension) 
+%       and pages (third dimension) 
 %
 % Returns:
 %    :
@@ -44,7 +44,7 @@ function obj=subsasgn(obj,s,b)
 %    - **specification of pages** : 
 %       - numbers : 1, 2:4, [1,3,5], etc. 
 %       - function handles : e.g. @isreal : only pages where all elements
-%         are real
+%          are real
 %
 %    - **specification of time shift** : Not supported
 %

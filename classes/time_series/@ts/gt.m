@@ -1,19 +1,6 @@
 function flag=gt(varargin)
-% H1 line
+% Overloaded gt object for ts object
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
 
 flag=comparison(mfilename,varargin{:});
 end

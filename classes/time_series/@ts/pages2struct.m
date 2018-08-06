@@ -1,19 +1,21 @@
 function this=pages2struct(this0)
-% H1 line
+% Turns multivariable ts object into a struct with time series object
 %
 % ::
 %
+%    output = pages2struct(input)
 %
 % Args:
+%    input (ts object): ts object to turn into struct form of data
 %
 % Returns:
 %    :
 %
-% Note:
+%    - **output** (struct): a struct with
 %
-% Example:
+%       - fieldname: variable names of input
+%       - value: ts object corresponding to the variable (with data and description)
 %
-%    See also:
 
 vnames=this0.varnames;
 
