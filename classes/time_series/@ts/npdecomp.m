@@ -26,7 +26,7 @@ function out=npdecomp(y0,doLog)
 % Note:
 %
 %    If there are many variables and the variables are named, the first level
-%     of the structure will be the names of the different variables.
+%    of the structure will be the names of the different variables.
 %
 % See also:
 %    - :func:`pdecomp <ts.pdecomp>`

@@ -1,6 +1,6 @@
 function S=skewness(this,varargin)
 % Computes skewness for time series: It is an interface to MATLAB
-%  implementation of skewness 
+% implementation of skewness 
 %
 % ::
 %

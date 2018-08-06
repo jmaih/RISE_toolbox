@@ -1,20 +1,6 @@
 function Value= get(obj,varargin)
-% H1 line
+% INTERNAL FUNCTION
 %
-% ::
-%
-%
-% Args:
-%
-% Returns:
-%    :
-%
-% Note:
-%
-% Example:
-%
-%    See also:
-
 
 %  get  Access/Query time series property values.
 %

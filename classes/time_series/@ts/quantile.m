@@ -1,6 +1,6 @@
 function varargout=quantile(this,varargin)
 % Computes quantile for time series: It is an interface to MATLAB
-%   implementation of quantile 
+% implementation of quantile 
 %
 % ::
 %

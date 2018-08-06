@@ -18,7 +18,7 @@ function cond_fkst_db=forecast(obj,varargin)
 %      - **forecast_nsteps** [integer|{12}]: number of forecasting steps
 %
 %      - **forecast_start_date** [char|numeric|serial date]: date when the
-%          forecasts start (end of history + 1)
+%        forecasts start (end of history + 1)
 %
 %      - **forecast_cond_endo_vars** [{''},char|cellstr]: names of conditional
 %        endogenous variables to be used either in forecasting or in estimation

@@ -1,6 +1,6 @@
 function db=ones(start_date,varargin)
 % Initializes a ts object with the given start data and data initialized to
-%  ones 
+% ones 
 %
 % ::
 %

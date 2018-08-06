@@ -1,6 +1,6 @@
 function db=rand(start_date,varargin)
 % Initializes a ts object with the given start data and data initialized to
-%   uniform random numbers 
+% uniform random numbers 
 %
 % ::
 %

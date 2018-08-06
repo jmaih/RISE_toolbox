@@ -1,4 +1,7 @@
 function Out = set(this,varargin)
+% INTERNAL FUNCTION
+%
+
 %SET  Set properties of time series object.
 %
 %   SET(THIS,'PropertyName',VALUE) sets the property 'PropertyName'

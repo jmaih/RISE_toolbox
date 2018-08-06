@@ -1,6 +1,6 @@
 function n=numel(this,varargin)
 % Returns the number of data, i.e., (length of time)x(number of
-%   variables)x(number of panels) 
+% variables)x(number of panels) 
 %
 % ::
 %
