@@ -24,10 +24,15 @@ classdef mcmc < handle
             %    mcmc_helper = mcmc(draws, pnames, drop, start_from, trimming)
             %
             % Args:
+            %
             %    draws (struct): output from samplers
+            %
             %    pnames (cellstr): cell of parameter names
+            %
             %    drop (double): fraction of samples to drop (default: 0.5)
+            %
             %    start_from (integer): discard first (start_from-1) samples (default: 1)
+            %
             %    trimming (integer): only use every trimming value (default: 1)
             %
             % Returns:
@@ -36,15 +41,22 @@ classdef mcmc < handle
             %    - **mcmc_helper** : mcmc object
             %
             % Note:
-            %    - Pull parameter names via::
+            %    - It is the responsibility of the user to provide the
+            %      names of the parameters as this routine aims to be
+            %      independent from any estimation procedure or class. If
+            %      the priors are set in separate structure, their names
+            %      can easily be obtained via ::     
+            %
+            %         pnames = fieldnames(priors);
+            %
+            %    - Alternatively, if using a RISE object, parameter names
+            %      can be obtained via::  
             %
             %         pnames = model.estimation.priors.name;
             %
-            %    - Note that burn-in option in samplers already discard values, so make sure that **start_from** parameters is the intended value.
-            %
-            % Todo:
-            %    - The syntax for getting parameter names is unnatural, and will be fixed in the future.
-            %
+            %    - Note that burn-in option in samplers already discard
+            %    values, so make sure that **start_from** parameters is the
+            %    intended value.  
 
             if nargin<5
 

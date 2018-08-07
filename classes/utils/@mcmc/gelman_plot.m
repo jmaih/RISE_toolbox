@@ -15,14 +15,17 @@ function hdl=gelman_plot(obj,pname)
 %    - **hdl** (handle object): handle to plot object
 %
 % Warning:
-%    - This function requires multiple chains of MCMC samples. See **nchain** option of samplers.
+%    - This function requires multiple chains of MCMC samples. See
+%      **nchain** option of samplers. 
 %
 % References:
 %    - :cite:`gelman1992inference`
 %
 
 % Reference:
-%    - Gelman, Andrew, and Donald B. Rubin. "Inference from iterative simulation using multiple sequences." Statistical science 7.4 (1992): 457-472.
+%    - Gelman, Andrew, and Donald B. Rubin. "Inference from iterative
+%      simulation using multiple sequences." Statistical science 7.4 (1992):
+%      457-472.  
 %
 hdl0=plot(obj.psrf.(pname).time,obj.psrf.(pname).psrf);
 
