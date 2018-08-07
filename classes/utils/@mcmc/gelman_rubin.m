@@ -1,5 +1,5 @@
 function [p,R,W,B]=gelman_rubin(obj,recursive)
-% INTERNAL FUNCTION
+% INTERNAL FUNCTION: Computes Potential Scale Reduction Factor
 %
 
 if nargin<2

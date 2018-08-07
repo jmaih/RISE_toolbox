@@ -1,6 +1,6 @@
 function m=var(this,varargin)
 % Computes variance for time series: It is an interface to MATLAB
-% implementation of var adjusted to handle nan properly 
+% implementation of var adjusted to handle nan properly
 %
 % ::
 %
@@ -13,7 +13,7 @@ function m=var(this,varargin)
 % Returns:
 %    :
 %
-%    varargout: output from var function
+%    - **varargout**: output from var function
 %
 
 

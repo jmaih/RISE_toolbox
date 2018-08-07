@@ -10,6 +10,7 @@ function hdl=densplot(obj,pname,chain_id,N)
 % Args:
 %
 %    obj (mcmc object): mcmc object
+%
 %    pname (string): parameter name
 %
 %    chain_id (integer | {[]}): choice of chain for which to plot the

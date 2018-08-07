@@ -38,41 +38,43 @@ function out=fanchart(this,ci)
 %
 % Note:
 %    If the input time series contains several variables, the output is a
-%      structure with the names of the different variables in the first level of
-%      the fields
+%    structure with the names of the different variables in the first level of
+%    the fields
 %
-% See also plot_fanchart
+% See also:
+%    - :func:`plot_fanchart <ts.plot_fanchart>`
+%
 
 out=struct();
 
 nvar=this.NumberOfVariables;
 
 if nvar>1
-    
+
     vnames=this.varnames;
-    
+
     if ~isempty(vnames{1})
-        
+
         for ivar=1:nvar
-            
+
             S=struct('type','()','subs',{vnames(ivar)});
-            
+
             obj=subsref(this,S);%<--obj=this(vnames{ivar});
-            
+
             out.(vnames{ivar})=fanchart(obj,ci);
-            
+
         end
-        
+
         return
-        
+
     end
-    
+
 end
 
 if any(ci<0)
-    
+
     error('confidence bands cannot be negative')
-    
+
 end
 
 ci=sort(ci(:));
@@ -84,9 +86,9 @@ ci(large)=ci(large)/100;
 datax=squeeze(double(this));
 
 if size(datax,3)>1
-    
+
     error('dataset must have multiple columns or multiple pages but not both')
-    
+
 end
 
 probs = 0.5*(1+[-ci,ci]);

@@ -1,6 +1,6 @@
 function m=std(this,varargin)
 % Computes standard deviation for time series: It is an interface to MATLAB
-% implementation of std, but adjusted to handle nan properly 
+% implementation of std, but adjusted to handle nan properly
 %
 % ::
 %
@@ -15,7 +15,7 @@ function m=std(this,varargin)
 % Returns:
 %    :
 %
-%    varargout: output from std function
+%    - **varargout**: output from std function
 %
 
 m=utils.stat.std(this.data,varargin{:});

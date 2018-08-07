@@ -17,6 +17,34 @@ classdef mcmc < handle
     methods
 
         function obj=mcmc(draws,pnames,drop,start_from,trimming)
+            % Constructor for mcmc object
+            %
+            % ::
+            %
+            %    mcmc_helper = mcmc(draws, pnames, drop, start_from, trimming)
+            %
+            % Args:
+            %    draws (struct): output from samplers
+            %    pnames (cellstr): cell of parameter names
+            %    drop (double): fraction of samples to drop (default: 0.5)
+            %    start_from (integer): discard first (start_from-1) samples (default: 1)
+            %    trimming (integer): only use every trimming value (default: 1)
+            %
+            % Returns:
+            %    :
+            %
+            %    - **mcmc_helper** : mcmc object
+            %
+            % Note:
+            %    - Pull parameter names via::
+            %
+            %         pnames = model.estimation.priors.name;
+            %
+            %    - Note that burn-in option in samplers already discard values, so make sure that **start_from** parameters is the intended value.
+            %
+            % Todo:
+            %    - The syntax for getting parameter names is unnatural, and will be fixed in the future.
+            %
 
             if nargin<5
 

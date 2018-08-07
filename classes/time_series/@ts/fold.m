@@ -18,12 +18,14 @@ function this=fold(last_hist_date,varargin)
 %
 %    - **this** [ts]: folded time series
 %
-% See also ts.unfold
+% See also:
+%    - :func:`unfold <ts.unfold>`
+%
 
 if ~(ischar(last_hist_date)||isnumeric(last_hist_date))
-    
+
     error('pivot date should be a valid date or a serial date')
-    
+
 end
 
 obj=ts.collect(varargin{:});
@@ -35,9 +37,9 @@ dn=obj.date_numbers;
 loc=find(dn==sdate);
 
 if isempty(loc)
-    
+
     error('pivot date not found')
-    
+
 end
 
 data=double(obj);
