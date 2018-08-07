@@ -45,18 +45,19 @@ classdef mcmc < handle
             %      names of the parameters as this routine aims to be
             %      independent from any estimation procedure or class. If
             %      the priors are set in separate structure, their names
-            %      can easily be obtained via ::     
+            %      can easily be obtained via ::
             %
             %         pnames = fieldnames(priors);
             %
             %    - Alternatively, if using a RISE object, parameter names
-            %      can be obtained via::  
+            %      can be obtained via::
             %
             %         pnames = model.estimation.priors.name;
             %
             %    - Note that burn-in option in samplers already discard
-            %    values, so make sure that **start_from** parameters is the
-            %    intended value.  
+            %      values, so make sure that **start_from** parameters is the
+            %      intended value.
+            %
 
             if nargin<5
 
