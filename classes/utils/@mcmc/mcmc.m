@@ -132,7 +132,7 @@ classdef mcmc < handle
 
         varargout=autocorrplot(varargin)
 
-        varargout=gelman_plot(varargin)
+        varargout=psrf_plot(varargin)
 
         varargout=scatterplot(varargin)
 

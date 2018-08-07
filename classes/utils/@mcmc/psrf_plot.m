@@ -1,4 +1,4 @@
-function hdl=gelman_plot(obj,pname)
+function hdl=psrf_plot(obj,pname)
 % Make a plot of the "posterior scale reduction factor," i.e., Gelman-Rubin diagnotics from the chains
 %
 % ::

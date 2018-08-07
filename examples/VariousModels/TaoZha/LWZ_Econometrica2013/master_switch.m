@@ -220,11 +220,11 @@ plotfunc=@(name)autocorrplot(obj,name,chain_id,order);
 
 hfig=utils.plot.multiple(plotfunc,pnames,'Autocorrelation plots',3,3)
 
-%% Gelman plots
+%% Gelman-Rubin plots
 
-plotfunc=@(name)gelman_plot(obj,name);
+plotfunc=@(name)psrf_plot(obj,name);
 
-hfig=utils.plot.multiple(plotfunc,pnames,'Gelman (PSRF) plots',3,3)
+hfig=utils.plot.multiple(plotfunc,pnames,'Gelman-Rubin (PSRF) plots',3,3)
 
 %% Scatter plots
 
