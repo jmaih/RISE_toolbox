@@ -7,7 +7,9 @@ function [myMeanStdev,myQuantiles]=summary(obj,varargin)
 %    [myMeanStdev, MyQuantiles] = summary(mcobj, varargin);
 %
 % Args:
+%
 %    mcobj (mcmc object): mcmc object
+%
 %    varargin (options): options need to come in pairs:
 %
 %       - 'percnt': Quantile points (default: [2.5, 25, 50, 75, 97.5])

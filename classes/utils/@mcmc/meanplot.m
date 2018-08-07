@@ -7,8 +7,11 @@ function hdl=meanplot(obj,pname,chain_id)
 %    hdl = meanplot(mcobj,pname,chain_id);
 %
 % Args:
+%
 %    mcobj (mcmc object): mcmc object
+%
 %    pname (str): parameter to make the mean plot
+%
 %    chain_id (vector of int): id of the chain to use
 %
 % Returns:

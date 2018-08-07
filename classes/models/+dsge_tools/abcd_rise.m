@@ -93,3 +93,4 @@ D=R{1}(obs,:);
 eigvals=eig(A-B/D*C);
 
 test=all(abs(eigvals)<1);
+end
