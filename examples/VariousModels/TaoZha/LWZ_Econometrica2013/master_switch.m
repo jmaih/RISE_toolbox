@@ -52,7 +52,7 @@ do_estimate=false;
 
 if do_estimate
     
-    ms=estimate(m,'data',data,...
+    [ms,filtration]=estimate(m,'data',data,...
         'estim_priors',priors,...
         'kf_presample',3,...
         'kf_init_variance',10,...
@@ -63,7 +63,7 @@ if do_estimate
     
     switch_mode=get(ms,'mode');
     
-    save switch_estimates ms switch_mode
+    save switch_estimates ms switch_mode filtration
     
 else
     
@@ -90,7 +90,7 @@ plot_data_against_probabilities(ms)
 %% replicate figure 9
 close all
 
-probs=ms.filtering.smoothed_state_probabilities;
+probs=filtration.smoothed_state_probabilities;
 % I substract a constant since I don't know the correct level of the data.
 % Maybe Dan can help with this?
 lp=cumsum(data.DLogQl)-0.55;

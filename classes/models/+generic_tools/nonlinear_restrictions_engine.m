@@ -6,7 +6,7 @@ function [nonlinear_restrictions,is_linear_restriction,derived_params]=...
 
 isnonlin=@(x)any(x=='<')||any(x=='>');
 
-isnonlin_not_allowed=@(x)~isempty(strfind(x,'=='));
+isnonlin_not_allowed=@(x)parser.mycontains(x,'==');
 
 n_restr=numel(RestrictionsBlock);
 

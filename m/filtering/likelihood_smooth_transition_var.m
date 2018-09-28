@@ -1,6 +1,4 @@
-function [LogLik,Incr,retcode,obj]=likelihood_smooth_transition_var(params,obj)
-% INTERNAL FUNCTION
-%
+function [LogLik,Incr,retcode,obj,filtration]=likelihood_smooth_transition_var(params,obj)
 
 % parameters are as follows
 % p*(nlags*p+1+nx)*nregs unrestricted
@@ -14,14 +12,16 @@ LogLik=-1e+8;
 
 Incr=[];
 
-obj=assign_estimates(obj,params);
+filtration=[];
+
+obj=assign_estimates(obj,params); 
 
 [u,~,retcode,obj]=low_level_residuals(obj);
 
 if retcode
-
+    
     return
-
+    
 end
 
 s=obj.solution;
@@ -33,11 +33,11 @@ det_SIG=det(SIG);
 is_failed=det_SIG<=1e-10;% ~all(isfinite(iSIG(:)));
 
 if is_failed
-
+    
     retcode=30002;
-
+    
     return
-
+    
 end
 
 p=obj.endogenous.number;
@@ -51,10 +51,10 @@ Incr=-.5*(diag((u.'*iSIG*u))+ldet_pl2pi);
 LogLik=sum(Incr);
 
 if ~utils.error.valid(LogLik)
-
+    
     % nans or inf in likelihood
     retcode=300002;
-
+    
 end
 
 end

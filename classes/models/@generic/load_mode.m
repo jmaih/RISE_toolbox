@@ -5,31 +5,54 @@ function model=load_mode(model)
 % reload the start values for the estimated parameters from a structure.
 
 nobj=numel(model);
+
 if nobj>1
+    
     for iobj=1:nobj
+        
         model(iobj)=load_mode(model(iobj));
+    
     end
+    
     return
+
 end
+
 the_mode_file=model.options.estim_start_vals;
 
 if ~isempty(the_mode_file)
+    
     if ~isstruct(the_mode_file)
+        
         error('estim_start_vals should be a structure')
+    
     end
-	param_names={model.estimation.priors.name};
+    
+    param_names={model.estimation.priors.name};
+    
     % turn the official names into valid names. Since the mode file is a
     % structure, it has to be the case that it only includes valid names
     %---------------------------------------------------------------------
     param_names=parser.param_texname_to_param_name(param_names);
+    
     re_started_names=fieldnames(the_mode_file);
+    
     for irestart=1:numel(re_started_names)
+        
         loc=find(strcmp(re_started_names{irestart},param_names));
+        
         if isempty(loc)
+            
             error(['parameter ',re_started_names{irestart},' is not an estimated parameter'])
+        
         end
+        
         model.estimation.priors(loc).start=the_mod_file.(re_started_names{irestart});
+    
     end
+    
+end
+
 end
 
 % function model=load_mode(model)

@@ -19,7 +19,7 @@ else
 
 end
 
-[SteadyStateModel_block,dictionary,static]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'steady_state_model',static);
+[SteadyStateModel_block,dictionary]=parser.capture_equations(dictionary,blocks(current_block_id).listing,'steady_state_model');
 
 if dictionary.parse_debug
 
@@ -66,8 +66,20 @@ blocks(current_block_id)=[];
 auxiliary_steady_state_equations=dictionary.auxiliary_equations;
 
 for irow_=1:size(auxiliary_steady_state_equations,1)
-
+    
     tmp_=auxiliary_steady_state_equations{irow_,1}(1,:);
+    
+    if parser.mycontains(cell2mat(tmp_),'=')
+        
+        continue
+        
+    end
+    
+    if ~(tmp_{2}(1)=='-')
+        
+        error('missing minus sign: report to junior.maih@gmail.com')
+        
+    end
 
     tmp_{2}=strrep(tmp_{2},'-','=');
 

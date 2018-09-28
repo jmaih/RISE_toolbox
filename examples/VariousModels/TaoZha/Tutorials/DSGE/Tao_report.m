@@ -55,6 +55,8 @@ if nargin<4
 end
 close all
 
+filtration=filter(m);
+
 %% Make some choices
 
 do_model=true;
@@ -205,7 +207,7 @@ if do_smoothed_probabilities
         for ivar=1:nstates
             subplot(rr,cc,ivar)
             vname=state_names{ivar};
-            plot(m(imod).filtering.smoothed_state_probabilities.(vname),'linewidth',2)
+            plot(filtration{imod}.smoothed_state_probabilities.(vname),'linewidth',2)
             ylim([-0.01,1.01])
             title(sprintf('%s(%s)',state_tex_names{ivar},vname))
         end
@@ -218,9 +220,9 @@ end
 %% plot the observables against the transition probabilities
 if do_data_against_transition_probabilities
     for imod=1:number_of_models
-        smoothed=m(imod).filtering.Expected_smoothed_variables;
+        smoothed=filtration{imod}.Expected_smoothed_variables;
         [state_names,state_tex_names,nstates]=get_state_names(m(imod));
-        smooth_probs=m(imod).filtering.smoothed_state_probabilities;
+        smooth_probs=filtration{imod}.smoothed_state_probabilities;
         for icase=1:nstates
             titel=sprintf('%s:: Observed vs %s(%s)',...
                 model_tags{imod},state_tex_names{icase},state_names{icase});
@@ -474,7 +476,7 @@ if do_shock_correlations
     report(m(1),xrep,'exogenous')
     xrep.pagebreak()
     for imod=1:number_of_models
-        tmp=ts.collect(m(imod).filtering.Expected_smoothed_shocks);
+        tmp=ts.collect(filtration{imod}.Expected_smoothed_shocks);
         shock_corr=corrcoef(tmp);
         shock_locs=locate_variables(shock_list,tmp.varnames);
         mytable=[
@@ -551,7 +553,7 @@ myshock_data=cell(1,number_of_models);
 lb=inf;
 ub=-inf;
 for imod=1:number_of_models
-    myshock_data{imod}=double(m(imod).filtering.Expected_smoothed_shocks.(vshock));
+    myshock_data{imod}=double(filtration{imod}.Expected_smoothed_shocks.(vshock));
     lb=min(lb,min(myshock_data{imod}));
     ub=max(ub,max(myshock_data{imod}));
 end
@@ -571,9 +573,9 @@ legend_=model_tags;
 end
 
 function [tex_name,legend_]=one_smoothed_shock(vshock,shock_list_tex_names,m,model_tags)
-myshock_data=m(1).filtering.Expected_smoothed_shocks.(vshock);
+myshock_data=filtration{1}.Expected_smoothed_shocks.(vshock);
 for imod=2:numel(m)
-    myshock_data=[myshock_data,m(imod).filtering.Expected_smoothed_shocks.(vshock)]; %#ok<AGROW>
+    myshock_data=[myshock_data,filtration{imod}.Expected_smoothed_shocks.(vshock)]; %#ok<AGROW>
 end
 plot(myshock_data,'linewidth',2)
 axis tight
@@ -612,9 +614,9 @@ legend_=model_tags;
 end
 
 function [tex_name,legend_]=one_unobservable(vname,unobsList_tex_names,m,model_tags)
-V=m(1).filtering.Expected_smoothed_variables.(vname);
+V=filtration{1}.Expected_smoothed_variables.(vname);
 for imod=2:numel(m)
-    V=[V,m(imod).filtering.Expected_smoothed_variables.(vname)];
+    V=[V,filtration{imod}.Expected_smoothed_variables.(vname)];
 end
 plot(V,'linewidth',2)
 tex_name=unobsList_tex_names.(vname);

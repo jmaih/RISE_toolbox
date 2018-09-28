@@ -1,17 +1,21 @@
-function [ppdata,hdl]=plot_priors_and_posteriors(obj,simulation_folder,...
+function [ppdata,hdl]=plot_priors_and_posteriors(obj,sim_fold,...
     parlist,trunc,npoints,varargin)
 % Compute posterior and prior densities for estimated parameters
 %
 % ::
 %
 %   ppdata=plot_priors_and_posteriors(obj)
-%   ppdata=plot_priors_and_posteriors(obj,simulation_folder)
+%   ppdata=plot_priors_and_posteriors(obj,sim_fold)
+%   ppdata=plot_priors_and_posteriors(obj,sim_fold,parlist)
+%   ppdata=plot_priors_and_posteriors(obj,sim_fold,parlist,trunc)
+%   ppdata=plot_priors_and_posteriors(obj,sim_fold,parlist,trunc,npoints)
+%   ppdata=plot_priors_and_posteriors(obj,sim_fold,parlist,trunc,npoints,varargin)
 %
 % Args:
 %
 %    obj (rise | dsge | rfvar | svar): model object
 %
-%    simulation_folder (empty | char | struct): location of the simulations. If
+%    sim_fold (empty | char | struct): location of the simulations. If
 %      empty, it is assumed that the simulations are saved to disc and are
 %      located in the address found in obj.folders_paths.simulations. If it is a
 %      "char", this corresponds to the location of the simulation. Otherwise, if
@@ -66,7 +70,7 @@ end
 
                 if nargin<2
 
-                    simulation_folder=[];
+                    sim_fold=[];
 
                 end
 
@@ -99,7 +103,7 @@ if nobj>1
         if nout
 
             [argouts{1:nout}]=plot_priors_and_posteriors(obj(iobj),...
-                simulation_folder,parlist,trunc,npoints,varargin{:});
+                sim_fold,parlist,trunc,npoints,varargin{:});
 
             tmpdata{iobj}=argouts{1};
 
@@ -111,7 +115,7 @@ if nobj>1
 
         else
 
-            plot_priors_and_posteriors(obj(iobj),simulation_folder,...
+            plot_priors_and_posteriors(obj(iobj),sim_fold,...
                 parlist,trunc,npoints,varargin{:});
 
         end
@@ -134,15 +138,15 @@ if nobj>1
 
 end
 
-if isempty(simulation_folder)
+if isempty(sim_fold)
 
-    simulation_folder=obj.folders_paths.simulations;
+    sim_fold=obj.folders_paths.simulations;
 
 end
 
 % do posterior densities
 %---------------------------
-post_dens=plot_posteriors(obj,simulation_folder,parlist,npoints);
+post_dens=plot_posteriors(obj,sim_fold,parlist,npoints);
 
 vnames=fieldnames(post_dens);
 

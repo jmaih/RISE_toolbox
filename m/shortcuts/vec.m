@@ -1,6 +1,19 @@
 function x = vec(x)
-% INTERNAL FUNCTION
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 x = vartools.vec(x);
 

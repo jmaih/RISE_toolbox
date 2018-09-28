@@ -20,7 +20,7 @@ m=set(m,'parameters',p);
 %% estimate model
 clc
 log_vars=[];%{'A','C','G','LAMBDA','PAI','Q','R','THETA','X','Y','Z'};
-mest=estimate(m,'data',data,'estim_priors',priors,...
+[mest,filtration]=estimate(m,'data',data,'estim_priors',priors,...
     'solve_log_approx_vars',log_vars);
 %% Impulse response functions
 myirfs=irf(mest);
@@ -84,7 +84,7 @@ for irecess=1:numel(recessions)
         shock=mest.exogenous.name{ishock};
         last_letter=lower(shock(end));
         sig=eval(['pest.sig_',last_letter]);
-        db=[db,sig*mest.filtering.smoothed_shocks.(shock)(recess)];
+        db=[db,sig*filtration.smoothed_shocks.(shock)(recess)];
         if irecess==1
             sigmas{ishock}=sig;
         end
@@ -100,8 +100,8 @@ end
 %% Counterfactuals
 clc
 close all
-db=mest.filtering.smoothed_variables;
-dbshocks=mest.filtering.smoothed_shocks;
+db=filtration.smoothed_variables;
+dbshocks=filtration.smoothed_shocks;
 db=pages2struct(ts.collect(db,dbshocks));
 for irecess=1:numel(recessions)
     recess=recessions{irecess};
@@ -128,4 +128,4 @@ for irecess=1:numel(recessions)
 end
 %% full sample estimates of monetary policy shocks
 figure('name','Full-sample estimates of monetary policy shocks')
-plot(mest.filtering.smoothed_shocks.EPS_R,'linewidth',2)
+plot(filtration.smoothed_shocks.EPS_R,'linewidth',2)

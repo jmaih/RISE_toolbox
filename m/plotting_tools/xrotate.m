@@ -1,6 +1,19 @@
 function xrotate(angle)
-% INTERNAL FUNCTION: to be removed
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 if nargin==0
     angle=90;

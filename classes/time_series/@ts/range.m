@@ -1,6 +1,6 @@
 function Y=range(this,varargin)
 % Overloads Matlab's range for ts objects. returns the range of the
-% values in the time series
+%   values in the time series
 %
 % ::
 %

@@ -29,7 +29,7 @@ priors.rhog={0.5,0,0.999};
 priors.sigu={2,0.0001,5}; 
 priors.sigg={0.5,0.0001,5};
 
-mest=estimate(m,'priors',priors,'data_demean',true,'data',db,...
+[mest,filtration]=estimate(m,'priors',priors,'data_demean',true,'data',db,...
     'estim_start_date','1955Q1','estim_end_date','2015Q4');
 
 %% print solution at the mode
@@ -38,9 +38,9 @@ print_solution(mest)
 
 %% Plot Inflation vs one-step ahead
 
-fs=mest.filtering.smoothed_variables;
+fs=filtration.smoothed_variables;
 
-ff=mest.filtering.filtered_variables;
+ff=filtration.filtered_variables;
 
 figure('name','Inflation vs predicted (one-step) inflation')
 % The mean is added back to the observables after filtering

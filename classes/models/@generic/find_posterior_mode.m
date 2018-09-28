@@ -58,10 +58,11 @@ else
 
 end
 
-%% disable those elements
-warning('off','MATLAB:nearlySingularMatrix')
+% warnstate = warning();% =warning('query','all') %=warning('query') 
 
-warning('off','MATLAB:illConditionedMatrix')
+% disable key warnings
+%------------------------
+warnstate=utils.estim.warnings_disable();
 
 fprintf(1,'%s\n','Looking for good enough start values. Please wait...');
 
@@ -115,8 +116,6 @@ end
 
 viol=viol(viol>0);
 
-warning('on','MATLAB:nearlySingularMatrix')
-
-warning('on','MATLAB:illConditionedMatrix')
+utils.estim.warnings_enable(warnstate);
 
 end

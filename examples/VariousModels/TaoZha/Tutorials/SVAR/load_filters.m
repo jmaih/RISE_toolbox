@@ -14,7 +14,7 @@ if isa(m,'abstvar')
     
 else
     
-    f=m.filtering;
+    f=filter(m);
     
     the_regimes=generic.describe_regimes(m.markov_chains);
     

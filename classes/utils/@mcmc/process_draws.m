@@ -92,7 +92,6 @@ if is_saved_to_disk
 
             if iter==1
 
-
                 d=tmp.pop(:,ones(1,1e+6));
 
             end

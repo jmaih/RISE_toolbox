@@ -1,7 +1,4 @@
 function [Params,ff,log_mdd]=dsmh_sampler(logf,lb,ub,options,mu,SIG)
-% DEPRECATED
-%
-
 % try and save the draws at each stage in a way that simulation can proceed
 % with exactly the same settings if interrupted... basically in a way that
 % one can just load an continue. This means the tempering levels, etc will
@@ -166,21 +163,21 @@ ndraws_per_striation_per_core(1:remains)=ndraws_per_striation_per_core(1:remains
 sqrt_cSIG=[];
 
 for istage=1:H
-
+    
     lambda_old=lambda_vector(istage);
-
+    
     lambda=lambda_vector(istage+1);
-
+    
     [w,wtilde]=importance_weights();
-
+    
     % compute log marginal data density
     %-----------------------------------
     log_I=log_I_old+log(mean(wtilde));
-
+    
     % update moments to be used in the metropolis step.
     %----------------------------------------------------
     update_moments(w);
-
+    
     % draw theta, ensuring that an equal number of draws lies in each
     % striation
     NEW_X=STRIATIONS_CORES_X;
@@ -229,21 +226,21 @@ for istage=1:H
     end
     % adjust the scale using all cores? If so do it here. WWZ seem to have
     % a unique ci for each generation
-
+    
     % gather results
     %----------------
     fthet=cell2mat(NEW_F);
     n_metrop_draws=sum(sum(cell2mat(METROP_NDRAWS)));
     n_accept=sum(sum(cell2mat(METROP_NACCEPT)));
-
+    
     if minimization
         bestf=min(fthet(:));
     else
         bestf=max(fthet(:));
     end
-
+    
     fprintf('stage %0.0f of %0.0f, lambda %8.4f, best f(x) %8.4f \n\n',istage,H,lambda,bestf);
-
+    
     % next round
     %------------
     log_I_old=log_I;
@@ -290,15 +287,15 @@ log_mdd=log_I;
             end
         end
         mutant=xx(:,ii);
-
+        
         % pick the parameter to change in the new solution
         %--------------------------------------------------
         change=min(fix(rand*d)+1,d);
         nc=numel(change);
         mutant(change)=mutant(change)+(mutant(change)-xx(change,donor_id))*2.*(rand(nc,1)-.5);
-
+        
         mutant(change)=utils.optim.recenter(mutant(change),lb(change),ub(change));
-
+        
     end
 
     function [x,fx,accepted]=metropolis_draw(x0,f0)
@@ -374,9 +371,9 @@ log_mdd=log_I;
         SIG=SIG-(mu*mu.');
         % we may need to procrustify this...
         SIG=utils.cov.nearest(SIG);
-
+        
         update_scaled_choleski();
-
+        
         function update_scaled_choleski
             if istage>1
                 acceptance_rate=n_accept/n_metrop_draws;
@@ -443,14 +440,14 @@ log_mdd=log_I;
         for it=1:M
             partition_i=badges==it;
             badges(partition_i)=[];
-
-            CORE_PARTIONS_X(it,:)=mat2cell(theta__(:,partition_i),d,ndraws_per_striation_per_core);
+            
+            CORE_PARTIONS_X(it,:)=mat2cell(theta__(:,partition_i),d,ndraws_per_striation_per_core); 
             theta__(:,partition_i)=[];
-
-            CORE_PARTIONS_F(it,:)=mat2cell(fthet__(partition_i),1,ndraws_per_striation_per_core);
+            
+            CORE_PARTIONS_F(it,:)=mat2cell(fthet__(partition_i),1,ndraws_per_striation_per_core); 
             fthet__(partition_i)=[];
         end
-
+                
         function [lnp]=multivariate_tstudent_density(theta__)
             thet_mu=theta__-mu;
             lnp=gammaln(.5*(nu+1))-(gammaln(.5*nu)+.5*d*log(nu+pi))...

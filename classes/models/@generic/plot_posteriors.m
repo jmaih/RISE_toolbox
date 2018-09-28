@@ -150,7 +150,7 @@ if is_saved_to_disk
 
     W=W.mat;
 
-    W=strrep(W(locs),'.mat','');
+    W=strrep(W,'.mat','');
 
     number_of_matrices=numel(W);
 
@@ -217,6 +217,8 @@ for ipar=1:npar
         if is_saved_to_disk
 
             tmp=load([simulation_folder,filesep,W{m}]);
+            
+            tmp=tmp.pop;
 
         else
 

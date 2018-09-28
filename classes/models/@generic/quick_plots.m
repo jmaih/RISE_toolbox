@@ -137,12 +137,14 @@ end
             bv=batch.(vname);
 
             if isstruct(bv)
+                
+                error(['multiple regimes no longer allowed in "',mfilename,'"'])
 
-                theLegend=bv.regime_1.varnames;
-
-                theIrf=bv.regime_1;
-
-                warning('Multiple regimes detected. extracting first only')
+%                 theLegend=bv.regime_1.varnames;
+% 
+%                 theIrf=bv.regime_1;
+% 
+%                 warning('Multiple regimes detected. extracting first only')
 
             else
 

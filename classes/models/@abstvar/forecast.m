@@ -11,6 +11,8 @@ if ~isempty(histdb)
 
 end
 
+params=solve(self,params);
+
 nreplic=numel(params);
 
 [y,x,date_range_all]=collect_data(self,[]);
@@ -278,8 +280,6 @@ format_output()
         if isempty(shock_uncertainty),shock_uncertainty=true; end
 
         if isempty(nsteps),nsteps=12; end
-
-        params=solve(self,params);
 
         if isempty(date_start),date_start=self.estim_.date_range(2)+1; end
 

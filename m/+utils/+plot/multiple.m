@@ -32,7 +32,7 @@ end
 
 npar=numel(vnames);
 
-rmdoll=@(x)strrep(x,'$','');
+% rmdoll=@(x)strrep(x,'$','');
 
 nstar=r0*c0;
 
@@ -109,8 +109,10 @@ for fig=1:nfig
             % return a handle, in which case the following will break. That
             % is why this shoud only be tried
             try %#ok<TRYNC>
-
-                title(rmdoll(tex_name),varargin{:})
+                
+                [tex_name,vargs]=format_title(tex_name,varargin{:});
+                    
+                    title(tex_name,vargs{:})
 
             end
 
@@ -133,5 +135,53 @@ for fig=1:nfig
 end
 
 warning(warnState)
+
+end
+
+function [tex_name,vargs]=format_title(tex_name,varargin)
+
+if iscell(tex_name)
+    
+    for kk=1:numel(tex_name)
+        
+        [tex_name{kk},vargs]=format_title(tex_name{kk},varargin{:});
+                
+    end
+    
+    return
+    
+end
+
+vargs=reshape(varargin,2,[]);
+
+found=false;
+
+for ii=1:size(vargs,2)
+    
+    found=any(strcmpi(vargs{1,ii},{'interp','interpreter'}));
+    
+    if found
+        
+        break
+        
+    end
+    
+end
+
+if ~found 
+    
+    varargin=[varargin,{'interp','latex'}];
+    
+end
+
+vargs=varargin;
+
+if any(tex_name=='$')
+    
+    return
+    
+end
+
+tex_name=regexprep(tex_name,'(?!\\)_','\\_');
 
 end

@@ -37,101 +37,177 @@ function xout=code2vector(xcell,devect)
 % See also:
 %    -utils.code.code2func
 
-
 xout=xcell;
+
 if isempty(xcell)
+
     return
+
 end
 
 if nargin<2
+
     devect=false;
+
 end
 
 if iscell(xcell)
+
     [xout]=main_engine();
+
 elseif isstruct(xcell)
-    derivative_fields={'size','functions','map','partitions'};
+    
+    derivative_fields={'size','derivatives'};
+    
     eval_fields={'code','argins','argouts'};
+    
     if all(isfield(xcell,derivative_fields))
+    
         [xout]=derivative_engine();
+    
     elseif all(isfield(xcell,eval_fields))
+    
         [xout]=eval_engine();
+    
     else
         % then it must be a transition matrix
         [xout]=transition_matrix_engine();
-    end
-elseif isa(xcell,'function_handle')
-    xout=xcell;
-else
-    error('first input must be a cell, a structure or a function handle')
-end
 
+    end
+    
+elseif isa(xcell,'function_handle')
+
+    xout=xcell;
+
+else
+    
+    error('first input must be a cell, a structure or a function handle')
+
+end
 
     function [xout]=transition_matrix_engine()
         % things are already vectorized... more or less
         xout=xcell;
+    
     end
 
-    function tmp=derivative_engine()
-        tmp=xcell;
-        order=numel(tmp);
-        xout={};
-        for io=1:order
-            do_one_order(io);
-        end
-        tmp=rmfield(tmp,'map'); % vectorizer will be used at evaluation...
 
-        function do_one_order(oo)
-            xcell=tmp(oo).functions;
-            tmp(oo).functions=main_engine();
+    function tmp=derivative_engine()
+        
+        tmp=xcell;
+        
+        order=numel(tmp);
+        
+        xout={};
+        
+        for io=1:order
+        
+            do_one_order(io);
+        
         end
+        
+        function do_one_order(oo)
+            
+            xcell=tmp(oo).derivatives(:,1);
+            
+            locs=tmp(oo).derivatives(:,2);
+            
+            % re-append the locations: add a cell around the locs to make
+            % concatenation possible. We will need to remove one cell at
+            % evaluation stage.
+            %-------------------------------------------------------------
+            tmp(oo).derivatives=[main_engine(),{locs}];
+    
+        end
+        
     end
 
     function [xout]=main_engine()
+        
         n=numel(xcell);
+        
         xout=xcell;
+        
         entry_gate='';
+        
         has_colon=false;
+        
         for item=1:n
+            
             if ~isempty(xcell{item})
+                
                 if ~isa(xcell{item},'function_handle')
+                
                     error('all elements in xcell should be function handles')
+                
                 end
+                
                 xout{item}=func2str(xcell{item});
+                
                 if devect
+                
                     xout{item}=devectorize(xout{item});
+                
                 end
+                
                 if isempty(entry_gate)
+                    
                     right_parenth=find(xout{item}==')',1,'first');
+                
                     entry_gate=xout{item}(1:right_parenth);
+                
                 end
+                
                 if ~has_colon
+                
                     has_colon=any(xout{item}==':');
+            
                 end
+                
             end
+            
         end
+        
         xout=strrep(xout,entry_gate,'');
+        
         if has_colon
+            
             xout=strcat(xout(:).',';');
+        
             tp='';
+        
         else
+            
             xout=strcat(xout(:).',',');
+        
             tp='.''';
+        
         end
+        
         xout=cell2mat(xout);
+        
         xout=['[',xout(1:end-1),']',tp];
+    
         xout={str2func([entry_gate,xout])};
+    
     end
 
     function [code]=eval_engine()
         % eval is already vectorized...
         code=xcell;
+    
     end
 
     function code=devectorize(code)
+        
         code=strrep(code,',:','');
+        
         code=strrep(code,'./','/');
+        
         code=strrep(code,'.^','^');
+    
         code=strrep(code,'.*','*');
+
     end
+
 end

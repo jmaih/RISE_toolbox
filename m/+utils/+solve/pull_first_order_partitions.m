@@ -20,6 +20,8 @@ sm.dpb_minus=cell(h);
 
 sm.de_0=cell(h);
 
+sm.sig_0=cell(h);
+
 for r0=1:h
 
     for r1=1:h
@@ -37,6 +39,8 @@ for r0=1:h
         sm.dpb_minus{r0,r1}=dv{r0,r1}(:,posv.pb_minus);
 
         sm.de_0{r0,r1}=dv{r0,r1}(:,posv.e_0);
+
+        sm.sig_0{r0,r1}=dv{r0,r1}(:,posv.sig_0);
 
     end
 

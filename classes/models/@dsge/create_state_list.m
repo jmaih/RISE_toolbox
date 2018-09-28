@@ -87,6 +87,18 @@ kept=cell(numel(orders),1);
 if compact_form
 
     kept=utils.kronecker.shrink_expand(n,max(orders));
+    
+else
+    
+    ni=1;
+    
+    for ii=1:max(orders)
+        
+        ni=n*ni;
+        
+        kept{ii}=true(1,ni);
+        
+    end
 
 end
 

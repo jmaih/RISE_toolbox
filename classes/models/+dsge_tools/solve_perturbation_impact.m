@@ -50,6 +50,9 @@ if any(dt_t(:))% then automatically h>1
         end
 
     end
+    % turning it to sparse: fingers crossed
+    %--------------------------------------
+    A=sparse(A);
 
     Tz_sig_PBF=uminus(dt_t(siz.ns+1:end,:));
 

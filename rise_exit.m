@@ -1,7 +1,8 @@
 function rise_exit()
-% Exit from RISE
+% rise_exit exit from RISE
 %
 % ::
+%
 %
 %   rise_exit
 %   rise_exit()
@@ -15,6 +16,11 @@ function rise_exit()
 %
 %    none
 %
+% Note:
+%
+% Example:
+%
+%    See also:
 
 rise_startup(true)
 

@@ -30,8 +30,6 @@ if ~isstruct(y0)
 
 end
 
-xloc0=xloc;
-
 if isempty(xloc)
 
     % all variables are state variables
@@ -100,27 +98,6 @@ elseif (order<no||is_var) && order~=1
 
 end
 
-% extract the exogenous constant
-%--------------------------------
-try
-
-    const_pos=numel(xloc)+1;
-
-    Tsig_growth=T{1}(:,const_pos);
-
-catch
-
-    xloc=xloc0;
-
-    const_pos=numel(xloc)+1;
-
-    Tsig_growth=T{1}(:,const_pos);
-
-end
-
-growth=imag(Tsig_growth);
-
-T{1}(:,const_pos)=real(Tsig_growth);
 
 y1.y=0;
 
@@ -157,18 +134,10 @@ for iy=1:order
 end
 
 y1.y=y1.y+ss;
-% add growth
-y1.y=y1.y+growth;
 
 if pruned
 
     y1.y_lin=y01;
-
-    if any(growth)
-
-        y1.y_lin(:,1)=y1.y_lin(:,1)+growth;
-
-    end
 
 end
 

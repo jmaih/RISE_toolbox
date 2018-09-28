@@ -1,7 +1,4 @@
 function Results = adaptive_parallel_tempering(logf,lb,ub,options,mu,SIG)
-% DEPRECATED
-%
-
 % Also known as:
 % - Replica exchange Monte Carlo
 % - Metropolis coupled Markov chain Monte Carlo
@@ -298,11 +295,11 @@ iter=0;
 not_converged=isim<N && funevals< MaxFunEvals && etime(clock,t0)<MaxTime;
 while not_converged
     iter=iter+1;
-
+    
     % gaussian proposal
     %---------------------
     u_randn = randn(d,H);
-
+    
     % Metropolis moves
     %------------------
     fixed_component = (rand(1,H) <= rwm_fixed_p);
@@ -322,7 +319,7 @@ while not_converged
         accepted_metropolis_total(istage) = accepted_metropolis_total(istage) + accepted;
     end
     funevals=funevals+sum(fevals);
-
+    
     % covariance and/or tune adaptation
     %----------------------------------
     alpha_diff = (~fixed_component).*(acceptance_prob-alpha);
@@ -335,28 +332,28 @@ while not_converged
         % Do the location-shape adaptation:
         [m, Rchol] = mean_cov_adapt(m, Rchol, x, gamma_);
     end
-
+    
     % Swap states between temperatures
     %----------------------------------
     [x, fx, acc_sw_, alpha_sw_, who_swapped] = one_random_swap(x, fx);
     N_sw = N_sw + who_swapped;
     accepted_swaps_total = accepted_swaps_total + acc_sw_;
-
+    
     % Adaptation of the temperature schedule
     %---------------------------------------
     lambda = inv_temperatures(alpha_sw_);
-
+    
     % Record the statistics
     swaps_number_total = swaps_number_total + N_sw;
     N_sw(:) = 0;
     %     alpha_sw_est(:) = 0;
-
+    
     if rem(iter,nthin) == 0
         isim=isim+1;
         X(isim) = struct('f',fx(1),'x',x(:,1));
         % Be sure to include only the stored guys... there is always a
         % chance that the best guy is lost in thinning but that is unlikely
-        % here
+        % here 
         if (minimization && fx(1)<bestf)||(~minimization && fx(1)>bestf)
             bestf=fx(1);
             bestx=x(:,1);
@@ -369,9 +366,9 @@ while not_converged
             iter, bestf, funevals, t/isim*(N-isim), mean(accepted_metropolis_total./isim)*100, ...
             mean(accepted_swaps_total./swaps_number_total)*100 );
     end
-
+    
     not_converged=isim<N && funevals< MaxFunEvals && etime(clock,t0)<MaxTime;
-
+    
 end
 swaps_number_total = swaps_number_total + N_sw;
 
@@ -403,14 +400,14 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
         % % %             fxx=logf(xx); funevals=funevals+1;
         % % %             [x,fx,accept_prob,accepted]=metropolis_selection(x,fx,xx,fxx);
         % % %         end
-
+        
         function [xx,fxx,accept_prob,success]=metropolis_selection(x0,f0,x,fx)
             % first select by the strength of violation, then by the level of
             % the function
             %         disp('deb selection not yet implemented!!!')
-
+            
             accept_prob=acceptance_probability(lambda(istage),fx,f0);
-
+            
             u_rand=rand;
             success=u_rand<accept_prob;
             if success
@@ -428,7 +425,7 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
             x=draw_one();
             [fx,retcode]=logf(x);
             fevals=1;
-
+            
             while retcode||is_violation(fx,penalty)
                 u=[];
                 x=draw_one();
@@ -438,7 +435,7 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
                     decipher(retcode)
                 end
             end
-
+            
             function x=draw_one()
                 if chol_style
                     if isempty(u)
@@ -452,7 +449,7 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
                 end
             end
         end
-
+        
     function lambda = inv_temperatures(alpha_sw_)
         if fixed_temperatures
             if geometric_tempering
@@ -478,11 +475,11 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
 
     function Rchol = ram_adapt_shape(Rchol, gamma, u, alpha_diff)
         % Robust AM adaptation for each of the levels
-
+        
         % ram_adapt_shape.m
         %
         u_norm_sq = sum(u.^2,1);
-
+        
         for istage_ = 1:H
             const = sqrt(min(0.9,d*gamma)*abs(alpha_diff(istage_))/u_norm_sq(istage_));
             if alpha_diff(istage_) < 0
@@ -493,17 +490,17 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
             R_ = Rchol(:,:,istage_);
             Rchol(:,:,istage_)=cholupdate_lower(R_,const*R_*u(:,istage_),sign_);
         end
-
+        
     end
 
     function [m, Rchol] = mean_cov_adapt(m, Rchol, x, gamma)
         % The mean & covariance adaptation
-
+        
         % mean_cov_adapt.m
         %
         C_mean = zeros(d);
         m_mean = zeros(d,1);
-
+        
         for istage_ = 1:H
             if separate_shape_adaptation
                 dx = x(:,istage_) - m(:,istage_);
@@ -517,14 +514,14 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
                 C_mean = C_mean + dx*dx'/H;
             end
         end
-
+        
         if ~separate_shape_adaptation
             % Mean
             m = (1-gamma)*m + gamma*m_mean;
             % Covariance
             Rchol = chol((1-gamma)*(Rchol*Rchol.') + gamma*C_mean,'lower');
         end
-
+        
     end
 
     function Rlow=cholupdate_lower(Rlow,v,sign_)
@@ -535,49 +532,49 @@ Results=struct('X',X,'bestf',bestf,'bestx',bestx,...
     end
 
     function [x, fx, acc_sw, alpha_swap, who_swapped] = one_random_swap(x, fx)
-
+        
         % one_random_swap.m
         %
         who_swapped = zeros(1,H-1);
         alpha_swap = who_swapped;
         acc_sw = alpha_swap;
-
+        
         % Pick random integer in [1,H-1]
         picked_stage = min(floor(rand*(H-1)+1),H-1);
-
+        
         [acc_sw(picked_stage), alpha_swap(picked_stage)] = try_swap(picked_stage);
-
+        
         who_swapped(picked_stage) = 1;
-
+        
         function [acc_sw, acceptance_prob] = try_swap(chosen_stage)
             % Try to swap the levels istage <-> istage+1
-
+            
             % try_swap.m
             %
             % The acceptance probability:
             delta_lambda=lambda(chosen_stage)-lambda(chosen_stage+1);
             acceptance_prob=acceptance_probability(delta_lambda,fx(chosen_stage+1),fx(chosen_stage));
-
+            
             % An accept-reject for the swap
             if rand <= acceptance_prob
                 % Swap states
                 x_ = x(:,chosen_stage);
                 fx_ = fx(chosen_stage);
-
+                
                 x(:,chosen_stage) = x(:,chosen_stage+1);
                 fx(chosen_stage) = fx(chosen_stage+1);
-
+                
                 x(:,chosen_stage+1) = x_;
                 fx(chosen_stage+1) = fx_;
-
+                
                 % Update statistics
                 acc_sw = 1;
             else
                 acc_sw = 0;
             end
-
+            
         end
-
+        
     end
 
     function prob=acceptance_probability(delta,lfx,lfx0)

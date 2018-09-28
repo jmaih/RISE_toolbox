@@ -8,7 +8,7 @@ lamb_lead "\lambda_{lead}", lamb_y "\lambda_{y}", paiss,
 rhogdp "\rho_{gdp}", rhoi "\rho_{i}", rhopai "\rho_{\pi}", rhoy "\rho_{y}",
 siggdp "\sigma_{gdp}", sigi "\sigma_{i}", sigpai "\sigma_{\pi}", sigy "\sigma_{y}"
 
-model(linear)
+model
 
 	# junk=beta_lead;
 	

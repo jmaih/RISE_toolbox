@@ -1,665 +1,827 @@
-function [block,dictionary,static]=capture_equations(dictionary,listing,block_name,static)
+function [block,dic]=capture_equations(dic,listing,block_name)
 % INTERNAL FUNCTION
 %
 
-if nargin<4
-    static=struct();
-end
-function_on=false;
-time_on=false;
-last_status='';
-fill_time='';
-time_opening='';
-def_flag=false;
-endo_switch_flag=false;
-mcp_flag=false;
-equation=initialize_equation();%cell(2,0);
-block=cell(0,5);
-DELIMITERS=parser.delimiters();
-
-chain_names={dictionary.markov_chains.name};
-chain_states_number=[dictionary.markov_chains.number_of_states];
-parameter_names={dictionary.parameters.name};
-parameter_govern=[dictionary.parameters.governing_chain];
-
-% profile off
-% profile on
-% [listing,nlist]=parser.insert_definitions(listing, dictionary.definitions_inserted);
-% profile off
-% profile viewer
-% keyboard
-nlist=size(listing,1);
-
-swp=switching_status_of_parameters(dictionary);
-
-nblks=0;
-blocks_to_discard_coz_they_are_defs=false(nblks,1);
-definitions_loc=struct();
-
-for ii=1:nlist
-    [block,equation]=capture_equations_engine(block,listing(ii,:),block_name,equation);
+if isempty(listing)
+    
+    block=cell(0,5);
+    
+    return
+    
 end
 
-if dictionary.definitions_inserted
-    block=block(~blocks_to_discard_coz_they_are_defs,:);
-    % remove all definitions from the list
-    dictionary.definitions={};
+delimiters=parser.delimiters();
+
+y={dic.endogenous.name};
+
+x={dic.exogenous.name};
+
+p={dic.parameters.name};
+
+d=dic.definitions;
+
+yxpd=parser.cell2matize([y(:).',x(:).',p(:).',d(:).']);
+
+tmpdt='t*[+-]*\d+|t';
+
+listing(:,2)=precleaning(listing(:,2),yxpd,tmpdt);
+
+nrows=size(listing,1);
+
+iter=0;
+
+straight=@(x)x(~isspace(x));
+
+eqtn=initialize_equation();
+
+eqtns=eqtn(1:0);
+
+while iter<nrows
+    
+    iter=iter+1;
+    
+    iline_=listing{iter,1}; rawline_=straight(listing{iter,2}); file_name_=listing{iter,3};
+    
+    [model,rest]=strtok(rawline_,delimiters);
+    
+    if strcmp(model,block_name)
+        
+        rawline_=rest;
+        
+    end
+    
+    if isempty(rawline_)
+        
+        continue
+        
+    end
+    
+    semicol=strfind(rawline_,';');
+    
+    rest='';
+    
+    if ~isempty(semicol)
+        
+        rest=rawline_(semicol+1:end);
+        
+        rawline_=rawline_(1:semicol);
+        
+    end
+    
+    if isempty(eqtn.eqtn)
+        
+        eqtn=initialize_equation(iline_,file_name_);
+        
+    end
+    
+    store_eqtn()
+    
 end
 
-    function eqtn=initialize_equation()
+% parameters in use
+%------------------
+dic=set_used_atoms(dic,eqtns);
+
+% matlab functions
+%-----------------
+% matlab_functions(dic)
+
+[eqtns,dic]=replace_definitions(eqtns,dic);
+
+block=eqtns2table(eqtns,yxpd,dic);
+
+dic.exogenous_list={dic.exogenous.name};
+
+dic.parameters_list={dic.parameters.name};
+
+    function store_eqtn()
+        
+        eqtn.eqtn=[eqtn.eqtn,rawline_];
+        
+        if isempty(semicol)
+            
+            return
+            
+        end
+        
+        eqtn.finish_line=iline_;
+        
+        eqtn=set_lead_lags(eqtn);
+        
+        [eqtn,dic,yxpd]=set_type(eqtn,dic,yxpd);
+
+        eqtn=validate_eqtn(eqtn,yxpd,tmpdt,block_name);
+        
+        eqtn=flush_left_right(eqtn,block_name);
+        
+        if isempty(eqtns)
+            
+            eqtns=eqtn;
+            
+        else
+            
+            eqtns(end+1)=eqtn;
+            
+        end
+        
+        if ~isempty(rest)
+            
+            eqtn=initialize_equation(iline_,file_name_);
+            
+            rawline_=rest;
+            
+            store_eqtn()
+            
+        else
+            
+            eqtn=initialize_equation();
+            
+        end
+        
+    end
+
+    function eqtn=set_lead_lags(eqtn)
+        
+        ll=regexp(eqtn.eqtn,['\<(?<atom>',yxpd,')(\{)(?<val>',tmpdt,')(\})'],'names');
+        
+        if isempty(ll)
+            
+            return
+            
+        end
+        
+        vals=strrep({ll.val},'t','');
+        
+        zz=cellfun(@isempty,vals);
+        
+        vals(zz)={'0'}; % arises from expressions such as R(t) or R{t}
+        
+        vals=cellfun(@str2double,vals,'uniformOutput',true);
+        
+        eqtn.max_lag=min(0,min(vals));
+        
+        eqtn.max_lead=max(0,max(vals));
+        
+        for ii=1:numel(ll)
+            
+            vn=ll(ii).atom;
+            
+            [t,vloc]=identify_type(vn);
+                                    
+            vv=vals(ii);
+            
+            if vv<0
+                
+                dic.(t)(vloc).max_lag=min(dic.(t)(vloc).max_lag,vv);
+                
+            elseif vv>0
+                
+                dic.(t)(vloc).max_lead=max(dic.(t)(vloc).max_lead,vv);
+                
+            end
+            
+        end
+        
+        function [t,loc]=identify_type(str)
+                        
+            loc=strcmp(str,y);
+            
+            if any(loc)
+                
+                t='endogenous';
+                
+            else
+                
+                loc=strcmp(str,x);
+                
+                if any(loc)
+                    
+                    t='exogenous';
+                    
+                else
+                    
+                    loc=strcmp(str,x);
+                    
+                    t='parameters';
+                    
+                end
+                
+            end
+            
+        end
+        
+    end
+
+    function eqtn=initialize_equation(sline,fn)
+        
+        if nargin==0
+            
+            sline=nan;
+            
+            fn='';
+            
+        end
+        
         eqtn=struct('max_lag',0,'max_lead',0,...
-            'eqtn',{cell(2,0)},...
+            'eqtn','',...
+            'sseqtn','',...
             'type','normal',...
+            'filename',fn,...
             'is_def',false,... % definitions
             'is_tvp',false,... % endogenous probabilities
-            'is_mcp',false); % complementarity condition
+            'is_mcp',false,... % complementarity condition
+            'start_line',sline,...
+            'finish_line',nan);
+        
     end
-    function [block,equation]=capture_equations_engine(block,cell_info,block_name,equation)
-        % if a parameter has a lead, create an auxiliary variable for it
-        % if a variable has a lead or a lag greater than one, replace it
-        % with the corresponding auxiliary variable and update the lead or
-        % lag of the variable in the list and then create auxiliary
-        % equations when the parsing of the model is done.
 
-        % store this useful information separately
-        %-----------------------------------------
-        reset_lists();
-
-        iline_=cell_info{1};
-        rawline_=cell_info{2};
-        file_name_=cell_info{3};
-        while ~isempty(rawline_) && ~all(isspace(rawline_))
-            % try splitting first
-            semicol=strfind(rawline_,';');
-            if ~isempty(semicol)
-                % I don't call look_around here because I need the semicol
-                rest_=rawline_(1:semicol(1));
-                rawline_=rawline_(semicol(1)+1:end);
-            else
-                rest_=rawline_;
-                rawline_=[];
-            end
-
-            if isempty(equation.eqtn)
-                endo_switch_flag=false;
-                def_flag=false;
-                if time_on
-                    error([mfilename,':: new equation starting without finished time index in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-                if function_on
-                    error([mfilename,':: new equation starting with earlier function not closed in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-            end
-            while ~isempty(rest_) && ~all(isspace(rest_))
-                [tokk,rest1]=strtok(rest_,DELIMITERS);
-
-                % test whether there is a declaration
-                if ~isempty(tokk)
-                    if (strcmp(block_name,'model') && strcmp(tokk,'model'))||...
-                            (strcmp(block_name,'steady_state_model') && strcmp(tokk,'steady_state_model'))||...
-                            (strcmp(block_name,'exogenous_definition') && strcmp(tokk,'exogenous_definition'))
-                        while ~isempty(rest1)
-                            [tokk,rest1]=strtok(rest1,DELIMITERS);
-                            if ~isempty(tokk)
-                                error([mfilename,':: attributes to ',...
-                                    block_name,' block no longer permitted in file ',...
-                                    file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                        end
-                        break % exit while ~isempty(rest_) loop
-                    end
-                end
-
-                if ~isempty(tokk)
-                    tok_status=dictionary.determine_status(tokk,dictionary);
-                    if strcmp(tok_status,'param')
-                        if strcmp(block_name,'exogenous_definition')
-                            error([mfilename,':: exogenous definitions cannot contain parameters in file ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-                        position=strcmp(tokk,{dictionary.parameters.name});
-                        dictionary.parameters(position).is_in_use=true;
-                    elseif strcmp(tok_status,'x')
-                        position=strcmp(tokk,{dictionary.exogenous.name});
-                        dictionary.exogenous(position).is_in_use=true;
-                    end
-                    is_lhs_def=false;
-                    if (strcmp(tok_status,'#') && isempty(equation.eqtn))||...
-                            strcmp(tok_status,'!')||...
-                            strcmp(tok_status,'?')
-                        def_flag=strcmp(tok_status,'#');
-                        if strcmp(block_name,'exogenous_definition')
-                            error([mfilename,':: the exogenous definition block cannot contain ''#'' or ''!'' or ''?'' ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-                        endo_switch_flag=strcmp(tok_status,'!');
-                        mcp_flag=strcmp(tok_status,'?');
-                        rest_=rest1;
-                        [tokk,rest1]=strtok(rest_,DELIMITERS); %#ok<*STTOK>
-                        tok_status=dictionary.determine_status(tokk,dictionary);
-                        if ~mcp_flag && ~strcmp(tok_status,'unknown')
-                            if strcmp(tok_status,'f')
-                                disp([mfilename,':: (gentle warning): ',tokk,' is also a matlab function'])
-                            else
-                                error([mfilename,':: string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_),' cannot have multiple types'])
-                            end
-                        end
-                        if def_flag
-                            dictionary.definitions=[dictionary.definitions;{tokk}];
-                            is_lhs_def=true;
-                            equation.is_def=true;
-                            equation.type='def';
-                            if isempty(tokk)
-                                error([mfilename,':: definition missing in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            definitions_loc.(tokk)=nblks+1;
-                        elseif mcp_flag
-                            equation.is_mcp=true;
-                            equation.type='mcp';
-                            % everything shall be parse as normal
-                            % equations. but still, perhaps this is the
-                            % place where to stamp the equations for their
-                            % type=
-                        elseif endo_switch_flag
-                            equation.is_tvp=true;
-                            equation.type='tvp';
-                            [istp,isdiagonal,chain_name]=parser.is_transition_probability(tokk);
-                            if ~istp
-                                error([mfilename,':: string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_),' is not an appropriate name for an endogenous switching probability'])
-                            end
-                            if isdiagonal
-                                error([mfilename,':: "',tokk,'" is a diagonal transition probabilitiy. Only off-diagonal elements are allowed. Check ',file_name_,' at line ',sprintf('%0.0f',iline_),' is not an appropriate name for an endogenous switching probability'])
-                            end
-                            dictionary.time_varying_probabilities=[dictionary.time_varying_probabilities,{tokk}];
-                            ch_names={dictionary.markov_chains.name};
-                            loc_chain=find(strcmp(chain_name,ch_names));
-                            if isempty(loc_chain)
-                                error([mfilename,':: markov chain "',chain_name,'" has not be declared. In ',file_name_,' at line ',sprintf('%0.0f',iline_),' is not an appropriate name for an endogenous switching probability'])
-                            end
-                            chain_status=dictionary.markov_chains(loc_chain).is_endogenous;
-                            if isnan(chain_status)
-                                dictionary.markov_chains(loc_chain).is_endogenous=true;
-                            elseif ~isequal(chain_status,true)
-                                error([mfilename,':: markov chain "',chain_name,'" was previously found to be exogenous and now is endogenous. In ',file_name_,' at line ',sprintf('%0.0f',iline_),' is not an appropriate name for an endogenous switching probability'])
-                            end
-                        else
-                            error([mfilename,':: parsing error in ',file_name_,' at line ',sprintf('%0.0f',iline_),' please report this to junior.maih@gmail.com'])
-                        end
-                        % update the status above
-                        tok_status=dictionary.determine_status(tokk,dictionary);
-                        if ~isempty(equation.eqtn)
-                            error([mfilename,':: # and ! can only occur at the beginning of an equation check in ',file_name_,' line ',sprintf('%0.0f',iline_)])
-                        end
-                    elseif strcmp(tok_status,'unknown')
-                        if parser.is_transition_probability(tokk) && strcmp(block_name,'model')
-                            error([mfilename,':: equations for endogenous transition probabilities must start with a "!" in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        else
-                            error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-                    end
-
-                    if def_flag && (strcmp(tok_status,'y')||strcmp(tok_status,'x')) && ~dictionary.definitions_inserted
-                        error([mfilename,':: definitions cannot contain variables. ',...
-                            'If this is an endogenous parameter, declare the definitions as ',...
-                            'parameters and use a steady state file. check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-
-                    if ~endo_switch_flag && strcmp(tok_status,'tvp')
-                        error([mfilename,':: model equations cannot contain endogenous switching probabilities. check ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-                    left_operator=parser.look_around(tokk,rest_);
-
-                    for i1=2:length(left_operator)
-                        first=dictionary.determine_status(left_operator(i1-1),dictionary);
-                        if strcmp(first,'unknown')
-                            error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-                        second=dictionary.determine_status(left_operator(i1),dictionary);
-                        if strcmp(second,'unknown')
-                            error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-                        check_validity([first,second],file_name_,iline_,block_name);
-                    end
-                    if ~isempty(left_operator)
-                        if ~isempty(tokk)
-                            third=dictionary.determine_status(left_operator(end),dictionary);
-                            if strcmp(third,'unknown')
-                                error([mfilename,':: unknown string ''',tokk,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            check_validity([third,tok_status],file_name_,iline_,block_name)
-                        end
-                        % always deal with time before dealing with
-                        % functions as time potentially removes some
-                        % parentheses and the functions do not.
-                        if (...
-                                (strcmp(last_status,'y')||...
-                                strcmp(last_status,'x')||...
-                                (strcmp(last_status,'param')&& ~strcmp(block_name,'parameter_restrictions'))...
-                                ) &&...
-                                (strcmp(left_operator(1),'(')||strcmp(left_operator(1),'{')))% check the time
-                            time_on=true;
-                            time_opening=left_operator(1);
-                            fill_time=[fill_time,left_operator(2:end)];
-                            left_operator='';
-                        elseif time_on && (strcmp(left_operator(1),')')||strcmp(left_operator(1),'}'))
-                            if isempty(fill_time)
-                                error([mfilename,':: missing lead or lag in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            equation=update_leads_lags(equation,fill_time);
-                            fill_time='';
-                            time_on=false;
-                            time_closing=left_operator(1);
-                            if ~((strcmp(time_opening,'(') && strcmp(time_closing,')'))||...
-                                    (strcmp(time_opening,'{') && strcmp(time_closing,'}')))
-                                error([mfilename,':: time opened with ''',time_opening,''' and closed with ''',time_closing,''' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            left_operator=left_operator(2:end);
-                        end
-
-                        left_parents=sum(left_operator=='(');
-                        right_parents=sum(left_operator==')');
-                        % try and close the function before worrying about
-                        % whether the closing is not successful.
-                        if function_on && right_parents
-                            function_on=function_on-min(function_on,right_parents);
-                        end
-                        if (strcmp(last_status,'f')||function_on) && left_parents
-                            function_on=function_on+left_parents;
-                        end
-                        if function_on<0
-                            error([mfilename,':: parenthesis mismatch in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-
-                        if ~isempty(left_operator)
-                            equation.eqtn=[equation.eqtn,{left_operator,[]}']; %#ok<*AGROW>
-                        end
-                    end
-                    if time_on && strcmp(tok_status,'n')
-                        fill_time=[fill_time,tokk];
-                    else
-                        % if it is a definition, get rid of it if the
-                        % definitions are to be inserted
-                        %----------------------------------------------
-                        if ~is_lhs_def && strcmp(tok_status,'def') && dictionary.definitions_inserted
-                            old_eqtn=block{definitions_loc.(tokk),1};
-                            middle_man=old_eqtn;
-                            % remove the first part
-                            %----------------------
-                            middle_man(:,1)=[];
-                            % remove the equality sign
-                            %-------------------------
-                            middle_man{1,1}(1)=[];
-                            if isempty(middle_man{1,1})
-                                middle_man(:,1)=[];
-                            end
-                            % remove the semicolon
-                            %---------------------
-                            middle_man{1,end}(end)=[];
-                            if isempty(middle_man{1,end})
-                                middle_man(:,end)=[];
-                            end
-                            block_def=[{'(',[]}',middle_man,{')',[]}'];
-                            equation.eqtn=[equation.eqtn,block_def];
-                        else
-                            equation.eqtn=[equation.eqtn,{tokk,[]}'];
-                        end
-                        if (strcmp(tok_status,'y')||strcmp(tok_status,'x')||...
-                                (strcmp(tok_status,'param') && swp.(tokk))...
-                                )
-                            equation.eqtn{2,end}=0;
-                        end
-                        fill_time='';
-                    end
-                    last_status=tok_status;
-                    rest_=rest1;
-                else
-                    if time_on && (strcmp(rest_(1),')')||strcmp(rest_(1),'}'))
-                        rest_=rest_(2:end);
-                        %====================
-                        equation=update_leads_lags(equation,fill_time);
-                        fill_time='';
-                        %====================
-                        time_on=false;
-                    end
-                    if function_on
-                        left_parents=sum(rest_=='(');
-                        right_parents=sum(rest_==')');
-                        function_on=function_on+left_parents-min(function_on,right_parents);
-                    end
-                    if ~isempty(rest_)
-                        rest_(isspace(rest_))=[];
-                        if ~isempty(rest_)
-                            equation.eqtn=[equation.eqtn,{rest_,[]}'];
-                        end
-                        rest_='';
-                    end
-                    last_status=dictionary.determine_status(equation.eqtn{1,end}(end),dictionary);
-                end
-            end
-            if ~isempty(equation.eqtn)
-                if strcmp(equation.eqtn{1,end}(end),';')
-                    % we've reach the end of the equation, validate it,
-                    % load it and reinitialize.
-                    equation.eqtn=validate_equation(equation.eqtn,...
-                        max(abs([equation.max_lag,equation.max_lead])));
-                    fast_ss_form=[];
-                    pound_key=find(strcmp(equation.eqtn(1,:),'#'));
-                    if ~isempty(pound_key)
-                        fast_ss_form=equation.eqtn(:,pound_key+1:end);
-                        equation.eqtn=equation.eqtn(:,1:pound_key-1);
-                    end
-                    block=[block;...
-                        {equation.eqtn,equation.max_lag,equation.max_lead,equation.type,fast_ss_form}];
-                    nblks=nblks+1;
-                    if equation.is_def && dictionary.definitions_inserted
-                        blocks_to_discard_coz_they_are_defs(nblks,1)=true;
-                    else
-                        blocks_to_discard_coz_they_are_defs(nblks,1)=false;
-                    end
-                    equation=initialize_equation();
-                    % clear the mcp_flag
-                    %--------------------
-                    if mcp_flag
-                        mcp_flag=false;
-                    end
-                end
-            end
-            % make sure the list is up to date for status determination
-            %-----------------------------------------------------------
-            reset_lists()
-        end
-        function reset_lists()
-            do_one_list('endogenous')
-            do_one_list('parameters')
-            do_one_list('exogenous')
-            function do_one_list(type_)
-                fake_name=[type_,'_list'];
-                if ~isfield(dictionary,fake_name)||...
-                        numel(dictionary.(fake_name))~=numel(dictionary.(type_))
-                    dictionary.(fake_name)={dictionary.(type_).name};
-                end
-            end
-        end
-        function equation=validate_equation(equation,max_lead_lag)
-            % if there is a # in the equation, split the equation in to two
-            % validate each part and reconnect
-            pound_key_=find(strcmp(equation(1,:),'#'));
-            if ~isempty(pound_key_)
-                if ~strcmp(block_name,'model')
-                    error(['# sign only allowed in model block in ',...
-                        file_name_,' at line ',sprintf('%0.0f',iline_)])
-                elseif numel(pound_key_)>1
-                    error([' Only one # sign allowed per equation. In ',...
-                        file_name_,' at line ',sprintf('%0.0f',iline_)])
-                elseif mcp_flag||endo_switch_flag||def_flag
-                    error([' Complementarities, endogenous switching probs ',...
-                        ' and definitions cannot contain a # sign. In ',...
-                        file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-                % add a semicolon to the first part and validate
-                first_part=[equation(:,1:pound_key_-1),{';';[]}];
-                second_part=equation(:,pound_key_+1:end);
-                % validate the bgp/sstate part
-                first_part=validate_equation(first_part,max_lead_lag);
-                second_part=validate_equation(second_part,max_lead_lag);
-                % reconnect both
-                equation=[first_part,{'#';[]},second_part];
-            end
-            if mcp_flag
-                if max_lead_lag
-                    % 3- cannot contain lags or leads
-                    error(['A complementarity constraint cannot contain leads or lags in ',...
-                        file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-                mcp_test_passed=false;
-                mcp_inequalities={'>=','<='...,'>','<','ge','gt','le','lt',
-                    };
-            end
-            checked=false;
-            % look for equality signs
-            equality_signs=cell(2,0);
-            % the top cell with register the cell number with equality
-            % sign and the lower cell, the location of the equality sign
-            % within the top cell
-            for ic=1:size(equation,2)
-                eq_s=strfind(equation{1,ic},'=');
-                if ~isempty(eq_s)
-                    equality_signs=[equality_signs,transpose({ic,eq_s})];
-                end
-                if mcp_flag
-                    % Restrictions for complementarity constraints
-                    % 1- no switching parameter
-                    loc=strcmp(equation{1,ic},{dictionary.parameters.name});
-                    if any(loc) && dictionary.parameters(loc).is_switching
-                        error(['A complementarity constraint cannot contain switching parameters in ',...
-                            file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-                    % 2- one of the following ge gt le lt
-                    for iii=1:numel(mcp_inequalities)
-                        loc=strfind(equation{1,ic},mcp_inequalities{iii});
-                        if ~isempty(loc)
-                            break
-                        end
-                    end
-                    if ~isempty(loc)
-                        if ~mcp_test_passed
-                            if (ic==1||ic==size(equation,2)-1)
-                                error(['inequality mis-placed in complementarity constraint in ',...
-                                    file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            mcp_test_passed=true;
-                        else
-                            error(['A complementarity constraint cannot contain more than one inequality in ',...
-                                file_name_,' at line ',sprintf('%0.0f',iline_)])
-                        end
-                    end
-                elseif strcmp(block_name,'parameter_restrictions')
-                    % Restrictions for the parameter restriction block
-                    % 1- no variable
-                    if ismember(equation{1,ic},{dictionary.endogenous.name})
-                        error([mfilename,':: no variable allowed in the parameter_restrictions block'])
-                    end
-                    % 2- if parenthesis after a parameter, then one of the elements
-                    % inside the parenthesis must be a chain name and the other a
-                    % numeric.
-                    locs=find(strcmp(equation{1,ic},parameter_names));
-                    if ~isempty(locs) % chain_states_number={dictionary.markov_chains.number_of_states};
-                        nom_de_chaine=chain_names{parameter_govern(locs)};
-                        etats_de_la_chaine=1:chain_states_number(parameter_govern(locs));
-                        state_=1;
-                        chain_='const';
-                        if  ic<size(equation,2) && strcmp(equation{1,ic+1}(1),'(')
-                            if strcmp(nom_de_chaine,'const')
-                                error(['parameter ',equation{1,ic},' is controlled by markov chain "const". So an opening parenthesis is unexpected in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            chain_=equation{1,ic+2};
-                            if ~strcmp(chain_,nom_de_chaine) % chain
-                                error(['parameter ',equation{1,ic},' is not controlled by a markov chain with name ',chain_,' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            if ~strcmp(equation{1,ic+3},',') % remove comma
-                                error([mfilename,':: comma missing between chain and state for parameter ',equation{1,ic},' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            state_=eval(equation{1,ic+4});
-                            if isnan(state_)||~(isnumeric(state_) && ismember(state_,etats_de_la_chaine))
-                                error([mfilename,':: state invalid for parameter ',equation{1,ic},' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            if ~strcmp(equation{1,ic+5}(1),')') % closing parenthesis
-                                error([mfilename,':: closing parenthesis missing for parameter ',equation{1,ic},' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                            end
-                            % remove all processed elements
-                            equation{1,ic+1}(1)=[]; % left parenthesis
-                            equation{1,ic+2}=''; % state or chain
-                            equation{1,ic+3}=''; % comma
-                            equation{1,ic+4}=''; % state or chain
-                            equation{1,ic+5}(1)=[]; % right parenthesis
-                        end
-                        % we carefully record the chain and the state for
-                        % later processing
-                        equation{2,ic}={chain_,state_};
-                    end
-                    % 3- parameter must be effectively controlled by the
-                    % chain in the parameterization block
-                end
-            end
-            % an equation cannot have multiple equality signs
-            if size(equality_signs,2)>1
-                error([mfilename,':: multiple equality signs found in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-            elseif size(equality_signs,2)==1
-                    % validate the lhs and the rhs of the equality separately
-                    lhs=equation(:,1:equality_signs{1}-1);
-                    rhs=equation(:,equality_signs{1}+1:end);
-                    if isempty(rhs)||isempty(lhs)
-                        error([mfilename,':: left-hand side or right-hand side badly specified in ',...
-                            file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-                    % split the middle cell and isolate the equality sign
-                    string=equation{1,equality_signs{1}};
-                    left_string=[];
-                    right_string=[];
-                    if mcp_flag
-                        % locate > or < and =
-                        inequal=strfind(string,'<');
-                        inequal_type=1;
-                        if isempty(inequal)
-                            inequal=strfind(string,'>');
-                            inequal_type=2;
-                        end
-                        equal_=strfind(string,'=');
-                        lhs=[lhs,transpose({string(1:inequal-1),[]})];
-                        rhs=[transpose({string(equal_+1:end),[]}),rhs];
-                        if inequal_type==1
-                            lhs=[transpose({'-(',[]}),lhs,transpose({')',[]})];
-                        end
-                    else
-                        left_string=string(1:equality_signs{2}-1);
-                        right_string=string(equality_signs{2}+1:end);
-                    end
-                    if ~isempty(left_string)
-                        % add to the lhs
-                        lhs=[lhs,transpose({left_string,[]})];
-                    end
-                    msg=count_parentheses(lhs(1,:));
-                    if ~isempty(msg)
-                        error([mfilename,':: ',msg,' on left hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-
-                    if ~isempty(right_string)
-                        % add to the rhs but before !
-                        rhs=[transpose({right_string,[]}),rhs];
-                    end
-                    msg=count_parentheses(rhs(1,:));
-                    if ~isempty(msg)
-                        error([mfilename,':: ',msg,' on right hand side in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                    end
-                    checked=true;
-                    % Putting the equation back together: what to do with the
-                    % equality sign?
-                    if ~strcmp(block_name,'parameter_restrictions') &&...
-                            ~strcmp(block_name,'steady_state_model') &&...
-                            ~strcmp(block_name,'exogenous_definition') &&...
-                            ~ def_flag &&... % <--- should do the same as here with TVP below
-                            ~ismember(equation{1,1},dictionary.time_varying_probabilities)
-                        % % % % %                         ~ismember(equation{1,1},dictionary.known_words) &&... % I don't remember why this is here !
-                        % modify the last item of the right hand side
-                        rhs{1,end}=[rhs{1,end}(1:end-1),');'];
-                        middle=transpose({'-(',[]});
-                    else
-                        middle=transpose({'=',[]});
-                    end
-                    equation=[lhs,middle,rhs];
-                    if mcp_flag
-                        equation{1,end}=[equation{1,end}(1:end-1),'>=0;'];
-                    end
-            end
-            if ~checked
-                % then there was no equality sign and so, check the whole
-                % equation in one go
-                msg=count_parentheses(equation(1,:));
-                if ~isempty(msg)
-                    error([mfilename,':: ',msg,' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-            end
-            % if it is an exogenous definition equation, then it needs a
-            % special treatment
-            if strcmp(block_name,'exogenous_definition')
-                % check that the first element on the left-hand side is an observable
-                % exogenous
-                vnamex=equation{1,1};
-                if ~(ismember(vnamex,{dictionary.exogenous.name}) && ...
-                        ismember(vnamex,{dictionary.observables.name}))
-                    error([mfilename,':: ',vnamex,' must be exogenous and observed in ',file_name_,' at line ',sprintf('%0.0f',iline_)'])
-                end
-                % It must be dated at time 0
-                if ~isequal(equation{2,1},0)
-                    error([mfilename,':: ',vnamex,' must be dated at time 0 in ',file_name_,' at line ',sprintf('%0.0f',iline_)'])
-                end
-                % the second element must be an equality sign
-                if ~strcmp(equation{1,2}(1),'=')
-                    error([mfilename,':: the second token must be a ''=''  in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-                % no rhs variable can be dated at a time beyond 0
-                for icol=3:size(equation,2)
-                    if ~isempty(equation{2,icol}) && equation{2,icol}>0
-                        error([mfilename,':: right-hand side variables cannot be dated in the future in ',file_name_,' at line ',sprintf('%0.0f',iline_)'])
-                    end
-                end
-            end
-            if mcp_flag
-                if ~mcp_test_passed
-                    disp(mcp_inequalities)
-                    error([' A complementarity condition must contain one of the above ''=''  in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-                end
-            end
-
-            function msg=count_parentheses(equation)
-                equation=cell2mat(equation);
-                leftpars=numel(strfind(equation,'('));
-                rightpars=numel(strfind(equation,')'));
-                checked_=(leftpars==rightpars);
-                leftpars=numel(strfind(equation,'['));
-                rightpars=numel(strfind(equation,']'));
-                checked_=checked_+2*(leftpars==rightpars);
-                switch checked_
-                    case 3
-                        msg='';
-                    case 2
-                        msg='parentheses mismatch';
-                    case 1
-                        msg='brackets mismatch';
-                    case 0
-                        msg='parentheses and brackets mismatch';
-                end
-            end
-        end
-        function equation=update_leads_lags(equation,leadorlag)
-            leadorlag=eval(leadorlag);
-            if ~isnumeric(leadorlag)||~isequal(leadorlag,floor(leadorlag))
-                error([mfilename,':: time syntax error in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-            end
-            equation.eqtn{2,end}=leadorlag;
-            equation.max_lag=min(equation.max_lag,leadorlag);
-            equation.max_lead=max(equation.max_lead,leadorlag);
-        end
-    end
-    function check_validity(syntax,file_name_,iline_,block_name)
-        special_syntax=any(strcmp(syntax,dictionary.syntax_special));
-        good=any(strcmp(syntax,dictionary.syntax_typical))||...
-            (any(strcmp(syntax,dictionary.syntax_time)) && ~strcmp(block_name,'steady_state_model'))||...
-            (any(strcmp(syntax,dictionary.syntax_function)) && function_on)||...
-            (special_syntax && strcmp(block_name,'steady_state_model'))||...
-            (special_syntax && strcmp(block_name,'parameter_restrictions'))||...
-            (special_syntax && strcmp(block_name,'model') && mcp_flag);
-        if ~good
-            error([mfilename,':: wrong syntax ',syntax,' in ',file_name_,' at line ',sprintf('%0.0f',iline_)])
-        end
-    end
 end
 
-function p=switching_status_of_parameters(dic)
-% control parameters
-%-------------------
-p=struct();
-for ipar=1:numel(dic.parameters)
+function eqtn=flush_left_right(eqtn,block_name)
 
-    p.(dic.parameters(ipar).name)=dic.parameters(ipar).is_switching;
+if ~(eqtn.is_def || eqtn.is_tvp || strcmp(block_name,'steady_state_model')) 
+    
+    eqtn.eqtn=flusher(eqtn.eqtn);
+    
+    eqtn.sseqtn=flusher(eqtn.sseqtn);
+    
+end
+
+    function e=flusher(e)
+        
+        ekl=strfind(e,'=');
+        
+        if isempty(ekl)
+            
+            return
+            
+        end
+        % remove semicolon: some equations (e.g. sstate form) don't have it
+        % anyway but make sure to put it back...
+        e=strrep(e,';','');
+        
+        lhs=e(1:ekl-1);
+        
+        rhs=e(ekl+1:end);
+        
+        if length(lhs)>length(rhs)
+            
+            e=[lhs,'-(',rhs,');'];
+            
+        else
+            
+            e=['-(',lhs,')','+',rhs,';'];
+            
+        end
+        
+    end
 
 end
+
+function [eqtns,dic]=replace_definitions(eqtns,dic)
+
+if ~dic.definitions_inserted
+    
+    return
+    
+end
+
+def_eqtns=eqtns([eqtns.is_def]);
+
+dm=definitions_map();
+
+if isempty(dm)
+    
+    return
+    
+end
+
+eqtns=eqtns(~[eqtns.is_def]);
+
+n=numel(eqtns);
+
+alleqts=[{eqtns.eqtn},{eqtns.sseqtn}];
+
+for ii=1:size(dm,1)
+        
+    alleqts=regexprep(alleqts,['\<',dm{ii,1},'\>'],dm{ii,2});
+    
+end
+
+[eqtns.eqtn]=deal(alleqts{1:n});
+
+[eqtns.sseqtn]=deal(alleqts{n+1:end});
+
+    function dm=definitions_map()
+        
+        ndef=numel(def_eqtns);
+        
+        dm=cell(0,2);
+        
+        if isfield(dic,'definitions_map')
+            
+            dm=dic.definitions_map;
+                        
+        end
+        
+        ndef0=size(dm,1);
+        
+        dm=[dm;
+            cell(ndef,2)];
+        
+        for jj=ndef:-1:1
+            
+            stud=def_eqtns(jj).eqtn;
+            
+            ekl=strfind(stud,'=');
+            
+            lhs=stud(1:ekl-1);
+            
+            rhs=['(',strrep(stud(ekl+1:end),';',''),')'];
+            
+            loc=jj+ndef0;
+            
+            dm(loc,:)={lhs,rhs};
+            
+            dm(loc+1:end,2)=regexprep(dm(loc+1:end,2),['\<',lhs,'\>'],rhs);
+            
+        end
+        
+        for jj=1:ndef0
+            
+            lhs=dm{jj,1};
+            
+            rhs=dm{jj,2};
+            
+            dm(ndef0+1:end,2)=regexprep(dm(ndef0+1:end,2),['\<',lhs,'\>'],rhs);
+            
+        end
+        
+        dic.definitions_map=dm;
+        
+    end
+
+end
+
+function T=eqtns2table(eqtns,yxpd,dic)
+
+isendo=classify_atoms_variables();
+
+n=numel(eqtns);
+
+T=cell(n,5);
+
+for ii=1:n
+    
+    e=eqtns(ii);
+    
+    e1=e.eqtn;
+    
+    e2=e.sseqtn;
+    
+    T(ii,:)={do_it(e1),e.max_lag,e.max_lead,e.type,do_it(e2)};
+    
+end
+
+    function out=do_it(in0)
+        
+        out=in0;
+        
+        if isempty(in0)
+            
+            return
+            
+        end
+        
+        in1=regexprep(in0,['\<',yxpd,'\>(\{[^\}]+\})?'],'%$1$2%');
+        
+        in1=regexp(in1,'%','split');
+        
+        mt=cellfun(@isempty,in1,'uniformOutput',true);
+        
+        in1=in1(~mt);
+        
+        in1=[in1;cell(size(in1))];
+        
+        for jj=1:size(in1,2)
+            
+            cinj=in1{1,jj};
+            
+            if strcmp(cinj(end),'}')
+                
+                op=strfind(cinj,'{');
+                
+                in1{1,jj}=cinj(1:op-1);
+                % remove t in t+1 t-1 expressions
+                in1{2,jj}=xxxdbl(cinj(op+1:end-1));
+                
+            elseif isvarname(cinj) % <--all(isstrprop(cinj,'alphanum') && isstrprop(cinj(1),'alpha')
+                                
+                if isendo.(cinj)
+                    
+                    in1{2,jj}=0;
+                    
+                end
+                
+            end
+            
+        end
+        
+        out=in1;
+        
+    end
+
+    function w=classify_atoms_variables()
+        
+        y={dic.endogenous.name};
+        
+        x={dic.exogenous.name};
+        
+        p={dic.parameters.name};
+        
+        d=dic.definitions;
+        
+        atoms=[
+            y(:)
+            x(:)
+            p(:)
+            d(:)
+            ];
+        
+        na=numel(atoms);
+        
+        v=zeros(na,1); v(1:numel(y))=1;
+        
+        w=cell2struct(num2cell(v),atoms,1);
+        
+    end
+
+    function o=xxxdbl(x)
+        
+        if strcmp(x,'t')
+            
+            o=0;
+            
+        else
+            
+            o=str2double(strrep(x,'t',''));
+            
+        end
+        
+    end
+
+end
+
+function matlab_functions(dic)
+
+types={'endogenous','exogenous','parameters',...'definitions','chain_names','time_varying_probabilities'
+    };
+
+for ii=1:numel(types)
+    
+    t=types{ii};
+    
+    names={dic.(t).name};
+    
+    n=numel(names);
+    
+    if n==0
+        
+        continue
+        
+    end
+    
+    is_matlab=false(1,n);
+    
+    for jj=1:n
+        
+        v=names{jj};
+        
+        is_matlab(jj)=exist([v,'.m'],'file');
+        
+    end
+    
+    badnames=names(is_matlab);
+    
+    if ~isempty(badnames)
+        
+        disp(['gentle warning (No need to worry): the following atoms(',t,...
+            ') are also matlab functions'])
+        
+        disp(badnames)
+        
+    end
+    
+end
+
+end
+
+function dic=set_used_atoms(dic,eqtns)
+
+types={'parameters','exogenous'};
+
+for ii=1:numel(types)
+    
+    t=types{ii};
+    
+    p={dic.(t).name};
+    
+    l=get_list(p);
+    
+    loc=locate_variables(l,p);
+    
+    [dic.(t)(loc).is_in_use]=deal(true);
+    
+end
+
+    function l=get_list(p)
+        
+        l=regexp({eqtns.eqtn}.',['\<',parser.cell2matize(p),'\>'],'match');
+        
+        l=[l{:}];
+        
+        l=unique(l);
+        
+    end
+
+end
+
+function validate_mcp(e)
+
+ee=e.eqtn(2:end);
+
+dblekl=strfind(ee,'==');
+
+if ~isempty(dblekl) %#ok<STREMP>
+    
+    error(['complementarity conditions cannot contain double equalities in ',...
+        e.filename,' at line ',sprintf('%0.0f',e.start_line)])
+    
+end
+
+ineq=regexp(ee,'(>=|<=|<|>|\<lt\>|\<le\>|\<gt\>|\<ge\>)','match');
+
+if isempty(ineq)
+    
+    error(['complementarity conditions must contain at least one inequality sign in ',...
+        e.filename,' at line ',sprintf('%0.0f',e.start_line)])
+    
+end
+
+end
+
+function dic=validate_tvp(e,dic)
+
+ekl=strfind(e.eqtn,'=');
+
+tokk=e.eqtn(2:ekl-1);
+
+[istp,isdiagonal,chain_name]=parser.is_transition_probability(tokk);
+
+iline_=e.start_line;
+
+file_name_=e.filename;
+
+if ~istp
+    
+    error(['string ''',tokk,''' in ',file_name_,' at line ',...
+        sprintf('%0.0f',iline_),' is not an appropriate name for a ',...
+        'time-varying transition probability'])
+    
+end
+
+if isdiagonal
+    
+    error(['"',tokk,'" is a diagonal transition probabilitiy. Only ',...
+        'off-diagonal elements are allowed. Check ',file_name_,...
+        ' at line ',sprintf('%0.0f',iline_)])
+    
+end
+
+dic.time_varying_probabilities=[dic.time_varying_probabilities,{tokk}];
+
+ch_names={dic.markov_chains.name};
+
+loc_chain=find(strcmp(chain_name,ch_names));
+
+if isempty(loc_chain)
+    
+    error(['markov chain "',chain_name,'" has not be declared. In ',...
+        file_name_,' at line ',sprintf('%0.0f',iline_)])
+    
+end
+
+chain_status=dic.markov_chains(loc_chain).is_endogenous;
+
+if isnan(chain_status)
+    
+    dic.markov_chains(loc_chain).is_endogenous=true;
+    
+elseif ~isequal(chain_status,true)
+    
+    error(['markov chain "',chain_name,'" was previously found to be ',...
+        'exogenous and now is endogenous. In ',file_name_,' at line ',...
+        sprintf('%0.0f',iline_)])
+    
+end
+
+end
+
+function e=validate_eqtn(e,yxpd,tmpdt,block_name)
+
+e=split_sstate_check_equalities(e);
+
+patt=['\<',yxpd,'\>((\{)(',tmpdt,')(\}))?']; % new form with only {
+% patt=['\<',yxpd,'\>((\(|\{)(',tmpdt,')(\)|\}))?']; old form with ( and {
+
+myreplace=@repl_engine; %#ok<NASGU>
+
+validator(e.eqtn)
+
+validator(e.sseqtn)
+
+    function validator(s)
+        
+        if isempty(s),return,end
+        
+        s=strrep(s,';','');
+        
+        if ~e.is_tvp
+            
+            ekl=strfind(s,'=');
+            
+            if ~isempty(ekl)
+                
+                s=[s(1:ekl-1),'-(',s(ekl+1:end),')'];
+                
+            end
+            
+        end
+        
+        s1=regexprep(s,patt,'${myreplace($1,$2,$3,$4)}');
+        
+        if strcmp(block_name,'planner_objective')
+            
+            s1=regexprep(s1,'\<(commitment|discount)\>','${myreplace($1)}');
+            
+        elseif strcmp(block_name,'steady_state_model')
+            % replace all unknown atoms by something computable
+            s1=regexprep(s1,'\<([a-zA-Z]+\w*)\>(?!\()','${myreplace($1)}');
+                        
+        end
+        
+        echo_chamber(s1,e)
+                
+    end
+
+    function r=repl_engine(~,~,~,~)
+        
+        r='0.5';%<--r=sprintf('%0.6g',rand);
+        
+    end
+
+end
+
+function echo_chamber(s1,e)
+
+% we need to evaluate things here otherwise we might create some variables
+% that conflict with subfunctions, static workspaces, etc.
+
+try
+    
+    eval([s1,';'])
+    
+catch me
+    
+    error([me.message,' between line ',int2str(e.start_line),...
+        ' and line ',int2str(e.finish_line),' in "',e.filename,'"'])
+    
+end
+
+end
+
+function eqtn=split_sstate_check_equalities(eqtn)
+
+e=eqtn.eqtn;
+
+pound=strfind(e,'#');
+
+if isempty(pound)
+    
+    check_equalities(e)
+    
+    return
+    
+end
+
+if numel(pound)>1
+    
+    error(['Too many # in between line ',int2str(eqtn.start_line),...
+        ' and line ',int2str(eqtn.finish_line),' in',eqtn.filename])
+    
+elseif eqtn.is_def
+
+    error(['Definitions cannot have sstate form between line ',int2str(eqtn.start_line),...
+        ' and line ',int2str(eqtn.finish_line),' in',eqtn.filename])
+    
+elseif eqtn.is_mcp
+
+    error(['Restrictions cannot have sstate form between line ',int2str(eqtn.start_line),...
+        ' and line ',int2str(eqtn.finish_line),' in',eqtn.filename])
+    
+elseif eqtn.is_tvp
+
+    error(['Time-varying probabilities cannot have sstate form between line ',int2str(eqtn.start_line),...
+        ' and line ',int2str(eqtn.finish_line),' in',eqtn.filename])
+    
+end
+
+eqtn.sseqtn=e(pound+1:end-1);
+
+eqtn.eqtn=[e(1:pound-1),';'];
+
+check_equalities(eqtn.eqtn)
+
+check_equalities(eqtn.sseqtn)
+
+    function check_equalities(e)
+        
+        ekl=strfind(e,'=');
+        
+        if numel(ekl)>1
+            
+            error(['Too many "=" signs between line ',int2str(eqtn.start_line),...
+                ' and line ',int2str(eqtn.finish_line),' in',eqtn.filename])
+            
+        end
+                
+    end
+
+end
+
+function [eqtn,dic,yxpd]=set_type(eqtn,dic,yxpd)
+
+chop=true;
+
+switch eqtn.eqtn(1)
+    
+    case '#'
+        
+        eqtn.is_def=true;
+        
+        eqtn.type='def';
+        
+        ekl=strfind(eqtn.eqtn,'=');
+        
+        tokk=eqtn.eqtn(2:ekl-1);
+        
+        dic.definitions=[dic.definitions;{tokk}];
+        
+        yxpd=[yxpd(1:end-1),'|',tokk,')'];
+        
+    case '!'
+        
+        eqtn.is_tvp=true;
+        
+        eqtn.type='tvp';
+        
+        dic=validate_tvp(eqtn,dic);
+        
+    case '?'
+        
+        eqtn.is_mcp=true;
+        
+        eqtn.type='mcp';
+        
+        validate_mcp(eqtn)
+        
+    otherwise
+        
+        chop=false;
+end
+
+if chop
+    
+    eqtn.eqtn=eqtn.eqtn(2:end);
+    
+end
+
+% ! or ? cannot have leads or lags # can have but only if inserted
+
+end
+
+function L=precleaning(L,yxpd,tpmdt)
+
+% parentheses to curly braces
+patt=['\<',yxpd,'\((',tpmdt,'|ss|stst|sstate)\)'];
+
+L=regexprep(L,patt,'$1{$2}');
+
+patt=['\<',yxpd,'\{(stst|sstate)\}'];
+
+L=regexprep(L,patt,'steady_state($1)');
+
+% no more ...
+L=strrep(L,'...','');
+
 end

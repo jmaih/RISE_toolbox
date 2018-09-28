@@ -39,13 +39,23 @@ classdef verbatim < rise_report.text
     % - [log] -
     % - [batch] -
     methods
+	
         function obj=verbatim(varargin)
+		
             obj=obj@rise_report.text(varargin{:});
+			
         end
+		
     end
+	
     methods(Access = protected)
+	
         function b=batch_implementation(~,b)
+		
             b=['\begin{verbatim}';b(:);'\end{verbatim}'];
+			
         end
+		
     end
+	
 end

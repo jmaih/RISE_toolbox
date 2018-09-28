@@ -24,6 +24,8 @@ for r0=1:siz.h
 
         sm.de_0{r0,1}=sm.de_0{r0,1}+sm.de_0{r0,r1};
 
+        sm.sig_0{r0,1}=sm.sig_0{r0,1}+sm.sig_0{r0,r1};
+
     end
 
     sm.d0{r0}=[sm.ds_0{r0,1},sm.dp_0{r0,1},sm.db_0{r0,1},sm.df_0{r0,1}];
@@ -101,5 +103,7 @@ sm.db_0=sm.db_0(:,1)';
 sm.df_0=sm.df_0(:,1)';
 
 sm.de_0=sm.de_0(:,1)';
+
+sm.sig_0=sm.sig_0(:,1)';
 
 end

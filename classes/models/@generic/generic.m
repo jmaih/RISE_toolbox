@@ -40,9 +40,6 @@ classdef generic
         % model solution including steady state, definitions, etc.
         solution
         
-        % structure holding predicted, updated and smoothed series
-        filtering
-        
     end
     
     properties(SetAccess=protected)
@@ -147,10 +144,6 @@ classdef generic
         
         varargout=hessian(varargin)
         
-        varargout=historical_decomposition(varargin)
-        
-        varargout=hd(varargin)
-        
         varargout=initial_conditions(varargin)
         
         varargout=irf(varargin)
@@ -176,8 +169,6 @@ classdef generic
         varargout=posterior_sample(varargin)
         
         varargout=print_estimation_results(varargin)
-        
-        varargout=print_estimation_results_legacy(varargin)
         
         varargout=pull_objective(varargin)
         

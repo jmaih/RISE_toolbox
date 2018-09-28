@@ -1,6 +1,8 @@
 function x=vech(x)
-% INTERNAL FUNCTION
+
+% low-level function
 %
+% No help provided
 
 x=vartools.vech(x);
 

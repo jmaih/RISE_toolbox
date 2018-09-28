@@ -1,6 +1,8 @@
 function Initcond=initial_conditions_to_order_var(Initcond,new_order,options)
-% INTERNAL FUNCTION: Set initial conditions to the order of the solution of the model (going from the Alphabetical order)
+% INTERNAL FUNCTION: Set initial conditions to the order of the solution of
+% the model (going from the Alphabetical order) 
 %
+
 
 % adjust the start values according to the order_var
 %---------------------------------------------------
@@ -11,7 +13,9 @@ Initcond.y.y=Initcond.y.y(new_order,:,:);% [variables,ncols,1+n_conditions]
 
 % adjust the log_var
 if isfield(Initcond,'is_log_var') && ~isempty(Initcond.is_log_var)
+
     Initcond.is_log_var=Initcond.is_log_var(new_order);
+	
 end
 
 iov(new_order)=1:numel(new_order);
@@ -19,7 +23,9 @@ iov(new_order)=1:numel(new_order);
 % re-order conditions accordingly
 %---------------------------------
 if isfield(Initcond.y.ycond,'pos') && ~isempty(Initcond.y.ycond.pos)
+
     Initcond.y.ycond.pos=iov(Initcond.y.ycond.pos);
+	
 end
 
 % adjust the transition and complementarity functions according to the

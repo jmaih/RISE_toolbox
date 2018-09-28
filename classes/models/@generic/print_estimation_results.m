@@ -28,11 +28,19 @@ nobj=numel(obj);
 
 string='';
 
-for kk=1:numel(obj)
+for kk=1:nobj
 
     if nobj>1
-
-        string=int2str(kk);
+        
+        string=obj(kk).legend;
+        
+        if isempty(string)
+            
+            string=int2str(kk);
+            
+        end
+        
+        string=['(',string,')'];
 
     end
 

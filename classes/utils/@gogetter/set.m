@@ -1,8 +1,7 @@
 function Out = set(this,varargin)
-% INTERNAL FUNCTION
+% SET  Set properties of time series object.
 %
-
-%SET  Set properties of time series object.
+% ::
 %
 %   SET(THIS,'PropertyName',VALUE) sets the property 'PropertyName'
 %   of the time series THIS to the value VALUE.  An equivalent syntax
@@ -16,9 +15,17 @@ function Out = set(this,varargin)
 %
 %   SET(THIS) displays all properties of THIS and their values.
 %
+% Args:
+%
+%    this (ts object): time series object
+%
+%    varargin: valid pairwise arguments (see above)
+%
 %   See also TS\GET.
 
-% N.B: Add a no_check property to skip the checking !!!!!!
+% TODO: Add a no_check property to skip the checking !!!!!!
+%
+% TODO: set varnames to accept also char... !!!!!!
 %---------------------------------------------------------
 
 ni = nargin;

@@ -50,8 +50,11 @@ classdef (Abstract) abstvar < gogetter
     end
 
     properties(Dependent)
+        
         nparams
+        
         nregs
+        
     end
 
     properties(Constant)
@@ -92,6 +95,10 @@ classdef (Abstract) abstvar < gogetter
         varargout=print_low_level(varargin)
 
         varargout=setup_nonlinear_restrictions(varargin)
+
+        varargout=transform(varargin)
+
+        varargout=untransform(varargin)
 
     end
 
@@ -495,6 +502,8 @@ classdef (Abstract) abstvar < gogetter
         varargout=posterior_mode(varargin)
 
         varargout=print_solution(varargin)
+        
+        varargout=pull_objective(varargin)
 
         varargout=residuals(varargin)
 

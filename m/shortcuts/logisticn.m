@@ -1,6 +1,19 @@
 function varargout=logisticn(varargin)
-% INTERNAL FUNCTION
+% logisticn nth-order logistic function
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 [varargout{1:nargout}]=nth_order_logistic(varargin{:});
 

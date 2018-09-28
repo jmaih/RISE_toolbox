@@ -14,16 +14,22 @@ nobj=numel(obj);
 
 if nobj>1
 
-    params=cell(1,nobj);
+    pp=cell(1,nobj);
 
     for iobj=1:numel(obj)
 
-        params{iobj}=isnan(obj(iobj));
+        pp{iobj}=isnan(obj(iobj));
 
         disp(['====== model ',int2str(iobj),' ======'])
 
-        disp(params{iobj})
+        disp(pp{iobj})
 
+    end
+    
+    if nargout
+        
+        params=pp;
+        
     end
 
     return

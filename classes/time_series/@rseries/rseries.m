@@ -85,7 +85,6 @@ classdef rseries<ts
     % - [range](rseries/range)
     % - [rdivide](rseries/rdivide)
     % - [regress](rseries/regress)
-    % - [reset_start_date](rseries/reset_start_date)
     % - [rolling](rseries/rolling)
     % - [rseries](rseries/rseries)
     % - [sin](rseries/sin)

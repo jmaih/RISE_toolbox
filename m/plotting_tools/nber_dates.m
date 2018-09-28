@@ -1,6 +1,19 @@
 function [start,finish]= nber_dates(freq)
-% INTERNAL FUNCTION
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 if nargin<1 || isempty(freq)
     freq='Q';

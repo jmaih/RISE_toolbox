@@ -106,10 +106,7 @@ if nobj>1
 
 end
 
-warnstate=warning('query','all');
-warning('off','optim:fmincon:SwitchingToMediumScale')% %
-warning('off','optimlib:fmincon:WillRunDiffAlg')
-warning('off','optimlib:fmincon:SwitchingToMediumScaleBecauseNoGrad')
+warnstate=utils.estim.prior.warnings_fmincon_disable();
 
 fields=fieldnames(MyPriors);
 
@@ -185,7 +182,7 @@ end
 
 obj.estim_priors_data=utils.prior.load_priors(struct(),priors,new_dirichlet);
 
-warning(warnstate)
+utils.estim.prior.warnings_fmincon_enable(warnstate);
 
 obj.estimation.priors=priors;
 

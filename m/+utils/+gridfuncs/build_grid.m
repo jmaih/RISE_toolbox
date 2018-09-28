@@ -1,14 +1,13 @@
 function R=build_grid(R,vp,vectorized)
 % INTERNAL FUNCTION
 %
+% see also mygrid
 
 if nargin<3
 
     vectorized=true;
 
 end
-
-% see also mygrid
 
 [rg,cg]=size(R);
 

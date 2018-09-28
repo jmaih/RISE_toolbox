@@ -1,20 +1,26 @@
 function [Results]=rrf_sampler(logf,lb,ub,options,mu,SIG)
-% Rapid Reaction Force Sampler
+% RRF_SAMPLER -- Rapid Reaction Force Sampler
 %
 % ::
 %
-%   [Results]=rrf_sampler(logf,lb,ub)
-%   [Results]=rrf_sampler(logf,lb,ub,options)
-%   [Results]=rrf_sampler(logf,lb,ub,options,mu)
-%   [Results]=rrf_sampler(logf,lb,ub,options,mu,SIG)
+%
+%   [Results]=RRF_SAMPLER(logf,lb,ub)
+%
+%   [Results]=RRF_SAMPLER(logf,lb,ub,options)
+%
+%   [Results]=RRF_SAMPLER(logf,lb,ub,options,mu)
+%
+%   [Results]=RRF_SAMPLER(logf,lb,ub,options,mu,SIG)
 %
 % Args:
 %
 %    - **logf** [char|function_handle]: Objective function to MINIMIZE!!!
-%    - **lb** [d x 1 vector]: lower bound of the paramters
-%    - **ub** [d x 1 vector]: upper bound of the paramters
-%    - **options** [struct]:
 %
+%    - **lb** [d x 1 vector]: lower bound of the paramters
+%
+%    - **ub** [d x 1 vector]: upper bound of the paramters
+%
+%    - **options** [struct]:
 %      - **c** [scalar|{1}]: initial scale for the covariance matrix
 %      - **c_range** [vector|{[sqrt(eps),100]}]: range of variation of c
 %      - **alpha** [scalar|2-element|{[.25,.45]}]: target acceptance rate
@@ -26,32 +32,32 @@ function [Results]=rrf_sampler(logf,lb,ub,options,mu,SIG)
 %      - **lambda_1** [numeric|{2.5e-5}]: initial tempering
 %      - **ps** [numeric|{0.9}]: probability of storing a draw
 %      - **p** [numeric|{[]}]: probability of drawing from previous
-%        distribution
+%      distribution
 %      - **p_mutant** [numeric|{0}]: probability of drawing a mutant
 %      - **ess_min** [numeric|{0.1}]: constant for controlling the evolution
-%        of lambda
+%      of lambda
 %      - **focus_fire_after** [numeric|{0.5}]: percentage after which
-%        exploitation takes over exploration
+%      exploitation takes over exploration
 %      - **penalty** [numeric|{1e+8}]: worst possible function value
 %      - **fixed_scaling** [true|{false}]: if true, the scaling (c) of the
-%        covariance matrix is kept constant
+%      covariance matrix is kept constant
 %      - **geometric_lambda** [{true}|false]: geometric evolution of lambda
 %      - **rwm_exp** [numeric|{0.6}]: tuning hyper-parameter for scale and
-%        covariance matrix
+%      covariance matrix
 %      - **use_true_moments** [true|{false}]: if true, the updated exact
-%        covariance matrix of the draws is used at each step. If false, a
-%        different update of the covariance matrix is used.
+%      covariance matrix of the draws is used at each step. If false, a
+%      different update of the covariance matrix is used.
 %
 %    - **mu** [d x 1 vector]: initial condition for the sampler
+%
 %    - **SIG** [d x d matrix]: initial covariance matrix
 %
 % Returns:
 %    :
 %
 %    - **Results** [struct]:
-%
 %      - **pop** [nchain x N struct]: fields are "x" for the parameter vector
-%        and "f" for the value of the parameter vector
+%      and "f" for the value of the parameter vector
 %      - **bestf** [numeric]: best function value
 %      - **bestx** [vector]: best parameter vector
 %      - **lambda** [vector]: tempering levels
@@ -68,20 +74,20 @@ function [Results]=rrf_sampler(logf,lb,ub,options,mu,SIG)
 % Note:
 %
 %    - It is assumed that logf is a function to minimize
-%    - the update of c in one bin might not be adequate for the other bins. As
-%      a result, the last bin may be detrimental for the first bin. This is
-%      calls for bin-specific log_c: IMPLEMENTED!!!
-%    - Possible variations for the stud
 %
+%    - the update of c in one bin might not be adequate for the other bins. As
+%    a result, the last bin may be detrimental for the first bin. This is
+%    calls for bin-specific log_c: IMPLEMENTED!!!
+%
+%    - Possible variations for the stud
 %      - best in the bin (Current implementation)
 %      - random
 %      - simple average : what if it has unacceptable density?
 %      - weigthed average through a merit system : what if it has unacceptable density?
 %
-% See also:
-%    - constant_bvar_sampler
-%    - mh_sampler
+% Example:
 %
+%    See also:	CONSTANT_BVAR_SAMPLER, MH_SAMPLER
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
 num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
@@ -244,19 +250,19 @@ utils.optim.manual_stopping();
 I_am_done=false;
 while ~done
     istage=istage+1;
-
+    
     is_time_to_exploit=fixed_horizon && istage>=focus_fire_after*H;
-
+    
     lambda_old=lambda_vector(istage);
-
+    
     lambda=lambda_vector(istage+1);
-
+    
     [genpop,log_I{istage},Fnewpop]=do_one_stage(logf,genpop,log_I_old);
-
-    % compute log marginal data density
-    %------------------------------------
+    
+    % compute log marginal data density 
+    %------------------------------------    
     log_I_old=log_I{istage};
-
+    
     if fixed_horizon
         done=istage==total_runs;
         % the lambda is already computed
@@ -318,17 +324,17 @@ Results=struct('pop',genpop,...
         % handle to a key function
         %--------------------------
         dsmh_draw_hdle=@dsmh_draw;
-
+        
         if is_time_to_exploit
             target_pop=last_generation;
         else
             target_pop=pop0;
         end
-
+        
         % it is assumed the population is already sorted
         %------------------------------------------------
         F_pop=[target_pop.f];
-
+        
         % separate in striations: here we use the actual number of
         % individuals instead of N
         %------------------------------------------------------------
@@ -337,7 +343,7 @@ Results=struct('pop',genpop,...
         target_pop=mat2cell(target_pop,1,ndraws_per_striation);
         d=size(lb,1);
         pop=cell(1,M);
-
+        
         tmp_all=tic;
         loop_is_complete=false(1,M);
         nbatch=nbatch+1;
@@ -363,7 +369,7 @@ Results=struct('pop',genpop,...
                     sqrt_cSIG,pointer);
                 pop{istri}(idraw)=theta_star;
             end
-
+            
             accept_ratio=nan;
             if metrop_draws(istri)
                 % note we use the same adaptation exponent
@@ -380,7 +386,7 @@ Results=struct('pop',genpop,...
             % tempering gets to more normal levels, the covariance matrix
             % is perhaps too big to decrease quickly enough. This may call
             % for a geometric lambda
-
+            
             % display partial results
             %------------------------
             pop_i=utils.mcmc.sort_population(pop{istri});
@@ -395,47 +401,47 @@ Results=struct('pop',genpop,...
         % add index in case the procedure is stopped before the loop was
         % completed.
         pop=utils.mcmc.sort_population(cell2mat(pop(loop_is_complete)));
-
+        
         % update moments to be used in the metropolis step and the
         % theoretical moments
         %-------------------------------------------------------------
         [mu_algo,SIG_algo]=utils.mcmc.update_moments(mu_algo,SIG_algo,...
             [pop.x],nbatch,rwm_exp);
-
+        
         [mu,SIG,n_vectors]=utils.moments.recursive(mu,SIG,[pop.x],n_vectors);
         % correct covariance if necessary
         %--------------------------------
         SIG=utils.cov.project(SIG);
-
+            
         options.accept_ratio=options.metrop_accept/options.metrop_draws;
-
+        
         last_generation=pop;
-
+        
         Fnewpop=[pop.f];
         % calculate some statistics on the new population
         %-------------------------------------------------
         [w,wtilde,options.ess]=importance_weights(Fnewpop,lambda,lambda_old);
-
+        
         log_I=log_I_old+log(mean(wtilde(:)));
-
+        
         % merge populations
         %------------------
         pop=[pop,pop0];
-
+        
         % resort the database
         %---------------------
         pop=utils.mcmc.sort_population(pop);
-
+        
         bestf=pop(1).f;
-
+        
         time_it_took=toc(tmp_all);
         I_am_done=display_progress(istage,total_runs,[],[],lambda,funevals,...
             bestf,options.accept_ratio,options.ess,numel(w),time_it_took,...
             is_time_to_exploit);
-
+        
         function [theta,metrop_accept__,metrop_draws__]=dsmh_draw(theta_star,...
                 metrop_accept__,metrop_draws__,sqrt_cSIG,pointer)
-
+            
             is_metrop_draw=rand>p;
             if is_metrop_draw
                 % gaussian distribution
@@ -446,20 +452,20 @@ Results=struct('pop',genpop,...
                 %-------------------------------------------
                 [theta,lgratio]=previous_level_draw();
             end
-
+            
             [theta_star]=dsmh_selection(theta_star,theta);
-
+            
             % dynamic thinning
             %------------------
             while is_metrop_draw && rand<probability_of_not_storing_metropolis
                 [theta,lgratio]=gaussian_draw();
                 [theta_star]=dsmh_selection(theta_star,theta);
             end
-
+            
             % update final
             %--------------
             theta=theta_star;
-
+            
             function [theta,accepted]=dsmh_selection(theta0,theta)
                 if utils.mcmc.is_violation(theta.f,penalty)
                     theta=theta0;
@@ -467,11 +473,11 @@ Results=struct('pop',genpop,...
                 else
                     lfratio=lambda*(theta.f-theta0.f);
                     lfg_ratio=lfratio+lgratio;
-
+                    
                     % minimization: change sign
                     %--------------------------
                     lfg_ratio=-lfg_ratio;
-
+                    
                     % Metropolis criterion
                     %-----------------------
                     crit=min(0,lfg_ratio);
@@ -485,19 +491,19 @@ Results=struct('pop',genpop,...
                     end
                 end
             end
-
+            
             function [theta,lgratio]=previous_level_draw()
                 % find the right striation for the newcomer
                 target_stri=pointer;
                 nail=randi(numel(target_pop{target_stri}));
-
+                
                 if rand<p_mutant
                     [theta]=draw_mutant();
                 else
                     theta=target_pop{target_stri}(nail);
                 end
                 lgratio=lambda_old*(theta_star.f-theta.f);
-
+                
                 function [theta]=draw_mutant()
                     xd=generate_mutant([target_pop{target_stri}.x],nail,lb,ub);
                     theta.f=logf(xd);
@@ -505,7 +511,7 @@ Results=struct('pop',genpop,...
                     funevals=funevals+1;
                 end
             end
-
+            
             function [theta,lgratio]=gaussian_draw()
                 xd=theta_star.x+sqrt_cSIG*randn(d,1);
                 bad=xd<lb; xd(bad)=lb(bad);

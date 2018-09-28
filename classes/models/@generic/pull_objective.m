@@ -57,13 +57,18 @@ if isempty(obj)
 end
 
 if ~isempty(varargin)
+    
     obj=set(obj,varargin{:});
+    
 end
 % if the prior is set, the following should available even if the model has
 % not been estimated yet.
 lb=[obj.estimation.priors.lower_bound]';
+
 ub=[obj.estimation.priors.upper_bound]';
+
 x00=obj.estimation.posterior_maximization.mode;
+
 vcov=obj.estimation.posterior_maximization.vcov;
 
 % never allow violations
@@ -81,27 +86,49 @@ obj.estimation_under_way=true;
 ff=@engine;
 
     function [minus_log_post,retcode]=engine(x)
+        
         retcode=0;
+        
         if bounds_fail()
+            
             retcode=7;
+            
         else
             [~,minus_log_post,~,issue,viol]=estimation_wrapper(obj,[],x,lb,ub,0);
+            
             % function evaluations computed elsewhere
             if ~isempty(issue)
+                
                 retcode=issue;
+                
             end
+            
             if ~isempty(viol) && any(viol>0)
+                
                 retcode=7;
+                
             end
+            
         end
+        
         if retcode
+            
             minus_log_post=obj.options.estim_penalty;
+            
         end
+        
         function flag=bounds_fail()
+            
             flag=max(lb-x)>1e-8;
+            
             if ~flag
+                
                 flag=max(x-ub)>1e-8;
+                
             end
+            
         end
+        
     end
+
 end

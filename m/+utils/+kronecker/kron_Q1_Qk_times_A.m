@@ -21,8 +21,11 @@ function C=kron_Q1_Qk_times_A(A,varargin)
 
 % transpose all inputs
 A=A.';
+
 for iarg=1:length(varargin)
+    
     varargin{iarg}=varargin{iarg}.';
+    
 end
 
 C=utils.kronecker.A_times_kron_Q1_Qk(A,varargin{:});

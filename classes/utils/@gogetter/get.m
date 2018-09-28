@@ -1,7 +1,4 @@
 function Value= get(obj,varargin)
-% INTERNAL FUNCTION
-%
-
 %  get  Access/Query time series property values.
 %
 %     VALUE = get(TS,'PropertyName') returns the value of the

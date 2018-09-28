@@ -22,8 +22,6 @@ if isempty(obj.solution)
 
 end
 
-[A,B]=load_solution(obj,'iov');
-
-steady_state=obj.solution.ss;
+[A,B,Qfunc,steady_state]=load_solution(obj,'iov'); %#ok<ASGLU>
 
 end

@@ -1,26 +1,4 @@
 function [x1,f1,exitflag]=csminwelwrap(fh_handle,x0,lb,ub,options,varargin)
-% INTERNAL FUNCTION: Interface to csminwel function
-%
-% ::
-%
-%    [x1,f1,exitflag] = csminwelwrap(fh_handle,x0,lb,ub,options,varargin);
-%
-% Args:
-%    fh_handle (function handle): objective function to minimize
-%    x0 (double): initial guess of the argmin
-%    lb (double): lower bound for parameters
-%    ub (double): upper bound for parameters
-%    options (struct): optimize options
-%    varargin : extra arguments to be fed into the function to minimize
-%
-% Returns:
-%    :
-%
-%    - x1 (double): argmin found by csminwel
-%    - fh (double): minimum value found by csminwel
-%    - exitflag (int): currently always equals 1
-%
-
 % translate the inputs from RISE into inputs for csminwel
 %--------------------------------------------------------
 nx=numel(x0);
@@ -42,17 +20,17 @@ f1=fh;
         % RISE expect your optimizer to correctly handle parameter bounds
         % restrictions. If your optimizer does not, you have to do
         % something about it yourself as I do in this subfunction.
-
+        
         if any(x<lb)||any(x>ub)
-
+            
             fval=1e+12;
-
+            
         else
-
+            
             fval=fh_handle(x,varargin{:});
-
+            
         end
-
+        
     end
 
 end

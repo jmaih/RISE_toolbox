@@ -7,6 +7,7 @@ rz
 @
 #
 $
+...
 define
 dsge_var
 else
@@ -36,6 +37,8 @@ planner_discount
 planner_objective
 steady_state
 steady_state_model
+sstate
+stst
 switch
 unique
 var
@@ -74,7 +77,6 @@ star
 stvar
 stochvol
 dsge
-
 +
 -
 *

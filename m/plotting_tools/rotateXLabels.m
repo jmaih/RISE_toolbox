@@ -1,11 +1,23 @@
 function hh = rotateXLabels( ax, angle, varargin )
-% INTERNAL FUNCTION: To be removed
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
-% original code by Ben Tordoff at the Mathworks available at file exchange
-% <https://www.mathworks.com/matlabcentral/fileexchange/27812-rotatexlabels--ax--angle--varargin-->
+% original code by Ben Tordoff at the Mathworks
 %
-% rotateXLabels: rotate any xticklabels
+%rotateXLabels: rotate any xticklabels
 %
 %   hh = rotateXLabels(ax,angle) rotates all XLabels on axes AX by an angle
 %   ANGLE (in degrees). Handles to the resulting text objects are returned
@@ -22,34 +34,8 @@ function hh = rotateXLabels( ax, angle, varargin )
 %   >> rotateXLabels( gca(), 45 )
 %
 %   See also: GCA, BAR
-%
-% Copyright (c) 2006-2013, The MathWorks, Inc.
-% All rights reserved.
-%
-% Redistribution and use in source and binary forms, with or without
-% modification, are permitted provided that the following conditions are
-% met:
-%
-% * Redistributions of source code must retain the above copyright
-% notice, this list of conditions and the following disclaimer.
-% * Redistributions in binary form must reproduce the above copyright
-% notice, this list of conditions and the following disclaimer in
-% the documentation and/or other materials provided with the distribution.
-% * In all cases, the software is, and all modifications and derivatives
-% of the software shall be, licensed to you solely for use in conjunction
-% with MathWorks products and service offerings.
-%
-% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-% POSSIBILITY OF SUCH DAMAGE.
+
+%   Copyright 2006-2013 The MathWorks Ltd.
 
 narginchk( 2, inf ) ;
 % From R2014b, rotating labels is built-in using 'XTickLabelRotation'
@@ -105,7 +91,7 @@ end
                 switch upper( params{pp} )
                     case 'MAXSTRINGLENGTH'
                         maxStringLength = values{pp};
-
+                        
                     otherwise
                         error( 'RotateXLabels:BadParam', 'Optional parameter ''%s'' not recognised.', params{pp} );
                 end
@@ -116,7 +102,7 @@ end
     function [vals,labels] = findAndClearExistingLabels( ax, maxStringLength )
         % Get the current tick positions so that we can place our new labels
         vals = get( ax, 'XTick' );
-
+        
         % Now determine the labels. We look first at for previously rotated labels
         % since if there are some the actual labels will be empty.
         ex = findall( ax, 'Tag', 'RotatedXTickLabel' );
@@ -148,17 +134,17 @@ end
                 end
             end
         end
-
+        
     end % findAndClearExistingLabels
 %-------------------------------------------------------------------------%
     function restoreDefaultLabels( ax )
         % Restore the default axis behavior
         removeListeners( ax );
-
+        
         % Try to restore the tick marks and labels
         set( ax, 'XTickMode', 'auto', 'XTickLabelMode', 'auto' );
         rmappdata( ax, 'OriginalXTickLabels' );
-
+        
         % Try to restore the axes position
         if isappdata( ax, 'OriginalAxesPosition' )
             set( ax, 'Position', getappdata( ax, 'OriginalAxesPosition' ) );
@@ -170,8 +156,8 @@ end
         % Work out the ticklabel positions
         zlim = get(ax,'ZLim');
         z = zlim(1);
-
-        % We want to work in normalised coords, but this doesn't print
+        
+        % We want to work in normalised coords, but this doesn't print 
         % correctly. Instead we have to work in data units even though it
         % makes positioning hard.
         ylim = get( ax, 'YLim' );
@@ -180,7 +166,7 @@ end
         else
             y = ylim(1);
         end
-
+        
         % Now create new text objects in similar positions.
         textLabels = -1*ones( numel( vals ), 1 );
         for ll=1:numel(vals)
@@ -198,12 +184,12 @@ end
         % callback. We only attach it to one label to save massive numbers
         % of callbacks during axes shut-down.
         set(textLabels(end), 'DeleteFcn', @onTextLabelDeleted);
-
+        
         % Now copy font properties into the texts
         updateFont();
         % Update the alignment of the text
         updateAlignment();
-
+ 
     end % createNewLabels
 
 %-------------------------------------------------------------------------%
@@ -214,18 +200,18 @@ end
         if ~strcmpi( get( ax, 'ActivePositionProperty' ), 'OuterPosition' )
             return;
         end
-
+        
         % Work out the maximum height required for the labels
         labelHeight = getLabelHeight(ax);
-
+        
         % Remove listeners while we mess around with things, otherwise we'll
         % trigger redraws recursively
         removeListeners( ax );
-
+        
         % Change to normalized units for the position calculation
         oldUnits = get( ax, 'Units' );
         set( ax, 'Units', 'Normalized' );
-
+        
         % Not sure why, but the extent seems to be proportional to the height of the axes.
         % Correct that now.
         set( ax, 'ActivePositionProperty', 'Position' );
@@ -233,7 +219,7 @@ end
         axesHeight = pos(4);
         % Make sure we don't adjust away the axes entirely!
         heightAdjust = min( (axesHeight*0.9), labelHeight*axesHeight );
-
+        
         % Move the axes
         if isappdata( ax, 'OriginalAxesPosition' )
             pos = getappdata( ax, 'OriginalAxesPosition' );
@@ -250,10 +236,10 @@ end
         end
         set( ax, 'Units', oldUnits );
         set( ax, 'ActivePositionProperty', 'OuterPosition' );
-
+        
         % Make sure we find out if axes properties are changed
         addListeners( ax );
-
+        
     end % repositionAxes
 
 %-------------------------------------------------------------------------%
@@ -261,7 +247,7 @@ end
         % Try to work out where to put the xlabel
         removeListeners( ax );
         labelHeight = getLabelHeight(ax);
-
+        
         % Use the new max extent to move the xlabel. We may also need to
         % move the title
         xlab = get(ax,'XLabel');
@@ -417,7 +403,7 @@ end
 
 %-------------------------------------------------------------------------%
     function onTextLabelDeleted( ~, ~ )
-        % The final text label has been deleted. This is likely from a
+        % The final text label has been deleted. This is likely from a 
         % "cla" or "close" call, so we should remove all of our dirty
         % hacks.
         restoreDefaultLabels(ax);

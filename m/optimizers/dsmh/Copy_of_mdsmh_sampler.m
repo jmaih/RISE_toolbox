@@ -1,7 +1,4 @@
 function [Results]=mdsmh_sampler(logf,lb,ub,options,mu,SIG)
-% DEPRECATED
-%
-
 % Matlab complains that there is no documentation. But then here is one!!!
 % To do:
 % - beggar-thy-neighbor: whenever you sample a new guy, you put him in the
@@ -20,12 +17,12 @@ function [Results]=mdsmh_sampler(logf,lb,ub,options,mu,SIG)
 % as structures. check for the latest developments
 % - re-write the metropolis hastings algorithm with the same philosophy as
 % in this function and make it independent of rise objects
-% - re-write the marginal data densities:
+% - re-write the marginal data densities: 
 %   - Meng and Wong
 %   - Adaptive Importance Sampling,
-%   - Mueller,
-%   - Chib-Jeliazkov,
-%   - Waggoner and Zha,
+%   - Mueller, 
+%   - Chib-Jeliazkov, 
+%   - Waggoner and Zha, 
 %   - Geweke
 % - Include moves from the metaheuristic literature in the sampler? I most
 % likely would be blamed for insulting convergence theorems and
@@ -55,7 +52,7 @@ function [Results]=mdsmh_sampler(logf,lb,ub,options,mu,SIG)
 %   - curvature
 %   - derivatives?
 %   - plots
-%   - scale
+%   - scale 
 %   - curvature
 
 num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
@@ -169,7 +166,7 @@ ndraws_per_striation=ceil(N/M);
 
 N=ndraws_per_striation*M;
 
-% draw initial distribution:
+% draw initial distribution: 
 %----------------------------
 
 [genpop,striations,striation_ranges,log_I_old]=initial_draws();
@@ -220,9 +217,9 @@ istage=0;
 done=false;
 while ~done
     istage=istage+1;
-
+    
     lambda_old=lambda_vector(istage);
-
+    
     lambda=lambda_vector(istage+1);
     % do each core
     %--------------------
@@ -244,27 +241,27 @@ while ~done
         [genpop{icore},log_I{icore+1},options_dispatch{icore}]=do_one_core(...
             logf,genpop{icore},log_I_old{icore+1},options_dispatch{icore}); %#ok<PFOUS>
     end
-
+    
     F=cell2mat(genpop); F=[F.f];
-
+    
     [w,wtilde,ess]=importance_weights(F,lambda,lambda_old,options.minimization);
-
+    
     % compute log marginal data density across all cores
     %----------------------------------------------------
     log_I{1}=log_I_old{1}+log(mean(wtilde(:)));
-
+    
     % update moments to be used in the metropolis step.
     %----------------------------------------------------
     [mu,SIG]=update_moments(genpop,w);
-
+    
     log_I_old=log_I;
-
+    
     if options.minimization
         bestf=min(matricize(F));
     else
         bestf=max(matricize(F));
     end
-
+    
     metrop_draws=0;
     metrop_accept=0;
     funevals=0;
@@ -276,7 +273,7 @@ while ~done
     accept_ratio=metrop_accept/metrop_draws;
     display_progress([],istage,options.H,lambda,funevals,bestf,...
         accept_ratio,ess,numel(w))
-
+    
     if fixed_horizon
         done=istage==H;
         % the lambda is already computed
@@ -351,15 +348,15 @@ Results=struct('X',genpop,...
     end
 
     function [bigpop,striations,striation_ranges,log_I_init]=initial_draws()
-
+        
         % this has to be a probability density and not a Kernel and so it
         % sums to 1. Do initialization for each core and for the general...
         I_init=1;
         log_I_init=repmat({log(I_init)},1,G+1);
-
+        
         % Total number of simulations
         NG=N*G;
-
+        
         ub_minus_lb=ub-lb;
         theta=bsxfun(@plus,lb,bsxfun(@times,ub_minus_lb,rand(d,NG)));
         genpop_=cell(1,NG);
@@ -376,7 +373,7 @@ Results=struct('X',genpop,...
             ldens=-ldens;
         end
         genpop_=cell2mat(genpop_);
-
+            
         % same number of guys in each striation
         [~,tags]=sort_population(genpop_);
         badges=ones(ndraws_per_striation*G,1)*(1:M);
@@ -676,15 +673,15 @@ metrop_accept=0;
 tic
 for idraw=1:M_times_ndraws_per_striation
     theta=dsmh_draw();
-
+    
     % replace the guy in the same position
     %--------------------------------------
-
+    
     pop(idraw)=theta;
-
+        
 %     % find the right striation for the newcomer
 %     [target_stri,striations,isnew]=find_striation(fx,striations,F,options.energy_adjust);
-%
+%     
 %     if isnew
 %         % striations have changed and so some vectors may now belong to
 %         % a different striation. In that case we need to sort the
@@ -692,7 +689,7 @@ for idraw=1:M_times_ndraws_per_striation
 %         [F,tags]=sort(F);
 %         X=X(:,tags);
 %     end
-
+    
 %     % place the draw in the striation it belongs. But then since there
 %     % is room for only a limited number of draws per striation, we need
 %     % to pop one guy and this could be:
@@ -700,7 +697,7 @@ for idraw=1:M_times_ndraws_per_striation
 %     % database) among those with lower energy...
 %     % - the guy with the lowest energy... this is the option we
 %     % implement for now
-%
+%     
 %     Ftarg=F(striation_ranges{target_stri});
 %     if minimization
 %         nailed=find(Ftarg==max(Ftarg),1,'first');
@@ -770,7 +767,7 @@ if ~options.common_lambda && ~lambda_converged(lambda)
 end
 
     function [theta]=dsmh_draw()
-
+        
         is_metrop_draw=rand>p;
         if is_metrop_draw
             % gaussian distribution
@@ -781,20 +778,20 @@ end
             %-------------------------------------------
             [theta,lgratio]=previous_level_draw();
         end
-
+        
         [theta_star]=dsmh_selection(theta_star,theta);
-
+        
         % dynamic thinning
         %------------------
         while is_metrop_draw && rand<probability_of_not_storing_metropolis
             [theta,lgratio]=gaussian_draw();
             [theta_star]=dsmh_selection(theta_star,theta);
         end
-
+        
         % update final
         %--------------
         theta=theta_star;
-
+        
         function [theta,accepted]=dsmh_selection(theta0,theta)
             if is_violation(theta.f,penalty)
                 theta=theta0;
@@ -818,13 +815,13 @@ end
                 end
             end
         end
-
+        
         function [theta,lgratio]=previous_level_draw()
             nail=randi(ndraws_per_striation);
             % find the right striation for the newcomer
             [target_stri,striations]=find_striation(theta_star.f,...
                 striations,[pop.f],options.energy_adjust);
-
+            
             if rand<p_mutant
                 [theta]=draw_mutant();
             else
@@ -832,7 +829,7 @@ end
                 theta=pop0(this_guy);
             end
             lgratio=lambda_old*(theta_star.f-theta.f);
-
+            
             function [theta]=draw_mutant()
                 xd=generate_mutant([pop0(striation_ranges{target_stri}).x],nail,lb,ub);
                 theta.f=logf(xd);
@@ -840,7 +837,7 @@ end
                 in_funevals=in_funevals+1;
             end
         end
-
+        
         function [theta,lgratio]=gaussian_draw()
             xd=theta_star.x+sqrt_cSIG*randn(d,1);
             bad=xd<lb; xd(bad)=lb(bad);

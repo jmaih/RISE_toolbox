@@ -97,9 +97,7 @@ prior.nonvar=switch_prior;
 %% Find posterior mode
 clc
 
-sv=sv0;
-
-sv=estimate(sv,db,{'1960Q1','2015Q2'},prior,restrictions);
+sv=estimate(sv0,db,{'1960Q1','2015Q2'},prior,restrictions,'fmincon');
 
 %% estimates
 clc
@@ -133,6 +131,18 @@ plot_data_against_probabilities(sv,'regime')
 myirfs=irf(sv);
 
 %% Posterior sampling
+
+[ff,lb,ub,x0,vcov,self]=pull_objective(sv);
+
+options=struct();
+options.alpha=0.234;
+options.burnin=1000;
+options.N=10000;
+
+lb(~isfinite(lb))=-500;
+ub(~isfinite(ub))=500;
+
+results=mh_sampler(ff,lb,ub,options,x0,vcov)
 
 %% Marginal data density
 

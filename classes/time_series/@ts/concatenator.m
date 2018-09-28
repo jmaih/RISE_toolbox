@@ -114,7 +114,9 @@ if nnames==1
         
     end
     
-    myts=set(varargin{1},'data',myts);
+    newnames=repmat({''},1,nn);
+    
+    myts=set(varargin{1},'data',myts,'varnames',newnames);
     
 else
     

@@ -30,14 +30,14 @@ m=set(m,'data',data,...
 mest=estimate(m);
 
 %% estimate model with endogenous priors
-
+clc
 % mest2=estimate(m,'estim_endogenous_priors',@simple_endo_priors);
 
-mest2=estimate(m,'estim_endogenous_priors',@cov_endo_priors);
+[mest2,filts]=estimate(m,'estim_endogenous_priors',@cov_endo_priors);
 
 %% How well did we do?
 
-cov_endo_priors(mest2)
+cov_endo_priors(mest2,filts)
 
 %% Impulse response functions
 myirfs=irf([mest,mest2]);

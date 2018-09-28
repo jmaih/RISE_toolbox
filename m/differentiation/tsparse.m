@@ -84,8 +84,7 @@ classdef tsparse
             A=A.data;
             [ra,ca]=size(A);
             Af=[];
-            ss=memory;
-            max_bytes=ss.MaxPossibleArrayBytes/4;
+            max_bytes=utils.windows_mac.maxbytes()/4;
             % MemAvailableAllArrays = MaxPossibleArrayBytes so we divide by
             % 4 above to be economical...
             ncell=200;

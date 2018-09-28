@@ -13,8 +13,6 @@ if nargin < 3
 
 end
 
-solve_time_consistent_switch=obj.options.solve_time_consistent_switch;
-
 solve_order=obj.options.solve_order;
 
 h=obj.markov_chains.small_markov_chain_info.regimes_number;
@@ -64,7 +62,8 @@ if size(ssdata,1)~=size(ss,1)
 
 end
 
-[ys,nind,lead_pos]=forms_used_in_computation_of_derivatives();
+[ys,nind,lead_pos,lag_pos,structural_matrices.log_deriv_coefs]=...
+    forms_used_in_computation_of_derivatives(obj,ssdata); %#ok<ASGLU>
 
 if is_has_data
     % update residuals with the data
@@ -213,9 +212,13 @@ for s1=1:h
                     end
 
                 end
+                
+                weird_pnames=parser.perturbation_control_param_names();
+                
+                sig_pos=find(strcmp(weird_pnames{1},obj.parameters.name));
 
                 [G01{1:1}]=utils.code.evaluate_jacobian_numerically(obj.routines.probs_times_dynamic,...
-                    ys01,xss,ss(:,s0),params(:,s0),def{s0},s0,s1);
+                    ys01,xss,ss(:,s0),params(:,s0),def{s0},s0,s1,sig_pos); %#ok<FNDSB>
                 % The columns are to be put in the order_var order
 
                 G01{1}(:,1:nind)=G01{1}(:,reordering);
@@ -227,13 +230,36 @@ for s1=1:h
                 %---------------------------------------------------
                 zkz=1;
 
-                log_deriv_coefs=structural_matrices.log_deriv_coefs.';
+                log_deriv_coefs=structural_matrices.log_deriv_coefs(:,s0,s1).';
+                
+                save_kron=all(abs(log_deriv_coefs-1)<1e-10);
+                
+%                 n=length(log_deriv_coefs);
+                
+%                 sub=[{ones(1,n)},repmat({(1:n)},1,solve_order)];
 
                 for io=1:solve_order
-
-                    zkz=kron(zkz,log_deriv_coefs(s1,:));
-                    structural_matrices.(['d',xxx(1:io)]){s0,s1}=...
-                        multiply_bsxfun(G01{io},zkz);
+                    
+                    if save_kron
+                        
+                        structural_matrices.(['d',xxx(1:io)]){s0,s1}=G01{io};
+                        
+                    else
+                        
+                        zkz=kron(zkz,log_deriv_coefs);
+                        
+%                         if io>1
+%                             
+%                             ind=sub2ind([1,n*ones(1,io)],sub{1:io+1});
+%                             
+%                             zkz(ind)=log_deriv_coefs;
+%                             
+%                         end
+                        
+                        structural_matrices.(['d',xxx(1:io)]){s0,s1}=...
+                            multiply_bsxfun(G01{io},zkz);
+                        
+                    end
 
                 end
 
@@ -275,16 +301,29 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
                 retcode=6;
 
             end
+            
+            if ~retcode
+                
+                deriv2=obj.routines.planner_osr_support.second_order_util_derivatives;
+                
+                % Transpose in order to make concatenation possible during
+                % subsequent evaluation.
+                deriv2=utils.code.evaluate_functions(deriv2(:).',...
+                    ssdata(:,s0),xss,ss(:,s0),params(:,s0),def{s0},s0,s0);
+                
+                deriv_locs=obj.routines.planner_osr_support.derivatives_locations;
+                
+            end
 
             if ~retcode
-
+                
                 planner.objective{s0}=lcd(1);
 
                 planner.commitment{s0}=lcd(2);
 
                 planner.discount{s0}=lcd(3);
 
-                planner.weights{s0}=calculate_weights(lcd,s0);
+                planner.weights{s0}=calculate_weights(deriv2,s0);
 
             end
 
@@ -296,16 +335,10 @@ if obj.is_optimal_policy_model|| obj.is_optimal_simple_rule_model
 
 end
 
-    function y01=yvector(s0,s1)
+    function y01=yvector(s0,s1) 
 
-        y01=ys(:,s0);
-
-        if solve_time_consistent_switch
-
-            y01(lead_pos)=ys(lead_pos,s1);
-
-        end
-
+        y01=ys(:,s0,s1);
+        
     end
 
     function w=calculate_weights(lcd,s0)
@@ -313,10 +346,10 @@ end
         if symbolic_type
 
             ww=zeros(obj.routines.planner_osr_support.size);
-
-            ww(obj.routines.planner_osr_support.map)=lcd(4:end);
-
-            ww=ww(obj.routines.planner_osr_support.partitions);
+            
+            % expand the right-hand side
+            %---------------------------
+            ww(deriv_locs(:,2))=lcd(deriv_locs(:,3));
 
             nwrt=obj.routines.planner_osr_support.nwrt;
 
@@ -346,72 +379,84 @@ end
 
     end
 
-    function [ys,nind,lead_positions,lag_positions]=...
-            forms_used_in_computation_of_derivatives()
+end
 
-        % spit out the forms to be used for the computation of derivatives
-        %-----------------------------------------------------------------
-        [the_leads,the_lags,nind]=...
-            dsge_tools.create_endogenous_variables_indices(obj.lead_lag_incidence.before_solve);
 
-        lead_positions=1:numel(the_leads);
+function [ys,nind,lead_positions,lag_positions,log_deriv_coefs]=...
+    forms_used_in_computation_of_derivatives(obj,ssdata)
 
-        curr=1:size(ssdata,1);
+% spit out the forms to be used for the computation of derivatives
+%-----------------------------------------------------------------
+[the_leads,the_lags,nind]=...
+    dsge_tools.create_endogenous_variables_indices(obj.lead_lag_incidence.before_solve);
 
-        lag_positions=numel(the_leads)+numel(curr)+(1:numel(the_lags));
+lead_positions=1:numel(the_leads);
 
-        ys=zeros(nind,h);
-        % derivatives taken wrt y+|y0|y-|shocks
-        log_deriv_coefs=ones(nind+nx,h);
+[nv,h]=size(ssdata);
 
-        is_log_var=obj.endogenous.is_log_var;
+nx=sum(obj.exogenous.number);
 
-        % order of differentiation is different from alphabetic order
-        %-------------------------------------------------------------
-        yindex_deriv_order=obj.lead_lag_incidence.before_solve(obj.order_var,:);
+curr=1:nv;
 
-        yindex_deriv_order=nonzeros(yindex_deriv_order(:))';
+lag_positions=numel(the_leads)+numel(curr)+(1:numel(the_lags));
 
-        long_is_log_var=is_log_var;
+ys=zeros(nind,h,h);
+% derivatives taken wrt y+|y0|y-|shocks|sig(potentially)
+is_sigma_deriv=~isempty(obj.locations.before_solve.v.sig_0);
 
-        long_is_log_var=[long_is_log_var(the_leads),long_is_log_var,long_is_log_var(the_lags)];
+log_deriv_coefs=ones(nind+nx+is_sigma_deriv,h,h);
 
-        for s11=1:h
+is_log_var=obj.log_vars;
 
-            bgp=obj.solution.bgp{s11};
+% order of differentiation is different from alphabetic order
+%-------------------------------------------------------------
+yindex_deriv_order=obj.lead_lag_incidence.before_solve(obj.order_var,:);
 
-            % taking the approximation around the data and not the steady
-            % state !
-            sscurr=ssdata(:,s11);
+yindex_deriv_order=nonzeros(yindex_deriv_order(:))';
 
-            sslead=balanced_growth_path_powers(ssdata(:,s11),1);
+long_is_log_var=is_log_var;
 
-            sslag=balanced_growth_path_powers(ssdata(:,s11),-1);
+long_is_log_var=[long_is_log_var(the_leads),long_is_log_var,long_is_log_var(the_lags)];
 
-            ys(:,s11)=[sslead(the_leads);sscurr;sslag(the_lags)];
+for s00=1:h
+    
+    % taking the approximation around the data and not the steady
+    % state !
+    sscurr=ssdata(:,s00);
+    
+    bgp=obj.solution.bgp{s00};
+    
+    sslag=balanced_growth_path_powers(sscurr,-1);
+    
+    for s11=1:h
+        
+        bgp=obj.solution.bgp{s11};
+        
+        sslead=balanced_growth_path_powers(sscurr,1);
+        
+        ys(:,s00,s11)=[sslead(the_leads);sscurr;sslag(the_lags)];
+        
+        tmp=ys(:,s00,s11);
+        
+        tmp(~long_is_log_var)=1;
+        
+        % reorder according to the differentiation order
+        log_deriv_coefs(1:nind,s00,s11)=tmp(yindex_deriv_order);
+        
+    end
+    
+end
 
-            tmp=ys(:,s11);
-
-            tmp(~long_is_log_var)=1;
-
-            % reorder according to the differentiation order
-            log_deriv_coefs(1:nind,s11)=tmp(yindex_deriv_order);
-
-        end
-
-        structural_matrices.log_deriv_coefs=log_deriv_coefs;
-
-        function [sstime]=balanced_growth_path_powers(sstime,c)
-
-            sstime(is_log_var)=sstime(is_log_var).*bgp(is_log_var).^c;
-
-            sstime(~is_log_var)=sstime(~is_log_var)+c*bgp(~is_log_var);
-
-        end
-
+    function [sstime]=balanced_growth_path_powers(sstime,c)
+        
+        sstime(is_log_var)=sstime(is_log_var).*bgp(is_log_var).^c;
+        
+        sstime(~is_log_var)=sstime(~is_log_var)+c*bgp(~is_log_var);
+        
     end
 
 end
+
 
 function G=multiply_bsxfun(G,zkz)
 
@@ -433,6 +478,7 @@ vv=vv.*zkz(:);
 G=sparse(ii,jj,vv,m,n);
 
 end
+
 
 function W=automatic_policy_weigths(obj,y,xss,ss,params,def,s0,s1) %#ok<INUSL,INUSD>
 

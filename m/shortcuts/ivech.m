@@ -1,6 +1,7 @@
 function x=ivech(x)
-% INTERNAL FUNCTION
+% low-level function
 %
+% No help provided
 
 x=vartools.ivech(x);
 

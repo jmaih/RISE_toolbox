@@ -1,38 +1,20 @@
 function [x0,f0,exitflag,output]=blockwise_optimization(func,x0,lb,ub,options,varargin)
-% Optimization by blocks of parameters rather than the whole vector
+% blockwise_optimization optimization by blocks of parameters rather than the whole vector
 %
 % ::
 %
-%    [x0,f0,exitflag,output] = blockwise_optimization(func,x0,lb,ub,options,varargin);
 %
 % Args:
-%    fh_handle (function handle): objective function to minimize
-%    x0 (double): initial guess of the argmin
-%    lb (double): lower bound for parameters
-%    ub (double): upper bound for parameters
-%    options (struct): optimization options
-%
-%       - **'MaxNodes'**: {20}
-%       - **'MaxIter'**: {1000}
-%       - **'MaxTime'**: {3600}
-%       - **'MaxFunEvals'**: {inf}
-%       - **'penalty'**: {1e+8}
-%       - **'verbose'**: {10}
-%       - **'blocks'**: {[]}
-%       - **'optimizer'**: {@bee_gate}
-%       - **'Display'**: {'iter'}
-%       - **'nonlcon'**: {[]}
-%
-%    varargin : extra arguments to be fed into the function to minimize
-%
 %
 % Returns:
 %    :
 %
-%    - x1 (double): argmin found by csminwel
-%    - fh (double): minimum value found by csminwel
-%    - exitflag (int): currently always equals 1
+% Note:
 %
+% Example:
+%
+%    See also:
+
 
 if nargin<4
     options=[];
@@ -163,7 +145,7 @@ while isempty(stopflag)
             disp('--------------------------------------------------------')
         end
         %         end
-
+        
         if matlab_style
             Problem.objective=@(x)block_wrapper(x,x0);
             Problem.x0=x0(this);

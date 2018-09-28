@@ -180,6 +180,14 @@ switch dim
 
 end
 
+varnames=varnames(:).';
+
+if numel(unique(varnames))~=numel(varnames)
+    
+    varnames='';
+    
+end
+
 db=ts(dn,datta,varnames);
 
     function [varnames,nvar]=set_variables_names()

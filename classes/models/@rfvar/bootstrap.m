@@ -45,6 +45,8 @@ if ~isempty(self.estim_.prior)
         warning('switching to analytical sampling algorithms for constant-parameter BVARs')
 
         RepsRun=self.estim_.sampler(boot);
+        
+        return
 
     end
 

@@ -1,4 +1,4 @@
-function [obj,H,issue]=hessian(obj,x,varargin)
+function [obj,H,issue]=hessian(obj,varargin)
 % Computes the hessian of the model at a specific point
 %
 % ::
@@ -46,10 +46,40 @@ if nobj==0
     obj=utils.hessian.numerical();
 
     return
+    
+elseif nobj>1
+        
+    NumWorkers=utils.parallel.get_number_of_workers();
+        
+    if NumWorkers
+        
+        pctRunOnAll('utils.estim.warnings_disable();')
+        
+        pctRunOnAll('utils.estim.prior.warnings_fmincon_disable();')
+        
+    end
+    
+    parfor (ii=1:nobj,NumWorkers)
+        
+        obj(ii)=hessian(obj(ii),varargin{:}); %#ok<PFBNS>
+        
+    end
+    
+    return
 
 end
 
-if nargin<2||isempty(x)
+x=[];
+
+if nargin>1
+    
+    x=varargin{1};
+    
+    varargin=varargin(2:end);
+    
+end    
+
+if isempty(x)
 
     if ~isfield(obj.estimation.posterior_maximization,'mode')||...
             isempty(obj.estimation.posterior_maximization.mode)
@@ -68,9 +98,13 @@ if ~isempty(varargin)
 
 end
 
+ws=utils.estim.warnings_disable();
+
 fh=pull_objective(obj);
 
 [H,issue]=utils.hessian.numerical(fh,x,obj.options.hessian_type);
+
+utils.estim.warnings_enable(ws);
 
 post_max=obj.estimation.posterior_maximization;
 

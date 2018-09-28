@@ -40,6 +40,6 @@ end
 
 sstate=cell2mat(syst.steady_state);
 
-growth=imag(cell2mat(syst.Tsig));
+growth=cell2mat(syst.Tsig);
 
 end

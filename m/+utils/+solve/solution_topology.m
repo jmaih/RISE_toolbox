@@ -1,14 +1,32 @@
 function [siz,t,z,parts,order_var,inv_order_var]=solution_topology(...
-lead_lag_incidence,...
-exo_nbr,... number of shocks
-kfuture) % number of shocks periods beyond the current
-% INTERNAL FUNCTION
+    lead_lag_incidence,...
+    exo_nbr,... number of shocks
+    smohp) % structural model has perturbation
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
+    
 
-    if nargin<3
-        kfuture=0;
-    end
+if ~islogical(smohp)
+    
+    error('structural model has perturbation(smohp) should be logical')
+    
+end
 
+kfuture=0;% number of shocks periods beyond the current
+    
 [parts]=utils.solve.partition_variables(lead_lag_incidence);
 
 static=parts.static;
@@ -22,7 +40,8 @@ siz=struct('ns',numel(static),...
     'np',numel(pred),...
     'nb',numel(both),...
     'nf',numel(frwrd),...
-    'ne',exo_nbr);
+    'ne',exo_nbr,...
+    'nsig',double(smohp)); % perturbation parameter
 
 % z-locations
 %------------

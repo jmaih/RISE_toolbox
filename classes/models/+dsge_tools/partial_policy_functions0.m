@@ -1,4 +1,4 @@
-function polfun=partial_policy_functions(m,histdb,state_ranges)
+function polfun=partial_policy_functions0(m,histdb,state_ranges)
 % INTERNAL FUNCTION
 %
 

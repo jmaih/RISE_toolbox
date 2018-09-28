@@ -1,31 +1,44 @@
 function [xbest,fbest,H,issue]=estimation_engine(PROBLEM,estim_blocks)
-% INTERNAL FUNCTION: wrapper for estimation procedures
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 issue='';
 
 mydefaults=the_defaults();
-
+    
 if nargin==0
-
+    
     if nargout
-
+        
         xbest=mydefaults;
-
+        
     else
-
+        
         disp_defaults(mydefaults);
-
+        
     end
-
+    
     return
-
+    
 end
 
 if nargin<2
-
+    
     estim_blocks=[];
-
+    
 end
 
 opt=disp_defaults(mydefaults);
@@ -33,25 +46,25 @@ opt=disp_defaults(mydefaults);
 OtherProblemFields={'Aineq','bineq','Aeq','beq','nonlcon'};
 
 if isempty(PROBLEM.solver)
-
+    
     PROBLEM.solver=opt.optimizer;
-
+    
 end
 
 for ii=1:numel(OtherProblemFields)
-
+    
     if ~isfield(PROBLEM,OtherProblemFields{ii})
-
+        
         PROBLEM.(OtherProblemFields{ii})=[];
-
+        
     end
-
+    
 end
 
 if isnumeric(PROBLEM.solver)
-
+    
     error('optimizer should be a string or a function handle')
-
+    
 end
 
 optimizer=PROBLEM.solver;
@@ -73,48 +86,48 @@ options=utils.miscellaneous.setfield(options,optim_opt);
 block_flag=~isempty(estim_blocks);
 
 if block_flag
-
+    
     options.blocks=estim_blocks;
-
+    
 end
 
 vargs={};
 
 if iscell(optimizer)
-
+    
     vargs=optimizer(2:end);
-
+    
     optimizer=optimizer{1};
-
+    
 end
 
 % rename the optimizers if necessary
 if isa(optimizer,'function_handle')
-
+    
     tmp=func2str(optimizer);
-
+    
 else
-
+    
     tmp=optimizer;
-
+    
 end
 
 if ~strcmp(tmp,'fmincon')
-
+    
     options.nonlcon=PROBLEM.nonlcon;
-
+    
 end
 
 if ismember(tmp,{'fminunc','fminsearch'})
-
+    
     optimizer=str2func(['@',tmp,'_bnd']);
-
+    
 end
 
 if ischar(optimizer)
-
+    
     optimizer=str2func(optimizer);
-
+    
 end
 
 % hessian
@@ -124,45 +137,45 @@ d=numel(x0);
 H=nan(d);
 
 if block_flag
-
+    
     options.optimizer=optimizer;
-
+    
     [xfinal,ffinal,exitflag]=blockwise_optimization(fh,x0,lb,ub,options,vargs{:});
 
 else
-
+    
     if strcmp(tmp,'fmincon')
-
+        
         [xfinal,ffinal,exitflag,~,~,~,H(:,:,1)]=optimizer(fh,x0,[],[],[],[],lb,ub,PROBLEM.nonlcon,options,vargs{:});
-
+    
     elseif strcmp(tmp,'fminunc')
-
+        
         [xfinal,ffinal,exitflag,~,~,H(:,:,1)]=optimizer(fh,x0,lb,ub,options,vargs{:});
-
+    
     elseif strcmp(tmp,'fminsearch')
-
+        
         [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
-
+        
     else
-
+        
         nout=nargout(optimizer);
-
+        
         if nout==3
-
+            
             [xfinal,ffinal,exitflag]=optimizer(fh,x0,lb,ub,options,vargs{:});
-
+            
         elseif nout>=4
-
+            
             [xfinal,ffinal,exitflag,H]=optimizer(fh,x0,lb,ub,options,vargs{:});
-
+        
         else
-
+            
             error('optimizer should have at least 3 outputs')
-
+            
         end
-
+        
     end
-
+    
 end
 
 % select the overall best
@@ -177,28 +190,43 @@ end
 function TranslateOptimization(exitflag)
 
 switch exitflag
+    
     case 1
+    
         disp('First order optimality conditions satisfied.')
+    
     case 0
+    
         disp('Too many function evaluations or iterations.')
+    
     case -1
+    
         disp('Stopped by output/plot function.')
+    
     case -2
+    
         disp('No feasible point found.')
+    
     case 2
         %     Trust-region-reflective and interior-point:
         disp('Change in X too small.')
+    
     case 3
         %     Trust-region-reflective:
         disp('Change in objective function too small.')
+    
     case 4
         %     Active-set only:
         disp('Computed search direction too small.')
+    
     case 5
+    
         disp('Predicted change in objective function too small.')
+    
     case -3
         %     Interior-point:
         disp('Problem seems unbounded.')
+    
     otherwise
         % do nothing
 end
@@ -207,7 +235,7 @@ end
 
 function [x,fval,exitflag,output]=fminsearch_bnd(fun,x0,lb,ub,options,varargin) %#ok<DEFNU>
 
-nonlcon=options.nonlcon;
+% nonlcon=options.nonlcon;
 
 options=rmfield(options,'nonlcon');
 
@@ -223,7 +251,7 @@ end
 
 function [x,fval,exitflag,output,grad,hess]=fminunc_bnd(fun,x0,lb,ub,options,varargin) %#ok<DEFNU>
 
-nonlcon=options.nonlcon;
+% nonlcon=options.nonlcon;
 
 options=rmfield(options,'nonlcon');
 
@@ -320,11 +348,11 @@ opt.optimizer='fmincon'; % default is fmincon
 d={
     'optimset(sr)',opt.optimset,@(x)isstruct(x),...
     'optimset must be a structure'
-
+    
     'optimizer',opt.optimizer,...
     @(x)ischar(x)||iscell(x)||isa(x,'function_handle'),...
     'optimizer must be a char, a cell or a function handle'
-
+    
     };
 
 end

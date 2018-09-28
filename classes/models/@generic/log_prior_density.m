@@ -1,16 +1,26 @@
-function [lnprior,retcode]=log_prior_density(obj, param)
-% Computes the probability density function of the prior corresponding to the parameter values
+function [lnprior,retcode]=log_prior_density(obj,param,filtration)
+% Computes the probability density function of the prior corresponding to
+% the parameter values
 %
 % Note:
-%    In effort to make RISE modular, this function is available so that one can use a different sampler if needed, but most likely, one should just use available stock samplers.
+%    In effort to make RISE modular, this function is available so that one
+%    can use a different sampler if needed, but most likely, one should
+%    just use available stock samplers.  
 %
 % ::
 %
+%    [lnprior, retcode] = log_prior_density(model)
 %    [lnprior, retcode] = log_prior_density(model, param)
+%    [lnprior, retcode] = log_prior_density(model, param,filtration)
 %
 % Args:
 %    model (dsge | rise object): model object
+%
 %    param (column vector): parameter values
+%
+%    filtration (empty|struct): results from model filtration that can
+%    potentially be used for endogenizing priors.
+%
 %
 % Returns:
 %    : [lnprior, retcode]
@@ -25,62 +35,62 @@ function [lnprior,retcode]=log_prior_density(obj, param)
 nobj=numel(obj);
 
 if nobj==0
-
+    
     mydefaults=the_defaults();
-
+    
     if nargout
-
+        
         lnprior=mydefaults;
-
+        
     else
-
+        
         disp_defaults(mydefaults);
-
+        
     end
-
+    
     return
-
+    
 end
 
 if nargin<2
-
+    
     param=[];
-
+    
 end
-
-lnprior=0;
-
+        
+lnprior=0;  
+%
 retcode=0;
 
 epdata=obj.estim_priors_data;
 
 if ~isempty(param)
-
+    
     if isnumeric(param)
-
+        
         [lnprior,retcode]=utils.estim.prior_evaluation_engine(epdata,param,...
             lnprior);
-
+        
     elseif ischar(param)
-
+        
         if ~isempty(obj.estimation.endogenous_priors)
             % do the uncorrelated guys
             %--------------------------
-            pp=obj.options.estim_endogenous_priors(obj);
-
+            pp=obj.options.estim_endogenous_priors(obj,filtration);
+            
             [lnprior,retcode]=utils.estim.prior.evaluate_uncorrelated(...
                 obj.estim_endogenous_priors_data,pp,lnprior);
 
             if retcode
-
+                
                 retcode=309;
-
+                
             end
-
+            
         end
-
+                
     end
-
+    
 end
 
 end

@@ -1,13 +1,26 @@
 function plot_handle=plot_decomp(varargin)
-% INTERNAL FUNCTION
+% H1 line
 %
+% ::
+%
+%
+% Args:
+%
+% Returns:
+%    :
+%
+% Note:
+%
+% Example:
+%
+%    See also:
 
 plot_handle0=utils.plot.myplot(@plot_decomp,varargin{:});
 
 if nargout
-
+    
     plot_handle=plot_handle0;
-
+    
 end
 
 end

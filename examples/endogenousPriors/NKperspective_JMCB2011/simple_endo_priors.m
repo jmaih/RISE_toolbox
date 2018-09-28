@@ -1,4 +1,4 @@
-function v=simple_endo_priors(obj)
+function v=simple_endo_priors(obj,filtration) %#ok<INUSD>
 
 % this file demonstrates how to setup a simple endogenous prior problem
 

@@ -4,6 +4,7 @@ function xout=listing(varargin)
 
 % LISTING parses the arguments of a parameter or a variable
 myscalar=@(x)isa(x,'double') && isscalar(x) && floor(x)==ceil(x);
+
 default_xout={
     'name','',@(x)isvarname(x)% all
     'current_name','',@(x)isvarname(x)% all
@@ -22,20 +23,33 @@ default_xout={
     };
 
 in_opt=struct();
+
 for ivar=1:2:length(varargin)
+    
     in_opt.(varargin{ivar})=varargin{ivar+1};
+    
 end
+
 xout=parse_arguments(default_xout,in_opt);
 
 if nargin
+    
     if isempty(xout.name)
+        
         error('must have a name')
+        
     end
+    
     if isempty(xout.current_name)
+        
         xout.current_name=xout.name;
+        
     end
+    
 else
+    
     xout=xout(1:0);
+    
 end
 
 end

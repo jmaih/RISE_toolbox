@@ -78,12 +78,13 @@ end
 close all,clc
 % if we have the parallel computing toolbox, we can estimate all models in
 % one go
+filtration=cell{1,nmodels};
 for imod=1:nmodels 
     % replace "for" by "parfor" if you want to use parallel computation
     disp('*--------------------------------------------------------------*')
     disp(['*---------Estimation of ',model_names{imod},' model-----------*'])
     disp('*--------------------------------------------------------------*')
-    estim_models{imod}=estimate(estim_models{imod},'optimizer','fmincon');
+    [estim_models{imod},filtration{imod}]=estimate(estim_models{imod},'optimizer','fmincon');
 end
 
 %% plot the smoothed probabilities
@@ -104,7 +105,7 @@ for imod=1:nmodels
     figure('name',mytitle)
     for istate=1:nstates
         subplot(nstates,1,istate)
-        plot(estim_models{imod}.filtering.smoothed_state_probabilities.(thisstates{istate}),...
+        plot(filtration{imod}.smoothed_state_probabilities.(thisstates{istate}),...
             'linewidth',2)
         title([thislabels{istate},'(chain ',thisstates{istate}(1:end-2),' state ',thisstates{istate}(end),')'])
     end
