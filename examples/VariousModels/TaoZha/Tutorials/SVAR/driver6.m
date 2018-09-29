@@ -144,7 +144,30 @@ ub(~isfinite(ub))=500;
 
 results=mh_sampler(ff,lb,ub,options,x0,vcov)
 
+%% MCMC diagnostics
+
+% obj=mcmc(results.pop,pnames,0,1,1)
+
+
 %% Marginal data density
+
+obj=mdd(results.pop,ff,lb,ub);
+
+log_mdd=is(obj,[],mdd.global_options)
+
+log_mdd=ris(obj,[],mdd.global_options)
+
+log_mdd=bridge(obj,true,mdd.global_options)
+
+log_mdd=mueller(obj,[],mdd.global_options)
+
+log_mdd=laplace(obj)
+
+log_mdd=swz(obj,[],mdd.global_options)
+
+log_mdd=laplace_mcmc(obj)
+
+log_mdd=cj(obj,[],mdd.global_options)
 
 %% Out-of sample forecasts
 
