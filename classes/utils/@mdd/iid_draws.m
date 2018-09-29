@@ -28,6 +28,8 @@ x_bar=m.x_bar;
 
 Shat=m.Shat;
 
+d=numel(x_bar);
+
 for idraw=1:opts.L
     
     if ~is_drawn
