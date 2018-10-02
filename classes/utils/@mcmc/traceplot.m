@@ -8,10 +8,14 @@ function hdl=traceplot(obj,pname,chain_id,ma_window)
 %    hdl = traceplot(mcobj,pname,chain_id,ma_window);
 %
 % Args:
+%
 %    mcobj (mcmc object): mcmc object
+%
 %    pname (str): parameter to make the trace plot
+%
 %    chain_id (vector of int): id of the chain to use
-%    ma_windwo (int): window size if using moving average smoothing.
+%
+%    ma_window (int): window size if using moving average smoothing.
 %
 % Returns:
 %    :
