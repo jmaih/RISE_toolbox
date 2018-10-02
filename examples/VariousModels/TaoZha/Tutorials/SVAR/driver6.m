@@ -130,6 +130,88 @@ plot_data_against_probabilities(sv,'regime')
 
 myirfs=irf(sv);
 
+snames=fieldnames(myirfs);
+
+figure('name','Simple impulse response functions')
+
+iter=0;
+
+jter=0;
+
+for ishk=1:numel(snames)
+    
+    shk=snames{ishk};
+    
+    for iv=1:numel(varlist)
+        
+        v=varlist{iv};
+        
+        iter=iter+1;
+        
+        subplot(3,3,iter)
+        
+        plot(myirfs.(shk).(v),'linewidth',2)
+        
+        if iter<=3,title(v),end
+        
+        if any(iter==[1,4,7])
+            
+            jter=jter+1;
+            
+            ylabel([shk,'(',varlist{jter},' shock)'])
+            
+        end
+        
+    end
+       
+end
+
+%% Generalized impulse responses
+
+shock_names=[];
+
+irf_periods=[];
+
+params=[];
+
+girf_setup=struct();% girf_setup=struct('nsims',300);
+
+mygirfs=irf(sv,shock_names,irf_periods,params,girf_setup);
+
+figure('name','Generalized impulse response functions')
+
+iter=0;
+
+jter=0;
+
+for ishk=1:numel(snames)
+    
+    shk=snames{ishk};
+    
+    for iv=1:numel(varlist)
+        
+        v=varlist{iv};
+        
+        iter=iter+1;
+        
+        subplot(3,3,iter)
+        
+        plot(mygirfs.(shk).(v),'linewidth',2)
+        
+        if iter<=3,title(v),end
+        
+        if any(iter==[1,4,7])
+            
+            jter=jter+1;
+            
+            ylabel([shk,'(',varlist{jter},' shock)'])
+            
+        end
+        
+    end
+       
+end
+
 %% Posterior sampling
 
 [ff,lb,ub,x0,vcov,self]=pull_objective(sv);
