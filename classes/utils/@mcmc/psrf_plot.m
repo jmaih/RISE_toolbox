@@ -3,7 +3,7 @@ function hdl=psrf_plot(obj,pname)
 %
 % ::
 %
-%    hdl = gelman_plot(obj, pname)
+%    hdl = psrf_plot(obj, pname)
 %
 % Args:
 %    obj (mcmc object): mcmc object
