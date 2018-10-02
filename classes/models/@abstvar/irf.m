@@ -17,6 +17,16 @@ function [myirfs]=irf(self,shock_names,irf_periods,params,Rfunc,girf_setup)
 %
 %    Rfunc (function handle): identification function. This is an output of :func:`identification <var.identification>`. (default: choleski identification)
 %
+%    girf_setup (struct|{empty}): structure containing information relevant
+%       for the computation of generalized impulse response functions. If
+%       empty, simple regime-specific impulse responses are computed, else
+%       girfs are computed. In that case the relevant information to
+%       provide in girf_setup is:
+%       - nsims : (default=300) number of simulations for the integration.
+%       Note that even setting girf_setup=struct() will trigger the
+%       computation of girfs. But in that case only the default options
+%       will apply.
+%
 % Returns:
 %
 %    : struct containing IRFs
