@@ -47,6 +47,14 @@ classdef svar < abstvar
             
             Rfunc=identification(self);
             
+            if ~isempty(params)
+                
+                a2tilde_to_a=self.estim_.linres.a2tilde_to_a;
+                
+                params=a2tilde_to_a(params);
+                
+            end
+            
             [varargout{1:nargout}]=irf@abstvar(self,shock_names,irf_periods,...
                 params,Rfunc,girf_setup);
             
