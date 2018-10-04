@@ -25,9 +25,9 @@ function hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
 %
 
 if ischar(vnames)
-
+    
     vnames=cellstr(vnames);
-
+    
 end
 
 npar=numel(vnames);
@@ -47,63 +47,63 @@ warnState=warning('query');
 warning('off')
 
 for fig=1:nfig
-
+    
     [Remains,r,c]=number_of_rows_and_columns_in_figure(fig,npar,r0,c0);
-
+    
     if nfig>1
-
+        
         titelfig=[fig_title,' ',int2str(fig)];
-
+        
     else
-
+        
         titelfig=fig_title;
-
+        
     end
-
+    
     hfig(fig)=figure('name',titelfig);
-
+    
     for plt=1:min(nstar,Remains)
-
+        
         par_id=(fig-1)*nstar+plt;
-
+        
         figure(hfig(fig))
-
+        
         subplot(r,c,plt)
-
+        
         if plt==1 && fig ==1 && ~is_legend
             % plotfunc does not always return the correct number of
             % arguments. So here we try...
-
+            
             try
-
+                
                 [tex_name,legend_]=plotfunc(vnames{par_id});
-
+                
                 is_legend=true;
-
+                
             catch
-
+                
                 tex_name=plotfunc(vnames{par_id});
-
+                
                 legend_='';
-
+                
             end
-
+            
         else
-
+            
             if is_legend
-
+                
                 [tex_name,legend_]=plotfunc(vnames{par_id});
-
+                
             else
-
+                
                 tex_name=plotfunc(vnames{par_id});
-
+                
                 legend_='';
-
+                
             end
-
+            
         end
-
+        
         if ~isempty(tex_name)
             % a plot function will not always return a tex_name, it could
             % return a handle, in which case the following will break. That
@@ -111,27 +111,27 @@ for fig=1:nfig
             try %#ok<TRYNC>
                 
                 [tex_name,vargs]=format_title(tex_name,varargin{:});
-                    
-                    title(tex_name,vargs{:})
-
+                
+                title(tex_name,vargs{:})
+                
             end
-
+            
         end
-
+        
         if plt==1 && ~isempty(legend_)
-
+            
             hleg=legend(legend_);
-
+            
             if ~isempty(varargin)
-
+                
                 set(hleg,varargin{:});
-
+                
             end
-
+            
         end
-
+        
     end
-
+    
 end
 
 warning(warnState)
@@ -145,7 +145,7 @@ if iscell(tex_name)
     for kk=1:numel(tex_name)
         
         [tex_name{kk},vargs]=format_title(tex_name{kk},varargin{:});
-                
+        
     end
     
     return
@@ -168,7 +168,7 @@ for ii=1:size(vargs,2)
     
 end
 
-if ~found 
+if ~found
     
     varargin=[varargin,{'interp','latex'}];
     
@@ -182,6 +182,10 @@ if any(tex_name=='$')
     
 end
 
-tex_name=regexprep(tex_name,'(?!\\)_','\\_');
+if ~found
+    
+    tex_name=regexprep(tex_name,'(?!\\)(_|&)','\\$1');
+    
+end
 
 end
