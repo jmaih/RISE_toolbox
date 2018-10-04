@@ -49,11 +49,13 @@ B=zeros(obj.nparams,niter);
 
 V=zeros(obj.nparams,niter);
 
-parfor iter=1:niter
+nworkers=utils.parallel.get_number_of_workers();
+
+parfor(iter=1:niter,nworkers)
 
     time_end=time_end+1;
 
-    [R(:,iter),W(:,iter),B(:,iter),V(:,iter)]=my_recursion(obj.draws(:,1:last+iter-1));
+    [R(:,iter),W(:,iter),B(:,iter),V(:,iter)]=my_recursion(obj.draws(:,1:last+iter-1)); %#ok<PFBNS>
 
 end
 
