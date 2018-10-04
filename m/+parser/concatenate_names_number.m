@@ -24,7 +24,9 @@ out=strrep(out,'{0}','');
 out=regexprep(out,'(\w+){(\d+)}','$1{+$2}');
 
     function out=myadd(x)
+        
         out=sprintf('%0.0f',str2double(x)+lag);
+        
     end
 
 end
