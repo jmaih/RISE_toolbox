@@ -4,6 +4,8 @@ function print_low_level(obj,caller,varlist)
 
 colnames=stretch_variables(obj,obj.endogenous);
 
+nendo=numel(colnames);
+
 rownames=obj.exogenous;
 
 if obj.constant
@@ -16,7 +18,7 @@ rownames=stretch_variables(obj,rownames);
 
 vv=cell(numel(colnames),obj.nlags);
 
-for ii=1:numel(colnames)
+for ii=1:nendo
 
     vv(ii,:)=parser.create_state_list(colnames{ii},obj.nlags);
 
@@ -27,10 +29,14 @@ switch caller
     case 'print_solution'
 
         rownames=regexprep([rownames,vv(:).'],'(_)(\d+)\>','{-$2}');
+        
+        sList=utils.char.create_names([],'shock',nendo);
+
+        rownames=[rownames,sList(:).'];
 
         stud='B';
 
-        add_on=@(varargin)[];
+        add_on=@(sol,id,reg)chol(sol.S(id,id,reg),'lower');
 
     case 'print_structural_form'
 

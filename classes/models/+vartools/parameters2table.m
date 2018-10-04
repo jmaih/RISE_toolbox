@@ -18,6 +18,8 @@ end
 
 t=mat2cell(A,nvars,colseps);
 
+create_names=@(a,b)utils.char.create_names([],a,b);
+
 rownames=create_names('eq',nvars);
 
 colnames=create_names('lag',nlags);
@@ -48,15 +50,5 @@ catch me
 
 end
 
-    function names=create_names(prefix,n)
-
-        names=cell(1,n);
-
-        for ivar=1:n
-
-            names{ivar}=[prefix,'_',int2str(ivar)];
-
-        end
-    end
 
 end
