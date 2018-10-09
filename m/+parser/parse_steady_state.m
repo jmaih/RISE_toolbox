@@ -75,7 +75,7 @@ for irow_=1:size(auxiliary_steady_state_equations,1)
         
     end
     
-    if ~(tmp_{2}(1)=='-')
+    if ~(strncmp(tmp_{2},'-(',2)||strncmp(tmp_{1},'-(',2))%<-- ~(tmp_{2}(1)=='-')
         
         error('missing minus sign: report to junior.maih@gmail.com')
         
