@@ -84,15 +84,7 @@ for ii=1:nrout
 
     end
 
-    ge_=strfind(rout_i,'>=');
-
-    if isempty(ge_)||numel(ge_)>1
-
-        error('">=" missing or too many ">="')
-
-    end
-
-    dd{ii}=rout_i(right_par+1:ge_-1);
+    dd{ii}=strrep(rout_i(right_par+1:end),';','');
 
 end
 
@@ -101,6 +93,14 @@ dd=cell2mat(strcat(dd,';'));
 dd=dd(1:end-1);
 
 is_log_var=obj.log_vars;
+
+additional_inputs=load_inputs(obj,rise_inputs);
+
+[sep_cf, cf]=do_memo(dd, is_log_var,additional_inputs{:});
+
+end
+
+function ainp=load_inputs(obj,rise_inputs)
 
 % inputs and missing inputs
 %---------------------------
@@ -116,27 +116,23 @@ x=[];s0=1;s1=1; %#ok<NASGU>
 %----------------------------
 ninp=numel(rise_inputs);
 
-additional_inputs=cell(1,ninp-1);
+ainp=cell(1,ninp-1);
 
-for inp=2:ninp
+for ii=2:ninp
 
-    additional_inputs{inp-1}=eval(rise_inputs{inp});
-
-end
-
-[sep_cf, cf]=do_memo(dd, is_log_var,obj.options.simul_restrictions_lb,...
-    additional_inputs{:});
+    ainp{ii-1}=eval(rise_inputs{ii});
 
 end
 
-function [sep_cf, cf]=do_memo(dd, is_log_var,simul_restrictions_lb,varargin)
+end
+
+function [sep_cf, cf]=do_memo(dd, is_log_var,varargin)
 
 args=cell2mat(strcat(parser.input_list,','));
 
 sep_cf0=str2func(['@(',args(1:end-1),')[',dd,']']);
 
-cf0=str2func(['@(',args(1:end-1),')all([',dd,']>=',...
-    num2str(simul_restrictions_lb),')']);
+cf0=str2func(['@(',args(1:end-1),')all([',dd,'])']);
 
 sep_cf=@engine_sepcf;
 

@@ -62,9 +62,6 @@ function [db,states,retcode] = simulate(obj,varargin)
 %      nonstationary, a growth component appears in the solution. This option
 %      enables or disables that component.
 %
-%      - **simul_restrictions_lb** [numeric|{-sqrt(eps)}]: effective lower
-%      bound for restrictions in simulations.
-%
 %      - **simul_seed ** [{}|numeric]: seed used in simulations
 %
 % Returns: 
@@ -559,9 +556,6 @@ d={
     
     'simul_hpfilter_lambda',[],@(x)num_fin(x) && x>0,...
     ' simul_hpfilter_lambda must be >0'
-    
-    'simul_restrictions_lb',-sqrt(eps),@(x)num_fin(x),...
-    ' simul_restrictions_lb must be a scalar and finite number'
     
     'simul_seed',[],@(x)num_fin(x) && isreal(x),...
     ' simul_seed must be a numeric real scalar'

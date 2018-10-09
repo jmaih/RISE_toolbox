@@ -239,7 +239,8 @@ end
 
 function eqtn=flush_left_right(eqtn,block_name)
 
-if ~(eqtn.is_def || eqtn.is_tvp || strcmp(block_name,'steady_state_model')) 
+if ~(eqtn.is_def || eqtn.is_tvp || eqtn.is_mcp || ...
+        strcmp(block_name,'steady_state_model')) 
     
     eqtn.eqtn=flusher(eqtn.eqtn);
     

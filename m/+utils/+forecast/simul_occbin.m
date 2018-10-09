@@ -248,7 +248,7 @@ do_one_occbin_path()
 
         for ii=1:size(my_regimes,2)
 
-            if test(ii)<0
+            if ~test(ii)
 
                 this_regime(ii)=setdiff([1,2],this_regime(ii));
 
