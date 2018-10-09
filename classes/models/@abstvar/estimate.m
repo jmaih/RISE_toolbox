@@ -9,6 +9,7 @@ function self=estimate(self,varargin)
 %    var = estimate(var, data, data_range, prior);
 %    var = estimate(var, data, data_range, prior, restrictions);
 %    var = estimate(var, data, data_range, prior, restrictions,optimizer);
+%    var = estimate(var, data, data_range, prior, restrictions,optimizer,is_fixed_regime);
 %
 % Args:
 %
@@ -58,6 +59,10 @@ function self=estimate(self,varargin)
 %               optimization functions.
 %             - **H**: an estimate of the Hessian
 %
+%    is_fixed_regime : (true|{false}): if true, the regimes are known in
+%       advance. In that case the data should contain time series for a
+%       variable called "hist_regimes"
+%
 % Returns:
 %    : var object with parameters estimated based on data
 %
@@ -66,7 +71,7 @@ function self=estimate(self,varargin)
 %    - :func:`identification <var.identification>`
 %
 
-data=[];date_range=[];prior=[];restrictions=[];optimizer=[];
+data=[];date_range=[];prior=[];restrictions=[];optimizer=[]; is_fixed_regime=[];
 
 n=length(varargin);
 
@@ -90,8 +95,13 @@ if n
                     
                     optimizer=varargin{5};
                     
+                    if n>5
+                        
+                        is_fixed_regime=varargin{6};
+                        
+                    end
+                    
                 end
-                
                 
             end
             
@@ -107,7 +117,7 @@ if nobj>1
     
     for ii=1:nobj
         
-        self(ii)=estimate(self(ii),data,date_range,prior,restrictions,optimizer);
+        self(ii)=estimate(self(ii),data,date_range,prior,restrictions,optimizer,is_fixed_regime);
         
     end
     
@@ -122,7 +132,7 @@ self=prime_time(self);
 self=set_inputs(self,'linear_restrictions',restrictions,...
     'data',data,'prior',prior);
 
-[y,x,self.estim_.date_range]=collect_data(self,date_range);
+[y,x,self.estim_.date_range,fixed_regimes]=collect_data(self,date_range,is_fixed_regime);
 
 % N.B: yx does not include the constant while x may include it.
 self = abstvar.embed(self,y,x);
@@ -141,7 +151,7 @@ self=process_linear_restrictions(self);
 
 if self.is_switching||self.optimize
     
-    self=switching_parameter_estimation(self,y,optimizer);
+    self=switching_parameter_estimation(self,y,optimizer,fixed_regimes);
     
 else
     
@@ -151,11 +161,17 @@ end
 
 end
 
-function self=switching_parameter_estimation(self,y,optimizer)
+function self=switching_parameter_estimation(self,y,optimizer,fixed_regimes)
 
 prior_trunc=1e-10;
 
 penalty=1000;
+
+if ~isempty(fixed_regimes)
+    % lose nlags
+    fixed_regimes=fixed_regimes(self.nlags+1:end);
+    
+end
 
 [Dummies,epdata]=load_priors();
 
@@ -170,6 +186,8 @@ if T0
     XX0=[XX0,Dummies.X];
     
     YY0=[YY0,Dummies.Y];
+    
+    fixed_regimes=[fixed_regimes(:).',fixed_regimes(end)*ones(1,T0)];
     
 end
 
@@ -248,7 +266,7 @@ self.estim_.objfun=objfun;
             
             [LogLik,Incr,retcode]=vartools.likelihood(M,mapping,...
                 YY0,XX0,is_time_varying_trans_prob,...
-                markov_chains);
+                markov_chains,fixed_regimes);
             
             if ~retcode
                 

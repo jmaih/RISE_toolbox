@@ -1,9 +1,9 @@
 %% -------------------- only variances switch model -------------------- %%
 %
-% Only variances in ALL three equations switch 
+% Only variances in ALL three equations switch
 
 %% housekeeping
-clear 
+clear
 close all
 clc()
 
@@ -75,7 +75,7 @@ nonlin_restr={
 
 restrictions=[lin_restr;nonlin_restr];
 
-%% set priors 
+%% set priors
 
 % priors for the VAR coefficients
 %--------------------------------
@@ -98,6 +98,21 @@ prior.nonvar=switch_prior;
 clc
 
 sv=estimate(sv0,db,{'1960Q1','2015Q2'},prior,restrictions,'fmincon');
+
+%% Find posterior mode : known regimes
+clc
+
+db2=db;
+
+nobs=get(db.FFR,'NumberOfObservations');
+
+h=sv0.nregs;
+
+db2.hist_regimes=ts(get(db.FFR,'start'),randi(h,nobs,1));
+
+is_fixed_regime=true;
+
+sv2=estimate(sv0,db2,{'1960Q1','2015Q2'},prior,restrictions,'fmincon',is_fixed_regime);
 
 %% estimates
 clc
@@ -163,7 +178,7 @@ for ishk=1:numel(snames)
         end
         
     end
-       
+    
 end
 
 %% Generalized impulse responses
@@ -209,7 +224,7 @@ for ishk=1:numel(snames)
         end
         
     end
-       
+    
 end
 
 %% Posterior sampling
@@ -218,41 +233,167 @@ end
 
 options=struct();
 options.alpha=0.234;
-options.burnin=1000;
-options.N=10000;
+options.thin=10;
+options.burnin=10^3;
+options.N=2*10^4;
+options.nchain=2;
 
 lb(~isfinite(lb))=-500;
 ub(~isfinite(ub))=500;
 
-results=mh_sampler(ff,lb,ub,options,x0,vcov)
+results=mh_sampler(ff,lb,ub,options,x0,vcov);
 
 %% MCMC diagnostics
+clc
 
-% obj=mcmc(results.pop,pnames,0,1,1)
+pnames=fieldnames(pmode);
+
+a2tilde_to_a=sv.estim_.linres.a2tilde_to_a;
+
+mcmcobj=mcmc(results.pop,pnames,0,1,1,a2tilde_to_a);
+
+myList={'syncvol_tp_1_2','syncvol_tp_1_3','syncvol_tp_2_1','syncvol_tp_2_3',...
+    'syncvol_tp_3_1','syncvol_tp_3_2','s_1_1_syncvol_1','s_1_1_syncvol_2',...
+    's_1_1_syncvol_3','s_2_2_syncvol_1','s_2_2_syncvol_2','s_2_2_syncvol_3',...
+    's_3_3_syncvol_1','s_3_3_syncvol_2','s_3_3_syncvol_3'};
+
+chain_id=[];
+
+for ii=1:numel(myList)
+    
+    v=myList{ii};
+    
+    figure('name',['Univariate convergence diagnostics for ',v]);
+    
+    subplot(3,2,1),autocorrplot(mcmcobj,v,chain_id,40); title('autocorrelogram')
+    
+    subplot(3,2,2),densplot(mcmcobj,v,chain_id,250); title('density')
+    
+    subplot(3,2,3),meanplot(mcmcobj,v,chain_id); title('recursive mean')
+    
+    subplot(3,2,4),psrf_plot(mcmcobj,v); title('pot. scale red. factor')
+    
+    subplot(3,2,5),traceplot(mcmcobj,v,chain_id,20); title('trace')
+    
+    pause
+    
+    close
+    
+end
 
 
 %% Marginal data density
+clc
 
-obj=mdd(results.pop,ff,lb,ub);
+mddobj=mdd(results.pop,ff,lb,ub);
 
-log_mdd=is(obj,[],mdd.global_options)
+fprintf('Importance sampling::%0.2f\n',is(mddobj,[],mdd.global_options))
 
-log_mdd=ris(obj,[],mdd.global_options)
+fprintf('Reciprocal Importance sampling::%0.2f\n',ris(mddobj,[],mdd.global_options))
 
-log_mdd=bridge(obj,true,mdd.global_options)
+fprintf('Meng and Wong''s bridge::%0.2f\n',bridge(mddobj,true,mdd.global_options))
 
-log_mdd=mueller(obj,[],mdd.global_options)
+fprintf('Ulrich Mueller::%0.2f\n',mueller(mddobj,[],mdd.global_options))
 
-log_mdd=laplace(obj)
+fprintf('Laplace::%0.2f\n',laplace(mddobj))
 
-log_mdd=swz(obj,[],mdd.global_options)
+fprintf('Sims, Waggoner and Zha::%0.2f\n',swz(mddobj,[],mdd.global_options))
 
-log_mdd=laplace_mcmc(obj)
+fprintf('Laplace MCMC::%0.2f\n',laplace_mcmc(mddobj))
 
-log_mdd=cj(obj,[],mdd.global_options)
+fprintf('Chib and Jeliazkov::%0.2f\n',cj(mddobj,[],mdd.global_options))
 
-%% Out-of sample forecasts
+%% Out-of sample forecasts at the mode
+shock_uncertainty=false;
 
-%% Conditional forecast
+nsteps=12;
 
+mycast=forecast(sv,[],[],[],nsteps,shock_uncertainty);
+
+do_plot_unconditional_forecasts(mycast,sv)
+
+%% Conditional forecast on ygap
+
+% conditional information
+%-------------------------
+ygap=scale*(-0.025:0.005:8*0.005).';
+cond_db=struct('ygap',ts('2015Q3',ygap));
+
+% options for the exercise
+%--------------------------
+myoptions=struct('cbands',[10,20,50,80,90],'do_plot',true,'nsteps',20,...
+    'param_uncertainty',false,'shock_uncertainty',true,'ndraws',200);
+
+% do it
+%-------
+tic
+[fkst,bands,hdl]=do_conditional_forecasts(mest,db,cond_db,Results.pop,myoptions);
+fprintf('\n\n Computing conditional forecasts took %0.4f minutes\n\n',toc/60);
+%% Median conditional forecasts
+% we take advantage of the fact that in the bands above we specified 50 in
+% the bands above 
+%--------------------------------------------------------------------------
+figure('name','Median Conditional Forecasts');
+nvars=mest.endogenous.number;
+for ivar=1:nvars
+    thisname=mest.endogenous.name{ivar};
+    subplot(nvars,1,ivar)
+    plot(bands.(thisname)('ci_50'),'linewidth',2)
+    title(mest.endogenous.tex_name{ivar})
+end
+
+
+%% irfs distributions
+
+clc
+
+shock_names=[];
+
+params=[results.pop.x];
+
+myirfs2=irf(sv,shock_names,[],params);
+
+%% plotting of fan chargs
+
+for ireg=1:sv.nregs
+    
+    reg=sprintf('regime_%d',ireg);
+    
+    figure('name',['Simple impulse response functions(',reg,')'])
+    
+    iter=0;
+    
+    jter=0;
+    
+    for ishk=1:numel(snames)
+        
+        shk=snames{ishk};
+        
+        for iv=1:numel(varlist)
+            
+            v=varlist{iv};
+            
+            iter=iter+1;
+            
+            subplot(3,3,iter)
+            
+            ffr=fanchart(myirfs2.(shk).(v),[30,50,70,90]);
+            
+            plot_fanchart(ffr.(reg),'r')
+            
+            if iter<=3,title(v),end
+            
+            if any(iter==[1,4,7])
+                
+                jter=jter+1;
+                
+                ylabel([shk,'(',varlist{jter},' shock)'])
+                
+            end
+            
+        end
+        
+    end
+    
+end
 

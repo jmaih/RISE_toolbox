@@ -1,13 +1,31 @@
-function [y,x,date_range]=collect_data(self,date_range)
+function [y,x,date_range,regimes]=collect_data(self,date_range,is_fixed_regime)
 % INTERNAL FUNCTION: Parse data into a useable format
 %
 % Note:
 %    It is assumed that data is set in self.estim_.data before the execution of this function
 %
 
+if nargin<3
+    
+    is_fixed_regime=[];
+    
+end
+
+if isempty(is_fixed_regime)
+    
+    is_fixed_regime=false;
+    
+end
+
 ynames=self.endogenous;
 
 xnames=self.exogenous;
+
+if is_fixed_regime
+    
+    xnames=[xnames(:).',{'hist_regimes'}];
+    
+end
 
 yxnames=[ynames,xnames];
 
@@ -39,6 +57,28 @@ xloc=locate_variables(xnames,yxnames);
 y=yx(yloc,:,:);
 
 x=yx(xloc,:,:);
+
+regimes=[];
+
+if is_fixed_regime
+    
+    regimes=x(end,:,:);
+    
+    x=x(1:end-1,:,:);
+    
+    for ig=2:ng
+        
+        if any(regimes(1,:,ig)-regimes(1,:,1))
+            
+            error('all regimes across panel members should be the same')
+            
+        end
+        
+    end
+    
+    regimes=regimes(1,:,1);
+    
+end
 
 add_constants()
 
