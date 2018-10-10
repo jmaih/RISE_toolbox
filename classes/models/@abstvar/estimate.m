@@ -187,7 +187,11 @@ if T0
     
     YY0=[YY0,Dummies.Y];
     
-    fixed_regimes=[fixed_regimes(:).',fixed_regimes(end)*ones(1,T0)];
+    if ~isempty(fixed_regimes)
+        
+        fixed_regimes=[fixed_regimes(:).',fixed_regimes(end)*ones(1,T0)];
+        
+    end
     
 end
 
