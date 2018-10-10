@@ -8,7 +8,7 @@ endogenous PAI, "Inflation", Y, "Output gap", R, "Interest rate"
 
 exogenous EPS_R	"Monetary policy shock"
 
-parameters betta, eta, kappa, rhor sigr a_tp_1_2, a_tp_2_1 %, mu_bar
+parameters betta, eta, kappa, rhor sigr a_tp_1_2, a_tp_2_1
 
 parameters(a,2) mu, psi
 
@@ -33,7 +33,6 @@ parameterization
 	eta, 10;
 	rhor, .8;
 	sigr, 0.0025;
-	%%mu_bar,0.02; 
 	mu(a,1), 0.03;
 	mu(a,2), 0.01;
 	psi(a,1), 3.1;
