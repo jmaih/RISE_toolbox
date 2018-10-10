@@ -44,7 +44,8 @@ for ii=1:this0.NumberOfVariables
         
     else
         
-        this.(this0.varnames{ii})=set(this.(this0.varnames{1}),'data',newdata);
+        this.(this0.varnames{ii})=set(this.(this0.varnames{1}),'data',newdata,...
+            'description',description);
                 
     end
     
