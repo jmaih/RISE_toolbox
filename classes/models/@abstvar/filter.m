@@ -4,16 +4,21 @@ function varargout=filter(self,param)
 % ::
 %
 %    varargout = filter(self);
+%
 %    varargout = filter(self, param);
 %
 % Args:
+%
 %    self (var object): var object
+%
 %    param (cell of struct): (optional) parameter values
 %
 % Returns:
+%
 %    : log likelihood values of the VAR
 %
 % Note:
+%
 %    Almost everything is automated in RISE, so see :func:`estimate` or :func:`identification` .
 %
 

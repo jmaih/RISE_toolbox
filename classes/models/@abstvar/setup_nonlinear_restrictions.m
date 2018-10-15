@@ -1,4 +1,4 @@
-function self=setup_nonlinear_restrictions(self,express,rplfunc)
+function self=setup_nonlinear_restrictions(self,express,rplfunc) %#ok<INUSD>
 % INTERNAL FUNCTION: Sets nonlinear restrictions
 %
 
