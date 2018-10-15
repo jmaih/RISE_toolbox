@@ -3,9 +3,9 @@ function varargout=filter(self,param)
 %
 % ::
 %
-%    varargout = filter(self);
+%    [LogLik,Incr,retcode,filtering] = filter(self);
 %
-%    varargout = filter(self, param);
+%    [LogLik,Incr,retcode,filtering] = filter(self, param);
 %
 % Args:
 %
@@ -15,7 +15,13 @@ function varargout=filter(self,param)
 %
 % Returns:
 %
-%    : log likelihood values of the VAR
+%    LogLik : log likelihood values of the VAR
+%
+%    Incr : period-by-period contributions to the likelihood
+%
+%    retcode : flag, 0 if no problem
+%
+%    filtering : structure containing filtration
 %
 % Note:
 %
