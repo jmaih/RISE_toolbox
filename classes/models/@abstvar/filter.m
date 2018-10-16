@@ -55,6 +55,8 @@ M=vartools.estim2states(param,...
 % after its lags...
 start_date=self.estim_.date_range(1)+self.nlags;
 
+proto=ts(start_date,0);
+
 for ix=1:nout
 
     if isstruct(outCell{ix})
@@ -152,7 +154,7 @@ varargout=outCell;
 
                 % would be nice to have one prototype with just
                 % a start date...
-                sout=ts(start_date,permute(s,[2,3,1]));
+                sout=set(proto,'data',permute(s,[2,3,1])); % sout=ts(start_date,permute(s,[2,3,1]));
 
             end
 
