@@ -1,16 +1,20 @@
 %% Housekeeping
-clear all
+clear
 close all
 clc
-%% load RISE
-rise_startup()
-
 
 %% read the models and their calibrations
-m=rise('frwz_nk');
+
+m0=rise('frwz_nk');
 
 %% solve the model
-m=solve(m,'steady_state_unique',true,'steady_state_imposed',true);
+
+m=solve(m0,'steady_state_unique',true);
+
+part_list={};
+
+m2=solve(m0,'solve_perturbation_type',{'frwz',part_list});
+
 
 %% print results
 m.print_solution()
@@ -21,12 +25,15 @@ m.print_solution({'PAI','Y'})
 %% Alternative calibrations
 
 cal_2=struct('psi_a_2', 0.7);
+
 m2=set(m,'parameters',cal_2);
 
 %% construct a vector of models
 
 bigm=[m,m2];
+
 %% compute impulse responses for all models simultaneously
+
 myirfs=irf(bigm,'irf_periods',20);
 
 %% plot the impulse responses
