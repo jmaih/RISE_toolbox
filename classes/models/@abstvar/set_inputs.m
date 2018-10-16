@@ -136,9 +136,9 @@ end
 
         fi=fieldnames(v);
 
-        if ~all(ismember(fi,{'var','nonvar'}))
+        if ~all(ismember(fi,{'var','nonvar','endogenous'}))
 
-            error('unrecognized field(s) in prior: expecting "var" or "nonvar"')
+            error('unrecognized field(s) in prior: expecting "var", "nonvar" or "endogenous"')
 
         end
 

@@ -199,6 +199,8 @@ last=T;
 %-------------------------------------------------------------------
 LogLik=sum(Incr(start:last));
 
+filtering=struct();
+
 if retcode
     
     LogLik=big_penalty;
@@ -209,15 +211,13 @@ end
 %------------------------------------------------------
 % % % %     LogLik=-LogLik;
 
-if nargout<4
+if nargout<4||retcode
     
     return
     
 end
 
 regime_names=mapping.regimes(2:end,1).';
-
-filtering=struct();
 
 prob_smooth=[];
 

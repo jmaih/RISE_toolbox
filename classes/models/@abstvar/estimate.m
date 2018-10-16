@@ -173,7 +173,19 @@ if ~isempty(fixed_regimes)
     
 end
 
-[Dummies,epdata]=load_priors();
+[Dummies,epdata,endopri]=load_priors();
+
+is_endo_priors=~isempty(endopri);
+
+is_filt_required=false;
+
+filt=[];
+
+if is_endo_priors
+    
+    is_filt_required=endopri.is_filt_required;
+    
+end
 
 XX0=self.estim_.X;
 
@@ -192,6 +204,16 @@ if T0
         fixed_regimes=[fixed_regimes(:).',fixed_regimes(end)*ones(1,T0)];
         
     end
+    
+end
+
+if is_filt_required
+    
+    self0=self;
+    
+    self0.estim_.X=XX0;
+    
+    self0.estim_.Y=YY0;
     
 end
 
@@ -236,6 +258,8 @@ PROBLEM_=struct('objective',objfun,...
     'options',options,...obj(1).options.optimset
     'solver',optimizer);
 
+wd=utils.estim.warnings_disable();
+
 [x1,f1,H]=optimization.estimation_engine(PROBLEM_,estim_blocks); %#ok<ASGLU>
 
 if any(isnan(H(:)))
@@ -250,16 +274,18 @@ self.estim_.estim_param=untransform(self,x1);
 
 self.estim_.objfun=objfun;
 
+utils.estim.warnings_enable(wd)
+
     function varargout=engine(params0)
         
-        Lpost=uminus(1e+8); Lprior=0; Incr=[];
+        Lpost=uminus(1e+8); Lprior=[0,0]; Incr=[];
         
         params1=untransform(self,params0);
         
         % Evaluate prior first and only evaluate the likelihood if prior
         % does not fail.
-        [Lprior,retcode]=utils.estim.prior_evaluation_engine(epdata,...
-            params1,Lprior);
+        [Lprior(1),retcode]=utils.estim.prior_evaluation_engine(epdata,...
+            params1,Lprior(1));
         
         if ~retcode
             
@@ -268,9 +294,17 @@ self.estim_.objfun=objfun;
             
             pen=utils.estim.penalize_violations2(M,nonlinres,penalty);
             
-            [LogLik,Incr,retcode]=vartools.likelihood(M,mapping,...
-                YY0,XX0,is_time_varying_trans_prob,...
-                markov_chains,fixed_regimes);
+            if is_filt_required
+                
+                [LogLik,Incr,retcode,filt]=filter(self0,params1);
+                
+            else
+                
+                [LogLik,Incr,retcode]=vartools.likelihood(M,mapping,...
+                    YY0,XX0,is_time_varying_trans_prob,...
+                    markov_chains,fixed_regimes);
+                
+            end
             
             if ~retcode
                 
@@ -278,15 +312,31 @@ self.estim_.objfun=objfun;
                     
                     LogLik0=sum(Incr(1:end-T0));
                     
-                    Lprior=Lprior+(LogLik-LogLik0);
+                    Lprior(1)=Lprior(1)+(LogLik-LogLik0);
                     
                     LogLik=LogLik0;
                     
                 end
                 
+                if is_endo_priors
+                    % do the uncorrelated guys
+                    %--------------------------
+                    pp=endopri.estim_endogenous_priors(self,filt);
+                    
+                    [Lprior(2),retcode]=utils.estim.prior.evaluate_uncorrelated(...
+                        endopri.estim_endogenous_priors_data,pp,Lprior(2));
+                    
+                    if retcode
+                        
+                        retcode=309;
+                        
+                    end
+                    
+                end
+                
                 if ~retcode
                     
-                    Lpost=LogLik+Lprior+pen;
+                    Lpost=LogLik+sum(Lprior)+pen;
                     
                 end
                 
@@ -303,11 +353,38 @@ self.estim_.objfun=objfun;
         
     end
 
-    function [Dummies,indPriors]=load_priors()
+    function [Dummies,indPriors,endopri]=load_priors()
         
         Dummies=do_var_prior();
         
         indPriors=do_nonvar_priors();
+        
+        endopri=do_endogenous_priors();
+        
+        function endopri=do_endogenous_priors()
+            
+            endopri=[];
+            
+            if ~isfield(self.estim_.prior,'endogenous')||...
+                    isempty(self.estim_.prior.endogenous)
+                
+                return
+                
+            end
+            
+            endopri=struct();
+            
+            fh=self.estim_.prior.endogenous;
+            
+            test=fh();
+            
+            endopri.is_filt_required=test.kf_filtering_level>0;
+            
+            [endopri.estim_endogenous_priors_data,...
+                endopri.endogenous_priors,endopri.estim_endogenous_priors]...
+                =utils.prior.setup_endogenous_priors_engine(prior_trunc,fh);
+            
+        end
         
         function newpri=do_nonvar_priors()
             
