@@ -39,7 +39,7 @@ end
 
 [T,Ti]=create_symbols(n0,n_,h);
 
-if ~license('checkout','symbolic_toolbox')
+if license('checkout','symbolic_toolbox')&& ~verLessThan('matlab','9.4.0')
     
     AllSols=use_symbolic_toolbox(T,Ti,A0,Aminus,Aplus,aplus,aminus);
     

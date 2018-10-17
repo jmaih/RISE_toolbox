@@ -71,8 +71,6 @@ end
 
 eigvals=[];
 
-retcode=0;
-
 h=size(A0_0,3);
 
 Ap=cell(h);
@@ -107,7 +105,6 @@ for s0=1:h
         
         A_{s0}=A_0(:,:,s0);
         
-        
     end
     
 end
@@ -128,6 +125,8 @@ nsol=numel(T);
 
 Tz_pb=zeros(n,n,h,nsol);
 
+retcode=zeros(1,nsol);
+
 for isol=1:nsol
     
     if minimal
@@ -138,6 +137,11 @@ for isol=1:nsol
         
         Tz_pb(:,:,:,isol)=T{isol};
         
+    end
+    
+    if ~utils.error.validComplex(T{isol})% any(isnan(T{isol}(:)))||any(isinf(T{isol}(:)))
+        
+        retcode(isol)=22;
         
     end
     
