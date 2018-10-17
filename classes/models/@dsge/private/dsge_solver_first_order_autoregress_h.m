@@ -193,18 +193,19 @@ switch model_class
             
             % collect the relevant part
             %--------------------------
-            if ~retcode
+            if any(~retcode)
                 % allow for the possibility of multiple solutions returned
                 % in the 4th dimension
-                Tz_pb=Tz_pb(:,adjusted.siz.ns+(1:adjusted.siz.np+adjusted.siz.nb),:,:);
+                Tz_pb=Tz_pb(:,adjusted.siz.ns+(1:adjusted.siz.np+adjusted.siz.nb),:,~retcode);
+                
+                retcode=retcode(~retcode);
                 
             end
             
         end
 end
 
-
-if ~retcode
+if any(~retcode)
     
     nsol=size(Tz_pb,4);
     
@@ -215,7 +216,7 @@ if ~retcode
     if accelerate
         % solve for the static variables
         %-------------------------------
-        Sz_pb=zeros(siz.ns,npb,siz.h,nsol);
+        Sz_pb=nan(siz.ns,npb,siz.h,nsol);
         
         for isol=1:nsol
             
