@@ -207,16 +207,6 @@ if T0
     
 end
 
-if is_filt_required
-    
-    self0=self;
-    
-    self0.estim_.X=XX0;
-    
-    self0.estim_.Y=YY0;
-    
-end
-
 is_time_varying_trans_prob=self.is_time_varying_trans_prob;
 
 nonlinres=self.estim_.nonlinres;
@@ -296,7 +286,9 @@ utils.estim.warnings_enable(wd)
             
             if is_filt_required
                 
-                [LogLik,Incr,retcode,filt]=filter(self0,params1);
+                [LogLik,Incr,retcode,filt]=vartools.likelihood(M,mapping,...
+                    YY0,XX0,is_time_varying_trans_prob,...
+                    markov_chains,fixed_regimes);
                 
             else
                 
