@@ -6,10 +6,13 @@ function [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargi
 %   [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargin)
 %
 % Args:
+%
 %    - iterate_func : [func_handle]: a function handle which returns 2
 %      elements: The improved value of T and F0, the value of the function
 %      whose discrepancy is to be minmized
+%
 %    - T0 : is the initial guess for the solution
+%
 %    - options : [struct] with fields
 %      - fix_point_explosion_limit : [positive scalar |{1e+6}] : maximum
 %        divergence of F0
@@ -18,6 +21,12 @@ function [T,itercode,retcode]=fix_point_iterator(iterate_func,T0,options,varargi
 %      - fix_point_maxiter : [positive scalar |{1000}] : maximum number of
 %        iterations
 %      - fix_point_verbose : [true|{false}] : show iterations or not
+%      - fix_point_valid_func : [function_handle|{@utils.error.valid}] :
+%        function that checks the validity (nans, complex, inf, etc.) of
+%        the calculations. The default function checks for complex numbers.
+%        If you want to allow for complex numbers, use instead
+%        @utils.error.validComplex
+%
 %    - varargin
 %
 % Returns:
@@ -58,6 +67,8 @@ default_solve=disp_defaults(mydefaults);
 
 options=utils.miscellaneous.setfield(default_solve,options);
 
+valid=options.fix_point_valid_func;
+
 % solving for T
 F0=0.1*options.fix_point_explosion_limit;
 
@@ -74,7 +85,7 @@ fix_point_verbose=options.fix_point_verbose;
 while max(conv_T,conv_F)>options.fix_point_TolFun && ...
         iter<options.fix_point_maxiter && ...
         conv_F<options.fix_point_explosion_limit && ...
-        utils.error.valid(F0)
+        valid(F0)
     
     iter=iter+1;
     
@@ -92,7 +103,7 @@ while max(conv_T,conv_F)>options.fix_point_TolFun && ...
     
     T0=T;
     
-    if ~utils.error.valid(T)
+    if ~valid(T)
         
         break
         
@@ -108,7 +119,7 @@ if iter>=options.fix_point_maxiter
     
     retcode=21;
     
-elseif ~utils.error.valid(F0)||~utils.error.valid(T)
+elseif ~valid(F0)||~valid(T)
     
     retcode=22;
     
@@ -118,7 +129,7 @@ elseif conv_F>=options.fix_point_explosion_limit
     
 end
 
-if retcode==0 && ~utils.error.valid(T)
+if retcode==0 && ~valid(T)
     
     assignin('base','T0',T00)
     
@@ -154,6 +165,9 @@ d={
     
     'fix_point_explosion_limit(r)',1e+12,@(x)num_fin_int(x),...
     'fix_point_explosion_limit must be a finite and positive integer'
+    
+    'fix_point_valid_func(r)',@utils.error.valid,@(x)isa(x,'function_handle'),...
+    'fix_point_valid_func must be a function handle'
     };
 
 end
