@@ -1,4 +1,5 @@
-function [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,~,TolFun,maxiter,varargin)
+function [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,~,TolFun,...
+    maxiter,varargin)
 %
 % dsge_udc undetermined coefficients-type of solution algorithm for DSGE models.
 % The procedure can find all possible solutions for a constant-parameter
@@ -32,8 +33,16 @@ function [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,~,TolFun,maxiter,va
 %     - **maxiter** [numeric] : Maximum number of iterations (Not used)
 %
 %     - **varargin** [] : additional arguments
-%        - **allsols** [true|{false}] : flag for finding all solutions
-%        - **msv_only** [{true}|false] : return only MSV solutions
+%        - **refine** [true|{false}] : solve for sigma=1 instead of just
+%          sigma=0
+%        - **checkStab** [true|{false}] : check the stability of the
+%           solution by the eigenvalues
+%        - **allSols** [true|{false}] : flag for finding all solutions
+%        - **msvOnly** [{true}|false] : return only the minimum state
+%          variable solutions
+%        - **xplosRoots** [{true}|false] : if all solutions are
+%          computed we still can restrict ourselves to solutions that do not
+%          involve explosive roots
 %        - **debug** [true|{false}] : debug or not
 %
 % Returns:
@@ -47,21 +56,7 @@ function [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,~,TolFun,maxiter,va
 %
 % See also :  dsge_groebner
 
-refine=false;
-
-debug=false;
-
-larg=length(varargin);
-
-if larg>3
-    
-    debug=varargin{3};
-    
-end
-
-opts=struct();
-
-update_options()
+slvOpts=msre_solvers.maih_waggoner.set_solve_options(varargin{:});
 
 [n,h]=reformat_inputs();
 
@@ -108,9 +103,16 @@ for s0=1:h
 end
 
 
-doall=false;
+if slvOpts.allSols
+    
+    doall=true;
+    
+    [X,eigvals,retcode]=msre_solvers.maih_waggoner.udc(Alead2,Acurr2,Alag2,...
+        slvOpts);
 
-if isempty(varargin)||~varargin{1} % not all solutions
+else
+    
+    doall=false;
     
     eigvals=cell(h,1);
     
@@ -120,8 +122,8 @@ if isempty(varargin)||~varargin{1} % not all solutions
     
     for s0=1:h
         
-        [Xs0,eigvals{s0},retcode(s0)]=msre_solvers.udc(...
-            full(Alead{s0,s0}),full(Acurr{s0}),full(Alag{s0}),varargin{:});
+        [Xs0,eigvals{s0},retcode(s0)]=msre_solvers.maih_waggoner.udc(...
+            full(Alead{s0,s0}),full(Acurr{s0}),full(Alag{s0}),slvOpts);
         
         if retcode(s0)
             
@@ -146,13 +148,7 @@ if isempty(varargin)||~varargin{1} % not all solutions
         return
         
     end
-    
-else
-    
-    doall=true;
-    
-    [X,eigvals,retcode]=msre_solvers.udc(Alead2,Acurr2,Alag2,varargin{:});
-    
+        
 end
 
 if ~iscell(X)
@@ -167,53 +163,29 @@ Tz_pb=zeros(n,n,h,k);
 
 Sproto=zeros(n,n,h);
 
-if refine
+refine_data=[];
+
+if slvOpts.refine
     
-    Alead_diag=diag_cell(Alead);
+    opts=msre_solvers.maih_waggoner.update_options(TolFun,maxiter,slvOpts.debug);
+    
+    Alead_diag=msre_solvers.maih_waggoner.diag_cell(Alead);
+    
+    refine_data={Acurr,Alead_diag,Q,opts};
     
 end
 
 for isol=1:k
     
-    Tz_pb(:,:,:,isol)=set_one_solution(X{isol});
+    if ~retcode(isol)
+        
+        [Tz_pb(:,:,:,isol),retcode(isol)]=...
+            msre_solvers.maih_waggoner.set_one_solution(X{isol},Sproto,...
+            doall,refine_data);
+        
+    end
     
 end
-
-    function [S,itercode,retcode]=set_one_solution(X)
-        
-        itercode=0;
-        
-        [X,retcode]=dsge_realize_solution(X,doall);
-        
-        S=Sproto;
-        
-        for ireg=1:h
-            
-            row_range=(ireg-1)*n+(1:n);
-            
-            S(:,:,ireg)=X(row_range,row_range);
-            
-        end
-        
-        if refine
-            
-            [T2,itercode,retcode]=solve_pretzel(S,Acurr,Alead_diag,Q,opts);
-            
-            S=S+T2;
-            
-        end
-        
-    end
-
-    function update_options()
-        
-        opts.fix_point_TolFun=TolFun;
-        
-        opts.fix_point_maxiter=maxiter;
-        
-        opts.fix_point_verbose=debug;
-        
-    end
 
     function [n,h]=reformat_inputs()
         
@@ -242,25 +214,5 @@ end
         end
         
     end
-
-end
-
-function Cout=diag_cell(Cin)
-
-[h,h2]=size(Cin);
-
-if h~=h2
-    
-    error('cell array should be square')
-    
-end
-
-Cout=cell(1,h);
-
-for ireg=1:h
-    
-    Cout{ireg}=Cin{ireg,ireg};
-    
-end
 
 end

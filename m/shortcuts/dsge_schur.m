@@ -1,4 +1,5 @@
-function [Tz_pb,eigvals,retcode]=dsge_schur(Alead,Acurr,Alag,~,~,~,~,varargin)
+function [Tz_pb,eigvals,retcode]=dsge_schur(Alead,Acurr,Alag,Q,~,TolFun,...
+    maxiter,varargin)
 %
 % dsge_schur : Schur solution algorithm for DSGE models.
 % The procedure can find all possible solutions for a constant-parameter
@@ -23,18 +24,25 @@ function [Tz_pb,eigvals,retcode]=dsge_schur(Alead,Acurr,Alag,~,~,~,~,varargin)
 %     - **Alag** [n x n x h array] : Jacobian of lagged variables in each
 %       regime
 %
-%     - **Q** [h x h matrix] : Transition matrix (Not used)
+%     - **Q** [h x h matrix] : Transition matrix (used only if refinement)
 %
 %     - **T0** [n x n x h array] : Initial guess for the solution (Not used)
 %
-%     - **TolFun** [numeric] : Tolerance criterion for solution (Not used)
+%     - **TolFun** [numeric] : Tolerance criterion for solution used in the
+%       refinement of the solution
 %
-%     - **maxiter** [numeric] : Maximum number of iterations (Not used)
+%     - **maxiter** [numeric] : Maximum number of iterations used in the
+%       refinement of the solution
 %
 %     - **varargin** [] : additional arguments
-%        - **allsols** [true|{false}] : flag for finding all solutions
-%        - **check_stab** [true|{false}] : check stability of the system
-%        - **explos_roots** [{true}|false] : if all solutions are
+%        - **refine** [true|{false}] : solve for sigma=1 instead of just
+%          sigma=0
+%        - **checkStab** [true|{false}] : check the stability of the
+%           solution by the eigenvalues
+%        - **allSols** [true|{false}] : flag for finding all solutions
+%        - **msvOnly** [{true}|false] : return only the minimum state
+%          variable solutions
+%        - **xplosRoots** [{true}|false] : if all solutions are
 %          computed we still can restrict ourselves to solutions that do not
 %          involve explosive roots
 %        - **debug** [true|{false}] : debug or not
@@ -50,6 +58,9 @@ function [Tz_pb,eigvals,retcode]=dsge_schur(Alead,Acurr,Alag,~,~,~,~,varargin)
 %     - **retcode** [numeric] : 0 if there is no problem
 %
 % See also :  dsge_groebner, dsge_udc
+
+
+slvOpts=msre_solvers.maih_waggoner.set_solve_options(varargin{:});
 
 [n,h]=reformat_inputs();
 
@@ -95,10 +106,17 @@ for s0=1:h
     
 end
 
+if slvOpts.allSols
+    
+    doall=true;
+    
+    [X,eigvals,retcode]=msre_solvers.maih_waggoner.naqme_schur(Alead2,...
+        Acurr2,Alag2,slvOpts);
+    
+else
+    
 doall=false;
 
-if isempty(varargin)||~varargin{1} % not all solutions
-    
     eigvals=cell(h,1);
     
     X=zeros(n*h);
@@ -107,8 +125,8 @@ if isempty(varargin)||~varargin{1} % not all solutions
     
     for s0=1:h
         
-        [Xs0,eigvals{s0},retcode(s0)]=msre_solvers.naqme_schur(...
-            full(Alead{s0,s0}),full(Acurr{s0}),full(Alag{s0}),varargin{:});
+        [Xs0,eigvals{s0},retcode(s0)]=msre_solvers.maih_waggoner.naqme_schur(...
+            full(Alead{s0,s0}),full(Acurr{s0}),full(Alag{s0}),slvOpts);
         
         if retcode(s0)
             
@@ -124,7 +142,7 @@ if isempty(varargin)||~varargin{1} % not all solutions
     
     retcode=max(retcode);
     
-    if retcode
+    if all(retcode)
         
         eigvals=[];
         
@@ -133,13 +151,7 @@ if isempty(varargin)||~varargin{1} % not all solutions
         return
         
     end
-    
-else
-    
-    doall=true;
-    
-    [X,eigvals,retcode]=msre_solvers.naqme_schur(Alead2,Acurr2,Alag2,varargin{:});
-    
+        
 end
 
 if ~iscell(X)
@@ -154,31 +166,29 @@ Tz_pb=zeros(n,n,h,k);
 
 Sproto=zeros(n,n,h);
 
+refine_data=[];
+
+if slvOpts.refine
+    
+    opts=msre_solvers.maih_waggoner.update_options(TolFun,maxiter,slvOpts.debug);
+
+    Alead_diag=msre_solvers.maih_waggoner.diag_cell(Alead);
+    
+    refine_data={Acurr,Alead_diag,Q,opts};
+    
+end
+
 for isol=1:k
     
     if ~retcode(isol)
         
-        [Tz_pb(:,:,:,isol),retcode(isol)]=set_one_solution(X{isol});
+        [Tz_pb(:,:,:,isol),retcode(isol)]=...
+            msre_solvers.maih_waggoner.set_one_solution(X{isol},Sproto,...
+            doall,refine_data);
         
     end
     
 end
-
-    function [S,retcode]=set_one_solution(X)
-        
-        [X,retcode]=dsge_realize_solution(X,doall);
-        
-        S=Sproto;
-        
-        for ireg=1:h
-            
-            row_range=(ireg-1)*n+(1:n);
-            
-            S(:,:,ireg)=X(row_range,row_range);
-            
-        end
-        
-    end
 
     function [n,h]=reformat_inputs()
         

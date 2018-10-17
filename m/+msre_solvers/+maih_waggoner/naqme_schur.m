@@ -1,14 +1,10 @@
-function [X,eigvals,retcode,xtras]=naqme_schur(A,B,C,allsols,check_stab,explos_roots,debug)
+function [X,eigvals,retcode,xtras]=naqme_schur(A,B,C,slvOpts) 
 %
 % naqme_schur : solves the system A*X^2+B*X+C=0
 %
 % ::
 %
-%   [X]=naqme_schur(A,B,C)
-%   [X]=naqme_schur(A,B,C,allsols)
-%   [X]=naqme_schur(A,B,C,allsols,check_stab)
-%   [X]=naqme_schur(A,B,C,allsols,check_stab,explos_roots)
-%   [X]=naqme_schur(A,B,C,allsols,check_stab,explos_roots,debug)
+%   [X]=naqme_schur(A,B,C,slvOpts)
 %   [X,eigvals,retcode]=naqme_schur(...)
 %
 % Args:
@@ -19,15 +15,15 @@ function [X,eigvals,retcode,xtras]=naqme_schur(A,B,C,allsols,check_stab,explos_r
 %
 %     - **C** [n x n] : Coefficient matrix on lagged variables
 %
-%     - **allsols** [true|{false}] : flag for finding all solutions
+%     - **slvOpts.allSols** [true|{false}] : flag for finding all solutions
 %
-%     - **check_stab** [true|{false}] : check stability of the system
+%     - **slvOpts.checkStab** [true|{false}] : check stability of the system
 %
-%     - **explos_roots** [{true}|false] : if all solutions are
+%     - **slvOpts.xplosRoots** [{true}|false] : if all solutions are
 %       computed we still can restrict ourselves to solutions that do not
 %       involve explosive roots
 %
-%     - **debug** [true|{false}] : debug or not
+%     - **slvOpts.debug** [true|{false}] : slvOpts.debug or not
 %
 % Returns:
 %    :
@@ -48,43 +44,19 @@ function [X,eigvals,retcode,xtras]=naqme_schur(A,B,C,allsols,check_stab,explos_r
 % quadratic matrix equation" IMA Journal of Numerical Analysis (2000) 20,
 % 499-519
 
-if nargin<7
-    
-    debug=[];
-    
-    if nargin<6
-        
-        explos_roots=[];
-        
-        if nargin<5
-            
-            check_stab=[];
-            
-            if nargin<4
-                
-                allsols=[];
-                
-            end
-            
-        end
-        
-    end
-    
-end
-
 retcode=0;
 
 xtras=struct();
 
 qz_criterium=sqrt(eps);
 
-if isempty(check_stab),check_stab=false; end
+if isempty(slvOpts.checkStab),slvOpts.checkStab=false; end
 
-if isempty(explos_roots),explos_roots=true; end
+if isempty(slvOpts.xplosRoots),slvOpts.xplosRoots=true; end
 
-if isempty(debug),debug=false; end
+if isempty(slvOpts.debug),slvOpts.debug=false; end
 
-if isempty(allsols),allsols=false; end
+if isempty(slvOpts.allSols),slvOpts.allSols=false; end
 
 [mr,m]=size(A);
 
@@ -94,7 +66,7 @@ if mr~=m
     
 end
 
-if debug
+if slvOpts.debug
     % AX^2+BX+C=0
     test=@(x)A*x^2+B*x+C;
     
@@ -134,9 +106,9 @@ klusters(order)=clusters;
 eigvals=eigvals(order);%<-- Now same as eigvals = ordeig(FF,GG);
 
 % order
-if allsols
+if slvOpts.allSols
     
-    if explos_roots
+    if slvOpts.xplosRoots
         
         o=n;
         
@@ -196,6 +168,8 @@ if allsols
     
     xtras.is_stable=xtras.is_stable(1:xtras.itersol);
     
+    retcode=zeros(1,xtras.itersol);
+    
 else
     
     xtras.nalt=1;
@@ -240,7 +214,7 @@ end
             
         else
             
-            if check_stab
+            if slvOpts.checkStab
                 
                 is_stable=max(abs(eig(S)))<=1+qz_criterium;
                 
@@ -252,7 +226,7 @@ end
             
         end
         
-        if debug
+        if slvOpts.debug
             
             debug2(S)
             
@@ -303,7 +277,7 @@ end
 
     function debug1(msg)
         
-        if debug
+        if slvOpts.debug
             
             result1=max(max(abs(Q*F*Z-FF)))<qz_criterium;
             

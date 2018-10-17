@@ -1,4 +1,4 @@
-function [X,eigvals,retcode,xtras]=udc(A,B,C,allsols,msv_only,debug)
+function [X,eigvals,retcode,xtras]=udc(A,B,C,slvOpts) 
 %
 % udc Undetermined coefficients solution algorithm for DSGE models.
 % The procedure can find all possible solutions for a constant-parameter
@@ -17,11 +17,11 @@ function [X,eigvals,retcode,xtras]=udc(A,B,C,allsols,msv_only,debug)
 %
 %     - **C** [n x n] : Coefficient matrix on lagged variables
 %
-%     - **allsols** [true|{false}] : flag for finding all solutions
+%     - **slvOpts.allSols** [true|{false}] : flag for finding all solutions
 %
-%     - **msv_only** [{true}|false] : return only MSV solutions
+%     - **slvOpts.msvOnly** [{true}|false] : return only MSV solutions
 %
-%     - **debug** [true|{false}] : debug or not
+%     - **slvOpts.debug** [true|{false}] : slvOpts.debug or not
 %
 % Returns:
 %    :
@@ -34,35 +34,17 @@ function [X,eigvals,retcode,xtras]=udc(A,B,C,allsols,msv_only,debug)
 %
 % See also :  groebner
 
-if nargin<6
-    
-    debug=[];
-    
-    if nargin<5
-        
-        msv_only=[];
-        
-        if nargin<4
-            
-            allsols=[];
-            
-        end
-        
-    end
-    
-end
-
 retcode=0;
 
 xtras=struct();
 
 qz_criterium=sqrt(eps);
 
-if isempty(msv_only),msv_only=true; end
+if isempty(slvOpts.msvOnly),slvOpts.msvOnly=true; end
 
-if isempty(debug),debug=false; end
+if isempty(slvOpts.debug),slvOpts.debug=false; end
 
-if isempty(allsols),allsols=false; end
+if isempty(slvOpts.allSols),slvOpts.allSols=false; end
 
 [mr,m]=size(A);
 
@@ -116,7 +98,7 @@ if n<m
     
 end
 
-if allsols
+if slvOpts.allSols
     
     Sols=utils.gridfuncs.ordered_combos_without_repetition(1:n,m);
     
@@ -136,7 +118,7 @@ if allsols
         
         [tmp,stbli,is_msvi,is_bad]=one_solution(srange);
         
-        ok=(~msv_only||(msv_only && is_msvi))&&~is_bad;
+        ok=(~slvOpts.msvOnly||(slvOpts.msvOnly && is_msvi))&&~is_bad;
         
         if ok
             
@@ -174,6 +156,8 @@ if allsols
     
     xtras.is_msv=xtras.is_msv(1:xtras.itersol);
     
+    retcode=zeros(1,xtras.itersol);
+    
 else
     
     xtras.nalt=1;
@@ -181,9 +165,7 @@ else
     xtras.itersol=1;
     
     [X,xtras.is_stable,xtras.is_msv,is_bad]=one_solution(1:m);
-    
-    X=real(X);
-    
+        
     if is_bad
         
         retcode=22; % nans in solution
@@ -214,7 +196,7 @@ end
             
         end
         
-        if debug
+        if slvOpts.debug
             
             result=max(max(abs(A*S^2+B*S+C)))<qz_criterium;
             
@@ -232,7 +214,7 @@ end
 
     function debug1(msg)
         
-        if debug
+        if slvOpts.debug
             
             result=max(max(abs(XI*V-DELTA*V*D)))<1e-12;
             
@@ -244,7 +226,7 @@ end
 
     function debug2()
         
-        if debug
+        if slvOpts.debug
             
             V1=V(1:m,:);
             
