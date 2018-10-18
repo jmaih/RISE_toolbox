@@ -39,13 +39,22 @@ m000=set(m00,'solve_perturbation_type','mw');
 %----------------------
 m001=solve(m000);
 
-% Finding all solutions
-%-----------------------
+% Finding all solutions Groebner
+%-------------------------------
+m002=solve(m000,'solver','dsge_groebner','solve_check_stability',false);
+
+% Finding all solutions UDC
+%--------------------------
+refine=false;checkStab=false;allSols=true;msvOnly=true;
+xplosRoots=false;debug=false;
+solver={'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug};
+m003=solve(m000,'solver',solver,'solve_check_stability',false);
+
+% Finding all solutions UDC with refinement
+%------------------------------------------
 refine=true;checkStab=false;allSols=true;msvOnly=true;
 xplosRoots=false;debug=false;
 solver={'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug};
 
-m002=solve(m000,'solver',solver,'solve_check_stability',false);
-print_solution(m001)
-print_solution(m002)
+m004=solve(m000,'solver',solver,'solve_check_stability',false);
 
