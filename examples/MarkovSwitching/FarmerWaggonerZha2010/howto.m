@@ -34,7 +34,9 @@ pp(3).delta_a_2=-.2;
 pp(3).phi_a_1=.2;
 pp(3).phi_a_2=.4;
 pp(3).a_tp_1_2=1-.9;
-pp(3).a_tp_2_1=1-.8;   
+pp(3).a_tp_2_1=1-.8;  
+
+np=numel(pp);
 
 %% solve models with the different parameterizations conditional on starting at the backward solution
 solvers={'mnk','fwz','mn','mfi'};
@@ -43,7 +45,7 @@ number_of_solvers=numel(solvers);
 
 m=struct();
 
-for ii=1:numel(pp)
+for ii=1:np
         
     for solver=1:number_of_solvers
         
@@ -76,4 +78,35 @@ for ii=1:numel(m)
     
 end
 
-% disp(Final_Results)
+%% latest solvers
+clc
+refine=false;checkStab=false;allSols=true;msvOnly=true;
+xplosRoots=false;debug=false;
+solver_noref={'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug};
+solver_ref={'dsge_udc',true,checkStab,allSols,msvOnly,xplosRoots,debug};
+
+M2=cell(1,np);
+
+for ii=1:np
+    
+    m0i=set(m0,'parameters',pp(ii),'solve_check_stability',false);
+        
+    m0i_mw=set(m0i,'solve_perturbation_type','mw');
+    
+    mi=rise.empty(0,1);
+    % Groebner: original model
+    %--------------------------
+    mi(1)=solve(m0i,'solver','dsge_groebner');
+    % Groebner: mw-perturbed model
+    %------------------------------
+    mi(2)=solve(m0i_mw,'solver','dsge_groebner');
+    % dsge_udc: mw-perturbed model & no refinement
+    %----------------------------------------------
+    mi(3)=solve(m0i_mw,'solver',solver_noref);
+    % dsge_udc: mw-perturbed model & with refinement
+    %------------------------------------------------
+    mi(4)=solve(m0i_mw,'solver',solver_ref);
+    
+    M2{ii}=mi;
+end
+
