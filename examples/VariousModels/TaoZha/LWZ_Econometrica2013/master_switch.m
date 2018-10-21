@@ -48,9 +48,9 @@ myNormalization={
 %% estimate the model
 clc
 
-do_estimate=false;
-
-if do_estimate
+%do_estimate=false;
+%
+%if do_estimate
     
     [ms,filtration]=estimate(m,'data',data,...
         'estim_priors',priors,...
@@ -63,13 +63,13 @@ if do_estimate
     
     switch_mode=get(ms,'mode');
     
-    save switch_estimates ms switch_mode filtration
-    
-else
-    
-    load switch_estimates
-    
-end
+%    save switch_estimates ms switch_mode filtration
+%    
+%else
+%    
+%    load switch_estimates
+%    
+%end
 
 %% irfs
 
