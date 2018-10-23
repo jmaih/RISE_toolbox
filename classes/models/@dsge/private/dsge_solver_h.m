@@ -55,9 +55,11 @@ order=obj.options.solve_order;
 
 if obj.options.solve_order>1
     
+    k=max(obj.exogenous.shock_horizon(:));
+    
     % higher orders
     %--------------
-    if isempty(obj.hops)
+    if isempty(obj.hops)||obj.hops.k~=k
         
         ns=sum(obj.endogenous.is_static);
         
@@ -68,8 +70,6 @@ if obj.options.solve_order>1
         nf=sum(obj.endogenous.is_frwrd_looking);
         
         ne0=obj.exogenous.number(1);
-        
-        k=max(obj.exogenous.shock_horizon(:));
         
         h=obj.markov_chains.regimes_number;
         
