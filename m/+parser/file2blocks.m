@@ -8,8 +8,6 @@ quote_active=false;
 
 last_block_id=[];
 
-block_col_names={'name','trigger','listing'};
-
 current_markov_chain_name='';
 
 current_number_of_states=[];
@@ -20,7 +18,7 @@ markov_chains=parser.initialize_markov_chain('const',1,'is_endogenous',false);
 
 all_chain_names={markov_chains.name};
 
-blocks=parser.initialize_blocks();
+[blocks,block_col_names]=parser.initialize_blocks();
 
 % 'endogenous','exogenous','parameters','observables' blocks are just
 % declarations. The corresponding blocks are to hold name and tex_name
@@ -79,7 +77,8 @@ while iline<NumberOfLines
         
         if isempty(last_block_id)
             
-            error('''end'' found before an opening of a block')
+            error(['''end'' found before an opening of a block In ',...
+                 file_name,' at line ',sprintf('%0.0f',line_number)])
         
         end
         
@@ -98,8 +97,39 @@ while iline<NumberOfLines
         
         case 'Legend'
             % do nothing
-        case {'log_vars','endogenous','exogenous','parameters','observables',...
-                'level_variables'}
+        case {'endogenous','exogenous','parameters','observables'}
+            
+            blocks(last_block_id)=construct_list(blocks(last_block_id),rawline,tok);
+        
+        case {'log_vars','level_variables'}
+                
+                ab=regexp(rawline,'\<@all_but\>','match');
+                
+                if ~isempty(ab)
+                    
+                    if blocks(last_block_id).is_all_but
+                        
+                        error(['not possible to have multiple ''@all_but'' ',...
+                            'in ', file_name,' at line ',...
+                            sprintf('%0.0f',line_number)])
+                        
+                    end
+                    
+                    ab=regexp(rawline,[tok,'\s+@all_but\>'],'match');
+                    
+                    if isempty(ab)
+                        
+                        error(['''@ll_but'' should come right after the ',...
+                            'trigger ',tok 'in ', file_name,' at line ',...
+                            sprintf('%0.0f',line_number)])
+                        
+                    end
+                    
+                    blocks(last_block_id).is_all_but=true;
+                    
+                    rawline=regexprep(rawline,'\<@all_but\>','');
+                    
+                end
             
             blocks(last_block_id)=construct_list(blocks(last_block_id),rawline,tok);
         
@@ -159,12 +189,6 @@ end
 [~,tags]=sort({markov_chains.name});
 markov_chains=markov_chains(tags);
 
-levelVarBlock=strcmp('level_variables',{blocks.name});
-levelvar_names={blocks(levelVarBlock).listing.name};
-
-logvarBlock=strcmp('log_vars',{blocks.name});
-logvar_names={blocks(logvarBlock).listing.name};
-
 endogBlock=strcmp('endogenous',{blocks.name});
 endovar_names={blocks(endogBlock).listing.name};
 
@@ -179,42 +203,7 @@ param_names={blocks(paramBlock).listing.name};
 
 modelBlock=strcmp('model',{blocks.name});
 
-if ~isempty(levelvar_names) 
-    
-    if ~isempty(logvar_names)
-        
-        error('log_variables and level_variables cannot be declared in the same file')
-    
-    end
-    
-    locs=locate_variables(levelvar_names,endovar_names,true);
-    
-    store_locs=locs;
-    
-    locs=find(isnan(locs));
-    
-    if ~isempty(locs)
-        
-        bad_vars=levelvar_names(locs);
-        
-        disp(bad_vars(:)')
-        
-        error('The LEVEL variables above have not been found in the list of endogenous variables')
-        
-    end
-    
-    blocks(levelVarBlock).listing=blocks(logvarBlock).listing;
-    
-%     levelvar_names={blocks(logvarBlock).listing.name};
-    
-    % now swap and destroy
-    blocks(logvarBlock).listing=blocks(endogBlock).listing;
-    
-    blocks(logvarBlock).listing(store_locs)=[];
-    
-    logvar_names={blocks(logvarBlock).listing.name};    
-    
-end
+[blocks,logvar_names]=parser.file2blocks_log_variables(blocks);
 
 % check that the potential measurement errors have corresponding observables
 %--------------------------------------------------------------------------
@@ -239,26 +228,6 @@ if ~isempty(meas_errs)
         blocks(paramBlock).listing(loc).is_in_use=true;
         
         blocks(paramBlock).listing(loc).is_measurement_error=true;
-    
-    end
-    
-end
-
-% check that all log_vars are endogenous
-%---------------------------------------
-if ~isempty(logvar_names)
-    
-    locs=locate_variables(logvar_names,endovar_names,true);
-    
-    locs=find(isnan(locs));
-    
-    if ~isempty(locs)
-        
-        logvar_names=logvar_names(locs);
-        
-        disp(logvar_names(:)')
-        
-        error('The LOG variables above have not been found in the list of endogenous variables')
     
     end
     
@@ -393,15 +362,7 @@ blocks(modelBlock).listing=parser.process_keywords(...
         
         rawline_without_description=parser.remove_description(rawline_);
         
-        try
-            
-            end_game= contains(rawline_without_description,';');
-            
-        catch
-            
-            end_game=parser.mycontains(rawline_without_description,';'); 
-            
-        end
+        end_game=parser.mycontains(rawline_without_description,';');
         
         if end_game
             
@@ -498,6 +459,7 @@ blocks(modelBlock).listing=parser.process_keywords(...
                 end
                 
             end
+            
             [tokk,rest_]=strtok(rawline_,DELIMITERS);
             
             if ismember(tokk,blknames) &&  ~quote_active
@@ -507,6 +469,7 @@ blocks(modelBlock).listing=parser.process_keywords(...
                     file_name,' at line ',sprintf('%0.0f',line_number)])
                 
             end
+            
             if ~isempty(tokk)
                 
                 if strcmp(tokk(1),'"')
