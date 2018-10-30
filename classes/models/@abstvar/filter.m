@@ -30,6 +30,32 @@ function varargout=filter(self,param)
 
 if nargin<2,param=[]; end
 
+n=numel(self);
+
+if n>1
+    
+    nout=nargout;
+    
+    outCell=cell(n,nout);
+    
+    for k=1:n
+        
+        [outCell{k,:}]=filter(self(k),param);
+        
+    end
+    
+    varargout=cell(1,nout);
+    
+    for l=1:nout
+        
+        varargout{l}=outCell(:,l).';
+        
+    end
+    
+    return
+    
+end
+
 if isempty(param),param=self.estim_.estim_param; end
 
 nout=nargout;
