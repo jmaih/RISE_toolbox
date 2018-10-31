@@ -265,11 +265,11 @@ end
                 
                 if ~isempty(linewidth)
                     
-                    set([h1,h2(:).'],linewidth{:})
+                    set([h1(:).',h2(:).'],linewidth{:})
                 
                 end
                 
-                 h1h2={h1,h2(:).'};
+                 h1h2={h1(:).',h2(:).'};
                  
             else
                 
