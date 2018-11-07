@@ -509,13 +509,17 @@ probability_of_commitment=[];
 
 if ~isempty(dictionary.planner_system.shadow_model)
     
-    probability_of_commitment=dictionary.planner_system.shadow_model{2};
+    shadow_model=dictionary.planner_system.shadow_model;
+    % amendment for new capturing of equations
+    shadow_model=regexprep(shadow_model,'-\(\<(commitment|discretion)\>\)\+','$1-');
+    
+    probability_of_commitment=shadow_model{2};
     
     probability_of_commitment=strrep(probability_of_commitment,'commitment-','');
     
     probability_of_commitment=strrep(probability_of_commitment,';','');
-    
-    probability_of_commitment=probability_of_commitment(2:end-1);
+        
+    dictionary.planner_system.shadow_model=shadow_model;
     
 end
 

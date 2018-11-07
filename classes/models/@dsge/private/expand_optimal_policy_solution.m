@@ -27,9 +27,15 @@ loose_com_regimes=big_regimes(:,loose_com_col);
 
 big_regimes(:,loose_com_col)=[];
 
+oldT=T;
+
+% oldT potentially has fewer columns and so T needs to be preallocated
+% accordingly
+T.Tz=cell(1,bigh,nsols);
+
 for isol=1:nsols
     
-    T.Tz(:,:,isol)=one_solution(T.Tz(:,:,isol));
+    T.Tz(:,:,isol)=one_solution(oldT.Tz(:,:,isol));
     
 end
 
