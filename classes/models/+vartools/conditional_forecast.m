@@ -13,16 +13,18 @@ np=numel(params);
 for jj=1:np
 
     load_params();
+    
+    Qfunc=transition_function(params(jj).Q.Q);
 
     if jj==1
 
-        yf=do_one(Aj,Rj,y0,Xh,yh,shock_uncertainty);
+        yf=do_one(Aj,Rj,y0,Xh,yh,shock_uncertainty,Qfunc);
 
         yf=yf(:,:,ones(1,np));
 
     else
 
-        yf(:,:,jj)=do_one(Aj,Rj,y0,Xh,yh,shock_uncertainty);
+        yf(:,:,jj)=do_one(Aj,Rj,y0,Xh,yh,shock_uncertainty,Qfunc);
 
     end
 
@@ -37,9 +39,30 @@ end
 
     end
 
+
+    function out=transition_function(Q0)
+        
+        out=@engine;
+        
+        function [Q,retcode]=engine(~)
+            
+            Q=1;
+            
+            retcode=0;
+            
+% %             if is_girf
+% %                 
+% %                 Q=Q0;
+% %                 
+% %             end
+            
+        end
+        
+    end
+
 end
 
-function yf=do_one(A,B,y0,Xh,yh,shock_uncertainty)
+function yf=do_one(A,B,y0,Xh,yh,shock_uncertainty,Qfunc)
 
 nx=size(Xh,1);
 
@@ -73,7 +96,7 @@ end
 
 e=reshape(M1*g1+M2*g2,ns,[]);
 
-yf=vartools.simulate(y0,Xh,A,B,e);
+yf=vartools.simulate(y0,Xh,A,B,e,Qfunc);
 
     function [M1,M2,RM2i,mu]=null_colum_spaces(A,B,y0)
         % separate deterministic terms from the rest
