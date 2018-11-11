@@ -186,72 +186,89 @@ for irow=1:size(modelBlock,1)
 
     eqtn=modelBlock{irow,1};
 
+    sseqtn=modelBlock{irow,end};
+
     endog=dic.endogenous;
+    
+    [eqtn,endog]=do_one(eqtn,endog);
 
-    for icol0=1:size(eqtn,2)
-
-        theLag=eqtn{2,icol0};
-
-        if isempty(theLag)||evalfunc(theLag,newMaxLeadOrLag)
-
-            continue
-
-        end
-
-        endo_names={endog.name};
-
-        vname=eqtn{1,icol0};
-
-        newVname=parser.create_auxiliary_name(vname,update(theLag),true);
-
-        eqtn{1,icol0}=newVname;
-
-        eqtn{2,icol0}=newMaxLeadOrLag;
-
-        pos=strcmp(vname,endo_names);
-
-        is_log_var=endog(pos).is_log_var;
-
-        endog(pos).max_lag=newMaxLeadOrLag;
-
-        oldguy=vname;
-
-        %----------------------------------------
-        for item=1:abs(theLag)-1
-
-            newguy=parser.create_auxiliary_name(vname,theOne*item,true);
-
-            if ~any(strcmp(newguy,endo_names))
-
-                endog=parser.update_variable_lead_lag(endog,newguy,theOne,...
-                    is_log_var,vname);
-
-                newthing=sprintf('%s = %s{%s1};',newguy,oldguy,the_type);
-
-                ilist=ilist+1;
-
-                listing(ilist,:)={nan,newthing,'auxiliary equations'};
-
-                endo_names={endog.name};
-
-                new_auxvars{ilist}=newguy;
-            end
-
-            oldguy=newguy;
-
-        end
-        %----------------------------------------
-
+    if ~isempty(sseqtn)
+        
+        [sseqtn,endog]=do_one(sseqtn,endog);
+        
     end
 
     dic.endogenous=endog;
 
     modelBlock{irow,1}=eqtn;
 
+    modelBlock{irow,end}=sseqtn;
+
 end
 
 listing=listing(1:ilist,:);
 
 new_auxvars=new_auxvars(1:ilist);
+
+    function [eqtn,endog]=do_one(eqtn,endog)
+        
+        for icol0=1:size(eqtn,2)
+            
+            theLag=eqtn{2,icol0};
+            
+            if isempty(theLag)||evalfunc(theLag,newMaxLeadOrLag)
+                
+                continue
+                
+            end
+            
+            endo_names={endog.name};
+            
+            vname=eqtn{1,icol0};
+            
+            newVname=parser.create_auxiliary_name(vname,update(theLag),true);
+            
+            eqtn{1,icol0}=newVname;
+            
+            eqtn{2,icol0}=newMaxLeadOrLag;
+            
+            pos=strcmp(vname,endo_names);
+            
+            is_log_var=endog(pos).is_log_var;
+            
+            endog(pos).max_lag=newMaxLeadOrLag;
+            
+            oldguy=vname;
+            
+            %----------------------------------------
+            for item=1:abs(theLag)-1
+                
+                newguy=parser.create_auxiliary_name(vname,theOne*item,true);
+                
+                if ~any(strcmp(newguy,endo_names))
+                    
+                    endog=parser.update_variable_lead_lag(endog,newguy,theOne,...
+                        is_log_var,vname);
+                    
+                    newthing=sprintf('%s = %s{%s1};',newguy,oldguy,the_type);
+                    
+                    ilist=ilist+1;
+                    
+                    listing(ilist,:)={nan,newthing,'auxiliary equations'};
+                    
+                    endo_names={endog.name};
+                    
+                    new_auxvars{ilist}=newguy;
+                    
+                end
+                
+                oldguy=newguy;
+                
+            end
+            %----------------------------------------
+            
+        end
+        
+    end
 
 end

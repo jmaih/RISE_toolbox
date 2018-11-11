@@ -154,6 +154,10 @@ dic.parameters_list={dic.parameters.name};
             
             ll=regexp(eqtn.eqtn,['\<(?<atom>',yxpd,')(\{)(?<val>',tmpdt,')(\})'],'names');
             
+            llss=regexp(eqtn.sseqtn,['\<(?<atom>',yxpd,')(\{)(?<val>',tmpdt,')(\})'],'names');
+            
+            ll=[ll,llss];
+            
             if isempty(ll)
                 
                 return
