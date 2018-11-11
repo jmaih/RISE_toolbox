@@ -62,9 +62,9 @@ end
         
         dd=data.(vn)(probs.(vname).date_numbers);
         
-        plotyy(probs.(vname),dd,'linewidth',2)
+        [AX,H1,H2]=plotyy(probs.(vname),dd,'linewidth',2);
         
-        %         ylim(myLimits)
+        axis(AX,'tight')
         
         if isempty(tex)
             
