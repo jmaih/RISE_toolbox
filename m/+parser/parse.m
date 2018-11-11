@@ -297,6 +297,7 @@ dictionary.time_varying_probabilities=sort(dictionary.time_varying_probabilities
 
 %% Now we can re-order the original (and augmented) endogenous
 [~,tags]=sort({dictionary.endogenous.name});
+
 dictionary.endogenous=dictionary.endogenous(tags);
 % also renew the endogenous quick list for status determination under
 % shadowization, where the precise locations now matter!!!
@@ -309,7 +310,10 @@ dictionary.endogenous_list={dictionary.endogenous.name};
 % at the same time, construct the incidence and occurrence matrices
 orig_endo_nbr=numel(dictionary.endogenous);
 
-[equation_type,occurrence,fast_sstate_occurrence]=equation_types_and_variables_occurrences();
+endo_names={dictionary.endogenous.name};
+        
+[equation_type,occurrence,fast_sstate_occurrence]=...
+    equation_types_and_variables_occurrences(endo_names);
 
 %% Steady state Model block
 % now with the endogenous, exogenous, parameters in hand, we can process
@@ -401,8 +405,10 @@ shadow_definitions=defs.shadow;
 static=utils.miscellaneous.mergestructures(static,stat);
 
 if dictionary.is_optimal_policy_model
+    
     dictionary.planner_system.static_mult_equations{1}=...
         static.shadow_steady_state_model(ss_eq_nbr+aux_ss_eq_nbr+1:end);
+    
 end
 
 static.shadow_steady_state_auxiliary_eqtns=...
@@ -698,7 +704,9 @@ if dictionary.is_model_with_planner_objective
     
     dictionary.planner_system=rmfield(dictionary.planner_system,...
         {'shadow_model','model'});
+    
 end
+
 %% Add final variables list to the dictionary
 % the unsorted variables are variables sorted according to their order in
 % during the solving of the model.
@@ -785,7 +793,7 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
         
     end
 
-    function [equation_type,occurrence,fast_sstate_occurrence]=equation_types_and_variables_occurrences()
+    function [equation_type,occurrence,fast_sstate_occurrence]=equation_types_and_variables_occurrences(endo_names)
         
         number_of_equations=size(Model_block,1);
         
@@ -868,7 +876,7 @@ dictionary=parser.dictionary_cleanup(dictionary,dynamic,static,old_endo_names,lo
                 
                 if ~isempty(eq_i_{2,ii2})
                     
-                    var_loc=strcmp(eq_i_{1,ii2},{dictionary.endogenous.name});
+                    var_loc=strcmp(eq_i_{1,ii2},endo_names);
                     
                     lag_or_lead=eq_i_{2,ii2}+2;
                     

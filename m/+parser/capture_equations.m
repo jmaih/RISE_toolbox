@@ -88,6 +88,10 @@ dic=set_used_atoms(dic,eqtns);
 
 [eqtns,dic]=replace_definitions(eqtns,dic);
 
+% after the definitions have been inserted, now is the time to set leads
+% and lags, not before!!!
+eqtns=set_leads_lags(eqtns);
+
 block=eqtns2table(eqtns,yxpd,dic);
 
 dic.exogenous_list={dic.exogenous.name};
@@ -105,8 +109,6 @@ dic.parameters_list={dic.parameters.name};
         end
         
         eqtn.finish_line=iline_;
-        
-        eqtn=set_lead_lags(eqtn);
         
         [eqtn,dic,yxpd]=set_type(eqtn,dic,yxpd);
 
@@ -140,69 +142,79 @@ dic.parameters_list={dic.parameters.name};
         
     end
 
-    function eqtn=set_lead_lags(eqtn)
+    function eqtns=set_leads_lags(eqtns)
         
-        ll=regexp(eqtn.eqtn,['\<(?<atom>',yxpd,')(\{)(?<val>',tmpdt,')(\})'],'names');
-        
-        if isempty(ll)
+        for ieqtn=1:numel(eqtns)
             
-            return
+            eqtns(ieqtn)=set_one(eqtns(ieqtn));
             
         end
         
-        vals=strrep({ll.val},'t','');
-        
-        zz=cellfun(@isempty,vals);
-        
-        vals(zz)={'0'}; % arises from expressions such as R(t) or R{t}
-        
-        vals=cellfun(@str2double,vals,'uniformOutput',true);
-        
-        eqtn.max_lag=min(0,min(vals));
-        
-        eqtn.max_lead=max(0,max(vals));
-        
-        for ii=1:numel(ll)
+        function eqtn=set_one(eqtn)
             
-            vn=ll(ii).atom;
+            ll=regexp(eqtn.eqtn,['\<(?<atom>',yxpd,')(\{)(?<val>',tmpdt,')(\})'],'names');
             
-            [t,vloc]=identify_type(vn);
-                                    
-            vv=vals(ii);
-            
-            if vv<0
+            if isempty(ll)
                 
-                dic.(t)(vloc).max_lag=min(dic.(t)(vloc).max_lag,vv);
-                
-            elseif vv>0
-                
-                dic.(t)(vloc).max_lead=max(dic.(t)(vloc).max_lead,vv);
+                return
                 
             end
             
-        end
-        
-        function [t,loc]=identify_type(str)
-                        
-            loc=strcmp(str,y);
+            vals=strrep({ll.val},'t','');
             
-            if any(loc)
+            zz=cellfun(@isempty,vals);
+            
+            vals(zz)={'0'}; % arises from expressions such as R(t) or R{t}
+            
+            vals=cellfun(@str2double,vals,'uniformOutput',true);
+            
+            eqtn.max_lag=min(0,min(vals));
+            
+            eqtn.max_lead=max(0,max(vals));
+            
+            for ii=1:numel(ll)
                 
-                t='endogenous';
+                vn=ll(ii).atom;
                 
-            else
+                [t,vloc]=identify_type(vn);
                 
-                loc=strcmp(str,x);
+                vv=vals(ii);
+                
+                if vv<0
+                    
+                    dic.(t)(vloc).max_lag=min(dic.(t)(vloc).max_lag,vv);
+                    
+                elseif vv>0
+                    
+                    dic.(t)(vloc).max_lead=max(dic.(t)(vloc).max_lead,vv);
+                    
+                end
+                
+            end
+            
+            function [t,loc]=identify_type(str)
+                
+                loc=strcmp(str,y);
                 
                 if any(loc)
                     
-                    t='exogenous';
+                    t='endogenous';
                     
                 else
                     
                     loc=strcmp(str,x);
                     
-                    t='parameters';
+                    if any(loc)
+                        
+                        t='exogenous';
+                        
+                    else
+                        
+                        loc=strcmp(str,x);
+                        
+                        t='parameters';
+                        
+                    end
                     
                 end
                 
