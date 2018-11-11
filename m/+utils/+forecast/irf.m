@@ -24,96 +24,100 @@ irfs=zeros(endo_nbr,nlags+options.nsteps,nshocks,options.nsimul,nsols);
 for isol=1:nsols
     
     one_irf()
-
+    
 end
 
     function one_irf()
-
-iter=0;
-
-retcode=0;
-% orig_shocks=y0.econd.data(:,:,1);
-for ishock=1:exo_nbr
-    
-    if ~which_shocks(ishock)
         
-        continue
+        iter=0;
         
-    end
-    
-    iter=iter+1;
-    
-    shock_id=ishock;
-    
-    for isimul=1:options.nsimul
-        
-        if ~retcode
+        retcode=0;
+        % orig_shocks=y0.econd.data(:,:,1);
+        for ishock=1:exo_nbr
             
-            shocks=utils.forecast.create_shocks(exo_nbr,shock_id,det_vars,...
-                options,user_input);
-            % make sure that impulses that are inherited stay on in the
-            % reference simulation. This may imply over-riding the impulse
-            % itself if it happens to be on the path of an inherited shock
-%             %--------------------------------------------------------------
-%             inherited_shocks=orig_shocks~=0;
-%             shocks(inherited_shocks)=orig_shocks(inherited_shocks);
-            y0.econd.data=shocks(:,:,ones(3,1));
-            
-            if ~retcode
+            if ~which_shocks(ishock)
                 
-                [sim1,states1,retcode]=utils.forecast.multi_step(y0,ss,...
-                    T(:,:,isol),state_vars_location,options);
+                continue
+                
+            end
+            
+            iter=iter+1;
+            
+            shock_id=ishock;
+            
+            for isimul=1:options.nsimul
                 
                 if ~retcode
                     
-                    path1=[y0.y,sim1];
+                    shocks=utils.forecast.create_shocks(exo_nbr,shock_id,det_vars,...
+                        options,user_input);
+                    % make sure that impulses that are inherited stay on in the
+                    % reference simulation. This may imply over-riding the impulse
+                    % itself if it happens to be on the path of an inherited shock
+                    %             %--------------------------------------------------------------
+                    %             inherited_shocks=orig_shocks~=0;
+                    %             shocks(inherited_shocks)=orig_shocks(inherited_shocks);
+                    y0.econd.data=shocks(:,:,ones(3,1));
                     
-                    if options.girf
+                    if ~retcode
                         
-                        if isimul==1
-                            
-                            path2=path1;
-                            
-                        end
-                        
-                        y02=y0;
-                        % set to 0(new_impulse) the location
-                        % corresponding to the impulse
-                        %------------------------------------------
-                        shocks=utils.forecast.replace_impulse(shocks,shock_id,...
-                            options.k_future+1,new_impulse);
-                        % set to 0 the location corresponding to the
-                        % inherited shocks
-                        %------------------------------------------
-%                         shocks(inherited_shocks)=0;
-                        y02.econd.data=shocks(:,:,ones(3,1));
-                        
-                        states2=states1;
-                        
-                        if options.girf_regime_uncertainty
-                            
-                            states2=nan(size(states1));
-                            
-                        end
-                        
-                        y02.rcond.data=states2;
-                        % ensure that the shocks are not updated in the
-                        % alternative scenario
-                        %-----------------------------------------------
-                        [sim2,~,retcode]=utils.forecast.multi_step(y02,ss,...
+                        [sim1,states1,retcode]=utils.forecast.multi_step(y0,ss,...
                             T(:,:,isol),state_vars_location,options);
                         
                         if ~retcode
                             
-                            path2(:,nlags+1:end)=sim2;
+                            path1=[y0.y,sim1];
                             
-                            path1=path1-path2;
+                            if options.girf
+                                
+                                if isimul==1
+                                    
+                                    path2=path1;
+                                    
+                                end
+                                
+                                y02=y0;
+                                % set to 0(new_impulse) the location
+                                % corresponding to the impulse
+                                %------------------------------------------
+                                shocks=utils.forecast.replace_impulse(shocks,shock_id,...
+                                    options.k_future+1,new_impulse);
+                                % set to 0 the location corresponding to the
+                                % inherited shocks
+                                %------------------------------------------
+                                %                         shocks(inherited_shocks)=0;
+                                y02.econd.data=shocks(:,:,ones(3,1));
+                                
+                                states2=states1;
+                                
+                                if options.girf_regime_uncertainty
+                                    
+                                    states2=nan(size(states1));
+                                    
+                                end
+                                
+                                y02.rcond.data=states2;
+                                % ensure that the shocks are not updated in the
+                                % alternative scenario
+                                %-----------------------------------------------
+                                [sim2,~,retcode]=utils.forecast.multi_step(y02,ss,...
+                                    T(:,:,isol),state_vars_location,options);
+                                
+                                if ~retcode
+                                    
+                                    path2(:,nlags+1:end)=sim2;
+                                    
+                                    path1=path1-path2;
+                                    
+                                end
+                                
+                            end
+                            
+                            irfs(:,:,iter,isimul,isol)=path1;
                             
                         end
                         
                     end
-                    
-                    irfs(:,:,iter,isimul,isol)=path1;
                     
                 end
                 
@@ -121,10 +125,6 @@ for ishock=1:exo_nbr
             
         end
         
-    end
-    
-end
-
     end
 
 end
