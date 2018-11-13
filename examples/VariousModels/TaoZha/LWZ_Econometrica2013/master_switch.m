@@ -99,7 +99,7 @@ plotyy(lp,probs.hetero_2,'linewidth',2)
 
 %% (Approximate) Historical decomposition
 
-h=hd(ms);
+h=historical_decomposition(ms);
 
 obslist=get(ms,'obs_list');
 
