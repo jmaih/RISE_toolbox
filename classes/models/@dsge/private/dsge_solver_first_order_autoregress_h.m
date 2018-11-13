@@ -340,7 +340,7 @@ end
                     
                     biggest=get_max(sm.dbf_plus{s0,s1});
                     
-                    flag=biggest<1e-9;
+                    flag=isempty(biggest)||biggest<1e-9;
                     
                 end
                 
