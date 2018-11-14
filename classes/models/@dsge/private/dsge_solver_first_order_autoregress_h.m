@@ -339,7 +339,7 @@ end
                 if s0~=s1 && flag
                     
                     biggest=get_max(sm.dbf_plus{s0,s1});
-                    
+                    % for backward-looking models, biggest will be empty
                     flag=isempty(biggest)||biggest<1e-9;
                     
                 end
