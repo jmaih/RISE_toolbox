@@ -7,7 +7,9 @@ filename=parser.remove_file_extension(filename);
 orient(fig,'landscape')
 
 correction=0;
+
 success=false;
+
 switch computer
     case 'MAC'
         remove_figure_margins()
@@ -32,7 +34,11 @@ switch computer
 end
 
 if ~success
+    
     print(fig,'-dpdf',filename)%,sprintf('-r%d',dpi)
+    
+    saveas(fig, filename, 'fig')
+    
 end
 
 
