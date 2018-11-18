@@ -105,7 +105,7 @@ end
                         
                     end
                     
-                    dt_t(:,rt)=dt_t(:,rt)-dbf_plus*gTx(pos.t.bf);
+                    dt_t(:,rt)=dt_t(:,rt)-dbf_plus*gTx(pos.t.bf,1);
                     
                     df_Lf_Tzp_Lp(:,pos.t.p)=df_plus*Tz_pb(pos.t.f,1:siz.np,rplus);% place in the p position
                     
