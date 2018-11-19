@@ -584,8 +584,24 @@ end
             
             otherwise
                 
-                error(['unknown type ',type])
-        
+                try
+                    
+                    newList=get(obj,sprintf('par_list(%s)',type));
+                    
+                catch
+                    
+                    error(['unknown type ',type])
+                    
+                end
+                
+                locs=locate_variables(newList,pnames,true);
+                
+                for ipar=1:numel(newList)
+                    
+                    Reply.(newList{ipar})=pvals(locs(ipar),:);
+                    
+                end
+                
         end
         
     end
