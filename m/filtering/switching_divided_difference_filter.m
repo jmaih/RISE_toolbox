@@ -185,7 +185,7 @@ for t = 1:T
         
         % forecast of observables
         %-------------------------
-        y_tt1=xbar_tt1{rt}(obsOccur); %<-- y_tt1 = z*xbar_tt1{rt};
+        y_tt1=xbar_tt1{rt}(obsOccur,1); %<-- y_tt1 = z*xbar_tt1{rt};
         
         % forecast error
         %-----------------

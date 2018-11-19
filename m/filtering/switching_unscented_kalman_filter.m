@@ -216,7 +216,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         % forecast of observables: already include information about the
         % trend and or the steady state from initialization
         %------------------------------------------------------------------
-        yf=a{st}(obsOccur); %<-- yf=Z*a{st};
+        yf=a{st}(obsOccur,1); %<-- yf=Z*a{st};
         
         % forecast errors and variance
         %-----------------------------

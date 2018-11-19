@@ -199,7 +199,7 @@ end
 
                 Zt=Z(okt);
 
-                v=y(okt,t)-a(Zt)-dy(okt,tdy(t));
+                v=y(okt,t)-a(Zt,1)-dy(okt,tdy(t));
 
                 F=P(Zt,Zt)+H(okt,okt,sp.H(t));
 
