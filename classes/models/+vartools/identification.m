@@ -68,7 +68,7 @@ Rfunc=@identification_engine;
 
         end
 
-        retcode=1-check;
+        retcode=(1-check)*801;
 
         if debug
 
@@ -229,15 +229,25 @@ Rfunc=@identification_engine;
 
                     end
 
-                    if ~check(irest)
+                    if check(irest)
+                        
+                        if debug
+                            
+                            fprintf(1,'# trials: %d, restr #: %d/%d, S*rotation: %0.4f\n',...
+                                trials,irest,number_of_sign_restrictions,SPHI);
+                            
+                        end
+                        
+                    else
+                        
+                        if debug
+                            
+                            fprintf(1,'restr #: %d/%d at trial #: %d fails\n',...
+                                irest,number_of_sign_restrictions,trials);
+                            
+                        end
 
                         break
-
-                    end
-
-                    if debug
-
-                        %                     disp([trials,irest,SPHI])
 
                     end
 

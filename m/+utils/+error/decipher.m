@@ -216,6 +216,11 @@ switch code
         
         msg='Simulation: invalid simulation (complex solutions OR need pruning?)';
         
+        % ====== VAR ====== %
+    case 801
+        
+        msg='No suitable rotation could be found';
+        
     otherwise
         
         error([mfilename,':: Unknown error code'])

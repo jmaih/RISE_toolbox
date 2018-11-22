@@ -85,6 +85,26 @@ end
             shk=locate_variables(shk,shocknames);
 
         end
+        
+        if any(lag<0)
+            
+            error('lags cannot be negative')
+            
+        else
+            
+            finlags=lag(isfinite(lag));
+            
+            if ~isempty(finlags)
+               
+                if any(finlags-floor(finlags))
+                   
+                    error('lags have to be finite')
+                    
+                end
+                
+            end
+            
+        end
 
         if isnumeric(rhs)
 

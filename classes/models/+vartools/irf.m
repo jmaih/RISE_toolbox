@@ -40,13 +40,15 @@ failed=false(1,kreps);
 %-------------------------------------------
 xdet=zeros(nx,irf_periods);
 
+retcode=zeros(1,kreps);
+
 for jj=1:kreps
     
     Aj=params(jj).B;
     
-    [Rj,retcode]=identification(params(jj));
+    [Rj,retcode(jj)]=identification(params(jj));
     
-    if retcode
+    if retcode(jj)
         
         failed(jj)=true;
         
@@ -73,6 +75,20 @@ for jj=1:kreps
         end
         
     end
+    
+end
+
+rcode=unique(retcode);
+
+if all(rcode)
+    
+    for ii=1:numel(rcode)
+        
+        decipher(rcode(ii))
+        
+    end
+    
+    error('Irfs could not be computed due to the errors above')
     
 end
 
