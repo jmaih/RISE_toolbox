@@ -40,23 +40,7 @@ function Initcond=set_simulation_initial_conditions(obj)
 %-----------------------------------------------------------
 [sep_compl,complementarity]=complementarity_memoizer(obj);
 
-simul_pruned=false;
-
-simul_sig=0;
-
-simul_order=1;
-
 nlags=1;
-
-k_future=0;
-
-do_dsge_var=false;
-
-if isa(obj,'svar')
-    
-    nlags=obj.nlags;
-    
-elseif isa(obj,'dsge')
     
     k_future=max(obj.exogenous.shock_horizon(:));
     
@@ -76,12 +60,6 @@ elseif isa(obj,'dsge')
     
     do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
     
-else
-    
-    error(['model of class ',class(obj),' not ready for simulation'])
-    
-end
-
 % one initial condition despite multiple regimes
 %------------------------------------------------
 [PAI,retcode]=initial_markov_distribution(obj.solution.transition_matrices.Q);
@@ -92,17 +70,13 @@ if retcode
     
 end
 
-is_log_var=[];
-
-if isa(obj,'dsge')
+is_log_var=obj.log_vars;
     
-    is_log_var=obj.log_vars;
-    
-end
-
 % initial conditions for endogenous
 %-----------------------------------
 ss=cell2mat(obj.solution.ss);
+
+ss(is_log_var,:)=log(ss(is_log_var,:));
 
 ss=sum(bsxfun(@times,ss,PAI(:).'),2);
 
@@ -209,20 +183,16 @@ Initcond.simul_shock_uncertainty=obj.options.simul_shock_uncertainty;
 Initcond.simul_frwrd_back_shoot=obj.options.simul_frwrd_back_shoot;
 Initcond.simul_seed=obj.options.simul_seed;
 
-if isa(obj,'dsge')
+Initcond.simul_fbs_horizon=obj.options.simul_fbs_horizon;
+
+if ~isempty(obj.options.solve_occbin)
     
-    Initcond.simul_fbs_horizon=obj.options.simul_fbs_horizon;
+    Initcond.occbin=obj.options.occbin;
     
-    if ~isempty(obj.options.solve_occbin)
-        
-        Initcond.occbin=obj.options.occbin;
-        
-        Initcond.solve_occbin=obj.options.solve_occbin;
-        
-    end
+    Initcond.solve_occbin=obj.options.solve_occbin;
     
 end
-
+    
 Initcond.is_log_var=is_log_var;
 
 Initcond.is_endogenous_exo_vars=ismember(obj.exogenous.name,...
@@ -405,6 +375,7 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
         
     end
 
+
     function set_endogenous_variables()
         
         if has_data
@@ -471,6 +442,7 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
         is_conditional_forecasting=~isempty(datay);
         
     end
+
 
     function datax=build_cond_data(names,silent)
         
