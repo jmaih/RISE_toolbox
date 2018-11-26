@@ -15,10 +15,7 @@ if obj.is_endogenous_switching_model
     
     Vargs={[],cell2mat(obj.solution.ss),M,defs,[],[]};
     
-    % account for log vars
-    is_log_var=obj.log_vars;
-    
-    Qfunc=memoizer(obj.routines.transition_matrix,is_log_var,Vargs{:});
+    Qfunc=memoizer(obj.routines.transition_matrix,Vargs{:});
     
 else
     
@@ -28,19 +25,14 @@ end
 
 end
 
-function Qfunc=memoizer(routine,is_log_var,varargin)
+function Qfunc=memoizer(routine,varargin)
 
 Qfunc=@engine;
 
     function [Q,retcode]=engine(y)
-        % re-exponentiate the logvars before computing the transition probs
+        % exponentiation of logvars already done in load solution, which
+        % calls this function
         %------------------------------------------------------------------
-        if any(is_log_var)
-            
-            y(is_log_var,:)=exp(y(is_log_var,:));
-            
-        end
-        
         [Qall,retcode]=utils.code.evaluate_transition_matrices(routine,y,...
             varargin{:});
         
