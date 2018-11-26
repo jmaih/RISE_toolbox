@@ -41,25 +41,25 @@ function Initcond=set_simulation_initial_conditions(obj)
 [sep_compl,complementarity]=complementarity_memoizer(obj);
 
 nlags=1;
+
+k_future=max(obj.exogenous.shock_horizon(:));
+
+simul_sig=obj.options.simul_sig;
+
+simul_pruned=obj.options.simul_pruned;
+
+if isempty(obj.options.simul_order)
     
-    k_future=max(obj.exogenous.shock_horizon(:));
+    simul_order=obj.options.solve_order;
     
-    simul_sig=obj.options.simul_sig;
+else
     
-    simul_pruned=obj.options.simul_pruned;
+    simul_order=obj.options.simul_order;
     
-    if isempty(obj.options.simul_order)
-        
-        simul_order=obj.options.solve_order;
-        
-    else
-        
-        simul_order=obj.options.simul_order;
-        
-    end
-    
-    do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
-    
+end
+
+do_dsge_var=obj.is_dsge_var_model && obj.options.dsgevar_var_regime;
+
 % one initial condition despite multiple regimes
 %------------------------------------------------
 [PAI,retcode]=initial_markov_distribution(obj.solution.transition_matrices.Q);
@@ -71,7 +71,7 @@ if retcode
 end
 
 is_log_var=obj.log_vars;
-    
+
 % initial conditions for endogenous
 %-----------------------------------
 ss=cell2mat(obj.solution.ss);
@@ -141,7 +141,7 @@ set_shocks_and_states()
 if ~simul_pruned
     
     y0=rmfield(y0,'y_lin');
-
+    
 end
 
 if ~isfield(obj.options,'simul_update_shocks_handle')
@@ -157,7 +157,7 @@ if k_future
     
     for iexo=1:exo_nbr
         
-		maxlength=max(obj.exogenous.shock_horizon(:,iexo));
+        maxlength=max(obj.exogenous.shock_horizon(:,iexo));
         
         shock_structure(iexo,1:maxlength)=true;
         
@@ -192,7 +192,7 @@ if ~isempty(obj.options.solve_occbin)
     Initcond.solve_occbin=obj.options.solve_occbin;
     
 end
-    
+
 Initcond.is_log_var=is_log_var;
 
 Initcond.is_endogenous_exo_vars=ismember(obj.exogenous.name,...
@@ -204,13 +204,13 @@ if is_conditional_forecasting
     % burn-in simulations necessary
     Initcond.burn=0;
     
-	if ~isempty(obj.options.solve_user_defined_shocks)
-	    
-	    error(['Filtration can only be performed using normal ',...
-	        'shocks. You should empty option "solve_user_defined_shocks" ',...
-	        ' before proceeding'])
-	    
-	end
+    if ~isempty(obj.options.solve_user_defined_shocks)
+        
+        error(['Filtration can only be performed using normal ',...
+            'shocks. You should empty option "solve_user_defined_shocks" ',...
+            ' before proceeding'])
+        
+    end
     
 else
     
@@ -221,20 +221,20 @@ else
     which_shocks(obj.exogenous.is_observed)=false;
     
     %--------------------------
-
-	user_input=[];
-
-	if ~isempty(obj.options.solve_user_defined_shocks)
-		% load the structure containing the function doing the draws
-		user_input_draws=obj.options.solve_user_defined_shocks(obj,false,[]);
-	    
-	    user_input=utils.forecast.set_user_shocks_input(obj.exogenous.name,...
-	        user_input_draws);
-	
-	end
+    
+    user_input=[];
+    
+    if ~isempty(obj.options.solve_user_defined_shocks)
+        % load the structure containing the function doing the draws
+        user_input_draws=obj.options.solve_user_defined_shocks(obj,false,[]);
+        
+        user_input=utils.forecast.set_user_shocks_input(obj.exogenous.name,...
+            user_input_draws);
+        
+    end
     
     %--------------------------
-	
+    
     shocks=utils.forecast.create_shocks(exo_nbr,[],~which_shocks,Initcond,user_input);
     
     y0.econd.data=shocks(:,:,ones(1,3));
@@ -268,7 +268,7 @@ if ~isempty(simul_regime)
         if iscell(simul_regime) && ~isa(simul_regime{1},'function_handle')
             
             error(['A switching rule should be declared as a function ',...
-            'handle or a cell whose first element is a function handle'])
+                'handle or a cell whose first element is a function handle'])
             
         end
         
@@ -430,7 +430,7 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
             end
             
         end
-
+        
         conditional_vars=obj.options.forecast_cond_endo_vars;
         
         datay=build_cond_data(conditional_vars);
@@ -503,7 +503,7 @@ Initcond=utils.forecast.initial_conditions_to_order_var(Initcond,new_order,obj.o
                 % - According to this specification, there is no conditionning
                 % on a variable if the user does not give a central tendency.
                 % - We have to revisit the role of nan central tendency vs nan
-                % bounds...   
+                % bounds...
                 
                 % log it if required
                 %--------------------
