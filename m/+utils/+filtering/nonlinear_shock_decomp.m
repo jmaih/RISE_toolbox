@@ -1,8 +1,8 @@
-function contrib=nonlinear_shock_decomp(fsim,smoothed,shocks,nsim,varargin)
+function contrib=nonlinear_shock_decomp(fsim,smoothed,shocks,pos_groups,nsim,varargin)
 
 y0=smoothed(:,1);
 
-nshocks=size(shocks,1);
+nshocks=numel(pos_groups);
 
 contrib=smoothed(:,:,ones(nshocks+1,1));
 
@@ -14,9 +14,11 @@ contrib(:,1,end)=y0;
 
 for ishk=1:nshocks
     
+    whichOnes=pos_groups{ishk};
+    
     shocks_i=shocks(:,2:end);
     
-    shocks_i(ishk,:)=0;
+    shocks_i(whichOnes,:)=0;
     
     Si=utils.filtering.nonlinear_counterfactual(y0,fsim,shocks_i,nsim,varargin{:});
         

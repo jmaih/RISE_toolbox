@@ -1,4 +1,4 @@
-function mycontrib=historical_decomposition(m,sim_engine,nsim,varargin)
+function mycontrib=historical_decomposition(m,sim_engine,nsim,groups,varargin)
 % historical_decomposition Computes historical decomposition of a nonlinear
 % DSGE model 
 %
@@ -9,7 +9,8 @@ function mycontrib=historical_decomposition(m,sim_engine,nsim,varargin)
 %   mycontrib=historical_decomposition(m)
 %   mycontrib=historical_decomposition(m,sim_engine)
 %   mycontrib=historical_decomposition(m,sim_engine,nsim)
-%   mycontrib=historical_decomposition(m,sim_engine,nsim,varargin)
+%   mycontrib=historical_decomposition(m,sim_engine,nsim,groups)
+%   mycontrib=historical_decomposition(m,sim_engine,nsim,groups,varargin)
 %
 % Inputs
 % -------
@@ -25,6 +26,16 @@ function mycontrib=historical_decomposition(m,sim_engine,nsim,varargin)
 % - nsim : [empty|numeric|{100}] Number of simulation to consider for the
 %   integration exercise. nsim is automatically set to 1 if the model is
 %   detected to be solved at order 1 and not contain regime switches.
+%
+% - groups : [structure|cell array |{empty}] grouping of shocks in the decomposition.
+%   By default, the shocks are not grouped. The syntax is of the form
+%   {group1,{v11,v12,...},...,groupn,{vn1,vn2,...}}. The shocks that are
+%   not listed are put in a special group called "others". The "others"
+%   group does not include the effect of initial conditions.
+%   e.g. p=struct();
+%        p.demand={'Ey','Er'};
+%        p.supply={'Ep'};
+%   e.g. p={'demand',{'Ey','Er'},'supply',{'Ep'}};
 %
 % - varargin : additional information needed for the computation of the
 %   smoothed quantities through filtration.
@@ -82,6 +93,10 @@ if isempty(m)
     
 end
 
+if nargin<4
+    
+    groups=[];
+
 if nargin<3
     
     nsim=[];
@@ -94,6 +109,8 @@ if nargin<3
     
 end
 
+end
+
 nobj=numel(m);
 
 if nobj>1
@@ -102,8 +119,8 @@ if nobj>1
     
     for ii=1:nobj
         
-        tmp{ii}=nonlinear_historical_decomposition(m(ii),sim_engine,nsim,...
-            varargin{:});
+        tmp{ii}=historical_decomposition(m(ii),sim_engine,nsim,...
+            groups,varargin{:});
         
         if ii==1
             
@@ -159,6 +176,8 @@ end
 
 nsols=m.nsols;
 
+[groups,pos_groups]=utils.miscellaneous.check_groups(allshks,groups);
+
 if nsols>1
     
     mycontrib=cell(1,nsols);
@@ -186,10 +205,13 @@ end
         [smoothed,shocks,pai0,ordered_endos,start_date]=...
             utils.filtering.smoothed_quantities(m,filtration);
         
-        contrib=utils.filtering.nonlinear_shock_decomp(sim_engine,smoothed,shocks,nsim,...
+        contrib=utils.filtering.nonlinear_shock_decomp(sim_engine,smoothed,...
+            shocks,pos_groups,nsim,...
             ss,T,Qfunc,is_state,pai0);
         
-        cnames=[allshks,'init'];
+        cnames=fieldnames(groups);
+        
+        cnames=[cnames(:).','init'];
         
         tmplt=ts(start_date,permute(contrib(1,:,:),[2,3,1]),cnames);
         
