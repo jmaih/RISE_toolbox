@@ -147,10 +147,6 @@ header = sprintf('Conversion of Dynare file [%s] into RISE file [%s]\n',...
 
 rise_code=raw_code;
 
-% replace E-015 with 10^15
-%-------------------------
-rise_code = regexprep(rise_code,'(\d+)(E-0)','$1/10^');
-
 % replace y ${y}$ (long_name='output') with y "{y}(output)"
 %----------------------------------------------------------
 rise_code=replace_descriptions(rise_code);
@@ -252,10 +248,6 @@ par_list=[par_list,new_par_list];
 % model equations: discard attributes
 %--------------------------------------
 rise_code = regexprep(rise_code,'model\([^)]+\)','model');
-
-% replace weird numbers that RISE does not parse yet
-%---------------------------------------------------
-rise_code = regexprep(rise_code,'(\d+)?(\.\d+)?e(\+|\-)(\d+)','$1$2*10^($3$4)');
 
 rise_code = regexprep(rise_code,'(\+\s*\-|\-\s*\+)','-');
 
