@@ -1,25 +1,5 @@
 function [dic,dyn,stat,defs,shadow_tvp,shadow_complementarity]=shadowize(dic,M,eqtn_type)
 
-y=preparse(dic,'endogenous');
-
-p=preparse(dic,'parameters');
-
-x=preparse(dic,'exogenous');
-
-dic0=dic;
-
-dic0.definitions=struct('name',dic0.definitions);
-
-d=preparse(dic0,'definitions');
-
-incid=dic.lead_lag_incidence.before_solve;
-
-% get rid of useless info
-%-------------------------
-M=[M(:,1),M(:,end)];
-
-M=recollect(M);
-
 % define pings
 %--------------
 dynamic=eqtn_type==1;
@@ -34,6 +14,24 @@ planner=eqtn_type==6;
 
 sstate=eqtn_type==5|eqtn_type==7;
 
+dic0=dic;
+
+dic.definitions=struct('name',dic.definitions);
+
+teipes={'endogenous','parameters','exogenous','definitions'};
+
+[ypxd,pat]=preparse(dic,teipes);
+
+dic=dic0;
+
+incid=dic.lead_lag_incidence.before_solve;
+
+% get rid of useless info
+%-------------------------
+M=[M(:,1),M(:,end)];
+
+M=recollect(M,dynamic);
+
 % Make a copy of the original model
 %-----------------------------------
 M0=M;
@@ -42,11 +40,14 @@ M0=M;
 %---------------------------------------------
 rsp=@(x)parser.add_auxiliary_switching_parameters(x,dic.parameters);
 
-M=sspxd(M,y,x,p,d,rsp);
+% Non-dynamic equations
+M(~dynamic,1)=shadowizer(M(~dynamic,1),ypxd,pat,rsp);
 
-M(dynamic,:)=do_normal(M(dynamic,:),y,incid);
+% fast steady state equations
+M(dynamic,2)=shadowizer(M(dynamic,2),ypxd,pat,rsp);
 
-M(~dynamic,1)=do_others(M(~dynamic,1),y);
+% dynamic equations
+M(dynamic,1)=shadowizer(M(dynamic,1),ypxd,pat,rsp,incid);
 
 % replace ss with y in all but the dynamic model
 %-----------------------------------------------
@@ -152,136 +153,144 @@ do_planner()
 end
 
 
-function y=preparse(dic,teipe)
-
+function [y,pat]=preparse(dic,teipes)
+    
 y=struct();
 
-y.list={dic.(teipe).name};
+nt=numel(teipes);
 
-y.pat=parser.cell2matize(y.list);
+list=cell(1,nt);
 
-n=numel(y.list);
+mytypes=struct('endogenous','y',...
+    'parameters','param',...
+    'exogenous','x',...
+    'definitions','def');
 
-y.pos=cell2struct(num2cell(1:n),y.list,2);
-
-end
-
-
-function M=do_others(M,y)
-
-% steady state redux: encode but do not touch the time subscripts
-%--------------------
-ypat=['\<',y.pat,'\>'];
-
-rep6=@(u)rep1_(u,y,'y'); %#ok<NASGU>
-
-M=regexprep(M,ypat,'${rep6($1)}');
-
-end
-
-
-function M=do_normal(M,y,incid)
-
-no=cellfun(@isempty,M(:,2));
-
-M(no,2)=M(no,1);
-
-% dynamic endogenous
-%--------------------
-ypat=['\<',y.pat,'\>(\{[^\}]+\})?'];
-
-rep5=@rep2_; %#ok<NASGU>
-
-M(:,1)=regexprep(M(:,1),ypat,'${rep5($1,$2)}');
-
-% steady state redux: encode but do not touch the time subscripts
-%----------------------------------------------------------------
-ypat=['\<',y.pat,'\>'];
-
-rep6=@(u)rep1_(u,y,'y'); %#ok<NASGU>
-
-M(:,2)=regexprep(M(:,2),ypat,'${rep6($1)}');
-
-
-    function o=rep2_(v,l)
+for itype=1:nt
+    
+    teipe=teipes{itype};  
+    
+    myteipe=mytypes.(teipe);
+    
+    sublist={dic.(teipe).name};
+    
+    ny=numel(sublist);
+    
+    for ii=1:ny
         
-        if isempty(l)
-            
-            l='0';
-            
-        else
-            
-            l=l(2:end-1);
-            
-        end
+        v=sublist{ii};
         
-        loc=y.pos.(v);
+        y.(v).pos=ii;
         
-        c=abs(str2double(l)-2);
-        
-        index=incid(loc,c);
-        
-        o=sprintf('y(%d)',index);
+        y.(v).type=myteipe;
         
     end
+    
+    list{itype}=sublist(:).';
+    
+end
 
+list=[list{:}];
+
+pat=parser.cell2matize(list);
 
 end
 
 
-function M=sspxd(M,y,x,p,d,rsp)
+function M=shadowizer(M,y,pat,rsp,incid)
 
-% steady states
-%---------------
+if nargin<5
+    
+    incid=[];
+    
+end
+
+is_dynamic=~isempty(incid);
+
+% replace variables, parameters and definitions in one go in order to avoid
+% potential problems with atoms named y,x,param,def...
+%------------
+rep2=@seek_and_destroy;%#ok<NASGU>
+
+ppat=['\<',pat,'\>'];
+
+if is_dynamic
+    
+    ppat=[ppat,'(\{[^\}]+\})?'];
+    
+    M=regexprep(M,ppat,'${rep2($1,$2)}');
+    
+else
+    
+    % steady state redux: encode but do not touch the time subscripts
+    %--------------------
+    M=regexprep(M,ppat,'${rep2($1)}');
+    
+end
+
+% steady states: do this here in order to avoid any problem with a variable
+% being named ss
+%-------------------------------------------------------------------------
 sspat='\<steady_state\((\w+)\)';
 
-rep1=@(u)rep1_(u,y,'ss'); %#ok<NASGU>
+rep1=@re_rep1_; %#ok<NASGU>
 
 M=regexprep(M,sspat,'${rep1($1)}');
-
-% parameters
-%------------
-ppat=['\<',p.pat,'\>'];
-
-rep2=@(u)rep1_(u,p,'param');%#ok<NASGU>
-
-M=regexprep(M,ppat,'${rep2($1)}');
-
-% exogenous
-%-----------
-xpat=['\<',x.pat,'\>'];
-
-rep3=@(u)rep1_(u,x,'x');%#ok<NASGU>
-
-M=regexprep(M,xpat,'${rep3($1)}');
-
-% definitions
-%-----------
-dpat=['\<',d.pat,'\>'];
-
-rep4=@(u)rep1_(u,d,'def'); %#ok<NASGU>
-
-M=regexprep(M,dpat,'${rep4($1)}');
 
 % switching parameters to frwz
 %-----------------------------
 M=rsp(M);
 
+    function o=seek_and_destroy(v,l)
+        
+        if nargin<2
+            
+            l=[];
+            
+        end
+        
+        loc=y.(v).pos;
+        
+        t=y.(v).type;
+        
+        if is_dynamic && strcmp(t,'y')
+            
+            if isempty(l)
+                
+                l='0';
+                
+            else
+                
+                l=l(2:end-1);
+                
+            end
+            
+            c=abs(str2double(l)-2);
+            
+            loc0=loc;
+            
+            loc=incid(loc0,c);
+            
+        end
+        
+        o=sprintf('%s(%d)',t,loc);
+        
+    end
+
+    function o=re_rep1_(v)
+        
+        o=sprintf('ss(%d)',y.pos.(v));
+        
+    end
+
 end
 
 
-function o=rep1_(v,w,id)
-
-o=sprintf('%s(%d)',id,w.pos.(v));
-
-end
-
-
-function M1=recollect(M0)
+function M1=recollect(M0,dynamic)
 
 nr=numel(M0);
 
-M1=cell(size(M0));
+M1=M0;
 
 for ii=1:nr
     
@@ -318,5 +327,15 @@ for ii=1:nr
     M1{ii}=cell2mat(Mi(1,:));
     
 end
+
+% Take care of fast steady state
+%--------------------------------
+Md=M1(dynamic,:);
+
+no=cellfun(@isempty,Md(:,2));
+
+Md(no,2)=Md(no,1);
+
+M1(dynamic,:)=Md;
 
 end
