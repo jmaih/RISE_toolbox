@@ -1,5 +1,6 @@
 function hdl=psrf_plot(obj,pname)
-% Make a plot of the "posterior scale reduction factor," i.e., Gelman-Rubin diagnotics from the chains
+% Make a plot of the "posterior scale reduction factor," i.e., Gelman-Rubin
+% diagnotics from the chains 
 %
 % ::
 %
@@ -9,7 +10,9 @@ function hdl=psrf_plot(obj,pname)
 %
 %    obj (mcmc object): mcmc object
 %
-%    pname (str): parameter name
+%    pname (char): parameter name. N.B: One of the parameter names is
+%    "multivariate_" and it represents the aggregated statistics.
+%
 %
 % Returns:
 %    :
@@ -24,7 +27,7 @@ function hdl=psrf_plot(obj,pname)
 % References:
 %
 %    - :cite:`gelman1992inference`
-%
+% 
 
 % Reference:
 %    - Gelman, Andrew, and Donald B. Rubin. "Inference from iterative
