@@ -6,7 +6,9 @@ function hdl=psrf_plot(obj,pname)
 %    hdl = psrf_plot(obj, pname)
 %
 % Args:
+%
 %    obj (mcmc object): mcmc object
+%
 %    pname (str): parameter name
 %
 % Returns:
@@ -15,10 +17,12 @@ function hdl=psrf_plot(obj,pname)
 %    - **hdl** (handle object): handle to plot object
 %
 % Warning:
+%
 %    - This function requires multiple chains of MCMC samples. See
 %      **nchain** option of samplers. 
 %
 % References:
+%
 %    - :cite:`gelman1992inference`
 %
 
