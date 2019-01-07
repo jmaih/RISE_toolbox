@@ -88,8 +88,14 @@ parfor(iter=1:niter,nworkers)
     
     time_end=time_end+1;
     
-    [R(:,iter),W(:,iter),B(:,iter),V(:,iter),Rp(iter),aWa(iter),aBa(iter),aVa(iter)]=...
+    [R(:,iter),Wi,Bi,Vi,Rp(iter),aWa(iter),aBa(iter),aVa(iter)]=...
         my_recursion(obj.draws(:,1:last+iter-1)); %#ok<PFBNS>
+    
+    W(:,iter)=diag(Wi);
+    
+    B(:,iter)=diag(Bi);
+    
+    V(:,iter)=diag(Vi);
     
 end
 
@@ -106,7 +112,7 @@ p.multivariate_=struct('within_variance',aWa,...
     'time',obj.start+1:time_end);
 
 
-    function [R,W,B,SIG2,Rp,aWa,aBa,aVa]=do_one_recursion(these_draws)
+    function [R,W,B,V,Rp,aWa,aBa,aVa]=do_one_recursion(these_draws)
         
         two_n=size(these_draws,2);
         
@@ -132,15 +138,11 @@ p.multivariate_=struct('within_variance',aWa,...
         
         % 4. calculate the estimated variance of the parameter as a weighted sum of
         % the within-chain and between-chain variances
-        SIG2=(1-1/n)*W+1/n*B;
-        
-        %         Vhat=SIG2+B/(m*n);
-        
-        %         R=(SIG2+B/(m*n))/W
-        
+        V=(n-1)/n*W+(1+1/m)*B/n;
+                
         % 5. Calculate the potential scale reduction factor
         %------------------------------ --------------------
-        R=sqrt(SIG2./W);
+        R=sqrt(diag(V./W));
         
         % 5. Calculate the Multivariate potential scale reduction factor
         %------------------------------ --------------------------------
@@ -154,10 +156,8 @@ p.multivariate_=struct('within_variance',aWa,...
         best=L==L1;
         
         a=eigVect(:,best);
-        
-        V_=(1-1/n)*W+(1+1/m)*1/n*B;
-        
-        aVa=a.'*V_*a;
+                
+        aVa=a.'*V*a;
         
         aWa=a.'*W*a;
         
@@ -165,17 +165,17 @@ p.multivariate_=struct('within_variance',aWa,...
         
         Rp=(n-1)/n+(m+1)/m*L1;
         
-        function [w,s2j]=within_chain_variance()
+        function [w]=within_chain_variance()
             
-            s2j=zeros(obj.nparams,m);
+            w=0;
             
-            for ichain=1:m
+            im=1/m;
+            
+            for j=1:m
                 
-                s2j(:,ichain)=var(newDraws{ichain},1,2);
+                w=w+im*cov(newDraws{j}.');
                 
             end
-            
-            w=mean(s2j,2);
             
         end
         
@@ -183,16 +183,14 @@ p.multivariate_=struct('within_variance',aWa,...
             
             theta_bar=zeros(obj.nparams,m);
             
-            for ichain=1:m
+            for jj=1:m
                 
-                theta_bar(:,ichain)=mean(newDraws{ichain},2);
+                theta_bar(:,jj)=mean(newDraws{jj},2);
                 
             end
             
-            theta_bar_bar=mean(theta_bar,2);
-            
-            b=n/(m-1)*sum(bsxfun(@minus,theta_bar,theta_bar_bar).^2,2);
-            
+            b=n*cov(theta_bar.');
+                                    
         end
         
         function newDraws=load_draws()
