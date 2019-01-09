@@ -290,11 +290,7 @@ for t=1:smpl% <-- t=0; while t<smpl,t=t+1;
         store_updates();
         
     end
-    
-    % Likelihood computation
-    %-----------------------
-    Incr(t)=log(likt);
-    
+        
     % endogenous probabilities (conditional on time t information)
     %-------------------------------------------------------------
     att=a;
