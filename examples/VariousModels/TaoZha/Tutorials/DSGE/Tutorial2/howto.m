@@ -1,6 +1,6 @@
 %% RISE Tutorial by Dr. Tao Zha
 %% housekeeping
-clear all
+clear
 close all
 clc
 %% Instructions
