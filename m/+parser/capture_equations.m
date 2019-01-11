@@ -675,7 +675,17 @@ validator(e.sseqtn)
             
         end
         
-        s1=regexprep(s,patt,'${myreplace($1,$2,$3,$4)}');
+        s1=s;
+        % replace the switching parameters before anything else
+        if strcmp(block_name,'parameter_restrictions')
+            
+            par_restr_patt=['\<',yxpd,'\>\(\w+,\d+\)'];
+            
+            s1=regexprep(s1,par_restr_patt,'${myreplace($1)}');
+            
+        end
+        
+        s1=regexprep(s1,patt,'${myreplace($1,$2,$3,$4)}');
         
         if strcmp(block_name,'planner_objective')
             
@@ -684,7 +694,7 @@ validator(e.sseqtn)
         elseif strcmp(block_name,'steady_state_model')
             % replace all unknown atoms by something computable
             s1=regexprep(s1,'\<([a-zA-Z]+\w*)\>(?!\()','${myreplace($1)}');
-                        
+            
         end
         
         echo_chamber(s1,e)
