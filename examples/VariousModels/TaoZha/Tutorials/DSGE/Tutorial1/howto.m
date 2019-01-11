@@ -89,7 +89,7 @@ for ireg=1:2
         figure('name',['impulse responses to a ',shock,' shock in ',regime])
         for ivar=1:numel(varlist)
             subplot(3,1,ivar)
-            plot(myirfs.(shock).(regime).(varlist{ivar}),'linewidth',2)
+            plot(myirfs.(shock).(varlist{ivar}).(regime),'linewidth',2)
             title(varlist{ivar},'interp','none')
             if ivar==1
                 legend(labels(:,2))
