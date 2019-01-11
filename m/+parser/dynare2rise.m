@@ -704,9 +704,9 @@ fprintf('%s\n',summary);
             
             par_list=par_list-auxil_params;
             
-            xp=['p.\<',parser.cell2matize(auxil_params),'\>'];
+            % xp=['p.\<',parser.cell2matize(auxil_params),'\>'];
             
-            code=regexprep(code,xp,'$1');
+            % code=regexprep(code,xp,'$1');
             
         end
                                
