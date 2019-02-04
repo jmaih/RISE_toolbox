@@ -103,9 +103,26 @@ classdef mcmc < handle
                 
             end
             
-            [obj.draws,obj.i_dropped,obj.start,results_summary]=mcmc.process_draws(draws,drop,start_from,trimming);
+            [obj.draws,obj.i_dropped,obj.start,results_summary]=mcmc.process_draws(draws,[],drop,start_from,trimming);
             
-            obj.best=results_summary.best_of_the_best;
+            obj.best=results_summary(1).best_of_the_best;
+            
+            for ii=2:numel(results_summary)
+                
+                if results_summary(ii).best_of_the_best.f<obj.best.f
+                    
+                    obj.best=results_summary(ii).best_of_the_best;
+                    
+                end
+                
+            end
+            
+            if iscell(obj.draws)
+                % concatenate all draws. I still need to check they all
+                % contain the same number of vectors
+                obj.draws=vertcat(obj.draws{:});
+                
+            end
             
             if ~isempty(ilinres)
                 % untransform the parameters

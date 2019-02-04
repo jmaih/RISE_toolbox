@@ -83,35 +83,7 @@ function [Results]=mh_sampler(logf,lb,ub,options,mu,SIG_mom)
 %   - **retune_cov_every** [integer|{100}]: frequence for the retuning of
 %   the scale parameter
 
-num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
-
-num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
-
-savestruct=struct('every',inf,'location',pwd,'filename','');
-
-defaults={ % arg_names -- defaults -- checks -- error_msg
-    'alpha',[.25,.45],@(x)((numel(x)==2 && x(2)>=x(1))||numel(x)==1) && all(x>0) && all(x<1),'target_range should be a 2-element vector s.t. x(2)>=x(1) and x(i) in (0,1)'
-    'burnin',0,@(x)num_fin_int(x),'burnin should be an integer in [0,inf)'
-    'N',20000,@(x)num_fin_int(x) && x>0 ,'N should be a strictly positive integer'
-    'verbose',100,@(x)num_fin_int(x) && x>0 ,'verbose should be a strictly positive integer'
-    'c',0.25,@(x)all(num_fin(x)) && all(x>0) ,'c (tuning parameter) should be a positive scalar'
-    'c_range',[sqrt(eps),100],@(x)numel(x)==2 && all(num_fin(x) & x>0) && x(2)>=x(1),'c_range variation range for tuning parameter must be a two element vector'
-    'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
-    'penalty',1e+8,@(x)isempty(x)||num_fin(x) && x>0,'penalty (worst value possible in absolute value) must be empty or a finite positive number'
-    'nchain',1,@(x)num_fin_int(x) && x>0,'nchain(# chains) should be a strictly positive integer'
-    'rwm_exp',0.6,@(x)num_fin(x) && x>0.5 && x<1,'rwm_exp (Exponent of random-walk adaptation step size) must be in (1/2,1)'
-    'fixed_scaling',false,@(x)isscalar(x) && islogical(x),'fixed_scaling (fixed tuning parameter) should be a logical scalar'
-    'use_true_moments',false,@(x)isscalar(x) && islogical(x),'use_true_moments should be a logical scalar'
-    'recover',true,@(x)isscalar(x) && islogical(x),'recover should be a logical scalar'
-    'recover_start_at_best',false,@(x)isscalar(x) && islogical(x),'recover_start_at_best should be a logical scalar'
-    'logproppdf',[],@(x)isa(x,'function_handle'),'logproppdf must be a function handle'
-    'MaxTime',inf,@(x)num_fin(x) && x>0,'MaxTime must be a positive scalar'
-    'adapt_covariance',false,@(x)isscalar(x) && islogical(x),'adapt_covariance should be a logical scalar'
-    'save',savestruct,@(x)isstruct(x) && all(ismember(fieldnames(x),fieldnames(savestruct))),'fields for save must be "every", "location" and "filename"'
-%     'delay_rejection',true,@(x)isscalar(x) && islogical(x),'delay_rejection should be a logical scalar'
-%     'retune_cov_every',100,@(x)num_fin_int(x) && x>0, 'retune_cov_every should be a positive integer'
-    };
-
+defaults=load_defaults();
 
 if nargin==0
     
@@ -121,164 +93,119 @@ if nargin==0
     
 end
 
-if nargin<6
-    
-    SIG_mom=[];
-    
-    if nargin<5
-        
-        mu=[];
-        
-        if nargin<4
-            
-            options=struct();
-            
-        end
-        
-    end
-    
-end
+set_defaults(nargin())
 
-% number of parameters
-[d,ncols]=size(lb);
-
-if ncols~=1
-    
-    error('number of columns of lb should be 1')
-    
-end
-
-if ~(all(isfinite(lb)) && all(isfinite(ub)))
-    
-    error('lb and ub shoud be finite')
-    
-end
-
-if d==0
-    
-    error('lb cannot have less than 1 row')
-    
-end
-
-if ~isequal(size(ub),[d,ncols])
-    
-    error('size ub does not match size lb')
-    
-end
-
-options=parse_arguments(defaults,options);
-
-% number of chains
-%------------------
 nchain=options.nchain;
 
-% burn-in
-%--------
-burnin=options.burnin;
+utils.optim.manual_stopping();
 
-% tuning parameter for the covariance of the metropolis
-%-------------------------------------------------------
-log_c=log(options.c)*ones(1,nchain);
+Results=cell(1,nchain);
 
-c_range=options.c_range;
+nworkers=utils.parallel.get_number_of_workers();
 
-savefile=options.save.filename;
-
-savelocation=options.save.location;
-
-saveevery=options.save.every;
-
-is_save=isfinite(saveevery);
-
-isave_batch=0;
-
-N_recovered=0;
-
-burnin_old=0;
+parfor(ichain=1:nchain,nworkers)
     
-if is_save
+    Results{ichain}=do_one_chain(logf,lb,ub,mu,SIG_mom,...
+        options,ichain);
     
-    if isempty(savelocation)
-        
-        savelocation=pwd;
-        
-    end
+end
+
+if nchain==1
     
-    if isempty(savefile)
-        
-        savefile='mhDraws';  
-        
-    end
+    Results=Results{1};
     
-    % try recovering
-    %---------------
-    
-    if options.recover
+end
+
+    function set_defaults(nin)
         
-        [~,~,~,summary]=mcmc.process_draws(savelocation);
-        
-        N_recovered=summary.npop;
-        
-        if summary.nchains
+        if nin<6
             
-            burnin_old=burnin;
-                        
-            if nchain~=summary.nchains
-               
-                error('number of chains does not match')
-                
-            end
+            SIG_mom=[];
             
-            mu=[summary.last.x];
-            
-            if options.recover_start_at_best
+            if nin<5
                 
-                mu=summary.best_of_the_best.x;
-                % mu will be expanded below as needed if necessary
+                mu=[];
                 
-            end
-            
-            if ~isempty(summary.last_cov)
-                
-                SIG_mom=summary.last_cov;
-                
-            end
-            
-            if ~isempty(summary.last_cScale)
-                
-                log_c=log(summary.last_cScale);
+                if nin<4
+                    
+                    options=struct();
+                    
+                end
                 
             end
             
         end
         
-        isave_batch=summary.last_saved_index;
+        % number of parameters
+        [d,ncols]=size(lb);
+        
+        if ncols~=1
+            
+            error('number of columns of lb should be 1')
+            
+        end
+        
+        if ~(all(isfinite(lb)) && all(isfinite(ub)))
+            
+            error('lb and ub shoud be finite')
+            
+        end
+        
+        if d==0
+            
+            error('lb cannot have less than 1 row')
+            
+        end
+        
+        if ~isequal(size(ub),[d,ncols])
+            
+            error('size ub does not match size lb')
+            
+        end
+        
+        options=parse_arguments(defaults,options);
+        
+        if isempty(options.save.location)
+            
+            options.save.location=pwd;
+            
+        end
+        
+        if isempty(options.save.filename)
+            
+            options.save.filename='mhDraws';
+            
+        end
+        
+        if ischar(logf)
+            
+            logf=str2func(logf);
+            
+        end
+        
+        if ~isa(logf,'function_handle')
+            
+            error('logf should be a function handle or a string')
+            
+        end
         
     end
-    
+
 end
 
-if ischar(logf)
-    
-    logf=str2func(logf);
-    
-end
+function Results=do_one_chain(logf,lb,ub,mu,SIG_mom,options,chain)
 
 logproppdf=options.logproppdf;
 
 symmetric=isempty(logproppdf);
 
-if ~isa(logf,'function_handle')
-    
-    error('logf should be a function handle or a string')
-    
-end
+[log_c,isave_batch,idraw,accept_ratio,bestSoFar]=reload_options(chain);
 
 % target acceptance range
 %------------------------
 alpha=options.alpha;
 
-rho=.5*(alpha(1)+alpha(end))*ones(1,nchain);
+rho=.5*(alpha(1)+alpha(end));
 
 % more options
 %-------------
@@ -288,9 +215,19 @@ rwm_exp=options.rwm_exp;
 
 use_true_moments=options.use_true_moments;
 
+adapt_covariance=options.adapt_covariance;
+
+c_range=options.c_range;
+
+saveevery=options.save.every;
+
 % worst value that the function can assume
 %------------------------------------------
 penalty=options.penalty;
+
+% Burn-in
+%--------
+burnin=options.burnin;
 
 % thining
 %--------
@@ -300,64 +237,41 @@ thin=options.thin;
 %----------------------------------
 N=options.N;
 
-if isempty(mu)
-    
-    mu=.5*(ub+lb);
-    
-end
-
-% covariance adaptations
-%-------------------------
-adapt_covariance=options.adapt_covariance;
-
-if isempty(SIG_mom)
-    
-    SIG_mom=utils.mcmc.initial_covariance(lb,ub);
-    
-    adapt_covariance=true;
-    
-end
-
-if size(mu,2)<nchain
-    
-    mu=mu(:,ones(1,nchain));
-    
-end
-
-if size(SIG_mom,3)<nchain
-
-    SIG_mom=SIG_mom(:,:,ones(1,nchain));
-    
-end
-
 mu_algo=mu;
 
 SIG_algo=SIG_mom;
 
 % draw initial distribution:
 %----------------------------
-[stud,funevals,~,~,NumWorkers]=utils.mcmc.initial_draws(logf,lb,ub,nchain,penalty,mu);
+nchain=1;
 
-% vectorize in case of many parallel chains
-stud=stud(:);
+[stud,funevals]=utils.mcmc.initial_draws(logf,lb,ub,nchain,penalty,mu);
 
 % pre-allocate
 %--------------
+is_save=isfinite(options.save.every);
+
 if is_save
     
     saveevery=min(saveevery,N);
     
-    pop=stud(:,ones(1,saveevery));
+    pop=stud(1,ones(1,saveevery));
     
     the_iter=0;
     
+    savelocation=options.save.location;
+    
+    if isempty(savelocation),savelocation=pwd; end
+    
+    savefile=options.save.filename;
+    
+    if isempty(savefile),savefile='mhDraws'; end
+    
 else
     
-    pop=stud(:,ones(1,N));
+    pop=stud(1,ones(1,N));
     
 end
-
-d=numel(lb);
 
 obj=struct('funcCount',sum(funevals),'iterations',0,'start_time',clock,...
     'MaxTime',options.MaxTime,'verbose',options.verbose,'MaxFunEvals',inf,...
@@ -366,11 +280,7 @@ obj=struct('funcCount',sum(funevals),'iterations',0,'start_time',clock,...
 
 sqrt_cSIG=[];
 
-accept_ratio=zeros(1,nchain);
-
 scale_times_sqrt_covariance_updating()
-
-idraw=-burnin+(N_recovered*thin+burnin_old);
 
 total_draws=N*thin+burnin;
 
@@ -380,11 +290,17 @@ q_x0_given_y = 0;
 
 q_y_given_x0 = q_x0_given_y;
 
-utils.optim.manual_stopping;
-
 stopflag=utils.optim.check_convergence(obj);
 
+d=numel(stud.x);
+
 best=stud;
+
+if ~isempty(bestSoFar)
+    
+    best=bestSoFar;
+    
+end
 
 obj.best_fval=[best.f];
 
@@ -411,7 +327,7 @@ while isempty(stopflag)
     % this is a generic formula.
     rho = ([y.f]+q_x0_given_y)-([stud.f]+q_y_given_x0);
     
-    % minimization: change sign: 
+    % minimization: change sign:
     %--------------------------
     rho=-rho;
     
@@ -419,7 +335,7 @@ while isempty(stopflag)
     
     % Accept or reject the proposal
     %-------------------------------
-    U=rand(1,nchain);
+    U=rand;
     
     acc = rho>=U;
     
@@ -443,7 +359,7 @@ while isempty(stopflag)
         
         
         pop(:,the_iter) = stud;
-            
+        
         do_save()
         
     end
@@ -465,7 +381,7 @@ while isempty(stopflag)
     % update the cCs
     %---------------
     scale_times_sqrt_covariance_updating()
-        
+    
     % display progress
     %------------------
     obj.accept_ratio=accept_ratio;
@@ -476,7 +392,7 @@ while isempty(stopflag)
     %------------------
     stopflag=utils.optim.check_convergence(obj);
     
-%     waitbar_updating()
+    %     waitbar_updating()
 end
 
 % delete(wtbh)
@@ -487,7 +403,7 @@ Results=do_results();
         
         if is_save
             % in case we end right at the re-initialization...
-           cutoff=max(1,the_iter);
+            cutoff=max(1,the_iter);
             
         else
             
@@ -506,7 +422,7 @@ Results=do_results();
         
         obj.end_time=clock;
         
-        c=exp(log_c); 
+        c=exp(log_c);
         
         Results=struct('pop',pop(:,1:cutoff),...
             'bestf',bestOfTheBest(1).f,...
@@ -530,12 +446,12 @@ Results=do_results();
             
         end
         
-        results=do_results(); %#ok<NASGU>
+        results=do_results();
         
         isave_batch=isave_batch+1;
         
-        save(sprintf('%s%s%s_%0.0f',savelocation,filesep,savefile,isave_batch),...
-            '-struct','results')
+        save(sprintf('%s%s%s_%0.0f_%0.0f',savelocation,filesep,savefile,...
+            chain,isave_batch),'-struct','results')
         
         the_iter=0;
         
@@ -543,54 +459,41 @@ Results=do_results();
 
     function scale_times_sqrt_covariance_updating()
         
-            nbatch=obj.iterations;
+        nbatch=obj.iterations;
+        
+        sqrt_cSIG=SIG_mom;
+        
+        if obj.iterations>0
             
-            sqrt_cSIG=SIG_mom;
+            log_c=utils.mcmc.update_scaling(log_c,...
+                rho,alpha,fixed_scaling,nbatch,...
+                rwm_exp,[],c_range);
             
-            iterations=obj.iterations;
+        end
+        
+        if use_true_moments
             
-            parfor (ichain=1:nchain,NumWorkers)
-                
-                if iterations>0
-                    
-                     log_c(ichain)=utils.mcmc.update_scaling(log_c(ichain),...
-                        rho(ichain),alpha,fixed_scaling,nbatch,...
-                        rwm_exp,[],c_range);
-                    
-               end
-                
-                if use_true_moments
-                    
-                    sqrt_cSIG(:,:,ichain)=chol(...
-                        exp(log_c(ichain))*SIG_mom(:,:,ichain),...
-                        'lower');
-                    
-                else
-                    
-                    sqrt_cSIG(:,:,ichain)=chol(...
-                        exp(log_c(ichain))*SIG_algo(:,:,ichain),...
-                        'lower');
-                    
-                end
-                
-            end
+            sqrt_cSIG=chol(exp(log_c)*SIG_mom,'lower');
             
+        else
+            
+            sqrt_cSIG=chol(exp(log_c)*SIG_algo,'lower');
+            
+        end
+        
+        
     end
 
     function moments_updating()
         
         if adapt_covariance
             
-            for ichain=1:nchain
-                
-                [mu(:,ichain),SIG_mom(:,:,ichain)]=utils.moments.recursive(...
-                    mu(:,ichain),SIG_mom(:,:,ichain),stud(ichain).x,obj.iterations);
-                
-                [mu_algo(:,ichain),SIG_algo(:,:,ichain)]=utils.mcmc.update_moments(...
-                    mu_algo(:,ichain),SIG_algo(:,:,ichain),stud(ichain).x,obj.iterations,...
-                    options.rwm_exp);
-                
-            end
+            [mu,SIG_mom]=utils.moments.recursive(...
+                mu,SIG_mom,stud.x,obj.iterations);
+            
+            [mu_algo,SIG_algo]=utils.mcmc.update_moments(...
+                mu_algo,SIG_algo,stud.x,obj.iterations,...
+                options.rwm_exp);
             
         end
         
@@ -600,34 +503,146 @@ Results=do_results();
         
         v1=stud;
         
-        parfor (ichain=1:nchain,NumWorkers)
-            
-            xd=stud(ichain).x+sqrt_cSIG(:,:,ichain)*randn(d,1);
-            
-            bad=xd<lb; xd(bad)=lb(bad);
-            
-            bad=xd>ub; xd(bad)=ub(bad);
-            
-            v1(ichain).x=xd;
-            
-            v1(ichain).f=logf(xd); %#ok<PFBNS>
-            
-        end
+        xd=stud.x+sqrt_cSIG*randn(d,1);
         
-        funevals=funevals+nchain;
+        bad=xd<lb; xd(bad)=lb(bad);
         
-        obj.funcCount=sum(funevals);
+        bad=xd>ub; xd(bad)=ub(bad);
+        
+        v1.x=xd;
+        
+        v1.f=logf(xd);
+        
+        funevals=funevals+1;
+        
+        obj.funcCount=funevals;
         
     end
 
-%     function waitbar_updating()
-%         x=obj.iterations/total_draws;
-%         waitbar(x,wtbh,...
-%             {
-%             sprintf('bestf %s',num2str(obj.best_fval))
-%             sprintf('acceptance rate %s',num2str(100*accept_ratio))
-%             }...
-%             )
-%     end
+    function [log_c,isave_batch,idraw,accept_ratio,bestSoFar]=reload_options(chain)
+        
+        accept_ratio=0;
+        
+        % burn-in
+        %--------
+        burnin=options.burnin;
+        
+        % tuning parameter for the covariance of the metropolis
+        %-------------------------------------------------------
+        log_c=log(options.c);
+                        
+        isave_batch=0;
+        
+        N_recovered=0;
+        
+        burnin_old=0;
+        
+        bestSoFar=[];
+        
+        % try recovering
+        %---------------
+        
+        if options.recover
+            
+            if isstruct(mu)
+                
+                mu={mu};
+                
+            end
+            
+            if iscell(mu)
+                
+                [~,~,~,summary]=mcmc.process_draws(mu{chain});
+                
+            else
+                
+                [~,~,~,summary]=mcmc.process_draws(options.save.location,chain);
+                
+            end
+            
+            if ~isempty(summary)
+                
+                N_recovered=summary.npop;
+                
+                burnin_old=burnin;
+                
+                mu=[summary.last.x];
+                
+                bestSoFar=summary.best_of_the_best;
+                
+                if ~isempty(summary.last_cov)
+                    
+                    SIG_mom=summary.last_cov;
+                    
+                end
+                
+                if ~isempty(summary.last_cScale)
+                    
+                    log_c=log(summary.last_cScale);
+                    
+                end
+                
+                isave_batch=summary.last_saved_index;
+                
+                accept_ratio=summary.accept_ratio;
+                
+            end
+            
+        end
+        
+        idraw=-burnin+(N_recovered*options.thin+burnin_old);
+        
+        if isempty(mu)
+            
+            mu=.5*(ub+lb);
+            
+        end
+        
+        mu(~isfinite(mu))=0;
+        
+        % covariance adaptations
+        %-------------------------
+        
+        if isempty(SIG_mom)
+            
+            SIG_mom=utils.mcmc.initial_covariance(lb,ub);
+            
+            options.adapt_covariance=true;
+            
+        end
+        
+    end
+
+end
+
+function d=load_defaults()
+
+num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x) && isreal(x);
+
+num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
+
+savestruct=struct('every',inf,'location',pwd,'filename','');
+
+d={ % arg_names -- defaults -- checks -- error_msg
+    'alpha',[.25,.45],@(x)((numel(x)==2 && x(2)>=x(1))||numel(x)==1) && all(x>0) && all(x<1),'target_range should be a 2-element vector s.t. x(2)>=x(1) and x(i) in (0,1)'
+    'burnin',0,@(x)num_fin_int(x),'burnin should be an integer in [0,inf)'
+    'N',20000,@(x)num_fin_int(x) && x>0 ,'N should be a strictly positive integer'
+    'verbose',100,@(x)num_fin_int(x) && x>0 ,'verbose should be a strictly positive integer'
+    'c',0.25,@(x)all(num_fin(x)) && all(x>0) ,'c (tuning parameter) should be a positive scalar'
+    'c_range',[sqrt(eps),100],@(x)numel(x)==2 && all(num_fin(x) & x>0) && x(2)>=x(1),'c_range variation range for tuning parameter must be a two element vector'
+    'thin',1,@(x)num_fin_int(x) && x>=1,'thin must be >=1'
+    'penalty',1e+8,@(x)isempty(x)||num_fin(x) && x>0,'penalty (worst value possible in absolute value) must be empty or a finite positive number'
+    'nchain',1,@(x)num_fin_int(x) && x>0,'nchain(# chains) should be a strictly positive integer'
+    'rwm_exp',0.6,@(x)num_fin(x) && x>0.5 && x<1,'rwm_exp (Exponent of random-walk adaptation step size) must be in (1/2,1)'
+    'fixed_scaling',false,@(x)isscalar(x) && islogical(x),'fixed_scaling (fixed tuning parameter) should be a logical scalar'
+    'use_true_moments',false,@(x)isscalar(x) && islogical(x),'use_true_moments should be a logical scalar'
+    'recover',true,@(x)isscalar(x) && islogical(x),'recover should be a logical scalar'
+    'logproppdf',[],@(x)isa(x,'function_handle'),'logproppdf must be a function handle'
+    'MaxTime',inf,@(x)num_fin(x) && x>0,'MaxTime must be a positive scalar'
+    'adapt_covariance',false,@(x)isscalar(x) && islogical(x),'adapt_covariance should be a logical scalar'
+    'save',savestruct,@(x)isstruct(x) && all(ismember(fieldnames(x),fieldnames(savestruct))),'fields for save must be "every", "location" and "filename"'
+    %     'delay_rejection',true,@(x)isscalar(x) && islogical(x),'delay_rejection should be a logical scalar'
+    %     'retune_cov_every',100,@(x)num_fin_int(x) && x>0, 'retune_cov_every should be a positive integer'
+    };
 
 end

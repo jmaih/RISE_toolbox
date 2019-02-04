@@ -147,7 +147,17 @@ p.multivariate_=struct('within_variance',aWa,...
         % 5. Calculate the Multivariate potential scale reduction factor
         %------------------------------ --------------------------------
         
-        [eigVect,D]=eig((W\B)/n);
+        iWB=W\B;
+        
+        if any(isnan(iWB(:)))||~all(isfinite(iWB(:)))
+            
+            aVa=nan; aWa=nan; aBa=nan; Rp=nan;
+            
+            return
+            
+        end
+        
+        [eigVect,D]=eig(iWB/n);
         
         L=diag(D);
         
