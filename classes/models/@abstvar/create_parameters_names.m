@@ -26,7 +26,7 @@ end
 % things are not ordered alphabetically as is done in RISE for all classes
 % of models. If we decide to re-order things alphabetically...
 
-is_svar=lags(1)==0;
+is_svar=~isempty(lags) && lags(1)==0;
 
 if is_svar
     % svar

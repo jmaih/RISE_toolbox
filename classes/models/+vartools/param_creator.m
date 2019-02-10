@@ -5,7 +5,11 @@ function p=param_creator(nvars,lags,constant,nd,additional_params,prefix,is_svar
 % constant is the number of constants, which could be more than 1 in the
 % case of a panel!!!
 
-lags=lags(1):lags(end);
+if ~isempty(lags)
+    
+    lags=lags(1):lags(end);
+    
+end
 
 nlags=numel(lags);
 
