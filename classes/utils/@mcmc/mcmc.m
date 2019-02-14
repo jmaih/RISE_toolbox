@@ -118,8 +118,18 @@ classdef mcmc < handle
             end
             
             if iscell(obj.draws)
-                % concatenate all draws. I still need to check they all
-                % contain the same number of vectors
+                % fosh and chops
+                %----------------------
+                siz=cellfun(@(x)numel(x),obj.draws);
+                
+                if ~all(siz==siz(1))
+                    
+                    chop=min(siz);
+                    
+                    obj.draws=cellfun(@(x)x(:,1:chop),obj.draws,'uniformOutput',false);
+                    
+                end
+                
                 obj.draws=vertcat(obj.draws{:});
                 
             end
