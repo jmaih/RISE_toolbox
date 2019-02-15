@@ -76,26 +76,38 @@ niter=obj.npop-last+1;
 % for istart=last:obj.npop
 time_end=obj.start;
 
-my_recursion=@do_one_recursion;
-
 R=zeros(obj.nparams,niter); W=R; B=R; V=R;
 
 Rp=zeros(1,niter); aWa=Rp;  aBa=Rp;  aVa=Rp;
 
-nworkers=utils.parallel.get_number_of_workers();
+% nworkers=utils.parallel.get_number_of_workers();
 
-parfor(iter=1:niter,nworkers)
+mm=num2cell(zeros(1,m));
+
+vv=num2cell(zeros(1,m));
+
+batch=obj.draws(1,1).x(:,ones(1,m));
+            
+for iter=1:niter % parfor(iter=1:niter,nworkers)
+    
+    for ch=1:m
+        
+        batch(:,ch)=obj.draws(ch,iter).x;
+        
+    end
     
     time_end=time_end+1;
     
     [R(:,iter),Wi,Bi,Vi,Rp(iter),aWa(iter),aBa(iter),aVa(iter)]=...
-        my_recursion(obj.draws(:,1:last+iter-1)); %#ok<PFBNS>
+        do_one_recursion();
     
     W(:,iter)=diag(Wi);
     
     B(:,iter)=diag(Bi);
     
     V(:,iter)=diag(Vi);
+    
+    iter
     
 end
 
@@ -112,23 +124,13 @@ p.multivariate_=struct('within_variance',aWa,...
     'time',obj.start+1:time_end);
 
 
-    function [R,W,B,V,Rp,aWa,aBa,aVa]=do_one_recursion(these_draws)
-        
-        two_n=size(these_draws,2);
-        
-        %         if obj.i_dropped>0
-        %             % do not drop more than necessary
-        %             n=two_n;
-        %
-        %         else
-        
-        n=floor(0.5*two_n);
-        
-        %         end
-        
+    function [R,W,B,V,Rp,aWa,aBa,aVa]=do_one_recursion()
+                        
+        n=iter;
+                
         % 2. Discard half of the draws
         %-----------------------------
-        newDraws=load_draws();
+%         newDraws=load_draws();
         
         % 3. Calculate the within-chain and between-chain variances
         %----------------------------------------------------------
@@ -183,7 +185,17 @@ p.multivariate_=struct('within_variance',aWa,...
             
             for j=1:m
                 
-                w=w+im*cov(newDraws{j}.');
+                w=w+im*newcov();
+                
+            end
+            
+            function cc=newcov()
+                
+                d=batch(:,j);
+                
+                [mm{j},vv{j},n]=utils.moments.recursive(mm{j},vv{j},d,iter);
+                
+                cc=vv{j};
                 
             end
             
@@ -192,33 +204,17 @@ p.multivariate_=struct('within_variance',aWa,...
         function b=between_chain_variance()
             
             theta_bar=zeros(obj.nparams,m);
-            
+            % use the results already computed in the within chain
             for jj=1:m
                 
-                theta_bar(:,jj)=mean(newDraws{jj},2);
+                theta_bar(:,jj)=mm{jj};
                 
             end
             
             b=n*cov(theta_bar.');
                                     
         end
-        
-        function newDraws=load_draws()
-            
-            newDraws=these_draws(:,end-n+1:end);
-            
-            tmp=cell(m,1);
-            
-            for ichain=1:m
                 
-                tmp{ichain}=[newDraws(ichain,:).x];
-                
-            end
-            
-            newDraws=tmp;
-            
-        end
-        
     end
 
 end
