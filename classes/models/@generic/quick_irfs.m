@@ -101,11 +101,19 @@ for ishock=1:nshocks
     
     irf_batch=myirfs.(shock_name);
     
-    is_multiple_regimes=isstruct(irf_batch.(var_list{1}));
+    v1=var_list{1};
+    
+    if iscell(v1)
+        
+        v1=v1{1};
+        
+    end
+    
+    is_multiple_regimes=isstruct(irf_batch.(v1));
     
     if is_multiple_regimes
         
-        regime_names=fieldnames(irf_batch.(var_list{1}));
+        regime_names=fieldnames(irf_batch.(v1));
         
         nregs=numel(regime_names);
         
@@ -116,6 +124,12 @@ for ishock=1:nshocks
             for ii=1:numel(var_list)
                 
                 v=var_list{ii};
+                
+                if iscell(v)
+                    
+                    error('multiple variables in one plot not allowed in multiple regimes')
+                    
+                end
                 
                 tmp{ireg}.(v)=irf_batch.(v).(regime_names{ireg});
                 
