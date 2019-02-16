@@ -77,7 +77,7 @@ model
 %end;
 
 %xx_ssmdef_1 ... xx_ssmdef_9 are known words to rise
-steady_state_model;
+steady_state_model
   dA = exp(gam);
   xx_ssmdef_1 = 1/dA;
   m = mst;
