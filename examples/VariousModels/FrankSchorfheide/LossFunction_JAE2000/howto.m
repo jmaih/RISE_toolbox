@@ -1,5 +1,5 @@
 %% housekeeping
-clear classes
+clear
 clc
 close all
 %% "rise" the model

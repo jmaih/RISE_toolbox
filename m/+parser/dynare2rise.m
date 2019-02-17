@@ -781,7 +781,7 @@ fprintf('%s\n',summary);
             
             par_i=est(ip);
             
-            if strcmp(par_i.distr,'uniform')
+            if strcmp(par_i.distr,'uniform') && ~isempty(par_i.lb) && ~isempty(par_i.ub)
                 
                 my_new_line=sprintf('priors.%s={%s, %s, %s',...
                     par_i.name,par_i.start,par_i.lb,par_i.ub);
@@ -1627,8 +1627,9 @@ fprintf('%s\n',summary);
             
             % comment out equation tags and push the equation to the next line
             %-----------------------------------------------------------------
-            
-            tags=regexp(model_eqtns,'[\s*name\s*=','start');
+            % apparently an equation can have multiple tags... and not just one
+            % called name so we need to generalized to any word character.
+            tags=regexp(model_eqtns,'[\s*\w+\s*=','start');
             
             ntags=numel(tags);
             
@@ -2072,12 +2073,8 @@ end
 end
 
 function rise_code=replace_descriptions(rise_code)
-% replace y ${y}$ (long_name='output') with y "{y}(output)"
+% replace y ${y}$ (long_name='output') with y " y # output"
 %----------------------------------------------------------
-patt2='(\w+[^$]*)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
-% patt2='(\w+)\s*,?\s*\$(.*?)\$\s*,?\s*\(\s*long_name\s*=\s*''([^'']+)''\s*\)';
-% replace2='$1 "$3($2)"';
-replace2='$1 "$3 # $2"';
 
 replacer=@replace_engine; %#ok<NASGU>
 
@@ -2089,9 +2086,90 @@ rise_code = regexprep(rise_code,patt,repl);
 
     function out=replace_engine(str1,str2)
         
-        out = regexprep(str2,patt2,replace2);
+        out = process_all(str2);
+%         out = regexprep(str2,patt2,repl2);
         
-        out=[str1,out];
+        out=[str1,' ',out,' ;'];
+        
+    end
+
+end
+
+function outstr=process_all(instr)
+
+patt = ['(?<vname>\w+)[\s,]*',...
+    '(?<tname>\$([^$]*)\$)?[\s,]*',...
+    '(?<descr>\(\s*long_name\s*=\s*''([^'']+)''\s*\))?'];
+
+tmp=regexp(instr,patt,'names');
+
+n=numel(tmp);
+
+outstr=cell(1,n); 
+
+for ii=1:n
+    
+    outstr{ii}=process_one(tmp(ii));
+        
+end
+
+outstr=cell2mat(strcat(outstr,',,'));
+
+outstr=strrep(outstr(1:end-2),',,',', ');
+
+    function o=process_one(in)
+        
+        name=in.vname;
+        
+        tex=in.tname;
+        
+        long=in.descr;
+        
+        o=name;
+        
+        process_tex()
+        
+        process_long()
+        
+        istex=~isempty(tex);
+        
+        islong=~isempty(long);
+        
+        if istex && islong
+            % long before tex
+            o=[o,' "',long,' # ',tex,' "'];
+            
+        elseif istex && ~islong
+            
+            o=[o,' "',tex,' "'];
+            
+        elseif ~istex && islong
+            
+            o=[o,' "',long,' "'];
+            
+        end
+            
+        function process_tex()
+            
+            if ~isempty(tex)
+            
+            tex=regexprep(tex,'\$([^\$]*)\$','$1');
+            
+            end
+            
+        end
+        
+        function process_long()
+            
+            if isempty(long)
+                
+                return
+                
+            end
+            
+            long=regexprep(long,'\(\s*long_name\s*=\s*''([^'']+)''\s*\)','$1');
+            
+        end
         
     end
 

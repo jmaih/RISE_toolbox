@@ -27,6 +27,8 @@ myirfs=irf(m);
 
 %% plot some irfs
 
+% THIS NEEDS FIXING: QUICK IRFS DOES NO LONGER UNDERSTAND MULTIPLE
+% VARIABLES IN ONE PLOT... TO BE FIXED
 close all
 
 myList={
