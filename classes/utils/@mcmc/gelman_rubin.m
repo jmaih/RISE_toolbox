@@ -1,11 +1,9 @@
-function [p,R,W,B,Rp]=gelman_rubin(obj,recursive)
+function [p,R,W,B,Rp]=gelman_rubin(obj,~)
 % gelman_rubin : computes...
 %
 % ::
 %
 %    [p,R,W,B,Rp]=gelman_rubin(obj)
-%
-%    [p,R,W,B,Rp]=gelman_rubin(obj,recursive)
 %
 % Args:
 %
@@ -39,12 +37,6 @@ function [p,R,W,B,Rp]=gelman_rubin(obj,recursive)
 %    - :cite:`gelman1992inference`
 %
 
-if nargin<2
-    
-    recursive=false;
-    
-end
-
 m=obj.nchains;
 
 p=struct();
@@ -61,41 +53,55 @@ if m == 1
     
 end
 
-if recursive
+Origin=1000;
+
+ndraws=obj.npop;
+
+% So that the computational time does not increase too much with the number of simulations.
+StepLength = ceil((ndraws-Origin)/100);
+
+recurGrid = (Origin:StepLength:ndraws);
+
+if isempty(recurGrid)
     
-    last=2;
+    recurGrid = ndraws;
     
-else
+elseif recurGrid(length(recurGrid))<ndraws
     
-    last=obj.npop;
+    recurGrid = [recurGrid ndraws];
     
 end
 
-niter=obj.npop-last+1;
+nsteps=numel(recurGrid);
 
-% for istart=last:obj.npop
-time_end=obj.start;
+R=zeros(obj.nparams,nsteps); W=R; B=R; V=R;
 
-my_recursion=@do_one_recursion;
+Rp=zeros(1,nsteps); aWa=Rp;  aBa=Rp;  aVa=Rp;
 
-R=zeros(obj.nparams,niter); W=R; B=R; V=R;
+% place holders for moments
+%---------------------------
+mm=num2cell(zeros(1,m));
 
-Rp=zeros(1,niter); aWa=Rp;  aBa=Rp;  aVa=Rp;
+vv=mm;
 
-nworkers=utils.parallel.get_number_of_workers();
+prev_n=0;
 
-parfor(iter=1:niter,nworkers)
+for istep=1:nsteps 
+        
+    n=recurGrid(istep);
     
-    time_end=time_end+1;
+    subdraws=obj.draws(:,prev_n+1:n);
     
-    [R(:,iter),Wi,Bi,Vi,Rp(iter),aWa(iter),aBa(iter),aVa(iter)]=...
-        my_recursion(obj.draws(:,1:last+iter-1)); %#ok<PFBNS>
+    [R(:,istep),Wi,Bi,Vi,Rp(istep),aWa(istep),aBa(istep),aVa(istep)]=...
+        do_one_recursion();
     
-    W(:,iter)=diag(Wi);
+    W(:,istep)=diag(Wi);
     
-    B(:,iter)=diag(Bi);
+    B(:,istep)=diag(Bi);
     
-    V(:,iter)=diag(Vi);
+    V(:,istep)=diag(Vi);
+    
+    prev_n=n;
     
 end
 
@@ -103,31 +109,16 @@ for iname=1:obj.nparams
     
     p.(obj.pnames{iname})=struct('within_variance',W(iname,:),...
         'between_variance',B(iname,:),'variance',V(iname,:),'psrf',R(iname,:),...
-        'time',obj.start+1:time_end);
+        'time',1:nsteps);
     
 end
 
 p.multivariate_=struct('within_variance',aWa,...
     'between_variance',aBa,'variance',aVa,'psrf',Rp,...
-    'time',obj.start+1:time_end);
+    'time',1:nsteps);
 
-
-    function [R,W,B,V,Rp,aWa,aBa,aVa]=do_one_recursion(these_draws)
-        
-        two_n=size(these_draws,2);
-        
-        %         if obj.i_dropped>0
-        %             % do not drop more than necessary
-        %             n=two_n;
-        %
-        %         else
-        
-        n=floor(0.5*two_n);
-        
-        %         end
-        
-        % 2. Discard half of the draws
-        %-----------------------------
+    function [R,W,B,V,Rp,aWa,aBa,aVa]=do_one_recursion()
+                        
         newDraws=load_draws();
         
         % 3. Calculate the within-chain and between-chain variances
@@ -183,8 +174,19 @@ p.multivariate_=struct('within_variance',aWa,...
             
             for j=1:m
                 
-                w=w+im*cov(newDraws{j}.');
+                update_moments()
                 
+                w=w+im*vv{j};
+                
+            end
+            
+            
+            function update_moments()
+                
+                iter=prev_n+1;
+                
+                [mm{j},vv{j}]=utils.moments.recursive(mm{j},vv{j},newDraws{j},iter,prev_n);
+
             end
             
         end
@@ -195,7 +197,7 @@ p.multivariate_=struct('within_variance',aWa,...
             
             for jj=1:m
                 
-                theta_bar(:,jj)=mean(newDraws{jj},2);
+                theta_bar(:,jj)=mm{jj};
                 
             end
             
@@ -204,14 +206,12 @@ p.multivariate_=struct('within_variance',aWa,...
         end
         
         function newDraws=load_draws()
-            
-            newDraws=these_draws(:,end-n+1:end);
-            
+                        
             tmp=cell(m,1);
             
             for ichain=1:m
                 
-                tmp{ichain}=[newDraws(ichain,:).x];
+                tmp{ichain}=[subdraws(ichain,:).x];
                 
             end
             
