@@ -58,7 +58,7 @@ Origin=1000;
 ndraws=obj.npop;
 
 % So that the computational time does not increase too much with the number of simulations.
-StepLength = ceil((ndraws-Origin)/100);
+StepLength = 100; % StepLength = ceil((ndraws-Origin)/100);
 
 recurGrid = (Origin:StepLength:ndraws);
 
@@ -186,6 +186,10 @@ p.multivariate_=struct('within_variance',aWa,...
                 iter=prev_n+1;
                 
                 [mm{j},vv{j}]=utils.moments.recursive(mm{j},vv{j},newDraws{j},iter,prev_n);
+                
+                % verify with 
+                % mean([obj.draws(j,1:n).x],2)-mm{j}
+                % cov([obj.draws(j,1:n).x].',1)-vv{j}
 
             end
             
