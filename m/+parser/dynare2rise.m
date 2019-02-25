@@ -1290,7 +1290,7 @@ fprintf('%s\n',summary);
             
         end
         
-        pattern=['\<',typeof,'\s*;\s*(.*?)end\s*;'];
+        pattern=['\<',typeof,'\s*;\s*(.*?)\<end\s*;'];
         
         tokens = regexpi(rise_code,pattern,'tokens');
         
