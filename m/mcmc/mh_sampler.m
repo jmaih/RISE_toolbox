@@ -552,11 +552,11 @@ Results=do_results();
             
             if iscell(mu)
                 
-                [~,~,~,summary]=mcmc.process_draws(mu{chain});
+                [~,~,summary]=mcmc.process_draws(mu{chain});
                 
             else
                 
-                [~,~,~,summary]=mcmc.process_draws(options.save.location,chain);
+                [~,~,summary]=mcmc.process_draws(options.save.location,chain);
                 
             end
             

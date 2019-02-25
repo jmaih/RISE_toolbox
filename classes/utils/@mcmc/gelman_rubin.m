@@ -90,7 +90,7 @@ for istep=1:nsteps
         
     n=recurGrid(istep);
     
-    subdraws=obj.draws(:,prev_n+1:n);
+    subdraws=obj.draws(:,prev_n+1:n,:);
     
     [R(:,istep),Wi,Bi,Vi,Rp(istep),aWa(istep),aBa(istep),aVa(istep)]=...
         do_one_recursion();
@@ -118,9 +118,7 @@ p.multivariate_=struct('within_variance',aWa,...
     'time',1:nsteps);
 
     function [R,W,B,V,Rp,aWa,aBa,aVa]=do_one_recursion()
-                        
-        newDraws=load_draws();
-        
+                                
         % 3. Calculate the within-chain and between-chain variances
         %----------------------------------------------------------
         W=within_chain_variance();
@@ -185,7 +183,8 @@ p.multivariate_=struct('within_variance',aWa,...
                 
                 iter=prev_n+1;
                 
-                [mm{j},vv{j}]=utils.moments.recursive(mm{j},vv{j},newDraws{j},iter,prev_n);
+                [mm{j},vv{j}]=utils.moments.recursive(mm{j},vv{j},...
+                    subdraws(:,:,j),iter,prev_n);
                 
                 % verify with 
                 % mean([obj.draws(j,1:n).x],2)-mm{j}
@@ -208,21 +207,7 @@ p.multivariate_=struct('within_variance',aWa,...
             b=n*cov(theta_bar.');
                                     
         end
-        
-        function newDraws=load_draws()
-                        
-            tmp=cell(m,1);
-            
-            for ichain=1:m
                 
-                tmp{ichain}=[subdraws(ichain,:).x];
-                
-            end
-            
-            newDraws=tmp;
-            
-        end
-        
     end
 
 end

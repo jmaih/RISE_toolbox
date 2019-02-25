@@ -1,24 +1,26 @@
-function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,...
-    npoints,varargin)
+function [pdata,hdl]=plot_posteriors(obj,simfold,parlist,...
+    npoints,subset,varargin)
 % Computes posterior densities for estimated parameters
 %
 % ::
 %
 %   pdata=plot_posteriors(obj)
 %
-%   pdata=plot_posteriors(obj,simulation_folder)
+%   pdata=plot_posteriors(obj,simfold)
 %
-%   pdata=plot_posteriors(obj,simulation_folder,parlist)
+%   pdata=plot_posteriors(obj,simfold,parlist)
 %
-%   pdata=plot_posteriors(obj,simulation_folder,parlist,npoints)
+%   pdata=plot_posteriors(obj,simfold,parlist,npoints)
 %
-%   pdata=plot_posteriors(obj,simulation_folder,parlist,npoints,varargin)
+%   pdata=plot_posteriors(obj,simfold,parlist,npoints,subset)
+%
+%   pdata=plot_posteriors(obj,simfold,parlist,npoints,subset,varargin)
 %
 % Args:
 %
 %    obj (rise | dsge | rfvar | svar): model object
 %
-%    simulation_folder (empty | char | struct): location of the simulations. If
+%    simfold (empty | char | struct): location of the simulations. If
 %      empty, it is assumed that the simulations are saved to disc and are
 %      located in the address found in obj.folders_paths.simulations. If it is a
 %      "char", this corresponds to the location of the simulation. Otherwise, if
@@ -29,6 +31,18 @@ function [pdata,hdl]=plot_posteriors(obj,simulation_folder,parlist,...
 %
 %    parlist (empty | char | cellstr): list of the parameters for which one
 %      wants to plot the posteriors
+%
+%    subset (cell array|{empty}): When not empty, subset is a
+%     1 x 2 cell array in which the first cell contains a vector selecting
+%     the columns to retain in each chain and the second column contains
+%     the chains retained. Any or both of those cell array containts can be
+%     empty. Whenever an entry is empty, all the information available is
+%     selected. E.g. subsetting with dropping and trimming
+%     mysubs={a:b:c,[1,3,5]}. In this example, the first
+%     element selected is the one in position "a" and
+%     thereafter every "b" element is selected until we reach
+%     element in position "c". At the same time, we select
+%     markov chains 1,3 and 5.
 %
 % Returns:
 %    :
@@ -57,6 +71,10 @@ if isempty(obj)
 
 end
 
+if nargin<5
+
+    subset=[];
+
 if nargin<4
 
     npoints=[];
@@ -67,11 +85,13 @@ if nargin<4
 
         if nargin<2
 
-            simulation_folder=[];
+            simfold=[];
 
         end
 
     end
+
+end
 
 end
 
@@ -97,8 +117,8 @@ if nobj>1
 
         if nout
 
-            [argouts{1:nout}]=plot_posteriors(obj(iobj),simulation_folder,...
-                parlist,npoints,varargin{:});
+            [argouts{1:nout}]=plot_posteriors(obj(iobj),simfold,parlist,...
+                npoints,subset,varargin{:});
 
             tmpdata{iobj}=argouts{1};
 
@@ -110,8 +130,7 @@ if nobj>1
 
         else
 
-            plot_posteriors(obj(iobj),simulation_folder,parlist,npoints,...
-                varargin{:});
+            plot_posteriors(obj(iobj),simfold,parlist,npoints,subset,varargin{:});
 
         end
 
@@ -133,32 +152,27 @@ if nobj>1
 
 end
 
+% subset=[];
+% 
+% if iscell(simfold)
+%     
+%     subset=simfold{2};
+%     
+%     simfold=simfold{1};
+%     
+% end
 
-if isempty(simulation_folder)
+if isempty(simfold)
 
-    simulation_folder=obj.folders_paths.simulations;
-
-end
-
-is_saved_to_disk=ischar(simulation_folder);
-
-number_of_matrices=1;
-
-if is_saved_to_disk
-
-    W = what(simulation_folder);
-
-    W=W.mat;
-
-    W=strrep(W,'.mat','');
-
-    number_of_matrices=numel(W);
-
-elseif ~isstruct(simulation_folder)
-
-    error('wrong specification of simulation_folder')
+    simfold=obj.folders_paths.simulations;
 
 end
+
+[d,~,~,~,~,~,~,best]=mcmc.reload_draws(simfold,subset);
+
+% suppress the chain dimension
+
+d=d(:,:);
 
 if isempty(npoints),npoints=20^2; end
 
@@ -191,14 +205,26 @@ N=numel(prior_dens.(vnames{1}).x_prior);
 is_posterior_max=isfield(obj.estimation.posterior_maximization,'mode') && ...
     ~isempty(obj.estimation.posterior_maximization.mode);
 
-post_mode_sim=[];
-
-f_post_mode_sim=-inf;
-
 if is_posterior_max
 
     post_mode=obj.estimation.posterior_maximization.mode(vlocs);
 
+end
+
+post_mode_sim=best{1}.x(vlocs);
+
+ff=best{1}.f;
+
+for ib=2:numel(best)
+    
+    if best{ib}.f<ff
+        
+        ff=best{ib}.f;
+        
+        post_mode_sim=best{ib}.x(vlocs);
+    
+    end
+    
 end
 
 % create the data
@@ -210,43 +236,7 @@ pdata_=struct();
 % potential candidate for parallelization
 for ipar=1:npar
 
-    all_vals=[];
-
-    for m=1:number_of_matrices
-
-        if is_saved_to_disk
-
-            tmp=load([simulation_folder,filesep,W{m}]);
-            
-            tmp=tmp.pop;
-
-        else
-
-            tmp=simulation_folder;
-
-        end
-
-        if ipar==1
-            % try and locate the sampling posterior mode
-            fm=-[tmp.f];
-
-            best=find(fm==max(fm),1,'first');
-
-            if fm(best)>f_post_mode_sim
-
-                post_mode_sim=tmp(best).x(vlocs);
-
-                f_post_mode_sim=fm(best);
-
-            end
-
-        end
-
-        Params=[tmp.x];
-
-        all_vals=[all_vals;Params(vlocs(ipar),:).']; %#ok<AGROW>
-
-    end
+    all_vals=d(vlocs(ipar),:);
 
     tex_name=prior_dens.(vnames{ipar}).tex_name;
 
