@@ -45,7 +45,7 @@ end
 
 x=load_draws(obj,pname,chain_id);
 
-t=(1:obj.npop)+obj.start-1;
+t=(1:obj.npop); % t=(1:obj.npop)+obj.start-1;
 
 plot(t.',x.')
 

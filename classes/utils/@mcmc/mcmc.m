@@ -21,7 +21,10 @@ classdef mcmc < handle
             %
             % ::
             %
-            %    mcmc_helper = mcmc(draws, pnames, drop, start_from, trimming)
+            %    mcmc_helper = mcmc(draws)
+            %    mcmc_helper = mcmc(draws, pnames)
+            %    mcmc_helper = mcmc(draws, pnames, subset)
+            %    mcmc_helper = mcmc(draws, pnames, subset, ilinres)
             %
             % Args:
             %

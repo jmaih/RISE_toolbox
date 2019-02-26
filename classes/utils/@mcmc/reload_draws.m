@@ -120,9 +120,17 @@ best=best(subset{2});
         
         a=strrep(a.mat,'.mat','');
         
+        if ~isempty(a)
+            
+            a=regexp(a,'\<mhDraws_\d+_\d+','match');
+            
+            a=[a{:}];
+            
+        end
+        
         if isempty(a)
             
-            d={}; c={}; SIG={}; accept_ratio={}; dlast={}; best={}; 
+            d={}; c={}; SIG={}; accept_ratio={}; dlast={}; best={};  ff={}; 
             
             return
             
