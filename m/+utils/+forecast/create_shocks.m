@@ -21,12 +21,6 @@ shocks=zeros(nx,shocks_span);
 
 if random
     
-    if ~isempty(options.simul_seed)
-        
-        rng(options.simul_seed)
-        
-    end
-    
     set_all_shocks()
     
     shocks=utils.forecast.nullify_deterministic_shocks(shocks,det_vars);

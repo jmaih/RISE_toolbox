@@ -181,7 +181,6 @@ Initcond.simul_sig=simul_sig;
 Initcond.simul_order=simul_order;
 Initcond.simul_shock_uncertainty=obj.options.simul_shock_uncertainty;
 Initcond.simul_frwrd_back_shoot=obj.options.simul_frwrd_back_shoot;
-Initcond.simul_seed=obj.options.simul_seed;
 
 Initcond.simul_fbs_horizon=obj.options.simul_fbs_horizon;
 

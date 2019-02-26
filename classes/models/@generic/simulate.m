@@ -62,8 +62,6 @@ function [db,states,retcode] = simulate(obj,varargin)
 %      nonstationary, a growth component appears in the solution. This option
 %      enables or disables that component.
 %
-%      - **simul_seed ** [{}|numeric]: seed used in simulations
-%
 % Returns: 
 %    :
 %
@@ -556,9 +554,6 @@ d={
     
     'simul_hpfilter_lambda',[],@(x)num_fin(x) && x>0,...
     ' simul_hpfilter_lambda must be >0'
-    
-    'simul_seed',[],@(x)num_fin(x) && isreal(x),...
-    ' simul_seed must be a numeric real scalar'
     
     };
 
