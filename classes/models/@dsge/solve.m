@@ -184,29 +184,21 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %      variables whose values are given in the second column, the third column
 %      includes the parameters names that are endogenized.
 %
-%    solve_user_defined_shocks (char | function_handle | cell array | {''}):
+%    solve_user_defined_shocks (struct|{empty}):
 %      When empty, an independent normal distribution is assumed for each
-%      shock. Hence the shocks are not skewed! If a procedure is provided,
-%      it should compute the skewed higher-order moments of the shocks of
-%      the model. The function should accept 0, 2 or more inputs. If the
-%      input is a cell array, then the first entry is a char or a function
-%      handle and the remaining entries are the extra arguments above the
-%      first two required.  
-%       - when the function is called with no inputs, the function should
-%         return the list of shocks in the order the user will compute the
-%         moments. The list need not include all shocks appearing in the
-%         model. The shocks for which the user does not provide moments
-%         will automatically default to normal. 
-%       - when the function is called with 2 inputs, the first input is the
-%         **parameterized model** object. The user can then use, say the
-%         parameters of the model -- by issuing p=get(m,'parameters'); --
-%         if they are needed to compute the higher-order moments. The
-%         second input is the **order** for which higher-order moments are
-%         required. The function should then return a cell array of moments
-%         or a matrix 
-%       - if the output is a matrix, each row corresponds to a specific
-%         shock and each column corresponds to the moment of and order
-%         corresponding to the rank of the column
+%      shock. Hence the shocks are not skewed! When not empty, the argument
+%      is a structure whose fields are the names of the shocks for which
+%      the user wants to change the distribution. Each field/shock is 1 x 2
+%      cell array such that:
+%       - The first entry is a function handle that admits two inputs: the 
+%         model object (in case it is needed) and the maximum order for the
+%         moments of the shocks. The function should then return in a row
+%         vector the moments from 1 to order. e.g. f(obj,5)=[0,1,0,3,0,15]
+%         for a standard normal distribution. 
+%       - the second entry is also a function handle with one input
+%         argument. This function should return in a row vector random
+%         variates for the underlying distribution. e.g. we could have
+%         f(3)=[-0.6685    1.0613   -0.5339] for a normal distribution.
 %
 %    solve_perturbation_type (char | cell array | {'maih'}): pertubation
 %      type which should be one of the following
@@ -780,9 +772,9 @@ algotype=@(x)functype(x)||iscell(x);
         'solve_derivatives_only',false,@(x)islogical(x),...
         'solve_derivatives_only must be true or false'
         
-        'solve_user_defined_shocks(r)','',@(x)algotype(x),...
-        ['solve_user_defined_shocks must be empty or char, ',...
-        'a function handle or a cell array']
+        'solve_user_defined_shocks(r)','',@(x)isempty(x)||isstruct(x),...
+        ['solve_user_defined_shocks must be empty or ',...
+        'a structure whose fields are the names of the shocks. See help']
         
         'solve_perturbation_type(r)','maih',@(x)perturbation_type(x),...
         ['solve_perturbation_type must be "m","maih","mw","maih_waggoner","frwz"',...

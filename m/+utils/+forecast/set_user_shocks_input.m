@@ -27,7 +27,7 @@ for ii=1:n
     
     shk=user_list{ii};
     
-    user_input(ii,:)={locs(ii),simul_user_shocks_draws.(shk)};
+    user_input(ii,:)={locs(ii),simul_user_shocks_draws.(shk){2}};
     
 end
 

@@ -168,7 +168,7 @@ T=growth_component_solver(T,ss,g,order,pos,retcode);
             
         end
         
-        engine=homf(obj,true,order);
+        xlist_user=fieldnames(homf);
         
         template_moments=cell2mat(hops.set_up_normal_moments(order,1));
         
@@ -177,8 +177,6 @@ T=growth_component_solver(T,ss,g,order,pos,retcode);
         nshocks=sum(obj.exogenous.number);
         
         template_moments=template_moments(ones(1,nshocks),:);
-        
-        xlist_user=fieldnames(engine);
         
         xlist=obj.exogenous.name;
         
@@ -190,7 +188,11 @@ T=growth_component_solver(T,ss,g,order,pos,retcode);
         %---------------------------------
         for ivar=1:numel(xlist_user)
             
-            M(locs(ivar),:)=engine.(xlist_user{ivar})(:).';
+            shk=xlist_user{ivar};
+            
+            engine=homf.(shk){1};
+            
+            M(locs(ivar),:)=engine(obj,order);
             
         end
         

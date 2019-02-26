@@ -285,18 +285,9 @@ myirfs=format_irf_output(myirfs);
                 end
                 
                 %--------------------------
-
-				user_input=[];
-
-				if ~isempty(obj.options.solve_user_defined_shocks)
-					% load the structure containing the function doing the draws
-					user_input_draws=obj.options.solve_user_defined_shocks(obj,false,[]);
-	                
-	                user_input=utils.forecast.set_user_shocks_input(obj.exogenous.name,...
-	                    user_input_draws);
-	
-				end
-                
+                % load the structure containing the function doing the draws
+                user_input=utils.forecast.set_user_shocks_input(obj.exogenous.name,...
+                    obj.options.solve_user_defined_shocks);
                 %--------------------------
                 
                 [xxxx,retcode]=utils.forecast.irf(y0,Initcond.T,...
