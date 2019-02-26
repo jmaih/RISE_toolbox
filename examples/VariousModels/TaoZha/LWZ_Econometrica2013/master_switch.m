@@ -103,6 +103,8 @@ h=historical_decomposition(ms);
 
 obslist=get(ms,'obs_list');
 
+dropped={'init'};
+
 figure('name','Observables')
 
 for ii=1:numel(obslist)
@@ -111,13 +113,13 @@ for ii=1:numel(obslist)
     
     subplot(3,2,ii)
     
-    plot_decomp(h.(v))
+    plot_decomp(drop(h.(v),dropped))
     
     title(v)
     
     if ii==1
         
-        l=legend(h.(v).varnames);
+        l=legend(h.(v).varnames-dropped);
         
     end
     
@@ -143,13 +145,21 @@ if do_sampling
     
     sampling_options=struct('MaxTime',3600*24*7,...
         'N',10000,...
-        'nchain',4,...
+        'nchain',2,...
         'thin',5,...
         'adapt_covariance',true);
     
     results=mh_sampler(objective,lb,ub,sampling_options,mu);
     
-    save switch_sampling results
+    save switch_sampling results objective
+    
+end
+
+do_mdd=true;
+
+if do_mdd
+    
+    load switch_sampling
     
     % Marginal data density
     algorithms={'mhm','swz','mueller','bridge','is','ris','cj','laplace','laplace_mcmc'};
@@ -159,21 +169,22 @@ if do_sampling
     log_mdd(:,1)=algorithms(:);
     tictoc=nan(nalgos,1);
     
+    pop=results{1}.pop;
+    for jj=2:numel(results)
+        pop=[pop;results{jj}.pop];
+    end
+    
     parfor ii=1:nalgos
         opt=options;
         opt.algorithm=algorithms{ii};
         tic
-        log_mdd{ii,2} = mcmc_mdd(results.pop,lb,ub,opt);
+        log_mdd{ii,2} = mcmc_mdd(pop,lb,ub,opt);
         tictoc(ii)=toc;
     end
     log_mdd(:,3)=num2cell(tictoc(:));
     
     save switch_sampling log_mdd -append
-    
-else
-    
-    load switch_sampling
-    
+        
 end
 
 % the benchmark DSGE model (2344.0), the DSGE with two volatility regimes
@@ -182,9 +193,7 @@ end
 
 pnames={ms.estimation.priors.name};
 
-drop=0;
-
-obj=mcmc(results.pop,pnames,drop)%,start_from,trimming
+obj=mcmc(results,pnames)%,start_from,trimming
 
 %% Trace plots
 
@@ -208,7 +217,7 @@ chain_id=[];
 
 plotfunc=@(name)meanplot(obj,name,chain_id);
 
-hfig=utils.plot.multiple(plotfunc,pnames,'Mean plots',3,3)
+hfig=utils.plot.multiple(plotfunc,pnames,'Mean plots',3,3);
 
 %% Autocorrelation plots
 
