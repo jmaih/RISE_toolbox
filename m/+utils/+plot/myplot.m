@@ -217,9 +217,15 @@ end
             
             uall=d{:};
             
-            upos=zeros(size(uall));
+            [nobs,nexpl]=size(uall);
             
-            uneg=zeros(size(uall));
+            new_colormap=distinguishable_colors(nexpl,'w',@(x)colorspace('RGB->Lab',x));
+            
+            new_colormap(end,:) = [0.7 0.7 0.7];
+            
+            upos=zeros(nobs,nexpl);
+            
+            uneg=zeros(nobs,nexpl);
             
             ipos=uall>=0;
             
@@ -237,9 +243,9 @@ end
             
             hold on
             
-            for ii=1:numel(b1)
+            for ii=1:nexpl
                 
-                set(b2(ii),'FaceColor',b1(ii).FaceColor)
+                set([b2(ii),b1(ii)],'FaceColor',new_colormap(ii,:))
                 
             end
             
