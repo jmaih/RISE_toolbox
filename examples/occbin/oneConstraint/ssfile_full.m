@@ -8,7 +8,7 @@ if nargin==1
         'W','DLOG_Y','RR','R'};
     
     newp='kappa';
-
+    
 else
     
     newp=struct();
@@ -19,8 +19,8 @@ else
     
     R_TAYLOR = p.pi_ss*exp(p.gz)/p.beta;
     
-        R = R_TAYLOR;
-        
+    R = R_TAYLOR;
+    
     A = 1;
     
     Y = 1;
@@ -40,7 +40,7 @@ else
     W = MC;
     
     kappa = LAMBDA*W/(N^p.eta);
-        
+    
     DLOG_Y = log(MUZ);
     
     RR = R/PI;
