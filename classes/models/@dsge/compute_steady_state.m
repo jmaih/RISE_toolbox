@@ -199,6 +199,7 @@ exo_nbr=sum(obj.exogenous.number);
 
 x=zeros(exo_nbr,1);
 
+
 if isempty(obj.old_solution)
     
     g0=zeros(endo_nbr,1);
@@ -740,6 +741,14 @@ end
 
 function [y,g,p,r,retcode]=divide_and_conquer(y,g,p,x,d,unsolved,blocks)
 
+lev_lb=[];
+
+lev_ub=[];
+
+lev_bounds=blocks.level_bounds;
+
+growth_bounds=blocks.growth_bounds;
+
 optimopt=blocks.optimopt;
 
 swapping_func=blocks.swapping_func;
@@ -833,25 +842,41 @@ for iblock=1:nblocks
         
         if solve_bgp
             
+            gr_log_status=is_log_var(growth_vars);
+            
             log_status=[log_status,...
-                is_log_var(growth_vars)]; %#ok<AGROW>
+                gr_log_status]; %#ok<AGROW>
             
         end
         
-        z0=y(level_vars);
+        z0=set_initial_value(y(level_vars),lev_bounds(level_vars,1));
+                        
+        lev_lb=lev_bounds(level_vars,2);
+        
+        lev_ub=lev_bounds(level_vars,3);
         
         if solve_bgp
+                        
+            zg0=set_initial_value(g(growth_vars),growth_bounds(growth_vars,1));
             
-            z0=[z0;g(growth_vars)]; %#ok<AGROW>
+            gr_lb=growth_bounds(growth_vars,2);
+            
+            gr_ub=growth_bounds(growth_vars,3);
+            
+            lev_lb=[lev_lb;gr_lb]; %#ok<AGROW>
+            
+            lev_ub=[lev_ub;gr_ub]; %#ok<AGROW>
+            
+            z0=[z0;zg0]; %#ok<AGROW>
             
         end
         
-        z0(log_status)=log(z0(log_status));
+        lev_lb(log_status)=0;
         
-        [z,retcode]=optimization_center(@small_system,z0,arg_zero_solver,optimopt);
-        
-        z(log_status)=exp(z(log_status));
-        
+        z0=recenter(z0,lev_lb,lev_ub);
+                
+        [z,retcode]=optimization_center(@small_system,z0,arg_zero_solver,optimopt,lev_lb,lev_ub);
+                
         try
             z=round(z,12);
         catch
@@ -987,9 +1012,28 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
         
         is_jac=nargout>1;
         
-        zyg(log_status)=exp(zyg(log_status));
+        yl=zyg(1:nvl);
         
-        y(level_vars)=zyg(1:nvl);
+        y(level_vars)=yl;
+        
+        if any(yl<lev_lb)||any(yl>lev_ub)
+            % provision for solvers that do not take bounds into
+            % consideration
+            bad=sum(yl<lev_lb)+sum(yl>lev_ub);
+            
+            rs=10^bad*ones(nvl,1);
+            
+            if solve_bgp
+                
+                rs=[rs;rs];
+                
+            end
+            
+            Jac=rs(:,ones(size(rs,1),1));
+            
+            return
+            
+        end
         
         if solve_bgp
             
@@ -1016,10 +1060,24 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
             Jac=solve_jacobian(ssjacobians{iblock},y,yshift,g);
             
         end
-        
-        %         if any(~isfinite(rs)),rs=10000*ones(size(rs));end
-        
+                
     end
+
+end
+
+function z0=set_initial_value(z0,y0)
+
+good=~isnan(y0);
+
+z0(good)=y0(good);
+
+end
+
+function o=recenter(o,lb,ub)
+
+o(o<lb)=lb(o<lb);
+
+o(o>ub)=ub(o>ub);
 
 end
 
@@ -1045,40 +1103,87 @@ r=residfunc(y,g,x,p,d);
 
 end
 
-function [ssc1,retcode]=optimization_center(objfun,ssc0,arg_zero_solver,optimopt)
+function [ssc1,retcode]=optimization_center(objfun,ssc0,arg_zero_solver,optimopt,lb,ub)
+
+fixed=lb==ub;
+
+% % % fixed=false(size(fixed));
+
+ssc0(fixed)=lb(fixed);
+
+parvec=ssc0;
+
+lb(fixed)=[];
+
+ub(fixed)=[];
+
+ssc0(fixed)=[];
+
+[transf,untransf]=utils.estim.bounds_transform(lb,ub);
 
 if strcmp(arg_zero_solver,'lsqnonlin')
     % call to lsqnonlin
     %------------------
-    [ssc1,resnorm,~,exitflag]=lsqnonlin(objfun,ssc0,[],[],optimopt);
+    [ssc1,resnorm,~,exitflag]=lsqnonlin(@reobject,transf(ssc0),[],[],optimopt);
     
 elseif strcmp(arg_zero_solver,'fsolve')
     % call to fsolve
     %------------------
-    [ssc1,fval,exitflag]=fsolve(objfun,ssc0,optimopt);
+    [ssc1,fval,exitflag]=fsolve(@reobject,transf(ssc0),optimopt);
     
     resnorm=norm(fval);
     
 elseif strcmp(arg_zero_solver,'fminunc')
     % call to fsolve
     %------------------
-    [ssc1,resnorm,exitflag]=fminunc(@minimizer,ssc0,optimopt);
+    fields=fieldnames(optimopt);
+    bad=false(1,numel(fields));
+    for ii=1:numel(fields)
+        bad(ii)=isempty(optimopt.(fields{ii}));
+    end
+    optimopt=rmfield(optimopt,fields(bad));
+    if isfield(optimopt,'Algorithm') && iscell(optimopt.Algorithm)
+        optimopt.Algorithm=optimopt.Algorithm{1};
+    end
+    [ssc1,resnorm]=fminunc(@minimizer,transf(ssc0),optimopt);
+    
+    if resnorm<=optimopt.TolFun
+        
+        exitflag=1;
+        
+    else
+        
+        exitflag=-2;
+        
+    end
     
 else
     
     [arg_zero_solver,vargs]=utils.code.user_function_to_rise_function(arg_zero_solver);
     
-    [ssc1,resnorm,exitflag]=arg_zero_solver(objfun,ssc0,optimopt,vargs{:});
+    [ssc1,resnorm,exitflag]=arg_zero_solver(@reobject,transf(ssc0),optimopt,vargs{:});
     
 end
 
+parvec(~fixed)=untransf(ssc1);
+
+ssc1=parvec;
+    
 exitflag=utils.optim.exitflag(exitflag,ssc1,resnorm);
 
 retcode=1-(exitflag==1);
 
+    function o=reobject(x)
+        
+        parvec(~fixed)=untransf(x);
+        
+        o=objfun(parvec);
+        
+    end
+
     function fval=minimizer(ssc)
         
-        fval=objfun(ssc);
+        fval=reobject(ssc);
         
         fval=norm(fval);
         
@@ -1088,10 +1193,12 @@ end
 
 function [obj,sscode,blocks,unsolved]=prepare_steady_state_program(obj)
 
+endo_nbr=obj.endogenous.number;
+
 % In case of a swap, the location of the endogenous variables swapped
 % remain unsolved !!!
 
-unsolved=true(1,obj.endogenous.number);
+unsolved=true(1,endo_nbr);
 
 % steady state functions (just for output)
 %-----------------------------------------
@@ -1243,6 +1350,9 @@ end
 if isempty(obj.steady_state_2_blocks_optimization)||...
         obj.warrant_setup_change
     
+    [level_bounds,growth_bounds]=set_bounds(obj.options.steady_state_bounds,...
+        obj.endogenous.name);
+        
     % optimization setup
     %--------------------
     optimopt=obj.options.optimset;
@@ -1316,7 +1426,9 @@ if isempty(obj.steady_state_2_blocks_optimization)||...
         'auxcode',auxcode,...
         'arg_zero_solver',obj.options.steady_state_solver,...
         'optimopt',optimopt,...
-        'solve_linear',obj.options.solve_linear);
+        'solve_linear',obj.options.solve_linear,...
+        'level_bounds',level_bounds,...
+        'growth_bounds',growth_bounds);
     
     obj.steady_state_2_blocks_optimization=blocks;
     
@@ -1329,6 +1441,95 @@ end
 
 
 end
+
+function [level_bounds,growth_bounds]=set_bounds(ssbounds,endo_list)
+
+endo_nbr=numel(endo_list);
+
+level_bounds=[nan(endo_nbr,1),-inf(endo_nbr,1),inf(endo_nbr,1)];
+
+    growth_bounds=[nan(endo_nbr,1),-inf(endo_nbr,1),inf(endo_nbr,1)];
+        
+    if ~isempty(ssbounds)
+                
+        for ii=1:endo_nbr
+            
+            v=endo_list{ii};
+            
+            if isfield(ssbounds,v)
+                
+                ibnd=ssbounds.(v);
+                
+                if ~iscell(ibnd)
+                    
+                    ibnd={ibnd};
+                    
+                end
+                
+                if numel(ibnd)==1
+                    
+                    ibnd=[ibnd,{[]}]; %#ok<AGROW>
+                    
+                end
+                
+                level_bounds(ii,:)=set_one(level_bounds(ii,:),ibnd{1});
+                                
+                growth_bounds(ii,:)=set_one(growth_bounds(ii,:),ibnd{2});
+                
+            end
+            
+        end
+        
+    end
+    
+    function b=set_one(b,ibnd)
+                
+        if isempty(ibnd)
+            
+            return
+            
+        elseif ~any(numel(ibnd)-[1,3]==0)
+            
+            disp(ibnd)
+            
+            error('bound information should contain 1 or 3 elements')
+            
+        end
+        
+        for jj=1:numel(ibnd)
+            
+            b(jj)=ibnd(jj);
+            
+            if jj==2 && ibnd(jj)>ibnd(jj-1)
+                
+                disp(ibnd)
+                
+                error('initial value lower than lower bound')
+                
+            elseif jj==3
+                
+                if ibnd(jj)<ibnd(1)
+                    
+                    disp(ibnd)
+                    
+                    error('initial value greater than upper bound')
+                    
+                elseif ibnd(jj)<ibnd(jj-1)
+                    
+                    disp(ibnd)
+                    
+                    error('lower bound greater than upper bound')
+                    
+                end
+                
+            end
+            
+        end
+        
+    end
+    
+end
+
 
 function obj=recreate_steady_state_functions(obj)
 
@@ -1567,6 +1768,7 @@ obj.routines.shadow_sstate_bgp_auxiliary_eqtns=...
     end
 
 end
+
 
 function sssae=auxil_growth_rates(sssae,islogvar)
 
@@ -1834,6 +2036,8 @@ auxcode=@auxiliary_evaluation;
     end
 
 end
+
+
 
 function [ssparam_assign]=locate_steady_state_parameters(orig_pos,ss_pos)
 

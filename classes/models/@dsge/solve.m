@@ -184,6 +184,14 @@ function [obj,retcode,structural_matrices]=solve(obj,varargin)
 %      variables whose values are given in the second column, the third column
 %      includes the parameters names that are endogenized.
 %
+%    steady_state_bounds (struct | {} ): When not empty, it is
+%      a structure such that each field is the name of an endogenous
+%      variable for which we have constraints. Each field itself should be
+%      a 1 x 2 vector with lower and upper bounds information. e.g.
+%      b=struct(); b.E=[0,inf]; b.F=[0,0.99]; In case of multiple regimes,
+%      the structure is automatically expanded if the user does not provide
+%      bounds for the other regimes as e.g. b(2).E=[0,10]; b(2).F=[0,2];
+%
 %    solve_user_defined_shocks (struct|{empty}):
 %      When empty, an independent normal distribution is assumed for each
 %      shock. Hence the shocks are not skewed! When not empty, the argument
@@ -724,6 +732,10 @@ algotype=@(x)functype(x)||iscell(x);
         
         'steady_state_fixed(sr)',false,@(x)islogical(x),...
         'steady_state_fixed must be true or false'
+        
+        'steady_state_bounds(r)',[],@(x)isempty(x)||isstruct(x),...
+        ['steady_state_bounds must be empty or a structure whose field ',...
+        'names are the endogenous variables']
         
         'solver(r)',[],@(x)algotype(x),...
         'solver can be empty, a char, a cell or a function handle'
