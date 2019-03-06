@@ -14,7 +14,7 @@ if isempty(chain_id)
 
     for ichain=1:obj.nchains
 
-        xx=[obj.draws(ichain,:).x];
+        xx=obj.draws(:,:,ichain);
 
         if ichain==1
 
@@ -30,7 +30,7 @@ if isempty(chain_id)
 
 else
 
-    x=[obj.draws(chain_id,:).x];
+    x=obj.draws(:,:,chain_id);
 
     x=x(id,:);
 

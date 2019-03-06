@@ -16,12 +16,15 @@ classdef mcmc < handle
     
     methods
         
-        function obj=mcmc(draws,pnames,drop,start_from,trimming,ilinres)
+        function obj=mcmc(draws,pnames,subset,ilinres)
             % Constructor for mcmc object
             %
             % ::
             %
-            %    mcmc_helper = mcmc(draws, pnames, drop, start_from, trimming)
+            %    mcmc_helper = mcmc(draws)
+            %    mcmc_helper = mcmc(draws, pnames)
+            %    mcmc_helper = mcmc(draws, pnames, subset)
+            %    mcmc_helper = mcmc(draws, pnames, subset, ilinres)
             %
             % Args:
             %
@@ -29,11 +32,18 @@ classdef mcmc < handle
             %
             %    pnames (cellstr): cell of parameter names
             %
-            %    drop (double): fraction of samples to drop (default: 0.5)
-            %
-            %    start_from (integer): discard first (start_from-1) samples (default: 1)
-            %
-            %    trimming (integer): only use every trimming value (default: 1)
+            %    subset (cell array|{empty}): When not empty, subset is a
+            %     1 x 2 cell array in which the first cell contains a
+            %     vector selecting the columns to retain in each chain and
+            %     the second column contains the chains retained. Any or
+            %     both of those cell array containts can be empty. Whenever
+            %     an entry is empty, all the information available is
+            %     selected. E.g. subsetting with dropping and trimming
+            %     mysubs={a:b:c,[1,3,5]}. In this example, the first
+            %     element selected is the one in position "a" and
+            %     thereafter every "b" element is selected until we reach
+            %     element in position "c". At the same time, we select
+            %     markov chains 1,3 and 5.
             %
             %    ilinres (function handle|{empty}): function handle that
             %       untransforms the parameters in the presence of linear
@@ -65,35 +75,23 @@ classdef mcmc < handle
             
             n=nargin;
             
-            if n<6
+            if n<4
                 
                 ilinres=[];
                 
-                if n<5
+                if n<3
                     
-                    trimming=[];
+                    subset=[];
                     
-                    if n<4
+                    if n<2
                         
-                        start_from=[];
+                        pnames=[];
                         
-                        if n<3
+                        if n<1
                             
-                            drop=[];
+                            obj=mcmc.empty();
                             
-                            if n<2
-                                
-                                pnames=[];
-                                
-                                if n<1
-                                    
-                                    obj=mcmc.empty();
-                                    
-                                    return
-                                    
-                                end
-                                
-                            end
+                            return
                             
                         end
                         
@@ -103,7 +101,7 @@ classdef mcmc < handle
                 
             end
             
-            [obj.draws,obj.i_dropped,obj.start,results_summary]=mcmc.process_draws(draws,[],drop,start_from,trimming);
+            [obj.draws,~,results_summary]=mcmc.process_draws(draws,subset);
             
             obj.best=results_summary(1).best_of_the_best;
             
@@ -117,38 +115,38 @@ classdef mcmc < handle
                 
             end
             
-            if iscell(obj.draws)
-                % fosh and chops
-                %----------------------
-                siz=cellfun(@(x)numel(x),obj.draws);
-                
-                if ~all(siz==siz(1))
-                    
-                    chop=min(siz);
-                    
-                    obj.draws=cellfun(@(x)x(:,1:chop),obj.draws,'uniformOutput',false);
-                    
-                end
-                
-                obj.draws=vertcat(obj.draws{:});
-                
-            end
+            [~,obj.npop,obj.nchains]=size(obj.draws);
             
             if ~isempty(ilinres)
                 % untransform the parameters
-                for ii=1:numel(obj.draws)
+                
+                for ipop=1:obj.npop
                     
-                    obj.draws(ii).x=ilinres(obj.draws(ii).x);
+                    for ic=1:obj.nchains
+                        
+                        dii=ilinres(obj.draws(:,ipop,ic));
+                        
+                        if ipop==1 && ic==1
+                            
+                            mydraws=dii(:,ones(1,obj.npop),ones(1,obj.nchains));
+                            
+                        end
+                        
+                        mydraws(:,ipop,ic)=dii;
+                        
+                    end
                     
                 end
                 
+                obj.draws=mydraws; 
+                
+                clear mydraws
+                
             end
-            
-            [obj.nchains,obj.npop]=size(obj.draws);
             
             if obj.npop
                 
-                obj.nparams=numel(obj.draws(1).x);
+                obj.nparams=size(obj.draws,1);
                 
             else
                 
@@ -168,7 +166,7 @@ classdef mcmc < handle
             
             if obj.npop
                 
-                obj.psrf=gelman_rubin(obj,true);
+                obj.psrf=gelman_rubin(obj);
                 
             end
             
@@ -195,6 +193,8 @@ classdef mcmc < handle
     methods(Static)
         
         varargout=process_draws(varargin)
+        
+        varargout=reload_draws(varargin)
         
     end
     

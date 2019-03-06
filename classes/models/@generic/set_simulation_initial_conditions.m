@@ -181,7 +181,6 @@ Initcond.simul_sig=simul_sig;
 Initcond.simul_order=simul_order;
 Initcond.simul_shock_uncertainty=obj.options.simul_shock_uncertainty;
 Initcond.simul_frwrd_back_shoot=obj.options.simul_frwrd_back_shoot;
-Initcond.simul_seed=obj.options.simul_seed;
 
 Initcond.simul_fbs_horizon=obj.options.simul_fbs_horizon;
 
@@ -221,17 +220,9 @@ else
     which_shocks(obj.exogenous.is_observed)=false;
     
     %--------------------------
-    
-    user_input=[];
-    
-    if ~isempty(obj.options.solve_user_defined_shocks)
-        % load the structure containing the function doing the draws
-        user_input_draws=obj.options.solve_user_defined_shocks(obj,false,[]);
-        
-        user_input=utils.forecast.set_user_shocks_input(obj.exogenous.name,...
-            user_input_draws);
-        
-    end
+    % load the structure containing the function doing the draws
+    user_input=utils.forecast.set_user_shocks_input(obj.exogenous.name,...
+        obj.options.solve_user_defined_shocks);
     
     %--------------------------
     

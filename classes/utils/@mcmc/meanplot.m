@@ -40,7 +40,7 @@ for ii=2:obj.npop
 
 end
 
-t=(1:obj.npop)+obj.start-1;
+t=(1:obj.npop); % t=(1:obj.npop)+obj.start-1;
 
 hdl0=plot(t.',m.');
 

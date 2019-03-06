@@ -91,8 +91,6 @@ else
 end
 % Decide if using or not the RISE print and plot settings
 %--------------------------------------------------------
-USE_RISE_PLOT = true;
-
 USE_RISE_PRINT = true;
 
 rise_data=cell(0,2);
@@ -163,43 +161,6 @@ if USE_RISE_PRINT
     
 end
 
-
-% Plot settings
-%--------------
-if USE_RISE_PLOT
-    
-    rise_default_plot_colors={ ...
-        [0 0 1],     ...  % 'b'
-        [1 0 0],     ...  % 'r'
-        [0 1 0],     ...  % 'g'
-        [0 0 0],     ...  % 'k'
-        [0 1 1],     ...  % 'c'
-        [1 0 1],     ...  % 'm'
-        [0.565 0.247 0.667],     ...  % pink
-        [0.722 0.420 0.274],     ...   % siena
-        [0.659 0.541 0.000],     ...   % ocra
-        [1 0.604 0.208],     ...   % orange
-        [0.502 0.502 0.502],     ...   % dark grey
-        [0.733 0.824 0.082],     ...   % ill green
-        [0.318 0.557 0.675],     ...   % cobalto
-        [0.8 0.2 0.2],     ...
-        [0.2 0.2 0.8],     ...
-        [0.2 0.9 0.2],     ...
-        [0.37 0.9 0.83],   ...
-        [0.888 0.163 0.9], ...
-        [0 0 0],           ...
-        [0 207 255]/255,   ...
-        [255 128 0]/255,   ...
-        [143 0 0]/255,     ...
-        [255 207 0]/255,   ...
-        [0.9 0.266 0.593]
-        };
-    
-    rise_data=[rise_data
-        {'rise_default_plot_colors',rise_default_plot_colors}];
-    set(0, 'DefaultFigureColor', 'w');
-    
-end
 
 searchPaths=collect_paths(mfilename);
 

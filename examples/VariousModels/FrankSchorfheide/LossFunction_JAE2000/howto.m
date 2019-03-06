@@ -75,30 +75,32 @@ SIG=utils.cov.nearest(SIG);
 
 draws_mcmc = 1000; % number of parameter draws through MCMC.
 ndraws_burnin = floor(0.1*draws_mcmc);
-mcmc_options=struct('burnin',ndraws_burnin,'N',draws_mcmc,'thin',1);
+mcmc_options=struct('burnin',ndraws_burnin,'N',draws_mcmc,'thin',1,...
+    'nchain',2);
 Results=mh_sampler(objective,lb,ub,mcmc_options,x0,SIG);
 
 %% update the description of the parameters
 m=set(m,'tex_name',...
     {
-    'alp','\alpha'
-    'bet','\beta' 
-    'gam','\gamma' 
-    'rho','\rho' 
-    'psi','\psi'
-	'del','\delta' 
-    'sig_a','\sigma_a' 
-    'sig_m','\sigma_m'
+    'alp','$\alpha$'
+    'bet','$\beta$' 
+    'gam','$\gamma$' 
+    'rho','$\rho$' 
+    'psi','$\psi$'
+	'del','$\delta$' 
+    'sig_a','$\sigma_a$' 
+    'sig_m','$\sigma_m$'
     });
 %% plot priors, posteriors, priors and posteriors
 plot_priors(m)
-plot_posteriors(m,Results.pop)
-plot_priors_and_posteriors(m,Results.pop)
+plot_posteriors(m,Results)
+plot_priors_and_posteriors(m,Results)
 %% plot priors, posteriors, priors and posteriors for a subset of parameters
+close all
 myparams={'alp','gam','psi'};
 plot_priors(m,myparams)
-plot_posteriors(m,postSims,myparams)
-plot_priors_and_posteriors(m,Results.pop,myparams)
+plot_posteriors(m,Results,myparams)
+plot_priors_and_posteriors(m,Results,myparams)
 %% check curvature at the mode
 mode_curvature(m)
 

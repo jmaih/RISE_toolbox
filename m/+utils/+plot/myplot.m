@@ -179,29 +179,23 @@ end
             
             ymin=min(d{:}(:));
             
-            map=getappdata(0,'rise_default_plot_colors');
-            
             plot(pp.xdatenums(1:nr)',d{:}(:,1),matlab_args{:})%,'color',[0,0,0]
             
             if nc>1
                 % add some hair
                 %---------------
+                niter=size(d{:},1);
+                
+                new_colormap=distinguishable_colors(niter,'w',@(x)colorspace('RGB->Lab',x));
+                
+                new_colormap(end,:) = [0.7 0.7 0.7];
+                
                 hold on
-                
-                iter=0;
-                
-                for tt=1:size(d{:},1)
+                                
+                for tt=1:niter
                     
-                    iter=iter+1;
-                    
-                    plot(pp.xdatenums(tt+(0:nc-1))',d{:}(tt,:)','color',map{iter})%,'linestyle','--'
-                    
-                    if iter==numel(map)
-                        
-                        iter=0;
-                        
-                    end
-                    
+                    plot(pp.xdatenums(tt+(0:nc-1))',d{:}(tt,:)','color',new_colormap(tt,:))%,'linestyle','--'
+                                        
                 end
                 
                 hold off
@@ -217,9 +211,15 @@ end
             
             uall=d{:};
             
-            upos=zeros(size(uall));
+            [nobs,nexpl]=size(uall);
             
-            uneg=zeros(size(uall));
+            new_colormap=distinguishable_colors(nexpl,'w',@(x)colorspace('RGB->Lab',x));
+            
+            new_colormap(end,:) = [0.7 0.7 0.7];
+                        
+            upos=zeros(nobs,nexpl);
+            
+            uneg=zeros(nobs,nexpl);
             
             ipos=uall>=0;
             
@@ -237,9 +237,9 @@ end
             
             hold on
             
-            for ii=1:numel(b1)
+            for ii=1:nexpl
                 
-                set(b2(ii),'FaceColor',b1(ii).FaceColor)
+                set([b2(ii),b1(ii)],'FaceColor',new_colormap(ii,:))
                 
             end
             

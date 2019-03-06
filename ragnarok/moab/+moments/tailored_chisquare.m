@@ -14,7 +14,7 @@ function  m=tailored_chisquare(order,k)
  
  s2ki=1;
  
- pt=pascal_triangle(order);
+ pt=moments.pascal_triangle(order);
  
  for io=1:order
      

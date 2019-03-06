@@ -236,7 +236,7 @@ if is_save
     
     if options.recover
         
-        [~,~,~,summary]=mcmc.process_draws(savelocation);
+        [~,~,summary]=mcmc.process_draws(savelocation);
         
         N_recovered=summary.npop;
         

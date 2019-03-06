@@ -17,15 +17,9 @@ random=options.simul_shock_uncertainty;
 %------------------
 shocks_span=options.nsteps+options.k_future+options.burn;
 
-    shocks=zeros(nx,shocks_span);
-    
+shocks=zeros(nx,shocks_span);
+
 if random
-    
-    if ~isempty(options.simul_seed)
-        
-        rng(options.simul_seed)
-        
-    end
     
     set_all_shocks()
     
@@ -41,16 +35,10 @@ if ~isempty(shock_id)
     % first batch/period of shocks
     %-----------------------------
     shocks(shock_id,options.k_future+1)=impulse;
+    
 end
 
     function set_all_shocks()
-        
-        % e.g. fn=@(n)(sum(randn(k,n).^2,1)-k)/sqrt(2*k);
-        
-        % e.g. xlist.E_cons_pref='cons_pref_draw'
-        % e.g. xlist.E_cons_pref={'cons_pref_draw',1,2,3,4,5}
-        % e.g. xlist.E_wage_markup={@(n,k)(sum(randn(k,n).^2,1)-k)/sqrt(2*k),5}
-        % e.g. xlist.E_price_markup=@(n)(sum(randn(3,n).^2,1)-3)/sqrt(2*3)
         
         if isempty(user_input)
             

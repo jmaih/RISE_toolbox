@@ -88,12 +88,16 @@ classdef mdd<handle
                     
                 end
                 
-                theta_draws=mcmc.process_draws(theta_draws,0,1,1);
+                [theta_draws,fd]=mcmc.process_draws(theta_draws);
+
+				theta_draws=theta_draws(:,:);
+				
+				fd=fd(:,:);
                 
                 c=obj.thecoef;
                 
                 % multiply accordingly
-                obj.LogPost_M=c*[theta_draws.f];
+                obj.LogPost_M=c*fd;
                 
                 [~,best_loc]=max(obj.LogPost_M);
                 
@@ -103,7 +107,7 @@ classdef mdd<handle
                 
                 obj.theta_mode=theta_draws(best_loc(1));
                 
-                obj.theta_draws=[theta_draws.x];
+                obj.theta_draws=theta_draws;  clear theta_draws
                 
                 [obj.d,obj.M] = size(obj.theta_draws);
                 
