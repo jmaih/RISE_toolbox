@@ -255,7 +255,7 @@ end
                             
                             disp(max(max(abs(b-atest(:,new_y_order)))))
                             
-                            keyboard
+                            pause(0.5)
                         
                         end
                         
