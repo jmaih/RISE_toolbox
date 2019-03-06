@@ -270,6 +270,12 @@ if steady_state_unique
         
         if ~retcode
             
+            % update the parameters since we are not going into the steady
+            % state for every regime. The update includes the steady parameter
+            % values for FRWZ
+            %--------------------------------------------------------------
+            update_changed_parameters(p_start);
+            
             [p_unic,def_unic,TransMat,retcode]=ergodic_parameters(y(:,1));
             
             if retcode
@@ -301,12 +307,6 @@ if steady_state_unique
         y=y(:,ones(1,number_of_regimes));
         
         g=g(:,ones(1,number_of_regimes));
-        
-        % update the parameters since we are not going into the steady
-        % state for every regime. The update includes the steady parameter
-        % values for FRWZ
-        %--------------------------------------------------------------
-        update_changed_parameters(p_unic);
         
         % recompute residuals for all regimes
         %-------------------------------------
