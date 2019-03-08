@@ -5,7 +5,7 @@ exogenous EI, EPAI, EY
 parameters beta_lag, beta_lead, beta_r, gam_lag, gam_y, lamb_lag,
 lamb_lead, lamb_y, sigi, sigpai, sigy
 
-model(linear);
+model
 
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+sigy*EY;
 

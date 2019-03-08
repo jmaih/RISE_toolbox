@@ -19,7 +19,7 @@ parameters wy, wr
 % we specify the probability of commitment (if it is to vary)
 parameters gamma_prob
 
-model(linear) 
+model 
 
 		# cpie=1+constepinf/100;
 		# cgamma=1+ctrend/100 ;
@@ -107,7 +107,7 @@ observables dy dc dinve dw pinfobs robs labobs
 
 planner_objective{discount = 0.99,commitment=gamma_prob} -.5*(1*pinf_target^2+wy*y^2+wr*dr^2);	
 
-steady_state_model(imposed)
+steady_state_model
 	dy=ctrend;
 	dc=ctrend;
 	dinve=ctrend;
