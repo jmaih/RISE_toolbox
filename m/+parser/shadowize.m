@@ -207,9 +207,14 @@ end
 
 is_dynamic=~isempty(incid);
 
+% Mask the steady state in order to avoid prematurely replacement of
+% steady_state(B) into steady_state(y(3))
+%--------------------------------------------------------------------
+M=regexprep(M,'\<steady_state\((\w+)\)','steady_state_$1');
+
 % replace variables, parameters and definitions in one go in order to avoid
 % potential problems with atoms named y,x,param,def...
-%------------
+%--------------------------------------------------------------------------
 rep2=@seek_and_destroy;%#ok<NASGU>
 
 ppat=['\<',pat,'\>'];
@@ -228,10 +233,10 @@ else
     
 end
 
-% steady states: do this here in order to avoid any problem with a variable
-% being named ss
+% steady states: now that the dynamics is taken care of, let's take care of
+% the steady state which at this point is encoded as steady_state_B
 %-------------------------------------------------------------------------
-sspat='\<steady_state\((\w+)\)';
+sspat='\<steady_state_(\w+)'; % sspat='\<steady_state\((\w+)\)';
 
 rep1=@re_rep1_; %#ok<NASGU>
 
@@ -279,7 +284,7 @@ M=rsp(M);
 
     function o=re_rep1_(v)
         
-        o=sprintf('ss(%d)',y.pos.(v));
+        o=sprintf('ss(%d)',y.(v).pos);
         
     end
 
