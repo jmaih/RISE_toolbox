@@ -4,7 +4,7 @@ function [tr,utr]=bounds_transform(lb,ub)
 % finders or optimization routines that do not handle constraints on
 % parameters.
 %
-% returns function handles 
+% returns function handles
 % - tr: transform parameters into unconstrained units
 % - utr: unstransform parameters into original units
 %
@@ -37,6 +37,16 @@ if any(bad)
     
 end
 
+is_i1=any(i1);
+
+is_i2=any(i2);
+
+is_i3=any(i3);
+
+is_i4=any(i4);
+
+is_i5=any(i5);
+
 if all(i0)
     % no constraints
     tr=@(x)x;
@@ -67,17 +77,21 @@ end
 
     function x=untransform(x)
         
-        x(i1)=exp(x(i1));
+        if is_i1, x(i1)=exp(x(i1)); end
         
-        x(i2)=-exp(x(i2));
+        if is_i2, x(i2)=-exp(x(i2)); end
         
-        ex3=exp(-x(i3));
+        if is_i3
+            
+            ex3=exp(-x(i3));
+            
+            x(i3)=(ub(i3)+lb(i3).*ex3)./(1+ex3);
+            
+        end
         
-        x(i3)=(ub(i3)+lb(i3).*ex3)./(1+ex3);
+        if is_i4, x(i4)=exp(x(i4))+lb(i4); end
         
-        x(i4)=exp(x(i4))+lb(i4);
-        
-        x(i5)=-exp(x(i5))+ub(i5);
+        if is_i5, x(i5)=-exp(x(i5))+ub(i5); end
         
     end
 
