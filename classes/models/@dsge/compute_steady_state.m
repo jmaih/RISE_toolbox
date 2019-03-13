@@ -284,6 +284,28 @@ if steady_state_unique
                 
             end
             
+            % take care of frwz
+            %-------------------
+            if is_frwz_perturbation
+                % set the steady state parameters: note that the parameters
+                % that are not partitioned are not supposed to affect the
+                % steady state and so the steady state can be evaluated with
+                % p_unic
+                
+                p(ss_pos,:)=p_unic(orig_pos)*ones(1,number_of_regimes);
+                
+                % recompute the definitions that might be a function of the new
+                % parameters...
+                [d,retcode]=compute_definitions(obj,p);
+                
+                if retcode
+                    
+                    error('this should not be happening')
+                    
+                end
+                
+            end
+            
             y0(:,1)=y(:,1);
             
             g0(:,1)=g(:,1);
@@ -449,28 +471,6 @@ end
         % alternatively, apply the swapping...
         %---------------------------------------
         p=extend_param_func(p,ptarg);
-        
-        % take care of frwz
-        %-------------------
-        if is_frwz_perturbation
-            % set the steady state parameters: note that the parameters
-            % that are not partitioned are not supposed to affect the
-            % steady state and so the steady state can be evaluated with
-            % p_unic
-            
-            p(ss_pos,:)=p_unic(orig_pos)*ones(1,number_of_regimes);
-            
-            % recompute the definitions that might be a function of the new
-            % parameters...
-            [d,retcode]=compute_definitions(obj,p);
-            
-            if retcode
-                
-                error('this should not be happening')
-                
-            end
-            
-        end
         
     end
 
