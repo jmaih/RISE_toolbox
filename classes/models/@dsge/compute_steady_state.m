@@ -1121,6 +1121,22 @@ ssc0(fixed)=[];
 
 [transf,untransf]=utils.estim.bounds_transform(lb,ub);
 
+is_OPT=license('checkout','optimization_toolbox');
+
+OptimList={'lsqnonlin','fsolve','fminunc'};
+
+if ~is_OPT && any(strcmp(arg_zero_solver,OptimList))
+    
+    arg_zero_solver=[];
+    
+end
+
+if isempty(arg_zero_solver)
+    
+    arg_zero_solver=@nonlinsyst.mynewton;
+    
+end
+
 if strcmp(arg_zero_solver,'lsqnonlin')
     % call to lsqnonlin
     %------------------
@@ -1133,7 +1149,8 @@ elseif strcmp(arg_zero_solver,'fsolve')
     
     resnorm=norm(fval);
     
-elseif strcmp(arg_zero_solver,'fminunc')
+elseif any(strcmp(arg_zero_solver,{'fminunc','fminsearch'}))
+    
     % call to fsolve
     %------------------
     fields=fieldnames(optimopt);
@@ -1145,7 +1162,7 @@ elseif strcmp(arg_zero_solver,'fminunc')
     if isfield(optimopt,'Algorithm') && iscell(optimopt.Algorithm)
         optimopt.Algorithm=optimopt.Algorithm{1};
     end
-    [ssc1,resnorm]=fminunc(@minimizer,transf(ssc0),optimopt);
+    [ssc1,resnorm]=feval(arg_zero_solver,@minimizer,transf(ssc0),optimopt);
     
     if resnorm<=optimopt.TolFun
         
@@ -1161,7 +1178,7 @@ else
     
     [arg_zero_solver,vargs]=utils.code.user_function_to_rise_function(arg_zero_solver);
     
-    [ssc1,resnorm,exitflag]=arg_zero_solver(@reobject,transf(ssc0),optimopt,vargs{:});
+    [ssc1,resnorm,exitflag]=feval(arg_zero_solver,@reobject,transf(ssc0),optimopt,vargs{:});
     
 end
 
@@ -1185,7 +1202,7 @@ retcode=1-(exitflag==1);
         
         fval=reobject(ssc);
         
-        fval=norm(fval);
+        fval=fval.'*fval;% fval=norm(fval);
         
     end
 
