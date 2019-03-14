@@ -1016,10 +1016,10 @@ r=evaluate_all_residuals(blocks.residcode,y,g,x,p,d,swapping_func);
         
         y(level_vars)=yl;
         
-        if any(yl<lev_lb)||any(yl>lev_ub)
+        if any(yl<lev_lb(1:nvl))||any(yl>lev_ub(1:nvl))
             % provision for solvers that do not take bounds into
             % consideration
-            bad=sum(yl<lev_lb)+sum(yl>lev_ub);
+            bad=sum(yl<lev_lb(1:nvl))+sum(yl>lev_ub(1:nvl));
             
             rs=10^bad*ones(nvl,1);
             
