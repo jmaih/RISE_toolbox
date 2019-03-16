@@ -422,7 +422,7 @@ classdef mcf < handle
 
         end
 
-        function hdl=cdf_plot(obj,pnames,title)
+        function hdl=cdf_plot(obj,pnames,titel)
             % plot of the cumulative distribution functions
             %
             % ::
@@ -436,7 +436,7 @@ classdef mcf < handle
             %    - **obj** [mcf object]:
             %    - **pnames** [empty|char|cellstr]: names of the parameters of
             %      interest
-            %    - **title** [empty|char]: title of the figures
+            %    - **titel** [empty|char]: title of the figures
             %
             % Returns:
             %
@@ -445,7 +445,7 @@ classdef mcf < handle
 
             if nargin<3
 
-                title=sprintf('%s :: Comparison of distributions',mfilename);
+                titel=sprintf('%s :: Comparison of distributions',mfilename);
 
                 if nargin<2
 
@@ -460,7 +460,7 @@ classdef mcf < handle
             if numel(pnames)>1
 
                 hdl=utils.plot.multiple(@(xname)one_subplot(xname),...
-                    pnames,title,obj.graph_nrows,obj.graph_ncols,...
+                    pnames,titel,obj.graph_nrows,obj.graph_ncols,...
                     'FontSize',11,'FontWeight','normal');
 
             else
