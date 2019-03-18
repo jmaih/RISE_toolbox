@@ -24,6 +24,36 @@ function hfig=multiple(plotfunc,vnames,fig_title,r0,c0,varargin)
 %    - **hfig** [handles]: handles to the different figures created
 %
 
+if nargin<5
+    
+    c0=[];
+    
+    if nargin<4
+        
+        r0=[];
+        
+        if nargin<3
+            
+            fig_title='';
+            
+            if nargin<2
+                
+                error('at least 2 input arguments expected')
+                
+            end
+            
+        end
+        
+    end
+    
+end
+
+if isempty(c0),c0=3; end
+
+if isempty(r0),r0=3; end
+
+if isempty(fig_title),fig_title='no title'; end
+
 if ischar(vnames)
     
     vnames=cellstr(vnames);
