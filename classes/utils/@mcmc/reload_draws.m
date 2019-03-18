@@ -18,9 +18,7 @@ end
 
 last_saved_index=0;
 
-is_saved_to_disk=ischar(simfold);
-
-if is_saved_to_disk
+if ischar(simfold)
     
     preselected_chains=[];
     
@@ -77,37 +75,83 @@ best=best(subset{2});
             
         end
         
-        nchains=numel(simfold);
-        
-        c=cell(1,nchains); SIG=c; accept_ratio=c;  dlast=c;  best=c;
-        
-        for ic=1:nchains
+        if isstruct(simfold{1})
             
-            dii=simfold{ic};
+            [d,ff,c,SIG,accept_ratio,dlast,best]=load_from_struct();
             
-            if ic==1
+        elseif iscell(simfold) && isnumeric(simfold{1}) && numel(simfold)==2
+            % ={d,ff} i.e. first the draws and then the posterior values
+            
+            [d,ff,c,SIG,accept_ratio,dlast,best]=load_from_numeric();
+            
+        else
+            
+            error('wrong format of the inputs')
+            
+        end
+        
+        function [d,ff,c,SIG,accept_ratio,dlast,best]=load_from_numeric()
+            
+            d=simfold{1};
+            
+            ff=simfold{2};
+            
+            nchains_=size(d,3);
+            
+            c=cell(1,nchains_); SIG=c; accept_ratio=c;  dlast=c;  best=c;
+            
+            for ic=1:nchains_
+                                
+                [~,SIG{ic}]=utils.moments.compute_recursive(d(:,:,ic));
                 
-                d=[dii.pop.x];
+                dlast{ic}=d(:,end,ic);
                 
-                d=d(:,:,ones(1,nchains));
+                b=find(ff(1,:,ic)==min(ff(1,:,ic)));
                 
-                ff=d(1,:,:);
+                b=b(1);
+                
+                best{ic}=struct('x',d(:,b,ic),...
+                    'f',ff(1,b,ic));
                 
             end
             
-            d(:,:,ic)=[dii.pop.x];
+        end
+        
+        function [d,ff,c,SIG,accept_ratio,dlast,best]=load_from_struct()
             
-            ff(1,:,ic)=[dii.pop.f];
+            nchains_=numel(simfold);
             
-            SIG{ic}=dii.SIG;
+            c=cell(1,nchains_); SIG=c; accept_ratio=c;  dlast=c;  best=c;
             
-            c{ic}=dii.c;
-            
-            accept_ratio{ic}=dii.stats.accept_ratio;
-            
-            dlast{ic}=dii.pop(end).x;
-            
-            best{ic}=dii.best;
+            for ic=1:nchains_
+                
+                dii=simfold{ic};
+                
+                if ic==1
+                    
+                    d=[dii.pop.x];
+                    
+                    d=d(:,:,ones(1,nchains_));
+                    
+                    ff=d(1,:,:);
+                    
+                end
+                
+                d(:,:,ic)=[dii.pop.x];
+                
+                ff(1,:,ic)=[dii.pop.f];
+                
+                SIG{ic}=dii.SIG;
+                
+                c{ic}=dii.c;
+                
+                accept_ratio{ic}=dii.stats.accept_ratio;
+                
+                dlast{ic}=dii.pop(end).x;
+                
+                best{ic}=dii.best;
+                
+            end
             
         end
         

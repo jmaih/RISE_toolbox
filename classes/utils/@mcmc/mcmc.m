@@ -28,7 +28,17 @@ classdef mcmc < handle
             %
             % Args:
             %
-            %    draws (struct): output from samplers
+            %    draws (struct): output from samplers in 3 possible forms
+            %    - The draws are stored to disk in which case "draws" is a
+            %      string representing the location of the draws
+            %    - a structure, output of the samplers when draws are not
+            %      stored to disk. In this case there is only one chain
+            %    - a cell array of structures, with each structure as
+            %      above. Each entry then represents one chain
+            %    - a two-element cell array {draws,-logposterior} such that
+            %      the first entry is a np x ndraws x nchain array of
+            %      parameter values and the second entry is a 1 x ndraws x
+            %      nchain array of -logPosterior values
             %
             %    pnames (cellstr): cell of parameter names
             %
