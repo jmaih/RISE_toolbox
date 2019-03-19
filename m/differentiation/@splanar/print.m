@@ -92,7 +92,7 @@ if nderivs>1
     
 end
 
-c=[];
+c=cell(0,2);
 
 % build the @() part
 %--------------------

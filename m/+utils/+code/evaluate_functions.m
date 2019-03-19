@@ -90,18 +90,6 @@ end
        
             end
             
-            locs=xcell(:,2);
-            
-            is_vectorized=size(locs{1},2)==1;
-            
-            if is_vectorized
-                
-                locs=locs{1};
-                
-            end
-            
-            xcell=xcell(:,1);
-            
             mm=tmp(iout).size(1);
             
             nn=tmp(iout).size(2);
@@ -111,6 +99,18 @@ end
                 xout=sparse(mm,nn);
                 
             else
+                
+                locs=xcell(:,2);
+                
+                is_vectorized=size(locs{1},2)==1;
+                
+                if is_vectorized
+                    
+                    locs=locs{1};
+                    
+                end
+                
+                xcell=xcell(:,1);
                 
                 B=utils.code.set_vectorized_mapping(locs);
                 
