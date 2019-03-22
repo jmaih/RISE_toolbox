@@ -94,6 +94,16 @@ obj=set(obj,varargin{:});
 [dataOut,dataset,estim_start_date,estim_end_date,retcode]=...
     data_prerequest(obj,obj.options.data);
 
+if retcode
+    
+    if ~all([obj.is_optimal_simple_rule_model])
+        
+        error([mfilename,':: ',utils.error.decipher(retcode)])
+    
+    end
+    
+end
+
 % check wether the data are provided
 if isempty(dataset)
 

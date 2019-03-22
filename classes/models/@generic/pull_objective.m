@@ -79,6 +79,10 @@ obj.options.estim_barrier=true;
 %---------------------
 [obj,x0,lb,ub,vcov]=transform_parameters(obj,x00,lb,ub,vcov);
 
+% load the data if necessary in case the model was not previously estimated
+%--------------------------------------------------------------------------
+obj=load_data(obj);
+
 % try to avoid unnecessary computations like storing filters and so on
 %----------------------------------------------------------------------
 obj.estimation_under_way=true;

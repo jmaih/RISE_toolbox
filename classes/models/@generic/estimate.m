@@ -112,17 +112,7 @@ if ~isempty(estim_start_from_mode) && ~islogical(estim_start_from_mode)
     
 end
 
-[obj,issue,retcode]=load_data(obj);
-
-if retcode
-    
-    if ~all([obj.is_optimal_simple_rule_model])
-        
-        error([mfilename,':: ',utils.error.decipher(retcode)])
-    
-    end
-    
-end
+[obj,issue]=load_data(obj);
 
 if ~isempty(issue)
     
