@@ -31,6 +31,8 @@ end
 
 nargs=numel(x.args);
 
+nwrt=numel(wrt);
+
 if isempty(x.incidence)
     % numbers/vectors and variables which are not part of differentiation
     % automatically receive 0 as derivative
@@ -359,6 +361,26 @@ end
 
                 d=numerator/denominator*betapdf(x.args{1},x.args{2},x.args{3});
 
+        end
+        
+        if d.number_of_columns==1 && nwrt>1
+            
+            wan=ones(1,nwrt);
+            
+            if isempty(d.incidence)
+                % constants
+                d.func=d.func*wan;
+                
+            elseif nargs==0
+                % variables that are part of differentiation
+                d=d*splanar.prototypize(wan);
+                
+            else
+                
+                error('please contact junior.maih@gmail.com and report the problem')
+                
+            end
+            
         end
 
     end

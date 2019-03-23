@@ -18,9 +18,9 @@ offset=0;
 
 for irow=1:size(A,1)
     
-    r=A{irow}{1};
+    r=A{irow}{1}; % row
     
-    c0=A{irow}(2:end);
+    c0=A{irow}(2:end); % vectors of columns
     
     c0=c0(:);
     
