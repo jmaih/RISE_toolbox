@@ -1,41 +1,5 @@
-function dout=set_data_to_time_series(self,din,vnames,start_date)
-% INTERNAL FUNCTION
+%--- help for abstvar/set_data_to_time_series ---
 %
-
-dout=struct();
-
-if isstruct(din)
-
-    fnames=fieldnames(din);
-
-    ng=numel(fnames);
-
-    for ii=1:ng
-
-        dout.(fnames{ii})=set_data_to_time_series(self,din.(fnames{ii}),vnames,start_date);
-
-    end
-
-    return
-
-end
-
-rtmp=struct();
-
-for iv=1:numel(vnames)
-
-    d=permute(din(iv,:,:,:),[2,3,4,1]);
-
-    if iv==1
-
-        proto=ts(start_date,d);
-
-    end
-
-    rtmp.(vnames{iv})=set(proto,'data',d);
-
-end
-
-dout=rtmp;
-
-end
+%  INTERNAL FUNCTION
+% 
+%

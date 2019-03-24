@@ -1,7 +1,5 @@
-function log_mdd=laplace_mcmc(obj,~,~)
-
-Hinv=cov(obj.theta_draws.');
-
-log_mdd=utils.marginal_data_density.laplace_mdd(max(obj.LogPost_M),Hinv);
-
-end
+%--- help for mdd/laplace_mcmc ---
+%
+%mdd/laplace_mcmc is a function.
+%    log_mdd = laplace_mcmc(obj, ~, ~)
+%

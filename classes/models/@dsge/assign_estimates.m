@@ -1,39 +1,24 @@
-function obj=assign_estimates(obj,params)
-% Assign parameters to the model typically under the estimation
+%--- help for assign_estimates ---
 %
-% ::
+%  Assign parameters to the model typically under the estimation
+% 
+%  ::
+% 
+%    obj=assign_estimates(obj,params)
+% 
+%  Args:
+% 
+%     obj (rise | dsge): model object
+%     params (vector): values of parameters estimated or under estimation
+%       or under posterior simulation
+% 
+%  Returns:
+%     :
+% 
+%     - **obj** [rise|dsge]: model object
+% 
 %
-%   obj=assign_estimates(obj,params)
+%    Other functions named assign_estimates
 %
-% Args:
+%       dsge/assign_estimates    generic/assign_estimates
 %
-%    obj (rise | dsge): model object
-%    params (vector): values of parameters estimated or under estimation
-%      or under posterior simulation
-%
-% Returns:
-%    :
-%
-%    - **obj** [rise|dsge]: model object
-%
-
-% this is the routine called during estimation for assigning new estimates
-% to the model
-if isempty(obj)
-
-    obj=cell(0,4);
-
-    return
-
-end
-
-if ~isempty(params)
-    % this is general enough and includes measurement errors
-    obj=assign_estimates@generic(obj,params);
-    % ensure the model will be re-solved no matter what
-    %---------------------------------------------------
-    obj.warrant_resolving = true;
-
-end
-
-end

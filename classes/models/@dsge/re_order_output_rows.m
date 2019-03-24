@@ -1,7 +1,9 @@
-function y=re_order_output_rows(obj,y)
-% INTERNAL FUNCTION
+%--- help for re_order_output_rows ---
 %
-
-y=reshape(y(obj.inv_order_var,:,:),size(y));
-
-end
+%  INTERNAL FUNCTION
+% 
+%
+%    Other functions named re_order_output_rows
+%
+%       dsge/re_order_output_rows    generic/re_order_output_rows
+%

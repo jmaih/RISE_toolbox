@@ -1,5 +1,9 @@
-function y=re_order_output_rows(obj,y) %#ok<INUSL>
-% INTERNAL FUNCTION
+%--- help for re_order_output_rows ---
 %
-
-end
+%  INTERNAL FUNCTION
+% 
+%
+%    Other functions named re_order_output_rows
+%
+%       dsge/re_order_output_rows    generic/re_order_output_rows
+%

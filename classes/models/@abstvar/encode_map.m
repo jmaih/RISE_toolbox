@@ -1,9 +1,5 @@
-function c=encode_map(m,siz)
-% INTERNAL FUNCTION
+%--- help for encode_map ---
 %
-
-ind=sub2ind(siz,m(:,2),m(:,3));
-
-c=[m(:,1),ind];
-
-end
+%  INTERNAL FUNCTION
+% 
+%

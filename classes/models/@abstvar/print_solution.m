@@ -1,27 +1,9 @@
-function print_solution(obj,varlist)
-
-if nargin<2
-    
-    varlist=[];
-    
-end
-
-string='';
-
-nobj=numel(obj);
-
-for iobj=1:nobj
-    
-    if nobj>1
-        
-        string=int2str(iobj);
-        
-    end
-    
-    fprintf(1,'\n%s\n',['MODEL ',string,' SOLUTION']);
-    
-    print_low_level(obj(iobj),mfilename,varlist)
-    
-end
-
-end
+%--- help for abstvar/print_solution ---
+%
+%abstvar/print_solution is a function.
+%    print_solution(obj, varlist)
+%
+%    Other functions named print_solution
+%
+%       dsge/print_solution
+%

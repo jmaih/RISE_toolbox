@@ -1,21 +1,9 @@
-function [act,obj]=check_property(obj,propname,propval)
-% INTERNAL FUNCTION
+%--- help for check_property ---
 %
-
-action=check_property@generic(obj,propname,propval);
-
-act=action;
-
-if any(action=='r')
-
-    obj.warrant_resolving=true;
-
-end
-
-if any(action=='s')
-
-    obj.warrant_setup_change=true;
-
-end
-
-end
+%  INTERNAL FUNCTION
+% 
+%
+%    Other functions named check_property
+%
+%       dsge/check_property    generic/check_property
+%

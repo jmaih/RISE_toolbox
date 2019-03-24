@@ -1,56 +1,29 @@
-function [Vi,info]=autocov(A,B,nz,max_periods)
-% INTERNAL FUNCTIONS
+%--- help for abstvar/autocov ---
 %
-
-if nargin<4
-
-    max_periods=[];
-
-end
-
-if isempty(max_periods),max_periods=5; end
-
-% collect the state matrices
-endo_nbr=size(A,1);
-
-k=max_periods;
-
-exo_nbr=endo_nbr;
-
-[T,R]=vartools.companion(A,B,nz);
-
-Vi=autocov_engine(T,R);
-
-Vi=Vi(1:endo_nbr,1:endo_nbr,:);
-
-info={'endogenous','endogenous','horizon'};
-
-    function Vi=autocov_engine(T,R)
-
-        grand_endo_nbr=size(R,1);
-
-        R=reshape(R,grand_endo_nbr,exo_nbr);
-
-        Vi=zeros(grand_endo_nbr,grand_endo_nbr,k+1);
-
-        RR=R*R';
-
-        [V]=vartools.solve_lyapunov_equation(T,RR);
-
-        if any(~isfinite(V(:)))
-
-            error('Variance could not be solved')
-
-        end
-
-        for ii=1:k+1
-
-            Vi(:,:,ii)=V;
-
-            V=T*V;
-
-        end
-
-    end
-
-end
+% --- help for abstvar/autocov ---
+% 
+%   Compute the autocovariances (and the auto-correlation) of endogenous variables given the parameter values
+%  
+%   ::
+%  
+%      [C,R] = autocov(self);
+%      [C,R] = autocov(self, params);
+%      [C,R] = autocov(self, params, max_periods);
+%  
+%   Args:
+%      self (var object): var object
+%      params (cell of struct): struct containing var model related parameters (default: [])
+%      max_periods (integer): maximum number of period to calculate auto-covariance (default: 5)
+%  
+%   Returns:
+%      :
+%  
+%      - **C** [4-dimensional array]: auto-covariance where dimensions correspond to
+%  
+%         - 1,2: covariance
+%         - 3: time lags
+%         - 4: Number of parameters
+%  
+%      - **R** [4-dimensional array]: auto-correlation with same dimensions
+%  
+% 

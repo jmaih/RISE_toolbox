@@ -1,11 +1,6 @@
-classdef gogetter
-    
-    methods
-        
-        varargout=get(varargin)
-        
-        varargout=set(varargin)
-        
-    end
-    
-end
+%gogetter is a class.
+%
+%    Reference page in Doc Center
+%       doc gogetter
+%
+%

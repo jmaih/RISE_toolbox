@@ -1,7 +1,3 @@
-function varargout=rd(varargin)
-% INTERNAL FUNCTION
+%  INTERNAL FUNCTION
+% 
 %
-
-[varargout{1:nargout}]=date2serial(varargin{:});
-
-end

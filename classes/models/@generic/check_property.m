@@ -1,19 +1,9 @@
-function act=check_property(obj,propname,propval)
-% INTERNAL FUNCTION
+%--- help for check_property ---
 %
-
-action=obj.spec_checker.(propname).action;
-
-if nargout
-
-    act=action;
-
-end
-
-if ~obj.spec_checker.(propname).check(propval)
-
-    error(obj.spec_checker.(propname).errmsg)
-
-end
-
-end
+%  INTERNAL FUNCTION
+% 
+%
+%    Other functions named check_property
+%
+%       dsge/check_property    generic/check_property
+%

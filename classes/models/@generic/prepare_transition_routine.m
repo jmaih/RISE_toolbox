@@ -1,15 +1,10 @@
-function Qfunc=prepare_transition_routine(obj)
-% INTERNAL FUNCTION
+%--- help for prepare_transition_routine ---
 %
-
-Qfunc=memoizer(obj.solution.transition_matrices.Q);
-
-end
-
-function Qfunc=memoizer(Q0)
-Qfunc=@engine;
-    function [Q,retcode]=engine(~)
-        retcode=0;
-        Q=Q0;
-    end
-end
+%  INTERNAL FUNCTION
+% 
+%
+%    Other functions named prepare_transition_routine
+%
+%       dsge/prepare_transition_routine
+%       generic/prepare_transition_routine
+%

@@ -1,55 +1,46 @@
-function moments(obj,opts)
-
-if isempty(opts.center_at_mean)
-    
-    opts.center_at_mean=false;
-    
-end
-
-if opts.debug
-    
-    fprintf('MDD: Now computing moments from %0.0d draws...\n',obj.M);
-    
-    tic
-    
-end
-
-if ~isempty(obj.moms) && obj.moms.center_at_mean~=opts.center_at_mean
-    
-    return
-    
-end
-
-m=struct();
-
-if opts.center_at_mean
-    
-    m.x_bar = (1/obj.M)*sum(obj.theta_draws,2);
-    
-else
-    
-    m.x_bar = obj.theta_mode.x;
-    
-end
-
-S=obj.theta_draws-m.x_bar(:,ones(1,obj.M));
-
-m.Sigma_bar=S*S.'/obj.M; %<---m.Sigma_bar =cov(obj.theta_draws.');
-
-m.Sigma_i=m.Sigma_bar\eye(obj.d);
-
-m.det_Sigma=det(m.Sigma_bar);
-
-m.Shat = chol(m.Sigma_bar,'lower');
-
-if opts.debug
-    
-    fprintf('Done in %0.4d seconds\n\n',toc);
-    
-end
-
-obj.moms.m=m;
-
-obj.moms.center_at_mean=opts.center_at_mean;
-
-end
+%--- help for ts/moments ---
+%
+% --- help for ts/moments ---
+% 
+%   Computes the empirical moments of a time series
+%  
+%   ::
+%  
+%      oo_ = moments(db);
+%      oo_ = moments(db,drange);
+%      oo_ = moments(db,drange,ar);
+%      oo_ = moments(db,drange,ar,lambda);
+%  
+%   Args:
+%  
+%      db (ts object): time series object to get data
+%  
+%      drange (char | serial date | cellstr | {[]}): Range of the data to use
+%  
+%      ar (integer | {1}): order of autocorrelation
+%  
+%      lambda (numeric | {[]}): hyperparameter for hp-filtering the data
+%        before computing the moments. If empty, the data are not
+%        hp-filtered.
+%  
+%  
+%   Returns:
+%  
+%      - **oo_** [struct]: structure with fields
+%  
+%         - vcov : variance covariance
+%         - skewness : skewness
+%         - kurtosis : kurtosis
+%         - variance : variance
+%         - stdev : standard deviation
+%         - corrcoef : correlation array
+%  
+% 
+%     Other functions named moments
+% 
+%        mdd/moments
+% 
+%    Other functions named moments
+%
+%       mdd/moments
+%

@@ -1,60 +1,45 @@
-function kdata = data(mydata,nlags,constant)
-% INTERNAL FUNCTION
+%--- help for ts ---
 %
-
-[nvars,Tr] = size(mydata);
-
-row_wise=true;
-
-X = another_embed(mydata,nlags+1,row_wise);
-
-Y = X(1:nvars,:); % mydata(:,nlags+1:end);
-
-X = X(nvars+1:end,:);
-
-if constant
-
-    X=[ones(1,Tr-nlags);X];
-
-end
+%  Constructor for the time series (ts) object
+% 
+%  ::
+% 
+%    self=ts();    % construct a time series with no observations
+%    self=ts(start_date,data);
+%    self=ts(start_date,data,varnames);
+%    self=ts(start_date,data,varnames,description);
+%    self=ts(start_date,data,varnames,description,trailnans);
+% 
+%  Args:
+% 
+%     start_date (integer | char | serial date): start date of
+%       the time series. The following are admitted:
+% 
+%       - annual data : e.g. 1990 or '1990'
+%       - bi-annual data : e.g. '1990H1'
+%       - Quarterly data : e.g. '1990Q3'
+%       - monthly data : e.g. '1990M12'
+% 
+%     data (numeric): the format is nobs x nvars x npages,
+%       where:
+% 
+%       - **nobs** is the number of observations
+%       - **nvars** is the number of variables
+%       - **npages** is the number of pages (3rd dimension)
+% 
+%     varnames (char | cellstr): names of the variables in the
+%       database
+%     description (char | cellstr | {''}): comments on each
+%       variable in the database
+%     trailnans (true|{false}): keep or remove nans (missing observations)
+% 
+%  Returns:
+%     :
+% 
+%     - **self** [ts] : time series
+% 
 %
-K = size(X,1);
-
-T = Tr - nlags;
-
-kdata=struct('Y',Y,'X',X,'nvars',nvars,'K',K,'T',T,...
-    'constant',constant,'nlags',nlags);
-
-end
-
-function b=another_embed(a,n,row_wise)
-
-if nargin<3
-
-    row_wise=false;
-
-end
-
-if row_wise
-
-    a=a.';
-
-end
-
-b=cell(1,n);
-
-for icol=1:n
-
-    b{icol}=a((n:end)-icol+1,:);
-
-end
-
-b=cell2mat(b);
-
-if row_wise
-
-    b=b.';
-
-end
-
-end
+%    Reference page in Doc Center
+%       doc ts
+%
+%

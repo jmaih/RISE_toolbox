@@ -1,7 +1,5 @@
-function db=apply(db,fhandle)
-% INTERNAL FUNCTION
+%--- help for ts/apply ---
 %
-
-db=ts.unary_operation(db,fhandle);
-
-end
+%  INTERNAL FUNCTION
+% 
+%

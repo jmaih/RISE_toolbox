@@ -1,7 +1,5 @@
-function obj=set_planner_derivatives(obj,d)
-% INTERNAL FUNCTION
+%--- help for set_planner_derivatives ---
 %
-
-obj.solution.planner=d;
-
-end
+%  INTERNAL FUNCTION
+% 
+%
