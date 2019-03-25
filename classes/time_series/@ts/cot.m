@@ -1,9 +1,15 @@
-function this=cot(this)
-% Overloaded cot function for ts object
+% COT    Cotangent of argument in radians.
+%    COT(X) is the cotangent of the elements of X.
+% 
+%    Class support for input X:
+%       float: double, single
+% 
+%    See also ACOT, COTD.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc cot
+%
+%    Other functions named cot
+%
+%       codistributed/cot    gpuArray/cot    sym/cot    ts/cot
+%

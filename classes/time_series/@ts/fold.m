@@ -1,62 +1,24 @@
-function this=fold(last_hist_date,varargin)
-% Takes the first page of possibly several databases and adds
-% further pages using the information from a pivot date
+%  FOLD Apply a binary function left-associatively to a vector
+%    FOLD(F, V, INITIALVALUE) iteratively computes 
+%    RES = F(V(1), V(2))
+%    RES = F(RES, V(3)) 
+%    ....
+%    RES = F(RES, V(END))
+%    and, finally, returns RES. If V is empty, INITIALVALUE is returned. 
+%    For non-empty V, the third argument INITIALVALUE may be left out.
+% 
+%    Example: 
+%    syms x
+%    fold(@or, x == 1:3) gives x == 1 | x==2 | x==3
+%    fold(@and, [], true) gives true   
+%    fold(@intersect, {[1, 3], [2, 3, 29], [3, 1, 17]}) gives 3
+% 
+%    See also PROD, SUM.
 %
-% ::
+%    Reference page in Doc Center
+%       doc fold
 %
-%   this=fold(last_hist_date,obj)
-%   this=fold(last_hist_date,obj1,obj2,...,objn)
+%    Other functions named fold
 %
-% Args:
+%       symfun/fold    ts/fold
 %
-%    last_hist_date (char | serial date):
-%
-%    obj (ts): time series
-%
-% Returns:
-%    :
-%
-%    - **this** [ts]: folded time series
-%
-% See also:
-%    - :func:`unfold <ts.unfold>`
-%
-
-if ~(ischar(last_hist_date)||isnumeric(last_hist_date))
-
-    error('pivot date should be a valid date or a serial date')
-
-end
-
-obj=ts.collect(varargin{:});
-
-sdate=date2serial(last_hist_date);
-
-dn=obj.date_numbers;
-
-loc=find(dn==sdate);
-
-if isempty(loc)
-
-    error('pivot date not found')
-
-end
-
-data=double(obj);
-
-first_page=data(1:loc,:,1);
-
-nrows=size(first_page,1);
-
-extras=data(loc+1:end,:);
-
-[nx,ncols]=size(extras);
-
-extra_pages=nan(nrows,ncols,nx);
-
-extra_pages(end,:,:)=extras.';
-
-first_page=cat(3,first_page,extra_pages);
-
-this=ts(obj.start,first_page,obj.varnames);
-end

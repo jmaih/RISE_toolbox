@@ -3,3 +3,7 @@
 %  INTERNAL FUNCTION
 % 
 %
+%    Other functions named set_solution_to_companion
+%
+%       generic/set_solution_to_companion
+%

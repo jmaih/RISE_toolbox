@@ -1,8 +1,4 @@
-function x=ivech(x)
-% low-level function
+%  low-level function
+% 
+%  No help provided
 %
-% No help provided
-
-x=vartools.ivech(x);
-
-end

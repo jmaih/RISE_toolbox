@@ -1,9 +1,12 @@
-function this=sin(this)
-% Overloaded sin function for ts object
+% SIN    Sine of argument in radians.
+%    SIN(X) is the sine of the elements of X.
+% 
+%    See also ASIN, SIND.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc sin
+%
+%    Other functions named sin
+%
+%       codistributed/sin    gpuArray/sin    sym/sin    ts/sin
+%

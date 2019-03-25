@@ -1,9 +1,4 @@
-function x=vech(x)
-
-% low-level function
+%  low-level function
+% 
+%  No help provided
 %
-% No help provided
-
-x=vartools.vech(x);
-
-end

@@ -1,31 +1,11 @@
-function varargout=refresh(obj)
-% INTERNAL FUNCTION: - refresh the options of an old object with a newer version of
-% the software
+% REFRESH Refresh figure.
+%    REFRESH causes the current figure window to be redrawn. 
+%    REFRESH(FIG) causes the figure FIG to be redrawn.
 %
-% Note:
+%    Reference page in Doc Center
+%       doc refresh
 %
-%    - REFRESH is the same as RISE_GENERIC.REFRESH except that it also
-%      refreshes parts of the system that are specific to DSGE or RISE objects.
+%    Other functions named refresh
 %
-% See also: RISE_GENERIC.REFRESH
+%       dsge/refresh    generic/refresh
 %
-
-if ~isempty(obj)
-
-    nregs=obj.markov_chains.regimes_number;
-
-    if nregs>1
-
-        if size(obj.exogenous.shock_horizon,1)==1
-
-            obj.exogenous.shock_horizon=obj.exogenous.shock_horizon(ones(nregs,1),:);
-
-        end
-
-    end
-
-end
-
-[varargout{1:nargout}]=refresh@generic(obj);
-
-end

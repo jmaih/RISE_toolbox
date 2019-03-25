@@ -1,291 +1,46 @@
-function varargout=filter(self,param)
-% INTERNAL FUNCTION: Compute the log likelihood of the VAR for the given parameters
+% FILTER One-dimensional digital filter.
+%    Y = FILTER(B,A,X) filters the data in vector X with the
+%    filter described by vectors A and B to create the filtered
+%    data Y.  The filter is a "Direct Form II Transposed"
+%    implementation of the standard difference equation:
+% 
+%    a(1)*y(n) = b(1)*x(n) + b(2)*x(n-1) + ... + b(nb+1)*x(n-nb)
+%                          - a(2)*y(n-1) - ... - a(na+1)*y(n-na)
+% 
+%    If a(1) is not equal to 1, FILTER normalizes the filter
+%    coefficients by a(1). 
+% 
+%    FILTER always operates along the first non-singleton dimension,
+%    namely dimension 1 for column vectors and non-trivial matrices,
+%    and dimension 2 for row vectors.
+% 
+%    [Y,Zf] = FILTER(B,A,X,Zi) gives access to initial and final
+%    conditions, Zi and Zf, of the delays.  Zi is a vector of length
+%    MAX(LENGTH(A),LENGTH(B))-1, or an array with the leading dimension 
+%    of size MAX(LENGTH(A),LENGTH(B))-1 and with remaining dimensions 
+%    matching those of X.
+% 
+%    FILTER(B,A,X,[],DIM) or FILTER(B,A,X,Zi,DIM) operates along the
+%    dimension DIM.
+% 
+%    Tip:  If you have the Signal Processing Toolbox, you can design a
+%    filter, D, using DESIGNFILT.  Then you can use Y = FILTER(D,X) to
+%    filter your data.
+% 
+%    See also FILTER2, FILTFILT, FILTIC, DESIGNFILT.
+% 
+%    Note: FILTFILT, FILTIC and DESIGNFILT are in the Signal Processing
+%    Toolbox.
 %
-% ::
+%    Reference page in Doc Center
+%       doc filter
 %
-%    [LogLik,Incr,retcode,filtering] = filter(self);
+%    Other functions named filter
 %
-%    [LogLik,Incr,retcode,filtering] = filter(self, param);
+%       abstvar/filter    garch/filter       statespace/filter
+%       arima/filter      gjr/filter         tall/filter
+%       dsge/filter       gpuArray/filter    timeseries/filter
+%       dssm/filter       LagOp/filter       varm/filter
+%       egarch/filter     regARIMA/filter    vecm/filter
+%       fints/filter      ssm/filter
 %
-% Args:
-%
-%    self (var object): var object
-%
-%    param (cell of struct): (optional) parameter values
-%
-% Returns:
-%
-%    LogLik : log likelihood values of the VAR
-%
-%    Incr : period-by-period contributions to the likelihood
-%
-%    retcode : flag, 0 if no problem
-%
-%    filtering : structure containing filtration
-%
-% Note:
-%
-%    Almost everything is automated in RISE, so see :func:`estimate` or :func:`identification` .
-%
-
-if nargin<2,param=[]; end
-
-n=numel(self);
-
-if n>1
-    
-    nout=nargout;
-    
-    outCell=cell(n,nout);
-    
-    for k=1:n
-        
-        [outCell{k,:}]=filter(self(k),param);
-        
-    end
-    
-    varargout=cell(1,nout);
-    
-    for l=1:nout
-        
-        varargout{l}=outCell(:,l).';
-        
-    end
-    
-    return
-    
-end
-
-if isempty(param),param=self.estim_.estim_param; end
-
-nout=nargout;
-
-outCell=cell(1,nout);
-
-%------------------------------------
-XX=self.estim_.X;
-
-YY=self.estim_.Y;
-
-M=vartools.estim2states(param,...
-    self.estim_.links.theMap,...
-    self.mapping.nparams,...
-    self.mapping.nregimes);
-
-[outCell{1:nout}]=vartools.likelihood(M,self.mapping,...
-    YY,XX,self.is_time_varying_trans_prob,...
-    self.markov_chains);
-%------------------------------------
-
-% We need to shift the date to account for the fact that the VAR starts
-% after its lags...
-start_date=self.estim_.date_range(1)+self.nlags;
-
-proto=ts(start_date,0);
-
-for ix=1:nout
-
-    if isstruct(outCell{ix})
-
-        outCell{ix}=reprocess_structure(outCell{ix});
-
-    end
-
-end
-
-varargout=outCell;
-
-    function sout=reprocess_structure(s)
-
-        isshock=false;
-
-        ff=fieldnames(s);
-
-        sout=struct();
-
-        for ii=1:numel(ff)
-
-            sfi=s.(ff{ii});
-
-            if self.is_panel
-
-                ng=self.ng;
-
-                isshock=isstruct(sfi) && ...
-                    all(strncmp(fieldnames(sfi),'shock_',5));
-
-                if isshock
-
-                    sfi=squash_shocks(sfi,ng);
-
-                end
-
-                for g=1:ng
-
-                    sout.(self.members{g}).(ff{ii})=timeserize(sfi,g);
-
-                end
-
-            else
-
-                sout.(ff{ii})=timeserize(sfi);
-
-            end
-
-        end
-
-        function sout=timeserize(s,g)
-
-            if nargin<2
-
-                g=[];
-
-            end
-
-            if isstruct(s)
-
-                sout=struct();
-
-                fff=fieldnames(s);
-
-                for jj=1:numel(fff)
-
-                    sout.(fff{jj})=timeserize(s.(fff{jj}),g);
-
-                end
-
-            else
-
-                if ~isempty(g) && isshock
-                    % chop
-                    len=size(s,2);
-
-                    h=floor(len/ng);
-
-                    r=len-h*ng;
-
-                    s0=[];
-
-                    if r
-
-                        s0=s(:,1,:);
-
-                        s=s(:,2:end,:);
-
-                    end
-
-                    s=cat(2,s0,s(:,(g-1)*h+1:g*h,:));
-
-                end
-
-                % would be nice to have one prototype with just
-                % a start date...
-                sout=set(proto,'data',permute(s,[2,3,1])); % sout=ts(start_date,permute(s,[2,3,1]));
-
-            end
-
-        end
-
-    end
-
-end
-
-function sfi=squash_shocks(sfi,ng)
-
-if ng==1
-
-    return
-
-end
-
-ffi=fieldnames(sfi);
-
-if isstruct(sfi.(ffi{1}))
-
-    return
-
-end
-
-nvars=numel(ffi);
-
-nshocks=nvars/ng;
-
-tmp=sfi.(ffi{1})(ones(nvars,1),:);
-
-for ii=2:nvars
-
-    tmp(ii,:)=sfi.(ffi{ii});
-
-end
-
-sfi=struct();
-
-for ishock=1:nshocks
-
-    v=tmp((ishock-1)*ng+1:ishock*ng,:,:);
-
-    sfi.(ffi{ishock})=elongate(v);
-
-end
-
-    function e=elongate(v)
-
-        e=cell(1,ng);
-
-        for g=1:ng
-
-            e{g}=v(g,:,:);
-
-        end
-
-        e=cat(2,e{:});
-
-    end
-
-end
-
-%{
-function sfi=squash_shocks(sfi,ng)
-
-if ng==1
-
-    return
-
-end
-
-ffi=fieldnames(sfi);
-
-if isstruct(sfi.(ffi{1}))
-
-    return
-
-end
-
-n=numel(ffi);
-
-tmp=sfi.(ffi{1})(ones(n,1),:);
-
-for ii=2:n
-
-    tmp(ii,:)=sfi.(ffi{ii});
-
-end
-
-T=size(tmp,2);
-
-nshocks=n/ng;
-
-testla=reshape(tmp.',[T,ng,nshocks]);
-
-ffi=ffi(1:nshocks);
-
-sfi=struct();
-
-for ii=1:nshocks
-
-    sfi.(ffi{ii})=testla(:,:,ii).';
-end
-
-end
-
-%}

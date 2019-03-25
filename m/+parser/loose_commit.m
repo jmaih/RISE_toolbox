@@ -1,6 +1,3 @@
-function list=loose_commit()
-% INTERNAL FUNCTION
+%  INTERNAL FUNCTION
+% 
 %
-
-list='loosecommit';
-end

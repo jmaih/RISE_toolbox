@@ -1,7 +1,3 @@
-function name=name4dsgevar()
-% INTERNAL FUNCTION
+%  INTERNAL FUNCTION
+% 
 %
-
-name='dsge_prior_weight';
-
-end

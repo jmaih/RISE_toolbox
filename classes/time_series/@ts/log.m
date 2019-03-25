@@ -1,9 +1,14 @@
-function this=log(this)
-% Overloaded log function for ts object
+% LOG    Natural logarithm.
+%    LOG(X) is the natural logarithm of the elements of X.
+%    Complex results are produced if X is not positive.
+% 
+%    See also LOG1P, LOG2, LOG10, EXP, LOGM, REALLOG.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc log
+%
+%    Other functions named log
+%
+%       codistributed/log    gpuArray/log    sym/log    ts/log
+%       fints/log
+%

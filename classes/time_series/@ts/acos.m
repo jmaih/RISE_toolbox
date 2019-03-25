@@ -1,9 +1,13 @@
-function this=acos(this)
-% Overloaded acos function for ts object
+% ACOS   Inverse cosine, result in radians.
+%    ACOS(X) is the arccosine of the elements of X. Complex
+%    results are obtained if ABS(x) > 1.0 for some element.
+% 
+%    See also COS, ACOSD.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc acos
+%
+%    Other functions named acos
+%
+%       codistributed/acos    gpuArray/acos    sym/acos    ts/acos
+%

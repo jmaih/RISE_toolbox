@@ -1,21 +1,27 @@
-function x=create_state_list(name,number)
-% INTERNAL FUNCTION
+%--- help for dsge/create_state_list ---
 %
-
-if isscalar(number)
-    
-    number=(1:number).';
-    
-else
-    
-    number=number(:);
-    
-end
-
-x=cellstr(strcat(name,'_',num2str(number)));
-
-x=cellfun(@(z)z(~isspace(z)),x,'uniformOutput',false);
-
-x=x(:).';
-
-end
+%  INTERNAL FUNCTION: create_state_list creates the list of the state variables in the solution
+% 
+%  ::
+% 
+%    final_list=create_state_list(m)
+%    final_list=create_state_list(m,orders)
+% 
+%  Args:
+% 
+%     m (dsge | rise): model object
+% 
+%     orders (integer array | {1:m.options.solve_order}): approximation
+%       orders
+% 
+%     compact_form (true | {false}): if true, only unique combinations
+%       will be returned. Else, all combinations will be returned.
+% 
+%  Returns:
+%     :
+% 
+%     - **final_list** [cellstr] : list of the state variables
+%     - **kept** [vector] : location of kept state variables (computed only if
+%       compact_form is set to true)
+% 
+%

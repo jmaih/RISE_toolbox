@@ -1,57 +1,58 @@
-function c=pad(varargin)
-% INTERNAL FUNCTION: Concatenates fields structures horizontally
+% PAD Insert leading and trailing spaces
+%    NEWSTR = PAD(STR) inserts space characters at the end of each element
+%    of STR to match the width of the longest string. STR can be a string
+%    array, character vector, or cell array of character vectors.
+% 
+%    NEWSTR = PAD(STR,WIDTH) inserts space characters to a width specified
+%    by WIDTH. Elements in STR that are longer than WIDTH are unchanged. The
+%    default WIDTH is max(strlength(STR)).
+% 
+%    NEWSTR = PAD(STR,SIDE) inserts space characters to STR on the specified
+%    SIDE to match the width of the longest string. SIDE can be 'left',
+%    'right', or 'both'. The default SIDE is 'right'.
+% 
+%    NEWSTR = PAD(STR,PAD_CHARACTER) inserts PAD_CHARACTER at the end of
+%    each string element in STR to match the width of the longest string.
+%    PAD_CHARACTER must be exactly one character. The default PAD_CHARACTER
+%    is a space character, ' '.
+% 
+%    NEWSTR = PAD(STR,WIDTH,SIDE) inserts space characters to the specified
+%    SIDE and WIDTH.
+% 
+%    NEWSTR = PAD(STR,WIDTH,PAD_CHARACTER) inserts PAD_CHARACTER to the
+%    specified WIDTH.
+% 
+%    NEWSTR = PAD(STR,WIDTH,SIDE,PAD_CHARACTER) inserts PAD_CHARACTER to the
+%    specified SIDE and WIDTH.
+% 
+%    Example:
+%        STR = string({'head';'shoulders';'knees';'toes'});
+%        pad(STR)
+% 
+%        returns
+% 
+%            "head     "
+%            "shoulders"
+%            "knees    "
+%            "toes     "
+%    
+%    Example:
+%        STR = string({'head';'shoulders';'knees';'toes'});
+%        pad(STR,10,'left','.')
+% 
+%        returns
+% 
+%            "......head"
+%            ".shoulders"
+%            ".....knees"
+%            "......toes"
+%        
+%    See also STRIP, STRING/PLUS
 %
-% ::
+%    Reference page in Doc Center
+%       doc pad
 %
-%   c=pad(c1,c2,...,cn)
+%    Other functions named pad
 %
-% Args:
+%       codistributed/pad    tall/pad
 %
-%    - ci : [struct]
-%
-% Returns:
-%
-%    - c : [struct] structure with fields that horizontally concatenate the
-%      fields of c1, c2,..., cn
-%
-% Note:
-%    All structures must have the same fields and the fields must be
-%    concatenable.
-%
-% Example:
-%
-%    ::
-%
-%       c1=struct('a',1,'b',3); c2=struct('a',2,'b',3); c3=struct('a',3,'b',3);
-%       c=utils.struct.pad(c1,c2,c3)
-%
-
-n=nargin;
-silent=true;
-for ii=1:n
-    if ~isa(varargin{ii},'struct')
-        error(sprintf('argument # %0.0f must be a structure',ii))
-    end
-    fields=fieldnames(varargin{ii});
-    if ii==1
-        c=struct2cell(varargin{ii});
-        main_fields=fields;
-    else
-        pos=locate_variables(fields,main_fields,silent);
-        bad=isnan(pos);
-        if any(bad)
-            disp(fields(bad))
-            error(sprintf('the field(s) above belong to structure # %0.0f but are not part of the first structure',ii))
-        elseif numel(pos)~=numel(main_fields)
-            error('all structures must have the same fields')
-        end
-        for ipos=1:numel(pos)
-            c{pos(ipos)}=[c{pos(ipos)},varargin{ii}.(fields{ipos})];
-        end
-    end
-end
-
-c=cell2struct(c,main_fields,1);
-
-
-end

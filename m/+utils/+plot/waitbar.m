@@ -1,74 +1,37 @@
-function waitbar(task,x,varargin)
-% INTERNAL FUNCTION
+% WAITBAR Display wait bar.
+%    H = WAITBAR(X,'message', property, value, property, value, ...)
+%    creates and displays a waitbar of fractional length X.  The
+%    handle to the waitbar figure is returned in H.
+%    X should be between 0 and 1.  Optional arguments property and
+%    value allow to set corresponding waitbar figure properties.
+%    Property can also be an action keyword 'CreateCancelBtn', in
+%    which case a cancel button will be added to the figure, and
+%    the passed value string will be executed upon clicking on the
+%    cancel button or the close figure button.
+% 
+%    WAITBAR(X) will set the length of the current bar to the fractional
+%    length X.
+% 
+%    WAITBAR(X,H) will set the length of the bar in waitbar H
+%    to the fractional length X.
+% 
+%    WAITBAR(X,H,'message') will update the message text in
+%    the waitbar figure, in addition to setting the fractional
+%    length to X.
+% 
+%    WAITBAR is typically used inside a FOR loop that performs a
+%    lengthy computation.
+% 
+%    Example:
+%        h = waitbar(0,'Please wait...');
+%        for i=1:1000,
+%            % computation here %
+%            waitbar(i/1000,h)
+%        end
+% 
+%    See also DIALOG, MSGBOX.
 %
-
-persistent waitbar_handle init_clock title_size_reset
-
-switch lower(task)
-
-    case 'init'
-
-        if ~isstruct(x)
-
-            error('at initialization, second argument must be a structure')
-
-        end
-
-        waitbar_handle=waitbar(0,x.message,...
-            'Name',x.name,...
-            'CreateCancelBtn','delete(gcbf)',...
-            varargin{:});
-
-        init_clock=clock;
-
-        title_size_reset=false;
-
-    case 'close'
-
-        if ishandle(waitbar_handle)
-
-            delete(waitbar_handle)
-
-        end
-
-    case 'update'
-
-        if ishandle(waitbar_handle)
-
-            [hrs,mins,secs]=utils.miscellaneous.estimated_time_of_arrival(init_clock,x);
-
-            msg=sprintf('%0.4f complete. ETA: %g:%02g:%02g',x,hrs,mins,secs);
-
-            if ~isempty(varargin) && ischar(varargin{1})
-
-                msg=[varargin(:)
-                    msg];
-
-                if ~title_size_reset
-
-                    title_size_reset=true;
-
-                    pos=get(waitbar_handle,'position');
-
-                    pos(end)=(1+.25*numel(varargin))*pos(end);
-
-                    set(waitbar_handle,'position',pos)
-
-                end
-                % msg=sprintf('%s -- %s',varargin{1},msg);
-            end
-
-            waitbar(x,waitbar_handle,msg);
-
-            drawnow
-
-        else
-            % handle was deleted, don't do anything
-        end
-
-    otherwise
-
-        error(['unknown task "',task,'"'])
-end
-
-end
+%    Reference page in Doc Center
+%       doc waitbar
+%
+%

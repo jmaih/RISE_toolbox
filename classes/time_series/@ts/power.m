@@ -1,6 +1,20 @@
-function db=power(db1,db2)
-% Overloaded power function for ts object
+% .^  Array power.
+%    Z = X.^Y denotes element-by-element powers. X and Y must have
+%    compatible sizes. In the simplest cases, they can be the same size or
+%    one can be a scalar. Two inputs have compatible sizes if, for every
+%    dimension, the dimension sizes of the inputs are either the same or one
+%    of them is 1.
+% 
+%    C = POWER(A,B) is called for the syntax 'A .^ B' when A or B is an
+%    object.
+% 
+%    See also MPOWER, NTHROOT, REALPOW.
 %
-
-db=ts.binary_operation(db1,db2,mfilename);
-end
+%    Reference page in Doc Center
+%       doc power
+%
+%    Other functions named power
+%
+%       codistributed/power    gpuArray/power    sym/power    ts/power
+%       fints/power
+%

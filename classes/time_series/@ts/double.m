@@ -1,18 +1,21 @@
-function d=double(self)
-% DOUBLE: Returns the underlying data of the time series
+% DOUBLE Convert to double precision.
+%    DOUBLE(X) returns the double precision value for X.
+%    If X is already a double precision array, DOUBLE has
+%    no effect.
+% 
+%    DOUBLE is called for the expressions in FOR, IF, and WHILE loops
+%    if the expression isn't already double precision.  DOUBLE should
+%    be overloaded for all objects where it makes sense to convert it
+%    into a double precision value.
+% 
+%    See also SINGLE, DATATYPES, ISFLOAT, ISNUMERIC.
 %
-% ::
+%    Reference page in Doc Center
+%       doc double
 %
-%    data = double(db);
+%    Other functions named double
 %
-% Args:
+%       categorical/double      gpuArray/double    sym/double
+%       codistributed/double    opaque/double      tabular/double
+%       dataset/double          string/double      ts/double
 %
-%    db (ts object): time series object
-%
-% Returns:
-%    :
-%    - data (numeric): vector/matrix/tensor form of the data underlying the time series
-%
-
-d=self.data;
-end

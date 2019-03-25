@@ -1,205 +1,60 @@
-function Value= get(obj,varargin)
-%  get  Access/Query time series property values.
+% GET    Get object properties.
+%    V = GET(H,'PropertyName') returns the value of the specified property
+%    for the graphics object with handle H.  If H is a vector of handles,
+%    then get will return an M-by-1 cell array of values where M is equal
+%    to length(H).  If 'PropertyName' is replaced by a 1-by-N or N-by-1 cell
+%    array of strings containing property names, then GET will return an 
+%    M-by-N cell array of values.
+% 
+%    GET(H) displays the names and current values of all user-gettable 
+%    properties for the graphics object with handle H.
+% 
+%    V = GET(H) where H is a scalar, returns a structure where each field
+%    name is the name of a user-gettable property of H and each field
+%    contains the value of that property.
+% 
+%    V = GET(0, 'Factory') 
+%    V = GET(0, 'Factory<ObjectType>')
+%    V = GET(0, 'Factory<ObjectType><PropertyName>') 
+%    returns for all object types the factory values of all properties
+%    which have user-settable default values.  
+% 
+%    V = GET(H, 'Default') 
+%    V = GET(H, 'Default<ObjectType>') 
+%    V = GET(H, 'Default<ObjectType><PropertyName>') 
+%    returns information about default property values (H must be scalar).  
+%    'Default' returns a list of all default property values currently set 
+%    on H.  'Default<ObjectType>' returns only the defaults for properties 
+%    of <ObjectType> set on H.
+%    'Default<ObjectType><PropertyName>' returns the default value for the
+%    specific property, by searching the defaults set on H and its
+%    ancestors, until that default is found.  If no default value for this
+%    property has been set on H or any ancestor of H up through the root, 
+%    then the factory value for that property is returned.
+%  
+%    Defaults can not be queried on a descendant of the object, or on the
+%    object itself - for example, a value for 'DefaultAxesColor' can not
+%    be queried on an axes or an axes child, but can be queried on a figure
+%    or on the root.
+% 
+%    When using the 'Factory' or 'Default' GET, if PropertyName is omitted 
+%    then the return value will take the form of a structure in which each 
+%    field name is a property name and the corresponding value is the value
+%    of that property.  If PropertyName is specified then a matrix or string
+%    value will be returned.
+%    
+% 
+%    See also SET, RESET, DELETE, GCF, GCA, FIGURE, AXES.
 %
-%     VALUE = get(TS,'PropertyName') returns the value of the
-%     specified property of the time series object.  An equivalent
-%     syntax is
+%    Reference page in Doc Center
+%       doc get
 %
-%         VALUE = TS.PropertyName
+%    Other functions named get
 %
-%     get(TS) displays all properties of TS and their values.
-
-if isempty(obj)
-    
-    Value = [];
-    
-    return
-    
-end
-
-if numel(obj)==1 % get on a scalar timeseries
-    
-    Value = uttsget(obj,varargin{:});
-    
-    return
-    
-end
-
-% Process array values
-if nargin>=2 % get on a timeseries array with specified properties
-    
-    if ischar(varargin{1})
-        
-        Value = cell(size(obj));
-        
-        for k=1:numel(obj)
-            
-            Value{k} = uttsget(obj(k),varargin{:});
-        
-        end
-        
-    elseif iscell(varargin{1})
-        
-        props = varargin{1};
-        
-        Value = cell(numel(obj),length(props));
-        
-        for k=1:numel(obj)
-            
-            for j=1:length(props)
-                
-                Value{k,j} = uttsget(obj(k),props{j});
-            
-            end
-            
-        end
-        
-    end
-    
-else % Return a stuct array for a timeseries array with no props
-    
-    for k=numel(obj):-1:1
-        
-        Value(k) = uttsget(obj(k),varargin{:});
-    
-    end
-    
-end
-
-end
-
-function ValueOut = uttsget(h,varargin)
+%       arrowline/get    figobj/get        scribehandle/get
+%       axischild/get    generic/get       scribehgobj/get
+%       axisobj/get      gogetter/get      serial/get
+%       axistext/get     hgbin/get         splanar/get
+%       COM/get          instrument/get    timeseries/get
+%       dataset/get      RandStream/get    tscollection/get
 %
-% ts utility function
-
-ni = nargin;
-
-narginchk(1,2);
-
-if ni==2
-    % GET(H,'Property') or GET(H,{'Prop1','Prop2',...})
-    Property = varargin{1};
-    
-    CharProp = ischar(Property);
-    
-    if CharProp
-        
-        Property = {Property};
-    
-    elseif ~iscellstr(Property) %#ok<ISCLSTR>
-        
-        error('invalid property')
-    
-    end
-    
-    % Loop over each queried property
-    Nq = numel(Property);
-    
-    Value = cell(length(h),Nq);
-    
-    for i=1:Nq
-        % Find match for k-th property name and get corresponding value
-        % RE: a) Must include all properties to detect multiple hits
-        %     b) Limit comparison to first 7 chars (because of iodelaymatrix)
-        try
-            
-            if numel(h)==1 % Do not index into timeseries - they are not really arrays
-                
-                Value{1,i} = h.(Property{i});
-            
-            else
-                
-                for k=1:numel(h)
-                    
-                    Value{k,i} = h(k).(Property{i});
-                
-                end
-                
-            end
-            
-        catch me
-            
-            rethrow(me)
-        
-        end
-        
-    end
-    
-    % Strip cell header if PROPERTY was a string.
-    if CharProp
-        
-        ValueOut = Value{1};
-    
-    else
-        
-        ValueOut = Value;
-    
-    end
-    
-else
-    
-    if all(~ishandle(h)) % This is an MCOS object/array
-        
-        classH = metaclass(h);
-        
-        Public=strcmp({classH.PropertyList.GetAccess},'public');
-        
-        Hidden=[classH.PropertyList.Hidden];
-        
-        good=Public & ~Hidden;
-        
-        PropNames = {classH.PropertyList.Name};
-        
-        PropNames=PropNames(good);
-        
-    else
-        
-        classH = classhandle(h(1));
-        
-        propH  = classH.Properties(:);
-        
-        PropNames = {};
-        
-        for k=1:length(propH)
-            
-            if strcmp(propH(k).AccessFlags.PublicGet,'on') && strcmp(propH(k).Visible,'on')
-                
-                PropNames = [PropNames; {propH(k).Name}]; %#ok<AGROW>
-                
-            end
-            
-        end
-        
-    end
-    
-    if numel(h)>1
-        
-        for j=numel(h):-1:1
-            
-            for k=length(PropNames):-1:1
-                
-                PropValues{k} = h(j).(PropNames{k});
-                
-            end
-            
-            Value(j) = cell2struct(PropValues,PropNames,2);
-            
-        end
-        
-        ValueOut = Value;
-        
-    else
-        
-        for k=length(PropNames):-1:1
-            
-            PropValues{k} = h.(PropNames{k});
-            
-        end
-        
-        ValueOut = cell2struct(PropValues,PropNames,2);
-        
-    end
-    
-end
-
-end

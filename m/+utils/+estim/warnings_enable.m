@@ -1,7 +1,3 @@
-function warnings_enable(warnstate)
-% INTERNAL FUNCTION
+%  INTERNAL FUNCTION
+% 
 %
-
-warning(warnstate);
-
-end

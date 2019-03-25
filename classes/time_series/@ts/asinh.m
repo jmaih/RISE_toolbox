@@ -1,9 +1,12 @@
-function this=asinh(this)
-% Overloaded asinh for ts object
+% ASINH  Inverse hyperbolic sine.
+%    ASINH(X) is the inverse hyperbolic sine of the elements of X.
+% 
+%    See also SINH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc asinh
+%
+%    Other functions named asinh
+%
+%       codistributed/asinh    gpuArray/asinh    sym/asinh    ts/asinh
+%

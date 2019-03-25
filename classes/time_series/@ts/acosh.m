@@ -1,9 +1,12 @@
-function this=acosh(this)
-% Overloaded acosh function for ts object
+% ACOSH  Inverse hyperbolic cosine.
+%    ACOSH(X) is the inverse hyperbolic cosine of the elements of X.
+% 
+%    See also COSH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc acosh
+%
+%    Other functions named acosh
+%
+%       codistributed/acosh    gpuArray/acosh    sym/acosh    ts/acosh
+%

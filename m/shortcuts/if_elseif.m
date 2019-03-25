@@ -1,6 +1,4 @@
-function varargout=if_elseif(varargin)
-% low-level function
+%  low-level function
+% 
+%  No help provided
 %
-% No help provided
-
-[varargout{1:nargout}]=utils.functional_programming.if_elseif(varargin{:});

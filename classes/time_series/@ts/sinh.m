@@ -1,9 +1,12 @@
-function this=sinh(this)
-% Overloaded sinh function for ts object
+% SINH   Hyperbolic sine.
+%    SINH(X) is the hyperbolic sine of the elements of X.
+% 
+%    See also ASINH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc sinh
+%
+%    Other functions named sinh
+%
+%       codistributed/sinh    gpuArray/sinh    sym/sinh    ts/sinh
+%

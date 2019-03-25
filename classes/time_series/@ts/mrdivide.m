@@ -1,9 +1,20 @@
-function this3=mrdivide(this1,this2)
-% Overloaded mrdivide for ts object
+% /   Slash or right matrix divide.
+%    A/B is the matrix division of B into A, which is roughly the
+%    same as A*INV(B) , except it is computed in a different way.
+%    More precisely, A/B = (B'\A')'. See MLDIVIDE for details.
+% 
+%    C = MRDIVIDE(A,B) is called for the syntax 'A / B' when A or B is an
+%    object.
+% 
+%    See also MLDIVIDE, RDIVIDE, LDIVIDE.
 %
-% Note:
-%    It matrix multiplication does not make sense for a time series object, so automatically defaults to element-wise division
+%    Reference page in Doc Center
+%       doc mrdivide
 %
-
-this3=rdivide(this1,this2);
-end
+%    Other functions named mrdivide
+%
+%       codistributed/mrdivide    gpuArray/mrdivide    tall/mrdivide
+%       distributed/mrdivide      LagOp/mrdivide       timeseries/mrdivide
+%       duration/mrdivide         sym/mrdivide         ts/mrdivide
+%       fints/mrdivide
+%

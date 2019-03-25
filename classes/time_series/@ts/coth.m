@@ -1,9 +1,15 @@
-function this=coth(this)
-% Overloaded coth function for ts object
+% COTH   Hyperbolic cotangent.
+%    COTH(X) is the hyperbolic cotangent of the elements of X.
+% 
+%    Class support for input X:
+%       float: double, single
+% 
+%    See also ACOTH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc coth
+%
+%    Other functions named coth
+%
+%       codistributed/coth    gpuArray/coth    sym/coth    ts/coth
+%

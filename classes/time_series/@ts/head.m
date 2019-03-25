@@ -1,25 +1,15 @@
-%--- help for ts/head ---
+%--- help for tabular/head ---
 %
-%  Returns the first few sample dates of the time series
+% HEAD  Get first few rows of a table or a timetable.
+%    B = HEAD(A) gets the first few rows of the table A and returns the
+%    results in the table B.
 % 
-%  ::
+%    B = HEAD(A,K) returns up to K rows from the beginning of the table A.
+%    If A contains fewer than K rows, then the entire table is returned.
 % 
-%     db = head(db);
-%     db = head(db,n);
-% 
-%  Args:
-%     db (ts object): time series object
-%     n (integer): number of time steps to show
-% 
-%  Returns:
-%     :
-%     - db (ts object): time series with the first n-time steps
-% 
-%  Note:
-%     - This is similar to the head function in stata.
-% 
+%    See also: TAIL, TABLE, TIMETABLE.
 %
 %    Other functions named head
 %
-%       codistributed/head    gpuArray/head    tabular/head    tall/head
+%       codistributed/head    gpuArray/head    tall/head    ts/head
 %

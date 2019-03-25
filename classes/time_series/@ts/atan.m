@@ -1,9 +1,12 @@
-function this=atan(this)
-% Overloaded atan for ts object
+% ATAN   Inverse tangent, result in radians.
+%    ATAN(X) is the arctangent of the elements of X.
+% 
+%    See also ATAN2, TAN, ATAND, ATAN2D.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc atan
+%
+%    Other functions named atan
+%
+%       codistributed/atan    gpuArray/atan    sym/atan    ts/atan
+%

@@ -1,30 +1,19 @@
-%--- help for mcmc/summary ---
+%--- help for tabular/summary ---
 %
-%  Print summary information about the mcmc draws
+% SUMMARY Print summary of a table or a timetable.
+%    SUMMARY(T) prints a summary of T and the variables that it contains. If
+%    T is a table, then SUMMARY displays the description from
+%    T.Properties.Description followed by a summary of the table variables.
+%    If T is a timetable, then SUMMARY additionally displays a summary of
+%    the row times.
 % 
-%  ::
-% 
-%     [myMeanStdev, MyQuantiles] = summary(mcobj);
-%     [myMeanStdev, MyQuantiles] = summary(mcobj, varargin);
-% 
-%  Args:
-% 
-%     mcobj (mcmc object): mcmc object
-% 
-%     varargin (options): options need to come in pairs:
-% 
-%        - 'percnt': Quantile points (default: [2.5, 25, 50, 75, 97.5])
-%        - 'batch_size': sampling size of for the computation of thinned standard deviation (SD(batch)), every 'batch_size'th points are used to compute SD(batch).
-% 
-%  Returns:
-%     :
-% 
-%     - **myMeanStdev** [cell]: mean and standard deviations
-%     - **myQuantiles** [cell]: quantile values
-% 
+%    S = SUMMARY(T) returns a summary of T as a structure. Each field of S
+%    contains a summary for the corresponding variable in T. If T is a
+%    timetable, S contains an additional field for a summary of the row
+%    times.
 %
 %    Other functions named summary
 %
-%       categorical/summary      dataset/summary        tabular/summary
+%       categorical/summary      dataset/summary        mcmc/summary
 %       codistributed/summary    distributed/summary    tall/summary
 %

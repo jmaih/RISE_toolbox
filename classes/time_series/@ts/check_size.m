@@ -1,4 +1,4 @@
-%--- check_size.m not found. Showing help for checksiz instead. ---
+%--- help for checksiz ---
 %
 % CHECKSIZ Test size consistency among input arguments.
 % 

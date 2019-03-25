@@ -1,25 +1,15 @@
-%--- help for ts/tail ---
+%--- help for tabular/tail ---
 %
-%  Returns the last few sample dates of the time series
+% TAIL  Get last few rows of a table or a timetable.
+%    B = TAIL(A) gets the last few rows of the table A and returns the
+%    results in the table B.
 % 
-%  ::
+%    B = TAIL(A,K) returns up to K rows from the end of the table A.
+%    If A contains fewer than K rows, then the entire table is returned.
 % 
-%     db = tail(db);
-%     db = tail(db,n);
-% 
-%  Args:
-%     db (ts object): time series object
-%     n (integer): number of time steps to show
-% 
-%  Returns:
-%     :
-%     - **db** (ts object): time series with the last n-time steps
-% 
-%  Note:
-%     - This is similar to the tail function in stata.
-% 
+%    See also: HEAD, TABLE, TIMETABLE.
 %
 %    Other functions named tail
 %
-%       codistributed/tail    gpuArray/tail    tabular/tail    tall/tail
+%       codistributed/tail    gpuArray/tail    tall/tail    ts/tail
 %

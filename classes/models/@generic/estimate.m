@@ -1,314 +1,272 @@
-function [obj,filtration]=estimate(obj,varargin)
-
-nobj=numel(obj);
-
-if nobj==0 % same as isempty(obj)
-    
-    mydefaults=the_defaults();
-    
-    mydefaults=[mydefaults
-        optimization.estimation_engine()];
-    %         load_data(obj),...
-    
-    if nargout
-        
-        obj=mydefaults;
-        
-    else
-        
-        clear obj
-        
-        disp_defaults(mydefaults);
-        
-    end
-    
-    return
-    
-elseif nobj>1
-    
-    NumWorkers=utils.parallel.get_number_of_workers();
-    
-    filtration=cell(1,nobj);
-    
-    if NumWorkers
-        
-        pctRunOnAll('utils.estim.warnings_disable();')
-        
-        pctRunOnAll('utils.estim.prior.warnings_fmincon_disable();')
-        
-    end
-    
-    parfor (ii=1:nobj,NumWorkers)
-        
-        [obj(ii),filtration{ii}]=estimate(obj(ii),varargin{:}); %#ok<PFBNS>
-        
-    end
-    
-    return
-    
-end
-
-nn=length(varargin);
-
-if nn
-    
-    if rem(nn,2)~=0
-        
-        error([mfilename,':: arguments must come in pairs'])
-        
-    end
-    
-    if ~isempty(varargin)
-        
-        for jj=1:nobj
-            
-            obj(jj)=set(obj(jj),varargin{:});
-            
-        end
-        
-    end
-    
-end
-
-estim_start_time=clock;
-
-for jj=1:nobj
-    
-    if isempty(obj(jj).estimation.posterior_maximization.estim_start_time)
-        % maybe we used several optimizers one after the other. In that
-        % case the start of the estimation should not change
-        obj(jj).estimation.posterior_maximization.estim_start_time=estim_start_time;
-        
-    end
-    
-end
-
-estim_start_from_mode=obj(1).options.estim_start_from_mode;
-
-% Load the function that computes the likelihood
-% preliminary checks:
-param_names={obj(1).estimation.priors.name};
-% Load the function that computes the likelihood
-for ii=1:nobj
-    
-    if ~isequal(param_names,{obj(ii).estimation.priors.name})
-        
-        error([mfilename,':: optimization parameters should be the same across all models and ordered in the same way'])
-    
-    end
-    % this will be useful when deciding to check for stability in the markov switching model
-    obj(ii).estimation_under_way=true;
-    % load the mode
-    obj(ii)=load_mode(obj(ii));
-
-end
-
-% this will record the different problems encounter during estimation
-list_of_issues=cell(0);
-
-if ~isempty(estim_start_from_mode) && ~islogical(estim_start_from_mode)
-    
-    estim_start_from_mode=logical(estim_start_from_mode);
-    
-end
-
-[obj,issue]=load_data(obj);
-
-if ~isempty(issue)
-    
-    list_of_issues=[list_of_issues;{issue}];
-    
-end
-
-xmode=obj(1).estimation.posterior_maximization.mode;
-
-response='n';
-
-if ~isempty(xmode)
-    
-    if ~isempty(estim_start_from_mode)
-        
-        if estim_start_from_mode
-            
-            response='y';
-            
-        else
-            
-            response='n';
-            
-        end
-        
-    else
-        
-        response='';
-        
-        while ~ismember(response,{'y','n'})
-            
-            response=input('previous estimation found. Do you want to load the mode? [y/n]','s');
-        
-        end
-        
-    end
-    
-end
-
-switch response
-    
-    case 'y'
-        
-        x0=xmode;
-    
-    case 'n'
-        
-        x0=[obj(1).estimation.priors.start];
-    
-    otherwise
-        
-end
-
-x0=x0(:);
-
-lb=[obj(1).estimation.priors.lower_bound]; lb=lb(:);
-
-ub=[obj(1).estimation.priors.upper_bound]; ub=ub(:);
-
-% transform initial conditions
-%-----------------------------
-[obj,x0,lb_short,ub_short]=transform_parameters(obj,x0,lb,ub);
-
-% do posterior maximization
-%--------------------------
-[x1,f1,H,x0,f0,viol,funevals,issue,obj]=find_posterior_mode(obj,x0,lb_short,ub_short); %#ok<ASGLU>
-
-% extend the output but not the short hessian
-%---------------------------------------------
-linear_restricts=obj(1).linear_restrictions_data;
-
-% x1 = linear_restricts.a_func(x1);
+%--- help for statespace/estimate ---
+%
+% ESTIMATE Maximum likelihood parameter estimation of state-space models 
 % 
-% x0 = linear_restricts.a_func(x0); %#ok<NASGU>
-% H=linear_restricts.a_func(H,true);
-
-x1=unstransform_parameters(obj(1),x1);
-
-x0=unstransform_parameters(obj(1),x0); %#ok<NASGU>
-
-numberOfActiveInequalities=numel(viol);
-
-if ~isempty(issue)
-    
-    list_of_issues=[list_of_issues;{issue}];
-
-end
-
-estim_end_time=clock;
-
-filtration=cell(1,nobj);
-
-for ii=1:nobj
-    % set the filtering/smoothing flag to 3 in order to get out the final
-    % outputs with the smoothed and filtered variables (if feasible)
-    
-    [log_post,log_lik,log_prior,~,~,obj(ii),xmode,filtration{ii}]=conclude_estimation(obj(ii),x1);
-    % compute the penalties for the restrictions violations
-    %-------------------------------------------------------
-    g=evaluate_general_restrictions(obj(ii));
-    
-    nonlin_penalty=utils.estim.penalize_violations(g{1},obj(ii).options.estim_penalty_factor);
-    
-    post_max=obj(ii).estimation.posterior_maximization;
-    % set the end time for estimation, even if it does not include the
-    % smoothing part done in conclude_estimation.
-    post_max.estim_end_time=estim_end_time;
-    % capture the final parameters and their standard deviations
-    post_max.mode=xmode;
-    
-    % Hessian
-    post_max.hessian=H;
-    
-    post_max.log_prior=log_prior(1);
-    post_max.log_endog_prior=log_prior(2);
-    post_max.nonlinear_restrictions_penalty=nonlin_penalty;
-    post_max.log_post=log_post;
-    post_max.log_lik=log_lik;
-    post_max.active_inequalities_number=numberOfActiveInequalities;
-    post_max.funevals=funevals;
-    
-    % Marginal data density and other variable outputs that can be calculated separately
-    %-----------------------------------------------------------------------------------
-    post_max=generic_tools.posterior_maximization_variable_quantities(...
-        post_max,linear_restricts.a_func);
-    
-    post_max.x0=x0;
-    
-    post_max.f0=f0;
-    
-    obj(ii).estimation.posterior_maximization=post_max;
-    
-    obj(ii).list_of_issues=list_of_issues;
-    
-end
-
-if nobj==1
-    
-    filtration=filtration{1};
-    
-end
-
-% disp Estimation results
-print_estimation_results(obj);
-
-end
-
-function d=the_defaults()
-
-num_fin=@(x)isnumeric(x) && isscalar(x) && isfinite(x);
-
-num_fin_int=@(x)num_fin(x) && floor(x)==ceil(x) && x>=0;
-
-d={
-    'estim_barrier',false,@(x)islogical(x),...
-    'estim_barrier must be a logical'
-    
-    'estim_start_from_mode',[],@(x)islogical(x),...
-    'estim_start_from_mode must be a logical'
-    
-    'estim_penalty_factor',10,@(x)num_fin(x) && x >0,...
-    'estim_penalty_factor must be a finite and positive scalar'
-    
-    'estim_penalty',1e+8,@(x)num_fin(x) && x >0,...
-    'estim_penalty must be a finite and positive scalar'
-    
-    'estim_max_trials',500,@(x)num_fin_int(x) && x >0,...
-    'estim_max_trials must be a finite and positive integer'
-    
-    'estim_parallel',1,@(x)num_fin_int(x) && x>0,...
-    'estim_parallel must be a positive integer' % number of starting values
-    
-    'estim_start_date','',@(x)isempty(x)||is_date(x)||is_serial(x),...
-    'estim_start_date must be a valid date'
-    
-    'estim_end_date','',@(x)isempty(x)||is_date(x)||is_serial(x),...
-    'estim_end_date must be a valid date'
-    
-    'estim_start_vals',[],@(x)isstruct(x),...
-    'estim_start_vals must be a struct'
-    
-    'estim_general_restrictions',[],...
-    @(x)ischar(x)||iscell(x)||isa(x,'function_handle'),...
-    'estim_general_restrictions must be a char, a cell or a function handle' % holds a function that takes as input the model object and returns the
-    
-    'estim_linear_restrictions',[],@(x)iscell(x)&&size(x,2)==2,...
-    'estim_linear_restrictions must be a two-column cell'
-    
-    'estim_nonlinear_restrictions',[],@(x)iscellstr(x),...
-    'estim_nonlinear_restrictions must be a cell array of strings'
-    
-    'estim_blocks',[],@(x)iscell(x),...
-    'estim_blocks must be a cell array with groupings of parameter names'
-    
-    'estim_endogenous_priors',[],@(x)isa(x,'function_handle'),...
-    'estim_endogenous_priors must be a functio handle'
-    }; %#ok<ISCLSTR>
-
-end
+%  Syntax:
+% 
+%    [EstMdl,estParams,EstParamCov,logL,Output] = estimate(Mdl,Y,params0)
+%    [EstMdl,estParams,EstParamCov,logL,Output] = estimate(Mdl,Y,params0,
+%                                                          name,value,...)
+% 
+%  Description:
+% 
+%    For observation vector y(t) and state vector x(t), estimate parameters 
+%    of the following general state-space model by maximum likelihood:
+% 
+%    State equation:       x(t) = A(t) * x(t-1) + B(t) * u(t)
+%    Observation equation: y(t) = C(t) * x(t)   + D(t) * e(t)
+% 
+%    where u(t) and e(t) are uncorrelated, unit-variance white noise vector
+%    processes. The length of x(t), y(t), u(t), and e(t) is m, n, k, and h, 
+%    respectively.
+% 
+%    For models created explicitly by specifying coefficients A, B, C, and D,
+%    unknown parameters to estimate are identified by the presence of NaNs in
+%    these model coefficients. Unknown parameters identified by the presence 
+%    of NaNs in the mean vector (Mean0) and covariance matrix (Cov0) of initial
+%    states x(0) are optionally estimated as well.
+% 
+%    For models created implicitly by specifying a parameter mapping function 
+%    ParamMap, the mapping function is responsible for managing the presence 
+%    and placement of unknown parameters. In the implicit approach, the mapping
+%    function alone defines the model, and is particularly convenient for 
+%    estimating complex models and for imposing certain parameter constraints. 
+%    Moreover, in more general settings in which the initial states are also 
+%    determined by unknown parameters, ParamMap may include additional output 
+%    arguments; refer to the SSM/DSSM constructor for more details.
+% 
+%  Input Arguments:
+% 
+%    Mdl - A state-space model with unknown parameters to estimate, created 
+%      by the SSM/DSSM constructor.
+% 
+%    Y - Observed response data to which the model is fit. For time-invariant 
+%      models in which the length of each observation vector (n) is the same, 
+%      Y is a T-by-n matrix. For time-varying models in which the length of 
+%      the observation vector changes, Y is a T-by-1 cell array in which 
+%      each element contains a time-varying n-element vector of observations, 
+%      y(t), associated with the corresponding period. The last observation 
+%      is the most recent.
+% 
+%    params0 - A vector containing the initial values of unknown 
+%      parameters associated with model coefficients A, B, C, and D, and 
+%      optionally the mean vector (Mean0) and covariance matrix (Cov0) of 
+%      initial states x(0), estimated by maximum likelihood. For models created 
+%      explicitly, parameters mapped to NaN values are found by a column-wise 
+%      search of A, followed by B, then C, then D, and finally Mean0 and Cov0. 
+%      For models created implicitly, the parameter function ParamMap is 
+%      solely responsible for mapping the initial parameter vector into model 
+%      coefficients A, B, C, and D, as well as additional information 
+%      regarding initial states and types if necessary. 
+% 
+%  Optional Input Name/Value Pairs:
+% 
+%    'Univariate'  Logical value indicating whether to use the univariate 
+%                  treatment of a multivariate series. The default is false.
+% 
+%    'SquareRoot'  Logical value indicating whether to use the square-root 
+%                  filter. The default is false.
+%                  SSM only. No effects on DSSM.
+% 
+%    'Tolerance'   A small, non-negative variance tolerance that controls 
+%                  whether an observed series is ignored if its forecast
+%                  uncertainty falls below this threshold. Setting tolerance 
+%                  to a small number, say 1e-15, may help overcome numerical 
+%                  problems of the filter. The default is 0.
+% 
+%    'Predictors'  T-by-d matrix of common predictor variables used to
+%                  include a regression component in the observation equation. 
+%                  Observations at time t are deflated such that
+% 
+%                  [y(t) - z(t)*b] = C * x(t) + D * e(t)
+% 
+%                  where z(t) is a vector of predictor variables and b is 
+%                  the regression coefficient vector (see below). The default
+%                  is an empty matrix (no regression component)
+% 
+%    'Beta0'       d-by-n matrix of initial values of regression coefficients 
+%                  associated with predictors (see above). If the model contains
+%                  a regression component, coefficients are estimated along 
+%                  with other unknown parameters in A, B, C, D, Mean0, and 
+%                  Cov0; the default initial values are obtained by ordinary 
+%                  least squares (OLS) by regressing Y on the explanatory 
+%                  variables.
+% 
+%    'SwitchTime'  a positive integer that specifies the date after which the
+%                  diffuse filter switches to the standard filter.
+%                  The default is the earliest date when the smoothed
+%                  initial states have a full-rank covariance matrix.
+%                  DSSM only. No effects on SSM.
+% 
+%    'CovMethod'   String or character vector indicating the method for
+%                  computing the asymptotic parameter error covariance
+%                  matrix of estimated parameters. Values are:
+% 
+%                  VALUE             METHOD
+% 
+%                  o 'hessian'       Negative inverted Hessian matrix
+%                  o 'opg'           Outer product of gradients (default)
+%                  o 'sandwich'      Both Hessian and outer product of gradients
+% 
+%    'Options'     Optimization options created with OPTIMOPTIONS. If 
+%                  specified, default optimization parameters are replaced 
+%                  by those in options. The default OPTIMOPTIONS object depends
+%                  on the optimization function used to estimate parameters.
+%                  For constrained optimization, FMINCON is called and the 
+%                  algorithm used is interior point; for unconstrained 
+%                  optimization, FMINUNC is called and the algorithm is 
+%                  quasi-Newton. See documentation for OPTIMOPTIONS, FMINCON, 
+%                  and FMINUNC for details.
+% 
+%    'Display'    String vector or cell vector of character vectors
+%                 indicating what information to display in the command
+%                 window. Values are:
+%   
+%                 VALUE           DISPLAY
+%   
+%                 o 'off'         No display to the command window. 
+%   
+%                 o 'params'      Display maximum likelihood parameter 
+%                                 estimates, standard errors, and t statistics.
+%                                 This is the default.
+% 
+%                 o 'iter'        Display iterative optimization information.
+% 
+%                 o 'diagnostics' Display optimization diagnostics.
+% 
+%                 o 'full'        Display 'params', 'iter', and 'diagnostics'.            
+% 
+%    The following optional name/value pairs are related to constrained
+%    optimization performed by FMINCON (see FMINCON for details):
+% 
+%    'Aineq'  Linear inequality matrix, such that for solution vector X 
+%             Aineq*X <= bineq. The number of rows is determined by the 
+%             number of constraints, and the number of columns by the number 
+%             of estimated parameters. Columns are ordered by estimated 
+%             parameters in A, B, C, D, Mean0, Cov0, and finally regression 
+%             coefficients for models with a regression component.
+% 
+%    'bineq'  Linear inequality column vector, such that for solution vector
+%             X Aineq*X <= bineq. 
+% 
+%    'Aeq'    Linear equality matrix, such that for solution vector X 
+%             Aeq*X = beq. The number of rows is determined by the 
+%             number of constraints, and the number of columns by the number 
+%             of estimated parameters. Columns are ordered by estimated 
+%             parameters in A, B, C, D, Mean0, Cov0, and finally regression 
+%             coefficients for models with a regression component.
+% 
+%    'beq'    Linear equality column vector, such that for solution vector X 
+%             Aeq*X = beq. 
+% 
+%    'lb'     Lower bounds column vector on estimated parameters. Vector 
+%             elements are ordered by estimated parameters in A, B, C, D, 
+%             Mean0, Cov0, and finally regression coefficients for models with 
+%             a regression component.
+% 
+%    'ub'     Upper bounds column vector on estimated parameters. Vector 
+%             elements are ordered by estimated parameters in A, B, C, D, 
+%             Mean0, Cov0, and finally regression coefficients for models with 
+%             a regression component.
+% 
+%  Output Arguments:
+% 
+%    EstMdl - A fitted state-space model with estimated model coefficients. 
+%      Provided the optimization converged successfully, the model is explicit 
+%      in its coefficients A, B, C, D, Mean0, and Cov0 regardless of whether 
+%      the input model (Mdl) was created explicitly or implicitly.
+% 
+%    estParams - Vector of estimated parameter. The elements are ordered such
+%      that any estimated parameters in A appear first, then B, then C, then
+%      D, and finally Mean0 and Cov0. Additionally, if the observation equation
+%      includes a regression component, then estimates of any regression 
+%      coefficients appear last.
+% 
+%    EstParamCov - Variance-covariance matrix of estimated parameters. The
+%      rows/columns are ordered such that variances/covariances of any 
+%      estimated parameters in A appear first, then B, then C, then D, and 
+%      finally Mean0 and Cov0. Additionally, if the observation equation
+%      includes a regression component, then variances/covariances of any 
+%      estimated regression coefficients appear last.
+% 
+%    logL - Log-likelihood of the observations.
+% 
+%    Output - Output structure with the following fields:
+% 
+%       o ExitFlag - Optimization exit flag that describes the exit condition.
+%           See FMINCON or FMINUNC for additional details.
+% 
+%       o Options - Optimization options, created with OPTIMOPTIONS, and used
+%           by the optimizer.
+% 
+%  Notes:
+% 
+%    o Missing observations in Y are indicated by NaNs.
+% 
+%    o Although creating a model explicitly by directly specifying parameters
+%      (A, B, C, D, etc.) with NaN placeholders to indicate parameters to 
+%      estimate is more convenient than specifying a user-defined mapping 
+%      function ParamMap, the utility of an explicit approach is limited in 
+%      that each estimated parameter affects and is uniquely associated with 
+%      a single element of a coefficient matrix. 
+% 
+%    o The option of univariate treatment requires a diagonal D(t)*D(t)'.
+% 
+%    o The state-space model itself does not store regression data or 
+%      coefficients. Instead, a regression component is used to deflate the 
+%      observations, such that the deflated data is given by y(t) - z(t)*b. 
+% 
+%    o Regression coefficients in the observation equation are estimated along 
+%      with other unknown parameters, and so parameter constraints may be 
+%      placed on regression coefficients as well other parameters by specifying 
+%      appropriate entries in 'Aineq', 'bineq', etc.
+% 
+%    o If observations are multivariate, then the same regressors apply to all.
+% 
+%    o If the state equation requires predictors, or each individual component 
+%      of the observation equation requires a set of distinct predictors, try
+%      one of the following methods:
+% 
+%        o Expand the states by a constant one.
+%        o Expand the states by predictors.
+%        o Return 8 output arguments from the user-supplied function 
+%          ParamMap, the last of which is the deflated observation data.
+% 
+%    o Regression components in the observation equation are allowed only for
+%      time-invariant observations, in which the input observation series Y
+%      is of constant length and specified as a T-by-n matrix. Y specified as
+%      a T-by-1 cell array indicates a time-varying observation series whose 
+%      length may change over time. If the length of each observation y(t)
+%      changes, then it is unclear which regression coefficients are needed
+%      to deflate a given observation.
+% 
+%    o If no constraints are specified, FMINUNC is used; otherwise, FMINCON 
+%      is used for constrained optimization. Therefore, when specifying the 
+%      input Options, the input should be consistent with the solver (see 
+%      OPTIMOPTIONS, FMINCON, and FMINUNC for details).
+% 
+%      Whenever possible, it is recommended to avoid equality/inequality 
+%      constraints by reparameterizing the model. For example, various 
+%      parameters may be exponentiated using EXP to ensure positivity.
+% 
+%    o The observations in the starting periods are treated as if they were
+%      presample data for exact initialization of the diffuse initial
+%      states. We define the likelihood function as the joint density
+%      of the observations after the algorithm is switched to
+%      the standard Kalman filter. The variable 'SwitchTime' determines when
+%      the standard Kalman filter starts.
+%   
+%  See also SSM, DSSM, FILTER, SMOOTH, FORECAST, SIMULATE, SIMSMOOTH.
+%
+%    Other functions named estimate
+%
+%       abstvar/estimate         garch/estimate
+%       arima/estimate           generic/estimate
+%       conjugateblm/estimate    gjr/estimate
+%       customblm/estimate       regARIMA/estimate
+%       diffuseblm/estimate      semiconjugateblm/estimate
+%       dsge/estimate            ssm/estimate
+%       dssm/estimate            varm/estimate
+%       egarch/estimate          vecm/estimate
+%       empiricalblm/estimate
+%

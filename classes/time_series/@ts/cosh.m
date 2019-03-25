@@ -1,9 +1,12 @@
-function this=cosh(this)
-% Overloaded cosh function for ts object
+% COSH   Hyperbolic cosine.
+%    COSH(X) is the hyperbolic cosine of the elements of X.
+% 
+%    See also ACOSH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc cosh
+%
+%    Other functions named cosh
+%
+%       codistributed/cosh    gpuArray/cosh    sym/cosh    ts/cosh
+%

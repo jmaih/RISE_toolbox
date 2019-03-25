@@ -1,64 +1,19 @@
-function [dd,di]=tnrnd(a,b,m,s,options)
-% INTERNAL FUNCTION
+%--- help for trnd ---
 %
-
-if nargin<5
-    options=[];
-    if nargin<4
-        s=[];
-        if nargin<3
-            m=[];
-        end
-    end
-end
-
-if isempty(options)
-    options=utils.forecast.rscond.tmvnrnd();
-end
-
-if isempty(s)
-    s=1;
-end
-if ~isfinite(s)||~isreal(s)||s<0
-    error('standard deviation must be real and >=0')
-end
-if isempty(m)
-    m=0;
-end
-
-r=rand;
-
-dd=direct_draw();
-if nargout>1
-    di=indirect_draw();
-end
-    function d=direct_draw()
-        d=m;
-        if s>=0
-            Fa=normcdf(a,m,s);
-            Fb=normcdf(b,m,s);
-            u=Fa+r*(Fb-Fa);
-            d=apply_correction(norminv(u,m,s));
-        end
-    end
-
-    function d=indirect_draw()
-        d=m;
-        if s>=0
-            ai=(a-m)/s;
-            bi=(b-m)/s;
-            Fa=normcdf(ai);
-            Fb=normcdf(bi);
-            u=Fa+r*(Fb-Fa);
-            d=norminv(u);
-            d=apply_correction(m+s*d);
-        end
-    end
-    function d=apply_correction(d0)
-        d=max(d0,a);
-        d=min(d,b);
-        if options.debug && d~=d0
-            disp([d,d0])
-        end
-    end
-end
+% TRND   Random arrays from Student's t distribution.
+%    R = TRND(V) returns an array of random numbers chosen from Student's t
+%    distribution with V degrees of freedom.  The size of R is the size of
+%    V.
+% 
+%    R = TRND(V,M,N,...) or R = TRND(V,[M,N,...]) returns an M-by-N-by-...
+%    array.
+% 
+%    The t distribution with one degree of freedom is also known as the
+%    Cauchy distribution.
+% 
+%    See also TCDF, TINV, TPDF, TSTAT, NCTRND, RANDOM.
+%
+%    Reference page in Doc Center
+%       doc trnd
+%
+%

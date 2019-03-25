@@ -1,21 +1,5 @@
-function obj=prototypize(f)
-% INTERNAL FUNCTION
+%--- help for splanar.prototypize ---
 %
-
-persistent proto
-
-if isempty(proto)
-
-	proto=splanar(0);
-
-end
-
-obj=proto;
-
-if nargin
-
-	obj.func=f;
-
-end
-
-end
+%  INTERNAL FUNCTION
+% 
+%

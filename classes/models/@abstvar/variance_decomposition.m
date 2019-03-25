@@ -1,30 +1,43 @@
-%--- help for abstvar/variance_decomposition ---
+%--- help for generic/variance_decomposition ---
 %
-%  Compute the variance decompsition of the VAR
+%  Computes the variance decomposition for a DSGE model
 % 
 %  ::
 % 
-%     [vd,retcode] = variance_decomposition(self,params,Rfunc,shock_names,varargin);
+%     [Vardec,obj]=variance_decomposition(obj)
+% 
+%     [Vardec,obj]=variance_decomposition(obj,varargin)
 % 
 %  Args:
-%     self (var object):
-%     params :(optional) parameter values
-%     Rfunc (function handle): (optional) transform parameters into dynamics
-%     shock_names : names of shocks
-%     varargin
+% 
+%     obj (dsge | rise ): model object
+% 
+%     varargin : Pairwise list of extra arguments
+% 
+%       - **vardec_shocks** [empty|char|cellstr]: list of shocks
+% 
+%       - **vardec_periods** [vector|{[1 4 8 16 40 100 200 400]}]: periods
+%         to consider for the decomposition
+% 
+%       - **vardec_theoretical** [false|{true}]: if true, the theoretical
+%         variance decomposition is computed to the extent that this is
+%         possible. If false, the decomposition is based on simulated data.
+% 
+%       - **vardec_ergodic** [{false}|true]: if true, compute the ergodic
+%         variance decomposition for a regime-switching model. If false, the
+%         computations are regime specific
 % 
 %  Returns:
 %     :
 % 
-%     - **vd** (struct): a struct containing the variance decomposition:
+%     - **Vardec** [struct]: structure containing the variance decomposition
+%       both for the
 % 
-%        - **infinity** (struct):
-%        - **conditional** (struct):
-% 
-%     - **retcode** (integer): This passes through the retcode given by Rfunc. Currently (2018/07/19), this output always returns 0.
+%        - infinite horizon (**infinity**)
+%        - for each period (**conditional**)
 % 
 %
 %    Other functions named variance_decomposition
 %
-%       generic/variance_decomposition
+%       abstvar/variance_decomposition
 %

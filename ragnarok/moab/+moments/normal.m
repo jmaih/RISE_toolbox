@@ -1,17 +1,29 @@
-function m=normal(order)
-
-double_factorial=@(n)prod(n:-2:0);
-
-m=zeros(order,1);
-
-for o=1:order
-    
-    if rem(o,2)==0
-        
-        m(o)=double_factorial(o-1);
-        
-    end
-    
-end
-
-end
+%--- help for norm ---
+%
+% NORM   Matrix or vector norm.
+%      NORM(X,2) returns the 2-norm of X.
+% 
+%      NORM(X) is the same as NORM(X,2).
+% 
+%      NORM(X,1) returns the 1-norm of X.
+% 
+%      NORM(X,Inf) returns the infinity norm of X.
+% 
+%      NORM(X,'fro') returns the Frobenius norm of X.
+% 
+%    In addition, for vectors...
+% 
+%      NORM(V,P) returns the p-norm of V defined as SUM(ABS(V).^P)^(1/P).
+% 
+%      NORM(V,Inf) returns the largest element of ABS(V).
+% 
+%      NORM(V,-Inf) returns the smallest element of ABS(V).
+% 
+%    By convention, NaN is returned if X or V contains NaNs.
+% 
+%    See also COND, RCOND, CONDEST, NORMEST, HYPOT.
+%
+%    Reference page in Doc Center
+%       doc norm
+%
+%

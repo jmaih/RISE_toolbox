@@ -1,9 +1,14 @@
-function this=uminus(this)
-% Overloaded uminus function for ts object
+% -  Unary minus.
+%    -A negates the elements of A.
+% 
+%    B = UMINUS(A) is called for the syntax '-A' when A is an object.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc uminus
+%
+%    Other functions named uminus
+%
+%       calendarDuration/uminus    fints/uminus       sym/uminus
+%       codistributed/uminus       gpuArray/uminus    ts/uminus
+%       duration/uminus
+%

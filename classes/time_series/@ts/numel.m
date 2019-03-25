@@ -1,30 +1,16 @@
-function n=numel(this,varargin)
-% Returns the number of data, i.e., (length of time)x(number of
-% variables)x(number of panels) 
+% NUMEL   Number of elements in an array or subscripted array expression.
+%    N = NUMEL(A) returns the number of elements, N, in array A, equivalent 
+%    to PROD(SIZE(A)).
+% 
+%    See also SIZE, PROD, SUBSREF.
 %
-% ::
+%    Reference page in Doc Center
+%       doc numel
 %
-%    n = numel(db);
+%    Other functions named numel
 %
-% Args:
+%       categorical/numel      distributed/numel    tabular/numel
+%       codistributed/numel    gpuArray/numel       tall/numel
+%       Composite/numel        sym/numel            ts/numel
+%       dataset/numel          symfun/numel
 %
-%    db (ts object): time series object
-%
-% Returns:
-%    :
-%
-%       - n (integer): total number of data points, i.e., (length of
-%         time)x(number of variables)x(number of panels) 
-%
-
-if isempty(varargin)
-    
-    n=builtin('numel',this);
-    
-else
-    
-    n=1;
-    
-end
-
-end

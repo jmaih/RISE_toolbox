@@ -1,222 +1,272 @@
-function [obj,filtration]=estimate(obj,varargin)
-% Estimate the parameters of a RISE model
+%--- help for statespace/estimate ---
 %
-% ::
+% ESTIMATE Maximum likelihood parameter estimation of state-space models 
+% 
+%  Syntax:
+% 
+%    [EstMdl,estParams,EstParamCov,logL,Output] = estimate(Mdl,Y,params0)
+%    [EstMdl,estParams,EstParamCov,logL,Output] = estimate(Mdl,Y,params0,
+%                                                          name,value,...)
+% 
+%  Description:
+% 
+%    For observation vector y(t) and state vector x(t), estimate parameters 
+%    of the following general state-space model by maximum likelihood:
+% 
+%    State equation:       x(t) = A(t) * x(t-1) + B(t) * u(t)
+%    Observation equation: y(t) = C(t) * x(t)   + D(t) * e(t)
+% 
+%    where u(t) and e(t) are uncorrelated, unit-variance white noise vector
+%    processes. The length of x(t), y(t), u(t), and e(t) is m, n, k, and h, 
+%    respectively.
+% 
+%    For models created explicitly by specifying coefficients A, B, C, and D,
+%    unknown parameters to estimate are identified by the presence of NaNs in
+%    these model coefficients. Unknown parameters identified by the presence 
+%    of NaNs in the mean vector (Mean0) and covariance matrix (Cov0) of initial
+%    states x(0) are optionally estimated as well.
+% 
+%    For models created implicitly by specifying a parameter mapping function 
+%    ParamMap, the mapping function is responsible for managing the presence 
+%    and placement of unknown parameters. In the implicit approach, the mapping
+%    function alone defines the model, and is particularly convenient for 
+%    estimating complex models and for imposing certain parameter constraints. 
+%    Moreover, in more general settings in which the initial states are also 
+%    determined by unknown parameters, ParamMap may include additional output 
+%    arguments; refer to the SSM/DSSM constructor for more details.
+% 
+%  Input Arguments:
+% 
+%    Mdl - A state-space model with unknown parameters to estimate, created 
+%      by the SSM/DSSM constructor.
+% 
+%    Y - Observed response data to which the model is fit. For time-invariant 
+%      models in which the length of each observation vector (n) is the same, 
+%      Y is a T-by-n matrix. For time-varying models in which the length of 
+%      the observation vector changes, Y is a T-by-1 cell array in which 
+%      each element contains a time-varying n-element vector of observations, 
+%      y(t), associated with the corresponding period. The last observation 
+%      is the most recent.
+% 
+%    params0 - A vector containing the initial values of unknown 
+%      parameters associated with model coefficients A, B, C, and D, and 
+%      optionally the mean vector (Mean0) and covariance matrix (Cov0) of 
+%      initial states x(0), estimated by maximum likelihood. For models created 
+%      explicitly, parameters mapped to NaN values are found by a column-wise 
+%      search of A, followed by B, then C, then D, and finally Mean0 and Cov0. 
+%      For models created implicitly, the parameter function ParamMap is 
+%      solely responsible for mapping the initial parameter vector into model 
+%      coefficients A, B, C, and D, as well as additional information 
+%      regarding initial states and types if necessary. 
+% 
+%  Optional Input Name/Value Pairs:
+% 
+%    'Univariate'  Logical value indicating whether to use the univariate 
+%                  treatment of a multivariate series. The default is false.
+% 
+%    'SquareRoot'  Logical value indicating whether to use the square-root 
+%                  filter. The default is false.
+%                  SSM only. No effects on DSSM.
+% 
+%    'Tolerance'   A small, non-negative variance tolerance that controls 
+%                  whether an observed series is ignored if its forecast
+%                  uncertainty falls below this threshold. Setting tolerance 
+%                  to a small number, say 1e-15, may help overcome numerical 
+%                  problems of the filter. The default is 0.
+% 
+%    'Predictors'  T-by-d matrix of common predictor variables used to
+%                  include a regression component in the observation equation. 
+%                  Observations at time t are deflated such that
+% 
+%                  [y(t) - z(t)*b] = C * x(t) + D * e(t)
+% 
+%                  where z(t) is a vector of predictor variables and b is 
+%                  the regression coefficient vector (see below). The default
+%                  is an empty matrix (no regression component)
+% 
+%    'Beta0'       d-by-n matrix of initial values of regression coefficients 
+%                  associated with predictors (see above). If the model contains
+%                  a regression component, coefficients are estimated along 
+%                  with other unknown parameters in A, B, C, D, Mean0, and 
+%                  Cov0; the default initial values are obtained by ordinary 
+%                  least squares (OLS) by regressing Y on the explanatory 
+%                  variables.
+% 
+%    'SwitchTime'  a positive integer that specifies the date after which the
+%                  diffuse filter switches to the standard filter.
+%                  The default is the earliest date when the smoothed
+%                  initial states have a full-rank covariance matrix.
+%                  DSSM only. No effects on SSM.
+% 
+%    'CovMethod'   String or character vector indicating the method for
+%                  computing the asymptotic parameter error covariance
+%                  matrix of estimated parameters. Values are:
+% 
+%                  VALUE             METHOD
+% 
+%                  o 'hessian'       Negative inverted Hessian matrix
+%                  o 'opg'           Outer product of gradients (default)
+%                  o 'sandwich'      Both Hessian and outer product of gradients
+% 
+%    'Options'     Optimization options created with OPTIMOPTIONS. If 
+%                  specified, default optimization parameters are replaced 
+%                  by those in options. The default OPTIMOPTIONS object depends
+%                  on the optimization function used to estimate parameters.
+%                  For constrained optimization, FMINCON is called and the 
+%                  algorithm used is interior point; for unconstrained 
+%                  optimization, FMINUNC is called and the algorithm is 
+%                  quasi-Newton. See documentation for OPTIMOPTIONS, FMINCON, 
+%                  and FMINUNC for details.
+% 
+%    'Display'    String vector or cell vector of character vectors
+%                 indicating what information to display in the command
+%                 window. Values are:
+%   
+%                 VALUE           DISPLAY
+%   
+%                 o 'off'         No display to the command window. 
+%   
+%                 o 'params'      Display maximum likelihood parameter 
+%                                 estimates, standard errors, and t statistics.
+%                                 This is the default.
+% 
+%                 o 'iter'        Display iterative optimization information.
+% 
+%                 o 'diagnostics' Display optimization diagnostics.
+% 
+%                 o 'full'        Display 'params', 'iter', and 'diagnostics'.            
+% 
+%    The following optional name/value pairs are related to constrained
+%    optimization performed by FMINCON (see FMINCON for details):
+% 
+%    'Aineq'  Linear inequality matrix, such that for solution vector X 
+%             Aineq*X <= bineq. The number of rows is determined by the 
+%             number of constraints, and the number of columns by the number 
+%             of estimated parameters. Columns are ordered by estimated 
+%             parameters in A, B, C, D, Mean0, Cov0, and finally regression 
+%             coefficients for models with a regression component.
+% 
+%    'bineq'  Linear inequality column vector, such that for solution vector
+%             X Aineq*X <= bineq. 
+% 
+%    'Aeq'    Linear equality matrix, such that for solution vector X 
+%             Aeq*X = beq. The number of rows is determined by the 
+%             number of constraints, and the number of columns by the number 
+%             of estimated parameters. Columns are ordered by estimated 
+%             parameters in A, B, C, D, Mean0, Cov0, and finally regression 
+%             coefficients for models with a regression component.
+% 
+%    'beq'    Linear equality column vector, such that for solution vector X 
+%             Aeq*X = beq. 
+% 
+%    'lb'     Lower bounds column vector on estimated parameters. Vector 
+%             elements are ordered by estimated parameters in A, B, C, D, 
+%             Mean0, Cov0, and finally regression coefficients for models with 
+%             a regression component.
+% 
+%    'ub'     Upper bounds column vector on estimated parameters. Vector 
+%             elements are ordered by estimated parameters in A, B, C, D, 
+%             Mean0, Cov0, and finally regression coefficients for models with 
+%             a regression component.
+% 
+%  Output Arguments:
+% 
+%    EstMdl - A fitted state-space model with estimated model coefficients. 
+%      Provided the optimization converged successfully, the model is explicit 
+%      in its coefficients A, B, C, D, Mean0, and Cov0 regardless of whether 
+%      the input model (Mdl) was created explicitly or implicitly.
+% 
+%    estParams - Vector of estimated parameter. The elements are ordered such
+%      that any estimated parameters in A appear first, then B, then C, then
+%      D, and finally Mean0 and Cov0. Additionally, if the observation equation
+%      includes a regression component, then estimates of any regression 
+%      coefficients appear last.
+% 
+%    EstParamCov - Variance-covariance matrix of estimated parameters. The
+%      rows/columns are ordered such that variances/covariances of any 
+%      estimated parameters in A appear first, then B, then C, then D, and 
+%      finally Mean0 and Cov0. Additionally, if the observation equation
+%      includes a regression component, then variances/covariances of any 
+%      estimated regression coefficients appear last.
+% 
+%    logL - Log-likelihood of the observations.
+% 
+%    Output - Output structure with the following fields:
+% 
+%       o ExitFlag - Optimization exit flag that describes the exit condition.
+%           See FMINCON or FMINUNC for additional details.
+% 
+%       o Options - Optimization options, created with OPTIMOPTIONS, and used
+%           by the optimizer.
+% 
+%  Notes:
+% 
+%    o Missing observations in Y are indicated by NaNs.
+% 
+%    o Although creating a model explicitly by directly specifying parameters
+%      (A, B, C, D, etc.) with NaN placeholders to indicate parameters to 
+%      estimate is more convenient than specifying a user-defined mapping 
+%      function ParamMap, the utility of an explicit approach is limited in 
+%      that each estimated parameter affects and is uniquely associated with 
+%      a single element of a coefficient matrix. 
+% 
+%    o The option of univariate treatment requires a diagonal D(t)*D(t)'.
+% 
+%    o The state-space model itself does not store regression data or 
+%      coefficients. Instead, a regression component is used to deflate the 
+%      observations, such that the deflated data is given by y(t) - z(t)*b. 
+% 
+%    o Regression coefficients in the observation equation are estimated along 
+%      with other unknown parameters, and so parameter constraints may be 
+%      placed on regression coefficients as well other parameters by specifying 
+%      appropriate entries in 'Aineq', 'bineq', etc.
+% 
+%    o If observations are multivariate, then the same regressors apply to all.
+% 
+%    o If the state equation requires predictors, or each individual component 
+%      of the observation equation requires a set of distinct predictors, try
+%      one of the following methods:
+% 
+%        o Expand the states by a constant one.
+%        o Expand the states by predictors.
+%        o Return 8 output arguments from the user-supplied function 
+%          ParamMap, the last of which is the deflated observation data.
+% 
+%    o Regression components in the observation equation are allowed only for
+%      time-invariant observations, in which the input observation series Y
+%      is of constant length and specified as a T-by-n matrix. Y specified as
+%      a T-by-1 cell array indicates a time-varying observation series whose 
+%      length may change over time. If the length of each observation y(t)
+%      changes, then it is unclear which regression coefficients are needed
+%      to deflate a given observation.
+% 
+%    o If no constraints are specified, FMINUNC is used; otherwise, FMINCON 
+%      is used for constrained optimization. Therefore, when specifying the 
+%      input Options, the input should be consistent with the solver (see 
+%      OPTIMOPTIONS, FMINCON, and FMINUNC for details).
+% 
+%      Whenever possible, it is recommended to avoid equality/inequality 
+%      constraints by reparameterizing the model. For example, various 
+%      parameters may be exponentiated using EXP to ensure positivity.
+% 
+%    o The observations in the starting periods are treated as if they were
+%      presample data for exact initialization of the diffuse initial
+%      states. We define the likelihood function as the joint density
+%      of the observations after the algorithm is switched to
+%      the standard Kalman filter. The variable 'SwitchTime' determines when
+%      the standard Kalman filter starts.
+%   
+%  See also SSM, DSSM, FILTER, SMOOTH, FORECAST, SIMULATE, SIMSMOOTH.
 %
-%   obj=estimate(obj)
-%   obj=estimate(obj,varargin)
-%   [obj,filtration]=estimate(...)
+%    Other functions named estimate
 %
-% Args:
+%       abstvar/estimate         garch/estimate
+%       arima/estimate           generic/estimate
+%       conjugateblm/estimate    gjr/estimate
+%       customblm/estimate       regARIMA/estimate
+%       diffuseblm/estimate      semiconjugateblm/estimate
+%       dsge/estimate            ssm/estimate
+%       dssm/estimate            varm/estimate
+%       egarch/estimate          vecm/estimate
+%       empiricalblm/estimate
 %
-%    obj (rise | dsge | rfvar | svar): model object
-%    varargin : additional optional inputs among which the most relevant
-%      for estimation are:
-%
-%       - **estim_parallel** [integer | {1}]: Number of starting values
-%
-%       - **estim_start_from_mode** [true | false | {[]}]: when empty, the user is
-%         prompted to answer the question as to whether to start estimation from
-%         a previously found mode or not. If true or false, no question is asked.
-%
-%       - **estim_start_date** [numeric | char | serial date]: date of the first
-%         observation to use in the dataset provided for estimation
-%
-%       - **estim_end_date** [numeric | char | serial date]: date of the last
-%         observation to use in the dataset provided for estimation
-%
-%       - **estim_max_trials** [integer | {500}]: When the initial value of the
-%         log-likelihood is too low, RISE uniformly draws from the prior support
-%         in search for a better starting point. It will try this for a maximum
-%         number of **estim_max_trials** times before squeaking with an error.
-%
-%       - **estim_start_vals** [{[]} | struct]: when not empty, the parameters
-%         whose names are fields of the structure will see their start values
-%         updated or overriden by the information in **estim_start_vals**. There
-%         is no need to provide values to update the start values for the
-%         estimated parameters.
-%
-%       - **estim_general_restrictions** [{[]} | function handle | cell array]: when
-%         not empty, the argument can be a function handle or a cell array
-%         containing the function handle and additional input arguments. The
-%         general syntax for the calling the function handle is
-%         viol=myfunc(obj,varargin), with **obj** the parameterized RISE object
-%         which will be used in the computation of the restrictions violations.
-%         Hence the restrictions are entered either as  @myfunc or as
-%         {@myfunc,arg2,arg3,...}. Originally, RISE will call the function
-%         without any inputs. In that case, RISE expects the output to be a
-%         structure with fields :
-%
-%          - **number_of_restrictions** : number of restrictions
-%          - **kf_filtering_level** [0 | 1 | 2 | 3]: if 0, no filters are required
-%            for the computation of the restrictions. If 1, only the filtered
-%            variables are required. If 2, the updated variables are required.
-%            If 3, the smoothed variables are required.
-%
-%         When the function is called with inputs, RISE expects as output the
-%         values of the restrictions. The sign of the violations does not matter.
-%         All the user has to do is to put a zero where the restrictions are not
-%         violated.
-%
-%       - **estim_linear_restrictions** [{[]} | cell]: This is most often used in
-%         the estimation of rfvar or svar models either to impose block
-%         exogeneity or to impose other forms of linear restrictions. When not
-%         empty, **estim_linear_restrictions** must be a 2-column cell:
-%
-%          - Each row of the first column represents a particular linear
-%            combination of the estimated parameters.
-%          - Each row of the second column holds the value of the linear
-%            combination.
-%
-%       - **estim_nonlinear_restrictions** [{[]} | cell]: When not
-%         empty, **estim_nonlinear_restrictions** must be a k x 1 cell, with each
-%         row representing a particular restriction on the parameters. e.g. for a
-%         switching model, one can have alpha(zlb,1)>alpha(zlb,2), which can also
-%         be written as alpha_zlb_1>alpha_zlb_2.
-%         The restrictions can also be equality restrictions. In this case,
-%         however, it is assumed that the parameters entering the lhs of
-%         restrictions are not estimated. e.g. alpha(zlb,1)=3*cos(alpha(zlb,2))+1.
-%
-%       - **estim_endogenous_priors** [{[]} | function handle]: When not empty,
-%         **estim_endogenous_priors** must be a function handle such that when
-%         called without inputs, it returns a struct with fields:
-%
-%       - **estim_priors** [{[]}|struct]: This provides an alternative to
-%         setting priors inside the rise/dsge model file. Each field of the
-%         structure must be the name of an estimated parameter. Each field will
-%         hold a cell array whose structure is described in help
-%         GENERIC/setup_priors.
-%
-%          - **priors** : cell array of estimation priors. more explicitly, each
-%            entry of the cell array is itself a cell with the same syntax as the
-%            priors for estimation, EXCEPT the start value!
-%          - **kf_filtering_level** [0 | 1 | 2 | 3]: if 0, no filters are required
-%            for the computation of the endogenous priors. If 1, only the
-%            filtered variables are required. If 2, the updated variables are
-%            required. If 3, the smoothed variables are required.
-%
-%         When the function handle is called with TWO inputs, what is
-%         returned is a vector of values for which RISE will evaluate the
-%         endogenous  prior. This vector should have the same length as the
-%         previous cell array. The two inputs are:
-%         - **obj** : The model object
-%         - **filtration** : a structure containing the filters
-%
-%       - **estim_blocks** [{[]} | cell]: When not empty, this triggers blockwise
-%         optimization. For further information on how to set blocks, see help
-%         for dsge.create_estimation_blocks
-%
-%       - **estim_penalty** [numeric | {1e+8}]: value of the objective function
-%         when a problem occurs. Possible problems include:
-%
-%          - no solution found
-%          - very low likelihood
-%          - stochastic singularity
-%          - problems computing the initial covariance matrix
-%          - non-positive definite covariance matrices
-%          - etc.
-%
-%       - **estim_penalty_factor** [numeric | {10}]: when general nonlinear
-%         restrictions are present, RISE uses an estimation strategy in which the
-%         objective function is penalized as
-%         f_final=fval+estim_penalty_factor*sum(max(0,g)^2) where g is a vector
-%         of the values of the restrictions, which are expected to be of the form
-%         g(x)<=0. See **estim_general_restrictions** above.
-%
-%       - **optimset** [struct]: identical to matlab's optimset
-%
-%       - **optimizer** [char | function handle | cell|{fmincon}]: This can
-%         be the name of a standard matlab optimizer or RISE optimization
-%         routine or a user-defined optimization procedure available of the
-%         matlab search path. If the optimzer is provided as a cell, then
-%         the first element of the cell is the name of the optimizer or its
-%         handle and the remaining entries in the cell are additional input
-%         arguments to the user-defined optimization routine. A
-%         user-defined optimization function should have the following
-%         syntax :: 
-%
-%            [xfinal,ffinal,exitflag,H]=optimizer(fh,x0,lb,ub,options,varargin);
-%
-%         That is, it accepts as inputs:
-%
-%             - **fh**: the function to optimize
-%             - **x0**: a vector column of initial values of the parameters
-%             - **lb**: a vector column of lower bounds
-%             - **ub**: a vector column of upper bounds
-%             - **options**: a structure of options whose fields will be similar
-%               to matlab's optimset
-%             - **varargin**: additional arguments to the user-defined
-%               optimization procedure
-%
-%         That is, it provides as outputs:
-%
-%             - **xfinal**: the vector of final values
-%             - **ffinal**: the value of **fh** at **xfinal**
-%             - **exitflag**: a flag similar to the ones provided by matlab's
-%               optimization functions.
-%             - **H**: an estimate of the Hessian
-%
-%       - **estim_barrier** [{false} | true]: never allow constraints to be
-%         violated in no circumstances.
-%
-% Returns:
-%    :
-%
-%    - **obj** [rise | dsge | rfvar | svar]: model object parameterized with the
-%      mode found and holding additional estimation results and statistics
-%      that can be found under obj.estimation
-%
-%    - **filtration** [struct]: structure with the filtration information
-%      of the model parameterized at the mode
-%
-% Note:
-%
-%    - recursive estimation may be done easily by passing a different
-%      estim_end_date at the beginning of each estimation run.
-%
-%    - It is also possible to estimate a dsge model using conditional
-%      future information on endogenous (**forecast_cond_endo_vars**) as well.
-%      as on exogenous (**forecast_cond_exo_vars**). The dataset provided in
-%      this case must have several pages. The first page is the actual data,
-%      while the subsequent pages are the expectations data.
-%      See help dsge.forecast for more information
-%
-%
-% See also: GENERIC/SETUP_PRIORS
-
-if isempty(obj)
-    
-    mydefaults=estimate@generic(obj,varargin{:});
-    
-    mydefaults=[mydefaults
-        {'estim_priors',[],@(x)isstruct(x),...
-        'estim_priors must be a structure'}];
-        
-    if nargout
-        
-        obj=mydefaults;
-        
-    else
-        
-        clear obj
-        
-        disp_defaults(mydefaults);
-        
-    end
-
-    
-    return
-    
-else
-    % Initially set the filtering/smoothing flag to false (during estimation).
-    % This is especially important given that the objective function could be
-    % optimal_simple_rule_posterior, in which case there is no filtering going
-    % on.
-    obj=set(obj,'kf_filtering_level',0);
-    
-    [obj,filtration]=estimate@generic(obj,varargin{:});
-    
-end
-
-
-end

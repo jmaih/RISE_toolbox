@@ -1,182 +1,30 @@
-function varargout=laplace(lowerquantileORmean,upperquantileORstdev,prob,c,d)% double exponential
-% INTERNAL FUNCTION: lapace distribution
+%--- help for sym/laplace ---
 %
-% Note:
-%    One would rarely need to call distribution functions directly.
-%    Refer to <densities.html> file for list of supported distributions.
+% LAPLACE Laplace transform.
+%    L = LAPLACE(F) is the Laplace transform of the sym F with default
+%    independent variable t.  The default return is a function of s.
+%    If F = F(s), then LAPLACE returns a function of z:  L = L(z).
+%    By definition, L(s) = int(F(t)*exp(-s*t),t,0,inf).
+% 
+%    L = LAPLACE(F,z) makes L a function of z instead of the default s:
+%    LAPLACE(F,z) <=> L(z) = int(F(t)*exp(-z*t),t,0,inf).
+% 
+%    L = LAPLACE(F,w,u) makes L a function of u instead of the
+%    default s (integration with respect to w).
+%    LAPLACE(F,w,u) <=> L(u) = int(F(w)*exp(-u*w),w,0,inf).
+% 
+%    Examples:
+%     syms a s t w x F(t)
+%     laplace(t^5)          returns   120/s^6
+%     laplace(exp(a*s))     returns   -1/(a-z)
+%     laplace(sin(w*x),t)   returns   w/(t^2+w^2)
+%     laplace(cos(x*w),w,t) returns   t/(t^2+x^2)
+%     laplace(x^(3/2),t)    returns   (3*pi^(1/2))/(4*t^(5/2))
+%     laplace(diff(F(t)))   returns   s*laplace(F(t),t,s) - F(0)
+% 
+%    See also SYM/ILAPLACE, SYM/FOURIER, SYM/ZTRANS, SUBS.
 %
-
-% The problem to solve is the following:
-% find a and b such that probability(lowerquantileORmean < x_a_b < upperquantileORstdev)=prob, with c and d
-% the lower and the upper bounds of the distribution with hyperparameters a
-% and b.
-% This function returns 2 types or outputs depending on whether there
-% inputs or not.
-% CASE 1: with inputs lowerquantileORmean,upperquantileORstdev,prob, and possibly c and d, the function
-% returns {a,b,moments,fval,space}, where
-%                        'a' is the first hyperparameter
-%                        'b' is the second hyperparameter,
-%                        'moments' is a structure with fields: mean and sd
-%                        'fval' is a measure of the convergence achieved in
-%                        the search for the hyperparameters
-%                        'space' is the domain for hyperparameters 'a' and 'b'
-% CASE 2: with no inputs, the function returns {lpdfn,cdfn,icdfn,rndfn}
-% where
-%                  'lpdfn(theta,a,b,c,d)' is the log density function
-%                  'cdfn(theta,a,b,c,d)' is the cumulative density function
-%                  'icdfn(u,a,b,c,d)' is the inverse of the cdf
-%                  'rndfn(a,b,n,c,d)' is the function that computes draws
-%                  'm2h(m,s,c,d)' returns the hyperparameters given m and s
-%                  'h2m(a,b,c,d)' returns the moments given the hyperparams
+%    Other functions named laplace
 %
-cdfn=@cumulative_density_function;
-
-hyperparameter_mode=nargin>0;
-if hyperparameter_mode
-    if nargin<5
-        d=1;
-        if nargin<4
-            c=0;
-            if nargin<3
-                prob=[];
-                if nargin<2
-                    error([mfilename,':: wrong number of arguments. Must be 0,2,3,4 or 5'])
-                end
-            end
-        end
-    end
-    % check whether the inputs are lower_quantile and upper_quantile or
-    % mean and standard deviations.
-    mean_stdev_flag=isempty(prob)||isnan(prob);
-    % check the laplace restrictions % -inf < x < inf
-    if ~isfinite(lowerquantileORmean)
-        error([mfilename,'lowerquantileORmean must be finite'])
-    end
-    if ~isfinite(upperquantileORstdev)
-        error([mfilename,'upperquantileORstdev must be finite'])
-    end
-    if ~mean_stdev_flag && (upperquantileORstdev<=lowerquantileORmean)
-        error([mfilename,':: upper bound cannot be less than or equal to lower bound'])
-    end
-    % find the hyperparameters space
-    space=hyperparameters();
-    if mean_stdev_flag
-        [a,b,fval]=moments_2_hyperparameters(lowerquantileORmean,upperquantileORstdev,c,d);
-        moments=[lowerquantileORmean,upperquantileORstdev];
-    else
-        [ab,fval,retcode]=distributions.find_hyperparameters(space,cdfn,lowerquantileORmean,upperquantileORstdev,prob,c,d);
-        if retcode
-            error([mfilename,':: could not find the hyperparameters of the distribution'])
-        end
-        a=ab(1);
-        b=ab(2);
-        moments=hyperparameters_2_moments(a,b,c,d);
-    end
-
-    moments=struct('mean',moments(1),'sd',moments(2));
-    varargout={a,b,moments,fval,space};
-else
-    icdfn=@inverse_cdf;
-    lpdfn=@log_density;
-    rndfn=@draws;
-    m2h=@moments_2_hyperparameters;
-    h2m=@hyperparameters_2_moments;
-    varargout={lpdfn,cdfn,icdfn,rndfn,m2h,h2m};
-end
-
-end
-
-    function [a,b,fval]=moments_2_hyperparameters(m,s,c,d)
-        if nargin<4
-            d=[];
-            if nargin<3
-                c=[];
-            end
-        end
-        if m<=0
-            error([mfilename,':: m must be >0'])
-        end
-        if s<=0
-            error([mfilename,':: s must be >0'])
-        end
-        aa=m;
-        bb=s/sqrt(2);
-        [ab,fval]=fsolve(@objective,[aa;bb],optimset('display','off'),c,d,m,s);
-		fval=norm(fval);
-        a=ab(1);
-        b=ab(2);
-        function res=objective(x,c,d,m,s)
-            res=hyperparameters_2_moments(x(1),x(2),c,d)-[m,s]';
-            if any(isnan(res))
-                res=1e+8*ones(2,1);
-            end
-        end
-    end
-
-    function moments=hyperparameters_2_moments(a,b,c,d)
-        if b<=0
-            moments=nan(2,1);
-        else
-		    moments=[a;sqrt(2)*b];
-        end
-    end
-function icdf=inverse_cdf(u,a,b,c,d)
-if nargin<5
-    d=1;
-    if nargin<4
-        c=0;
-    end
-end
-icdf=nan(size(u));
-low=u<=0.5;
-icdf(low)=a+b.*log(2*u(low));
-icdf(~low)=a-b.*log(2*(1-u(~low)));
-end
-
-function lpdf=log_density(theta,a,b,c,d)
-if nargin<5
-    d=[];
-    if nargin<4
-        c=[];
-    end
-end
-if isempty(c)||isnan(c)
-    c=0;
-end
-if isempty(d)||isnan(d)
-    d=1;
-end
-lpdf=-log(2*b)-abs(theta-a)./b;
-end
-
-function d=draws(a,b,n,c,d)
-if nargin<5
-    d=1;
-    if nargin<4
-        c=0;
-        if nargin<3
-            n=numel(b);
-        end
-    end
-end
-d=inverse_cdf(rand(n,1),a,b,c,d);
-end
-
-function cdf=cumulative_density_function(theta,a,b,c,d)
-% high
-cdf=1-0.5*exp(-(theta-a)./b);
-% low
-tmp=0.5*exp((theta-a)./b);
-low=theta<=a;
-cdf(low)=tmp(low);
-end
-
-function [violation,space]=hyperparameters(hyper)
-% -inf<a<inf, b>0
-space=[[-inf;1e-12],inf(2,1)];
-if nargin==0||isempty(hyper)
-    violation=space;
-else
-    violation=any(hyper(:)<space(:,1))||any(hyper(:)>space(:,2));
-end
-end
+%       mdd/laplace
+%

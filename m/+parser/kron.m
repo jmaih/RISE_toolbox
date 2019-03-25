@@ -1,30 +1,23 @@
-function xout=kron(a,b)
-% INTERNAL FUNCTION
+% KRON   Kronecker tensor product.
+%    KRON(X,Y) is the Kronecker tensor product of X and Y.
+%    The result is a large matrix formed by taking all possible
+%    products between the elements of X and those of Y. For
+%    example, if X is 2 by 3, then KRON(X,Y) is
+% 
+%       [ X(1,1)*Y  X(1,2)*Y  X(1,3)*Y
+%         X(2,1)*Y  X(2,2)*Y  X(2,3)*Y ]
+% 
+%    If either X or Y is sparse, only nonzero elements are multiplied
+%    in the computation, and the result is sparse.
+% 
+%    Class support for inputs X,Y:
+%       float: double, single
+%       integers: uint8, int8, uint16, int16, uint32, int32, uint64, int64
 %
-
-% kronecker multiplication of cell arrays of strings
-
-if ischar(a)
-    a=cellstr(a);
-end
-if ischar(b)
-    b=cellstr(b);
-end
-[ra,ca]=size(a);
-[rb,cb]=size(b);
-xout=cell(ra*rb,ca*cb);
-proto_b=cell(rb,cb);
-for irow_a=1:ra
-    stretch_ra=(irow_a-1)*rb+(1:rb);
-    for icol_a=1:ca
-        arc=a{irow_a,icol_a};
-        stretch_ca=(icol_a-1)*cb+(1:cb);
-        for irow_b=1:rb
-            for icol_b=1:cb
-                proto_b{irow_b,icol_b}=parser.string_mult(arc,b{irow_b,icol_b});
-            end
-        end
-        xout(stretch_ra,stretch_ca)=proto_b;
-    end
-end
-end
+%    Reference page in Doc Center
+%       doc kron
+%
+%    Other functions named kron
+%
+%       splanar/kron    sym/kron
+%

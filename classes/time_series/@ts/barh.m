@@ -1,63 +1,38 @@
-function plot_handle=barh(varargin)
-% Make bar graph of the time series
+% BARH Horizontal bar graph.
+%    BARH(X,Y) draws the columns of the M-by-N matrix Y as M groups of
+%    N horizontal bars. The vector X must not have duplicate values.
+% 
+%    BARH(Y) uses the default value of X=1:M.  For vector inputs,
+%    BARH(X,Y) or BARH(Y) draws LENGTH(Y) bars.  The colors are set by
+%    the colormap.
+% 
+%    BARH(X,Y,WIDTH) or BARH(Y,WIDTH) specifies the width of the
+%    bars. Values of WIDTH > 1, produce overlapped bars.  The
+%    default value is WIDTH=0.8.
+% 
+%    BARH(...,'grouped') produces the default horizontal grouped bar chart.
+%    BARH(...,'stacked') produces a horizontal stacked bar chart.
+%    BARH(...,LINESPEC) uses the line color specified (one of 'rgbymckw').
+% 
+%    BARH(AX,...) plots into AX instead of GCA.
+% 
+%    H = BARH(...) returns a vector of handles to barseries objects.
+% 
+%    Use SHADING FACETED to put edges on the bars.  Use SHADING FLAT to
+%    turn them off.
+% 
+%    Examples: subplot(3,1,1), barh(rand(10,5),'stacked'), colormap(cool)
+%              subplot(3,1,2), barh(0:.25:1,rand(5),1)
+%              subplot(3,1,3), barh(rand(2,3),.75,'grouped')
+% 
+%    See also PLOT, BAR, BAR3, BAR3H, HISTOGRAM.
+% 
+%    Copyright 1984-2017 The MathWorks, Inc.
 %
-% ::
+%    Reference page in Doc Center
+%       doc barh
 %
-%    varargout = bar(X,db,varargin);
+%    Other functions named barh
 %
-% Args:
-%    X (string | serial): Date description
+%       fints/barh    ts/barh
 %
-%       - string of dates, e.g., X='1990:2000'
-%       - serial dates, e.g., X=date2serial('1990Q1'):date2serial('2000Q1')
-%
-%    db (ts object): Time series object with data
-%    options (pairs): Options need to come in pairs
-%
-%       - 'figsize' ([value, value]): the figure size (multiple plots) with default [3,3]
-%       - 'figtitle' (string): the figure title (multiple plots) with default ''
-%       - the number of tick marks (integer): 'nticks', with default 8
-%       - 'date_format': the date format (see matlab's datestr) with default ''
-%       - 'logy' (bool): the log scale with default false
-%       - 'secondary_y': the list of variables going to the secondary y axis
-%       - 'subplots' (bool): the flag for multiple plots with default false
-%
-% Note:
-%
-%   - bar(db) uses the dates within db.  The colors are set by the colormap.
-%   - bar(X,db,WIDTH) or bar(db,WIDTH) specifies the width of the bars. Values
-%     of WIDTH > 1, produce overlapped bars.  The default value is WIDTH=0.8
-%   - bar(...,'grouped') produces the default vertical grouped bar chart.
-%     bar(...,'stacked') produces a vertical stacked bar chart.
-%     bar(...,LINESPEC) uses the line color specified (one of 'rgbymckw').
-%   - H = bar(...) returns a vector of handles to barseries objects.
-%   - Use SHADING FACETED to put edges on the bars.  Use SHADING FLAT to
-%     turn them off.
-%
-% Example:
-%    ::
-%
-%       bar('1994m7:1997m1',db(:,:,1),...
-%           'figsize',[2,2],...
-%           'figtitle','no title',...
-%           'nticks',10,...
-%           'legend',{'v1','v2'},...
-%           'legend_loc','BO',...
-%           'logy',true,...
-%           'secondary_y',{'v1','v4'},...
-%           'subplots',true,...
-%           'linewidth',2,...
-%           'date_format',17);
-%       xrotate(90)
-%
-% See also:
-%    - :func:`hist <ts.hist>`
-%    - :func:`plot <ts.plot>`
-%    - :func:`barh <ts.barh>`
-%    - :func:`bar3 <ts.bar3>`
-%    - :func:`bar3h <ts.bar3h>`
-%
-
-plot_handle=utils.plot.myplot(@barh,varargin{:});
-
-end

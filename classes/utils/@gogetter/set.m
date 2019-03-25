@@ -1,240 +1,71 @@
-function Out = set(this,varargin)
-% SET  Set properties of time series object.
+% SET    Set object properties.
+%    SET(H,'PropertyName',PropertyValue) sets the value of the specified
+%    property for the graphics object with handle H.  H can be a vector of 
+%    handles, in which case SET sets the properties' values for all objects
+%    of H.
+% 
+%    SET(H,a) where a is a structure whose field names are object property
+%    names, sets the properties named in each field name with the values
+%    contained in the structure.
+% 
+%    SET(H,pn,pv) sets the named properties specified in the cell array of
+%    strings pn to the corresponding values in the cell array pv for all
+%    objects specified in H.  The cell array pn must be 1-by-N, but the cell
+%    array pv can be M-by-N where M is equal to length(H) so that each
+%    object will be updated with a different set of values for the list of 
+%    property names contained in pn.
+% 
+%    SET(H,'PropertyName1',PropertyValue1,'PropertyName2',PropertyValue2,...)
+%    sets multiple property values with a single statement.  Note that it
+%    is permissible to use property/value string pairs, structures, and
+%    property/value cell array pairs in the same call to SET.
+% 
+%    A = SET(H, 'PropertyName') 
+%    SET(H,'PropertyName')
+%    returns or displays the possible values for the specified property of 
+%    the object with handle H.  The returned array is a cell array of 
+%    possible value strings or an empty cell array if the property does not 
+%    have a finite set of possible string values.
+%    
+%    A = SET(H) 
+%    SET(H) 
+%    returns or displays the names of the user-settable properties and 
+%    their possible values for the object with handle H.  The return value 
+%    is a structure whose field names are the user-settable property names 
+%    of H, and whose values are cell arrays of possible property values or 
+%    empty cell arrays.
+% 
+%    The default value for an object property can be set on any of an 
+%    object's ancestors by setting the PropertyName formed by concatenating 
+%    the string 'Default', the object type, and the property name.  For 
+%    example, to set the default color of text objects to red in the current
+%    figure window:
+% 
+%       set(gcf,'DefaultTextColor','red')
+%    
+%    Defaults can not be set on a descendant of the object, or on the
+%    object itself - for example, a value for 'DefaultAxesColor' can not
+%    be set on an axes or an axes child, but can be set on a figure or on
+%    the root.
+% 
+%    Three strings have special meaning for PropertyValues:
+%      'default' - use default value (from nearest ancestor)
+%      'factory' - use factory default value
+%      'remove'  - remove default value.
+% 
+%    See also GET, RESET, DELETE, GCF, GCA, FIGURE, AXES.
 %
-% ::
+%    Reference page in Doc Center
+%       doc set
 %
-%   SET(THIS,'PropertyName',VALUE) sets the property 'PropertyName'
-%   of the time series THIS to the value VALUE.  An equivalent syntax
-%   is
-%       THIS.PropertyName = VALUE
+%    Other functions named set
 %
-%   SET(THIS,'Property1',Value1,'Property2',Value2,...) sets multiple
-%   time series property values with a single statement.
+%       abstvar/set      editline/set      scribehandle/set
+%       arrowline/set    editrect/set      scribehgobj/set
+%       axischild/set    figobj/set        serial/set
+%       axisobj/set      generic/set       splanar/set
+%       axistext/set     gogetter/set      timer/set
+%       COM/set          instrument/set    timeseries/set
+%       dataset/set      RandStream/set    tscollection/set
+%       dsge/set
 %
-%   SET(THIS,'Property') displays values for the specified property in THIS.
-%
-%   SET(THIS) displays all properties of THIS and their values.
-%
-% Args:
-%
-%    this (ts object): time series object
-%
-%    varargin: valid pairwise arguments (see above)
-%
-%   See also TS\GET.
-
-% TODO: Add a no_check property to skip the checking !!!!!!
-%
-% TODO: set varnames to accept also char... !!!!!!
-%---------------------------------------------------------
-
-ni = nargin;
-
-no = nargout;
-
-if builtin('isempty',this)
-    
-    this = ts;
-    
-end
-
-c = metaclass(this);
-
-AllProps = {c.PropertyList.Name};%properties(this);
-
-bad=[c.PropertyList.Dependent]|[c.PropertyList.Constant]|[c.PropertyList.Hidden];
-
-% Get public properties and their assignable values
-AllProps=AllProps(~bad);
-
-if ni<=2
-    
-    PropValues = cell(length(AllProps),1);
-    
-    for k=1:length(AllProps)
-        
-        PropValues{k} = this.(AllProps{k});
-        
-    end
-    
-end
-
-% Handle read-only cases
-if ni==1
-    % SET(THIS) or S = SET(THIS)
-    if numel(this)~=1
-        
-        error('when the number of input is 1, only one object should be set');
-        
-    end
-    
-    if no
-        
-        Out = cell2struct(PropValues,AllProps,1);
-        
-    else
-        
-        disp(cell2struct(PropValues,AllProps,1))
-        
-    end
-    
-elseif ni==2
-    % SET(THIS,'Property') or STR = SET(THIS,'Property')
-    % Return admissible property value(s)
-    if numel(this)~=1
-        
-        error('Only one object may be passed to set for information about possible property values.');
-        
-    end
-    
-    imatch = strcmpi(varargin{1},AllProps);
-    
-    if no
-        
-        Out = PropValues{imatch};
-        
-    else
-        
-        disp(PropValues{imatch})
-        
-    end
-    
-else
-    % SET(THIS,'Prop1',Value1, ...)
-    if rem(ni-1,2)~=0
-        
-        error('Property/value pairs must come in even number.')
-        
-    end
-    
-    for i=1:2:ni-1
-        
-        propName = tspnmatch(varargin{i},AllProps);
-        
-        % Validate that base @ts property values are not structs
-        if isstruct(varargin{i+1})
-            
-            for k=1:length(c.PropertyList)
-                
-                if strcmpi(c.PropertyList(k).Name,propName) && ...
-                        isequal(c.PropertyList(k).DefiningClass,?ts)
-                    
-                    error('Time series properties cannot be assigned to structures')
-                    
-                end
-                
-            end
-            
-        end
-        
-        for k=1:numel(this)
-            
-            this(k).(char(propName)) = varargin{i+1};
-            
-        end
-        
-    end
-    
-    % Assign this in caller's workspace
-    tsname = inputname(1);
-    
-    this=check_consistency(this);
-    
-    if no
-        
-        Out = this;
-        
-    elseif ~isempty(tsname)
-        
-        assignin('caller',tsname,this)
-        
-    else
-        
-        warning(['Cannot assign properties in-place when a timeseries is ',...
-            'defined using an expression or a sub-referenced array.']);
-        
-    end
-    
-end
-
-end
-
-
-function [Property,imatch] = tspnmatch(Name,PropList)
-
-if (~ischar(Name) || size(Name,1)>1) && ~(isstring(Name) && isscalar(Name))
-    
-    error('Wrong specification of property name')
-    
-end
-
-% Find all matches
-imatch = find(strcmpi(Name,PropList));
-
-% Get matching property name
-switch length(imatch)
-    
-    case 1
-        % Single hit
-        Property = PropList{imatch};
-        
-    case 0
-        % No hit
-        error(['property with name "', Name,'" not found or not settable'])
-        
-    otherwise
-        
-        imatch = imatch(1);
-        
-end
-
-end
-
-
-function this=check_consistency(this)
-
-siz=ts.check_size(this.data);
-
-nvars=siz(2);
-
-% annual dates
-%-------------
-if isnumeric(this.start)
-    
-    if is_serial(this.start)
-        
-        this.start=serial2date(this.start);
-        
-    elseif ceil(this.start)==floor(this.start) % annual dates
-        
-        this.start=int2str(this.start);
-        
-    end
-    
-end
-
-this.varnames=check_conformity(this.varnames,'varnames');
-
-this.description=check_conformity(this.description,'description');
-
-    function a=check_conformity(a,type_)
-        
-        na=numel(a);
-        
-        if all(cellfun(@isempty,a,'uniformOutput',true))
-            
-            if na~=nvars
-                
-                a=repmat({''},1,nvars);
-                
-            end
-            
-        elseif na~=nvars
-            
-            error(['mismatch between # columns and #',type_])
-            
-        end
-        
-    end
-
-end

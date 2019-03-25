@@ -1,23 +1,16 @@
-function flag=isnan(self)
-% Returns whether the corresponding data is nan
+% ISNAN  True for Not-a-Number.
+%    ISNAN(X) returns an array that contains 1's where
+%    the elements of X are NaN's and 0's where they are not.
+%    For example, ISNAN([pi NaN Inf -Inf]) is [0 1 0 0].
+% 
+%    See also ISFINITE, ISINF, ISMISSING.
 %
-% ::
+%    Reference page in Doc Center
+%       doc isnan
 %
-%    flag = isnan(db);
+%    Other functions named isnan
 %
-% Args:
+%       calendarDuration/isnan    generic/isnan     sym/isnan
+%       codistributed/isnan       gpuArray/isnan    ts/isnan
+%       duration/isnan
 %
-%    db (ts object): time series object
-%
-% Returns:
-%    :
-%
-%    - flag (bool): whether the corresponding data is nan or not
-%
-% Note:
-%    - Since the time series object supports logical indexing, one can
-%      directly use the resulting flag with the time series object. 
-%
-
-flag=isnan(self.data);
-end

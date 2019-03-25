@@ -1,477 +1,71 @@
-function obj=set(obj,varargin)
-% Sets options for RISE models
+% SET    Set object properties.
+%    SET(H,'PropertyName',PropertyValue) sets the value of the specified
+%    property for the graphics object with handle H.  H can be a vector of 
+%    handles, in which case SET sets the properties' values for all objects
+%    of H.
+% 
+%    SET(H,a) where a is a structure whose field names are object property
+%    names, sets the properties named in each field name with the values
+%    contained in the structure.
+% 
+%    SET(H,pn,pv) sets the named properties specified in the cell array of
+%    strings pn to the corresponding values in the cell array pv for all
+%    objects specified in H.  The cell array pn must be 1-by-N, but the cell
+%    array pv can be M-by-N where M is equal to length(H) so that each
+%    object will be updated with a different set of values for the list of 
+%    property names contained in pn.
+% 
+%    SET(H,'PropertyName1',PropertyValue1,'PropertyName2',PropertyValue2,...)
+%    sets multiple property values with a single statement.  Note that it
+%    is permissible to use property/value string pairs, structures, and
+%    property/value cell array pairs in the same call to SET.
+% 
+%    A = SET(H, 'PropertyName') 
+%    SET(H,'PropertyName')
+%    returns or displays the possible values for the specified property of 
+%    the object with handle H.  The returned array is a cell array of 
+%    possible value strings or an empty cell array if the property does not 
+%    have a finite set of possible string values.
+%    
+%    A = SET(H) 
+%    SET(H) 
+%    returns or displays the names of the user-settable properties and 
+%    their possible values for the object with handle H.  The return value 
+%    is a structure whose field names are the user-settable property names 
+%    of H, and whose values are cell arrays of possible property values or 
+%    empty cell arrays.
+% 
+%    The default value for an object property can be set on any of an 
+%    object's ancestors by setting the PropertyName formed by concatenating 
+%    the string 'Default', the object type, and the property name.  For 
+%    example, to set the default color of text objects to red in the current
+%    figure window:
+% 
+%       set(gcf,'DefaultTextColor','red')
+%    
+%    Defaults can not be set on a descendant of the object, or on the
+%    object itself - for example, a value for 'DefaultAxesColor' can not
+%    be set on an axes or an axes child, but can be set on a figure or on
+%    the root.
+% 
+%    Three strings have special meaning for PropertyValues:
+%      'default' - use default value (from nearest ancestor)
+%      'factory' - use factory default value
+%      'remove'  - remove default value.
+% 
+%    See also GET, RESET, DELETE, GCF, GCA, FIGURE, AXES.
 %
-% ::
+%    Reference page in Doc Center
+%       doc set
 %
-%   obj=set(obj,varargin)
+%    Other functions named set
 %
-% Args:
+%       abstvar/set      editline/set        scribehgobj/set
+%       arrowline/set    editrect/set        serial/set
+%       axischild/set    figobj/set          splanar/set
+%       axisobj/set      generic/set         timer/set
+%       axistext/set     instrument/set      timeseries/set
+%       COM/set          RandStream/set      ts/set
+%       dataset/set      scribehandle/set    tscollection/set
+%       dsge/set
 %
-%    obj (rise | dsge | svar | rfvar): model object
-%
-%    varargin : valid input arguments coming in pairs.
-%
-% Returns:
-%    :
-%
-%    - **obj** [rise|dsge|svar|rfvar]: model object
-%
-% Note:
-%
-%    - one can force a new field into the options by prefixing it with a '+'
-%      sign. Let's say yourfield is not part of the options and you would like
-%      to force it to be in the options because it is going to be used in some
-%      function or algorithm down the road. Then you can run
-%      m=set(m,'+yourfield',value). then m will be part of the new options.
-%
-
-if isempty(obj)
-    
-    obj=cell(0,4);
-    
-    return
-    
-end
-
-nobj=numel(obj);
-
-if nobj>1
-    
-    is_legend=false;
-    
-    leg_pos=[];
-    
-    for ii=1:2:length(varargin)
-        
-        new_legend=strcmp(varargin{ii},'legend');
-        
-        if new_legend
-            
-            if is_legend
-                
-                error('more than one legends found in same call')
-                
-            end
-            
-            is_legend=new_legend;
-            
-            leg_pos=ii+1;
-            
-            if ~iscellstr(varargin{leg_pos})
-                
-                error('with multiple objects, legend must be a cell array of strings')
-                
-            end
-            
-            if numel(unique(varargin{leg_pos}))~=numel(varargin{leg_pos})
-                
-                error('legends must be unique to each model')
-                
-            end
-            
-        end
-        
-    end
-    
-    cell_argin=varargin;
-    
-    for iobj=1:nobj
-        
-        if is_legend
-            
-            iobj_leg=varargin{leg_pos}{iobj};
-            
-            if isempty(iobj_leg)
-                
-                iobj_leg=sprintf('model_%0.0f',iobj);
-                
-            end
-            
-            cell_argin{leg_pos}=iobj_leg;
-            
-        end
-        
-        obj(iobj)=set(obj(iobj),cell_argin{:});
-        
-    end
-    
-    return
-    
-end
-
-initialize=length(varargin)==1 && strcmp(varargin{1},'initialize');
-% This call with initialize is used by refresh(m)
-if initialize
-    
-    varargin=[];
-    
-end
-
-if ~isempty(varargin) && isstruct(varargin{1})
-    % convert to cell
-    tmp=struct2cell(varargin{1});
-    
-    fnames=fieldnames(varargin{1});
-    
-    varargin=transpose([fnames(:),tmp(:)]);
-    
-    varargin=varargin(:)';
-    
-end
-
-nn=length(varargin);
-
-if rem(nn,2)
-    
-    error('arguments must come in pairs')
-    
-end
-
-if isempty(obj.options)
-    
-    set_all_options()
-    
-end
-
-if nn==0 && ~initialize
-    % list all the settable options
-    %------------------------------
-elseif nn==1
-    % list the options for the particular field
-    %------------------------------------------
-    error('something should be implemented here. Please send a reminder to junior.maih@gmail.com')
-
-else
-    
-    do_reset_restrictions=false;
-    
-    options_fields=fieldnames(obj.options);
-    
-    for ii=1:2:nn
-        
-        propname=varargin{ii};
-        
-        propval=varargin{ii+1};
-        
-        forced=strcmp(propname(1),'+');
-        
-        if forced
-            
-            propname=propname(2:end);
-            
-            if ~isvarname(propname)
-                
-                error([propname,' is not a valid variable name'])
-                
-            end
-            
-        end
-        
-        set_one_at_a_time();
-        
-    end
-    
-    if do_reset_restrictions
-        
-        obj.restrictions_are_absorbed=false;
-        
-    end
-    
-end
-
-    function set_one_at_a_time()
-        
-        if strcmp(propname,'tex_name')
-            
-            set_tex_names()
-        
-        elseif strcmpi(propname,'parameters')
-            % propval is either a struct or a cell of the form {names,paramvector}
-            obj=setup_calibration(obj,propval);
-        
-        elseif strcmpi(propname,'legend')
-            
-            if ~ischar(propval)
-                
-                if iscellstr(propval) && numel(propval)==1 %#ok<*ISCLSTR>
-                    
-                    propval=char(propval);
-                
-                else
-                    
-                    error('legend must be a string or a one-component cellstr')
-                
-                end
-                
-            end
-            
-            obj.legend=propval;
-        
-        elseif strcmpi(propname,'estim_endogenous_priors')
-            
-            obj=setup_endogenous_priors(obj,propval);
-
-        elseif any(strcmp(propname,options_fields))||forced
-            
-            set_one_option()
-        
-        else
-            
-            error(['',propname,''' is not a settable option or property of class ',class(obj)])
-        
-        end
-        
-        function set_tex_names()
-            
-            if ~isstruct(propval)
-                
-                if ~iscellstr(propval) && size(propval,2)==2
-                    
-                    error('propval must be a structure of a cellstr with two columns')
-                    
-                end
-                
-                propval=cell2struct(propval(:,2),propval(:,1),1);
-                
-            end
-            
-            fields=fieldnames(propval);
-            
-            for ifield=1:numel(fields)
-                
-                thisfield=fields{ifield};
-                
-                loc=find(strcmp(thisfield,obj.endogenous.name));
-                
-                if isempty(loc)
-                    
-                    loc=find(strcmp(thisfield,obj.exogenous.name));
-                    
-                    if isempty(loc)
-                        
-                        loc=find(strcmp(thisfield,obj.parameters.name));
-                        
-                        if isempty(loc)
-                            
-                            loc=find(strcmp(thisfield,obj.markov_chains.chain_names));
-                            
-                            if isempty(loc)
-                                
-                                loc=find(strcmp(thisfield,obj.markov_chains.state_names));
-                                
-                                if isempty(loc)
-                                    
-                                    error(['"',thisfield,'" is not recognized as an endog, an exog, a param, a chain name or a regime name'])
-                                
-                                end
-                                
-                                obj.markov_chains.state_tex_names{loc}=propval.(thisfield);
-                                
-                                continue
-                            
-                            else
-                                
-                                obj.markov_chains.chain_tex_names{loc}=propval.(thisfield);
-                                
-                                continue
-                            
-                            end
-                            
-                        else
-                            
-                            type='parameters';
-                        
-                        end
-                        
-                    else
-                        
-                        type='exogenous';
-                    
-                    end
-                    
-                else
-                    
-                    type='endogenous';
-                
-                end
-                
-                obj.(type).tex_name{loc}=propval.(thisfield);
-                
-                if ~isempty(obj.observables.name) && ...
-                        any(strcmp(type,{'endogenous','exogenous'}))
-                    
-                    loc=find(strcmp(thisfield,obj.observables.name));
-                    
-                    if ~isempty(loc)
-                        
-                        obj.observables.tex_name{loc}=propval.(thisfield);
-                    
-                    end
-                    
-                end
-                
-                if strcmp(type,'parameters') && ...
-                        ~isempty(obj.estimation) && ...
-                        isfield(obj.estimation,'priors')
-                    % get the chain_names
-                    %---------------------
-                    chain_names=setdiff(obj.markov_chains.chain_names,'const');
-                    
-                    % check the priors if they exist...
-                    allpnames=parser.param_name_to_param_texname(...
-                        {obj.estimation.priors.name},chain_names);
-                    
-                    ncols=length(thisfield);
-                    
-                    bingo=find(strncmp(thisfield,allpnames,ncols));
-                    
-                    for ip=1:numel(bingo)
-                        
-                        ppos=bingo(ip);
-                        
-                        if strcmp(thisfield,allpnames{ppos})
-                            
-                            obj.estimation.priors(ppos).tex_name=propval.(thisfield);
-                        
-                        elseif length(allpnames{ppos})>ncols && ...
-                                strcmp(allpnames{ppos}(ncols+1),'(')
-                            
-                            obj.estimation.priors(ppos).tex_name=...
-                                [propval.(thisfield),allpnames{ppos}(ncols+1:end)];
-                        
-                        end
-                        
-                    end
-                    
-                end
-                
-            end
-            
-        end
-        
-        function set_one_option()
-            
-            absorbed=false;
-            
-            if ~forced
-                
-                [~,obj]=check_property(obj,propname,propval);
-                
-            end
-            
-            if strcmp(propname,'optimset')
-                
-                [obj.options.(propname),missing]=utils.miscellaneous.setfield(obj.options.(propname),propval);
-                
-                if ~isempty(missing)
-                    
-                    disp(missing)
-                    
-                    error('the fields above are not recognized')
-                
-                end
-                
-                absorbed=true;
-            
-            elseif any(strcmp(propname,{'estim_start_date','estim_end_date',...
-                    'data_demean','kf_presample'}))
-                
-                obj.data_are_loaded=false;
-            
-            elseif any(strcmp(propname,{'data','data_cond_ct','data_cond_lb','data_cond_ub'}))
-                % could also check that the observable variables are included
-                % in data... I do that during estimation, I guess but I can do
-                % that upfront too. Don't know what is best.
-                propval=ts.collect(propval);
-                
-                if strcmp(propname,'data')
-                    
-                    obj.data_are_loaded=false;
-                    
-                end
-            
-            elseif any(strcmp(propname,...
-                    {'estim_linear_restrictions',...
-                    'estim_nonlinear_restrictions',...
-                    'estim_general_restrictions'}))
-                
-                do_reset_restrictions=true;
-                
-            end
-
-            if ~absorbed
-                
-                obj.options.(propname)=propval;
-                
-            end
-                            
-        end
-        
-    end
-
-    function set_all_options()
-        % create a dummy object to read the options from various
-        % objects, functions and sub-functions
-        obj_class=class(obj);
-        
-        dum_obj=eval([obj_class,'.empty(0,1)']);
-        
-        method_list=methods(dum_obj);
-        
-        restricted_list={class(obj),'horzcat','cat','vertcat',...
-            'template'};%,'prior_plots','initialize_solution_or_structure'
-        
-        method_list(ismember(method_list,restricted_list))=[];
-        
-        % add some private methods to the list
-        method_list=[method_list(:)','load_data','unclassified'];%;'load_functions'
-        
-        myoptions=struct();
-        
-        checker=struct();
-        
-        for imeth=1:numel(method_list)
-            
-            this_options=dum_obj.(method_list{imeth});
-
-            [checker,myoptions]=set_checker(checker,myoptions,this_options);
-            
-        end
-        
-        obj.spec_checker=checker;
-        
-        obj.options=myoptions;
-        
-        if isa(obj,'dsge') 
-           % isfield(obj,'filename') does not work for objects!!!
-            results_folder=obj.filename;
-            % initialize the auxiliary parameters for switching processes
-            %------------------------------------------------------------
-            obj=set_auxiliary_switching_parameters(obj);
-            
-        else
-            
-            ymdhms=datevec(now);
-            year=sprintf('%0.0f',ymdhms(1));
-            
-            month=sprintf('%0.0f',ymdhms(2));
-            if length(month)==1,month=['0',month];end
-            
-            day=sprintf('%0.0f',ymdhms(3));
-            if length(day)==1,day=['0',day];end
-            
-            hour=sprintf('%0.0f',ymdhms(4));
-            if length(hour)==1,hour=['0',hour];end
-            
-            minutes=sprintf('%0.0f',ymdhms(5));
-            if length(minutes)==1,minutes=['0',minutes];end
-            results_folder=[year,month,day,hour,minutes];
-            
-        end
-        % set output folder name
-        obj.options.results_folder=results_folder;
-            
-    end
-
-end
-

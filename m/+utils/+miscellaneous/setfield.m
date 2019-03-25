@@ -1,42 +1,29 @@
-function [fresh_options,missing]=setfield(default_options,varargin)
-% INTERNAL FUNCTION
+% SETFIELD Set structure field contents.
+%    S = SETFIELD(S,FIELD,V) sets the contents of the specified field to the
+%    value V.  For example, SETFIELD(S,'a',V) is equivalent to the syntax
+%    S.field = V, and sets the value of field 'a' as V. S must be a 1-by-1
+%    structure.  FIELD can be a character vector or string scalar. The
+%    changed structure is returned.
+% 
+%    S = SETFIELD(S,{i,j},'a',{k},V) is equivalent to the syntax
+%        S(i,j).field(k) = V;
+% 
+%    In other words, S = SETFIELD(S,sub1,sub2,...,V) sets the
+%    contents of the structure S to V using the subscripts or field
+%    references specified in sub1,sub2,etc.  Each set of subscripts in
+%    parentheses must be enclosed in a cell array and passed to
+%    SETFIELD as a separate input.  Field references are passed as
+%    strings or character vectors.  
+% 
+%    For improved performance, when setting the value of a simple 
+%    field, use <a href="matlab:helpview([docroot '/techdoc/matlab_prog/matlab_prog.map'], 'dynamic_field_names')">dynamic field names</a>.
+% 
+%    See also GETFIELD, ISFIELD, FIELDNAMES, ORDERFIELDS, RMFIELD.
 %
-
-nn=length(varargin);
-if nn==1
-    if isempty(varargin{1})
-        fresh_options=default_options;
-        return
-    elseif isstruct(varargin{1})
-        new_options=varargin{1};
-    else
-        error([mfilename,':: varargin must be a structure if its length is 1'])
-    end
-else
-    if rem(nn,2)==0
-        names=varargin(1:2:end-1);
-        values=varargin(2:2:end);
-        new_options=cell2struct(values,names,2);
-    else
-        error([mfilename,':: arguments must come in pairs'])
-    end
-end
-fresh_options=default_options;
-missing=[];
-if ~isempty(new_options)
-    fields=fieldnames(new_options);
-    default_fields=fieldnames(fresh_options);
-    missing=false(1,numel(fields));
-    for ii=1:numel(fields)
-        loc=find(strcmpi(fields{ii},default_fields));
-        if ~isempty(loc)
-            value=new_options.(fields{ii});
-%             if ~isempty(value)
-                fresh_options.(default_fields{loc})=value;
-%             end
-        else
-            missing(ii)=true;
-        end
-    end
-    missing=fields(missing);
-end
+%    Reference page in Doc Center
+%       doc setfield
+%
+%    Other functions named setfield
+%
+%       fints/setfield
+%

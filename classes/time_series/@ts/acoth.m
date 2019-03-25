@@ -1,9 +1,15 @@
-function this=acoth(this)
-% Overloaded acoth for ts object
+% ACOTH  Inverse hyperbolic cotangent.
+%    ACOTH(X) is the inverse hyperbolic cotangent of the elements of X.
+% 
+%    Class support for input X:
+%       float: double, single
+% 
+%    See also COTH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc acoth
+%
+%    Other functions named acoth
+%
+%       codistributed/acoth    gpuArray/acoth    sym/acoth    ts/acoth
+%

@@ -1,9 +1,12 @@
-function this=atanh(this)
-% Overloaded atanh for ts object
+% ATANH  Inverse hyperbolic tangent.
+%    ATANH(X) is the inverse hyperbolic tangent of the elements of X.
+% 
+%    See also TANH.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc atanh
+%
+%    Other functions named atanh
+%
+%       codistributed/atanh    gpuArray/atanh    sym/atanh    ts/atanh
+%

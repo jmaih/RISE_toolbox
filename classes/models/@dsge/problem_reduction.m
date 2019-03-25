@@ -26,5 +26,5 @@
 %
 %    Other functions named problem_reduction
 %
-%       dsge/problem_reduction
+%       dsge/problem_reduction    generic/problem_reduction
 %

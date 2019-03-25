@@ -1,23 +1,16 @@
-function flag=isinf(self)
-% Returns whether the corresponding data is infinite
+% ISINF  True for infinite elements.
+%    ISINF(X) returns an array that contains 1's where the
+%    elements of X are +Inf or -Inf and 0's where they are not.
+%    For example, ISINF([pi NaN Inf -Inf]) is [0 0 1 1].
+% 
+%    See also ISFINITE, ISNAN.
 %
-% ::
+%    Reference page in Doc Center
+%       doc isinf
 %
-%    flag = isinfinite(db);
+%    Other functions named isinf
 %
-% Args:
+%       calendarDuration/isinf    duration/isinf    sym/isinf
+%       codistributed/isinf       gpuArray/isinf    ts/isinf
+%       datetime/isinf
 %
-%    db (ts object): time series object
-%
-% Returns:
-%    :
-%
-%    - flag (bool): whether the corresponding data is infinite or not
-%
-% Note:
-%    - Since the time series object supports logical indexing, one can
-%      directly use the resulting flag with the time series object. 
-%
-
-flag=isinf(self.data);
-end

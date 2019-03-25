@@ -1,10 +1,15 @@
-function this=acot(this)
-% Overloaded acot for ts object
+% ACOT   Inverse cotangent, result in radian.
+%    ACOT(X) is the inverse cotangent of the elements of X.
+% 
+%    Class support for input X: 
+%       float: double, single
+% 
+%    See also COT, ACOTD.
 %
-
-% Here it does not make sense to have names any more. But
-% all the same, perhaps I should have a function to rename
-% the series?
-
-this=ts.unary_operation(this,mfilename);
-end
+%    Reference page in Doc Center
+%       doc acot
+%
+%    Other functions named acot
+%
+%       codistributed/acot    gpuArray/acot    sym/acot    ts/acot
+%

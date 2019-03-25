@@ -28,5 +28,5 @@
 %
 %    Other functions named transform
 %
-%       abstvar/transform
+%       abstvar/transform    sym/transform
 %

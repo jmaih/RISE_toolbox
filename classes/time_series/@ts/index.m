@@ -1,4 +1,4 @@
-%--- index.m not found. Showing help for rsindex instead. ---
+%--- help for rsindex ---
 %
 % RSINDEX Relative Strength Index (RSI).
 % 
