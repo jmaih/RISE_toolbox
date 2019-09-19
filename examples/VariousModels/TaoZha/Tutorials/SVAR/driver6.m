@@ -285,7 +285,7 @@ end
 %% Marginal data density
 clc
 
-mddobj=mdd(results.pop,ff,lb,ub);
+mddobj=mdd(results,ff,lb,ub);
 
 fprintf('Importance sampling::%0.2f\n',is(mddobj,[],mdd.global_options))
 
