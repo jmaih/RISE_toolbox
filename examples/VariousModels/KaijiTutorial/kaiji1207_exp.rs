@@ -1,9 +1,9 @@
-var C, $Consumption$, K, $Capital$ H, $hours worked$, 
-R, $real interest rate$, A, $technology process$, B, $discount process$,
-D, $Depreciation process$, PSI $labor disutility process$;
+endogenous C, "Consumption", K, "Capital" H, "hours worked", 
+R, "real interest rate", A, "technology process", B, "discount process",
+D, "Depreciation process", PSI "labor disutility process";
 
-varexo EPS_A, $technology$, EPS_B, $discount$, 
-EPS_D, $depreciation$, EPS_PSI, $labor disutility$;
+exogenous EPS_A, "technology", EPS_B, "discount", 
+EPS_D, "depreciation", EPS_PSI, "labor disutility";
 
 parameters alpha, bss, dss, psiss, rho_psi, rho_a, rho_b, rho_d, sig_d, sig_a, sig_b, sig_psi;
 
@@ -26,7 +26,6 @@ model
 
 	log(PSI/psiss) = rho_psi*log(PSI{-1}/psiss)+sig_psi*EPS_PSI;
 
-end
 
 steady_state_model
 	A  = 1;
@@ -37,7 +36,6 @@ steady_state_model
 	K  = 2.0;
 	H  = .31;
 	R  = .04;
-end
 
 parameterization
 	alpha,   .36;
@@ -47,10 +45,9 @@ parameterization
 	rho_psi, .75, 0, 1;
 	rho_a,   .96, 0, 1;
 	rho_b,   .75, 0, 1;
-	rho_d,   .75, 0.25, .75, beta_pdf, .9;
+	rho_d,   .75, 0.25, .75, beta_pdf(.9);
 	sig_d,   .01, 0, 0.5;
 	sig_a,   .01, 0, 0.5;
 	sig_b,   .01, 0, 0.5;
 	sig_psi, .01, 0, 0.5;
-end
 	

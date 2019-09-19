@@ -1,41 +1,32 @@
 %% housekeeping
 close all
-clear all
+clearvars
 clc
-%% load the rise paths
-addpath('C:\Users\Junior\Documents\GitHub\RISE_toolbox')
-
-%% load RISE
-rise_startup();
 
 %% read the model
-kaiji=rise('kaiji1207');
-
-%% get the first-order perturbation (approximation) of the model
-
-kaiji=evaluate(kaiji);
+m=rise('kaiji1207_exp');
 
 %% alternatively, solve the model directly
 
-kaiji=solve(kaiji);
+m=solve(m);
 
 %% print the solution of the model
 
-kaiji.print_solution
+m.print_solution
 % alternative call
 % print_solution(kaiji)
 
 %% print solution of a subset of variables
 
-kaiji.print_solution({'C','H','K'})
+m.print_solution({'C','H','K'})
 
 %% doing things the RBC way: waste of time
 % RISE write the solution of the whole system as: X_t=T*X_{t-1}+R*e_t. The
 % RBC guys write solutions as S_t=P*S_{t-1}+K*e_t and Y_t=F*S_t . Below, we
 % show how to recover matrices P, K and F.
 % collect the T and R matrices
-T=kaiji.T;
-R=kaiji.R;
+[T,R]=load_solution(m,'iov');
+T=T{1}; R=R{1};
 % set some elements to 0 sharp
 T(abs(T)<1e-10)=0;
 R(abs(R)<1e-10)=0;
@@ -49,19 +40,26 @@ control_cols=~state_cols;
 P=T(state_cols,state_cols);
 % recover the solution of the controls as a function of states
 FP=T(control_cols,state_cols);
-F=FP/P; % P should always be invertible unless collinearity
+F=FP/P; % F=FP*inv(P) P should always be invertible unless collinearity
 % recover the shock impact on the states
 K=R(state_cols,:);
+
+allvars=m.endogenous.name;
+
+state_variables=allvars(state_cols);
+
+control_variables=allvars(control_cols);
+
 %% compute impulse responses
 % In general, if you want to see the options for a particular method,
 % create an empty rise object. e.g. tmp=rise.empty(0); then you can go
 % ahead and call the specific function you want to use on that empty object
 % and it will list out the various options and the defaults of those
 % options. e.g. irf(tmp)
-simple_irfs=irf(kaiji,'irf_periods',20);
+simple_irfs=irf(m,'irf_periods',20);
 %% construct a vector of models with different anticipation options
-kaiji_unant=kaiji.set('irf_anticipate',false);
-myvector=[kaiji,kaiji_unant];
+kaiji_unant=m.set('irf_anticipate',false);
+myvector=[m,kaiji_unant];
 
 %% change some option in the vector
 % here we set:
@@ -71,21 +69,22 @@ myvector=[kaiji,kaiji_unant];
 % the information (unanticipated)
 % 3- we can also choose the sign of the shocks. By default, the shocks will
 % be positive.
-myirfs=irf(myvector,'irf_periods',20,'irf_horizon',3,'irf_shock_sign',1);
+myirfs=irf(myvector,'irf_periods',20,'solve_shock_horizon',3,'irf_shock_sign',1);
 
 %% plot the irfs
-shock_list={kaiji.varexo.name};
-var_list={kaiji.varendo.name};
+shock_list=m.exogenous.name;
+tex=get(m,'tex');
+% var_list=allvars;
 % just re-ordering the variables in a way that I like for the plotting
 var_list={'A','B','D','PSI','C','K','H','R'}; 
 for ishock=1:numel(shock_list)
     shock=shock_list{ishock};
-    figure('name',['IRFs to a ',shock, 'shock']);
+    figure('name',['IRFs to a ',tex.(shock), 'shock']);
     for ivar=1:numel(var_list)
         endovar=var_list{ivar};
         subplot(3,3,ivar)
         plot(myirfs.(shock).(endovar),'linewidth',2)
-        title(endovar)
+        title(tex.(endovar))
         if ivar==1
             legend('anticipated','unanticipated')
         end
@@ -113,10 +112,10 @@ end
 
 %% estimate the model
 
-kaiji=estimate(kaiji,'data',ts.collect(mydata));
+m=estimate(m,'data',mydata);
 
 %% historical decomposition of shocks
-histdec=historical_decomposition(kaiji);
+histdec=historical_decomposition(m);
 
 %% plot the decomposition
 figure('name','historical decomposition of shocks and initial conditions')
@@ -124,9 +123,15 @@ for ivar=1:numel(var_list)
     vname=var_list{ivar};
     subplot(3,3,ivar)
     plot_decomp(histdec.(vname))
-    title(vname)
+    title(tex.(vname))
     if ivar==1
         contrib_names=histdec.(vname).varnames;
+        for jj=1:numel(contrib_names)
+            if ~isfield(tex,contrib_names{jj})
+                continue
+            end
+            contrib_names{jj}=tex.(contrib_names{jj});
+        end
         hleg=legend(contrib_names,...
             'Location','BestOutside','orientation','horizontal');
         pp=get(hleg,'position');
@@ -137,31 +142,53 @@ end
 
 %% counterfactual: what if only one shock had been alive?
 for ishock=1:numel(shock_list)
-    [counterf,actual]=counterfactual(kaiji,'counterfact_shocks_db',...
-        shock_list{ishock});%,'EPS_PSI','EPS_B','EPS_D'
-    figure('name',['Counterfactual: ',shock_list{ishock},' shock only'])
+    %,{'EPS_PSI','EPS_B','EPS_D'}
+    [counterf,actual]=counterfactual(m,[],1,shock_list{ishock});
+    figure('name',['Counterfactual: ',tex.(shock_list{ishock}),' shock only'])
     for ivar=1:numel(var_list)
         vname=var_list{ivar};
         subplot(3,3,ivar)
         plot([actual.(vname),counterf.(vname)])
-        title(vname)
+        title(tex.(vname))
         if ivar==1
             legend({'actual','counterfactual'})
         end
     end
 end
+
+%% counterfactual for a subset of shocks
+close all
+[counterf,actual]=counterfactual(m,[],1,{'EPS_PSI','EPS_B','EPS_D'});
+figure('name','Counterfactual: EPS_PSI and EPS_B shock only');
+for ivar=1:numel(var_list)
+    vname=var_list{ivar};
+    subplot(3,3,ivar)
+    plot([actual.(vname),counterf.(vname)])
+    title(tex.(vname))
+    if ivar==1
+        legend({'actual','counterfactual'})
+    end
+end
+
 %% variance decomposition
-vardec=variance_decomposition(kaiji);
+vardec=variance_decomposition(m);
 
 %% plot the decomposition
+close all
 figure('name','Variance decomposition of shocks')
 for ivar=1:numel(var_list)
     vname=var_list{ivar};
     subplot(3,3,ivar)
-    plot_decomp(vardec.conditional.(vname))
-    title(vname)
+    plot_decomp('0:50',vardec.conditional.(vname))
+    title(tex.(vname))
     if ivar==1
         contrib_names=vardec.conditional.(vname).varnames;
+        for jj=1:numel(contrib_names)
+            if ~isfield(tex,contrib_names{jj})
+                continue
+            end
+            contrib_names{jj}=tex.(contrib_names{jj});
+        end
         hleg=legend(contrib_names,...
             'Location','BestOutside','orientation','horizontal');
         pp=get(hleg,'position');
