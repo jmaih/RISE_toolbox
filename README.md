@@ -1,5 +1,5 @@
-> **Note:** A maintenance update of RISE will be published here soon.  
-> This update reflects work completed some time ago and brings the public repository closer to the internal development line, though not fully in sync with the latest features.  
+> **Note:** An updated version of RISE will be published here soon.  
+> This upcoming release reflects work completed after the current public version and brings the repository up to date.  
 > More information will follow once the update is finalized.
 
 
