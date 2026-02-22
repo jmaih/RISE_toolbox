@@ -1,3 +1,6 @@
+> **Note:** A maintenance update of RISE will be published here soon.  
+> This update reflects work completed some time ago and brings the public repository closer to the internal development line, though not fully in sync with the latest features.  
+> More information will follow once the update is finalized.
 
 
 Rationality In Switching Environments (RISE) Toolbox
