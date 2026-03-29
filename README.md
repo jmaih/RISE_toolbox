@@ -2,7 +2,7 @@
 
 **Rationality In Switching Environments (RISE)** is an object-oriented toolbox written in MATLAB, primarily designed for the modelling of regime-switching dynamic stochastic general equilibrium (DSGE) models. The transition probabilities governing the switching mechanism can be exogenous or endogenous. Constant-parameter models, which are special cases, are also fully supported.
 
-> **Legacy release:** The previous public version of RISE (circa 2019) is preserved as a tagged release [`v2019`](../../releases/tag/v2019) for users who need backward compatibility.
+> **Legacy release:** The previous public version of RISE (circa 2019) is preserved as a tagged release [`v2019`](../../releases/tag/v2019) for users who need backward compatibility. Note that the legacy version is no longer supported.
 
 ---
 
@@ -92,6 +92,10 @@ vol. 10, no. 4, October 2018
 - [Andrew Binning and Junior Maih (2015): "Sigma point filters for dynamic nonlinear regime switching models"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2015/102015/)
 
 ---
+
+## Extended Version
+
+An extended version of RISE is available to contributors and participants in RISE events. Contact the author for details.
 
 ## Getting Help and Reporting Issues
 
