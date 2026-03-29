@@ -1,62 +1,98 @@
-> **Note:** An updated version of RISE will be published here soon.  
-> This upcoming release reflects work completed after the current public version and brings the repository up to date.  
-> More information will follow once the update is finalized.
+# RISE Toolbox
 
+**Rationality In Switching Environments (RISE)** is an object-oriented toolbox written in MATLAB, primarily designed for the modelling of regime-switching dynamic stochastic general equilibrium (DSGE) models. The transition probabilities governing the switching mechanism can be exogenous or endogenous. Constant-parameter models, which are special cases, are also fully supported.
 
-Rationality In Switching Environments (RISE) Toolbox
-================
-Welcome to RISE!!! For any issue, suggestion or bug
-report, please send an email to [junior.maih AT gmail.com](junior.maih@gmail.com)
+> **Legacy release:** The previous public version of RISE (circa 2019) is preserved as a tagged release [`v2019`](../../releases/tag/v2019) for users who need backward compatibility.
 
-RISE is an object-oriented Matlab toolbox for solving and estimating nonlinear
-Regime-Switching Dynamic Stochastic General Equilibrium (RS-DSGE) models.
+---
 
-A new paper describing the problem and the solution approach in RISE
-can be found [here](http://www.norges-bank.no/en/Published/Papers/Working-Papers/2015/12015/).
-Other references in the field include various papers by Dan Waggoner and Tao Zha, which
-can be found [here](http://www.tzha.net/articles).
+## Installation
 
-In RISE, the switching process and can be endogenous. RISE uses perturbation to approximate the nonlinear Regime-Switching DSGE (RS-DSGE) model and solves it using efficient algorithms.
+1. Clone or download this repository.
+2. Add the toolbox path to MATLAB and run `rise_startup()`.
 
-Constant-parameter DSGE models are a special case. RISE also includes the solution
-and estimation of
-* [Loose commitment](http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=8686985) (or optimal policy) models
-* sticky information models (Deprecated)
-* hybrid expectations models (Deprecated)
-* [models in which agents have information about future events](http://www.kansascityfed.org/publicat/events/research/2010CenBankForecasting/Maih_paper.pdf)
+---
 
-Features of the toolbox
------------------------------------
+## Features
 
-* Symbolic, automatic and numerical derivatives
+### DSGE Modelling
 
-* Time Series
+- Perturbation solution up to 5th order for regime-switching DSGE models
+- Endogenous and exogenous switching mechanisms
+- Loose commitment policies with and without occasionally binding constraints — see [Debortoli, Maih and Nunes (2012)](http://journals.cambridge.org/action/displayAbstract?fromPage=online&aid=8686985)
+- 5th-order perturbation solution of regime-switching optimal-policy DSGE models: commitment, discretion, and stochastic replanning, with and without occasionally binding constraints
+- Deterministic solution of nonlinear regime-switching DSGE models
+- Conditional forecasting in linear and nonlinear models
+- Models in which agents have information about future events
+- Automatic translation of files from other toolboxes
+- Powerful macro-language
 
-* Maximum Likelihood and Bayesian estimation
+### VAR Modelling
 
-* Derivative-free optimization algorithms
+- Reduced-form VARs with and without regime switching
+- Panel reduced-form VARs with and without regime switching
+- Structural VARs with and without regime switching
+- Proxy structural VARs with and without regime switching
 
-* Forecasting and conditional forecasting
+### DSGE-VAR
 
-* DSGE-VAR modeling
+- Estimation and simulation of DSGE-VAR models
 
-* Integrated SVAR modeling with short, long and mixed restrictions
+### Estimation
 
-* High Dimensional Model Representation and Monte Carlo Filtering
+- Maximum likelihood estimation
+- Bayesian estimation
+- Indirect inference
 
-* Reporting	system
+### Uncertainty Quantification
 
-Installation
------
+- Global sensitivity analysis
+- High-dimensional model representation
 
-1. Download the toolbox either as zip file or through github (recommended)
-2. add the toolbox path to Matlab and run rise_startup();
+### Global Optimisation
 
-Documentation
----------------------
-* This publicly available version of RISE is largely work in progress and there
-is a documentation (PDF, HTML, etc) but that too is work in progress.
-* RISE is very intuitive as you will quickly realize when you run the examples in RISE_toolbox\examples\
-* Should you want to report a bug, make a suggestion or need help, please send an email to [junior.maih AT gmail.com](junior.maih@gmail.com)
+- Derivative-free stochastic global optimisation algorithms
 
-[![Analytics](https://ga-beacon.appspot.com/UA-83942100-1/github.com/jmaih/RISE_toolbox)](https://github.com/igrigorik/ga-beacon)
+### Other
+
+- Time series and data management
+- Reporting system
+
+---
+
+## Key References
+
+The main methodological paper describing the regime-switching problem and its solution as implemented in RISE:
+
+- [Junior Maih (2015): "Efficient perturbation methods for solving regime-switching DSGE models"](http://www.norges-bank.no/en/Published/Papers/Working-Papers/2015/12015/)
+
+Other useful references include various papers by Dan Waggoner and Tao Zha, available [here](http://www.tzha.net/articles).
+
+---
+
+## Selected Applications
+
+- [Hashimzade, Kirsanov, Kirsanova and Maih (2026): "Filtering and Smoothing in State-Space Models with Multiple Regimes" forthcoming in the *Journal of Business and Economic Statistics*]
+- [Yoosoon Chang, Junior Maih and Fei Tan (2021): "Origins of monetary policy shifts: A new approach to regime switching in DSGE models", Journal of Economic Dynamics and Control
+Volume 133, December 2021, 104235](https://www.sciencedirect.com/science/article/abs/pii/S0165188921001706)
+<!-- - [Ryo Kato, Junior Maih and Shin-Ichi Nishiyama (2022): "Trend inflation in Japanese pre-2000s: A Markov-switching DSGE estimation"](http://www.econ.kobe-u.ac.jp/RePEc/koe/wpaper/2022/2212.pdf) -->
+- [Ragna Alstadheim, Hilde C. Bjørnland and Junior Maih (2021): "Do central banks respond to exchange rate movements? A Markov-switching structural investigation of commodity exporters and importers", Energy Economics
+Volume 96, April 2021, 105138](https://www.sciencedirect.com/science/article/pii/S0140988321000438?via%3Dihub)
+- [Junior Maih, Falk Mazelis, Roberto Motto and Annukka Ristiniemi (2021): "Asymmetric monetary policy rules for the euro area and the US", Journal of Macroeconomics
+Volume 70, December 2021, 103376](https://www.sciencedirect.com/science/article/abs/pii/S0164070421000756)
+- [Andrew Binning, Hilde C. Bjørnland and Junior Maih (2019): "Is monetary policy always effective? Incomplete interest rate pass-through in a DSGE model"](https://www.norges-bank.no/aktuelt/nyheter-og-hendelser/Signerte-publikasjoner/Working-Papers/2019/222019/)
+- [Hilde C. Bjørnland, Vegard H. Larsen and Junior Maih (2018): "Oil and macroeconomic (in)stability", American Economic Journal: Macroeconomics
+vol. 10, no. 4, October 2018
+(pp. 128–51)](https://www.aeaweb.org/articles?id=10.1257/mac.20150171)
+- [Andrew Binning and Junior Maih (2017): "Modelling occasionally binding constraints using regime-switching"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2017/232017/)
+- [Andrew Binning and Junior Maih (2016): "Forecast uncertainty in the neighborhood of the effective lower bound: How much asymmetry should we expect?"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2016/132016/)
+- [Farooq Akram, Andrew Binning and Junior Maih (2016): "Joint prediction bands for macroeconomic risk management"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2016/72016/)
+- [Andrew Binning and Junior Maih (2016): "Implementing the zero lower bound in an estimated regime-switching DSGE model"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2016/32016/)
+- [Andrew Binning and Junior Maih (2015): "Applying flexible parameter restrictions in Markov-switching vector autoregression models"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2015/172015/)
+- [Andrew Binning and Junior Maih (2015): "Sigma point filters for dynamic nonlinear regime switching models"](https://www.norges-bank.no/en/news-events/news-publications/Papers/Working-Papers/2015/102015/)
+
+---
+
+## Getting Help and Reporting Issues
+
+For bug reports, suggestions, or questions, please open an issue on the [GitHub repository](https://github.com/jmaih/RISE_toolbox/issues) or send an email to [junior.maih AT gmail.com](mailto:junior.maih@gmail.com).

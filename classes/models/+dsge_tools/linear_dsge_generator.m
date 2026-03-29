@@ -35,5 +35,4 @@
 %     - the coefficients on exogenous variables by "c_i"
 % 
 %     - where "i" denotes the equation, "j" the variable
-% 
 %

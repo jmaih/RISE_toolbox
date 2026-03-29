@@ -45,16 +45,23 @@ m002=solve(m000,'solver','dsge_groebner','solve_check_stability',false);
 
 % Finding all solutions UDC
 %--------------------------
-refine=false;checkStab=false;allSols=true;msvOnly=true;
-xplosRoots=false;debug=false;
-solver={'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug};
+slvOpts=struct();
+slvOpts.refine=false;
+slvOpts.checkStab=false;
+slvOpts.allSols=true;
+slvOpts.msvOnly=true;
+slvOpts.xplosRoots=false;
+slvOpts.debug=false;
+
+solver={'dsge_udc',slvOpts};
 m003=solve(m000,'solver',solver,'solve_check_stability',false);
 
 % Finding all solutions UDC with refinement
 %------------------------------------------
-refine=true;checkStab=false;allSols=true;msvOnly=true;
-xplosRoots=false;debug=false;
-solver={'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug};
+slvOpts2=slvOpts;
+slvOpts2.refine=true;
+
+solver={'dsge_udc',slvOpts2};
 
 m004=solve(m000,'solver',solver,'solve_check_stability',false);
 

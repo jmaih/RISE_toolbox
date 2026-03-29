@@ -55,17 +55,37 @@
 % 
 %    See also GET, RESET, DELETE, GCF, GCA, FIGURE, AXES.
 %
-%    Reference page in Doc Center
+%    Documentation for set
 %       doc set
 %
-%    Other functions named set
+%    Other uses of set
 %
-%       abstvar/set      editline/set        scribehgobj/set
-%       arrowline/set    editrect/set        serial/set
-%       axischild/set    figobj/set          splanar/set
-%       axisobj/set      generic/set         timer/set
-%       axistext/set     instrument/set      timeseries/set
-%       COM/set          RandStream/set      ts/set
-%       dataset/set      scribehandle/set    tscollection/set
+%       abstvar/set
+%       arrowline/set
+%       audioplayer/set
+%       audiorecorder/set
+%       axischild/set
+%       axisobj/set
+%       axistext/set
+%       bvar_dsge/set
+%       COM/set
+%       dataset/set
 %       dsge/set
+%       editline/set
+%       editrect/set
+%       figobj/set
+%       generic/set
+%       instrument/set
+%       matlab.mixin.SetGet/set
+%       matlab.mock.PropertyBehavior/set
+%       matlab.System/set
+%       matlab.unittest.internal.FunctionTestCaseModifierProvider/set
+%       RandStream/set
+%       scribehandle/set
+%       scribehgobj/set
+%       serial/set
+%       splanar/set
+%       timeseries/set
+%       ts/set
+%       tscollection/set
 %

@@ -158,14 +158,14 @@ if do_steady_state_results
     big_table=cell(1,numel(m)+1);
     big_table{1}=steady_table;
     for imod=1:numel(m)
-        sstate=get(m(imod),'sstate');
+        stst=get(m(imod),'sstate');
         regs_i=m(imod).markov_chains.regime_tex_names;
         nregs=numel(regs_i);
         tble=cell(nvar+2,nregs);
         tble{1,1}=model_tags{imod};
         tble(2,1:nregs)=regs_i;
         for ivar=1:nvar
-            tble(ivar+2,1:nregs)=num2cell(sstate.(my_varlist{ivar}));
+            tble(ivar+2,1:nregs)=num2cell(stst.(my_varlist{ivar}));
         end
         big_table{1+imod}=tble;
     end
@@ -403,8 +403,8 @@ if do_forecast
         fig=figure('name',fig_title);
         for imod=1:number_of_models
             if ivar==1
-                sstates{imod}=cell2mat(m(imod).solution.ss);
-                Qi=m(imod).solution.transition_matrices.Q;
+                sstates{imod}=m(imod).stst_;
+                Qi=m(imod).state_space{1}.transition_matrices.Q;
                 nreg=size(Qi,1);
                 ergodic_probs{imod}=[eye(nreg)-Qi';ones(1,nreg)]\[zeros(nreg,1);1];
             end
@@ -558,7 +558,7 @@ for imod=1:number_of_models
     ub=max(ub,max(myshock_data{imod}));
 end
 for imod=1:number_of_models
-    [ff_,xx_]=distributions.kernel_density(myshock_data{imod},lb,ub,'normal',250);
+    [ff_,xx_]=rdist.kernel_density(myshock_data{imod},lb,ub,'normal',250);
     if imod==1
         ff_=ff_(:);
         myff=ff_(:,ones(1,number_of_models));

@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION: Choleski identification of structural shocks
-% 
+%choleski is a function.
+%    [Rfunc, ident] = choleski(n, ordering)
 %

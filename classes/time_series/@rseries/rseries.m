@@ -116,7 +116,7 @@
 %  - [NumberOfPages] -
 %  - [NumberOfVariables] -
 %
-%    Reference page in Doc Center
+%    Documentation for rseries
 %       doc rseries
 %
 %

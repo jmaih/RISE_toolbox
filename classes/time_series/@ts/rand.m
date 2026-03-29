@@ -11,8 +11,8 @@
 %    R = RAND(..., CLASSNAME) returns an array of uniform values of the 
 %    specified class. CLASSNAME can be 'double' or 'single'.
 % 
-%    R = RAND(..., 'like', Y) returns an array of uniform values of the 
-%    same class as Y.
+%    R = RAND(..., 'like', Y) is an array of uniform values with the same
+%    data type and complexity (real or complex) as the numeric variable Y.
 % 
 %    The sequence of numbers produced by RAND is determined by the settings of
 %    the uniform random number generator that underlies RAND, RANDI, and RANDN.
@@ -55,12 +55,12 @@
 %    See also RANDI, RANDN, RNG, RANDSTREAM, RANDSTREAM/RAND,
 %             SPRAND, SPRANDN, RANDPERM.
 %
-%    Reference page in Doc Center
+%    Documentation for rand
 %       doc rand
 %
-%    Other functions named rand
+%    Other uses of rand
 %
 %       codistributed/rand        distributed/rand    RandStream/rand
 %       codistributor1d/rand      gpuArray/rand       ts/rand
-%       codistributor2dbc/rand
+%       codistributor2dbc/rand    qrandstream/rand
 %

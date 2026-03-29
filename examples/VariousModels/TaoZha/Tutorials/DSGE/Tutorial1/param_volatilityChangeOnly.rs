@@ -1,11 +1,11 @@
 % in this case, only sigd is controlled by markov chain nk
 % the other parameters are controlled by the const markov chain
 
-parameters tau rhod rhos sigs sigr kappa beta rhor gamma_1 gamma_2
+@parameters tau rhod rhos sigs sigr kappa beta rhor gamma_1 gamma_2
 
-parameters(nk,2) sigd
+@parameters(nk,2) sigd
 
-parameterization
+@parameterization
 	tau          ,   0.6137;
 	rhod         ,   0.7550;
 	rhos         ,   0.835 ;

@@ -2,6 +2,8 @@
 %
 %  Parametric decomposition into trend, seasonal and irregular components
 % 
+%  .. index:: filtering
+% 
 %  ::
 % 
 %    out=pdecomp(y)
@@ -10,10 +12,12 @@
 % 
 %  Args:
 % 
-%     y (ts): time series to decompose
-%     doLog (true | {false}): if log, do a multiplicative decomposition
+%     - **y** (ts): time series to decompose
+% 
+%     - **doLog** (true | {false}): if log, do a multiplicative decomposition
 %       otherwise the decomposition is additive
-%     dorder (integer | {2}): detrending order
+% 
+%     - **dorder** (integer | {2}): detrending order
 % 
 %  Returns:
 %     :
@@ -25,12 +29,11 @@
 %       - **sa**    [ts] : seasonally adjusted data
 %       - **ic**    [ts] : estimated irregular component
 % 
-%  Note:
+%  .. note::
 % 
 %     If there are many variables and the variables are named, the first level
 %     of the structure will be the names of the different variables.
 % 
 %  See also:
 %     - :func:`npdecomp <ts.npdecomp>`
-% 
 %

@@ -2,6 +2,8 @@
 %
 %  Non-parametric decomposition into trend, seasonal and irregular components
 % 
+%  .. index:: filtering
+% 
 %  ::
 % 
 %    out=npdecomp(y)
@@ -31,5 +33,4 @@
 % 
 %  See also:
 %     - :func:`pdecomp <ts.pdecomp>`
-% 
 %

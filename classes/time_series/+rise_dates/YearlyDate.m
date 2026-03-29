@@ -1,0 +1,2 @@
+%YearlyDate is a class.
+%

@@ -20,7 +20,7 @@
 %                @rem            Remainder after division
 %                @mod            Modulus after division
 %                @atan2	        Four-quadrant inverse tangent; result in radians
-%                @atan2d	        Four-quadrant inverse tangent; result in dgrees
+%                @atan2d	        Four-quadrant inverse tangent; result in degrees
 %                @hypot	        Square root of sum of squares
 %                @eq             Equal
 %                @ne             Not equal
@@ -54,10 +54,10 @@
 % 
 %    See also REPMAT, ARRAYFUN
 %
-%    Reference page in Doc Center
+%    Documentation for bsxfun
 %       doc bsxfun
 %
-%    Other functions named bsxfun
+%    Other uses of bsxfun
 %
 %       codistributed/bsxfun    gpuArray/bsxfun    tall/bsxfun    ts/bsxfun
 %

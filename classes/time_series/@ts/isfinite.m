@@ -8,12 +8,12 @@
 % 
 %    See also ISNAN, ISINF.
 %
-%    Reference page in Doc Center
+%    Documentation for isfinite
 %       doc isfinite
 %
-%    Other functions named isfinite
+%    Other uses of isfinite
 %
-%       calendarDuration/isfinite    duration/isfinite    sym/isfinite
+%       calendarDuration/isfinite    duration/isfinite    symbolic/isfinite
 %       codistributed/isfinite       gpuArray/isfinite    ts/isfinite
-%       datetime/isfinite
+%       datetime/isfinite            sym/isfinite
 %

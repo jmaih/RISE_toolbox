@@ -1,9 +1,3 @@
-%  INTERNAL FUNCTION
-% 
-%  Note:
-% 
-%     - It is expected that the solution of the first order also contains the
-%       exogenous growth rate, which is nonzero for nonstationary models. That
-%       component is the imaginary part of the column numel(xloc)+1.
-% 
+%one_step_engine is a function.
+%    y1 = one_step_engine(T, y0, ss_curr, xloc, sig, shocks, order)
 %

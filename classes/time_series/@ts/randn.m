@@ -11,8 +11,9 @@
 %    R = RANDN(..., CLASSNAME) returns an array of normal values of the 
 %    specified class. CLASSNAME can be 'double' or 'single'.
 % 
-%    R = RANDN(..., 'like', Y) returns an array of normal values of the
-%    same class as Y.
+%    R = RANDN(..., 'like', Y) returns an array of normal values with
+%    the same data type and complexity (real or complex) as the numeric
+%    variable Y.
 % 
 %    The sequence of numbers produced by RANDN is determined by the settings of
 %    the uniform random number generator that underlies RAND, RANDN, and RANDI.
@@ -57,10 +58,10 @@
 % 
 %    See also RAND, RANDI, RNG, RANDSTREAM, RANDSTREAM/RANDN
 %
-%    Reference page in Doc Center
+%    Documentation for randn
 %       doc randn
 %
-%    Other functions named randn
+%    Other uses of randn
 %
 %       codistributed/randn        distributed/randn    RandStream/randn
 %       codistributor1d/randn      gpuArray/randn       ts/randn

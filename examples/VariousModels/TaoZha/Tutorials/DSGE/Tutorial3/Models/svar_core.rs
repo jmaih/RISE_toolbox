@@ -5,20 +5,20 @@
 %-------------------------------------------------------------%
 
 %Endogenous variables
-endogenous	 Y, "Output gap", PAI, "Inflation", I, "Fed Funds rate"
+@endogenous	 Y, "Output gap", PAI, "Inflation", I, "Fed Funds rate"
 
 %Exogenous variables
-exogenous EPAI,  "Phil. curve shock", EY, "IS curve shock", EI, "Taylor rule shock"
+@exogenous EPAI,  "Phil. curve shock", EY, "IS curve shock", EI, "Taylor rule shock"
 
 %parameters
-parameters alpha_pai1, "$\alpha_{\pi,1}$", alpha_pai2, "$\alpha_{\pi,2}$", alpha_y, "$\alpha_{y}$", c_pai, "$c_{\pi}$",
+@parameters alpha_pai1, "$\alpha_{\pi,1}$", alpha_pai2, "$\alpha_{\pi,2}$", alpha_y, "$\alpha_{y}$", c_pai, "$c_{\pi}$",
 c_y, "$c_{y}$", beta_y1, "$\beta_{y,1}$", beta_y2, "$\beta_{y,2}$", beta_r, "$\beta_{r}$",
 
 % observable variables
-observables I, Y, PAI
+@observables I, Y, PAI
 
 
-model
+@model
 	% define xx_ssmdef_iary expression to be inserted into the model equations
 	% the strategy is to interpret the inverse of the elements below as
 	% standard deviations
@@ -35,7 +35,7 @@ model
 %   gam_i*I = c_i + gam_i*rho_i*I{-1} - gam_i*(1-rho_i)*(gam_y*Y+gam_pai*PAI) + EI;
    gam_i*I = c_i + gam_i*rho_i*I{-1} +gam_i*(1-rho_i)*(gam_y*Y+gam_pai*PAI) + EI;
 
-steady_state_model
+@steady_state_model
 	xx_ssmdef_1=alpha_pai-alpha_pai1-alpha_pai2;
 	xx_ssmdef_2=gam_i*(1-rho_i);
 	xx_ssmdef_3=beta_r*(gam_pai-1);
@@ -47,7 +47,7 @@ steady_state_model
 	I=c_i/xx_ssmdef_2+gam_y*Y+gam_pai*PAI;
 
 % the non-policy parameters never switch, they will be controlled by the const markov chain
-parameterization
+@parameterization
     alpha_pai1, 	0.9, 	0.05, 	1.5, 	gamma_pdf(0.9);
     alpha_pai2, 	0.05  , 	-1  , 	1  , 	normal_pdf(0.9); 
     alpha_y,    	0.1, 	0.05, 	1.5, 	gamma_pdf(0.9);  

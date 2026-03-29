@@ -1,8 +1,8 @@
-parameters vol_tp_1_2, vol_tp_2_1
+@parameters vol_tp_1_2, vol_tp_2_1
 
-parameters(vol,2) sig_pai, "$\sigma_{\pi}$" sig_y, "$\sigma_{y}$", sig_i, "$\sigma_{i}$" 
+@parameters(vol,2) sig_pai, "$\sigma_{\pi}$" sig_y, "$\sigma_{y}$", sig_i, "$\sigma_{i}$" 
 
-parameterization
+@parameterization
 	sig_pai(vol,1),   		0.1, 	0.05, 	  3, 	weibull_pdf(0.9); 
 	sig_pai(vol,2),   		0.1, 	0.05, 	  3, 	weibull_pdf(0.9); 
 	sig_y(vol,1),  		    0.1, 	0.05, 	  3, 	weibull_pdf(0.9);  
@@ -13,6 +13,6 @@ parameterization
 	vol_tp_1_2,   			0.15,	0.1, 	0.5, 	beta_pdf(0.9);
 	vol_tp_2_1,   			0.15,	0.1, 	0.5, 	beta_pdf(0.9);
 
-parameter_restrictions
+@parameter_restrictions
 	% high volatility is the second regime
 	sig_pai(vol,2)>=sig_pai(vol,1);

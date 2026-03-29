@@ -1,43 +1,116 @@
-%--- help for abstvar/irf ---
+%--- help for statespace/irf ---
 %
-%  Compute impulse response function from the given parameter values
+% IRF Impulse response function of state-space models
 % 
-%  ::
+%  Syntax:
 % 
-%     myirfs = irf(self, shock_names, irf_periods, params, Rfunc);
+%    For fully specified models:
+%    [ResponseY,ResponseX] = irf(Mdl)
+%    [...] = irf(Mdl,name,value,...)
 % 
-%  Args:
+%    For partially specified models:
+%    [...] = irf(Mdl,'Params',estParams,'EstParamCov',EstParamCov,...)
+%    [...] = irf(Mdl,'Params',estParams,'EstParamCov',EstParamCov,name,value,...)
+%    where estParams and EstParamCov are returned by ESTIMATE.
 % 
-%     self (var object): var object
+%  Description:
 % 
-%     shock_names (cellstr): shocks to compute IRFs (has to be consistent with the names given in :func:`identification <var.identification>`)
+%    For observation vector y(t) and state vector x(t), a general 
+%    state-space model (SSM) takes the form:
 % 
-%     irf_periods (int): number of periods to compute IRFs (default: 40)
+%    State equation:       x(t) = A(t) * x(t-1) + B(t) * u(t)
+%    Observation equation: y(t) = C(t) * x(t)   + D(t) * e(t)
 % 
-%     params (vector): parameter values of the model. If empty MLE/posterior-mode values are used.
+%    where u(t) and e(t) are uncorrelated, unit-variance white noise vector
+%    processes. The length of x(t), y(t), u(t), and e(t) is m, n, k, and h, 
+%    respectively.
 % 
-%     Rfunc (function handle): identification function. This is an output of :func:`identification <var.identification>`. (default: choleski identification)
+%    Impulse response functions (IRF) measure the dynamic effects on the
+%    state and measurement series x(t), y(t), t = 1,2,..., when an
+%    unanticipated change to u(1) occurs.
+%    
 % 
-%     girf_setup (struct|{empty}): structure containing information relevant
-%        for the computation of generalized impulse response functions. If
-%        empty, simple regime-specific impulse responses are computed, else
-%        girfs are computed. In that case the relevant information to
-%        provide in girf_setup is:
-%        - nsims : (default=300) number of simulations for the integration.
-%        Note that even setting girf_setup=struct() will trigger the
-%        computation of girfs. But in that case only the default options
-%        will apply.
+%  Input Arguments:
 % 
-%  Returns:
+%    Mdl        - A state-space model, as created by the model constructor
+%                 or ESTIMATE.
 % 
-%     : struct containing IRFs
+%  Optional Input Name/Value Pairs:
 % 
-%  Note:
+%    'Params'      A vector of parameter values associated with unknown
+%                  parameters found in model coefficients A, B, C, and D, and
+%                  optionally the mean vector (Mean0) and covariance matrix 
+%                  (Cov0) of initial states x(0), estimated by maximum 
+%                  likelihood. For models created explicitly, parameters mapped
+%                  to NaN values are found by a column-wise search of A, 
+%                  followed by B, then C, then D, and finally Mean0 and Cov0. 
+%                  For models created implicitly, the parameter mapping function 
+%                  ParamMap is solely responsible for mapping the initial 
+%                  parameter vector into model coefficients A, B, C, and D, 
+%                  as well as additional information regarding initial states 
+%                  and types if necessary. This input is only necessary if the
+%                  model has unknown parameters. 
 % 
-%     Only successful IRFs are returned. If the structure does not return some IRFs make sure that IRFs properly identified.
+%    'EstParamCov' The output EstParamCov (estimator covariance matrix)
+%                 returned by ESTIMATE for computing lower and upper
+%                 bounds. The default is empty.
 % 
+%    'NumPeriods' Positive integer indicating the number of periods in the
+%                 IRF. The default is 20.
+% 
+%    'NumPaths'   Number of sample paths (trials) to generate for computing 
+%                 lower and upper bounds. The default is 1000.
+% 
+%    'Confidence' Positive scalar for the confidence level of the bounds. 
+%                 The default is 0.95.
+% 
+%    'Cumulative' Logical value indicating cumulative responses instead of
+%                 period-by-period responses. The default is false.
+% 
+%    'Method'     String that specifies the irf estimation algorithm.
+%                 o 'repeated-multiplication' (default).
+%                 o 'eigendecomposition': the software attempts to use the
+%                   eigenvalues of the time-invariant transition matrix for
+%                   computing impulse response functions.
+% 
+%  Output Argument:
+% 
+%    ResponseY -  numPeriods-by-k-by-n array of dynamic responses of Y.
+%                 If a unit of shock to variable i occurs in period 1,
+%                 then the response of variable j in period t is given by
+%                 the element (t,i,j).
+% 
+%    ResponseX -  numPeriods-by-k-by-m array of dynamic responses of X.
+%                 If a unit of shock to variable i occurs in period 1,
+%                 then the response of variable j in period t is given by
+%                 the element (t,i,j).
+% 
+%    LowerY -     numPeriods-by-k-by-n array of pointwise lower bounds 
+%                 of dynamic responses of Y. 
+% 
+%    UpperY -     numPeriods-by-k-by-n array of pointwise upper bounds 
+%                 of dynamic responses of Y.
+% 
+%    LowerX -     numPeriods-by-k-by-m array of pointwise lower bounds 
+%                 of dynamic responses of X. 
+% 
+%    UpperX -     numPeriods-by-k-by-m array of pointwise upper bounds 
+%                 of dynamic responses of X. 
+% 
+%  Notes:
+% 
+%  o The timing convention is that the state shock occurs in period 1.
+%    The responses are calculated for period 1, 2, and so on.
+% 
+%  o Models with time-varying coefficients have a time-varying IRF.
+% 
+%  o If 'EstParamCov' (estimator covariance matrix) is not available,
+%    lower and upper bounds overlap.
+% 
+%  See also FILTER, SMOOTH, ESTIMATE, FORECAST.
 %
-%    Other functions named irf
+%    Other uses of irf
 %
-%       dsge/irf    generic/irf
+%       abstvar/irf    dssm/irf       ssm/irf     vecm/irf
+%       dsge/irf       generic/irf    varm/irf
 %

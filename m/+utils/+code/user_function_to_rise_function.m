@@ -1,4 +1,3 @@
-%  INTERNAL FUNCTION: extracts objective function and
-%  additional input arguments for user-defined functions
-% 
+%user_function_to_rise_function is a function.
+%    [objective, vargs, is_required] = user_function_to_rise_function(objective)
 %

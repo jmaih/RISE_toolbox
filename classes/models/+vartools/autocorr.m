@@ -2,27 +2,32 @@
 % 
 %  Syntax:
 % 
-%    [acf,lags,bounds] = autocorr(y)
-%    [acf,lags,bounds] = autocorr(y,param,val,...)
-%    [acf,lags,bounds,h] = autocorr(...)
-%    [acf,lags,bounds,h] = autocorr(ax,...)
+%    [acf,lags] = autocorr(y)
+%    ACFTbl = autocorr(Tbl)
+%    [...,bounds] = autocorr(...)
+%    [...,bounds,h] = autocorr(...)
+%    [...] = autocorr(...,param,val,...)
+%    [...] = autocorr(ax,...)
 %    autocorr(...)
 % 
 %  Description:
 % 
-%    Compute the sample autocorrelation function (ACF) of a univariate,
-%    stochastic time series y. AUTOCORR optionally plots the ACF sequence
-%    with confidence bounds.
+%    Compute the sample autocorrelation function (ACF) of a univariate 
+%    time series. AUTOCORR optionally plots the ACF with confidence bounds.
 % 
 %  Input Arguments:
 % 
-%    y - Vector of observations of a univariate time series. The last
-%        element of y contains the most recent observation.
+%    y - Univariate time series data, specified as a numeric vector.
+% 
+%    Tbl - Time series data, specified as a table or timetable. Specify a
+%        single series for y using the 'DataVariable' parameter.
 % 
 %    ax - Axes object in which to plot. If unspecified, AUTOCORR plots to
 %        the current axes (gca).
 % 
-%  Optional Input Parameter Name/Value Pairs:
+%    The function treats NaN values as missing completely at random.
+% 
+%  Optional Input Parameter Name/Value Arguments:
 % 
 %   'NumLags' Positive integer that determines the number of lags at which the
 %             ACF is computed. The lags used to compute the ACF are 0:NumLags.
@@ -40,12 +45,20 @@
 %             specifying an interval of +/-(NumSTD) times the computed
 %             standard error. The default is 2 (approximate 95% confidence).
 % 
+%   'DataVariable' Variable in Tbl to use for y, specified as a name in
+%             Tbl.Properties.VariableNames. Variable names are character
+%             vectors, string scalars, integers or logical vectors. The
+%             default is the last variable in Tbl.
+% 
 %  Output Arguments:
 % 
 %    acf - Sample ACF. Vector of length NumLags+1 of values computed at lags
 %        0,1,2,...,NumLags. For all y, acf(1) = 1 at lag 0.
 % 
 %    lags - Vector of lag numbers of length NumLags+1 used to compute acf.
+% 
+%    ACFTbl - When input is Tbl, outputs lags and acf are returned in
+%        table ACFTbl.
 % 
 %    bounds - Two-element vector of approximate upper and lower confidence
 %        bounds, assuming that y is an MA(NumMA) process.
@@ -54,9 +67,6 @@
 %        ACF when the number of output arguments is 0 or 4.
 % 
 %  Notes:
-% 
-%   o Specify missing observations of y using NaN. AUTOCORR treats these
-%     values as "missing completely at random."
 % 
 %   o If y is fully observed, without NaNs, AUTOCORR uses a Fourier
 %     transform to compute the ACF in the frequency domain, then converts
@@ -87,7 +97,7 @@
 % 
 %  See also PARCORR, CROSSCORR, FILTER.
 %
-%    Reference page in Doc Center
+%    Documentation for autocorr
 %       doc autocorr
 %
 %

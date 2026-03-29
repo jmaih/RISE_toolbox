@@ -21,11 +21,28 @@
 % 
 %    See also STRING, DOUBLE, CELLSTR, ISCELLSTR, ISCHAR, ISSTRING.
 %
-%    Reference page in Doc Center
+%    Documentation for char
 %       doc char
 %
-%    Other functions named char
+%    Other uses of char
 %
-%       categorical/char      inline/char    splanar/char    tall/char
-%       codistributed/char    opaque/char    sym/char
+%       calendarDuration/char
+%       categorical/char
+%       codistributed/char
+%       datetime/char
+%       duration/char
+%       inline/char
+%       internal.matlab.codetools.reports.matlabType.Class/char
+%       internal.matlab.codetools.reports.matlabType.Function/char
+%       internal.matlab.codetools.reports.matlabType.Script/char
+%       matlab.automation.internal.diagnostics.FormattableString/char
+%       matlab.net.http.HeaderField/char
+%       matlab.net.http.MediaType/char
+%       matlab.net.QueryParameter/char
+%       matlab.net.URI/char
+%       opaque/char
+%       rise_dates.dates/char
+%       splanar/char
+%       sym/char
+%       tall/char
 %

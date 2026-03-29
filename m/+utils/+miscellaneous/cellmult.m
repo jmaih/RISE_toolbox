@@ -1,3 +1,3 @@
-%  Symbolic Multiplication of (matrix OR cellstr) with (matrix OR cellstr)
-%  designed for use with Ben Petschel stuff on Grobner basis
+%cellmult is a function.
+%    C = cellmult(A, B, precision)
 %

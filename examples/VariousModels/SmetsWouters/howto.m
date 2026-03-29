@@ -16,7 +16,7 @@ data=ts(data_start,data,vnames);
 sw=rise('usmodel','data',data,...
     'estim_start_date',obs2date(data_start,71),... % retrieve the date of the 71st observation
     'kf_presample',4,...
-    'steady_state_file','usmodel_steadystate');
+    'sstate_file','usmodel_steadystate');
 
 %% estimating the model
 sw=estimate(sw); % <--- sw=sw.estimate;

@@ -4,15 +4,15 @@
 % Perturbation Methods for Markov Switching Models.
 %-------------------------------------------------------------
 
-endogenous C Z K
+@endogenous C Z K
 
-exogenous E
+@exogenous E
 
-parameters alpha delta sigma beta s_tp_1_2 s_tp_2_1
+@parameters alpha delta sigma beta s_tp_1_2 s_tp_2_1
 
-parameters(s,2) mu
+@parameters(s,2) mu
 
-model
+@model
 
 	1/C = beta*1/C{+1}*(alpha*Z{+1}*K^(alpha-1)+1-delta);
 

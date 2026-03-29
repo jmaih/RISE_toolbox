@@ -1,14 +1,14 @@
-endogenous	DPQ_P_NW "Inflation", Y, ZGDP, ZI, ZPAI, ZY, D_GDP_NW "Growth", I, PAI, R, RN3M_NW "Fed Funds Rate"
+@endogenous	DPQ_P_NW "Inflation", Y, ZGDP, ZI, ZPAI, ZY, D_GDP_NW "Growth", I, PAI, R, RN3M_NW "Fed Funds Rate"
 
-exogenous EGDP "output shock",EI "monetary policy shock",EPAI "Cost push shock",EY "IS shock"
+@exogenous EGDP "output shock",EI "monetary policy shock",EPAI "Cost push shock",EY "IS shock"
 
-parameters beta_lag "\beta_{lag}", beta_lead "\beta_{lead}", beta_r "\beta_{r}",
+@parameters beta_lag "\beta_{lag}", beta_lead "\beta_{lead}", beta_r "\beta_{r}",
 gam_lag "\gamma_{lag}", gam_y "\gamma_{y}", gyss, iss, lamb_lag "\lambda_{lag}",
 lamb_lead "\lambda_{lead}", lamb_y "\lambda_{y}", paiss,
 rhogdp "\rho_{gdp}", rhoi "\rho_{i}", rhopai "\rho_{\pi}", rhoy "\rho_{y}",
 siggdp "\sigma_{gdp}", sigi "\sigma_{i}", sigpai "\sigma_{\pi}", sigy "\sigma_{y}"
 
-model
+@model
 
 	# junk=beta_lead;
 	
@@ -35,7 +35,7 @@ model
    ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
 
 
-parameterization
+@parameterization
 % not estimated
 	gyss   		 ,0 	      ;						 
 	iss    		 ,0 	      ;						 

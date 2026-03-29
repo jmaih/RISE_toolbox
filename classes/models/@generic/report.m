@@ -16,10 +16,10 @@
 % 
 %  Args:
 % 
-%     obj (rise | dsge):
-%     destination_root (rise_report.report): handle for the actual report
-%     rep_items (char | cellstr): list of desired items to report. This list
-%        can only include
+%     - obj (rise | dsge):
+%     - destination_root (rise_report.report): handle for the actual report
+%     - rep_items (char | cellstr): list of desired items to report. This list
+%       can only include
 % 
 %        - endogenous
 %        - exogenous
@@ -35,5 +35,4 @@
 %     :
 % 
 %     - none (Update the report in place)
-% 
 %

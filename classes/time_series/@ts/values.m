@@ -7,11 +7,15 @@
 %     data = value(db);
 % 
 %  Args:
-%     db (ts object): time series object
+% 
+%     - **db** (ts object): time series object
 % 
 %  Returns:
-%     :
-%     - data (double): vector/matrix/tensor form of the data underlying the
-%       time series 
-% 
+%     
+%     - **d** (double): vector/matrix/tensor form of the data underlying the
+%       time series
+%
+%    Other uses of values
+%
+%       dictionary/values
 %

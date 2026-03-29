@@ -1,12 +1,12 @@
 % Peter N. Ireland: "A Method for Taking Models to the Data" 
 % Journal of Economic Dynamics & Control 28 (2004) 1205 – 1226
 
-endogenous A Y K I C H LY LC LH
+@endogenous A Y K I C H LY LC LH
 U_Y U_C U_H XI_Y XI_C XI_H
 
-exogenous EPS EPS_Y EPS_C EPS_H	TREND
+@exogenous EPS EPS_Y EPS_C EPS_H	TREND
 
-parameters theta a eta delta gam beta rho sigma
+@parameters theta a eta delta gam beta rho sigma
 dyy dyc dyh                                            
 dcy dcc dch
 dhy dhc dhh
@@ -14,9 +14,9 @@ vyy
 vcy vcc
 vhy vhc vhh
 
-observables LY LC LH TREND
+@observables LY LC LH TREND
 
-model
+@model
 
 	Y=A*K{-1}^theta*H^(1-theta);
 
@@ -57,7 +57,7 @@ model
     
 	XI_H = vhy*EPS_Y+ vhc*EPS_C+ vhh*EPS_H;
     
-steady_state_model
+@steady_state_model
 	xx_ssmdef_1=(eta/beta-1+delta);
 	xx_ssmdef_2=(eta-1+delta);
 	A=a;
@@ -70,7 +70,7 @@ steady_state_model
 	LC = log(C); 
 	LH = log(H);
 
-parameterization
+@parameterization
 	delta, 0.025;
 	beta,  0.99;
 	theta, 0.2292, 0, 1;

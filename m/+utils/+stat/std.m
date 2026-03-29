@@ -20,18 +20,31 @@
 %    SQRT(MEAN(W)) is an estimate of standard deviation for an observation
 %    given weight 1.
 % 
+%    Y = STD(X,0,"all") or Y = STD(X,1,"all") returns the standard deviation
+%    of all elements of X. A weight of 0 normalizes by N-1 and a weight of 1 
+%    normalizes by N.
+% 
 %    Y = STD(X,W,DIM) takes the standard deviation along the dimension DIM
-%    of X.  Pass in 0 for W to use the default normalization by N-1, or 1 to
-%    use N.
+%    of X.
+% 
+%    Y = STD(X,0,VECDIM) or Y = STD(X,1,VECDIM) operates on the dimensions 
+%    specified in the vector VECDIM. A weight of 0 normalizes by N-1 and a 
+%    weight of 1 normalizes by N. For example, STD(X,0,[1 2]) operates on
+%    the elements contained in the first and second dimensions of X.
+% 
+%    [Y,M] = STD(X,...) also returns the mean M of the values in X that 
+%    was used to calculate the standard deviation. If Y is the weighted
+%    standard deviation, then M is the weighted mean.
 % 
 %    The standard deviation is the square root of the variance (VAR).
 % 
-%    STD(...,NANFLAG) specifies how NaN (Not-A-Number) values are treated.
-%    The default is 'includenan':
+%    STD(...,NANFLAG) specifies how NaN values are treated:
 % 
-%    'includenan' - the standard deviation of a vector containing NaN 
-%                   values is also NaN.
-%    'omitnan'    - elements of X or W containing NaN values are ignored.
+%    "includemissing" / "includenan" -
+%                   (default) The standard deviation of a vector containing
+%                   NaN values is also NaN.
+%    "omitmissing" / "omitnan"       -
+%                   Elements of X or W containing NaN values are ignored.
 %                   If all elements are NaN, the result is NaN.
 % 
 %    Example: 
@@ -44,11 +57,14 @@
 % 
 %    See also COV, MEAN, VAR, MEDIAN, CORRCOEF.
 %
-%    Reference page in Doc Center
+%    Documentation for std
 %       doc std
 %
-%    Other functions named std
+%    Other uses of std
 %
-%       datetime/std       duration/std    tall/std          ts/std
-%       distributed/std    fints/std       timeseries/std
+%       datetime/std                       tabular/std
+%       distributed/std                    tall/std
+%       duration/std                       timeseries/std
+%       prob.LoguniformDistribution/std    ts/std
+%       prob.NormalDistribution/std
 %

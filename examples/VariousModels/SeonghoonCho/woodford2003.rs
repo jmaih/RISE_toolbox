@@ -4,13 +4,13 @@
 %
 % The rise flag "multiple" when set to true gives the model with multiple equilibria
 
-endogenous PAI, Y, R, I
+@endogenous PAI, Y, R, I
 
-exogenous EPS
+@exogenous EPS
 
-parameters delta kappa mu, beta, phi, rho, lambda
+@parameters delta kappa mu, beta, phi, rho, lambda
 
-model
+@model
 	PAI = delta*PAI{+1}+kappa*Y;
 
 	Y = mu*Y{+1}+(1-mu)*Y{-1}-phi*(I-PAI{+1}-R);
@@ -19,15 +19,15 @@ model
 
 	R = rho*R{-1} + EPS;
 
-parameterization
+@parameterization
 	delta, 0.99;
 	kappa,0.3;
 	mu, .55;
-	@#if multiple
+	@if multiple
 		beta,0.95;
-	@#else
+	@else
 		beta,1.5;
-	@#end
+	@end
 	phi, 1;
 	rho,.8;
 	lambda,.1;

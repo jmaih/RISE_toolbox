@@ -1,4 +1,4 @@
-%--- help for trnd ---
+%--- tnrnd.m not found. Showing help for trnd instead. ---
 %
 % TRND   Random arrays from Student's t distribution.
 %    R = TRND(V) returns an array of random numbers chosen from Student's t
@@ -13,7 +13,7 @@
 % 
 %    See also TCDF, TINV, TPDF, TSTAT, NCTRND, RANDOM.
 %
-%    Reference page in Doc Center
+%    Documentation for trnd
 %       doc trnd
 %
 %

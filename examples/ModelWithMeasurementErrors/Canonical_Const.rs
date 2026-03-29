@@ -1,8 +1,8 @@
-endogenous	DPQ_P_NW "Inflation", Y, ZGDP, ZI, ZPAI, ZY, D_GDP_NW "Growth", I, PAI, R, RN3M_NW "Fed Funds Rate"
+@endogenous	DPQ_P_NW "Inflation", Y, ZGDP, ZI, ZPAI, ZY, D_GDP_NW "Growth", I, PAI, R, RN3M_NW "Fed Funds Rate"
 
-exogenous EGDP "output shock",EI "monetary policy shock",EPAI "Cost push shock",EY "IS shock"
+@exogenous EGDP "output shock",EI "monetary policy shock",EPAI "Cost push shock",EY "IS shock"
 
-parameters beta_lag "\beta_{lag}", beta_lead "\beta_{lead}", beta_r "\beta_{r}",
+@parameters beta_lag "\beta_{lag}", beta_lead "\beta_{lead}", beta_r "\beta_{r}",
 gam_lag "\gamma_{lag}", gam_y "\gamma_{y}", gyss, iss, lamb_lag "\lambda_{lag}",
 lamb_lead "\lambda_{lead}", lamb_y "\lambda_{y}", paiss,
 rhogdp "\rho_{gdp}", rhoi "\rho_{i}", rhopai "\rho_{\pi}", rhoy "\rho_{y}",
@@ -11,10 +11,10 @@ siggdp "\sigma_{gdp}", sigi "\sigma_{i}", sigpai "\sigma_{\pi}", sigy "\sigma_{y
 % measurement errors are declared as parameters: The corresponding variables
 % have to be declared as observables!!!
 %---------------------------------------------------------------------------
-parameters stderr_DPQ_P_NW, stderr_D_GDP_NW, stderr_RN3M_NW 
+@parameters stderr_DPQ_P_NW, stderr_D_GDP_NW, stderr_RN3M_NW 
 
 
-model(linear)
+@model
 	
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
 
@@ -39,10 +39,10 @@ model(linear)
    ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
 
    
-observables DPQ_P_NW, D_GDP_NW, RN3M_NW;
+@observables DPQ_P_NW, D_GDP_NW, RN3M_NW;
 
 
-parameterization
+@parameterization
 	gyss   		 ,0 	      ;						 
 	iss    		 ,0 	      ;						 
 	paiss  		 ,0 	      ;

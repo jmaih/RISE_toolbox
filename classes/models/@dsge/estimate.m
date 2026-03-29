@@ -258,15 +258,21 @@
 %   
 %  See also SSM, DSSM, FILTER, SMOOTH, FORECAST, SIMULATE, SIMSMOOTH.
 %
-%    Other functions named estimate
+%    Other uses of estimate
 %
-%       abstvar/estimate         garch/estimate
-%       arima/estimate           generic/estimate
-%       conjugateblm/estimate    gjr/estimate
-%       customblm/estimate       regARIMA/estimate
-%       diffuseblm/estimate      semiconjugateblm/estimate
-%       dsge/estimate            ssm/estimate
-%       dssm/estimate            varm/estimate
-%       egarch/estimate          vecm/estimate
-%       empiricalblm/estimate
+%       abstvar/estimate           gjr/estimate
+%       arima/estimate             lassoblm/estimate
+%       bssm/estimate              mcf/estimate
+%       bvar_dsge/estimate         mixconjugateblm/estimate
+%       conjugateblm/estimate      mixsemiconjugateblm/estimate
+%       conjugatebvarm/estimate    msVAR/estimate
+%       customblm/estimate         normalbvarm/estimate
+%       diffuseblm/estimate        prfvar/estimate
+%       diffusebvarm/estimate      regARIMA/estimate
+%       dsge/estimate              semiconjugateblm/estimate
+%       dssm/estimate              semiconjugatebvarm/estimate
+%       egarch/estimate            ssm/estimate
+%       empiricalblm/estimate      tsVAR/estimate
+%       estimable/estimate         varm/estimate
+%       garch/estimate             vecm/estimate
 %

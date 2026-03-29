@@ -2,6 +2,8 @@
 %
 %  Moving average filter
 % 
+%  .. index:: filtering
+% 
 %  ::
 % 
 %    [trend,detrended]=ma_filter(y,q)
@@ -20,9 +22,8 @@
 %       order to avoid losing some observations during the filtering process.
 % 
 %  Returns:
-%     :
 % 
 %     - **trend** [ts] : (non-parametric) trend
 %     - **detrended** [ts] : y-trend
-% 
+%     - **q** (integer | {0.5*frequency}) : value used in the computations
 %

@@ -1,3 +1,4 @@
+%  
 %  dsge_groebner Groebner basis-based solution for DSGE models. Symbolic
 %  solution of algebraic equations implied by a DSGE model. The procedure
 %  attempts to find all possible solutions.

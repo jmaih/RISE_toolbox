@@ -23,14 +23,27 @@
 % 
 %    See also VERTCAT, CAT.
 %
-%    Reference page in Doc Center
+%    Documentation for horzcat
 %       doc horzcat
 %
-%    Other functions named horzcat
+%    Other uses of horzcat
 %
-%       categorical/horzcat      inline/horzcat     tall/horzcat
-%       codistributed/horzcat    serial/horzcat     ts/horzcat
-%       dataset/horzcat          sym/horzcat        tscollection/horzcat
-%       fints/horzcat            tabular/horzcat    VideoReader/horzcat
+%       calendarDuration/horzcat
+%       categorical/horzcat
+%       codistributed/horzcat
+%       dataset/horzcat
+%       datetime/horzcat
+%       double/horzcat
+%       duration/horzcat
 %       gpuArray/horzcat
+%       inline/horzcat
+%       matlab.mixin.Heterogeneous/horzcat
+%       matlab.mixin.indexing.RedefinesParen/horzcat
+%       RandStream/horzcat
+%       serial/horzcat
+%       sym/horzcat
+%       tabular/horzcat
+%       tall/horzcat
+%       ts/horzcat
+%       tscollection/horzcat
 %

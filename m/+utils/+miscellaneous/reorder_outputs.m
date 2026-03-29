@@ -23,6 +23,5 @@
 % 
 %     x=rand(3,4); 
 % 
-%     [cols,rows]=reorder_outputs(@size,[2,1],x); 
-% 
+%     [cols,rows]=reorder_outputs(@size,[2,1],x);
 %

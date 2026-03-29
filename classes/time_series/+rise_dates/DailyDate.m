@@ -1,0 +1,2 @@
+%DailyDate is a class.
+%

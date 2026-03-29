@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION: conditional forecast for regime-switching models in a loop
-% 
+%loop_forecast is a function.
+%    varargout = loop_forecast(varargin)
 %

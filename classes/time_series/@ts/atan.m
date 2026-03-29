@@ -3,10 +3,13 @@
 % 
 %    See also ATAN2, TAN, ATAND, ATAN2D.
 %
-%    Reference page in Doc Center
+%    Documentation for atan
 %       doc atan
 %
-%    Other functions named atan
+%    Other uses of atan
 %
-%       codistributed/atan    gpuArray/atan    sym/atan    ts/atan
+%       adolm/atan            rsymbdiff/atan    symbolic/atan
+%       aplanar/atan          splanar/atan      tabular/atan
+%       codistributed/atan    sym/atan          ts/atan
+%       gpuArray/atan
 %

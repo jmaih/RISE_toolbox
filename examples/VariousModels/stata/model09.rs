@@ -1,13 +1,13 @@
 % Including a second lag of a control variable (page 56)
-endogenous C N W R
+@endogenous C N W R
 
-exogenous  ER EW
+@exogenous  ER EW
 
-parameters h gam rhow sigw sigr b1
+@parameters h gam rhow sigw sigr b1
 
-observables N C
+@observables N C
 
-model
+@model
 
 	N = b1*N{-2} + W - gam*C;
 

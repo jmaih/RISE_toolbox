@@ -8,7 +8,6 @@ close all
 clc()
 
 %% Create dataset
-clc
 
 do_plot=true;
 
@@ -28,17 +27,13 @@ markov_chains=struct('name','syncvol',...
 
 %% Create the VAR
 
-clc
-
 nlags=2;
 
 exog={};
 
 constant=true;
 
-panel=[];
-
-sv0=svar(varlist,exog,nlags,constant,panel,markov_chains);
+sv0=svar(varlist,exog,nlags,constant,markov_chains);
 
 %% set up restrictions
 
@@ -100,7 +95,6 @@ clc
 sv=estimate(sv0,db,{'1960Q1','2015Q2'},prior,restrictions,'fmincon');
 
 %% Find posterior mode : known regimes
-clc
 
 db2=db;
 
@@ -232,8 +226,8 @@ end
 [ff,lb,ub,x0,vcov,self]=pull_objective(sv);
 
 options=struct();
-options.alpha=0.234;
-options.thin=10;
+c=0.234;
+% options.thin=10;
 options.burnin=10^3;
 options.N=2*10^4;
 options.nchain=2;
@@ -241,7 +235,7 @@ options.nchain=2;
 lb(~isfinite(lb))=-500;
 ub(~isfinite(ub))=500;
 
-results=mh_sampler(ff,lb,ub,options,x0,vcov);
+results=mh_sampler(ff,lb,ub,options,x0,c*vcov);
 
 %% MCMC diagnostics
 clc
@@ -250,7 +244,17 @@ pnames=fieldnames(pmode);
 
 a2tilde_to_a=sv.estim_.linres.a2tilde_to_a;
 
-mcmcobj=mcmc(results.pop,pnames,0,1,1,a2tilde_to_a);
+nv=numel(results{1}.pop);
+nc=numel(results);
+vtrimming=1:10:nv;
+chain_trimming=1:1:nc; % all chains
+% uncomment one of the following
+%--------------------------------
+subset={vtrimming,chain_trimming};
+% subset={[],[]};
+% subset=[];
+
+mcmcobj=mcmc(results,pnames,subset,a2tilde_to_a);
 
 myList={'syncvol_tp_1_2','syncvol_tp_1_3','syncvol_tp_2_1','syncvol_tp_2_3',...
     'syncvol_tp_3_1','syncvol_tp_3_2','s_1_1_syncvol_1','s_1_1_syncvol_2',...
@@ -281,7 +285,6 @@ for ii=1:numel(myList)
     
 end
 
-
 %% Marginal data density
 clc
 
@@ -303,6 +306,8 @@ fprintf('Laplace MCMC::%0.2f\n',laplace_mcmc(mddobj))
 
 fprintf('Chib and Jeliazkov::%0.2f\n',cj(mddobj,[],mdd.global_options))
 
+fprintf('Modified Harmonic Mean::%0.2f\n',mhm(mddobj,[],mdd.global_options))
+
 %% Out-of sample forecasts at the mode
 shock_uncertainty=false;
 
@@ -312,8 +317,11 @@ mycast=forecast(sv,[],[],[],nsteps,shock_uncertainty);
 
 do_plot_unconditional_forecasts(mycast,sv)
 
+%-------------------------------------------%
+% -------the items below need repair--------%
+%-------------------------------------------%
 %% Conditional forecast on ygap
-
+clc
 % conditional information
 %-------------------------
 ygap=scale*(-0.025:0.005:8*0.005).';
@@ -324,32 +332,42 @@ cond_db=struct('ygap',ts('2015Q3',ygap));
 myoptions=struct('cbands',[10,20,50,80,90],'do_plot',true,'nsteps',20,...
     'param_uncertainty',false,'shock_uncertainty',true,'ndraws',200);
 
+nsteps=20;
+shock_uncertainty=[];
+Rfunc=[];
+date_start=rq(2015,3);
+params=[];
+for ir=1:numel(results)
+    params=[params,[results{ir}.pop.x]];
+end
+reorder=randperm(size(params,2));
+select=reorder(1:2000);
+params=a2tilde_to_a(params(:,select));
+[fkst,retcode]=forecast(sv,db,date_start,params,...
+    nsteps,shock_uncertainty,Rfunc,cond_db);
+
 % do it
 %-------
-tic
-[fkst,bands,hdl]=do_conditional_forecasts(mest,db,cond_db,Results.pop,myoptions);
-fprintf('\n\n Computing conditional forecasts took %0.4f minutes\n\n',toc/60);
+% tic
+% [fkst,bands,hdl]=do_conditional_forecasts(sv,db,cond_db,pop,myoptions);
+% fprintf('\n\n Computing conditional forecasts took %0.4f minutes\n\n',toc/60);
 %% Median conditional forecasts
 % we take advantage of the fact that in the bands above we specified 50 in
 % the bands above 
 %--------------------------------------------------------------------------
 figure('name','Median Conditional Forecasts');
-nvars=mest.endogenous.number;
+nvars=sv.nvars;
 for ivar=1:nvars
-    thisname=mest.endogenous.name{ivar};
+    thisname=sv.endogenous{ivar};
     subplot(nvars,1,ivar)
-    plot(bands.(thisname)('ci_50'),'linewidth',2)
-    title(mest.endogenous.tex_name{ivar})
+    plot(prctile(fkst.(thisname),50),'linewidth',2)
+    title(thisname)
 end
-
-
 %% irfs distributions
 
 clc
 
 shock_names=[];
-
-params=[results.pop.x];
 
 myirfs2=irf(sv,shock_names,[],params);
 

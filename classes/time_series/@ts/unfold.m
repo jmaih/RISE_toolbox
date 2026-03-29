@@ -16,5 +16,4 @@
 %     :
 % 
 %     - **this** [ts]: unfolded time series
-% 
 %

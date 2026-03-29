@@ -18,3 +18,7 @@
 %    SYM/POTENTIAL, CURL, DIVERGENCE, HESSIAN, LAPLACIAN, VECTORPOTENTIAL,
 %    SUBS.
 %
+%    Documentation for sym/jacobian
+%       doc sym/jacobian
+%
+%

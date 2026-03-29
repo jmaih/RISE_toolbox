@@ -14,7 +14,10 @@
 %    SYM/POTENTIAL, CURL, DIVERGENCE, HESSIAN, JACOBIAN, LAPLACIAN,
 %    VECTORPOTENTIAL, SUBS.
 %
-%    Other functions named hessian
+%    Documentation for sym/hessian
+%       doc sym/hessian
 %
-%       generic/hessian
+%    Other uses of hessian
+%
+%       dsge/hessian
 %

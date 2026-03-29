@@ -1,13 +1,13 @@
 % Including an observed exogenous variable (page 59)
-endogenous	X R P G U E
+@endogenous	X R P G U E
 
-exogenous EG EU	EE
+@exogenous EG EU	EE
 
-parameters beta kappa sigu sigg rhou rhog sige rhoe	psi
+@parameters beta kappa sigu sigg rhou rhog sige rhoe	psi
 
-observables R P E
+@observables R P E
 
-model
+@model
 
 	X = X{+1}-(R-P{+1}-G);
 

@@ -9,12 +9,12 @@ rise_startup()
 m=dsge('fs2000');
 %% we solve, passing a function that solves the steady state analytically
 
-mwssf_a=solve(m,'steady_state_file','fs2000_steadystate');
+mwssf_a=solve(m,'sstate_file','fs2000_steadystate');
 
 %% we solve passing a function that gives initial values of the steady state. 
 % this is the counterpart to dynare's initval
 
-mwssf_b=solve(m,'steady_state_file','fs2000_steadystate_initval');
+mwssf_b=solve(m,'sstate_file','fs2000_steadystate_initval');
 
 %% compare the solutions
 mwssf_a.print_solution

@@ -1,25 +1,25 @@
-endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a
+@endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a
 b g qs  ms  spinf sw kpf kp
 
-endogenous labobs robs pinfobs dy dc dinve dw
+@endogenous labobs robs pinfobs dy dc dinve dw
 
-endogenous dr pinf_target
+@endogenous dr pinf_target
  
-exogenous ea eb eg  eqs  em  epinf ew   
+@exogenous ea eb eg  eqs  em  epinf ew   
  
-parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
+@parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
 czcap csadjcost ctou csigma chabb cfc 
 cindw cprobw cindp cprobp csigl clandaw  crpi crdy cry crr 
 crhoa crhoas crhob crhog crhols crhoqs crhoms crhopinf crhow  
 ctrend cg, sig_a, sig_b,sig_w,sig_pinf,sig_m,sig_qs,sig_g
 
 % loss function weights
-parameters wy, wr
+@parameters wy, wr
 
 % we specify the probability of commitment (if it is to vary)
-parameters gamma_prob
+@parameters gamma_prob
 
-model 
+@model 
 
 		# cpie=1+constepinf/100;
 		# cgamma=1+ctrend/100 ;
@@ -103,11 +103,11 @@ model
 		robs =    1*(r) + conster;
 		labobs = lab + constelab;
 
-observables dy dc dinve dw pinfobs robs labobs
+@observables dy dc dinve dw pinfobs robs labobs
 
-planner_objective{discount = 0.99,commitment=gamma_prob} -.5*(1*pinf_target^2+wy*y^2+wr*dr^2);	
+@planner_objective{discount = 0.99,commitment=gamma_prob} -.5*(1*pinf_target^2+wy*y^2+wr*dr^2);	
 
-steady_state_model
+@steady_state_model
 	dy=ctrend;
 	dc=ctrend;
 	dinve=ctrend;
@@ -116,7 +116,7 @@ steady_state_model
 	robs = conster;
 	labobs = constelab;
 
-parameterization
+@parameterization
 	% fixed parameters
 	crhoas,1; 	 % this parameter does not enter the model
 	crhols,    0.9928;  % this parameter does not enter the model

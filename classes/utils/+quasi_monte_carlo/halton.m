@@ -1,16 +1,3 @@
-%  H1 line
-% 
-%  ::
-% 
-% 
-%  Args:
-% 
-%  Returns:
-%     :
-% 
-%  Note:
-% 
-%  Example:
-% 
-%     See also:
+%halton is a function.
+%    theta_ = halton(lb, ub, K, scramble_flag)
 %

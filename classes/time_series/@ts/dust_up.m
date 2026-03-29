@@ -17,5 +17,4 @@
 %     :
 % 
 %     - **this** [rts|ts]: time-series object
-% 
 %

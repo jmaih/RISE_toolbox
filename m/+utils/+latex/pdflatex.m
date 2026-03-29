@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION
-% 
+%pdflatex is a function.
+%    status = pdflatex(filename)
 %

@@ -1,8 +1,8 @@
 % in this case, all the parameters change and
 % are therefore, controlled by markov chain nk
-parameters(nk,2) tau rhod rhos sigd sigs sigr kappa beta rhor gamma_1 gamma_2
+@parameters(nk,2) tau rhod rhos sigd sigs sigr kappa beta rhor gamma_1 gamma_2
 
-parameterization
+@parameterization
 	tau(nk,1)    ,    0.5376 ;
 	tau(nk,2)    ,    0.6897 ;
 	rhod(nk,1)   ,    0.83   ;

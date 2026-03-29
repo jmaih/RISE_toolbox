@@ -35,17 +35,20 @@ mmw=solve(m,'solve_perturbation_type','mw','solver','dsge_schur');
 
 %% Find all solutions of the Maih-Waggoner perturbation using dsge_schur
 
-refine=true;checkStab=false;allSols=true;msvOnly=true;xplosRoots=false;debug=false;
+slvOpts=struct();
+slvOpts.refine=true;
+slvOpts.checkStab=false;
+slvOpts.allSols=true;
+slvOpts.msvOnly=true;
+slvOpts.xplosRoots=false;
+slvOpts.debug=false;
 
-mmw2=solve(m,'solve_perturbation_type','mw',...
-    'solver',{'dsge_schur',refine,checkStab,allSols,msvOnly,xplosRoots,debug});
+mmw2=solve(m,'solve_perturbation_type','mw','solver',{'dsge_schur',slvOpts});
 
 %% Find all solutions of the Maih-Waggoner perturbation using dsge_udc
 clc
-refine=true;checkStab=false;allSols=true;msvOnly=true;xplosRoots=false;debug=false;
 
-mmw3=solve(m,'solve_perturbation_type','mw',...
-    'solver',{'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug});
+mmw3=solve(m,'solve_perturbation_type','mw','solver',{'dsge_udc',slvOpts});
 
 %% print the solution
 

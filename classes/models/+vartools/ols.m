@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION
-% 
+%ols is a function.
+%    out = ols(kdata)
 %

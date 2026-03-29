@@ -1,13 +1,13 @@
 %Including a lag of a state variable (page 50)
-endogenous P Y R Z U
+@endogenous P Y R Z U
 
-exogenous EZ EU
+@exogenous EZ EU
 
-parameters beta kappa rhoz1 rhoz2 sigz sigu rhou
+@parameters beta kappa rhoz1 rhoz2 sigz sigu rhou
 
-observables P R
+@observables P R
 
-model
+@model
 
 	P = beta*P{+1}+kappa*Y;
 

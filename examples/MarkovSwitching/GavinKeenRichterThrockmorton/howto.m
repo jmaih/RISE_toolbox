@@ -8,7 +8,7 @@ gdexo.legend='endo_switch';
 
 %% solve the model
 
-gdexo=solve(gdexo,'steady_state_imposed',true);
+gdexo=solve(gdexo);
 
 %% print the solution
 

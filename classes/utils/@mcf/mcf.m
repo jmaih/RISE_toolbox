@@ -15,10 +15,8 @@
 %     - number_of_outputs : number of outputs to check_behavior
 %     - user_outputs : sampled additional outputs
 %     - known_procedures : known sampling procedures
-% 
-% 
 %
-%    Reference page in Doc Center
+%    Documentation for mcf
 %       doc mcf
 %
 %

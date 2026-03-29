@@ -1,6 +1,7 @@
 %gogetter is a class.
+%    obj = gogetter
 %
-%    Reference page in Doc Center
+%    Documentation for gogetter
 %       doc gogetter
 %
 %

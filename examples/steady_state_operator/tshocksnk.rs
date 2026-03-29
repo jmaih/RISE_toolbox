@@ -1,12 +1,12 @@
-endogenous y r pai g x a theta c z
+@endogenous y r pai g x a theta c z
 
-exogenous e_a, e_theta, e_z, e_r
+@exogenous e_a, e_theta, e_z, e_r
 
-parameters rho_a, a_ss sig_a rho_theta theta_ss sig_theta
+@parameters rho_a, a_ss sig_a rho_theta theta_ss sig_theta
 z_ss sig_z pai_ss beta sig_r omega rho_pai rho_g rho_x psi rho_r
  
 
-model
+@model
 	# eta=1/omega;
 	# phi=eta*(theta_ss-1)/psi;
 	
@@ -31,7 +31,7 @@ model
 
 	% steady_state(v) is the same as $(v)
 
-parameterization
+@parameterization
 	% fixed parameters
 	a_ss      ,1.0000;
 	z_ss      ,1.0048;

@@ -1,0 +1,504 @@
+function [d,iter_mirror,equations,symvars,wrt]=differentiate(equations,symvars,wrt,maxOrder,...
+    alien_list,cutoff)
+% DIFFERENTIATE - Compute derivatives of given equations with respect to specified variables.
+%
+%   [d, iter_mirror] = differentiate(equations, symvars, wrt, maxOrder, cutoff) computes the derivatives
+%   of a set of equations with respect to specified variables. The derivatives are calculated up to a maximum order
+%   (maxOrder) and a cutoff threshold is applied to limit temporary term calculations.
+%
+%   Input arguments:
+%   - equations: Cell array of symbolic or vectorized equations to be differentiated.
+%   - symvars: Symbolic variables used in the system of equations.
+%     Different formats are accepted:
+%     - purely symbolic expressions: e.g. symvars = {'x', 'y'}
+%     - (possibly mixed with) string vectors: e.g. symvars = {'v(5)', 'w(8,9'}
+%     - (possibly mixed with) vectors : e.g. symvars = {'x','y',{'u',1:3}},
+%       noting that symvars = {'x','y',{'u',[]}} is the same
+%       as symvars = {'x','y','u'}
+%     - (and) regular expressions : e.g. symvars = {...,{'v','\d+'},{'w','\d+,\d+'}}
+%   - wrt: Variables with respect to which derivatives are calculated.
+%     These can be expressed in detail or with the same shorthands as in
+%     the case of symvars
+%   - maxOrder: Maximum order of differentiation to calculate.
+%   - alien_list (optional): List of functions unknown to Matlab
+%   - cutoff (optional): Number of calls of an expression for there to be a
+%     temporary term. Default is 3. If you don't want temporary
+%     expressions, you can set the cutoff to a large number e.g. cutoff=inf
+%
+%   Output arguments:
+%   - d: Cell array with derivative information. Each cell contains derivatives of equations up to the specified
+%        maximum order.
+%   - iter_mirror: number of temporary terms across all orders of
+%     differentiation
+%   - equations: Cell array of symbolic equations.
+%   - symvars: cell array of symbolic symvars
+%   - wrt: cell array of symbolic wrt
+%
+%   Example usage:
+%   equations = {'x^2';'sin(y)'};
+%   symvars = {'x', 'y'};
+%   wrt = {'x', 'y'};
+%   maxOrder = 2;
+%   alien_list = {};
+%   cutoff = 3;
+%   [derivatives, nonzero] = rsymbdiff.differentiate(equations, symvars, wrt, maxOrder, alien_list,cutoff);
+%
+%   See also: rsymbdiff, rsymbdiff.stamper, rsymbdiff.symbolize, rsymbdiff.print
+%
+%   Note: This function requires the rsymbdiff class and associated functions to be available in the workspace.
+
+% legend for symbols [DO NOT DELETE THIS!]
+% 0: symbols
+% 1: {'u',1:3}
+% 22: {'v','\d+'}
+% 33: {'w','\d+,\d+'}
+% 0: {'u',[]}
+% 2: 'v(5)', 
+% 3: 'w(8,9'
+%
+
+if nargin<6||isempty(cutoff)
+
+    cutoff=3;
+
+end
+
+if nargin<5
+
+    alien_list={};
+
+end
+
+% Deal with alien (unknown) functions
+equations = rsymbdiff.alienize(equations, alien_list);
+
+vectorList=cell(1,0);
+
+[symvars,orig_symvars]=create_symbols(symvars);
+
+wrt=create_symbols(wrt);
+
+badwrt=~ismember(wrt,symvars);
+
+if any(badwrt)
+
+    disp(wrt(badwrt))
+
+    error('the atoms above were not found in the list of symbols')
+
+end
+
+if ~isempty(vectorList)
+
+    U=rdico.cell2matize(unique(vectorList));
+    
+    for icol=1:size(orig_symvars,2)
+        
+        klass=orig_symvars{2,icol};
+        
+        if klass==0,continue,end
+        
+        stud=orig_symvars{1,icol};
+        
+        if klass==1
+            
+            U1=cellfun(@(x)sprintf('%d',x),num2cell(stud{1}),'uniformOutput',false);
+            
+            U1=rdico.cell2matize(U1);
+            
+            equations = regexprep(equations, ['\<(',stud{1},')\(',U1,'\)'],'$1_$2');
+            
+        elseif klass==2
+            
+            [argList,funcname]=utils.functions.parse_arguments(stud);
+            
+            equations = regexprep(equations, ['\<(',funcname,')\((',argList{1},')\)'],'$1_$2');
+            
+        elseif klass==22
+            
+            equations = regexprep(equations, ['\<(',stud{1},')\((\d+)(,\:)?\)'],'$1_$2');
+            
+        elseif klass==3
+            
+            [argList,funcname]=utils.functions.parse_arguments(stud);
+            
+            equations = regexprep(equations, ['\<(',funcname,')\((',argList{1},'),(',argList{2},')\)'],'$1_$2_$3');
+            
+        elseif klass==33
+            
+            equations = regexprep(equations, ['\<(',stud{1},')\((\d+),(\d+)\)'],'$1_$2_$3');
+            
+        else
+            
+            error('unknown class')
+            
+        end
+        
+    end
+
+end
+
+[d,iter_mirror]=differentiate_symbols(equations,symvars,wrt,maxOrder,cutoff);
+
+d=undo_symbols(d);
+
+    function [symvars,orig_symvars]=create_symbols(symvars)
+        
+        n=numel(symvars);
+        
+        orig_symvars=[symvars(:)';repmat({0},1,n)];
+
+        if all(cellfun(@ischar,symvars)) && ...
+                ~any(cellfun(@(x)any(x=='('),symvars))
+
+            return
+
+        end
+
+        ncell=1000;
+
+        naug=ncell;
+
+        symvars=cell(1,ncell);
+
+        iter=0;
+
+        for ii=1:n
+
+            xi=orig_symvars{1,ii};
+
+            if ischar(xi)
+
+                [xi,orig_symvars{2,ii}]=upload_char(xi);
+
+            else
+
+                [xi,orig_symvars{2,ii}]=upload_cell(xi);
+
+            end
+
+            ni=numel(xi);
+
+            last=iter+ni;
+
+            if last>=ncell
+
+                symvars=[symvars,cell(1,naug)]; %#ok<AGROW>
+
+                ncell=ncell+naug;
+
+            end
+
+            symvars(iter+1:last)=xi;
+
+            iter=last;
+
+        end
+
+        symvars=symvars(1:last);
+        
+        function [xi,klass]=upload_char(xi)
+            
+            lp=find(xi=='(');
+            
+            if isempty(lp),return,end
+            
+            rp=find(xi==')');
+            
+            meat=xi(lp+1:rp-1);
+            
+            cc=find(meat==',');
+            
+            if isempty(cc)
+                
+                xi=sprintf('%s_%s',xi(1:lp-1),meat);
+                
+                klass=2;
+                
+            else
+                
+                digit1=meat(1:cc-1);
+                
+                digit2=meat(cc+1:end);
+                
+                if strcmp(digit2,':')
+                    
+                    xi=sprintf('%s_%s',xi(1:lp-1),digit1);
+                    
+                    klass=2;
+                    
+                else
+                    
+                    xi=sprintf('%s_%s_%s',xi(1:lp-1),digit1,digit2);
+                    
+                    klass=3;
+                    
+                end
+                
+            end
+            
+            xi={xi};            
+            
+        end
+
+        function [xi,klass]=upload_cell(xi)
+
+            if ~(iscell(xi) && isequal(size(xi),[1,2]))
+
+                error(['wrong format of symbol: should be a char or a ',...
+                    '1 x 2 cell in which the first element is a char and ',...
+                    'the second element empty or a vector of integers'])
+
+            end
+
+            xi2=xi{2};
+
+            if isempty(xi2)
+
+                xi=xi(1);
+                
+                klass=0;
+
+            else
+
+                xi1=xi{1};
+
+                vectorList{1,end+1}=xi1;
+
+                if isnumeric(xi2)
+
+                    [xi,klass]=upload_numeric(xi1,xi2);
+
+                elseif ischar(xi2)
+
+                    [xi,klass]=upload_cell_char(xi1,xi2);
+
+                end
+
+            end
+
+            function [zi,klass]=upload_cell_char(xi1,xi2)
+                
+                xi2(isspace(xi2))=[];
+                
+                if strcmp(xi2,'\d+')
+                    
+                    zi=regexp(equations,['\<(',xi1,')\((\d+)(,\:)?\)'],'match');
+                    
+                    zi=unique([zi{:}]);
+                    
+                    zi=strrep(zi,',:','');
+                    
+                    zi=regexprep(zi,'\((\d+)\)','_$1');
+                    
+                    klass=22;
+                    
+                elseif strcmp(xi2,'\d+,\d+')
+                    
+                    zi=regexp(equations,['\<(',xi1,')\((\d+),(\d+)\)'],'match');
+                    
+                    zi=unique([zi{:}]);
+                                        
+                    zi=regexprep(zi,'\((\d+),(\d+)\)','_$1_$2');
+                    
+                    klass=33;
+                    
+                else
+                    
+                    error('input should be of the form {%s,''\d+''} or {%s,''\d+,\d+''} ',xi1)
+                    
+                end
+                
+            end
+
+
+            function [zi,klass]=upload_numeric(xi1,xi2)
+                
+                klass=1;
+
+                nj=numel(xi2);
+
+                zi=cell(1,nj);
+
+                for jj=1:nj
+
+                    zi{jj}=sprintf('%s_%d',xi1,xi2(jj));
+
+                end
+
+            end
+
+
+        end
+
+    end
+
+    function d=undo_symbols(d)
+
+        if isempty(vectorList)
+
+            return
+
+        end
+
+        for io=1:maxOrder
+
+            d(io).derivs(:,2) = regexprep(d(io).derivs(:,2), ['\<',U,'_(\d+)'],'$1($2)');
+
+        end
+
+    end
+
+end
+
+
+function [d,iter_mirror]=differentiate_symbols(equations,symvars,wrt,maxOrder,cutoff)
+
+nwrt = numel(wrt);       % Number of variables
+
+fn=struct();
+
+TMP = rsymbdiff.generate_temporary_term('TMP',symvars);
+
+[fn.stamp,fn.query,fn.assign,fn.status]= rsymbdiff.stamper(TMP);
+
+x=rsymbdiff.initialize_symbols(symvars,wrt,fn);
+
+neqtns = numel(equations);  % Number of equations
+
+d=cell(neqtns,maxOrder);
+
+% symbolize the equations
+equations=create_functions(equations,x,symvars);
+
+nonzeroDerivatives=zeros(1,maxOrder);
+
+for ieqtn = 1:neqtns
+
+    prevDer = {
+        equations{ieqtn}% Initialize with the original equation
+        []
+        };
+
+    for io = 1:maxOrder
+
+        np = size(prevDer,2);    % Number of elements in the previous derivative
+
+        newDer = cell(3, nwrt * np);  % Initialize a cell array for the new derivatives
+
+        iter = 0;  % Initialize an iterator for the newDer cell array
+
+        for ip = 1:np
+
+            if isnumeric(prevDer{1,ip}),continue,end
+
+            prevTuple = prevDer{2,ip};
+
+            prevOccurrence = find(prevDer{1,ip}.occurrence);
+
+            if isempty(prevOccurrence),continue,end
+
+            if isempty(prevTuple)
+
+                lastIndex = 0;
+
+            else
+
+                lastIndex = prevTuple(end);
+
+            end
+
+            for iv = prevOccurrence
+
+                if iv >= lastIndex
+                    % Differentiate and update occurrence for the new derivative
+                    newDerivative= diff(prevDer{1,ip}, iv);
+                    %[newDerivative, isNew] = diff(prevDer{1,ip}, iv, derivativeCache);
+
+                    isNum=isnumeric(newDerivative);
+
+                    % Check if the derivative is different from zero
+                    if isNum && newDerivative==0,continue,end
+
+                    iter = iter + 1;
+
+                    newDer{1,iter} = newDerivative;
+
+                    tpl=[prevTuple, iv];
+
+                    newDer{2,iter} = tpl;
+
+                    if io==1
+
+                        pos = tpl;
+
+                    else
+
+                        pos = locate_all_permutations(tpl);
+
+                    end
+
+                    newDer{3,iter} = pos;
+
+                    nonzeroDerivatives(io)=nonzeroDerivatives(io)+numel(pos);
+
+                end
+
+            end
+
+        end
+
+        prevDer = newDer(:,1:iter);  % Update prevDer with the new derivatives
+
+        d{ieqtn,io}=prevDer;
+
+    end
+
+end
+
+status=fn.status();
+
+[d,iter_mirror]=rsymbdiff.print(d,nwrt,status,nonzeroDerivatives,cutoff,TMP);
+
+    function p=locate_all_permutations(tpl)
+
+        p=utils.gridfuncs.locate_kron_tuple(perms(tpl),nwrt);
+
+        p=unique(p);
+
+    end
+
+end
+
+
+function eqtns=create_functions(eqtns,x,symvars)
+
+patt=['\<',rdico.cell2matize(symvars),'\>'];
+
+for ieqtn=1:numel(eqtns)
+
+    vList=regexp(eqtns{ieqtn},patt,'match');
+
+    vList=unique(vList);
+
+    vloc=locate_variables(vList,symvars);
+
+    argOccur=x(vloc);
+
+    if numel(vList)==1
+
+        preamble=['(',vList{1},')'];
+
+    else
+
+        preamble=rdico.cell2matize(vList,',');
+
+    end
+
+    fi=str2func(['@',preamble,eqtns{ieqtn}]);
+
+    eqtns{ieqtn}=fi(argOccur{:});
+
+end
+
+end

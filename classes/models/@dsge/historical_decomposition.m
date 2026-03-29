@@ -2,7 +2,7 @@
 %
 %  varargin={shock_names}
 %
-%    Other functions named historical_decomposition
+%    Other uses of historical_decomposition
 %
 %       dsge/historical_decomposition
 %

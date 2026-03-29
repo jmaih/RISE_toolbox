@@ -1,19 +1,19 @@
 % copy van usmodel_hist_dsge_f19_7_71
 
-endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g qs  ms  spinf sw kpf kp
+@endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g qs  ms  spinf sw kpf kp
 
-endogenous labobs robs pinfobs dy dc dinve dw
+@endogenous labobs robs pinfobs dy dc dinve dw
  
-exogenous ea eb eg  eqs  em  epinf ew  
+@exogenous ea eb eg  eqs  em  epinf ew  
  
-parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
+@parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
 czcap csadjcost ctou csigma chabb cfc 
 cindw cprobw cindp cprobp csigl clandaw  crpi crdy cry crr 
 crhoa crhoas crhob crhog crhols crhoqs crhoms crhopinf crhow  
 ctrend cg ProbabilityOfCommitment testpar
 
 
-model 
+@model 
 
 # cpie=1+constepinf/100;
 # cgamma=1+ctrend/100 ;
@@ -92,12 +92,12 @@ robs =    1*(r) + conster;
 labobs = lab + constelab;
 
 
-observables dy dc dinve dw pinfobs robs labobs
+@observables dy dc dinve dw pinfobs robs labobs
 
 %planner_objective -.5*(1*pinf^2+.6*y^2);	 % This is not solved by the Dennis routine
-planner_objective{discount = 0.99,commitment=ProbabilityOfCommitment} -.5*(testpar*pinf^2+.6*y^2+.05*r^2);	 % This is solved by all 3 routines
+@planner_objective{discount = 0.99,commitment=ProbabilityOfCommitment} -.5*(testpar*pinf^2+.6*y^2+.05*r^2);	 % This is solved by all 3 routines
 
-parameterization
+@parameterization
 	testpar,1;
 	ProbabilityOfCommitment,0;
 	% fixed parameters

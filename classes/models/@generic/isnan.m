@@ -5,12 +5,12 @@
 % 
 %    See also ISFINITE, ISINF, ISMISSING.
 %
-%    Reference page in Doc Center
+%    Documentation for isnan
 %       doc isnan
 %
-%    Other functions named isnan
+%    Other uses of isnan
 %
-%       calendarDuration/isnan    generic/isnan     sym/isnan
+%       calendarDuration/isnan    generic/isnan     symbolic/isnan
 %       codistributed/isnan       gpuArray/isnan    ts/isnan
-%       duration/isnan
+%       duration/isnan            sym/isnan
 %

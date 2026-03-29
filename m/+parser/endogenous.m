@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION
-% 
+%endogenous is a function.
+%    new = endogenous
 %

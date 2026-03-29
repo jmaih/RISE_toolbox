@@ -23,8 +23,8 @@
 % 
 %  Note:
 % 
-%       The function has the form f(x,a,b)=a/(a+exp(b*x)) so that f(x1,a,b)=p1
-%       and f(x2,a,b)=p2
+%       The function has the form f(x,g,c)=1/(1+exp(-g*(x-c))) so that
+%       f(x1,g,c)=p1 and f(x2,g,c)=p2
 % 
 %  Example:
 % 

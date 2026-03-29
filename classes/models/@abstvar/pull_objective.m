@@ -40,9 +40,8 @@
 %       simply use log_posterior_kernel. However, if there are restrictions, they
 %       will not be enforced. Nevertheless it is an interesting proposition that
 %       should be investigated further.
-% 
 %
-%    Other functions named pull_objective
+%    Other uses of pull_objective
 %
-%       dsge/pull_objective    generic/pull_objective
+%       bvar_dsge/pull_objective    dsge/pull_objective
 %

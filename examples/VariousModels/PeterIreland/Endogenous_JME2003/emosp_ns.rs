@@ -1,14 +1,14 @@
-endogenous Y C I H N M W Q D P R K LAMB XI A E Z X V YGT PAI MU
+@endogenous Y C I H N M W Q D P R K LAMB XI A E Z X V YGT PAI MU
 
-log_vars Y C I H N M W Q D P R K LAMB XI A E Z X V YGT PAI MU
+@log_vars Y C I H N M W Q D P R K LAMB XI A E Z X V YGT PAI MU
 
-exogenous EA EE TREND EZ EV EX
+@exogenous EA EE TREND EZ EV EX
 
-parameters delta rho_x sig_x phi_k_trans g phi_p_trans rho_a sig_a rho_e e_ss sig_e gam eta beta rho_z sig_z
+@parameters delta rho_x sig_x phi_k_trans g phi_p_trans rho_a sig_a rho_e e_ss sig_e gam eta beta rho_z sig_z
 
 	omega_r omega_mu omega_pai omega_y rho_v sig_v z_ss_trans theta alpha mu_ss_trans
 
-model
+@model
 
 	# z_ss=z_ss_trans*10000;
 	# phi_p = 100*abs(phi_p_trans);
@@ -49,7 +49,7 @@ model
 
 	Y = K{-1}^alpha*(g^TREND*Z*H)^(1-alpha);
 
-	LAMB*W/P*H = (1-alpha)^XI*Y;
+	LAMB*W/P*H = (1-alpha)*XI*Y;
 
 	LAMB*Q/P*K{-1} = alpha*XI*Y;
 

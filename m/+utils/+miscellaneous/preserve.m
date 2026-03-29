@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION
-% 
+%preserve is a function.
+%    preserve(varargin)
 %

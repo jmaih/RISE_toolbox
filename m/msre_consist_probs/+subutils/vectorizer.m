@@ -1,4 +1,4 @@
-%--- help for vectorize ---
+%--- vectorizer.m not found. Showing help for vectorize instead. ---
 %
 % VECTORIZE Vectorize expression.
 %    VECTORIZE(S), when S is a string expression, inserts a '.' before
@@ -13,7 +13,7 @@
 % 
 %    See also INLINE/FORMULA, INLINE, FUNCTION_HANDLE.
 %
-%    Reference page in Doc Center
+%    Documentation for vectorize
 %       doc vectorize
 %
 %

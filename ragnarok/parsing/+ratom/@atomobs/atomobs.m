@@ -1,0 +1,2 @@
+%atomobs is a class.
+%

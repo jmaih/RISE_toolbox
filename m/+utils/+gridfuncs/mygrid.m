@@ -1,4 +1,4 @@
-%--- help for grid ---
+%--- mygrid.m not found. Showing help for grid instead. ---
 %
 % GRID   Grid lines.
 %    GRID ON adds major grid lines to the current axes.
@@ -9,13 +9,14 @@
 % 
 %    GRID sets the XGrid, YGrid, and ZGrid properties of
 %    the current axes. If the axes is a polar axes then GRID sets
-%    the ThetaGrid and RGrid properties.
+%    the ThetaGrid and RGrid properties. If the axes is a geoaxes, then GRID
+%    sets the Grid property.
 % 
 %    AX.XMinorGrid = 'on' turns on the minor grid.
 % 
 %    See also TITLE, XLABEL, YLABEL, ZLABEL, AXES, PLOT, BOX, POLARAXES.
 %
-%    Reference page in Doc Center
+%    Documentation for grid
 %       doc grid
 %
 %

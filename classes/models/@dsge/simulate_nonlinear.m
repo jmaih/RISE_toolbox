@@ -1,5 +1,4 @@
 %--- help for dsge/simulate_nonlinear ---
 %
-%  INTERNAL FUNCTION
-% 
+%   For help see  : dsge.perfect_foresight
 %

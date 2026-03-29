@@ -1,2 +1,3 @@
-%  e.g. fn=@(n)(sum(randn(k,n).^2,1)-k)/sqrt(2*k);
+%set_user_shocks_input is a function.
+%    user_input = set_user_shocks_input(obj)
 %

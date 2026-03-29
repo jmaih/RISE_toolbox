@@ -35,10 +35,10 @@
 % 
 %    See also SHORTESTPATHTREE, DISTANCES, GRAPH/NEAREST
 %
-%    Reference page in Doc Center
+%    Documentation for digraph/nearest
 %       doc digraph/nearest
 %
-%    Other functions named nearest
+%    Other uses of nearest
 %
 %       graph/nearest
 %

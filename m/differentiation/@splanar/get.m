@@ -46,15 +46,35 @@
 % 
 %    See also SET, RESET, DELETE, GCF, GCA, FIGURE, AXES.
 %
-%    Reference page in Doc Center
+%    Documentation for get
 %       doc get
 %
-%    Other functions named get
+%    Other uses of get
 %
-%       arrowline/get    figobj/get          scribehgobj/get
-%       axischild/get    generic/get         serial/get
-%       axisobj/get      hgbin/get           splanar/get
-%       axistext/get     instrument/get      timeseries/get
-%       COM/get          RandStream/get      ts/get
-%       dataset/get      scribehandle/get    tscollection/get
+%       arrowline/get
+%       audioplayer/get
+%       audiorecorder/get
+%       axischild/get
+%       axisobj/get
+%       axistext/get
+%       COM/get
+%       dataset/get
+%       figobj/get
+%       generic/get
+%       hgbin/get
+%       instrument/get
+%       matlab.addons.repositories.FileExchangeRepositoryClient/get
+%       matlab.mixin.SetGet/get
+%       matlab.mock.PropertyBehavior/get
+%       matlab.System/get
+%       matlab.unittest.internal.FunctionTestCaseModifierProvider/get
+%       parallel.ValueStore/get
+%       RandStream/get
+%       scribehandle/get
+%       scribehgobj/get
+%       serial/get
+%       splanar/get
+%       timeseries/get
+%       ts/get
+%       tscollection/get
 %

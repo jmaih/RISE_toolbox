@@ -5,15 +5,15 @@
 % Atlanta Fed working paper 2014-16
 %-------------------------------------------------------------
 
-endogenous C Z K
+@endogenous C Z K
 
-exogenous E
+@exogenous E
 
-parameters alpha delta beta upsilon s_tp_1_2 s_tp_2_1
+@parameters alpha delta beta upsilon s_tp_1_2 s_tp_2_1
 
-parameters(s,2) mu sigma rho
+@parameters(s,2) mu sigma rho
 
-model
+@model
 
 	C^(upsilon-1) = beta*Z^(upsilon-1)*C{+1}^(upsilon-1)*(alpha*Z{+1}^(1-alpha)*K^(alpha-1)+1-delta);
 
@@ -21,7 +21,7 @@ model
 
 	log(Z) = (1-rho)*mu +rho*log(Z{-1})+sigma*E;
 
-steady_state_model
+@steady_state_model
 
 	Z=exp(mu);
 	
@@ -29,7 +29,7 @@ steady_state_model
 	
 	C = K*(1-delta-exp(mu)+1/alpha*(1/beta*exp((1-upsilon)*mu)-1+delta));
 
-parameterization
+@parameterization
 	alpha, 0.33;
 	beta, 0.9976;
 	upsilon,-1;

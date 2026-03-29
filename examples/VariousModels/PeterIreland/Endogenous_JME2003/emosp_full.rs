@@ -1,6 +1,6 @@
-@#include "emosp_ssmodel.rs"
+@include "emosp_ssmodel.rs"
 
-parameterization
+@parameterization
 	% fixed parameters
 	%------------------
 	g		  ,1 ;

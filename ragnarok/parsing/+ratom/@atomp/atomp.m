@@ -1,0 +1,2 @@
+%atomp is a class.
+%

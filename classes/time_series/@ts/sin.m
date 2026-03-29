@@ -1,12 +1,14 @@
 % SIN    Sine of argument in radians.
 %    SIN(X) is the sine of the elements of X.
 % 
-%    See also ASIN, SIND.
+%    See also ASIN, SIND, SINPI.
 %
-%    Reference page in Doc Center
+%    Documentation for sin
 %       doc sin
 %
-%    Other functions named sin
+%    Other uses of sin
 %
-%       codistributed/sin    gpuArray/sin    sym/sin    ts/sin
+%       adolm/sin            gpuArray/sin     sym/sin         tabular/sin
+%       aplanar/sin          rsymbdiff/sin    symbolic/sin    ts/sin
+%       codistributed/sin    splanar/sin
 %

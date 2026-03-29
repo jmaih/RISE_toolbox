@@ -1,7 +1,6 @@
-%abstvar is a class.
-%    self = abstvar(endog, exog, nlags, const, panel, markov_chains)
+% self=self@gogetter();
 %
-%    Reference page in Doc Center
+%    Documentation for abstvar
 %       doc abstvar
 %
 %

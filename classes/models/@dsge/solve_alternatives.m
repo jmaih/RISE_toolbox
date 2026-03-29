@@ -9,8 +9,8 @@
 % 
 %  Args:
 % 
-%     obj (rise | dsge): RISE model object
-%     solve_alternatives_nsim (numeric | {100}): Number of random starting
+%     - obj (rise | dsge): RISE model object
+%     - solve_alternatives_nsim (numeric | {100}): Number of random starting
 %       values generated.
 % 
 %  Returns:

@@ -191,15 +191,15 @@ end
 % (2354.1), and the DSGE model with three volatility regimes (2353.2)
 %%
 
-pnames={ms.estimation.priors.name};
+pnames=fieldnames(ms.estimation.priors);
 
-obj=mcmc(results,pnames)%,start_from,trimming
+mcmcobj=mcmc(results,pnames)%,start_from,trimming
 
 %% Trace plots
 
 chain_id=1;
 
-plotfunc=@(name)traceplot(obj,name,chain_id);
+plotfunc=@(name)traceplot(mcmcobj,name,chain_id);
 
 hfig=utils.plot.multiple(plotfunc,pnames,'trace plots',3,3)
 
@@ -207,7 +207,7 @@ hfig=utils.plot.multiple(plotfunc,pnames,'trace plots',3,3)
 
 chain_id=1;
 
-plotfunc=@(name)densplot(obj,name,chain_id,250);
+plotfunc=@(name)densplot(mcmcobj,name,chain_id,250);
 
 hfig=utils.plot.multiple(plotfunc,pnames,'density plots',3,3)
 
@@ -215,7 +215,7 @@ hfig=utils.plot.multiple(plotfunc,pnames,'density plots',3,3)
 
 chain_id=[];
 
-plotfunc=@(name)meanplot(obj,name,chain_id);
+plotfunc=@(name)meanplot(mcmcobj,name,chain_id);
 
 hfig=utils.plot.multiple(plotfunc,pnames,'Mean plots',3,3);
 
@@ -225,13 +225,13 @@ chain_id=[];
 
 order=10;
 
-plotfunc=@(name)autocorrplot(obj,name,chain_id,order);
+plotfunc=@(name)autocorrplot(mcmcobj,name,chain_id,order);
 
 hfig=utils.plot.multiple(plotfunc,pnames,'Autocorrelation plots',3,3)
 
 %% Gelman-Rubin plots
 
-plotfunc=@(name)psrf_plot(obj,name);
+plotfunc=@(name)psrf_plot(mcmcobj,name);
 
 hfig=utils.plot.multiple(plotfunc,pnames,'Gelman-Rubin (PSRF) plots',3,3)
 
@@ -252,23 +252,35 @@ scatnames=scatnames(1:iter);
 
 chain_id=[];
 
-plotfunc=@(name)scatterplot(obj,name{1},name{2},chain_id);%,varargin
+plotfunc=@(name)scatterplot(mcmcobj,name{1},name{2},chain_id);%,varargin
 
 hfig=utils.plot.multiple(plotfunc,scatnames,'Scatter plots',7,7)
 
 %% plot priors
 
-[pdata,hdl]=plot_priors(ms,pnames)
+plotOpts=struct();
+
+plotOpts.par_list=pnames;
+
+% priors
+rdist.plot(priors,plotOpts)
+
+% priors and posteriors
+rdist.plot(priors,plotOpts,mcmcobj)
 
 
 %% plot posteriors
 
-plot_posteriors(ms,results.pop,pnames)
+% posteriors only
+plotOpts.do=struct('priors',~true,'posteriors',true);
+
+h2=rdist.plot(priors,plotOpts,mcmcobj);
 
 
 %% priors and posteriors
+plotOpts.do.priors=true;
 
-plot_priors_and_posteriors(ms,results.pop,pnames)
+h2=rdist.plot(priors,plotOpts,mcmcobj);
 
 %% mode curvature
 

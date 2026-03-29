@@ -1,3 +1,5 @@
+%--- help for sym/solve ---
+%
 % SOLVE  Symbolic solution of algebraic equations.
 %    S = SOLVE(eqn1,eqn2,...,eqnM,var1,var2,...,varN)
 %    S = SOLVE(eqn1,eqn2,...,eqnM,var1,var2,...,varN,'ReturnConditions',true)
@@ -216,10 +218,25 @@
 % 
 %    See also DSOLVE, SUBS.
 %
-%    Reference page in Doc Center
-%       doc solve
+%    Documentation for sym/solve
+%       doc sym/solve
 %
-%    Other functions named solve
+%    Other uses of solve
 %
-%       abstvar/solve    dsge/solve    generic/solve    rfvar/solve
+%       abstvar/solve
+%       bvar_dsge/solve
+%       dsge/solve
+%       generic/solve
+%       hops/solve
+%       matlab.internal.decomposition.Banded/solve
+%       matlab.internal.decomposition.DenseCOD/solve
+%       matlab.internal.decomposition.DenseLU/solve
+%       matlab.internal.decomposition.DenseTriangular/solve
+%       matlab.internal.decomposition.Diagonal/solve
+%       matlab.internal.decomposition.SparseLU/solve
+%       matlab.internal.decomposition.SparseTriangular/solve
+%       ode/solve
+%       optim.problemdef.OptimizationProblem/solve
+%       prfvar/solve
+%       qubo/solve
 %

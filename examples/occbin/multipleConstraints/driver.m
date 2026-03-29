@@ -8,19 +8,19 @@ m=rise('ig2017');
 
 %% assign parameters and steady state file
 
-m=set(m,'parameters',paramfile(),'steady_state_file','ssfile');
+m=set(m,'parameters',paramfile(),'sstate_file','ssfile');
 
 %% solve the occbin model
 % assign each restriction to a markov chain
 restr_map=struct('debt',1,'zlb',2);
 
 m=solve(m,'solve_occbin',{1,restr_map,m.markov_chains.regimes},...
-    'steady_state_unique',true,... % impose a unique steady state
-    'steady_state_imposed',true);
+    'sstate_unique',true,... % impose a unique steady state
+    'sstate_imposed',true);
 
 %% simulate the model (honoring the constraints)
 rng(1900)
-mysims=simulate(m,'simul_honor_constraints',true,'simul_periods',300);
+mysims=simulate(m,'simul_periods',300);
 
 %% plot the simulations
 close all

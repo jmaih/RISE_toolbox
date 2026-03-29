@@ -8,19 +8,19 @@
 % are both predetermined and forward looking. But we don't need to do this
 % in RISE
 
-endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
+@endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
 LC LI LM LPI LR
 
-observables LC LI LM LPI LR
+@observables LC LI LM LPI LR
 
-exogenous EPS_V EPS_Z EPS_E EPS_A EPS_X	TREND
+@exogenous EPS_V EPS_Z EPS_E EPS_A EPS_X	TREND
 
-parameters g delta rho_x sig_x phi_p_trans phi_k_trans
+@parameters g delta rho_x sig_x phi_p_trans phi_k_trans
  rho_a sig_a rho_e e_ss sig_e z_ss_trans
 		   gam eta beta	rho_z  sig_z alpha theta mu_ss_trans rho_v sig_v
 		   omega_r omega_mu	omega_pai omega_y
 		   
-model
+@model
 
 	# z_ss=z_ss_trans*10000;
 	# phi_p = 100*abs(phi_p_trans);
@@ -66,35 +66,35 @@ model
 
 	E = rho_e*E{-1}+sig_e*EPS_E;
 
-	@#if original
+	@if original
 		gam*rss*A = gam*rss*LAMBDA+rss*(1+(gam-1)*lambdass*css)*C+(rss-1)*lambdass*mss*E+
 					(gam-1)*(rss-1)*lambdass*mss*M;
-	@#else
+	@else
 		gam*rss*A = gam*rss*LAMBDA+rss*(1+(gam-1)*lambdass*css)*C+(rss-1)*lambdass*mss*E
 					+(gam-1)*(rss-1)*lambdass*mss*MU
 					+(gam-1)*(rss-1)*lambdass*mss*M{-1}
 					-(gam-1)*(rss-1)*lambdass*mss*PAI;
-	@#end
+	@end
 
 	0 = eta*LAMBDA+eta*W-lambdass*wss*hss*H;
 
-	@#if original
+	@if original
 		(rss-1)*E+(rss-1)*C = (rss-1)*M+gam*R;
-	@#else
+	@else
 		(rss-1)*E+(rss-1)*C = (rss-1)*MU+(rss-1)*M{-1}-(rss-1)*PAI+gam*R;
-	@#end
+	@end
 
 	LAMBDA =R+LAMBDA{+1}-PAI{+1};
 
-	@#if original
+	@if original
 		g*LAMBDA-g*X-phi_k*K{-1} = g*LAMBDA{+1}+beta*qss*Q{+1}-beta*(1-delta)*X{+1}
 			+beta*phi_k*K{+1}
 			-(1+beta)*phi_k*K;
-	@#else
+	@else
 		g*LAMBDA-(g+beta*(phi_k*(1-(1-delta)/g)-(1-delta))*rho_x)*X-phi_k*K{-1} = 
 		g*LAMBDA{+1}+beta*qss*Q{+1}+(beta*(1-delta)/g-(1+beta))*phi_k*K
 		+beta*phi_k*(1-(1-delta)/g)*I{+1};
-	@#end
+	@end
 		
 	Z = rho_z*Z{-1}+sig_z*EPS_Z;
 

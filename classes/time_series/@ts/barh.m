@@ -21,18 +21,16 @@
 %    Use SHADING FACETED to put edges on the bars.  Use SHADING FLAT to
 %    turn them off.
 % 
-%    Examples: subplot(3,1,1), barh(rand(10,5),'stacked'), colormap(cool)
+%    Examples: subplot(3,1,1), barh(rand(10,5),'stacked')
 %              subplot(3,1,2), barh(0:.25:1,rand(5),1)
 %              subplot(3,1,3), barh(rand(2,3),.75,'grouped')
 % 
 %    See also PLOT, BAR, BAR3, BAR3H, HISTOGRAM.
-% 
-%    Copyright 1984-2017 The MathWorks, Inc.
 %
-%    Reference page in Doc Center
+%    Documentation for barh
 %       doc barh
 %
-%    Other functions named barh
+%    Other uses of barh
 %
-%       fints/barh    ts/barh
+%       ts/barh
 %

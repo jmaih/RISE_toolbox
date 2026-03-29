@@ -15,10 +15,10 @@
 % 
 %    See also PROD, SUM.
 %
-%    Reference page in Doc Center
+%    Documentation for fold
 %       doc fold
 %
-%    Other functions named fold
+%    Other uses of fold
 %
 %       symfun/fold    ts/fold
 %

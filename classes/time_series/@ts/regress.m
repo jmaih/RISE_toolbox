@@ -39,10 +39,10 @@
 % 
 %    See also LSCOV, POLYFIT, REGSTATS, ROBUSTFIT, STEPWISE.
 %
-%    Reference page in Doc Center
+%    Documentation for regress
 %       doc regress
 %
-%    Other functions named regress
+%    Other uses of regress
 %
-%       ts/regress
+%       gpuArray/regress    ts/regress
 %

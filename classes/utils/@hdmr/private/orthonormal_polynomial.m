@@ -1,9 +1,6 @@
-%--- help for orthonormal_polynomial ---
-%
 %  INTERNAL FUNCTION
-% 
 %
-%    Other functions named orthonormal_polynomial
+%    Other uses of orthonormal_polynomial
 %
 %       hdmr/orthonormal_polynomial
 %

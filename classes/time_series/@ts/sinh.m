@@ -3,10 +3,13 @@
 % 
 %    See also ASINH.
 %
-%    Reference page in Doc Center
+%    Documentation for sinh
 %       doc sinh
 %
-%    Other functions named sinh
+%    Other uses of sinh
 %
-%       codistributed/sinh    gpuArray/sinh    sym/sinh    ts/sinh
+%       adolm/sinh            rsymbdiff/sinh    symbolic/sinh
+%       aplanar/sinh          splanar/sinh      tabular/sinh
+%       codistributed/sinh    sym/sinh          ts/sinh
+%       gpuArray/sinh
 %

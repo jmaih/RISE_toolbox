@@ -1,30 +1,35 @@
-% NORM   Matrix or vector norm.
-%      NORM(X,2) returns the 2-norm of X.
+% NORM   Vector and matrix norms.
+%    N = NORM(V) returns the 2-norm or Euclidean norm of the vector V and is
+%    the same as NORM(V,2).
 % 
-%      NORM(X) is the same as NORM(X,2).
+%    N = NORM(V,p) returns the generalized vector p-norm.
+%    * If p is a positive real scalar, the p-norm is defined as
+%      SUM(ABS(V).^p)^(1/p).
+%    * If p = Inf, then N is the largest element of ABS(V).
+%    * If p = -Inf, then N is the smallest element of ABS(V).
 % 
-%      NORM(X,1) returns the 1-norm of X.
+%    N = NORM(M) returns the 2-norm of the matrix M, which is same as
+%    NORM(M,2), and is defined by the largest singular value.
 % 
-%      NORM(X,Inf) returns the infinity norm of X.
+%    N = NORM(M,p) returns the p-norm of the matrix M, where p is 1, 2, or
+%    Inf.
+%    * If p = 1, then N is the maximum absolute column sum in M.
+%    * If p = 2, then N is the maximum singular value of M.
+%    * If p = Inf, then N is the maximum absolute row sum of M.
 % 
-%      NORM(X,'fro') returns the Frobenius norm of X.
+%    N = NORM(X,"fro") returns the Frobenius norm of any numeric array X.
+%    Notice that the Frobenius norm for vectors is equivalent to the 2-norm.
+%    For N-D arrays, only the Frobenius norm is supported via NORM.
 % 
-%    In addition, for vectors...
+%    By convention, NaN is returned if the first input contains NaNs.
 % 
-%      NORM(V,P) returns the p-norm of V defined as SUM(ABS(V).^P)^(1/P).
-% 
-%      NORM(V,Inf) returns the largest element of ABS(V).
-% 
-%      NORM(V,-Inf) returns the smallest element of ABS(V).
-% 
-%    By convention, NaN is returned if X or V contains NaNs.
-% 
-%    See also COND, RCOND, CONDEST, NORMEST, HYPOT.
+%    See also vecnorm, pagenorm, normest, normalize, cond, hypot.
 %
-%    Reference page in Doc Center
+%    Documentation for norm
 %       doc norm
 %
-%    Other functions named norm
+%    Other uses of norm
 %
-%       codistributed/norm    gpuArray/norm    sym/norm    tall/norm
+%       codistributed/norm    sym/norm    symbolic/norm    tall/norm
+%       gpuArray/norm
 %

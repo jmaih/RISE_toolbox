@@ -1,27 +1,37 @@
-% RESHAPE Reshape array.
-%    RESHAPE(X,M,N) or RESHAPE(X,[M,N]) returns the M-by-N matrix 
-%    whose elements are taken columnwise from X. An error results 
-%    if X does not have M*N elements.
+% RESHAPE Reshape array by rearranging existing elements
+%    B = RESHAPE(A,M,N) or RESHAPE(A,[M,N]) returns the M-by-N matrix whose
+%    elements are taken columnwise from A. A must have M*N elements.
 % 
-%    RESHAPE(X,M,N,P,...) or RESHAPE(X,[M,N,P,...]) returns an 
-%    N-D array with the same elements as X but reshaped to have 
-%    the size M-by-N-by-P-by-.... The product of the specified
-%    dimensions, M*N*P*..., must be the same as NUMEL(X).
+%    B = RESHAPE(A,M,N,P,...) or RESHAPE(A,[M,N,P,...]) returns a
+%    multidimensional array with the same elements as A but reshaped to have
+%    the size M-by-N-by-P-by-.... The product of the specified dimensions,
+%    M*N*P*..., must be the same as NUMEL(A).
 % 
-%    RESHAPE(X,...,[],...) calculates the length of the dimension
-%    represented by [], such that the product of the dimensions 
-%    equals NUMEL(X). The value of NUMEL(X) must be evenly divisible 
-%    by the product of the specified dimensions. You can use only one 
-%    occurrence of [].
+%    B = RESHAPE(A,...,[],...) reshapes A according to the specified
+%    dimension sizes. You can specify a single dimension size of [] to have
+%    the dimension size automatically calculated, such that the product of
+%    the dimensions equals NUMEL(A). The value of NUMEL(A) must be evenly
+%    divisible by the product of the specified dimensions.
 % 
-%    See also SQUEEZE, SHIFTDIM, COLON.
+%    See also SQUEEZE, SHIFTDIM, COLON, RESIZE.
 %
-%    Reference page in Doc Center
+%    Documentation for reshape
 %       doc reshape
 %
-%    Other functions named reshape
+%    Other uses of reshape
 %
-%       categorical/reshape      gpuArray/reshape    tabular/reshape
-%       codistributed/reshape    sym/reshape         tall/reshape
+%       calendarDuration/reshape
+%       categorical/reshape
+%       codistributed/reshape
+%       datetime/reshape
 %       digraph/reshape
+%       duration/reshape
+%       gpuArray/reshape
+%       lib.pointer/reshape
+%       matlab.mixin.indexing.RedefinesParen/reshape
+%       RandStream/reshape
+%       sym/reshape
+%       symbolic/reshape
+%       tabular/reshape
+%       tall/reshape
 %

@@ -22,5 +22,4 @@
 %     :
 % 
 %     - **hdl** (handle object): handle to plot object
-% 
 %

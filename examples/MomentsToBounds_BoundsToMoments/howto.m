@@ -13,16 +13,25 @@ Params={
 	};
 npars=size(Params,1);
 bounds=nan(npars,2);
+l=0.5*(1-prob);
+r=1-l;
 for ii=1:npars
-    bounds(ii,:)=distributions.find_bounds(Params{ii,2},Params{ii,3},Params{ii,4},prob);
+    d=Params{ii,2};
+    if strcmp(d,'inv_gamma'),d='igamma';end
+    o_engine=rdist.(d)(Params{ii,3},Params{ii,4});
+    bounds(ii,:)=o_engine([l,r],'icdf');
 end
 disp(bounds)
 %% recover means and standard deviations
+clc
 MOMS=nan(npars,2);
+MOMS2=nan(npars,2);
 for ii=1:npars
-    [a,b,moments,fval]=distributions.(Params{ii,2})(bounds(ii,1),bounds(ii,2),prob);
-    MOMS(ii,1)=moments.mean;
-    MOMS(ii,2)=moments.sd;
+    d=Params{ii,2};
+    if strcmp(d,'inv_gamma'),d='igamma';end
+    o_engine=rdist.(d)(bounds(ii,1),bounds(ii,2),prob);
+    MOMS(ii,1)=o_engine([],'mean');
+    MOMS(ii,2)=o_engine([],'sd');
 end
 %% display and compare
 disp('================ Means and Standard Deviations ================ ')

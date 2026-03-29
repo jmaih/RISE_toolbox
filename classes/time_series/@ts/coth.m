@@ -6,10 +6,11 @@
 % 
 %    See also ACOTH.
 %
-%    Reference page in Doc Center
+%    Documentation for coth
 %       doc coth
 %
-%    Other functions named coth
+%    Other uses of coth
 %
-%       codistributed/coth    gpuArray/coth    sym/coth    ts/coth
+%       adolm/coth      codistributed/coth    sym/coth         tabular/coth
+%       aplanar/coth    gpuArray/coth         symbolic/coth    ts/coth
 %

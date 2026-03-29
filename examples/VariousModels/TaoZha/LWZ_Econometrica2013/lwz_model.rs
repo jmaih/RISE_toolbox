@@ -4,7 +4,7 @@
 % Fval obtained by the minimization routine: -2430.913404
 %---------------------------------------------------------------------------------
 
-endogenous 
+@endogenous 
 %--- 19 Endogenous state variables
 Muh "Lagrange mult. on flow of funds(household)"
 W "Wage rate"
@@ -44,9 +44,9 @@ LogL "log hours"
 %--- Additional (auxillary) variables
 C "Total consumption" DLogGDP
 
-observables DLogQl DLogQ DLogC DLogI DLogB LogL
+@observables DLogQl DLogQ DLogC DLogI DLogB LogL
 
-exogenous
+@exogenous
 Eps_a "Intertemporal preference (risk premium) shock"
 Eps_phi "Housing demand shock"
 Eps_psi "Labor supply shock"
@@ -56,7 +56,7 @@ Eps_q "Permanent shock to investment specific technical change"
 Eps_mu "Transitory shock to investment specific technical change"
 Eps_xitheta "Collateral shock"
 
-parameters
+@parameters
 %--- 5 estimated parameters
 gamma_h gamma_e omega g_trans lambda_qbar_trans
 %--- 8 calibrated parameters
@@ -70,7 +70,7 @@ sig_Eps_a, sig_Eps_phi, sig_Eps_psi, sig_Eps_z, sig_Eps_v, sig_Eps_q, sig_Eps_mu
 %--------------------------------------------------------------------
 %-- Model specification
 %--------------------------------------------------------------------
-model
+@model
 	# g = g_trans/100 + 1;
 	# lambda_qbar = 0.01*lambda_qbar_trans + 1;
 	# lambda_kbar = g*lambda_qbar; %See second sentence of first full paragraph of page 9
@@ -205,7 +205,7 @@ model
 	%--- Auxillary variables
 	DLogGDP = iy*DLogI + (1-iy)*DLogC;
 
-steady_state_model	
+@steady_state_model	
 	DLogQl = log(g);
 	DLogQ = log(lambda_qbar);
 	DLogC = log(g); 

@@ -24,10 +24,10 @@
 % 
 %    See also EYE, ZEROS.
 %
-%    Reference page in Doc Center
+%    Documentation for ones
 %       doc ones
 %
-%    Other functions named ones
+%    Other uses of ones
 %
 %       codistributed/ones      codistributor2dbc/ones    gpuArray/ones
 %       codistributor1d/ones    distributed/ones          ts/ones

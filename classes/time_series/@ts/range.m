@@ -6,14 +6,18 @@
 % 
 %    RANGE treats NaNs as missing values, and ignores them.
 % 
+%    Y = RANGE(X,'all') operates on all the dimensions of X.
+% 
 %    Y = RANGE(X,DIM) operates along the dimension DIM.
+% 
+%    Y = RANGE(X,VECDIM) operates along all the dimensions specified in VECDIM.
 % 
 %    See also BOUNDS, MIN, MAX, IQR, MAD, STD.
 %
-%    Reference page in Doc Center
+%    Documentation for range
 %       doc range
 %
-%    Other functions named range
+%    Other uses of range
 %
-%       distributed/range    tall/range    ts/range
+%       distributed/range    ts/range
 %

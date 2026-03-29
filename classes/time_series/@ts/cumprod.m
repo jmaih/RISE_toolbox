@@ -6,31 +6,35 @@
 %  
 %    Y = CUMPROD(___,DIRECTION) cumulates in the direction specified by
 %    DIRECTION using any of the above syntaxes:
-%      'forward' - (default) uses the forward direction, from beginning to end.
-%      'reverse' -           uses the reverse direction, from end to beginning.
 % 
-%    Y = CUMPROD(___,NANFLAG) specifies how NaN (Not-A-Number) values are 
-%    treated:
+%      "forward" - (default) uses the forward direction, from beginning to end.
+%      "reverse" -           uses the reverse direction, from end to beginning.
 % 
-%    'includenan' - (default) the product of elements containing NaN values is NaN.
-%    'omitnan'    -           the product of elements containing NaN values is 
-%                             the product of all non-NaN elements. If all 
-%                             elements are NaN, the result is 1.
+%    Y = CUMPROD(___,NANFLAG) specifies how NaN values are treated:
+% 
+%    "includemissing" / "includenan" -
+%                    (default) The product of elements containing NaN values
+%                    is NaN.
+%    "omitmissing" / "omitnan"       -
+%                    The product of elements containing NaN values is the
+%                    product of all non-NaN elements. If all elements are
+%                    NaN, the result is 1.
 % 
 %    Example: 
 %        X = [0 1 2; 3 4 5]
 %        cumprod(X,1)
 %        cumprod(X,2)
-%        cumprod(X,1,'reverse')
-%        cumprod(X,2,'reverse')
+%        cumprod(X,1,"reverse")
+%        cumprod(X,2,"reverse")
 % 
 %    See also PROD, CUMSUM, CUMMIN, CUMMAX.
 %
-%    Reference page in Doc Center
+%    Documentation for cumprod
 %       doc cumprod
 %
-%    Other functions named cumprod
+%    Other uses of cumprod
 %
-%       codistributed/cumprod    sym/cumprod    tall/cumprod    ts/cumprod
-%       gpuArray/cumprod
+%       codistributed/cumprod    symbolic/cumprod    tall/cumprod
+%       gpuArray/cumprod         tabular/cumprod     ts/cumprod
+%       sym/cumprod
 %

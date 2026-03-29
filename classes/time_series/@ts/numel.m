@@ -4,13 +4,26 @@
 % 
 %    See also SIZE, PROD, SUBSREF.
 %
-%    Reference page in Doc Center
+%    Documentation for numel
 %       doc numel
 %
-%    Other functions named numel
+%    Other uses of numel
 %
-%       categorical/numel      distributed/numel    tabular/numel
-%       codistributed/numel    gpuArray/numel       tall/numel
-%       Composite/numel        sym/numel            ts/numel
-%       dataset/numel          symfun/numel
+%       calendarDuration/numel
+%       categorical/numel
+%       codistributed/numel
+%       Composite/numel
+%       dataset/numel
+%       datetime/numel
+%       dictionary/numel
+%       distributed/numel
+%       duration/numel
+%       gpuArray/numel
+%       matlab.io.datastore.internal.NumelOverride/numel
+%       matlab.mixin.indexing.RedefinesParen/numel
+%       sym/numel
+%       symfun/numel
+%       tabular/numel
+%       tall/numel
+%       ts/numel
 %

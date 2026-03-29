@@ -1,16 +1,3 @@
-%  H1 line
-% 
-%  ::
-% 
-% 
-%  Args:
-% 
-%  Returns:
-%     :
-% 
-%  Note:
-% 
-%  Example:
-% 
-%     See also:
+%rise_startup is a function.
+%    rise_startup(varargin)
 %

@@ -1,12 +1,12 @@
-endogenous	PIE, GROWTH, I, PAI, RS, Y
+@endogenous	PIE, GROWTH, I, PAI, RS, Y
 
-exogenous EI, EPAI, EY 
+@exogenous EI, EPAI, EY 
 
-parameters pc_beta, d_y_lead, d_r,
+@parameters pc_beta, d_y_lead, d_r,
 mp_i_lag, mp_pai, mp_y, gyss, iss,
 pc_pai_lead, pc_y, paiss, sigi, sigpai, sigy
 
-model
+@model
 	% Phillips curve
    PAI=pc_beta*pc_pai_lead*PAI(+1)+(1-pc_pai_lead)*PAI(-1)+pc_y*Y(-1)+sigpai*EPAI;
 
@@ -23,16 +23,16 @@ model
    
    RS=iss+400*I;
 
-observables PIE, GROWTH, RS
+@observables PIE, GROWTH, RS
 
 
-steady_state_model
+@steady_state_model
 %%	ZGDP=gyss;
 	GROWTH=gyss;
 	PIE=paiss;
 	RS=iss;
 
-parameterization
+@parameterization
 % Not estimated
 	pc_beta       ,0.9900;				 
 % Controlled by the constant chain

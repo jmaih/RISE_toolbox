@@ -1,0 +1,2 @@
+%HalfYearlyDate is a class.
+%

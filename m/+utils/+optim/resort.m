@@ -1,4 +1,4 @@
-%--- help for sort ---
+%--- resort.m not found. Showing help for sort instead. ---
 %
 % SORT   Sort in ascending or descending order.
 %    B = SORT(A) sorts in ascending order.
@@ -53,7 +53,7 @@
 % 
 %    See also ISSORTED, SORTROWS, MIN, MAX, MINK, MAXK.
 %
-%    Reference page in Doc Center
+%    Documentation for sort
 %       doc sort
 %
 %

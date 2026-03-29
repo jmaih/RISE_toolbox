@@ -2,71 +2,137 @@
 % 
 %  Syntax:
 % 
-% 	[Trend,Cyclical] = hpfilter(Y)
-% 	[Trend,Cyclical] = hpfilter(Y,smoothing)
-% 	hpfilter(...)
+%    [Trend,Cyclical] = hpfilter(Y)
+%    [TTbl,CTbl] = hpfilter(Tbl)
+%    [...,h] = hpfilter(...)
+%    [...] = hpfilter(...,param,val,...)
+%    [...] = hpfilter(ax,...)
+%    hpfilter(...)
 % 
 %  Description:
 % 
-%    Separate one or more time series into trend and cyclical components
-%    with the Hodrick-Prescott filter. If no output arguments are specified,
-%    HPFILTER displays a plot of the series and trend (with cycles removed).
-%    The plot can be used to help select a smoothing parameter.
+%    Separate time series into additive trend and cyclical components with
+%    the Hodrick-Prescott filter [1]. HPFILTER optionally plots the series
+%    together with the smoothed (cycles removed) trend components.
 % 
 %  Input Arguments:
 % 
-% 	Y - Time series data. Y may be a vector or a matrix. If Y is a vector,
-% 	  it represents a single series. If Y is a numObs-by-numSeries matrix,
-% 	  it represents numObs observations of numSeries series, with
-% 	  observations across any row assumed to occur at the same time. The
-% 	  last observation of any series is assumed to be the most recent.
+%    Y - Time series data, specified as a numObs-by-numVars numeric matrix.
 % 
-%  Optional Input Argument:
+%    Tbl - Time series data, specified as a table or timetable. Specify
+%        series for Y using the 'DataVariables' parameter.
 % 
-% 	smoothing - Either a scalar to be applied to all series or a vector of
-% 	    length numSeries with values to be applied to corresponding series.
-% 	    The default is 1600, which is suggested	in [1] for quarterly data.
-% 	    If smoothing is 0, no smoothing occurs.	As the smoothing parameter
-% 	    increases, the smoothed series approaches a straight line. If
-% 	    smoothing is Inf, the series is detrended.
+%    ax - Axes object in which to plot. If unspecified, HPFILTER plots to
+%        the current axes (gca).
+% 
+%    The function removes NaN values indicating missing observations.
+% 
+%  Optional Input Parameter Name/Value Arguments:
+% 
+%    NAME            VALUE
+% 
+%    'Smoothing'     Smoothing parameter, specified as a nonnegative scalar
+%                    or vector. Scalar values are applied to all series in
+%                    Y. Vector values of length numVars are applied to
+%                    corresponding series in Y. As smoothing increases, the
+%                    trend approaches a straight line. The default is 1600,
+%                    suggested in both [1] and [3] for quarterly data.
+% 
+%    'FilterType'    Type of filter, specified as a string or character
+%                    vector. Values are 'two-sided' [1] or 'one-sided' [4].
+%                    The default is 'two-sided'.
+% 
+%    'DataVariables' Variables in Tbl to use for Y, specified as names in
+%                    Tbl.Properties.VariableNames. Variable names are cell
+%                    vectors of character vectors, string vectors, integer
+%                    vectors or logical vectors. The default is all
+%                    variables in Tbl.
 % 
 %  Output Arguments:
 % 
-% 	Trend - Trend component of Y, the same size as Y.
-% 	Cyclical - Cyclical component of Y, the same size as Y.
+%    Trend - Smoothed trend component of Y, the same size as Y.
+% 
+%    Cyclical - Cyclical component of Y, the same size as Y.
+% 
+%    TTbl - When input is Tbl, output Trend is returned in tabular TTbl, the
+%        same type as Tbl.
+% 
+%    CTbl - When input is Tbl, output Cyclical is returned in tabular CTbl,
+%        the same type as Tbl.
+% 
+%    h - Vector of handles to plotted graphics objects. HPFILTER plots the
+%        data and trend when the number of output arguments is 0 or 3.
 % 
 %  Notes:
 % 
-% 	o The Hodrick-Prescott filter separates a time series into a trend
-% 	  component and a cyclical component such that
+%    o The Hodrick-Prescott filter separates time series Y into a trend
+%      component and a cyclical component such that
 % 
-% 		Y = Trend + Cyclical
+%        Y = Trend + Cyclical
 % 
-% 	  The filter is equivalent to a cubic spline smoother, where the
-% 	  smoothed portion is in Trend.
+%      The method implements a high-pass filter for the cycle that penalizes
+%      variations in the trend to a degree determined by the smoothing
+%      parameter [1].
 % 
-% 	o [1] suggests values for the smoothing parameter that depend upon
-% 	  the periodicity of the data:
+%    o Hodrick and Prescott [1] suggest values for the smoothing parameter
+%      that depend upon the periodicity of the data:
 % 
-% 		Periodicity     smoothing
+%        Periodicity     Smoothing
 %        -----------     ---------
-% 		Yearly			100
-% 		Quarterly		1600
-% 		Monthly			14400
+%        Yearly			100
+%        Quarterly		1600
+%        Monthly			14400
 % 
-%    o The Hodrick-Prescott filter can produce anomalous endpoint effects in
-%      very high-frequency data and should never be used for extrapolation.
+%      Ravn and Uhlig [3] suggest adjustments to these values:
 % 
-%  Reference:
+%        Periodicity     Smoothing
+%        -----------     ---------
+%        Yearly			6.25
+%        Quarterly		1600
+%        Monthly			129600
 % 
-% 	[1] Hodrick, R. J., and E. C. Prescott. "Postwar U.S. Business Cycles:
-% 		An Empirical Investigation." Journal of Money, Credit, and Banking.
-% 		Vol. 29, 1997, pp. 1-16.
+%      In practice, a vector of smoothing parameters allows for testing of
+%      alternatives. The plot produced by HPFILTER is useful for comparison
+%      of results.
+% 
+%    o The default two-sided filter uses future values of the input series
+%      to compute outputs at time t and is typically applied to historical
+%      data. It may produce anomalous end effects unsuitable for forecasting
+%      [4]. The one-sided filter, by contrast, is causal, using only current
+%      and previous values of the input series. As a result, the one-sided
+%      filter does not revise outputs when new data becomes available.
+% 
+%  Example:
+% 
+%    % Filter annual GNP data:
+% 
+%    load Data_NelsonPlosser
+%    [TTbl,CTbl,h] = hpfilter(DataTable,'DataVariables',["GNPR" "GNPN"],...
+%                             'Smoothing',6.25);
+% 
+%  References:
+% 
+%    [1] Hodrick, R. J., and E. C. Prescott. "Postwar U.S. Business Cycles:
+%        An Empirical Investigation." Journal of Money, Credit, and Banking.
+%        Vol. 29, 1997, pp. 1-16.
+% 
+%    [2] Hodrick, R.J. "An Exploration of Trend-Cycle Decomposition
+%        Methodologies in Simulated Data." National Bureau of Economic
+%        Research. Working Paper 26750. 2020.
+% 
+%    [3] Ravn, M. O. and H. Uhlig. "On Adjusting the Hodrick-Prescott Filter
+%        for the Frequency of Observations." The Review of Economics and
+%        Statistics. Vol. 84, No. 2, 2002, pp. 371-376.
+% 
+%    [4] Stock, J. and M. Watson. "Forecasting inflation." Journal of
+%        Monetary Economics. Vol. 44, No. 2, 1999, pp. 293-335.
+%  
+%  See also BKFILTER, CFFILTER, HFILTER.
 %
-%    Reference page in Doc Center
+%    Documentation for hpfilter
 %       doc hpfilter
 %
-%    Other functions named hpfilter
+%    Other uses of hpfilter
 %
 %       ts/hpfilter
 %

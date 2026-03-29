@@ -55,10 +55,10 @@
 % 
 %    See also PORTCONS, PORTOPT.
 %
-%    Reference page in Doc Center
+%    Documentation for frontier
 %       doc frontier
 %
-%    Other functions named frontier
+%    Other uses of frontier
 %
 %       dsge/frontier
 %

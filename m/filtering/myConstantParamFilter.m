@@ -18,6 +18,10 @@
 % 
 %     - **options** [struct]: options provided by dsge.filter
 % 
+%     - **engine** [empty|char|{missing_observations_kalman_filter}]:
+%       internal filtering procedure. Other procedures include filter_ccc,
+%       filter_ccm, filter_cct, filter_cmt
+% 
 %  Returns:
 %     :
 % 

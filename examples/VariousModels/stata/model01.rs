@@ -1,13 +1,13 @@
-% Specifying a DSGE model (page 6-7)
-endogenous	X R P G U
+% Specifying a DSGE model
+@endogenous	X R P G U
 
-exogenous EG EU
+@exogenous EG EU
 
-parameters beta kappa sigu sigg rhou rhog
+@parameters beta kappa sigu sigg rhou rhog
 
-observables P R
+@observables P R
 
-model
+@model
 
 	X = X{+1}-(R-P{+1}-G);
 

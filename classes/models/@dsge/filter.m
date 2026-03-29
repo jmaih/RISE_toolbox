@@ -32,15 +32,16 @@
 %    Note: FILTFILT, FILTIC and DESIGNFILT are in the Signal Processing
 %    Toolbox.
 %
-%    Reference page in Doc Center
+%    Documentation for filter
 %       doc filter
 %
-%    Other functions named filter
+%    Other uses of filter
 %
-%       abstvar/filter    garch/filter       statespace/filter
-%       arima/filter      gjr/filter         tall/filter
-%       dsge/filter       gpuArray/filter    timeseries/filter
-%       dssm/filter       LagOp/filter       varm/filter
-%       egarch/filter     regARIMA/filter    vecm/filter
-%       fints/filter      ssm/filter
+%       abstvar/filter          garch/filter       ssm/filter
+%       arima/filter            gjr/filter         statespace/filter
+%       bnlssm/filter           gpuArray/filter    tall/filter
+%       codistributed/filter    LagOp/filter       timeseries/filter
+%       dsge/filter             msVAR/filter       varm/filter
+%       dssm/filter             regARIMA/filter    vecm/filter
+%       egarch/filter
 %

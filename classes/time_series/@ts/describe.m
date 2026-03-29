@@ -19,5 +19,4 @@
 %        - max
 %        - variable names
 %        - variable descriptions
-% 
 %

@@ -31,7 +31,7 @@
 % 
 %    See also DIALOG, MSGBOX.
 %
-%    Reference page in Doc Center
+%    Documentation for waitbar
 %       doc waitbar
 %
 %

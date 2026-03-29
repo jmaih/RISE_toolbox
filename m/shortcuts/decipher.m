@@ -1,24 +1,19 @@
-%  decipher - interprets error codes
+%  DECIPHER - Interprets error codes returned by RISE
 % 
-%  ::
+%  Syntax:
+%    msgout = decipher(code)
 % 
+%  Inputs:
+%    - code (scalar or vector): Scalar or vector of error codes returned by RISE.
 % 
-%    msgout=decipher(code)
-% 
-%  Args:
-% 
-%     - **code** [scalar|vector]: scalar or vector of error codes returned by
-%     RISE.
-% 
-%  Returns:
-%     :
-% 
-%     - **msgout** [char|cellstr]: explanation of the return code as a char if
-%     the input is a scalar or as a cellstr if input is a vector.
+%  Outputs:
+%    - msgout (char or cellstr): Explanation of the return code as a char if
+%      the input is a scalar or as a cellstr if the input is a vector.
 % 
 %  Note:
 % 
 %  Example:
+%    msgout = decipher(code);
 % 
-%     See also:
+%  See also:
 %

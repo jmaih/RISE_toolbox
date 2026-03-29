@@ -203,10 +203,10 @@
 % 
 %    See also ANOVA1, KRUSKALWALLIS, MULTCOMPARE.
 %
-%    Reference page in Doc Center
+%    Documentation for boxplot
 %       doc boxplot
 %
-%    Other functions named boxplot
+%    Other uses of boxplot
 %
 %       ts/boxplot
 %

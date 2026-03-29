@@ -1,6 +1,6 @@
-@#include "emosp.rs"
+@include "emosp.rs"
 
-steady_state_model
+@steady_state_model
 	X=1;
 	A=1;
 	E=e_ss;

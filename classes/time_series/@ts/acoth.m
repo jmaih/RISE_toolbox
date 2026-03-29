@@ -6,10 +6,11 @@
 % 
 %    See also COTH.
 %
-%    Reference page in Doc Center
+%    Documentation for acoth
 %       doc acoth
 %
-%    Other functions named acoth
+%    Other uses of acoth
 %
-%       codistributed/acoth    gpuArray/acoth    sym/acoth    ts/acoth
+%       codistributed/acoth    sym/acoth         tabular/acoth    ts/acoth
+%       gpuArray/acoth         symbolic/acoth
 %

@@ -5,7 +5,7 @@
 % 
 %  - [bee](bee/bee)
 %
-%    Reference page in Doc Center
+%    Documentation for bee
 %       doc bee
 %
 %

@@ -57,11 +57,11 @@
 % 
 %    See also COV, VAR, STD, PLOTMATRIX.
 %
-%    Reference page in Doc Center
+%    Documentation for corrcoef
 %       doc corrcoef
 %
-%    Other functions named corrcoef
+%    Other uses of corrcoef
 %
-%       codistributed/corrcoef    gpuArray/corrcoef    ts/corrcoef
-%       fints/corrcoef
+%       codistributed/corrcoef    tall/corrcoef    ts/corrcoef
+%       gpuArray/corrcoef
 %

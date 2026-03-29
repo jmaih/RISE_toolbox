@@ -1,4 +1,3 @@
-%  INTERNAL FUNCTION
-% 
-%  See also: UTILS.CODE.CODE2VECTOR
+%code2func is a function.
+%    func = code2func(code, argins, do_vectorize)
 %

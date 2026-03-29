@@ -16,7 +16,7 @@ if retcode
     
 else
     
-    [state_list]=create_state_list(obj,1);
+    [state_list]=state_var_list(obj,1);
     
     % inflation
     vloc=strcmp('PIE',obj.endogenous.name);
@@ -24,7 +24,7 @@ else
     % monetary policy shock
     sloc=strcmp('EI',state_list);
     
-    response=obj.solution.Tz{1}(vloc,sloc);
+    response=obj.state_space{1}.Tz{1}(vloc,sloc);
     
     flag=response>0;
     

@@ -23,5 +23,4 @@
 %     :
 % 
 %     - **hdl** [integer]: handle to the plot
-% 
 %

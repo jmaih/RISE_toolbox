@@ -2,4 +2,6 @@
 %
 %  INTERNAL FUNCTION
 % 
+%  growth_type,'zero'
+%  growth_type,'steady'
 %

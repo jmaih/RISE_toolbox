@@ -3,12 +3,12 @@
 % By Glenn D. Rudebusch and Eric T. Swanson. American Economic Journal:
 % Macroeconomics 2012, 4(1): 105-143.
 
-endogenous V, C, L, VK, PI, Valphaexp, ZN, MC, Y, ZD, P0, W, Int, Delta, PIAVG, G, A, DZ, PISTAR,
+@endogenous V, C, L, VK, PI, Valphaexp, ZN, MC, Y, ZD, P0, W, Int, Delta, PIAVG, G, A, DZ, PISTAR,
 	PB, PBB, YTM, YTMM, TT
 
-exogenous EPSInt, EPSA, EPSZ, EPSG, EPSPISTAR
+@exogenous EPSInt, EPSA, EPSZ, EPSG, EPSPISTAR
 
-parameters phi, chi, theta, eta, xi, alpha, LMax, DZBAR, YBAR, delta, KRAT, GRAT , 
+@parameters phi, chi, theta, eta, xi, alpha, LMax, DZBAR, YBAR, delta, KRAT, GRAT , 
     PIBAR, rhoinflavg, taylrho, taylpi, tayly, rhoa, rhoz, rhog, rhopistar, GSSLOAD,
 	cdelta Beta_tilde
 	% stand-ins for shocks' standard deviations
@@ -18,7 +18,7 @@ parameters phi, chi, theta, eta, xi, alpha, LMax, DZBAR, YBAR, delta, KRAT, GRAT
 	%---------------------------------------
 	KBAR, IBAR chi0, Beta
 
-model
+@model
 
     % Behavioural Equations
     %-----------------------
@@ -82,7 +82,7 @@ model
 	
     PISTAR - (1-rhopistar)*PIBAR + rhopistar*PISTAR(-1) - GSSLOAD*(4*log(PIAVG) - PISTAR) - std_EPSPISTAR*EPSPISTAR;
 
-steady_state_model
+@steady_state_model
 	L = 1/3;
 	
 	Y = 1;
@@ -140,7 +140,7 @@ steady_state_model
 	YTMM = log(cdelta*PBB/(PBB-1))*400;
 
 
-parameterization
+@parameterization
 	phi , 2;
 	chi , 3;
 	theta , 0.2;

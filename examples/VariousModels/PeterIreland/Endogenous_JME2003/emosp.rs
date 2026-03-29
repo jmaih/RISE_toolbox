@@ -3,18 +3,18 @@
 %
 % Nonlinear version of the model.
 
-endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
+@endogenous Y C I H N M MU W Q D PAI R K LAMBDA XI A E Z X V
 LC LI LM LPI LR
 
-observables LC LI LM LPI LR
+@observables LC LI LM LPI LR
 
-exogenous EPS_V EPS_Z EPS_E EPS_A EPS_X	TREND
+@exogenous EPS_V EPS_Z EPS_E EPS_A EPS_X	TREND
 
-parameters g delta rho_x sig_x phi_p_trans phi_k_trans
+@parameters g delta rho_x sig_x phi_p_trans phi_k_trans
  rho_a sig_a rho_e e_ss sig_e z_ss_trans
 		   gam eta beta	rho_z  sig_z alpha theta mu_ss_trans rho_v sig_v
 		   omega_r omega_mu	omega_pai omega_y
-model
+@model
 
 	# z_ss=z_ss_trans*10000;
 	# phi_p = 100*abs(phi_p_trans);

@@ -23,5 +23,4 @@
 % 
 %        RepsRun = bootstrap(rfvar, 10000);
 %        var(RepsRun, [], 2)
-% 
 %

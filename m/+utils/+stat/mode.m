@@ -16,7 +16,13 @@
 %    as M.  Each element of C is a sorted vector of all the values having
 %    the same frequency as the corresponding element of M.
 % 
+%    [...]=MODE(X,'all') is the mode of all elements in X.
+% 
 %    [...]=MODE(X,DIM) takes the mode along the dimension DIM of X.
+% 
+%    [...]=MODE(X,VECDIM) operates on the dimensions specified in the vector 
+%    VECDIM. For example, MODE(X,[1 2]) operates on the elements contained
+%    in the first and second dimensions of X.
 % 
 %    This function is most useful with discrete or coarsely rounded data.
 %    The mode for a continuous probability distribution is defined as
@@ -46,11 +52,12 @@
 % 
 %    See also MEAN, MEDIAN, HISTOGRAM, HISTCOUNTS.
 %
-%    Reference page in Doc Center
+%    Documentation for mode
 %       doc mode
 %
-%    Other functions named mode
+%    Other uses of mode
 %
-%       categorical/mode      datetime/mode    gpuArray/mode      ts/mode
-%       codistributed/mode    duration/mode    timeseries/mode
+%       categorical/mode      duration/mode    tabular/mode
+%       codistributed/mode    gpuArray/mode    timeseries/mode
+%       datetime/mode         symfun/mode      ts/mode
 %

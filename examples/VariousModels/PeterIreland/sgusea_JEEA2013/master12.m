@@ -20,7 +20,7 @@ m=rise('sgusea12',...
 
 %% Assign steady state file
 
-m=set(m,'steady_state_file','sstate_model12b');
+m=set(m,'sstate_file','sstate_model12b');
 
 %% create parameters
 

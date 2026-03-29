@@ -61,7 +61,7 @@
 %  - [uminus](splanar/uminus)
 %  - [uplus](splanar/uplus)
 %
-%    Reference page in Doc Center
+%    Documentation for splanar
 %       doc splanar
 %
 %

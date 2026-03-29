@@ -1,13 +1,13 @@
 % Correlated state variables (page 62)
-endogenous	Y P Z G
+@endogenous	Y P Z G
 
-exogenous EG EZ
+@exogenous EG EZ
 
-parameters alpha rhog rhogz rhoz sigg sigz
+@parameters alpha rhog rhogz rhoz sigg sigz
 
-observables Y P
+@observables Y P
 
-model
+@model
 
 	Y = Y{+1}+alpha*P+G;
 

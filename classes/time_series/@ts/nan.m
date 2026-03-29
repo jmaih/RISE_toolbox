@@ -25,11 +25,10 @@
 % 
 %    See also INF, ISNAN, ISFINITE, ISFLOAT.
 %
-%    Reference page in Doc Center
+%    Documentation for NaN
 %       doc nan
 %
-%    Other functions named nan
+%    Other uses of NaN
 %
-%       codistributed/nan      codistributor2dbc/nan    gpuArray/nan
-%       codistributor1d/nan    distributed/nan          ts/nan
+%       codistributed/NaN    distributed/NaN    gpuArray/NaN
 %

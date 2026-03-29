@@ -49,10 +49,10 @@
 %        
 %    See also STRIP, STRING/PLUS
 %
-%    Reference page in Doc Center
+%    Documentation for pad
 %       doc pad
 %
-%    Other functions named pad
+%    Other uses of pad
 %
 %       codistributed/pad    tall/pad
 %

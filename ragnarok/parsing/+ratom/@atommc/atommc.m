@@ -1,0 +1,2 @@
+%atommc is a class.
+%

@@ -1,9 +1,9 @@
-endogenous aj ak ap arr aw az b bnot c c1 data_ctot data_dp data_dwtot data_ik data_ntot data_q data_r data_rnot dp dp1 dp2 dp3 dw dw1 h1 ik k lm maxlev n n1 q qk r rk
+@endogenous aj ak ap arr aw az b bnot c c1 data_ctot data_dp data_dwtot data_ik data_ntot data_q data_r data_rnot dp dp1 dp2 dp3 dw dw1 h1 ik k lm maxlev n n1 q qk r rk
 rnot uc uc1 uh uh1 w w1 xp xw xw1 y z_j
 
-exogenous eps_j eps_k eps_p eps_r eps_w eps_z
+@exogenous eps_j eps_k eps_p eps_r eps_w eps_z
 
-parameters BETA BETA1 EC EH ETA JEI M ALPHA PHIK DK LAGP LAGW PIBAR INDTR
+@parameters BETA BETA1 EC EH ETA JEI M ALPHA PHIK DK LAGP LAGW PIBAR INDTR
 SIGMA TAYLOR_P TAYLOR_Q TAYLOR_R TAYLOR_Y TETAP TETAW XP_SS XW_SS 
 RHO_J RHO_K RHO_P RHO_R RHO_W RHO_Z
 STD_J STD_K STD_P STD_R STD_W STD_Z RHO_J2 RHOD % ITAYLOR_W
@@ -12,11 +12,11 @@ debt_tp_1_2 debt_tp_2_1
 
 zlb_tp_1_2 zlb_tp_2_1
  
-parameters(debt,2) debtflag
+@parameters(debt,2) debtflag
 
-parameters(zlb,2) zlbflag
+@parameters(zlb,2) zlbflag
 
-model
+@model
 
 	? lm>=0;	 % horzcat(lm,-maxlev)>=0;
 	? log(r)>=0; % horzcat(log(r),-log(rnot))>=0;   

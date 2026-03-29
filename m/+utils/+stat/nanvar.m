@@ -1,4 +1,6 @@
 % NANVAR Variance, ignoring NaNs.
+%    nanvar is not recommended. Use var instead.
+% 
 %    Y = NANVAR(X) returns the sample variance of the values in X, treating
 %    NaNs as missing values.  For a vector input, Y is the variance of the
 %    non-NaN elements of X.  For a matrix input, Y is a row vector
@@ -20,14 +22,24 @@
 %    operates, and its non-NaN elements must be nonnegative.  Elements of X
 %    corresponding to NaN elements of W are ignored.
 % 
-%    Y = NANVAR(X,W,DIM) takes the variance along dimension DIM of X.
+%    Y = NANVAR(X,0,'all') or Y = NANVAR(X,1,'all') returns the variance of
+%    all elements of X. A weight of 0 normalizes by N-1 and a weight of 1
+%    normalizes by N.
+% 
+%    Y = NANVAR(X,W,DIM) takes the variance along the dimension DIM of X.
+% 
+%    Y = NANVAR(X,0,VECDIM) or Y = NANVAR(X,1,VECDIM) operates on the
+%    dimensions specified in the vector VECDIM. A weight of 0 normalizes by
+%    N-1 and a weight of 1 normalizes by N. For example, VAR(X,0,[1 2])
+%    operates on the elements contained in the first and second dimensions
+%    of X.
 % 
 %    See also VAR, NANSTD, NANMEAN, NANMEDIAN, NANMIN, NANMAX, NANSUM.
 %
-%    Reference page in Doc Center
-%       doc stats/nanvar
+%    Documentation for nanvar
+%       doc nanvar
 %
-%    Other functions named nanvar
+%    Other uses of nanvar
 %
-%       distributed/nanvar    fints/nanvar
+%       distributed/nanvar
 %

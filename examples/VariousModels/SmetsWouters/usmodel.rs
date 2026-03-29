@@ -1,18 +1,18 @@
-endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a
+@endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a
 b g qs ms  spinf sw kpf kp
 
-endogenous labobs robs pinfobs dy dc dinve dw
+@endogenous labobs robs pinfobs dy dc dinve dw
  
-exogenous ea eb eg  eqs  em  epinf ew   
+@exogenous ea eb eg  eqs  em  epinf ew   
  
-parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
+@parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
 czcap csadjcost ctou csigma chabb cfc 
 cindw cprobw cindp cprobp csigl clandaw  crpi crdy cry crr 
 crhoa crhoas crhob crhog crhols crhoqs crhoms crhopinf crhow  
 ctrend cg, sig_a, sig_b,sig_w,sig_pinf,sig_m,sig_qs,sig_g
 
 
-model 
+@model 
 
 		# cpie=1+constepinf/100;
 		# cgamma=1+ctrend/100 ;
@@ -90,10 +90,10 @@ model
 		robs =    1*(r) + conster;
 		labobs = lab + constelab;
 
-observables dy dc dinve dw pinfobs robs labobs
+@observables dy dc dinve dw pinfobs robs labobs
 
 
-parameterization
+@parameterization
 	% fixed parameters
 	crhoas,1; 	 % this parameter does not enter the model
 	crhols,    0.9928;  % this parameter does not enter the model
@@ -118,26 +118,26 @@ parameterization
 	cgy,      0.51,.1,1.5,normal_pdf(.9);
 	
 	csadjcost, 6.0144,1,7,normal_pdf(0.9);
-	chabb,     0.6361,0.3,0.7,beta_pdf(.9);    
-	cprobw,    0.8087,0.3,0.7,beta_pdf(.9);
+	chabb,     0.6361,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta    
+	cprobw,    0.8087,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
 	csigl,     1.9423,.5,3.5,normal_pdf(.9);
-	cprobp,    0.6,0.3,0.7,beta_pdf(.9);
-	cindw,     0.3243,0.3,0.7,beta_pdf(.9);
-	cindp,     0.47,0.3,0.7,beta_pdf(.9);
-	czcap,     0.2696,0.3,0.7,beta_pdf(.9);
+	cprobp,    0.6,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	cindw,     0.3243,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	cindp,     0.47,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	czcap,     0.2696,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
 	crpi,      1.488,1,2,normal_pdf(.9);
-	crr,       0.8762,0.3,0.7,beta_pdf(.9);
+	crr,       0.8762,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
 	cry,       0.0593,0.025,0.225,normal_pdf(.9);
 	crdy,      0.2347,0.025,0.225,normal_pdf(.9);
-	crhoa,     0.9977,0.2,0.8,beta_pdf(.9);
-	crhob,     0.5799,0.3,0.7,beta_pdf(.9);
-	crhog,     0.9957,0.2,0.8,beta_pdf(.9);
-	crhoqs,    0.7165,0.3,0.7,beta_pdf(.9);
-	crhoms,    .3,0.3,0.7,beta_pdf(.9);
-	crhopinf,  0.8,0.3,0.7,beta_pdf(.9);
-	crhow,     0.8,0.3,0.7,beta_pdf(.9);
-	cmap ,     0.7,0.3,0.7,beta_pdf(.9);
-	cmaw  ,    0.7,0.3,0.7,beta_pdf(.9);
+	crhoa,     0.9977,0.2,0.8,0,1,beta_pdf(.9); % Generalized beta
+	crhob,     0.5799,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	crhog,     0.9957,0.2,0.8,0,1,beta_pdf(.9); % Generalized beta
+	crhoqs,    0.7165,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	crhoms,    .3,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	crhopinf,  0.8,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	crhow,     0.8,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	cmap ,     0.7,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
+	cmaw  ,    0.7,0.3,0.7,0,1,beta_pdf(.9); % Generalized beta
 	% derived from steady state
 	constebeta, 0.7420,.05,.8,gamma_pdf(.9);
 	

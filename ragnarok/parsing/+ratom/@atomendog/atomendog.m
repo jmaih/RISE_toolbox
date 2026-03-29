@@ -1,0 +1,2 @@
+%atomendog is a class.
+%

@@ -16,5 +16,4 @@
 %       t=1,2,3,...,T, where T is the number of observations
 % 
 %     varargin: additional arguments to func
-% 
 %

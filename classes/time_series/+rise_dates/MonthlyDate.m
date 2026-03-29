@@ -1,0 +1,2 @@
+%MonthlyDate is a class.
+%

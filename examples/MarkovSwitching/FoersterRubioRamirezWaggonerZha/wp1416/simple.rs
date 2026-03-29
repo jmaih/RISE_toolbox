@@ -5,19 +5,19 @@
 % Atlanta Fed working paper 2014-16
 %-------------------------------------------------------------
 
-endogenous PAI
+@endogenous PAI
 
-exogenous E
+@exogenous E
 
-parameters s_tp_1_2 s_tp_2_1
+@parameters s_tp_1_2 s_tp_2_1
 
-parameters(s,2) phi sigma
+@parameters(s,2) phi sigma
 
-model
+@model
 
 	phi*PAI+sigma*E=PAI{+1};
 
-parameterization
+@parameterization
     phi(s,1),1.25;
 	phi(s,2),0.96;
 	sigma(s,1), 0.1;

@@ -5,7 +5,7 @@ linear=~true;
 if linear
     m=rise('targets_lin');
 else
-    m=rise('targets','steady_state_file','sstate_model');
+    m=rise('targets','sstate_file','sstate_model');
 end
 %% get the parameters
 version='a';
@@ -32,7 +32,7 @@ myirfs=irf(ms);
 myvars={'Y','PAI','R','X'};
 locs=locate_variables(myvars,ms.endogenous.name);
 myvtex=ms.endogenous.tex_name(locs);
-sstate=get(ms,'sstate');
+stst=get(ms,'sstate');
 ssdev=false;
 
 shocks={'EPS_A','EPS_E','EPS_Z','EPS_V','EPS_PAI'};%m.exogenous.name;
@@ -47,7 +47,7 @@ for ishock=1:numel(shocks)
     for ivar=1:numel(myvars)
         vname=myvars{ivar};
         if ssdev
-            ss=sstate.(vname);
+            ss=stst.(vname);
         end
         iter=iter+1;
         subplot(5,4,iter)

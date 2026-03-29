@@ -1,16 +1,16 @@
-endogenous	Y, ZI, ZPAI, ZY, I, PAI, R
+@endogenous	Y, ZI, ZPAI, ZY, I, PAI, R
 
-exogenous EI "monetary policy shock",EPAI "Cost push shock",EY "IS shock"
+@exogenous EI "monetary policy shock",EPAI "Cost push shock",EY "IS shock"
 
-parameters beta_lag "$\beta_{lag}$", beta_lead "$\beta_{lead}$", beta_r "$\beta_{r}$",
+@parameters beta_lag "$\beta_{lag}$", beta_lead "$\beta_{lead}$", beta_r "$\beta_{r}$",
 gam_lag "$\gamma_{lag}$", gam_y "$\gamma_{y}$", lamb_lag "$\lambda_{lag}$",
 lamb_lead "$\lambda_{lead}$", lamb_y "$\lambda_{y}$",
 rhoi "$\rho_{i}$", rhopai "$\rho_{\pi}$", rhoy "$\rho_{y}$",
 siggdp "$\sigma_{gdp}$", sigi "$\sigma_{i}$", sigpai "$\sigma_{\pi}$", sigy "$\sigma_{y}$"
 
-parameters hbe_lambda hbe_w
+@parameters hbe_lambda hbe_w
 
-model
+@model
 
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
 
@@ -27,7 +27,7 @@ model
    ZY=rhoy*ZY(-1)+sigy*EY;
 
    
-parameterization;
+@parameterization;
 	beta_lag 	 ,0.0000;
 	beta_lead	 ,0.9900;
 	beta_r  	 ,0.1000;

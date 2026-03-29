@@ -14,7 +14,6 @@
 %     markov_chains ():XXXXXXXXXX
 %     is_time_varying_trans_prob ():XXXXXXXXX
 %     is_switching (bool): whether a markov switching VAR
-%     is_panel (bool): whether a penal VAR or not
 %     nlags (integer): number of lags to include
 %     nx (integer): number of exogenous variables (constants count as exogenous variables)
 %     ng (integer): number of "countries," i.e., the dimensionality of the penal
@@ -23,9 +22,8 @@
 %     nregs (integer): XXXXX
 %     panel_types (cellstring): available panel types
 %     panel_with_constant (cellstring): available penal types with constants
-% 
 %
-%    Reference page in Doc Center
+%    Documentation for rfvar
 %       doc rfvar
 %
 %

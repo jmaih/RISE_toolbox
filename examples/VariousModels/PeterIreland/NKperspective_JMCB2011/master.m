@@ -19,9 +19,8 @@ m=set(m,'parameters',p);
 
 %% estimate model
 clc
-log_vars=[];%{'A','C','G','LAMBDA','PAI','Q','R','THETA','X','Y','Z'};
-[mest,filtration]=estimate(m,'data',data,'estim_priors',priors,...
-    'solve_log_approx_vars',log_vars);
+[mest,filtration]=estimate(m,'data',data,'estim_priors',priors);
+
 %% Impulse response functions
 myirfs=irf(mest);
 % % close,shock='EPS_Z';plot(cumsum(myirfs.(shock).Z)+myirfs.(shock).Y)

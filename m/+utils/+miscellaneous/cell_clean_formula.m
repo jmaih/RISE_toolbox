@@ -1,2 +1,3 @@
-%  (X)^2--> X^2
+%cell_clean_formula is a function.
+%    C = cell_clean_formula(C0)
 %

@@ -2,15 +2,15 @@
 % by Campbell Leith and Ding Liu. Working paper 2014 06,
 % University of Glasgow.
 
-endogenous R, DELTA, Z, C, W, N, K, J, PSTAR, PI, MC
+@endogenous R, DELTA, Z, C, W, N, K, J, PSTAR, PI, MC
 
-exogenous EZ, ER
+@exogenous EZ, ER
 
-parameters Beta, sigma, psi, epsilon, theta, kappa_c, kappa_pi, rho_r, rho, phi,
+@parameters Beta, sigma, psi, epsilon, theta, kappa_c, kappa_pi, rho_r, rho, phi,
 std_EZ	
 std_ER
 
-model
+@model
 
     Beta*R*((C/C(1))^sigma*(1/PI(1))) - 1;
 	
@@ -35,7 +35,7 @@ model
 	
     log(Z/steady_state(Z)) - rho*log(Z(-1)/steady_state(Z)) - std_EZ*EZ;
 
-steady_state_model
+@steady_state_model
 	PI = 1;
 	DELTA = 1;
 	Z = 1;
@@ -49,7 +49,7 @@ steady_state_model
 	PSTAR = (epsilon/(epsilon - 1))*(K/J);
 	R = PI/Beta;
 
-parameterization
+@parameterization
 	Beta , 0.99;
 	sigma , 2;
 	psi , 3;

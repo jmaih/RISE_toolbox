@@ -3,10 +3,13 @@
 % 
 %    See also TANH.
 %
-%    Reference page in Doc Center
+%    Documentation for atanh
 %       doc atanh
 %
-%    Other functions named atanh
+%    Other uses of atanh
 %
-%       codistributed/atanh    gpuArray/atanh    sym/atanh    ts/atanh
+%       adolm/atanh            rsymbdiff/atanh    symbolic/atanh
+%       aplanar/atanh          splanar/atanh      tabular/atanh
+%       codistributed/atanh    sym/atanh          ts/atanh
+%       gpuArray/atanh
 %

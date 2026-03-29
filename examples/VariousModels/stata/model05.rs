@@ -1,13 +1,13 @@
 % Specifying a shock on a control variable (page 45)
-endogenous C N W
+@endogenous C N W
 
-exogenous  E EW
+@exogenous  E EW
 
-parameters h sige gam rho sigw
+@parameters h sige gam rho sigw
 
-observables C N
+@observables C N
 
-model
+@model
 
 	C = (1-h)*W+h*C{+1}+sige*E;
 

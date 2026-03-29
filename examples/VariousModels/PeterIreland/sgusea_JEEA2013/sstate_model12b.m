@@ -157,7 +157,7 @@ else
     Q_H =  R - (1-p.delta)/v;
     Q_F =  R - (1-p.delta)/v;
     
-    P_F = fsolve(@pfssfn,1,optimset('Display','none'));
+    P_F = fsolve(@pfssfn,1,optimset('Display','off'));
     
     [P_A,P_B,Y_A,Y_B,A_H,A_F]=many_variables(P_F);
     

@@ -1,7 +1,7 @@
-endogenous C "Consumption" I "Total investment" AG "Growth-rate-stationary pref. process" H "Total labor supply"
+@endogenous C "Consumption" I "Total investment" AG "Growth-rate-stationary pref. process" H "Total labor supply"
 AL "level-stationary pref. process" G_H "Growth rate of hours" A "Preference shock"
 
-@#for ii in Sektors		
+@for ii in Sektors		
 	ZG_@{ii} "Growth-rate-stationary techn. process @{ii}"
 	LAMBDA_@{ii} "Multiplier on production @{ii}"
 	H_@{ii} "Labor supply in sector @{ii}"
@@ -11,25 +11,25 @@ AL "level-stationary pref. process" G_H "Growth rate of hours" A "Preference sho
 	XI_@{ii} "Multiplier on capital accumulation @{ii}"
 	ZL_@{ii} "Level-stationary techn. process @{ii}"
 	G_@{ii} "Growth rate of @{ii}"
-@#end
+@end
 
 LG_C LG_I LG_H
 
-observables LG_C LG_I LG_H
+@observables LG_C LG_I LG_H
 
-exogenous ELA EAG
-@#for ii in Sektors		
+@exogenous ELA EAG
+@for ii in Sektors		
 	EL_@{ii} EG_@{ii}
-@#end
+@end
 
-parameters gam beta	rhola sigla	agtr rhoga sigga  phik_C_tr phih_C_tr
+@parameters gam beta	rhola sigla	agtr rhoga sigga  phik_C_tr phih_C_tr
 
-@#for ii in Sektors
+@for ii in Sektors
 	theta_@{ii} eta_@{ii}	kappa_@{ii}	delta_@{ii}	rhol_@{ii}
 	sigl_@{ii} zg_@{ii}_tr	rhog_@{ii}	sigg_@{ii}
-@#end
+@end
 
-model
+@model
 	# phik_C = 100*abs(phik_C_tr);
 	# phik_I = phik_C;
 	# phih_C = 100*abs(phih_C_tr);
@@ -41,25 +41,25 @@ model
 	1/(C-gam*C{-1}/(AG{-1}*ZG_I{-1}^theta_C*ZG_C{-1}^(1-theta_C)))-
 		beta*gam*1/((AG*ZG_I^theta_C*ZG_C^(1-theta_C))*C{+1}-gam*C)=LAMBDA_C;
 
-@#for ii in Sektors		
+@for ii in Sektors		
 	1/A=(1-theta_@{ii})*LAMBDA_@{ii}*@{ii}/H_@{ii}-phih_@{ii}*LAMBDA_@{ii}*(AG{-1}*H_@{ii}/H_@{ii}{-1}-eta_@{ii})*
 		AG{-1}/H_@{ii}{-1}*(1-phik_@{ii}/2*(I_@{ii}/K_@{ii}{-1}-kappa_@{ii})^2)*K_@{ii}{-1}^theta_@{ii}*(Z_@{ii}*H_@{ii})^(1-theta_@{ii})+
 		beta*phih_@{ii}*LAMBDA_@{ii}{+1}*(AG*H_@{ii}{+1}/H_@{ii}-eta_@{ii})*AG*H_@{ii}{+1}/H_@{ii}*1/H_@{ii}*(1-phik_@{ii}/2*
 		(I_@{ii}{+1}/K_@{ii}-kappa_@{ii})^2)*K_@{ii}^theta_@{ii}*(Z_@{ii}{+1}*H_@{ii}{+1})^(1-theta_@{ii});
 
 	XI_@{ii}=LAMBDA_I
-		@#if strcmp('@{ii}','I')
+		@if strcmp('@{ii}','I')
 			*(1
-		@#end
+		@end
 		+phik_@{ii}*
-		@#if strcmp('@{ii}','C')
+		@if strcmp('@{ii}','C')
 			LAMBDA_@{ii}*
-		@#end
+		@end
 		(1-phih_@{ii}/2*(AG{-1}*H_@{ii}/H_@{ii}{-1}-eta_@{ii})^2)*
 			(I_@{ii}/K_@{ii}{-1}-kappa_@{ii})*K_@{ii}{-1}^(theta_@{ii}-1)*(Z_@{ii}*H_@{ii})^(1-theta_@{ii})
-		@#if strcmp('@{ii}','I')
+		@if strcmp('@{ii}','I')
 			)
-		@#end
+		@end
 		;
 
 	AG*Z_I*XI_@{ii}=beta*(1-delta_@{ii})*XI_@{ii}{+1}+beta*theta_@{ii}*LAMBDA_@{ii}{+1}*@{ii}{+1}/K_@{ii}+beta*phik_@{ii}*LAMBDA_@{ii}{+1}*
@@ -75,7 +75,7 @@ model
 	log(ZL_@{ii})=rhol_@{ii}*log(ZL_@{ii}{-1})+sigl_@{ii}*EL_@{ii};
 
 	log(ZG_@{ii}/zg_@{ii})=rhog_@{ii}*log(ZG_@{ii}{-1}/zg_@{ii})+sigg_@{ii}*EG_@{ii};
-@#end
+@end
 
 	I=I_C+I_I;
 

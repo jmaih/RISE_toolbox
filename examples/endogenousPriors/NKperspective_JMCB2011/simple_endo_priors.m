@@ -4,11 +4,18 @@ function v=simple_endo_priors(obj,filtration) %#ok<INUSD>
 
 nconstr=5;
 
-is_initial=nargin==0;
-
-if is_initial
+if nargin==1
     
     v = cell(nconstr,1);
+
+	for ii=1:nconstr
+	    	    
+	    v{ii}={0.005,2*0.005,'gamma'};
+	            
+	end
+
+    v = struct('priors',{v},...
+        'kf_filtering_level',0);
     
 else
     
@@ -17,32 +24,18 @@ else
     C_A=double(myirfs.EPS_A.C);
     
     v = zeros(nconstr,1);
+
+	pointer=0;
+	
+	for ii=1:nconstr
+	    
+	    pointer=pointer+1;
+	    
+	    v(pointer)=C_A(pointer+1);
+	            
+	end
     
 end
 
-pointer=0;
-
-for ii=1:nconstr
-    
-    pointer=pointer+1;
-    
-    if is_initial
-
-        v{pointer}={0.005,2*0.005,'gamma'};
-        
-    else
-        
-        v(pointer)=C_A(pointer+1);
-        
-    end
-    
-end
-
-if is_initial
-    
-    v = struct('priors',{v},...
-        'kf_filtering_level',0);
-    
-end
 
 end

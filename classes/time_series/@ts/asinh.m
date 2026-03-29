@@ -3,10 +3,13 @@
 % 
 %    See also SINH.
 %
-%    Reference page in Doc Center
+%    Documentation for asinh
 %       doc asinh
 %
-%    Other functions named asinh
+%    Other uses of asinh
 %
-%       codistributed/asinh    gpuArray/asinh    sym/asinh    ts/asinh
+%       adolm/asinh            rsymbdiff/asinh    symbolic/asinh
+%       aplanar/asinh          splanar/asinh      tabular/asinh
+%       codistributed/asinh    sym/asinh          ts/asinh
+%       gpuArray/asinh
 %

@@ -1,7 +1,7 @@
 %generic is a class.
 %    obj = generic(varargin)
 %
-%    Reference page in Doc Center
+%    Documentation for generic
 %       doc generic
 %
 %

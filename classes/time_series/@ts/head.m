@@ -1,15 +1,20 @@
-%--- help for tabular/head ---
-%
-% HEAD  Get first few rows of a table or a timetable.
-%    B = HEAD(A) gets the first few rows of the table A and returns the
-%    results in the table B.
+% HEAD Get first rows of array, table, or timetable
+%    HEAD(A) displays the first eight rows of the array or table A in the
+%    command window without storing a value.
 % 
-%    B = HEAD(A,K) returns up to K rows from the beginning of the table A.
-%    If A contains fewer than K rows, then the entire table is returned.
+%    HEAD(A,K) displays up to K rows from the beginning of A. If A contains
+%    fewer than K rows, then the entire array or table is displayed.
 % 
-%    See also: TAIL, TABLE, TIMETABLE.
+%    B = HEAD(A) or B = HEAD(A,K) returns the first eight rows, or up to K
+%    rows, of the array or table A.
+% 
+%    See also TAIL, TOPKROWS, SIZE
 %
-%    Other functions named head
+%    Documentation for head
+%       doc head
+%
+%    Other uses of head
 %
 %       codistributed/head    gpuArray/head    tall/head    ts/head
+%       distributed/head
 %

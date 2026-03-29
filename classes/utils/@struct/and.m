@@ -12,16 +12,32 @@
 % 
 %    Note that there are two logical AND operators in MATLAB. The & operator
 %    performs an element-by-element AND between matrices, while the &&
-%    operator performs a short-circuit AND between scalar values. See the
-%    documentation for details.
+%    operator performs a short-circuit AND between scalar values. 
+%  
+%    See <a href="matlab:helpview('matlab','MATLAB_OPS')">MATLAB Operators and Special Characters</a> for more details.
 % 
-%    See also RELOP, OR, XOR, NOT.
+%    See also OR, XOR, NOT.
 %
-%    Reference page in Doc Center
+%    Documentation for and
 %       doc and
 %
-%    Other functions named and
+%    Other uses of and
 %
-%       codistributed/and    mtree/and     sym/and    ts/and
-%       gpuArray/and         struct/and
+%       adolm/and
+%       aplanar/and
+%       codistributed/and
+%       gpuArray/and
+%       matlab.unittest.constraints.AbsoluteTolerance/and
+%       matlab.unittest.constraints.BooleanConstraint/and
+%       matlab.unittest.constraints.StartsWithSubstring/and
+%       matlab.unittest.internal.selectors.Modifier/and
+%       matlab.unittest.internal.selectors.NeverFilterSelector/and
+%       mtree/and
+%       rsymbdiff/and
+%       splanar/and
+%       struct/and
+%       sym/and
+%       symbolic/and
+%       tabular/and
+%       ts/and
 %

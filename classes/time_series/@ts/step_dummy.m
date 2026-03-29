@@ -15,5 +15,4 @@
 % 
 %     - **db** (ts object): a time series with zeros from the first observation to the date
 %       before the start of the dummy and ones from then on.
-% 
 %

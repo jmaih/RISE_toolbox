@@ -1,3 +1,4 @@
+% 
 %  dsge_udc undetermined coefficients-type of solution algorithm for DSGE models.
 %  The procedure can find all possible solutions for a constant-parameter
 %  DSGE model or a regime-switching DSGE model with diagonal transition
@@ -5,9 +6,9 @@
 % 
 %  ::
 % 
-%    [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,T0,TolFun,maxiter)
+%    [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,T0)
 % 
-%    [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,T0,TolFun,maxiter,varargin)
+%    [Tz_pb,eigvals,retcode]=dsge_udc(Alead,Acurr,Alag,Q,T0,slvOpts)
 % 
 %  Args:
 % 
@@ -25,11 +26,9 @@
 % 
 %      - **T0** [n x n x h array] : Initial guess for the solution (Not used)
 % 
-%      - **TolFun** [numeric] : Tolerance criterion for solution (Not used)
+%      - **slvOpts** [empty|struct] : structure with options for solving.
+%        The relevant fields are : 
 % 
-%      - **maxiter** [numeric] : Maximum number of iterations (Not used)
-% 
-%      - **varargin** [] : additional arguments
 %         - **refine** [true|{false}] : solve for sigma=1 instead of just
 %           sigma=0
 %         - **checkStab** [true|{false}] : check the stability of the
@@ -41,6 +40,8 @@
 %           computed we still can restrict ourselves to solutions that do not
 %           involve explosive roots
 %         - **debug** [true|{false}] : debug or not
+%         - **TolFun** [numeric] : Tolerance criterion for solution (Not used)
+%         - **maxiter** [numeric] : Maximum number of iterations (Not used)
 % 
 %  Returns:
 %     :

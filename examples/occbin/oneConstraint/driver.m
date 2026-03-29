@@ -25,13 +25,13 @@ p.ocb_tp_2_1=0;
 
 %% push parameters + steady state file
 
-m=set(m,'parameters',p,'steady_state_file','ssfile_full');
+m=set(m,'parameters',p,'sstate_file','ssfile_full');
 
 %% Inform RISE that we are solving a piecewise-linear model
 
 m = set(m,'solve_occbin',1,... % this is the ID of the reference regime
-    'steady_state_imposed',true,... % the steady state is the steady state of the reference regime
-    'steady_state_unique',true); % the steady state is unique
+    'sstate_imposed',true,... % the steady state is the steady state of the reference regime
+    'sstate_unique',true); % the steady state is unique
 
 %% solve the model
 
@@ -44,8 +44,7 @@ print_solution(m)
 %%
 clc
 
-mysims = simulate(m,'simul_periods',1000,...
-    'simul_honor_constraints',true);
+mysims = simulate(m,'simul_periods',1000);
 
 %% pick variables
 
@@ -86,7 +85,7 @@ end
 
 %% do the irfs honoring constraints
 
-myirfs_c=irf(M,'simul_honor_constraints',true);
+myirfs_c=irf(M);
 
 %% plot each shock in turn
 shock_names=get(m,'exo_list');

@@ -5,12 +5,12 @@
 % 
 %    See also ISFINITE, ISNAN.
 %
-%    Reference page in Doc Center
+%    Documentation for isinf
 %       doc isinf
 %
-%    Other functions named isinf
+%    Other uses of isinf
 %
-%       calendarDuration/isinf    duration/isinf    sym/isinf
+%       calendarDuration/isinf    duration/isinf    symbolic/isinf
 %       codistributed/isinf       gpuArray/isinf    ts/isinf
-%       datetime/isinf
+%       datetime/isinf            sym/isinf
 %

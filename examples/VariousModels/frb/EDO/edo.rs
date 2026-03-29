@@ -2,7 +2,7 @@
 %
 % Done 22-Jul-2017 17:34:51.
 
-endogenous
+@endogenous
 
 RC	"Marginal product of capital in the slow-growth sector"
 RK	"Marginal product of capital in the fast-growth sector"
@@ -102,13 +102,13 @@ R_obs	"Observed federal funds rate"
 RT2_obs	"Observed two-year treasury rate"
 unemp_obs	"Observed unemployment rate"
 
-exogenous eHG "Exogenous spending shock" eXiL "Wage markup shock" eLpref "The innovation to the labor supply shock" eR "Shock to monetary-policy reaction function"
+@exogenous eHG "Exogenous spending shock" eXiL "Wage markup shock" eLpref "The innovation to the labor supply shock" eR "Shock to monetary-policy reaction function"
 eMUZK "Shock to investment-specific technology" eMUZM "Shock to economy-wide technology" ePMKC "Price markup shock in slow-growth sector"
 ePMKK "Price markup shock in fast-growing sector" eEFFECH "Residential construction risk-premium shock" eEFFECD "Consumer durables risk-premium shock"
 eEFFK "Business investment risk-premium shock" eB "Aggregate risk-premium shock" eSTAR "Term-premium shock"
 
 
-parameters h r_inf r_y r_dy phi_pc phi_H phi_wc phi_ic phi_cd phi_ech gam_pc gam_wc gam_ic gam_icd rho_R rho_B rho_STAR rho_EFFK rho_EFFECD rho_HG rho_EFFECH tp2
+@parameters h r_inf r_y r_dy phi_pc phi_H phi_wc phi_ic phi_cd phi_ech gam_pc gam_wc gam_ic gam_icd rho_R rho_B rho_STAR rho_EFFK rho_EFFECD rho_HG rho_EFFECH tp2
 ONE MUZMSS MUZKSS r_dinf rpr phi_u rho_MUZK rho_MUZM pbeta delta_ h_cd h_ch delta_cd delta_ch alpha_ theta_c theta_k theta_wc theta_wk g_y a_ks s_AS gam_h
 gam_ech s_k s_ecdc eta_cnn eta_cd eta_ch icoef mu_ betarl MUZCSS RCSS RKSS WCSS WKSS YCSS YKSS MCCSS MCKSS KCSS KKSS LSS HCSS HKSS QKSS PKBSS RSS ECSS EIKSS
 INFCSS INFKSS INFWCSS INFWKSS MUCSS MUKSS AHSS ECDSS KCDSS QCDSS RCDSS ECHSS KCHSS QCHSS RCHSS UKSS UCSS USS MUKSShabit MUCSShabit INFCNASS INFCORSS INFC10SS
@@ -119,9 +119,9 @@ DIFFREALECHSS DIFFREALEIKSS DIFFREALWSS RL1SS RL2SS RL3SS RL4SS RL5SS RL6SS RL7S
 DIFFREALECHSS_obs DIFFREALWSS_obs INFCNASS_obs INFCORSS_obs INFKSS_obs RSS_obs RT2SS_obs unempSS_obs std_eHG std_eXiL std_eLpref std_eR std_eMUZK std_eMUZM
 std_ePMKC std_ePMKK std_eEFFECH std_eEFFECD std_eEFFK std_eB std_eSTAR 
 
-observables DIFFREALGDP_obs DIFFREALEC_obs DIFFREALEIK_obs DIFFREALECD_obs DIFFREALECH_obs DIFFREALW_obs AH_obs INFCNA_obs INFCOR_obs INFK_obs R_obs RT2_obs unemp_obs
+@observables DIFFREALGDP_obs DIFFREALEC_obs DIFFREALEIK_obs DIFFREALECD_obs DIFFREALECH_obs DIFFREALW_obs AH_obs INFCNA_obs INFCOR_obs INFK_obs R_obs RT2_obs unemp_obs
 
-model 
+@model 
 
 RC-MCC*YC/UC/KC(-1)*alpha_*MUK=0;
 

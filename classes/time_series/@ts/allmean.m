@@ -16,5 +16,4 @@
 %        - 1st column: strings denoting the type of mean (Harmonic, Geometric, Arithmetic, Quadratic)
 %        - 1st row: variable names
 %        - otherwise: mean value corresponding to the variable and mean concept.
-% 
 %

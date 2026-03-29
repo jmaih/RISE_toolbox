@@ -6,6 +6,7 @@
 %    duplicates=dynare2rise(dynFileName,riseFileName)
 %    duplicates=dynare2rise(dynFileName,riseFileName,stderr_name)
 %    duplicates=dynare2rise(dynFileName,riseFileName,stderr_name,detrend)
+%    [duplicates,listOfFilesCreated]=dynare2rise(...)
 % 
 %  Args:
 % 
@@ -20,6 +21,7 @@
 %       deviations into parameters)
 % 
 %     - **detrend** [true|{false}]: 
+% 
 %       - when true, the model is written in stationary form like dynare
 %         would do behind the scenes. For log growth variables,
 %         y-->(y*trend). For linear growth variables, y-->(y+trend). The
@@ -38,12 +40,13 @@
 %         linear growth is normalized to 0.
 % 
 %  Returns:
-%     :
 % 
 %     - **duplicates** [struct] : structure containing information on the
 %       redundancies
 % 
-%  NB: the created files are 
+%     - **listOfFilesCreated** [cellstr] : list of files created
+% 
+%  .. note:: the created files are 
 % 
 %     - riseFileName.rs 
 % 
@@ -52,5 +55,5 @@
 % 
 %     - riseFileName_sstate.m (optional): steady state function file
 % 
-%  See also :
+%  See also : :ref:`aim2rise`
 %

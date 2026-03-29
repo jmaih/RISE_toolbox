@@ -5,9 +5,9 @@
 %  ::
 % 
 % 
-%    derivs=splanar.differentiate(eqtns,nwrt)
-%    derivs=splanar.differentiate(eqtns,nwrt,order)
-%    derivs=splanar.differentiate(eqtns,nwrt,order,verbose)
+%    dout=splanar.differentiate(eqtns,nwrt)
+%    dout=splanar.differentiate(eqtns,nwrt,order)
+%    dout=splanar.differentiate(eqtns,nwrt,order,verbose)
 % 
 %  Args:
 % 
@@ -28,7 +28,7 @@
 %  Returns:
 %     :
 % 
-%     - **derivs** [structure]: each element in the structure contains:
+%     - **dout** [structure]: each element in the structure contains:
 %       - **size** [2-colum vector]: number of rows and number of columns of
 %         the compacted derivatives i.e. unique columns
 %       - **derivatives** [vector of splanar]: derivatives
@@ -36,7 +36,7 @@
 %         taken
 %       - **order** [integer]: order of differentiation of the current
 %         structure
-%       - **nnz_derivs** [integer]: number of non-zero derivatives
+%       - **nnz_dout** [integer]: number of non-zero derivatives
 %       - **partitions** [vector]: vector that help reconstruct the
 %         expanded/grand derivative matrix.
 %       - **map** []: empty field that will be used in a later stage

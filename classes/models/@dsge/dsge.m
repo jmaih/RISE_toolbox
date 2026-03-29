@@ -5,10 +5,10 @@
 % 
 %  check_derivatives -  compares the derivatives and the solutions from various differentiation techniques
 %  check_optimum -   H1 line
-%  compute_steady_state -   H1 line
+%  sstate -   H1 line
 %  counterfactual -   H1 line
 %  create_estimation_blocks -   H1 line
-%  create_state_list - creates the list of the state variables in the solution
+%  state_var_list - creates the list of the state variables in the solution
 %  draw_parameter -   H1 line
 %  dsge -   default options
 %  estimate -  estimates the parameters of a RISE model
@@ -47,8 +47,6 @@
 % 
 %  definitions -   values of auxiliary parameters defined in the model file with a #
 %  equations - of the system
-%  folders_paths -   paths for the different folders in which RISE stores information
-%  dsge_var -
 %  filename -   name of the rs/rz/dsge file read
 %  legend -   attribute for giving a tag to a specific version of a model
 %  endogenous -   information on endogenous variables (names, number, types, etc.)
@@ -60,7 +58,7 @@
 %  estimation -   information on estimation: posterior maximization and simulation
 %  solution -   model solution including steady state, definitions, etc.
 %
-%    Reference page in Doc Center
+%    Documentation for dsge
 %       doc dsge
 %
 %

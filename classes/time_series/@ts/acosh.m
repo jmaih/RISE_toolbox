@@ -3,10 +3,13 @@
 % 
 %    See also COSH.
 %
-%    Reference page in Doc Center
+%    Documentation for acosh
 %       doc acosh
 %
-%    Other functions named acosh
+%    Other uses of acosh
 %
-%       codistributed/acosh    gpuArray/acosh    sym/acosh    ts/acosh
+%       adolm/acosh            rsymbdiff/acosh    symbolic/acosh
+%       aplanar/acosh          splanar/acosh      tabular/acosh
+%       codistributed/acosh    sym/acosh          ts/acosh
+%       gpuArray/acosh
 %

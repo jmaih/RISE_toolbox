@@ -9,7 +9,7 @@ m0=rise('frwz_nk');
 
 %% solve the model
 
-m=solve(m0,'steady_state_unique',true);
+m=solve(m0,'sstate_unique',true);
 
 part_list={};
 

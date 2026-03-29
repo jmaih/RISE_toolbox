@@ -5,14 +5,14 @@
 %-------------------------------------------------------------%
 
 %Endogenous variables
-endogenous	 X, "Output gap", PAI, "Inflation", R, "Fed Funds rate",
+@endogenous	 X, "Output gap", PAI, "Inflation", R, "Fed Funds rate",
 ZS, "Supply shock process", ZD "Demand shock process"
 
 %Exogenous variables
-exogenous ES,  "Supply shock", ED, "Demand shock", ER, "Monetary policy shock"
+@exogenous ES,  "Supply shock", ED, "Demand shock", ER, "Monetary policy shock"
 
 %parameters
-parameters tau, "$\tau $", beta_trans, "$100\left( \frac{1}{\beta }-1\right) $", 
+@parameters tau, "$\tau $", beta_trans, "$100\left( \frac{1}{\beta }-1\right) $", 
 kappa, "$\kappa $", rhor, "$\rho _{r}$",
 rhod, "$\rho _{d}$" rhos, "$\rho _{s}$"
 % N.B: we have removed the transition probabilities from the list of
@@ -21,10 +21,10 @@ rhod, "$\rho _{d}$" rhos, "$\rho _{s}$"
 % the relationship between the two is given in the model
 
 % observable variables
-varobs R, X, PAI
+@varobs R, X, PAI
 
 
-model
+@model
 	% auxiliary parameters
 	# beta=1/(1+beta_trans/100);
 	
@@ -43,7 +43,7 @@ model
 
 
 % the non-policy parameters never switch, they will be controlled by the const markov chain
-parameterization
+@parameterization
 	tau          ,    0.5376,     0.1000,    0.5000,  gamma_pdf(.90);
 	kappa        ,    0.5800,     0.0500,    1.0000,  gamma_pdf(.90);
 	beta_trans   ,    0.1000,     0.2000,    0.4000,  beta_pdf(.90);

@@ -2,21 +2,22 @@
 %
 %  Forecast from each point in time
 % 
-%  ::
+%  Syntax ::
 % 
 %     [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj)
+% 
 %     [ts_fkst,ts_rmse,rmse,Updates]=forecast_real_time(obj,varargin)
 % 
 %  Args:
 % 
-%     obj (dsge | svar | rfvar): model object
-%     varargin : valid optional inputs coming in pairs. The main inputs
+%     - obj (dsge): model object
+% 
+%     - varargin : valid optional inputs coming in pairs. The main inputs
 %       of interest for changing the default behavior are:
 % 
 %       - **forecast_rt_nsteps** [integer] : number of periods ahead
 % 
 %  Returns:
-%     :
 % 
 %     - **ts_fkst** [struct] : fields are forecasts in the form of ts objects
 %       for the different endogenous variables
@@ -31,6 +32,6 @@
 %       the form of ts objects for the different endogenous variables
 % 
 %  See also:
-%     - plot_real_time
 % 
+%     - plot_real_time
 %

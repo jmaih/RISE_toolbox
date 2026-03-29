@@ -20,10 +20,7 @@ m=set(m,'parameters',p);
 %% set options
 
 clc
-log_vars=[];%{'A','C','G','LAMBDA','PAI','Q','R','THETA','X','Y','Z'};
-m=set(m,'data',data,...
-    'solve_log_approx_vars',log_vars,...
-    'estim_priors',priors);
+m=set(m,'data',data,'estim_priors',priors);
 
 %% estimate model without endogenous priors
 
@@ -65,7 +62,7 @@ for ivar=1:nvars
         shock=mest.exogenous.name{ishock};
         iter=iter+1;
         subplot(4,4,iter)
-        plot('0:20',100*myirfs.(shock).(vname),'linewidth',2)
+        plot(0:20,100*myirfs.(shock).(vname),'linewidth',2)
         axis tight
         title([tex.(vname),' to ',tex.(shock)])
         if ivar==1 && ishock==1

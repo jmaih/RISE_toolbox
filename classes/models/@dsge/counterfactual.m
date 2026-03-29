@@ -2,18 +2,16 @@
 %
 %  counterfactual Computes counterfactual history of a nonlinear DSGE model
 % 
-%  Syntax
-%  -------
-%  ::
+%  Syntax: ::
 % 
 %    counterf=counterfactual(m)
 %    counterf=counterfactual(m,sim_engine)
 %    counterf=counterfactual(m,sim_engine,nsim)
 %    counterf=counterfactual(m,sim_engine,nsim,shock_names)
 %    counterf=counterfactual(m,sim_engine,nsim,shock_names,varargin)
+%    [counterf,actual]=counterfactual(...)
 % 
-%  Inputs
-%  -------
+%  Inputs:
 % 
 %  - m : [rise|dsge] model(s) for which to compute the
 %    counterfactual. m could be a vector of models. The computation of the
@@ -33,34 +31,36 @@
 %  - varargin : additional information needed for the computation of the
 %    smoothed quantities through filtration.
 % 
-%  Outputs
-%  --------
+%  Outputs:
 % 
 %  - counterf : [struct|cell array] structure or cell array of structures
 %    with the counterfactuals in each model and each solution.
 % 
-%  Remarks
-%  --------
+%  - actual : [struct|cell array] structure or cell array of structures
+%    with the actuals (smoothed variables) in each model and each solution.
 % 
-%  - **N.B** : For a nonlinear model (e.g linear but switching), the type of
-%    decomposition/counterfactual we do for linear/linearized
-%    constant-parameter models is not feasible. RISE uses a monte carlo
-%    integration to provide an approximation to the
-%    decomposition/counterfactual
+%  Remarks:
 % 
-%  - **N.B** : if m is a vector of models, then each model should return a
-%    unique solution (implying a unique filtration), else the concatenation
-%    of counterfactuals will fail. In that case it is better to run one
-%    model at a time.
+%  .. note ::
 % 
-%  - **N.B** : When a model has multiple solutions, there is no guarantee
-%    that every solution will have succeed at filtration. For this reason,
-%    the result of each counterfactual is stored in a separate cell. Empty
-%    cells represent the solutions for which the filtration could not be
-%    obtained.
+%    - For a nonlinear model (e.g linear but switching), the type of
+%      decomposition/counterfactual we do for linear/linearized
+%      constant-parameter models is not feasible. RISE uses a monte carlo
+%      integration to provide an approximation to the
+%      decomposition/counterfactual
 % 
-%  Examples
-%  ---------
+%    - if m is a vector of models, then each model should return a
+%      unique solution (implying a unique filtration), else the concatenation
+%      of counterfactuals will fail. In that case it is better to run one
+%      model at a time.
 % 
-%  See also: dsge/historical_decomposition
+%    - When a model has multiple solutions, there is no guarantee
+%      that every solution will have succeed at filtration. For this reason,
+%      the result of each counterfactual is stored in a separate cell. Empty
+%      cells represent the solutions for which the filtration could not be
+%      obtained.
+% 
+%  Examples:
+% 
+%  See also: :ref:`dsge/historical_decomposition<rise.historical_decomposition>`
 %

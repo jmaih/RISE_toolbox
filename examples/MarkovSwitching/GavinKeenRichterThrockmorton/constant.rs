@@ -6,7 +6,7 @@
 %   (Model 2: Baseline with Capital)						 %
 %------------------------------------------------------------%
 
-endogenous W "Real wages"
+@endogenous W "Real wages"
 N "Labor Hours"
 C "Consumption"
 R "Nominal interest rate"
@@ -20,14 +20,14 @@ I "Investment"
 K "Capital"
 RTAYLOR
 
-exogenous  EZ "TFP shock" EBETA	"Discount shock"
+@exogenous  EZ "TFP shock" EBETA	"Discount shock"
 
-parameters	chi, eta, sigma, betass, delta, alpha, varphi, theta, paistar, phi_pai, phi_y
+@parameters	chi, eta, sigma, betass, delta, alpha, varphi, theta, paistar, phi_pai, phi_y
 zbar, rhoz, rhobeta, sigmabeta, sigmaz,nu, g_over_y, g, rbar
 
-parameters	k_over_y n_over_y i_over_y c_over_y
+@parameters	k_over_y n_over_y i_over_y c_over_y
 
-model
+@model
 	# paibar = paistar;
 	
 	W = chi*N^eta*C^sigma;
@@ -56,7 +56,7 @@ model
 
 	BETA = betass*(BETA{-1}/betass)^rhobeta*exp(sigmabeta*EBETA);
 
-steady_state_model(imposed) %,unique
+@steady_state_model
 	PSI = (theta-1)/theta;
 	Z = zbar;
 	BETA =  betass;
@@ -76,7 +76,7 @@ steady_state_model(imposed) %,unique
 	C = c_over_y*Y;
 	g = g_over_y*Y;
 
-parameterization
+@parameterization
 	chi, 4.507;
 	eta, 1/3;
 	sigma, 1;

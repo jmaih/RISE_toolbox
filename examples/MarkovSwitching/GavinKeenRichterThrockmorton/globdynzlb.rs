@@ -6,7 +6,7 @@
 %   (Model 2: Baseline with Capital)						 %
 %------------------------------------------------------------%
 
-endogenous W "Real wages"
+@endogenous W "Real wages"
 N "Labor Hours"
 C "Consumption"
 R "Nominal interest rate"
@@ -20,22 +20,22 @@ I "Investment"
 K "Capital"
 RTAYLOR
 
-exogenous  EZ "TFP shock" EBETA	"Discount shock"
+@exogenous  EZ "TFP shock" EBETA	"Discount shock"
 
-parameters	chi, eta, sigma, betass, delta, alpha, varphi, theta, paistar, phi_pai, phi_y
+@parameters	chi, eta, sigma, betass, delta, alpha, varphi, theta, paistar, phi_pai, phi_y
 zbar, rhoz, rhobeta, sigmabeta, sigmaz,nu, g_over_y, g, rbar
 gam	kappa1 kappa2
 
 
-parameters	k_over_y n_over_y i_over_y c_over_y
+@parameters	k_over_y n_over_y i_over_y c_over_y
 
-@#if exogenous_switching
+@if exogenous_switching
 	zlb_tp_1_2, zlb_tp_2_1
-@#end
+@end
 
-parameters(zlb,2) zlb_flag	% indicator 
+@parameters(zlb,2) zlb_flag	% indicator 
 
-model
+@model
 	# paibar = paistar;
 	# omicron1 = 1/kappa1-1;
 	# omicron2 = 1/kappa2-1;
@@ -43,10 +43,10 @@ model
 	% you have to say how exactly you move from one regime
 	% to the other and vice-versa
 	%-----------------------------------------------------
-	@#if ~exogenous_switching
+	@if ~exogenous_switching
 		! zlb_tp_1_2 = 1/(1+omicron1*exp(-gam*(BETA-betass)));% 0.1;
 		! zlb_tp_2_1 = 1/(1+omicron2*exp(gam*(BETA-betass)));% 0.2;
-	@#end
+	@end
 	
 	W = chi*N^eta*C^sigma;
 
@@ -74,7 +74,7 @@ model
 
 	BETA = betass*(BETA{-1}/betass)^rhobeta*exp(sigmabeta*EBETA);
 
-steady_state_model
+@steady_state_model
 	PSI = (theta-1)/theta;
 	Z = zbar;
 	BETA =  betass;
@@ -94,7 +94,7 @@ steady_state_model
 	C = c_over_y*Y;
 	g = g_over_y*Y;
 
-parameterization
+@parameterization
 	chi, 4.507;
 	eta, 1/3;
 	sigma, 1;
@@ -115,10 +115,10 @@ parameterization
 	sigmaz, 0.012;
 	zlb_flag(zlb,1),0;
 	zlb_flag(zlb,2),1;
-	@#if exogenous_switching
+	@if exogenous_switching
 		zlb_tp_1_2, 0.1;
 		zlb_tp_2_1,	0.2;
-	@#end
+	@end
 	gam, 10;
 	kappa1, 0.1;
 	kappa2, 0.2;

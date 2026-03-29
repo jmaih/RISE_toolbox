@@ -1,0 +1,2 @@
+%atom is a class.
+%

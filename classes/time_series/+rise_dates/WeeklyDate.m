@@ -1,0 +1,2 @@
+%WeeklyDate is a class.
+%

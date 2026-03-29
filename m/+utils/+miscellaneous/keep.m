@@ -22,3 +22,7 @@
 % 
 %     See also: clear
 %
+%    Other uses of keep
+%
+%       ratom.atommc/keep    struct/keep
+%

@@ -17,18 +17,18 @@
 % 
 %    BAR(AX,...) plots into AX instead of GCA.
 % 
-%    H = BAR(...) returns a vector of handles to barseries objects.
+%    H = BAR(...) returns a vector of handles to Bar objects.
 % 
-%    Examples: subplot(3,1,1), bar(rand(10,5),'stacked'), colormap(cool)
-%              subplot(3,1,2), bar(0:.25:1,rand(5),1)
-%              subplot(3,1,3), bar(rand(2,3),.75,'grouped')
+%    Examples: nexttile; bar(rand(10,5),'stacked')
+%              nexttile; bar(0:.25:1,rand(5),1)
+%              nexttile; bar(rand(2,3),.75,'grouped')
 % 
 %    See also HISTOGRAM, PLOT, BARH, BAR3, BAR3H.
 %
-%    Reference page in Doc Center
+%    Documentation for bar
 %       doc bar
 %
-%    Other functions named bar
+%    Other uses of bar
 %
-%       fints/bar    ts/bar
+%       ts/bar
 %

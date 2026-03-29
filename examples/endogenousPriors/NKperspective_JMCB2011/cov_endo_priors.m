@@ -1,4 +1,4 @@
-function v=cov_endo_priors(obj)
+function v=cov_endo_priors(obj,~)
 
 % this file demonstrates how to setup a simple endogenous prior problem
 
@@ -6,7 +6,7 @@ myList={'GHAT','PAIHAT','RHAT'};
 
 tight=1;
 
-if nargin==0
+if nargin==1
     
     sd=struct();
     
@@ -39,7 +39,7 @@ else
     % setting the number of autocovariances to 0 such that only the
     % variances are computed. We assume that the model does not need to be
     % resolved
-    [ac,retcode]=theoretical_autocovariances(obj,'autocov_ar',0,...
+    [ac,retcode]=theoretical_autocovariances(obj,[],[],'autocov_ar',0,...
         'autocov_model_resolve',false);
     
     if retcode
@@ -52,7 +52,7 @@ else
         
     end
     
-    variances=diag(ac(pos,pos,1));
+    variances=diag(ac{1}(pos,pos,1));
     
     mystdevs=sqrt(variances);
     

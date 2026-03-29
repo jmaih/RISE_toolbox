@@ -6,31 +6,34 @@
 %  
 %    Y = CUMSUM(___,DIRECTION) cumulates in the direction specified by
 %    DIRECTION using any of the above syntaxes:
-%      'forward' - (default) uses the forward direction, from beginning to end.
-%      'reverse' -           uses the reverse direction, from end to beginning.
 % 
-%    Y = CUMSUM(___,NANFLAG) specifies how NaN (Not-A-Number) values are 
-%    treated:
+%      "forward" - (default) uses the forward direction, from beginning to end.
+%      "reverse" -           uses the reverse direction, from end to beginning.
 % 
-%    'includenan' - (default) the sum of elements containing NaN values is NaN.
-%    'omitnan'    -           the sum of elements containing NaN values is 
-%                             the sum of all non-NaN elements. If all 
-%                             elements are NaN, the result is 0.
+%    Y = CUMSUM(___,NANFLAG) specifies how NaN values are treated:
+% 
+%    "includemissing" / "includenan" -
+%                    (default) The sum of elements containing NaN values is NaN.
+%    "omitmissing" / "omitnan"       -
+%                    The sum of elements containing NaN values is the sum of
+%                    all non-NaN elements. If all elements are NaN, the result
+%                    is 0.
 % 
 %    Example: 
 %        X = [0 1 2; 3 4 5]
 %        cumsum(X,1)
 %        cumsum(X,2)
-%        cumsum(X,1,'reverse')
-%        cumsum(X,2,'reverse')
+%        cumsum(X,1,"reverse")
+%        cumsum(X,2,"reverse")
 % 
 %    See also SUM, MOVSUM, CUMPROD, CUMMIN, CUMMAX.
 %
-%    Reference page in Doc Center
+%    Documentation for cumsum
 %       doc cumsum
 %
-%    Other functions named cumsum
+%    Other uses of cumsum
 %
-%       codistributed/cumsum    gpuArray/cumsum    tall/cumsum    ts/cumsum
-%       fints/cumsum            sym/cumsum
+%       codistributed/cumsum    sym/cumsum         tall/cumsum
+%       duration/cumsum         symbolic/cumsum    ts/cumsum
+%       gpuArray/cumsum         tabular/cumsum
 %

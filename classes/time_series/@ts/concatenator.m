@@ -11,8 +11,6 @@
 %     dbi (struct | ts): time series or structure of time series
 % 
 %  Returns:
-%     :
 % 
 %     - **myirfs** [struct] : structure containing the concatenated time series
-% 
 %

@@ -5,22 +5,29 @@
 %    For N-D arrays, S is the mean value of the elements along the first 
 %    array dimension whose size does not equal 1.
 % 
+%    MEAN(X,"all") is the mean of all elements in X.
+% 
 %    MEAN(X,DIM) takes the mean along the dimension DIM of X.
 % 
-%    S = MEAN(...,TYPE) specifies the type in which the mean is performed, 
+%    MEAN(X,VECDIM) operates on the dimensions specified in the vector 
+%    VECDIM. For example, MEAN(X,[1 2]) operates on the elements contained
+%    in the first and second dimensions of X.
+% 
+%    S = MEAN(...,OUTTYPE) specifies the type in which the mean is performed, 
 %    and the type of S. Available options are:
 % 
-%    'double'    -  S has class double for any input X
-%    'native'    -  S has the same class as X
-%    'default'   -  If X is floating point, that is double or single,
+%    "double"    -  S has class double for any input X
+%    "native"    -  S has the same class as X
+%    "default"   -  If X is floating point, that is double or single,
 %                   S has the same class as X. If X is not floating point, 
 %                   S has class double.
 % 
-%    S = MEAN(...,NANFLAG) specifies how NaN (Not-A-Number) values are 
-%    treated. The default is 'includenan':
+%    S = MEAN(...,NANFLAG) specifies how NaN values are treated:
 % 
-%    'includenan' - the mean of a vector containing NaN values is also NaN.
-%    'omitnan'    - the mean of a vector containing NaN values is the mean 
+%    "includemissing" / "includenan" -
+%                   (default) The mean of a vector containing NaN values is NaN.
+%    "omitmissing" / "omitnan"       -
+%                   The mean of a vector containing NaN values is the mean
 %                   of all its non-NaN elements. If all elements are NaN,
 %                   the result is NaN.
 % 
@@ -36,12 +43,48 @@
 % 
 %    See also MEDIAN, STD, MIN, MAX, VAR, COV, MODE.
 %
-%    Reference page in Doc Center
+%    Documentation for mean
 %       doc mean
 %
-%    Other functions named mean
+%    Other uses of mean
 %
-%       codistributed/mean    fints/mean       timeseries/mean
-%       datetime/mean         gpuArray/mean    ts/mean
-%       duration/mean         tall/mean
+%       codistributed/mean
+%       datetime/mean
+%       duration/mean
+%       gpuArray/mean
+%       prob.BetaDistribution/mean
+%       prob.BinomialDistribution/mean
+%       prob.BirnbaumSaundersDistribution/mean
+%       prob.BurrDistribution/mean
+%       prob.ExponentialDistribution/mean
+%       prob.ExtremeValueDistribution/mean
+%       prob.GammaDistribution/mean
+%       prob.GeneralizedExtremeValueDistribution/mean
+%       prob.GeneralizedParetoDistribution/mean
+%       prob.HalfNormalDistribution/mean
+%       prob.InverseGaussianDistribution/mean
+%       prob.KernelDistribution/mean
+%       prob.LogisticDistribution/mean
+%       prob.LoglogisticDistribution/mean
+%       prob.LognormalDistribution/mean
+%       prob.LoguniformDistribution/mean
+%       prob.MultinomialDistribution/mean
+%       prob.NakagamiDistribution/mean
+%       prob.NegativeBinomialDistribution/mean
+%       prob.NormalDistribution/mean
+%       prob.PiecewiseLinearDistribution/mean
+%       prob.PoissonDistribution/mean
+%       prob.ProbabilityDistribution/mean
+%       prob.RayleighDistribution/mean
+%       prob.RicianDistribution/mean
+%       prob.StableDistribution/mean
+%       prob.tLocationScaleDistribution/mean
+%       prob.TriangularDistribution/mean
+%       prob.UniformDistribution/mean
+%       prob.WeibullDistribution/mean
+%       symfun/mean
+%       tabular/mean
+%       tall/mean
+%       timeseries/mean
+%       ts/mean
 %

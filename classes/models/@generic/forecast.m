@@ -133,13 +133,31 @@
 % 
 %  See also SSM, FILTER, SMOOTH, SIMULATE, ESTIMATE.
 %
-%    Other functions named forecast
+%    Other uses of forecast
 %
-%       abstvar/forecast         garch/forecast
-%       arima/forecast           generic/forecast
-%       conjugateblm/forecast    gjr/forecast
-%       customblm/forecast       regARIMA/forecast
-%       diffuseblm/forecast      semiconjugateblm/forecast
-%       egarch/forecast          varm/forecast
-%       empiricalblm/forecast    vecm/forecast
+%       abstvar/forecast
+%       arima/forecast
+%       bvar/forecast
+%       conjugateblm/forecast
+%       conjugatebvarm/forecast
+%       customblm/forecast
+%       diffuseblm/forecast
+%       dssm/forecast
+%       egarch/forecast
+%       empiricalblm/forecast
+%       garch/forecast
+%       generic/forecast
+%       gjr/forecast
+%       lassoblm/forecast
+%       mixconjugateblm/forecast
+%       mixsemiconjugateblm/forecast
+%       msVAR/forecast
+%       prfvar/forecast
+%       regARIMA/forecast
+%       semiconjugateblm/forecast
+%       ssm/forecast
+%       timeseries.forecaster.DirectForecaster/forecast
+%       tsVAR/forecast
+%       varm/forecast
+%       vecm/forecast
 %

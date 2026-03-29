@@ -8,16 +8,21 @@
 %    KURTOSIS(X,0) adjusts the kurtosis for bias.  KURTOSIS(X,1) is the same
 %    as KURTOSIS(X), and does not adjust for bias.
 % 
+%    KURTOSIS(X,FLAG,'all') is the kurtosis of all the elements of X.
+% 
 %    KURTOSIS(X,FLAG,DIM) takes the kurtosis along dimension DIM of X.
+% 
+%    KURTOSIS(X,FLAG,VECDIM) finds the kurtosis of the elements of X based
+%    on the dimensions specified in the vector VECDIM.
 % 
 %    KURTOSIS treats NaNs as missing values, and removes them.
 % 
 %    See also MEAN, MOMENT, STD, VAR, SKEWNESS.
 %
-%    Reference page in Doc Center
+%    Documentation for kurtosis
 %       doc kurtosis
 %
-%    Other functions named kurtosis
+%    Other uses of kurtosis
 %
 %       distributed/kurtosis    tall/kurtosis    ts/kurtosis
 %

@@ -17,11 +17,11 @@
 %           - **Qfunc** [function handle]: transition matrix generator
 % 
 %           - **ff** [function handle]: ft=ff(rt,xt,et), where rt is the
-%           regime, xt is the vector of state variables and et the vector of
-%           shocks
+%             regime, xt is the vector of state variables and et the vector of
+%             shocks
 % 
 %           - **P** [cell]: initial covariance matrix of the states in each
-%           regime
+%             regime
 % 
 %           - **H** [cell]: Measurement error covariance matrices in each regime
 % 
@@ -32,15 +32,14 @@
 %     - **U** [[]|matrix]: ndx x T matrix of exogenous data
 % 
 %     - **z** [function handle|logical|vector]: linear connection of the
-%     observables to the state.
+%       observables to the state.
 % 
 %     - **include_in_likelihood** [logical]: selector of increments to include
-%     in the likelihood calculation
+%       in the likelihood calculation
 % 
 %     - **options** [struct]: structure with various options
 % 
 %  Returns:
-%     :
 % 
 %     - **loglik** [scalar]: log likelihood
 % 
@@ -54,5 +53,5 @@
 % 
 %  Example:
 % 
-%     See also:
+%  See also: switching_cubature_kalman_filter, switching_unscented_kalman_filter
 %

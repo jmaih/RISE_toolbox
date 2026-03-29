@@ -19,6 +19,9 @@
 %         criterion
 %       - fix_point_maxiter : [positive scalar |{1000}] : maximum number of
 %         iterations
+%       - fix_point_discretion_maxiter : [positive scalar |{100}] : maximum 
+%         number of iterations for discretionary/stochastic replanning
+%         algorithm
 %       - fix_point_verbose : [true|{false}] : show iterations or not
 %       - fix_point_valid_func : [function_handle|{@utils.error.valid}] :
 %         function that checks the validity (nans, complex, inf, etc.) of

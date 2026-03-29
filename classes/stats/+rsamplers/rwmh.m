@@ -1,0 +1,2 @@
+%rwmh is a class.
+%

@@ -48,7 +48,7 @@
 %  - [uminus](aplanar/uminus)
 %  - [uplus](aplanar/uplus)
 %
-%    Reference page in Doc Center
+%    Documentation for aplanar
 %       doc aplanar
 %
 %

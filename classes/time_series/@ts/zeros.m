@@ -24,10 +24,10 @@
 % 
 %    See also EYE, ONES.
 %
-%    Reference page in Doc Center
+%    Documentation for zeros
 %       doc zeros
 %
-%    Other functions named zeros
+%    Other uses of zeros
 %
 %       codistributed/zeros      codistributor2dbc/zeros    gpuArray/zeros
 %       codistributor1d/zeros    distributed/zeros          ts/zeros

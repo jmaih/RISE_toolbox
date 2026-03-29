@@ -1,0 +1,2 @@
+%QuarterlyDate is a class.
+%

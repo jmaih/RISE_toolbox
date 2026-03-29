@@ -4,13 +4,21 @@
 %    of each column.  For N-D arrays, MEDIAN(X) is the median value of the
 %    elements along the first non-singleton dimension of X.
 % 
+%    MEDIAN(X,"all") is the median of all elements of X.
+% 
 %    MEDIAN(X,DIM) takes the median along the dimension DIM of X.
 % 
-%    MEDIAN(...,NANFLAG) specifies how NaN (Not-A-Number) values
-%    are treated. The default is 'includenan':
+%    MEDIAN(X,VECDIM) operates on the dimensions specified in the vector 
+%    VECDIM. For example, MEDIAN(X,[1 2]) operates on the elements contained
+%    in the first and second dimensions of X.
 % 
-%    'includenan' - the median of a vector containing NaN values is also NaN.
-%    'omitnan'    - the median of a vector containing NaN values is the
+%    MEDIAN(...,NANFLAG) specifies how NaN values are treated:
+% 
+%    "includemissing" / "includenan" -
+%                   (default) The median of a vector containing NaN values
+%                   is also NaN.
+%    "omitmissing" / "omitnan"       -
+%                   The median of a vector containing NaN values is the
 %                   median of all its non-NaN elements. If all elements
 %                   are NaN, the result is NaN.
 % 
@@ -25,12 +33,19 @@
 % 
 %    See also MEAN, STD, MIN, MAX, VAR, COV, MODE.
 %
-%    Reference page in Doc Center
+%    Documentation for median
 %       doc median
 %
-%    Other functions named median
+%    Other uses of median
 %
-%       categorical/median    duration/median    timeseries/median
-%       datetime/median       tall/median        ts/median
-%       distributed/median
+%       categorical/median
+%       codistributed/median
+%       datetime/median
+%       duration/median
+%       prob.LoguniformDistribution/median
+%       prob.NormalDistribution/median
+%       tabular/median
+%       tall/median
+%       timeseries/median
+%       ts/median
 %

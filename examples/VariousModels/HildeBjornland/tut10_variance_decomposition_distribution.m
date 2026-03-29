@@ -25,7 +25,7 @@ endog=models.(model).endogenous;
 % choose identification scheme
 Rfunc=[];
 
-hd=variance_decomposition(models.(model),params.(model),Rfunc,shock_names);
+hd=variance_decomposition(models.(model),params.(model),Rfunc);
 
 %% plot decompositions
 shock_tex=shock_names;

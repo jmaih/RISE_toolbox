@@ -45,5 +45,4 @@
 %     - Bournay, J. y Laroque, G. (1979) "Reflexions sur la methode
 %       d'elaboration  des comptes trimestriels", Annales de l'INSEE, n. 36, p.
 %       3-30.
-% 
 %

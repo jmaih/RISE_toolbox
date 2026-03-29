@@ -1,6 +1,7 @@
-%--- help for rfvar/identification ---
+%--- help for prfvar/identification ---
 %
-%  Parses identifying restrictions into RISE interpretable identification function
+%  Parses panel VAR identifying restrictions into RISE interpretable
+%  identification function 
 % 
 %  Note:
 %     This function is a part of a general workflow. See XXXXXXXXXX to check the workflow.
@@ -10,14 +11,18 @@
 %     Rfunc = identification(var, restr, shock_names, varargin);
 % 
 %  Args:
-%     var (rfvar object): rfvar object
-%     restr : restrictions can take two forms
 % 
-%        - **'choleski'**: choleski identification. Supply the ordering as a cell array as varargin{1}
+%     - var (rfvar object): rfvar object
+%     - restr : restrictions can take two forms
+% 
+%        - **'choleski'**: choleski identification. Supply the ordering as a
+%          cell array as varargin{1} 
 %        - **cellstr**: n x 2 cell array, with n the number of restrictions.
-%           A typical restriction takes the form:
+%          A typical restriction takes the form:
+% 
 %           - 'vbl@shk','sign'
 %           - 'vbl{lags}@shk','sign'
+% 
 %           where sign = +|-
 %           where shk is the name of the shock
 %           where vbl is the name of the endogenous variable affected by
@@ -32,7 +37,10 @@
 %  Returns:
 %     :
 % 
-%     - **Rfunc** (function handle): a function that takes parameters and then returns structural shock matrix. This function function is not intended to be used used on its own, and supposed to be used as an argument in different functions.
+%     - **Rfunc** (function handle): a function that takes parameters and 
+%       then returns structural shock matrix. This function function is not 
+%       intended to be used used on its own, and supposed to be used as an 
+%       argument in different functions.
 % 
 %  See also:
 %     - :func:`autocov <var.autocov>`
@@ -40,5 +48,8 @@
 %     - :func:`historical_decomposition <var.historical_decomposition>`
 %     - :func:`irf <var.irf>`
 %     - :func:`variance_decomposition <var.variance_decomposition>`
-% 
+%
+%    Other uses of identification
+%
+%       bvar_dsge/identification    rfvar/identification
 %

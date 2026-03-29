@@ -22,5 +22,4 @@
 %     - **gam_** [scalar|vector] : sorted percentile(s)
 % 
 %     - **my** [ts] : mean across simulations
-% 
 %

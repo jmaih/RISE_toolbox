@@ -18,5 +18,4 @@
 %     window: number of observations in the rolling window
 % 
 %     varargin: additional arguments to func
-% 
 %

@@ -4,10 +4,13 @@
 % 
 %    See also SIN, ASIND.
 %
-%    Reference page in Doc Center
+%    Documentation for asin
 %       doc asin
 %
-%    Other functions named asin
+%    Other uses of asin
 %
-%       codistributed/asin    gpuArray/asin    sym/asin    ts/asin
+%       adolm/asin            matlab/asin       sym/asin
+%       aplanar/asin          rsymbdiff/asin    tabular/asin
+%       codistributed/asin    splanar/asin      ts/asin
+%       gpuArray/asin
 %

@@ -1,21 +1,21 @@
-endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g
+@endogenous ewma epinfma  zcapf rkf kf pkf cf invef yf labf wf rrf mc zcap rk k pk c inve y lab pinf w r a  b g
 qs  ms  spinf sw kpf kp 
 
-endogenous labobs robs pinfobs dy dc dinve dw
+@endogenous labobs robs pinfobs dy dc dinve dw
  
-exogenous ea eb eg  eqs  em  epinf ew  
+@exogenous ea eb eg  eqs  em  epinf ew  
  
-parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
+@parameters curvw cgy curvp constelab constepinf constebeta cmaw cmap calfa 
 czcap csadjcost ctou csigma chabb cfc 
 cindw cprobw cindp cprobp csigl clandaw 
 crhoa crhoas crhob crhog crhols crhoqs crhoms crhopinf crhow  
 ctrend cg, sig_a, sig_b,sig_w,sig_pinf,sig_m,sig_qs,sig_g
 
-parameters(coef,2)  crpi crdy cry crr
+@parameters(coef,2)  crpi crdy cry crr
 
-parameters coef_tp_1_2, coef_tp_2_1
+@parameters coef_tp_1_2, coef_tp_2_1
 
-model 
+@model 
 
 		# cpie=1+constepinf/100;
 		# cgamma=1+ctrend/100 ;
@@ -97,7 +97,7 @@ model
 		labobs = lab + constelab;
 
 
-parameterization
+@parameterization
 	coef_tp_1_2 ,   0.1000;
 	coef_tp_2_1 ,	0.7000;
 	crpi(coef,1),   1.4880;

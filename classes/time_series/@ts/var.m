@@ -20,17 +20,30 @@
 %    variance of X(I).  In other words, Y * MEAN(W) is an estimate of 
 %    variance for an observation given weight 1.
 % 
-%    Y = VAR(X,W,DIM) takes the variance along the dimension DIM of X.  Pass
-%    in 0 for W to use the default normalization by N-1, or 1 to use N.
+%    Y = VAR(X,0,"all") or Y = VAR(X,1,"all") returns the variance of all
+%    elements of X. A weight of 0 normalizes by N-1 and a weight of 1 
+%    normalizes by N.
+% 
+%    Y = VAR(X,W,DIM) takes the variance along the dimension DIM of X.
+% 
+%    Y = VAR(X,0,VECDIM) or Y = VAR(X,1,VECDIM) operates on the dimensions 
+%    specified in the vector VECDIM. A weight of 0 normalizes by N-1 and a 
+%    weight of 1 normalizes by N. For example, VAR(X,0,[1 2]) operates on
+%    the elements contained in the first and second dimensions of X.
+%    
+%    [Y,M] = VAR(X,...) also returns the mean M of the values in X that 
+%    was used to calculate the variance. If Y is the weighted variance, then
+%    M is the weighted mean. 
 % 
 %    The variance is the square of the standard deviation (STD).
 % 
-%    VAR(...,NANFLAG) specifies how NaN (Not-A-Number) values are treated.
-%    The default is 'includenan':
+%    VAR(...,NANFLAG) specifies how NaN values are treated:
 % 
-%    'includenan' - the variance of a vector containing NaN values 
+%    "includemissing" / "includenan"  -
+%                   (default) The variance of a vector containing NaN values
 %                   is also NaN.
-%    'omitnan'    - elements of X or W containing NaN values are ignored.
+%    "omitmissing" / "omitnan"        -
+%                   Elements of X or W containing NaN values are ignored.
 %                   If all elements are NaN, the result is NaN.
 % 
 %    Example:
@@ -43,11 +56,45 @@
 % 
 %    See also MEAN, STD, COV, CORRCOEF.
 %
-%    Reference page in Doc Center
+%    Documentation for var
 %       doc var
 %
-%    Other functions named var
+%    Other uses of var
 %
-%       codistributed/var    gpuArray/var    timeseries/var    ts/var
-%       fints/var            tall/var
+%       codistributed/var
+%       gpuArray/var
+%       prob.BetaDistribution/var
+%       prob.BinomialDistribution/var
+%       prob.BirnbaumSaundersDistribution/var
+%       prob.BurrDistribution/var
+%       prob.ExponentialDistribution/var
+%       prob.ExtremeValueDistribution/var
+%       prob.GammaDistribution/var
+%       prob.GeneralizedExtremeValueDistribution/var
+%       prob.GeneralizedParetoDistribution/var
+%       prob.HalfNormalDistribution/var
+%       prob.InverseGaussianDistribution/var
+%       prob.KernelDistribution/var
+%       prob.LogisticDistribution/var
+%       prob.LoglogisticDistribution/var
+%       prob.LognormalDistribution/var
+%       prob.LoguniformDistribution/var
+%       prob.MultinomialDistribution/var
+%       prob.NakagamiDistribution/var
+%       prob.NegativeBinomialDistribution/var
+%       prob.NormalDistribution/var
+%       prob.PiecewiseLinearDistribution/var
+%       prob.PoissonDistribution/var
+%       prob.ProbabilityDistribution/var
+%       prob.RayleighDistribution/var
+%       prob.RicianDistribution/var
+%       prob.StableDistribution/var
+%       prob.tLocationScaleDistribution/var
+%       prob.TriangularDistribution/var
+%       prob.UniformDistribution/var
+%       prob.WeibullDistribution/var
+%       tabular/var
+%       tall/var
+%       timeseries/var
+%       ts/var
 %

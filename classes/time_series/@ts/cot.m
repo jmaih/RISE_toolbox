@@ -6,10 +6,12 @@
 % 
 %    See also ACOT, COTD.
 %
-%    Reference page in Doc Center
+%    Documentation for cot
 %       doc cot
 %
-%    Other functions named cot
+%    Other uses of cot
 %
-%       codistributed/cot    gpuArray/cot    sym/cot    ts/cot
+%       adolm/cot            gpuArray/cot     sym/cot         tabular/cot
+%       aplanar/cot          rsymbdiff/cot    symbolic/cot    ts/cot
+%       codistributed/cot    splanar/cot
 %

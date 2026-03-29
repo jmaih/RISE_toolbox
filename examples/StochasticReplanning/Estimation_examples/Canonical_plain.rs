@@ -1,13 +1,13 @@
-endogenous	DPQ_P_NW, Y, ZGDP, ZI, ZPAI, ZY, D_GDP_NW, I, PAI, R, RN3M_NW
+@endogenous	DPQ_P_NW, Y, ZGDP, ZI, ZPAI, ZY, D_GDP_NW, I, PAI, R, RN3M_NW
 
-exogenous EGDP, EI, EPAI, EY
+@exogenous EGDP, EI, EPAI, EY
 
-parameters beta_lag, beta_lead, beta_r, gam_lag, gam_y, gyss, iss, lamb_lag,
+@parameters beta_lag, beta_lead, beta_r, gam_lag, gam_y, gyss, iss, lamb_lag,
 lamb_lead, lamb_y, paiss, rhogdp, rhoi, rhopai, rhoy, siggdp, sigi, sigpai, sigy
 
-parameters prob_commit
+@parameters prob_commit
 
-model(linear)
+@model
    
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
 
@@ -32,12 +32,12 @@ model(linear)
    
    ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
 
-// the definition in the model is used in specifying the planner objective
-planner_objective{discount = 0.99,commitment=prob_commit} -.5*(1*PAI^2+.6*Y^2);	 
+// the definition in the @model is used in specifying the planner objective
+@planner_objective{discount = 0.99,commitment=prob_commit} -.5*(1*PAI^2+.6*Y^2);	 
 
-observables DPQ_P_NW, D_GDP_NW, RN3M_NW;
+@observables DPQ_P_NW, D_GDP_NW, RN3M_NW;
 
-parameterization
+@parameterization
 // not estimated
 	gyss   		 ,0 	;						 
 	iss    		 ,0 	;						 

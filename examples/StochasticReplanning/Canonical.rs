@@ -1,14 +1,14 @@
-endogenous	Y, ZGDP, ZI, ZPAI, ZY, I, PAI, R
+@endogenous	Y, ZGDP, ZI, ZPAI, ZY, I, PAI, R
 
-exogenous EGDP, EI, EPAI, EY
+@exogenous EGDP, EI, EPAI, EY
 
-parameters beta_lag, beta_lead, beta_r, gam_lag, gam_y, gyss, lamb_lag,
+@parameters beta_lag, beta_lead, beta_r, gam_lag, gam_y, gyss, lamb_lag,
 lamb_lead, lamb_y, rhogdp, rhoi, rhopai, rhoy, vol_tp_1_2, vol_tp_2_1
 commit_prob
 
-parameters(vol,2) siggdp, sigi, sigpai, sigy
+@parameters(vol,2) siggdp, sigi, sigpai, sigy
 
-model
+@model
 
    Y=beta_lag*Y(-1)+beta_lead*Y(+1)-beta_r*R(-1)+ZY;
 
@@ -28,9 +28,9 @@ model
    ZGDP=(1-rhogdp)*gyss+rhogdp*ZGDP(-1)+siggdp*EGDP;
 
 
-planner_objective{discount = 0.99,commitment=commit_prob} -.5*(1*PAI^2+.6*Y^2);	 
+@planner_objective{discount = 0.99,commitment=commit_prob} -.5*(1*PAI^2+.6*Y^2);	 
 
-parameterization
+@parameterization
 	gyss   			,0 	   ;				 
 	beta_lag 	    ,0.5000;
 	beta_lead		,0.4000;

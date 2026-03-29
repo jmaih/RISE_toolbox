@@ -1,4 +1,6 @@
 % PLOTYY Graphs with y tick labels on the left and right
+%    PLOTYY is not recommended. Use YYAXIS instead.
+% 
 %    PLOTYY(X1,Y1,X2,Y2) plots Y1 versus X1 with y-axis labeling
 %    on the left and plots Y2 versus X2 with y-axis labeling on
 %    the right.
@@ -23,12 +25,12 @@
 %    AX and the handles of the graphics objects from each plot in H1
 %    and H2. AX(1) is the left axes and AX(2) is the right axes.
 % 
-%    See also PLOT, function_handle
+%    See also PLOT, YYAXIS, function_handle
 %
-%    Reference page in Doc Center
+%    Documentation for plotyy
 %       doc plotyy
 %
-%    Other functions named plotyy
+%    Other uses of plotyy
 %
 %       ts/plotyy
 %

@@ -1,11 +1,11 @@
 % In passing, we demonstrate a little bit of the macro language in RISE
 % we include the previous file that does not contain the steady_state_model block
 
-@# include "fs2000.rs"
+@include "fs2000.rs"
 
 
-steady_state_model
-	@# if approximate==1
+@steady_state_model
+	@if approximate==1
 		k = 6;
 		m = mst;
 		P = 2.25;
@@ -20,7 +20,7 @@ steady_state_model
 		gy_obs = gam;  %	gy_obs = exp(gam);
 		gp_obs = -gam; %	gp_obs = exp(-gam);
 		dA = exp(gam);
-	@# else
+	@else
 	%NB: xx_ssmdef_1 ... xx_ssmdef_9 are known words to rise. They are used to define auxiliary
 	% constants in the steady_state_model block
 		dA = exp(gam);
@@ -41,4 +41,4 @@ steady_state_model
 		e = 1;
 		gp_obs = log(m/dA);% accommodating dynare's loglinear option
 		gy_obs = log(dA); % accommodating dynare's loglinear option
-	@# end
+	@end

@@ -8,16 +8,21 @@
 %    SKEWNESS(X,0) adjusts the skewness for bias.  SKEWNESS(X,1) is the same
 %    as SKEWNESS(X), and does not adjust for bias.
 % 
+%    SKEWNESS(X,FLAG,'all') is the skewness of all the elements of X.
+% 
 %    SKEWNESS(X,FLAG,DIM) takes the skewness along dimension DIM of X.
+% 
+%    SKEWNESS(X,FLAG,VECDIM) finds the skewness of the elements of X based 
+%    on the dimensions specified in the vector VECDIM.
 % 
 %    SKEWNESS treats NaNs as missing values, and removes them.
 % 
 %    See also MEAN, MOMENT, STD, VAR, KURTOSIS.
 %
-%    Reference page in Doc Center
+%    Documentation for skewness
 %       doc skewness
 %
-%    Other functions named skewness
+%    Other uses of skewness
 %
 %       distributed/skewness    tall/skewness    ts/skewness
 %

@@ -1,19 +1,25 @@
-%--- help for tabular/summary ---
+%--- help for categorical/summary ---
 %
-% SUMMARY Print summary of a table or a timetable.
-%    SUMMARY(T) prints a summary of T and the variables that it contains. If
-%    T is a table, then SUMMARY displays the description from
-%    T.Properties.Description followed by a summary of the table variables.
-%    If T is a timetable, then SUMMARY additionally displays a summary of
-%    the row times.
+% SUMMARY Print summary of a categorical array.
+%    SUMMARY(A) displays the number of elements in the categorical array A
+%    that are equal to each of A's categories.  If A contains any undefined
+%    elements, the output also includes the number of undefined elements.
 % 
-%    S = SUMMARY(T) returns a summary of T as a structure. Each field of S
-%    contains a summary for the corresponding variable in T. If T is a
-%    timetable, S contains an additional field for a summary of the row
-%    times.
+%    If A is a vector, SUMMARY displays counts for the entire vector.  If A is a
+%    matrix or N-D array, SUMMARY displays counts separately for each column of A.
+% 
+%    SUMMARY(A,DIM) displays the summary computed along the dimension DIM of A.
+% 
+%    See also ISCATEGORY, ISMEMBER, COUNTCATS.
 %
-%    Other functions named summary
+%    Documentation for categorical/summary
+%       doc categorical/summary
 %
-%       categorical/summary      dataset/summary        mcmc/summary
-%       codistributed/summary    distributed/summary    tall/summary
+%    Other uses of summary
+%
+%       backtestEngine/summary               distributed/summary
+%       brinsonAttribution/summary           DriftDiagnostics/summary
+%       clibgen.LibraryDefinition/summary    mcmc/summary
+%       codistributed/summary                tabular/summary
+%       dataset/summary                      tall/summary
 %

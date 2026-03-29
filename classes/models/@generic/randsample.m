@@ -4,11 +4,14 @@
 % 
 %    Y = RANDSAMPLE(POPULATION,K) returns K values sampled uniformly at random,
 %    without replacement, from the values in the vector POPULATION.  Y is a
-%    vector of the same type as POPULATION.  NOTE:  When POPULATION is a
-%    numeric vector containing only non-negative integer values, and it might
-%    have length 1, use
+%    vector of the same type as POPULATION.
+%  
+%    NOTE:  When POPULATION is a numeric vector containing only non-negative
+%    integer values, and it might have length 1, use either
 % 
-%       Y = POPULATION(RANDSAMPLE(LENGTH(POPULATION),K)
+%       Y = DATASAMPLE(POPULATION,K,'Replace',false)
+%    or
+%       Y = POPULATION(RANDSAMPLE(LENGTH(POPULATION),K))
 % 
 %    instead of Y = RANDSAMPLE(POPULATION,K).
 % 
@@ -21,7 +24,7 @@
 %    often a vector of probabilities. This function does not support weighted
 %    sampling without replacement.
 % 
-%    Y = RANDSAMPLE(S,...) uses the random number stream S for random number 
+%    Y = RANDSAMPLE(S,...) uses the random number stream S for random number
 %    generation.  RANDSAMPLE uses the MATLAB default random number stream by
 %    default.
 % 
@@ -40,10 +43,11 @@
 % 
 %    See also RAND, RANDPERM, RANDSTREAM.
 %
-%    Reference page in Doc Center
+%    Documentation for randsample
 %       doc randsample
 %
-%    Other functions named randsample
+%    Other uses of randsample
 %
-%       generic/randsample
+%       generic/randsample     quantum.gate.QuantumState/randsample
+%       gpuArray/randsample
 %

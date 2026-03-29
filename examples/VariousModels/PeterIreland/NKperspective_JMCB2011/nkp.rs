@@ -4,17 +4,17 @@
 % Nonlinear model
 % Data starting in 1983:1
 
-endogenous Y "Output" C "Consumption" PAI "Inflation" A LAMBDA Z THETA G "Output growth" Q
+@endogenous Y "Output" C "Consumption" PAI "Inflation" A LAMBDA Z THETA G "Output growth" Q
 X "Output gap" R "interest rate" E GHAT PAIHAT RHAT
 
-observables GHAT PAIHAT RHAT
+@observables GHAT PAIHAT RHAT
 
-exogenous EPS_A "Preference" EPS_Z "Technology" EPS_R "monetary policy" EPS_E "Cost push"
+@exogenous EPS_A "Preference" EPS_Z "Technology" EPS_R "monetary policy" EPS_E "Cost push"
 
-parameters psi alpha rho_a sig_a beta gam rho_e	thetass zss	rho_g
+@parameters psi alpha rho_a sig_a beta gam rho_e	thetass zss	rho_g
 	sig_z  sig_r paiss sig_e rho_r rho_pai rho_x ess
 
-model
+@model
 
 	# rho_theta = rho_e;
 	# phi = (thetass-1)/psi;
@@ -57,7 +57,7 @@ model
 	
 	RHAT = log(R/steady_state(R));
 
-steady_state_model
+@steady_state_model
 
 	A=1;
 

@@ -6,10 +6,11 @@
 % 
 %    See also COT, ACOTD.
 %
-%    Reference page in Doc Center
+%    Documentation for acot
 %       doc acot
 %
-%    Other functions named acot
+%    Other uses of acot
 %
-%       codistributed/acot    gpuArray/acot    sym/acot    ts/acot
+%       codistributed/acot    sym/acot         tabular/acot    ts/acot
+%       gpuArray/acot         symbolic/acot
 %

@@ -22,5 +22,4 @@
 %     - The derivatives computed are 'automatic', 'symbolic' or 'numerical'
 %     - The comparisons are done relative to automatic derivatives, which are
 %       assumed to be the most accurate.
-% 
 %

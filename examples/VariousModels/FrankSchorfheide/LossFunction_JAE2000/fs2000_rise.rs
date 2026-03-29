@@ -16,16 +16,16 @@
 %model.
 %
 
-endogenous m P c e W R k d n l gy_obs gp_obs y dA
+@endogenous m P c e W R k d n l gy_obs gp_obs y dA
 
-exogenous e_a e_m
+@exogenous e_a e_m
 
-parameters alp "$\alpha$" bet "$\beta$" gam "$\gamma$" mst rho "$\rho$" psi "$\psi$"
+@parameters alp "$\alpha$" bet "$\beta$" gam "$\gamma$" mst rho "$\rho$" psi "$\psi$"
 	del "$\delta$" sig_a "$\sigma_a$" sig_m  "$\sigma_m$"
 
-observables gp_obs gy_obs
+@observables gp_obs gy_obs
 
-model
+@model
 	dA = exp(gam+sig_a*e_a);
 	
 	log(m) = (1-rho)*log(mst) + rho*log(m(-1))+sig_m*e_m;
@@ -77,7 +77,7 @@ model
 %end;
 
 %xx_ssmdef_1 ... xx_ssmdef_9 are known words to rise
-steady_state_model
+@steady_state_model
   dA = exp(gam);
   xx_ssmdef_1 = 1/dA;
   m = mst;
@@ -102,7 +102,7 @@ steady_state_model
   gp_obs = log(m/dA);% accommodating dynare's loglinear option
   gy_obs = log(dA); % accommodating dynare's loglinear option
 
-parameterization; % point at which dynare starts estimation 								% dynare calibration
+@parameterization; % point at which dynare starts estimation 								% dynare calibration
 	alp  ,   0.356000,   0.3235,    0.3891,  beta_pdf(.90)     ;% 0.356, 0.02;	      	0.330
 	bet  ,   0.993000,   0.9896,    0.9958,  beta_pdf(.90)     ;% 0.993, 0.002;			0.990
 	gam  ,   0.008500,   0.0036,    0.0134,  normal_pdf(.90)   ;% 0.0085, 0.003;		  	0.003

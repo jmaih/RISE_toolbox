@@ -1,13 +1,13 @@
-% New classical model (page 27-28)
-endogenous	C R H W X K Z G	Y
+% New classical model
+@endogenous	C R H W X K Z G	Y
 
-exogenous EG EZ
+@exogenous EG EZ
 
-parameters beta delta phi1 phi2 eta alpha rhoz rhog sigz sigg
+@parameters beta delta phi1 phi2 eta alpha rhoz rhog sigz sigg
 
-observables  Y 
+@observables  Y 
 
-model
+@model
 
 	C = C{+1}-(1-beta+beta*delta)*R{+1};
 

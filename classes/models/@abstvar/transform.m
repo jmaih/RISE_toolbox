@@ -2,12 +2,14 @@
 %
 %  Apply different transformations following the definitions of Haver
 % 
-%  ::
+%  Usage:
 % 
 %     db = transform(db, type);
 % 
 %  Args:
+% 
 %     db (ts object): time series object
+% 
 %     type: the type of the transformation. Available transformations are
 % 
 %        - 1 or 'level': Untransformed data - level (default)
@@ -21,12 +23,18 @@
 %        - 9 or 'yoy_log_ch': Year to year log change (yr-yr l-chg)
 % 
 %  Returns:
-%     :
 % 
 %     - **db** (ts object): Transformed time series
-% 
 %
-%    Other functions named transform
+%    Other uses of transform
 %
-%       abstvar/transform    sym/transform
+%       abstvar/transform
+%       DisparateImpactRemover/transform
+%       FeatureTransformer/transform
+%       matlab.buildtool.io.FileCollection/transform
+%       matlab.io.datastore.ImageDatastore/transform
+%       matlab.io.Datastore/transform
+%       matlab.io.xml.transform.Transformer/transform
+%       matlab.tall/transform
+%       sym/transform
 %

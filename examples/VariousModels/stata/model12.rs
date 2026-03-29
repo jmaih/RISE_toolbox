@@ -1,12 +1,12 @@
-endogenous P Y R U Z
+@endogenous P Y R U Z
 
-exogenous  EZ EU
+@exogenous  EZ EU
 
-parameters beta gam sigu sigz rhoz kappa rhou
+@parameters beta gam sigu sigz rhoz kappa rhou
 
-observables P R
+@observables P R
 
-model
+@model
 
 	P = beta*P{+1}+kappa*Y;
 

@@ -4,18 +4,18 @@
 % Nonlinear model
 % data start 1959Q1
 
-endogenous Y "Output" C "Consumption" PAI "Gross inflation" PAISTAR "Inflation target" A LAMBDA Z
+@endogenous Y "Output" C "Consumption" PAI "Gross inflation" PAISTAR "Inflation target" A LAMBDA Z
 R "Gross nom. int. rate" THETA GY GPAI GR RRPAI Q X "Output gap" V E EPS_THETA
 GY_HAT GPAI_HAT RRPAI_HAT
 
-observables GY_HAT GPAI_HAT RRPAI_HAT
+@observables GY_HAT GPAI_HAT RRPAI_HAT
 
-exogenous EPS_A "Preference" EPS_E "Cost-push" EPS_Z "Technology" EPS_PAI "Inflation target" EPS_V "Monetary policy"
+@exogenous EPS_A "Preference" EPS_E "Cost-push" EPS_Z "Technology" EPS_PAI "Inflation target" EPS_V "Monetary policy"
 
-parameters	psi	alpha rho_a	sig_a gam beta rho_e thetass sig_e zss sig_z rho_pai rho_x rho_gy
+@parameters	psi	alpha rho_a	sig_a gam beta rho_e thetass sig_e zss sig_z rho_pai rho_x rho_gy
 	delta_a	delta_e	delta_z	sig_pai	rho_v sig_v ess
 
-model
+@model
 	% Auxiliary parameters (see definitions on page 9 in the notes)
 	%--------------------------------------------------------------
 	# phi =(thetass-1)/psi;

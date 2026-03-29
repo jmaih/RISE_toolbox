@@ -1,5 +1,5 @@
 // pdk line 1
-endogenous C "Consumption" I "Total investment" AG "Growth-rate-stationary pref. process" H "Total labor supply"
+@endogenous C "Consumption" I "Total investment" AG "Growth-rate-stationary pref. process" H "Total labor supply"
 AL "level-stationary pref. process" G_H "Growth rate of hours" A "Preference shock"
 	ZG_C "Growth-rate-stationary techn. process C"
 	LAMBDA_C "Multiplier on production C"
@@ -20,16 +20,16 @@ AL "level-stationary pref. process" G_H "Growth rate of hours" A "Preference sho
 	ZL_I "Level-stationary techn. process I"
 	G_I "Growth rate of I"
 LG_C LG_I LG_H
-observables LG_C LG_I LG_H
-exogenous ELA EAG
+@observables LG_C LG_I LG_H
+@exogenous ELA EAG
 	EL_C EG_C
 	EL_I EG_I
-parameters gam beta	rhola sigla	agtr rhoga sigga  phik_C_tr phih_C_tr
+@parameters gam beta	rhola sigla	agtr rhoga sigga  phik_C_tr phih_C_tr
 	theta_C eta_C	kappa_C	delta_C	rhol_C
 	sigl_C zg_C_tr	rhog_C	sigg_C
 	theta_I eta_I	kappa_I	delta_I	rhol_I
 	sigl_I zg_I_tr	rhog_I	sigg_I
-model
+@model
 	# phik_C = 100*abs(phik_C_tr);
 	# phik_I = phik_C;
 	# phih_C = 100*abs(phih_C_tr);

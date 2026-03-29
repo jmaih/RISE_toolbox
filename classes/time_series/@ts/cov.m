@@ -17,33 +17,29 @@
 % 
 %    The mean is removed from each column before calculating the result.
 % 
-%    C = cov(...,NANFLAG) specifies how NaN (Not-A-Number) values are 
-%    treated. The default is 'includenan':
+%    C = COV(...,NANFLAG) specifies how NaN values are treated:
 % 
-%    'includenan'   - if the input contains NaN, the output also contains NaN.
-%                     Specifically, C(I, J) is NaN if column I or J of X 
-%                     contains NaN values.
-%    'omitrows'     - omit all rows of X that contain NaN values:
-%                       ind = all(~isnan(X), 2);
-%                       C = cov(X(ind, :));
-%    'partialrows'  - compute each element C(I,J) separately, based only on
-%                     the columns I and J of X. Omit rows only if they
-%                     contain NaN values in column I or J of X.
-%                     The resulting matrix C may not be a positive definite.
-%                       ind = all(~isnan(X(:, [I J])));
-%                       Clocal = cov(X(ind, [I J]));
-%                       C(I, J) = Clocal(1, 2);
+%    "includemissing" / "includenan" -
+%                     (default) If the input contains NaN, the output also
+%                     contains NaN. Specifically, C(I, J) is NaN if column I
+%                     or J of X contains NaN values.
+%    "omitrows"     - Omits all rows of X that contain NaN values and
+%                     returns the variance of all other rows.
+%    "partialrows"  - Computes each element C(I,J) separately, based only on
+%                     the columns I and J of X. Omits rows only if they
+%                     contain NaN values in column I or J of X. The resulting
+%                     matrix C may not be positive definite.
 % 
 %    Class support for inputs X,Y:
 %       float: double, single
 % 
 %    See also CORRCOEF, VAR, STD, MEAN.
 %
-%    Reference page in Doc Center
+%    Documentation for cov
 %       doc cov
 %
-%    Other functions named cov
+%    Other uses of cov
 %
-%       codistributed/cov    gpuArray/cov    tall/cov    ts/cov
-%       fints/cov
+%       codistributed/cov    symfun/cov    tall/cov    ts/cov
+%       gpuArray/cov
 %

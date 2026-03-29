@@ -62,11 +62,8 @@ database.varnames=vnames;
 m=set(m,'data',database,'estim_end_date',end_date);
 
 %% estimate the model
-profile off
-profile on
+
 m=estimate(m);%,'optimizer',@csminwellwrap,'debug',true
-profile off
-profile viewer
 
 %% do posterior simulation
 [objective,lb,ub,x0,SIG]=pull_objective(m);
@@ -92,24 +89,47 @@ m=set(m,'tex_name',...
     'sig_m','$\sigma_m$'
     });
 %% plot priors, posteriors, priors and posteriors
-plot_priors(m)
-plot_posteriors(m,Results)
-plot_priors_and_posteriors(m,Results)
+
+% add the possibility of subsetting parameters as well?
+draws=Results; 
+
+pnames=fieldnames(priors);
+
+this=mcmc(Results,pnames);
+
+% priors
+rdist.plot(priors)
+
+% priors and posteriors
+rdist.plot(priors,[],this)
+
+% posteriors only
+plotOpts=struct();
+
+plotOpts.do=struct('priors',~true,'posteriors',true);
+
+h1=rdist.plot(priors,plotOpts,this);
+
 %% plot priors, posteriors, priors and posteriors for a subset of parameters
-close all
-myparams={'alp','gam','psi'};
-plot_priors(m,myparams)
-plot_posteriors(m,Results,myparams)
-plot_priors_and_posteriors(m,Results,myparams)
+plotOpts=struct();
+
+plotOpts.par_list={'alp','gam','psi'};
+
+% priors
+rdist.plot(priors,plotOpts)
+
+% priors and posteriors
+rdist.plot(priors,plotOpts,this)
+
+% posteriors only
+plotOpts.do=struct('priors',~true,'posteriors',true);
+
+h2=rdist.plot(priors,plotOpts,this);
+
 %% check curvature at the mode
 mode_curvature(m)
 
 %% check curvature at the mode for a subset of parameters
+
 mode_curvature(m,myparams)
 
-%% check curvature at the mode for a subset of parameters
-profile off
-profile on
-mode_curvature(m,myparams)
-profile off
-profile viewer

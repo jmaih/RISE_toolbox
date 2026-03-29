@@ -20,7 +20,7 @@
 % 
 %     See also: TS/GROUP
 %
-%    Other functions named group
+%    Other uses of group
 %
 %       ts/group
 %

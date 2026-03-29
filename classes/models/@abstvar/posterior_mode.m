@@ -13,5 +13,4 @@
 %     :
 % 
 %     - **dd** (struct): posterior mode of the parameters
-% 
 %

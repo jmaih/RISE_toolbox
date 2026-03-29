@@ -1,3 +1,3 @@
-%  choice_set: set to choose from
-%  m: number of elements to choose
+%ordered_combos_without_repetition is a function.
+%    Sols = ordered_combos_without_repetition(choice_set, m)
 %

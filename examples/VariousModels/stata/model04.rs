@@ -1,13 +1,13 @@
-% financial frictions (page 34)
-endogenous	X R P G U I E
+%% Model 3c: financial frictions (page 41)
+@endogenous	X R P G U I E
 
-exogenous EG EU	EE
+@exogenous EG EU	EE
 
-parameters beta kappa sigu sigg sige rhou rhog rhoe chi	psi
+@parameters beta kappa sigu sigg sige rhou rhog rhoe chi	psi
 
-observables P I R
+@observables P I R
 
-model
+@model
 
 	P = beta*P{+1}+kappa*X;
 	

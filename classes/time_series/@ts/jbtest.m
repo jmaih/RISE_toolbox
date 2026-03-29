@@ -56,10 +56,10 @@
 % 
 %    See also LILLIETEST, KSTEST, KSTEST2, CDFPLOT.
 %
-%    Reference page in Doc Center
+%    Documentation for jbtest
 %       doc jbtest
 %
-%    Other functions named jbtest
+%    Other uses of jbtest
 %
 %       ts/jbtest
 %

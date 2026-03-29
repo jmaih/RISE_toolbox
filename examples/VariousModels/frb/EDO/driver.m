@@ -15,7 +15,7 @@ m=set(m,'parameters',p);
 
 %% solve the model
 
-m=solve(m,'steady_state_file','ssfile');
+m=solve(m,'sstate_file','ssfile');
 
 %% print_solution
 

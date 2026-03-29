@@ -1,13 +1,13 @@
-% New Keynesian model (page 22)
-endogenous	X R P G U
+% New Keynesian model
+@endogenous	X R P G U
 
-exogenous EG EU
+@exogenous EG EU
 
-parameters beta kappa sigu sigg rhou rhog psi
+@parameters beta kappa sigu sigg rhou rhog psi
 
-observables  P R
+@observables  P R
 
-model
+@model
 
 	P = beta*P{+1}+kappa*X;
 	

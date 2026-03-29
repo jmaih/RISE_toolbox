@@ -28,5 +28,4 @@
 %  See also:
 % 
 %     - rise_generic/is_stable_system
-% 
 %

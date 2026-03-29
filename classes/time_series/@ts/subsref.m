@@ -14,51 +14,58 @@
 %    For multi-dimensional arrays, A(I,J,K,...) is the subarray specified by
 %    the subscripts.  The result is LENGTH(I)-by-LENGTH(J)-by-LENGTH(K)-...
 % 
-%    A{I} when A is a cell array and I is a scalar is a copy of
-%    the array in the specified cell of A.  If I has more than one
-%    element, this expression is a comma separated list (see LISTS).
-%    Multiple subscripts that specify a scalar element, as in A{3,4}, also
-%    work.
+%    A{I} when A is a cell array and I is a scalar is a copy of the array in
+%    the specified cell of A.  If I has more than one element, this
+%    expression is a comma separated list (see LISTS). Multiple subscripts
+%    that specify a scalar element, as in A{3,4}, also work.
 % 
-%    A(I).field when A is a structure array and I is a scalar is a copy of
-%    the array in the field with the name 'field'.  If I has more than one
-%    element, this expression is a comma separated list.  If A is a 1-by-1
-%    structure array, then the subscript can be dropped.  In this case,
-%    A.field is the same as A(1).field.
+%    A(I).label when A is a structure or object array and I is a scalar is a
+%    copy of the array in the field or property with the name 'label'. If I
+%    has more than one element, this expression is a comma separated list.
+%    If A is a 1-by-1 array, then the subscript can be dropped. In this
+%    case, A.label is the same as A(1).label.
 % 
-%    B = SUBSREF(A,S) is called for the syntax A(I), A{I}, or A.I when A is
-%    an object.  S is a structure array with the fields:
+%    When var is a variable containing 'label', A(I).(var) is a copy of the
+%    array in the field or property with the name 'label'. If I has more
+%    than one element, this expression is a comma separated list.
+% 
+%    A class can implement a method named SUBSREF to overload indexed
+%    reference. When a class has a SUBSREF method, B = SUBSREF(A,S) is
+%    called for the syntax A(I), A{I}, A.I, or A.(I) whenever A is an
+%    instance of the class. The argument S is a structure array with the
+%    fields:
 %        type -- character vector or string containing '()', '{}', or '.' 
 %                specifying the subscript type.
 %        subs -- cell array, character vector, or string containing the 
 %                actual subscripts.
 % 
 %    Subscripting expressions can use more than one level to form more
-%    complicated expressions, for example A{1}.field(3:5).  For an
-%    expression with N subscripting levels, S is an N-by-1 structure array.
-%    See the subscripting examples in the documentation for more
-%    information.
+%    complicated expressions, for example A{1}.field(3:5). For an expression
+%    with N subscripting levels, S is a 1-by-N structure array.
+%    
+%    Instead of implementing SUBSREF, class authors can use the mixins in
+%    the matlab.mixin.indexing package to overload indexing. See the
+%    documentation for more information.
 % 
-%    See also SUBSASGN, SUBSTRUCT, PAREN, SUBSINDEX, LISTS, 
-%             NUMARGUMENTSFROMSUBSCRIPT.
+%    See also SUBSASGN, SUBSTRUCT, numArgumentsFromSubscript, SUBSINDEX,
+%             PAREN, LISTS, matlab.mixin.indexing
 %
-%    Reference page in Doc Center
+%    Documentation for subsref
 %       doc subsref
 %
-%    Other functions named subsref
+%    Other uses of subsref
 %
-%       axisobj/subsref             fints/subsref
-%       axistext/subsref            gpuArray/subsref
-%       calendarDuration/subsref    graph/subsref
-%       categorical/subsref         hgbin/subsref
-%       classregtree/subsref        inline/subsref
-%       codistributed/subsref       instrument/subsref
+%       axisobj/subsref             graph/subsref
+%       axistext/subsref            hgbin/subsref
+%       calendarDuration/subsref    inline/subsref
+%       categorical/subsref         instrument/subsref
+%       codistributed/subsref       parallel-computing/subsref
 %       Composite/subsref           printtemplate/subsref
-%       dataset/subsref             scribehandle/subsref
-%       datetime/subsref            scribehgobj/subsref
-%       diffusion/subsref           serial/subsref
-%       digraph/subsref             sym/subsref
-%       distributed/subsref         tabular/subsref
+%       dataset/subsref             RandStream/subsref
+%       datetime/subsref            scribehandle/subsref
+%       diffusion/subsref           scribehgobj/subsref
+%       digraph/subsref             serial/subsref
+%       distributed/subsref         sym/subsref
 %       drift/subsref               tall/subsref
 %       duration/subsref            ts/subsref
 %       fighandle/subsref           tscollection/subsref

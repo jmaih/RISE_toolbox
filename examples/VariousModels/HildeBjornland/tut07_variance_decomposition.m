@@ -26,7 +26,7 @@ Rfunc=Rfunc3;
 
 params=[];
 
-vd=variance_decomposition(models.(model),params,Rfunc3.(model),shock_names);
+vd=variance_decomposition(models.(model),params,Rfunc3.(model));
 
 %% plot decompositions
 

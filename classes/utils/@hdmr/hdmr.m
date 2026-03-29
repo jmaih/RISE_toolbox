@@ -17,7 +17,7 @@
 % 
 %  N -
 %  Nobs -
-%  n -
+%  numInputs -
 %  output_nbr -
 %  theta -
 %  theta_low -
@@ -36,7 +36,7 @@
 %  optimal -
 %  param_names -
 %
-%    Reference page in Doc Center
+%    Documentation for hdmr
 %       doc hdmr
 %
 %

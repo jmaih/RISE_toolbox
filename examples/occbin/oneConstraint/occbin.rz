@@ -1,19 +1,19 @@
-endogenous Y "Output" R "Interest rate" PI "Gross Inflation rate" MC "Marginal costs" M "stochastic discount factor" C "Consumption" W "real wage"
+@endogenous Y "Output" R "Interest rate" PI "Gross Inflation rate" MC "Marginal costs" M "stochastic discount factor" C "Consumption" W "real wage"
 MUZ "Growth rate of technology" N "Labor" R_TAYLOR LAMBDA "Lagr Mult on Budget constraint" PIND "Inflation index" DLOG_Y "Output growth"
 A "Cons. Pref shock process" RR "Real interest rate" 
 
-exogenous EA "Cons. pref. shock" EZ "Technology shock" ER "Monetary Policy shock" EPI "Cost-push shock"
+@exogenous EA "Cons. pref. shock" EZ "Technology shock" ER "Monetary Policy shock" EPI "Cost-push shock"
 
-parameters sigma "inv. intertemp elast of subst" kappa "coeff on labor in utility" kappa1 "reaction to inflation" kappa2 "reaction to output growth"
+@parameters sigma "inv. intertemp elast of subst" kappa "coeff on labor in utility" kappa1 "reaction to inflation" kappa2 "reaction to output growth"
 epsilon phi eta "inv. Frisch elasticity of labor" beta "discount factor" rho_r "interest rate smoothing" rho_a "AR cons pref"
 pi_ss "sstate inflation" xi "share of infl in infl index" h "habit persistence" gz "sstate growth of technology"
 d "preference parameter" sig_pi "stdev cost push" sig_a "stdev cons. pref" sig_z "stdev techn" sig_r "stdev mon pol"
 
-parameters r_zlb ocb_tp_1_2 ocb_tp_2_1
+@parameters r_zlb ocb_tp_1_2 ocb_tp_2_1
 
-parameters(ocb,2) bind
+@parameters(ocb,2) bind
 
-model
+@model
 
 	? R>=1;
 

@@ -1,7 +1,7 @@
 %--- help for mcmc/psrf_plot ---
 %
-%  Make a plot of the "posterior scale reduction factor," i.e., Gelman-Rubin
-%  diagnotics from the chains 
+%  Makes a plot of the "posterior scale reduction factor" i.e. the
+%  :cite:`GelmanRubin1992` diagnotics from the chains. 
 % 
 %  ::
 % 
@@ -11,8 +11,8 @@
 % 
 %     obj (mcmc object): mcmc object
 % 
-%     pname (char): parameter name. N.B: One of the parameter names is
-%     "multivariate_" and it represents the aggregated statistics.
+%     pname (char): parameter name. N.B: One of the parameter's name is
+%     "multivariate\_" and it represents the aggregated statistics.
 % 
 %     start (numeric|{1}|function handle): iteration at which to start the
 %        plot of the PSRF. If a function handle is used then it should take
@@ -21,17 +21,11 @@
 % 
 % 
 %  Returns:
-%     :
 % 
 %     - **hdl** (handle object): handle to plot object
 % 
 %  Warning:
 % 
 %     - This function requires multiple chains of MCMC samples. See
-%       **nchain** option of samplers. 
-% 
-%  References:
-% 
-%     - :cite:`gelman1992inference`
-%  
+%       **nchain** option of samplers.
 %

@@ -1,4 +1,3 @@
-%  transition matrix based on initial conditions: At this stage The function
-%  already accounts for the fact that y0 will be re-ordered
-% --------------------------------------------------------------------------
+%sim_engine is a function.
+%    [s, regimes] = sim_engine(y0, shks, ss, T, Qfunc, isstate, pai0)
 %

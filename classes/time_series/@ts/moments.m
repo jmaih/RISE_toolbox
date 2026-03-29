@@ -32,9 +32,8 @@
 %        - variance : variance
 %        - stdev : standard deviation
 %        - corrcoef : correlation array
-% 
 %
-%    Other functions named moments
+%    Other uses of moments
 %
 %       mdd/moments
 %

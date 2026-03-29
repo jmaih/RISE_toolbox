@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION: computes C=kron(A,In)*B
-% 
+%kron_A_I_times_B is a function.
+%    C = kron_A_I_times_B(A, B, n)
 %

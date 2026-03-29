@@ -22,5 +22,4 @@
 % 
 %  See also:
 %     ts.collect pages2struct
-% 
 %

@@ -5,15 +5,15 @@
 %-------------------------------------------------------------
 % TODO: reinstate the possibility of having leads and lags on parameters?
 
-endogenous PAI, "Inflation", C, "Consumption", R, "Interest rate", LAMBDA "Lagrange Multiplier", MU "Auxiliary variable"
+@endogenous PAI, "Inflation", C, "Consumption", R, "Interest rate", LAMBDA "Lagrange Multiplier", MU "Auxiliary variable"
 
-exogenous E	"Monetary policy shock"
+@exogenous E	"Monetary policy shock"
 
-parameters beta, kappa, eta, varphi, sigma, a_tp_1_2, a_tp_2_1
+@parameters beta, kappa, eta, varphi, sigma, a_tp_1_2, a_tp_2_1
 
-parameters(a,2) mu, psi
+@parameters(a,2) mu, psi
 
-model
+@model
 
 	LAMBDA = 1/(C-varphi*exp(-mu)*C{-1})-beta*varphi/(C{+1}*exp(MU{+1})-varphi*C);
 
@@ -25,14 +25,14 @@ model
 
 	MU=mu;
 
-steady_state_model
+@steady_state_model
     R=exp(mu)/beta;
     PAI=1;
 	LAMBDA=eta/(eta-1);
     C=(exp(mu)-beta*varphi)/(exp(mu)-varphi)*(eta-1)/eta;
 	MU=mu;
 
-parameterization
+@parameterization
 	beta, .9976;
 	kappa, 161;
 	eta, 10;

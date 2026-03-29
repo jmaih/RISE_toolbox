@@ -1,4 +1,4 @@
-%--- help for mvnrnd ---
+%--- tmvnrnd.m not found. Showing help for mvnrnd instead. ---
 %
 % MVNRND Random vectors from the multivariate normal distribution.
 %    R = MVNRND(MU,SIGMA) returns an N-by-D matrix R of random vectors
@@ -26,7 +26,7 @@
 % 
 %    See also MVTRND, MVNPDF, MVNCDF, NORMRND.
 %
-%    Reference page in Doc Center
+%    Documentation for mvnrnd
 %       doc mvnrnd
 %
 %

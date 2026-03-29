@@ -1,0 +1,2 @@
+%atomdef is a class.
+%

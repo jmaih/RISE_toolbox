@@ -15,17 +15,17 @@
 %model.
 %
 
-endogenous m P c e W R k d n l gy_obs gp_obs y dA
+@endogenous m P c e W R k d n l gy_obs gp_obs y dA
 
-exogenous e_a e_m 
+@exogenous e_a e_m 
 
-parameters alp bet gam mst rho psi del
+@parameters alp bet gam mst rho psi del
 
-parameters sig_a sig_m 
+@parameters sig_a sig_m 
 
-observables gp_obs gy_obs
+@observables gp_obs gy_obs
 
-model
+@model
 	dA = exp(gam+sig_a*e_a);
 	
 	log(m) = (1-rho)*log(mst) + rho*log(m(-1))+sig_m*e_m;
@@ -61,7 +61,7 @@ model
 %steady_state_model;	% if this does not work, rise will use it as initial guess
 %end;
 
-parameterization % point at which dynare starts estimation 								% dynare calibration
+@parameterization % point at which dynare starts estimation 								% dynare calibration
 	alp  ,   0.356000,   0.3235,    0.3891,  beta_pdf(.90)     ;% 0.356, 0.02;	      	0.330
 	bet  ,   0.993000,   0.9896,    0.9958,  beta_pdf(.90)     ;% 0.993, 0.002;			0.990
 	gam  ,   0.008500,   0.0036,    0.0134,  normal_pdf(.90)   ;% 0.0085, 0.003;		  	0.003

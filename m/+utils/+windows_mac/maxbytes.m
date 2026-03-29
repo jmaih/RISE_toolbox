@@ -1,3 +1,3 @@
-%  INTERNAL FUNCTION
-% 
+%maxbytes is a function.
+%    mb = maxbytes
 %

@@ -80,10 +80,19 @@ end
 
 %% latest solvers
 clc
-refine=false;checkStab=false;allSols=true;msvOnly=true;
-xplosRoots=false;debug=false;
-solver_noref={'dsge_udc',refine,checkStab,allSols,msvOnly,xplosRoots,debug};
-solver_ref={'dsge_udc',true,checkStab,allSols,msvOnly,xplosRoots,debug};
+slvOpts=struct();
+slvOpts.refine=false;
+slvOpts.checkStab=false;
+slvOpts.allSols=true;
+slvOpts.msvOnly=true;
+slvOpts.xplosRoots=false;
+slvOpts.debug=false;
+
+solver_noref={'dsge_udc',slvOpts};
+
+slvOpts2=slvOpts;
+slvOpts2.refine=true;
+solver_ref={'dsge_udc',slvOpts2};
 
 M2=cell(1,np);
 
