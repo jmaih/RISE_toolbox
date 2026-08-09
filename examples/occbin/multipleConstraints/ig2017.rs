@@ -18,9 +18,6 @@ zlb_tp_1_2 zlb_tp_2_1
 
 @model
 
-	? lm>=0;	 % horzcat(lm,-maxlev)>=0;
-	? log(r)>=0; % horzcat(log(r),-log(rnot))>=0;   
-
 	# llr = 1 / BETA ;
 	# llrk = llr - (1-DK) ;
 	# llxp = XP_SS ;
