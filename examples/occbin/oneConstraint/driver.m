@@ -47,10 +47,9 @@ print_solution(m)
 
 %% the occasionally binding constraint
 
-% The declaration "? R>=1;" in the model file documents the constraint; what
-% enforces it during a simulation is the pair below, handed to simulate and
-% irf. The first column is the inequality that has to hold, the second the
-% equation that holds while the constraint binds.
+% Constraints are declared here and handed to simulate and irf, not written
+% in the model file. The first column is the inequality that has to hold,
+% the second the equation that holds while the constraint binds.
 
 C={'R>=1','R=r_zlb'};
 

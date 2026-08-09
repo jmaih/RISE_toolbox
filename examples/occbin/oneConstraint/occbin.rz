@@ -15,8 +15,6 @@ d "preference parameter" sig_pi "stdev cost push" sig_a "stdev cons. pref" sig_z
 
 @model
 
-	? R>=1;
-
 	R = bind*r_zlb + (1-bind)*R_TAYLOR;
 
 	LAMBDA = A*(C - h*C(-1)/MUZ)^(-sigma);
