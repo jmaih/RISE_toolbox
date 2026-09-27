@@ -191,7 +191,14 @@ if beta>0
             m.options.fix_point_TolFun,... % tolerance level
             m.options.fix_point_maxiter,... % maximum number of iterations
             m.options.fix_point_verbose); % flag for printing progress or not
-        
+
+        % tfqmr can stop short of its tolerance (it exits on "stagnation"
+        % with retcode 0). A partially solved V makes the loss jagged in
+        % the policy parameters and hands optimizers spurious low pockets,
+        % so verify the residual and solve exactly if needed.
+        [V,retcode]=verify_or_solve_exactly(V,retcode,B,np,h,Q,Tx,ping,...
+            beta,m.options.fix_point_TolFun,@objective);
+
     end
     
 else
@@ -393,7 +400,108 @@ end
         w=utils.code.evaluate_functions(weightCell,ss,param);
         
         w=reshape(w,n,n);
-        
+
     end
+
+end
+
+
+function [V,retcode]=verify_or_solve_exactly(V,retcode,B,np,h,Q,Tx,ping,beta,tol,objective)
+% Accepts the iterative solution of
+%
+%   V_i - beta*sum_j Q(i,j)*T_i'*V_j*T_i = W_i,   T_i=Tx{i}(ping,ping)
+%
+% only if it converged and its relative residual is within tol. Otherwise
+% solves the vec form of the same system exactly,
+%
+%   (I - beta*[Q(i,j)*kron(T_i',T_i')]_{ij}) vec(V) = vec(W),
+%
+% with a sparse direct solver when the matrix is affordable, and returns a
+% nonzero retcode (201: no convergence) when it is not (or when the direct
+% solve fails).
+
+max_nnz=1e7; % ~160MB of sparse storage for the coefficient matrix
+
+if isempty(tol)
+
+    tol=sqrt(eps);
+
+end
+
+tol=max(tol,10*eps);
+
+nB=max(norm(B),realmin);
+
+if ~retcode && all(isfinite(V))
+
+    relres=norm(objective(V)-B)/nB;
+
+    if relres<=tol
+
+        return
+
+    end
+
+end
+
+N=np^2*h;
+
+T=cell(1,h);
+
+nnzA=N;
+
+for ii=1:h
+
+    T{ii}=sparse(Tx{ii}(ping,ping)).';
+
+    nnzA=nnzA+nnz(T{ii})^2*nnz(Q(ii,:));
+
+end
+
+failed=201;
+
+if nnzA>max_nnz
+
+    retcode=failed;
+
+    return
+
+end
+
+blocks=cell(h);
+
+for ii=1:h
+
+    K=kron(T{ii},T{ii});
+
+    for jj=1:h
+
+        blocks{ii,jj}=(-beta*Q(ii,jj))*K;
+
+    end
+
+end
+
+A=speye(N)+cell2mat(blocks);
+
+ws=warning('off','MATLAB:singularMatrix');
+
+ws2=warning('off','MATLAB:nearlySingularMatrix');
+
+Vx=A\B;
+
+warning(ws2); warning(ws);
+
+if all(isfinite(Vx)) && norm(A*Vx-B)/nB<=max(tol,sqrt(eps))
+
+    V=Vx;
+
+    retcode=0;
+
+else
+
+    retcode=failed;
+
+end
 
 end
