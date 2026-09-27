@@ -66,8 +66,12 @@ nsmpl=get(f.smoothed_shocks.(exo_list{1}),'NumberOfObservations');
 endo_list0=endo_list0(ping);
 
 if ~isempty(fxlogvars)
+    % fxlogvars refers to the present model's endogenous list, whereas the
+    % rows of DataEndo follow the list of the model that produced the
+    % smoothed variables, which may differ: map the log flags by name.
+    oldIsLog=ismember(fieldnames(f.smoothed_variables),endo_list(fxlogvars));
     
-    DataEndo(fxlogvars,:,:)=log(DataEndo(fxlogvars,:,:));
+    DataEndo(oldIsLog,:,:)=log(DataEndo(oldIsLog,:,:));
     
 end
     
