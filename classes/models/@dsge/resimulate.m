@@ -23,8 +23,8 @@
 %    log_variables, those variables should be entered here in log. RISE will
 %    not take the log of x0h.
 % 
-%  - fxlogvars : vector of booleans specifying which endogenous variables in
-%    fx are log variables
+%  - fxlogvars : vector of booleans specifying which endogenous variables
+%    of the present model m are log variables (matched by name to the series in fx)
 % 
 %  Outputs:
 % 
